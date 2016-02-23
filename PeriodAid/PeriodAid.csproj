@@ -504,6 +504,7 @@
     <Content Include="Views\Seller\Wx_Seller_APITest.cshtml" />
     <Content Include="Views\OfflineSales\Off_CreateCheckIn.cshtml" />
     <Content Include="Views\OfflineSales\Off_ProxyCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_ProxyCheckIn.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

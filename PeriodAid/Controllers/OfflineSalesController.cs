@@ -3873,8 +3873,6 @@ namespace PeriodAid.Controllers
                     var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id);
                     item.CheckinLocation = "N/A";
                     item.CheckoutLocation = "N/A";
-                    item.CheckinTime = schedule.Standard_CheckIn;
-                    item.CheckoutTime = schedule.Standard_CheckOut;
                     item.ConfirmTime = DateTime.Now;
                     item.ConfirmUser = User.Identity.Name;
                     item.Status = 4;

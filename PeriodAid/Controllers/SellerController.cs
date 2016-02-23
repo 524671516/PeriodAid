@@ -786,6 +786,58 @@ namespace PeriodAid.Controllers
                        select m;
             return View(list);
         }
+        /* 代签到 */
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_ProxyCheckIn(int checkid)
+        {
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == checkid);
+            ViewBag.StoreName = item.Off_Checkin_Schedule.Off_Store.StoreName;
+            ViewBag.Subscribe = item.Off_Checkin_Schedule.Subscribe;
+            ViewBag.SellerName = item.Off_Seller.Name;
+            ViewBag.SellerMobile = item.Off_Seller.Mobile;
+            return View(item);
+        }
+        
+        [Authorize(Roles = "Manager")]
+        [ValidateAntiForgeryToken, HttpPost]
+        public ActionResult Wx_Manager_ProxyCheckIn(Off_Checkin model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin checkin = new Off_Checkin();
+                if (TryUpdateModel(checkin))
+                {
+                    checkin.Report_Time = DateTime.Now;
+                    checkin.CheckinLocation = "N/A";
+                    checkin.CheckoutLocation = "N/A";
+                    checkin.ConfirmTime = DateTime.Now;
+                    checkin.ConfirmUser = User.Identity.Name;
+                    checkin.Status = 4;
+                    offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Manager_Home");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == model.Id);
+                ViewBag.StoreName = item.Off_Checkin_Schedule.Off_Store.StoreName;
+                ViewBag.Subscribe = item.Off_Checkin_Schedule.Subscribe;
+                ViewBag.SellerName = item.Off_Seller.Name;
+                ViewBag.SellerMobile = item.Off_Seller.Mobile;
+                return View(model);
+            }
+        }
 
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_StoreList()

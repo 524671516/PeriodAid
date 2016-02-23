@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="weui_actionsheet_action">
-                <div class="weui_actionsheet_cell action_sheet_cell_primary" id="bonus-submit">代签到</div>
+                <div class="weui_actionsheet_cell action_sheet_cell_primary" id="proxy-checkin-btn">代签到</div>
                 <div class="weui_actionsheet_cell action_sheet_cell_danger" id="cancel-checkin-btn">作废</div>
             </div>
             <div class="weui_actionsheet_action">
@@ -136,6 +136,9 @@
                 }
             })
         });
+        $("#proxy-checkin-btn").click(function () {
+            window.location.href = "/Seller/Wx_Manager_ProxyCheckIn?checkid=" + $("#current-checkid").val();
+        })
         function hideActionSheet(weuiActionsheet, mask) {
             weuiActionsheet.removeClass('weui_actionsheet_toggle');
             mask.removeClass('weui_fade_toggle');
