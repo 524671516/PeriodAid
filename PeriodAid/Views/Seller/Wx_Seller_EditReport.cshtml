@@ -1,0 +1,323 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Off_Seller_Id)
+    @Html.HiddenFor(m => m.Off_Schedule_Id)
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.CheckinLocation)
+    @Html.HiddenFor(m => m.CheckinPhoto)
+    @Html.HiddenFor(m => m.CheckinTime)
+    @Html.HiddenFor(m => m.CheckoutLocation)
+    @Html.HiddenFor(m => m.CheckoutTime)
+    @Html.HiddenFor(m => m.Report_Time)
+    <div class="weui_cells_title">提报信息</div>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">红糖</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+            <div class="weui_cell_ft">
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">黑糖</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">柠檬</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">蜂蜜</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">红枣</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.TextAreaFor(m => m.Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入简报" })
+                <div class="weui_textarea_counter"><abbr id="current_length">0</abbr>/500</div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.Rep_Image)
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <div class="weui_uploader">
+                    <div class="weui_uploader_hd weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">图片上传</div>
+                        <div class="weui_cell_ft"><abbr id="current_image">0</abbr>/7</div>
+                    </div>
+                    <div class="weui_uploader_bd">
+                        <ul class="weui_uploader_files" id="img-upload-list">
+                            <!--<li class="weui_uploader_file" style="background-image:url(/Content/checkin-img/130981806066116407.jpg)"></li>
+                            li class="weui_uploader_file" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/)"></!--li>
+                            <li class="weui_uploader_file" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/)"></li>
+                            <li class="weui_uploader_file weui_uploader_status" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/)">
+                                <div class="weui_uploader_status_content">
+                                    <i class="weui_icon_warn"></i>
+                                </div>
+                            </li>
+                            <li class="weui_uploader_file weui_uploader_status" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/)">
+                                <div class="weui_uploader_status_content">50%</div>
+                            </li>-->
+                        </ul>
+                        <div class="weui_uploader_input_wrp">
+                            <a class="weui_uploader_input" href="javascript:;" id="upload-btn"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <div class="container">
+        <a href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
+            确认并提交
+        </a>
+    </div>
+}
+<div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+        <div class="weui_dialog_bd">销量数据已提报，重新提报会覆盖之前的数据，是否确认操作？</div>
+        <div class="weui_dialog_ft">
+            <a href="/Seller/Wx_Seller_Home" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
+        </div>
+    </div>
+</div>
+<div class="weui_dialog_confirm" style="display:none;" id="dialog_delete_img">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+        <div class="weui_dialog_bd">是否删除已上传的图片？</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog default" id="dialog_img_cancel">取消</a>
+            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_img_confirm">确定</a>
+        </div>
+    </div>
+</div>
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd">提示</div>
+        <div class="weui_dialog_bd" id="dialog_text">当前无法上传更多图片，请删除任意图片后更新！</div>
+        <div class="weui_dialog_ft">
+            <a href="#" class="weui_btn_dialog primary" id="alert-btn">确定</a>
+        </div>
+    </div>
+</div>
+<div id="loadingToast" class="weui_loading_toast" style="display:none;">
+    <div class="weui_mask_transparent"></div>
+    <div class="weui_toast">
+        <div class="weui_loading">
+            <!-- :) -->
+            <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+        </div>
+        <p class="weui_toast_content">图片上传中...</p>
+    </div>
+</div>
+<div class="error-label container" style="display:none;">
+    <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+    <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+</div>
+<br /><br />
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+<script>
+    var img_max = 7;
+    var img_array = new Array();
+    $(function () {
+        var tl = cal_textlength();
+        $("#current_length").text(tl);
+        $("#img-upload-list").html("");
+        //$("#Rep_Image").val("130981806066116407.jpg,130985353047038610.jpg");
+        if ($("#Rep_Image").val() != "") {
+            img_array = $("#Rep_Image").val().split(',');
+        }
+        //alert(img_array.length);
+        $("#current_image").text(img_array.length);
+        if (img_array.length > 0) {
+            for (var i = 0; i < img_array.length; i++) {
+                var html_img = "<li class='weui_uploader_file' style='background-image:url(/Seller/ThumbnailImage?filename=" + img_array[i] + ")' data-target='" + img_array[i] + "'></li>";
+                $("#img-upload-list").append(html_img);
+            }
+        }
+    });
+    $("#submit-btn").click(function () {
+        if (img_array.length==0) {
+            $("#dialog_text").text("请至少上传1张图片");
+            $("#dialog_alert").show();
+        }
+        else {
+            if ($("#Report_Time").val() != "") {
+                $("#dialog_confirm").show();
+            }
+            else {
+                $("form").ajaxSubmit(function (data) {
+                    if (data == "SUCCESS") {
+                        window.location.href = "/Seller/Wx_Seller_Home";
+                    }
+                    else {
+                        $("#form_zone").html(data);
+                    }
+                });
+            }
+        }
+    });
+    $("#dialog_confirm_btn").click(function () {
+        $("#dialog_confirm").hide();
+        $("form").ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                window.location.href = "/Seller/Wx_Seller_Home";
+            }
+            else {
+                $("#form_zone").html(data);
+            }
+        });
+    });
+    function cal_textlength() {
+        return $("#Remark").val().length;
+    }
+    $("#Remark").change(function () {
+        var tl = cal_textlength();
+        $("#current_length").text(tl);
+    });
+    $("#upload-btn").click(function () {
+        var localIds
+        var btn = $(this);
+        if ($("#Rep_Image").val() != "") {
+            img_array = $("#Rep_Image").val().split(',');
+        }
+        else {
+            img_array = new Array();
+        }
+        var img_remain = img_max - img_array.length;
+        if (img_remain > 0) {
+            wx.chooseImage({
+                count: img_remain, // 默认9
+                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    $("#loadingToast").show();
+                    upload_img(localIds, 0);
+                }
+            });
+        }
+        else {
+            $("#dialog_text").text("当前无法上传更多图片，请删除任意图片后更新！");
+            $("#dialog_alert").show();
+        }
+    });
+    $("#alert-btn").click(function () {
+        $("#dialog_alert").hide();
+    })
+    // 点击显示可删除
+    $(".weui_uploader_files").delegate(".weui_uploader_file", "click", function () {
+        //alert("4");
+        $(".weui_uploader_status").html("");
+        $(".weui_uploader_file").removeClass("weui_uploader_status")
+        $(this).addClass("weui_uploader_status").html("<div class='weui_uploader_status_content' id='remove_btn'><i class='fa fa-minus-circle fa-2x'></i></div>");
+    });
+    $(".weui_uploader_files").delegate("#remove_btn", "click", function () {
+        var img_value = $(this).parent(".weui_uploader_status").attr("data-target");
+        //alert(img_value);
+        img_array = img_array = $("#Rep_Image").val().split(',');
+        var del_img_pos = $.inArray(img_value, img_array);
+        img_array.splice(del_img_pos, 1);
+        $("#current_image").text(img_array.length);
+        $("#Rep_Image").val(img_array);
+        //alert($("#Rep_Image").val());
+        $(this).parent(".weui_uploader_status").remove();
+    });
+    function upload_img(localIds, arraycount) {
+        if (arraycount < localIds.length) {
+            wx.uploadImage({
+                localId: localIds[arraycount], // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips: 0, // 默认为1，显示进度提示
+                success: function (res) {
+                    var serverId = res.serverId; // 返回图片的服务器端ID
+                    $.ajax({
+                        url: "/Seller/SaveOrignalImage",
+                        type: "post",
+                        data: {
+                            serverId: serverId
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                img_array.push(data.filename);
+                                arraycount++;
+                                upload_img(localIds, arraycount);
+                            }
+                            else {
+                                alert("上传失败，请重试");
+                                $("#loadingToast").fadeOut(500);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            $("#loadingToast").fadeOut(500);
+            $("#img-upload-list").html("");
+            for (var i = 0; i < img_array.length; i++) {
+                var html_img = "<li class='weui_uploader_file' style='background-image:url(/Seller/ThumbnailImage?filename=" + img_array[i] + ")' data-target='" + img_array[i] + "'></li>";
+                $("#img-upload-list").append(html_img);
+            }
+            $("#current_image").text(img_array.length);
+            $("#Rep_Image").val(img_array);
+            //alert($("#Rep_Image").val());
+        }
+    }
+    $("#ajaxform").ajaxForm(function (data) {
+        if (data == "SUCCESS") {
+            alert("修改成功");
+            window.location.href = "/Seller/Wx_Seller_Home";
+        }
+        else {
+            $("#form_zone").html(data);
+        }
+    });
+    $("#error-label-close").click(function () {
+        $(".error-label").hide();
+    });
+    $(function () {
+        if ($(".input-validation-error").length > 0) {
+            $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+            $(".error-label").show();
+            setTimeout(function () {
+                $(".error-label").fadeOut(1000)
+            }, 3000);
+        }
+    });
+</script>

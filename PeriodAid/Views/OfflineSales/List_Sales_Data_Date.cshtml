@@ -1,0 +1,38 @@
+﻿@model IEnumerable<PeriodAid.Models.Sales_Data>
+
+<table class="table table-striped h6">
+    <tr>
+        <th>
+            日期
+        </th>
+        <th>
+            门店
+        </th>
+        <th>
+            销售
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Sales_Date.ToString("MM-dd")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Store.Store_Name)
+            </td>
+            <td>
+                @item.Sales_Details.Sum(m => m.Report_Num)
+            </td>
+            <td>
+                <div class="text-right">
+                    @Html.ActionLink("修改", "Edit_Sales_Data", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                    @Html.ActionLink("删除", "Delete_Sales_Data", new { id = item.Id }, new { @class = "btn btn-danger btn-xs" })
+                </div>
+            </td>
+        </tr>
+    }
+
+</table>

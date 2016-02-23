@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "generateQRCode";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>生成二维码</h2>
+<br />
+<div class="container text-center">
+    @using (Html.BeginForm())
+    { 
+    <input type="text" class="form-control" id="url" name="url" /><br /><input type="submit" class="btn btn-default" href="javascript:void(0);" value="生成二维码" />
+    }
+    
+</div>
+
+

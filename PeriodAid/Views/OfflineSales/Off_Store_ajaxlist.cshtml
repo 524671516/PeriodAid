@@ -1,0 +1,97 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
+@using PagedList.Mvc;
+
+
+<table class="table table-condensed table-striped" style=" table-layout: fixed;width:100%;">
+    <tr>
+        <th style="width:15%">
+            门店名称
+        </th>
+        <th style="width:5%">
+            区域
+        </th>
+        <th style="width:10%">
+            经销商
+        </th>
+        <th style="width:35%">
+            地址
+        </th>
+        <th style="width:10%">
+            经度
+        </th>
+        <th style="width:10%">
+            纬度
+        </th>
+        <th style="width:15%"></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.StoreName)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Region)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Distributor)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Longitude)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Latitude)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Ajax_EditStore", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
+        </td>
+    </tr>
+}
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Store_ajaxlist", new { page }))</div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改店铺信息</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    $(function () {
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#search-query").val();
+            l = l + "&query=" + query;
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            return false;
+        });
+        $(".edit-button").click(function () {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#editcontent").html(data);
+                    $('#myModal').modal()
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

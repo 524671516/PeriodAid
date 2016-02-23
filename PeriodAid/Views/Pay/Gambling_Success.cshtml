@@ -1,0 +1,54 @@
+﻿@model PeriodAid.Models.WxPayOrder
+
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>寿全斋-支付成功</title>
+    <meta name="author" content="寿全斋电子商务有限公司">
+    <link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" />
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <style>
+        body{
+            background-color:#fe5051;
+            color:#fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                @if (Model.Trade_Status == 1)
+                {
+                    <h2>支付成功</h2>
+                    <br />
+                    <p>
+                        展示此页面给到现场工作人员<br />领取您的奖品
+                    </p>
+                    <br /><br />
+                    <h6>商品名称:&nbsp;&nbsp;@Model.Body</h6>
+                    <h6>订单号:&nbsp;&nbsp;@Model.Trade_No</h6>
+                    <h6>支付金额:&nbsp;&nbsp;@Convert.ToDecimal((decimal)Model.Total_Fee / (decimal)100) &nbsp;元</h6>
+                    <h6>支付时间:&nbsp;&nbsp;@Model.Time_Expire.ToString()</h6>
+                    <br /><br />
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3"></div>
+            <div class="col-xs-6"><img src="~/Content/images/qrcode_for_sqz1760.jpg" class="img-responsive" /></div>
+            <div class="col-xs-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center"><br /><p>长按识别二维码，关注寿全斋官方微信</p></div>
+        </div>
+    </div>
+
+</body>
+</html>

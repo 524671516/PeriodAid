@@ -1,0 +1,90 @@
+﻿@model IEnumerable<PeriodAid.Models.Wx_ManagerReportListViewModel>
+
+<div class="weui_cells_title">当天累计红包 @Model.Count(m => m.Bonus > 0) 个，合计 @String.Format("{0:F}", Model.Sum(m => m.Bonus)) 元</div>
+<div class="weui_cells weui_cells_access">
+    @foreach (var item in Model.OrderByDescending(m => m.Rep_Total))
+    {
+        <a class="weui_cell" href="javascript:;" data-rel="@item.Id">
+            <div class="weui_cell_bd weui_cell_primary">
+                @if ((item.Bonus ?? 0) > 0)
+                {
+                    <p><i class="fa fa-heart text-primary"></i>&nbsp; @Html.Encode(item.StoreName)</p>
+                }
+                else
+                {
+                    <p>@Html.Encode(item.StoreName)</p>
+                }
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(item.Rep_Total)</div>
+        </a>
+    }
+</div>
+<div id="actionSheet_wrap">
+    <div class="weui_mask_transition" id="mask"></div>
+    <div class="weui_actionsheet" id="weui_actionsheet">
+
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    var mask = $('#mask');
+    var weuiActionsheet = $('#weui_actionsheet');
+    function formpost() {
+        $("form").ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                hideActionSheet(weuiActionsheet, mask);
+                $("#toast_success").show();
+                setTimeout(function () {
+                    $("#toast_success").fadeOut(500);
+                }, 1500);
+                $.ajax({
+                    url: "Wx_Manager_ReportList_Partial",
+                    data: {
+                        date: $("#list_date").val()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#list-content").html(data);
+                    }
+                });
+            }
+            else {
+                $("#weui_actionsheet").html(data);
+                if ($(".input-validation-error").length > 0) {
+                    $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+                    $(".input-validation-error").closest(".weui_cell").find("weui_cell_ft").html("<i class='weui_icon_warn'></i>")
+                    $(".error-label").show();
+                    setTimeout(function () {
+                        $(".error-label").fadeOut(1000)
+                    }, 3000);
+                }
+            }
+        });
+    }
+    $("a.weui_cell").click(function () {
+        $.ajax({
+            url: "/Seller/Wx_Manager_ConfirmRedPack",
+            data: {
+                checkid: $(this).attr("data-rel")
+            },
+            success: function (data) {
+                $("#weui_actionsheet").html(data);
+                weuiActionsheet.addClass('weui_actionsheet_toggle');
+                mask.show().addClass('weui_fade_toggle').click(function () {
+                    hideActionSheet(weuiActionsheet, mask);
+                });
+                weuiActionsheet.unbind('transitionend').unbind('webkitTransitionEnd');
+            }
+        });
+    });
+    function hideActionSheet(weuiActionsheet, mask) {
+        weuiActionsheet.removeClass('weui_actionsheet_toggle');
+        mask.removeClass('weui_fade_toggle');
+        weuiActionsheet.on('transitionend', function () {
+            mask.hide();
+        }).on('webkitTransitionEnd', function () {
+            mask.hide();
+        });
+    }
+</script>

@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Off_CheckIn_List";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+<div class="col-md-12">
+    @Html.ActionLink("无数据", "Off_CheckIn_List_ajax", new { status = 0}, new { @class = "btn btn-default btn-sm btn-filter" })
+    @Html.ActionLink("未签到", "Off_CheckIn_List_ajax", new { status = 0 }, new { @class = "btn btn-default btn-sm btn-filter" })
+    @Html.ActionLink("未签退", "Off_CheckIn_List_ajax", new { status = 1 }, new { @class = "btn btn-default btn-sm btn-filter" })
+    @Html.ActionLink("未提报", "Off_CheckIn_List_ajax", new { status = 2 }, new { @class = "btn btn-default btn-sm btn-filter" })
+    @Html.ActionLink("未确认", "Off_CheckIn_List_ajax", new { status = 3 }, new { @class = "btn btn-default btn-sm btn-filter" })
+    @Html.ActionLink("已确认", "Off_CheckIn_List_ajax", new { status = 4 }, new { @class = "btn btn-success btn-sm btn-filter" })
+    @Html.ActionLink("已结算", "Off_CheckIn_List_ajax", new { status = 5 }, new { @class = "btn btn-default btn-sm btn-filter" })
+    @Html.ActionLink("已作废", "Off_CheckIn_List_ajax", new { status = -1 }, new { @class = "btn btn-default btn-sm btn-filter" })
+</div>
+<br />
+<div class="col-md-12" id="expenseslist">
+
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_CheckIn_List_ajax",
+                success: function (data) {
+                    $("#expenseslist").html(data);
+                }
+            });
+            $(document).delegate(".cancel-btn", "click", function () {
+                var cfm = confirm("确认要删除信息吗？");
+                if (cfm) {
+                    var link_url = $(this).attr("href");
+                    $.ajax({
+                        url: link_url,
+                        type: "post",
+                        success: function (data) {
+                            if (data == "SUCCESS") {
+                                $.ajax({
+                                    url: "/OfflineSales/Off_CheckIn_List_ajax",
+                                    success: function (data) {
+                                        $("#expenseslist").html(data);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                return false;
+            });
+        });
+        $(".btn-filter").click(function () {
+            $(".btn-filter").removeClass("btn-success btn-default").addClass("btn-default");
+            var button = $(this);
+            var url = $(button).attr("href");
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    //alert("33");
+                    $(button).removeClass("btn-default").addClass("btn-success");
+                    $("#expenseslist").html(data);
+                }
+            });
+            return false;
+        });
+        
+    </script>
+}

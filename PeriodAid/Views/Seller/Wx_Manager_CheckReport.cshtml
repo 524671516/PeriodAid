@@ -1,0 +1,292 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员管理</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="hidden">
+        <span id="appId">@ViewBag.AppId</span>
+        <span id="timeStamp">@ViewBag.TimeStamp</span>
+        <span id="nonce">@ViewBag.Nonce</span>
+        <span id="url">@ViewBag.Url</span>
+        <span id="signature">@ViewBag.Signature</span>
+    </div>
+    <div class="hd">
+        <h2 class="page_title text-center">销售数据确认</h2>
+    </div>
+    <div class="weui_cells_title">签到信息</div>
+    <div class="weui_cells weui_cells_access">
+        <a class="weui_cell" href="javascript:;" id="storelbs" latitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Latitude" longitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Longitude" address="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Address" storename="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>@Html.Encode(ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName)</p>
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(ViewBag.CheckIn.Off_Seller.Name)</div>
+        </a>
+        <a class="weui_cell" href="javascript:;" id="checkinlbs" location="@Model.CheckinLocation">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到时间</p>
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(Model.CheckinTime)</div>
+        </a>
+        <a class="weui_cell" href="javascript:;" id="checkinimg" data-target="@Model.CheckinPhoto">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到图片</p>
+            </div>
+            <div class="weui_cell_ft">点击查看</div>
+        </a>
+        <a class="weui_cell" href="javascript:;" id="checkoutlbs" location="@Model.CheckoutLocation">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退时间</p>
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(Model.CheckoutTime)</div>
+        </a>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>提报时间</p>
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(Model.Report_Time)</div>
+        </div>
+    </div>
+    
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.Off_Seller_Id)
+        @Html.HiddenFor(m => m.Off_Schedule_Id)
+        @Html.HiddenFor(m => m.Status)
+        @Html.HiddenFor(m => m.CheckinTime)
+        @Html.HiddenFor(m => m.CheckinPhoto)
+        @Html.HiddenFor(m => m.CheckinLocation)
+        @Html.HiddenFor(m => m.CheckoutTime)
+        @Html.HiddenFor(m => m.CheckoutLocation)
+        @Html.HiddenFor(m => m.Report_Time)
+        <div class="weui_cells_title">提报信息</div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">红糖</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+                </div>
+                <div class="weui_cell_ft">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">黑糖</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">柠檬</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">蜂蜜</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">红枣</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.TextAreaFor(m => m.Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入简报" })
+                    <div class="weui_textarea_counter"><abbr id="current_length">0</abbr>/500</div>
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.Rep_Image)
+        <div class="weui_cells weui_cells_access">
+            <a class="weui_cell" href="javascript:;" id="preview-btn">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>图片信息</p>
+                </div>
+                <div class="weui_cell_ft">点击查看</div>
+            </a>
+        </div>
+        <div class="weui_cells_title">审核备注</div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.TextAreaFor(m => m.Confirm_Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入审核备注" })
+                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500</div>
+                </div>
+            </div>
+        </div><br />
+        <div class="container">
+            <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
+                确认并审核
+            </button>
+            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default" id="submit-btn">
+                返回首页
+            </a>
+        </div>
+    }
+    <div class="error-label container" style="display:none;">
+        <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+        <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+    </div>
+    <br /><br />
+    @Scripts.Render("~/bundles/jquery")
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+    <script>
+        //parseFloat
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: $("#appId").text(), // 必填，公众号的唯一标识
+            timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
+            nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
+            signature: $("#signature").text(),// 必填，签名，见附录1
+            jsApiList: ['previewImage', 'openLocation']
+            //必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+        $(function () {
+            var tl = cal_textlength("Remark");
+            $("#current_length").text(tl);
+            var tl2 = cal_textlength("Confirm_Remark");
+            $("#current_length_2").text(tl2);
+            if ($(".input-validation-error").length > 0) {
+                $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+                $(".error-label").show();
+                setTimeout(function () {
+                    $(".error-label").fadeOut(1000)
+                }, 3000);
+            }
+        });
+        function cal_textlength(name) {
+            return $("#"+name).val().length;
+        }
+        $("#Remark").change(function () {
+            var tl = cal_textlength("Remark");
+            $("#current_length").text(tl);
+        });
+        $("#Confirm_Remark").change(function () {
+            var tl = cal_textlength("Confirm_Remark");
+            $("#current_length_2").text(tl);
+        });
+        $("#preview-btn").click(function () {
+            var images = $("#Rep_Image").val().split(',');
+            for (var i = 0; i < images.length; i++) {
+                images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+            }
+            wx.previewImage({
+                current: images[0], // 当前显示图片的http链接
+                urls: images // 需要预览的图片http链接列表
+            });
+        });
+        $("#checkinimg").click(function () {
+            var images = $(this).attr("data-target").split(',');
+            for (var i = 0; i < images.length; i++) {
+                images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+            }
+            wx.previewImage({
+                current: images[0], // 当前显示图片的http链接
+                urls: images // 需要预览的图片http链接列表
+            })
+        });
+        $("#checkinlbs").click(function () {
+            var lbs = $(this).attr("location").split(',');
+            var translbs = lbs[1] + "," + lbs[0];
+            var click_btn = $(this);
+            $.ajax({
+                url: "http://apis.map.qq.com/ws/coord/v1/translate",
+                type: "get",
+                dataType: "jsonp",
+                data: {
+                    locations: translbs,
+                    type: 1,
+                    output: "jsonp",
+                    key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        wx.openLocation({
+                            latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                            longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                            name: "签到地点", // 位置名
+                            address: "", // 地址详情说明
+                            scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                            infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        });
+                    }
+                }
+            });
+        });
+        $("#checkoutlbs").click(function () {
+            var lbs = $(this).attr("location").split(',');
+            var translbs = lbs[1] + "," + lbs[0];
+            var click_btn = $(this);
+            $.ajax({
+                url: "http://apis.map.qq.com/ws/coord/v1/translate",
+                type: "get",
+                dataType: "jsonp",
+                data: {
+                    locations: translbs,
+                    type: 1,
+                    output: "jsonp",
+                    key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        wx.openLocation({
+                            latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                            longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                            name: "签到地点", // 位置名
+                            address: "", // 地址详情说明
+                            scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                            infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        });
+                    }
+                }
+            });
+        });
+        $("#storelbs").click(function () {
+            var click_btn = $(this);
+            $.ajax({
+                url: "http://apis.map.qq.com/ws/coord/v1/translate",
+                type: "get",
+                dataType: "jsonp",
+                data: {
+                    locations: $(click_btn).attr("latitude") + "," + $(click_btn).attr("longitude"),
+                    type: 3,
+                    output: "jsonp",
+                    key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        wx.openLocation({
+                            latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                            longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                            name: $(click_btn).attr("storename"), // 位置名
+                            address: $(click_btn).attr("address"), // 地址详情说明
+                            scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                            infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        });
+                    }
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

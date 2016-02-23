@@ -1,0 +1,124 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+/*input,
+select,
+textarea {
+    max-width: 280px;
+}*/
+
+.reset {
+    padding: 30px 0 80px 0;
+    margin: 0;
+}
+
+.offline-navbar-bottom {
+    background-color: #0094ff;
+    opacity: 0.8;
+    color: #fff;
+    font-size: 1.1em;
+    line-height: 1.2em;
+}
+
+.nav-button {
+    font-size: 2em;
+    line-height: 2em;
+}
+
+.offline-navbar-bottom a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#l-map {
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+#result {
+    width: 100%;
+}
+
+li {
+    line-height: 28px;
+}
+
+.cityList {
+    height: 320px;
+    width: 372px;
+    overflow-y: auto;
+}
+
+.sel_container {
+    z-index: 9999;
+    font-size: 12px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 140px;
+    background: rgba(255,255,255,0.8);
+    height: 30px;
+    line-height: 30px;
+    padding: 5px;
+}
+
+.map_popup {
+    position: absolute;
+    z-index: 200000;
+    width: 382px;
+    height: 344px;
+    right: 0px;
+    top: 40px;
+}
+
+    .map_popup .popup_main {
+        background: #fff;
+        border: 1px solid #8BA4D8;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        width: 100%;
+        z-index: 2;
+    }
+
+    .map_popup .title {
+        background: url("http://map.baidu.com/img/popup_title.gif") repeat scroll 0 0 transparent;
+        color: #6688CC;
+        font-weight: bold;
+        height: 24px;
+        line-height: 25px;
+        padding-left: 7px;
+    }
+
+    .map_popup button {
+        background: url("http://map.baidu.com/img/popup_close.gif") no-repeat scroll 0 0 transparent;
+        cursor: pointer;
+        height: 12px;
+        position: absolute;
+        right: 4px;
+        top: 6px;
+        width: 12px;
+    }

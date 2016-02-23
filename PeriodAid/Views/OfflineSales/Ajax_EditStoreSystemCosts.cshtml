@@ -1,0 +1,92 @@
+﻿@model PeriodAid.Models.Off_StoreSystem_Costs
+
+@using (Html.BeginForm("Ajax_EditStoreSystemCosts", "OfflineSales", FormMethod.Post, new { id= "ajaxForm" } ))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model=>model.Checked)
+        @Html.HiddenFor(model => model.Canceled)
+        @Html.HiddenFor(model => model.Completed)
+        <div class="form-group">
+            <lable class="control-label col-md-3">申请日期</lable>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.ApplicationDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ApplicationDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <lable class="control-label col-md-3">渠道系统</lable>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.StoreSystem, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StoreSystem, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <lable class="control-label col-md-3">经销商</lable>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Distributor, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <lable class="control-label col-md-3">总费用</lable>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.TotalFee, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TotalFee, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <lable class="control-label col-md-3">已付现金金额</lable>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Cash, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Cash, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <lable class="control-label col-md-3">已货抵金额</lable>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.MortgageGoods, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MortgageGoods, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <lable class="control-label col-md-3">收款人</lable>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.Warrant, ViewBag.Warrantlist as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Warrant, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $('#ajaxForm').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("修改成功");
+                $('#myModal').modal('hide');
+                $.ajax({
+                    url: "/OfflineSales/Off_StoreSystemCosts_ajaxlist",
+                    success: function (data) {
+                        $("#list-container").html(data);
+                    }
+                });
+            }
+            else {
+                $("#editcontent").html(data);
+            }
+        });
+    });
+</script>

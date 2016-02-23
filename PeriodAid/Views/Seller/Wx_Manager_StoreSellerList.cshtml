@@ -1,0 +1,42 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Seller>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员管理</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="hd">
+        <h2 class="page_title text-center">销售员列表</h2>
+    </div>
+    <div class="weui_cells_title">@ViewBag.StoreName</div>
+    <div class="weui_cells">
+        @foreach (var item in Model)
+        {
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Html.Encode(item.Name)</p>
+                </div>
+                <div class="weui_cell_ft">@Html.Encode(item.Mobile)</div>
+            </div>
+        }
+    </div>
+    <br />
+    <div class="container">
+        <a href="/Seller/Wx_Manager_UnCheckInList?status=0" class="weui_btn weui_btn_primary" id="submit-btn">
+            返回列表
+        </a>
+    </div>
+    <br /><br />
+</body>
+</html>

@@ -1,0 +1,114 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
+    @using PagedList.Mvc;
+
+
+<table class="table table-condensed table-striped" style=" table-layout: fixed;width:100%;">
+    <tr>
+        <th style="width:10%">
+            日期
+        </th>
+        <th style="width:15%">
+            门店名称
+        </th>
+        <th style="width:8%">
+            门店系统
+        </th>
+        <th style="width:8%">
+            红糖姜茶
+        </th>
+        <th style="width:8%">
+            黑糖姜茶
+        </th>
+        <th style="width:8%">
+            柠檬姜茶
+        </th>
+        <th style="width:8%">
+            蜂蜜姜茶
+        </th>
+        <th style="width:8%">
+            红枣姜茶
+        </th>
+        <th style="width:8%">
+            销售员姓名
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Off_Store.StoreSystem)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Brown)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Black)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Lemon)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Honey)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Dates)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+        </td>
+        <td class="ellipsis">
+            @Html.ActionLink("修改","Ajax_EditDailyInfo", new { id= item.Id}, new { @class="btn btn-info btn-sm edit-button"})
+        </td>
+    </tr>
+}
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_DailySalesInfo_ajaxlist", new { page }))</div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改促销员</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    $(function () {
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#search-query").val();
+            l = l + "&query=" + query;
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            return false;
+        });
+        $(".edit-button").click(function () {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#editcontent").html(data);
+                    $('#myModal').modal()
+                }
+            });
+            return false;
+        });
+    });
+</script>

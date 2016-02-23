@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewBag.Title = "促销员信息";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+
+@Html.Partial("Off_Seller_Controller")
+<br />
+<div id="list-container">
+
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_Seller_ajaxlist",
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            $("#search-btn").click(function () {
+                $.ajax({
+                    url: "/OfflineSales/Off_Seller_ajaxlist",
+                    data:{
+                        query: $("#search-query").val()
+                    },
+                    success: function (data) {
+                        $("#list-container").html(data);
+                    }
+                });
+            });
+        })
+    </script>
+}

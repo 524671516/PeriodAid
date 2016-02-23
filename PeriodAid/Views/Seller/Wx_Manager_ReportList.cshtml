@@ -1,0 +1,91 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员 使用指南</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="weui_cells_title">选择日期</div>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">日期</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="date" value="@ViewBag.today.ToString("yyyy-MM-dd")" name="list_date" id="list_date">
+            </div>
+            <div class="weui_cell_ft">
+                <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_primary" id="search_btn"><i class="fa fa-search"></i>&nbsp;&nbsp;查看</a>
+            </div>
+        </div>
+    </div>
+    <div id="list-content">
+    </div>
+    <br />
+    <div class="container">
+        <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_primary">
+            返回首页
+        </a>
+    </div>
+    <div id="toast_success" style="display: none;">
+        <div class="weui_mask_transparent"></div>
+        <div class="weui_toast">
+            <i class="weui_icon_toast"></i>
+            <p class="weui_toast_content">已提交</p>
+        </div>
+    </div>
+    <div class="error-label container" style="display:none;">
+        <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+        <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+    </div>
+    <br /><br />
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+        $(function () {
+            $.ajax({
+                url: "Wx_Manager_ReportList_Partial",
+                data: {
+                    date: $("#list_date").val()
+                },
+                type: "post",
+                success: function (data) {
+                    $("#list-content").html(data);
+                }
+            });
+        });
+        $("#search_btn").click(function () {
+            $.ajax({
+                url: "Wx_Manager_ReportList_Partial",
+                data: {
+                    date: $("#list_date").val()
+                },
+                type: "post",
+                success: function (data) {
+                    $("#list-content").html(data);
+                }
+            });
+        });
+        $("#list_date").change(function (data) {
+            $.ajax({
+                url: "Wx_Manager_ReportList_Partial",
+                data: {
+                    date: $("#list_date").val()
+                },
+                type: "post",
+                success: function (data) {
+                    $("#list-content").html(data);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

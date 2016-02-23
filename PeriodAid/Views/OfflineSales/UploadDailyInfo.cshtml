@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "上传日销售报表";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+<div class="row">
+    <div class="col-xs-10">
+        <a class="btn btn-default btn-sm" href="/OfflineSales/UploadDailyInfo"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传日报表</a>
+        <a class="btn btn-info btn-sm" href="/OfflineSales/UploadMonthInfo"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传月报表</a>
+        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Sales_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看日报表</a>
+        <a class="btn btn-warning btn-sm" href="/OfflineSales/Off_Sales_month"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看月报表</a>
+    </div>
+    <div class="col-xs-2">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+<br />
+<h4><b>上传日销售数据</b></h4>
+<div class="row">
+    @using (Html.BeginForm("UploadDailyInfo", "OfflineSales", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="col-xs-4">
+            <div class="input-group">
+                <input type="file" name="xlsxfile" id="xlsxfile" class="form-control input-sm" accept=".xlsx" />
+                <span class="input-group-btn">
+                    <button class="btn btn-success btn-sm">上传</button>
+                </span>
+            </div>
+        </div>
+        <div class="col-xs-8">
+            <a class="btn btn-info btn-sm" href="~/Content/xlsx/店铺日报表-Template.xlsx">下载模板</a>
+        </div>
+    }
+</div>

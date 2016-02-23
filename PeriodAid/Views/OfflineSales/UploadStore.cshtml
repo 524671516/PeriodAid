@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "上传线下门店信息";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+<div class="row">
+    <div class="col-xs-10">
+        <a class="btn btn-default btn-sm" href="/OfflineSales/UploadStore"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a>
+        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Store_main"><i class="fa fa-search"></i>&nbsp;&nbsp;门店查询</a>
+        <a class="btn btn-info btn-sm" href="/OfflineSales/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a>
+    </div>
+    <div class="col-xs-2">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+<br />
+<h4><b>上传门店数据</b></h4>
+<div class="row">
+    @using (Html.BeginForm("UploadStore", "OfflineSales", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="col-xs-4">
+            <div class="input-group">
+                <input type="file" name="xlsxfile" id="xlsxfile" class="form-control input-sm" accept=".xlsx" />
+                <span class="input-group-btn">
+                    <button class="btn btn-success btn-sm">上传</button>
+                </span>
+            </div>
+        </div>
+        <div class="col-xs-8">
+            <a class="btn btn-info btn-sm" href="~/Content/xlsx/门店信息表-Template.xlsx">下载模板</a>
+        </div>
+    }
+</div>

@@ -1,0 +1,87 @@
+﻿@model PeriodAid.Models.Off_Seller
+
+
+@using (Html.BeginForm("Ajax_EditSeller","OfflineSales", FormMethod.Post, new { id= "ajaxForm"}))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            <label class="control-label col-md-3">姓名</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control disabled" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">联系方式</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">所属门店</label>
+            <div class="col-md-9">
+                @Model.Off_Store.StoreName
+                @Html.HiddenFor(model => model.StoreId)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">身份证号码</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.IdNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">开户行</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.CardName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CardName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">卡号</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.CardNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CardNo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="修改" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $('#ajaxForm').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("修改成功");
+                $('#myModal').modal('hide');
+                $.ajax({
+                    url: "/OfflineSales/Off_Seller_ajaxlist",
+                    success: function (data) {
+                        $("#list-container").html(data);
+                    }
+                });
+            }
+            else {
+                $("#editcontent").html(data);
+            }
+            
+        });
+    });
+</script>

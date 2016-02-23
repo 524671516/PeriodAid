@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "线下门店信息";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+<div class="row">
+    <div class="col-xs-10">
+        <a class="btn btn-default btn-sm" href="/OfflineSales/UploadStore"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a>
+        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Store_main"><i class="fa fa-search"></i>&nbsp;&nbsp;门店查询</a>
+        <a class="btn btn-info btn-sm" href="/OfflineSales/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a>
+    </div>
+    <div class="col-xs-2">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+<br />
+<div id="list-container">
+
+</div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            ...
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_Store_ajaxlist",
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            $("#search-btn").click(function () {
+                $.ajax({
+                    url: "/OfflineSales/Off_Store_ajaxlist",
+                    data:{
+                        query: $("#search-query").val()
+                    },
+                    success: function (data) {
+                        $("#list-container").html(data);
+                    }
+                });
+            });
+        })
+    </script>
+    }
+

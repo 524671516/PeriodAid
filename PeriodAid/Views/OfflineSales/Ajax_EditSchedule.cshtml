@@ -1,0 +1,80 @@
+﻿@model PeriodAid.Models.Off_Checkin_Schedule
+
+@using (Html.BeginForm("Ajax_EditSchedule", "OfflineSales", FormMethod.Post, new { id = "ajaxForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.Off_Store_Id)
+        <div class="form-group">
+            <label class="control-label col-md-3">店铺名称</label>
+            <div class="col-md-9">
+                <input value="@ViewBag.StoreName" class="form-control" readonly />
+                @Html.ValidationMessageFor(model => model.Off_Store_Id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">活动时间</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Subscribe, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.Subscribe, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">签到时间</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Standard_CheckIn, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Standard_CheckIn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">签退时间</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Standard_CheckOut, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Standard_CheckOut, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">基本工资</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Standard_Salary, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Standard_Salary, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="提交" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script src="~/Scripts/JavaScript.js"></script>
+<script>
+    $('#ajaxForm').ajaxForm(function (data) {
+        if (data == "SUCCESS") {
+            alert("修改成功");
+            $('#myModal').modal('hide');
+            var attr = $.getUrlParam("date");
+            window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
+        }
+        else {
+            $("#editcontent").html(data);
+        }
+
+    });
+    (function ($) {
+        $.getUrlParam = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+    })(jQuery);
+</script>
+

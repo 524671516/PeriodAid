@@ -1,0 +1,107 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Expenses>
+@using PagedList.Mvc;
+<table class="table table-condensed table-striped h6" style="table-layout: fixed;width:100%;">
+    <tr>
+        <th  style="width:10%">
+            申请日期
+        </th>
+        <th style="width:10%">
+            状态
+        </th>
+        <th style="width:10%">
+            渠道名称
+        </th>
+        <th style="width:10%">
+            经销商名称
+        </th>
+        <th style="width:10%">
+            费用类型
+        </th>
+        <th style="width:10%">
+            预算金额
+        </th>
+        <th style="width:10%">
+            结算金额
+        </th>
+        <th style="width:10%">
+            核销金额
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ApplicationDate)
+            </td>
+            <td class="ellipsis">
+                @if (item.Status == -1)
+                {
+                    <span class="text-danger">@Html.Encode("作废")</span>
+                }
+                else if (item.Status == 0)
+                {
+                    @Html.Encode("未审核");
+                }
+                else if (item.Status == 1)
+                {
+                    @Html.Encode("已审核");
+                }
+                else if (item.Status == 2)
+                {
+                    @Html.Encode("已结算");
+                }
+                else if (item.Status == 3)
+                {
+                    <span class="text-success">@Html.Encode("已核销")</span>
+                }
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.StoreSystem)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Distributor)
+            </td>
+            <td class="ellipsis">
+                @if (item.PaymentType == 0)
+                {
+                    @Html.Encode("进场费")
+                }
+                else if(item.PaymentType == 1)
+                {
+                    @Html.Encode("活动费")
+                }
+            </td>
+            <td class="ellipsis">
+                @item.Off_Expenses_Details.Where(m=>m.ExpensesType==0).Sum(m=>m.DetailsFee)
+            </td>
+            <td class="ellipsis">
+                @item.Off_Expenses_Details.Where(m=>m.ExpensesType==1).Sum(m => m.DetailsFee)
+            </td>
+            <td class="ellipsis">
+                @item.Off_Expenses_Payment.Sum(m=>m.VerifyCost)
+            </td>
+            
+            <td class="ellipsis">
+                @Html.ActionLink("查看", "Off_Expenses_Details", new { id = item.Id }, new { @class="btn btn-info btn-sm"})
+                @if (item.Status == 0)
+                {
+                    @Html.ActionLink("添加预算", "Off_Expenses_Edit", new { id = item.Id }, new { @class = "btn btn-default btn-sm" })
+                    @Html.Encode(" ")
+                    @Html.ActionLink("作废", "Off_Expenses_Cancel", new { id = item.Id }, new { @class = "btn btn-danger btn-sm cancel-btn", onClick="if(!confirm('是否要作废？')) return false;"})
+                }
+                else if (item.Status == 1)
+                {
+                    @Html.ActionLink("编辑结算", "Off_Expenses_Balance", new { id = item.Id }, new { @class = "btn btn-default btn-sm" })
+                }
+                else if (item.Status == 2)
+                {
+                    @Html.ActionLink("编辑核销", "Off_Expenses_VerifyCost", new { id = item.Id }, new { @class = "btn btn-default btn-sm" })
+                }
+                
+            </td>
+        </tr>
+    }
+
+</table>

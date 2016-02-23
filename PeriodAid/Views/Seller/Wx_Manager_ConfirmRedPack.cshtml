@@ -1,0 +1,62 @@
+﻿@model PeriodAid.Models.Wx_ManagerReportListViewModel
+
+<div class="container">
+    <br />
+    <div class="row">
+        <div class="col-xs-8" style="margin-bottom:10px; font-weight:bold;">@Html.Encode(Model.StoreName)</div>
+        <div class="col-xs-4" style="margin-bottom:10px; font-weight:bold;">@Html.Encode(Model.SellerName)</div>
+        <div class="col-xs-4">红糖：@Html.Encode(Model.Rep_Brown)</div>
+        <div class="col-xs-4">黑糖：@Html.Encode(Model.Rep_Black)</div>
+        <div class="col-xs-4">柠檬：@Html.Encode(Model.Rep_Lemon)</div>
+        <div class="col-xs-4">蜂蜜：@Html.Encode(Model.Rep_Honey)</div>
+        <div class="col-xs-4">红枣：@Html.Encode(Model.Rep_Dates)</div>
+        <div class="col-xs-4"></div>
+    </div>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m=>m.Id)
+    @Html.HiddenFor(m=>m.Rep_Brown)
+    @Html.HiddenFor(m=>m.Rep_Black)
+    @Html.HiddenFor(m=>m.Rep_Lemon)
+    @Html.HiddenFor(m=>m.Rep_Honey)
+    @Html.HiddenFor(m=>m.Rep_Dates)
+    @Html.HiddenFor(m=>m.Rep_Other)
+    @Html.HiddenFor(m=>m.Rep_Total)
+    @Html.HiddenFor(m=>m.SellerName)
+    @Html.HiddenFor(m=>m.StoreName)
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">奖金</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m=>m.Bonus, new { htmlAttributes = new { @class = "weui_input", type = "number", placeholder = "请输入金额" } })
+            </div>
+            <div class="weui_cell_ft">
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.TextAreaFor(m => m.Bonus_Remark, new { @class = "weui_textarea", rows = "2", placeholder = "请输入红包理由" })
+                <div class="weui_textarea_counter"><abbr id="current_length">0</abbr>/128</div>
+            </div>
+        </div>
+    </div>
+    <div class="weui_actionsheet_action">
+        <div class="weui_actionsheet_cell action_sheet_cell_primary" id="bonus-submit" onclick="javascript:formpost();">提交</div>
+    </div>
+}
+<script>
+    $(function () {
+        var tl = cal_textlength();
+        $("#current_length").text(tl);
+    });
+    function cal_textlength() {
+        return $("#Bonus_Remark").val().length;
+    }
+    $("#Bonus_Remark").change(function () {
+        var tl = cal_textlength();
+        $("#current_length").text(tl);
+    });
+</script>
+

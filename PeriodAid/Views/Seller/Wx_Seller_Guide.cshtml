@@ -1,0 +1,114 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员 使用指南</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <style type="text/css">
+        h1 {
+            color:#3cc51f;
+        }
+        h2, h3{
+            color:#de7c23; font-weight:bold;
+        }
+        p{
+            font-size:14px; line-height:24px;
+        }
+    </style>
+</head>
+<body>
+    <article class="weui_article">
+        <h1>使用指南</h1>
+        <section>
+            <h2 class="title">1. 促销员每日工作流程及要求</h2>
+            <p><img src="~/Content/images/guide-01-1.jpg" class="img-responsive" />
+            每日工作流程主要分为：<br />1. 签到；2. 签退；3.提报销量；<br />
+            促销员完成以上考勤流程，即视作完成当日促销，我们在确认销量后将及时将您的工资和奖金进行结算</p>
+            <br />
+            <h2 class="title">2. 准备工作</h2>
+            <section>
+                <h3>2.1 登陆</h3>
+                <p>
+                    关注“寿全斋官方微信”(sqz1760)，直接回复"促销员"，进入页面。<br />
+                    <img src="~/Content/images/guide-01-3.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>2.2 注册</h3>
+                <p>
+                    首次进入系统后台需要使用您的微信号进行注册，请正确填写您的姓名、手机号码以及我们发送的短信验证码进行注册。
+                </p>
+            </section>
+            <section>
+                <h3>2.3 等待绑定</h3>
+                <p>
+                    注册完成后需要等待工作人员将您的账户与您的工作店铺进行绑定。完成注册后请尽快与您的督导或管理人员联系，尽快进行店铺绑定并进行日常的操作。<br />
+                    (PS:注册与绑定的工作仅需要在第一次进入系统时操作)<br />
+                    <img src="~/Content/images/guide-01-2.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <br />
+            <h2 class="title">3. 每日操作内容</h2>
+            <section>
+                <h3>3.1 签到</h3>
+                <p>
+                    如当天促销员有促销任务，须在上班前完成签到工作。签到流程分为获取地址信息以及上传一张签到图片。两步操作完成后点击提交按钮完成签到。多次签到或签退会覆盖前一次的签到签退信息。<br />
+                    <img src="~/Content/images/guide-02-1.jpg" class="img-responsive" />
+                    (PS:如获取位置信息失败，请确保手机处于有信号状态并且手机开启位置信息)<br />
+                    <img src="~/Content/images/guide-02-2.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>3.2 签退</h3>
+                <p>
+                    促销工作结束后，须在手机上完成签退工作。提交位置信息后，点击提交完成签退工作。多次签到或签退会覆盖前一次的签到签退信息。<br />
+                    <img src="~/Content/images/guide-02-3.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>3.3 提报销量数据</h3>
+                <p>
+                    完成签退以后，促销员须根据门店拉出来的销量数据提报各品类销售数据，并提交至少1张图片作为销量依据。同时也可以添加备注信息告知督导或管理人员当日活动的异常信息。<br />
+                    提交图片一次最多7张图片，如有误传图片，可以点击错误的图片进行删除，并上传或补充正确的图片。<br />
+                    <img src="~/Content/images/guide-02-4.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <br />
+            <h2 class="title">4. 其他功能</h2>
+            <section>
+                <h3>4.1 查看排班时间表</h3>
+                <p>
+                    点击排班表功能可查询促销员对应门店的排班情况。排班表不代表促销员个人的排班计划，请各位促销员知悉。<br />
+                    <img src="~/Content/images/guide-03-1.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>4.2 查看月度结算统计</h3>
+                <p>
+                    促销员可以查看当月以及上月的结算统计明细。结算信息可能会在确认销量后1-2天结算，请耐心等待。如结算信息有错误，请及时与督导或管理人员联系。<br />
+                    <img src="~/Content/images/guide-03-2.jpg" class="img-responsive" />
+                </p>
+            </section>
+        </section>
+    </article>
+    <div class="container">
+        @if (User.Identity.IsAuthenticated) { 
+        <a href="/Seller/Wx_Seller_Home" class="weui_btn weui_btn_primary" id="submit-btn">
+            返回首页
+        </a>
+        }
+    </div>
+    <br /><br />
+</body>
+</html>

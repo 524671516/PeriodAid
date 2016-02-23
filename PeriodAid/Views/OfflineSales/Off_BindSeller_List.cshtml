@@ -1,0 +1,78 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Membership_Bind>
+
+@{
+    ViewBag.Title = "人员绑定";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+@Html.Partial("Off_Seller_Controller")
+<br />
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>
+                姓名
+            </th>
+            <th>
+                联系方式
+            </th>
+            <th>
+                注册时间
+            </th>
+            <th>
+                绑定促销员姓名
+            </th>
+            <th>绑定促销员所属门店</th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mobile)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.ApplicationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+            </td>
+            <td>
+                
+                @Html.Encode(item.Off_Seller==null?"":item.Off_Seller.Off_Store.StoreName)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "Off_BindSeller", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
+            </td>
+        </tr>
+    }
+    
+    </table>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改促销员</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script>
+    $(".edit-button").click(function () {
+        var link_url = $(this).attr("href");
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#editcontent").html(data);
+                $('#myModal').modal()
+            }
+        });
+        return false;
+    });
+</script>

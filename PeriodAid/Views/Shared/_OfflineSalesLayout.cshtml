@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线下销售系统</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    
+</head>
+<body class="reset">
+    <!-- <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("应用程序名称", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("主页", "Index", "Home")</li>
+                    <li>@Html.ActionLink("关于", "About", "Home")</li>
+                    <li>@Html.ActionLink("联系方式", "Contact", "Home")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - 我的 ASP.NET 应用程序</p>
+        </footer>
+    </div>
+    -->
+    <div class="container">
+        @RenderBody()
+    </div>
+    <div class="navbar navbar-fixed-bottom offline-navbar-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-3 text-center">
+                    <a href="/OfflineSales/Sales_Home" style="display:block">
+                        <span class="glyphicon glyphicon-usd nav-button"></span><br />
+                        销售
+                    </a>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <a href="/OfflineSales/Store_Home" style="display:block">
+                        <span class="glyphicon glyphicon-home nav-button"></span><br />
+                        门店
+                    </a>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <a href="/OfflineSales/Seller_Home" style="display:block">
+                        <span class="glyphicon glyphicon-user nav-button"></span><br />
+                        促销员
+                    </a>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <a href="/OfflineSales/Event_Home" style="display:block">
+                        <span class="glyphicon glyphicon-tag nav-button"></span><br />
+                        活动
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

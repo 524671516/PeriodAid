@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "Off_Expenses_List";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+<div class="col-md-12">
+    @Html.ActionLink("新增", "Off_Expenses_Add",null, new { @class="btn btn-success btn-sm"})
+</div>
+<br />
+<div class="col-md-12" id="expenseslist">
+
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_Expenses_AjaxList",
+                success: function (data) {
+                    $("#expenseslist").html(data);
+                }
+            });
+            $(document).on("click", ".cancel-btn", function () {
+                $.ajax({
+                    
+                })
+            });
+        });
+    </script>
+    }
+
+

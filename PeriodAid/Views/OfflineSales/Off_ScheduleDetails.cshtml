@@ -1,0 +1,111 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
+
+@{
+    ViewBag.Title = "Off_ScheduleDetails";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+@Html.Partial("Off_Sales_Control")
+<br />
+<a class="btn btn-info btn-sm" id="add-btn" href="/OfflineSales/Off_Add_Schedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a><br /><br />
+<table class="table table-condensed table-striped" style="table-layout:fixed; width:100%;">
+    <tr>
+        <th>
+            时间
+        </th>
+        <th>
+           店铺名称
+        </th>
+        <th>
+            标准签到时间
+        </th>
+        <th>
+            标准签退时间
+        </th>
+        <th>
+            标准工资
+        </th>
+        <th>提报数</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td>
+                @Html.Encode(item.Off_Store.StoreName)
+            </td>
+            <td>
+                @Html.Encode(item.Standard_CheckIn.ToString("HH:mm"))
+            </td>
+            <td>
+                @Html.Encode(item.Standard_CheckOut.ToString("HH:mm"))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Standard_Salary)
+            </td>
+            <td>
+                @Html.Encode(item.Off_Checkin.Count(m => m.Status >= 3))
+            </td>
+            <td>
+                @Html.ActionLink("编辑", "Ajax_EditSchedule", new { Id=item.Id }, new { @class = "btn btn-info btn-xs edit-button" })
+                @Html.ActionLink("手工数据", "Off_CreateCheckIn", new { scheduleId = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                @Html.ActionLink("删除", "Ajax_DeleteSchedule", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs del-button" })
+            </td>
+        </tr>
+    }
+
+</table>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改促销员</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    $(".edit-button").click(function () {
+        var link_url = $(this).attr("href");
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#editcontent").html(data);
+                $('#myModal').modal()
+            }
+        });
+        return false;
+    });
+    $(".del-button").click(function () {
+        var cfm = confirm("确认要删除信息吗？");
+        if (cfm) {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                type: "post",
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        var attr = $.getUrlParam("date");
+                        window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
+                    }
+                }
+            });
+        }
+        return false;
+    });
+    (function ($) {
+        $.getUrlParam = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+    })(jQuery);
+</script>

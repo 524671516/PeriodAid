@@ -1,0 +1,43 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员管理</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="hd">
+        <h2 class="page_title text-center">销量确认</h2>
+    </div>
+    <div class="weui_cells_title">门店列表</div>
+    <div class="weui_cells weui_cells_access">
+        @foreach (var item in Model)
+        {
+            <a class="weui_cell" href="/Seller/Wx_Manager_CheckReport?CheckId=@item.Id">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Html.Encode(item.Off_Checkin_Schedule.Off_Store.StoreName)</p>
+                </div>
+                <div class="weui_cell_ft">@Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("MM-dd"))</div>
+            </a>
+        }
+    </div>
+    <br />
+    <div class="container">
+        <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_primary" id="submit-btn">
+            返回首页
+        </a>
+    </div>
+    <br /><br />
+</body>
+</html>
