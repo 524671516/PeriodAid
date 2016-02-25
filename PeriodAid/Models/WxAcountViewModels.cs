@@ -62,6 +62,8 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
+        public int Status { get; set; }
+
         public string StoreName { get; set; }
 
         public string SellerName { get; set; }

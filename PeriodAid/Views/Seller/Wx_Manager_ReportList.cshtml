@@ -64,7 +64,7 @@
         });
         $("#search_btn").click(function () {
             $.ajax({
-                url: "Wx_Manager_ReportList_Partial",
+                url: "/Seller/Wx_Manager_ReportList_Partial",
                 data: {
                     date: $("#list_date").val()
                 },
@@ -76,7 +76,7 @@
         });
         $("#list_date").change(function (data) {
             $.ajax({
-                url: "Wx_Manager_ReportList_Partial",
+                url: "/Seller/Wx_Manager_ReportList_Partial",
                 data: {
                     date: $("#list_date").val()
                 },

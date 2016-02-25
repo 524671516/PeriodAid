@@ -505,6 +505,8 @@
     <Content Include="Views\OfflineSales\Off_CreateCheckIn.cshtml" />
     <Content Include="Views\OfflineSales\Off_ProxyCheckIn.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_ProxyCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_EventList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_EventList_Partial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

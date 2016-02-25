@@ -1,21 +1,24 @@
 ﻿@model IEnumerable<PeriodAid.Models.Wx_ManagerReportListViewModel>
 
-<div class="weui_cells_title">当天累计红包 @Model.Count(m => m.Bonus > 0) 个，合计 @String.Format("{0:F}", Model.Sum(m => m.Bonus)) 元</div>
+<div class="weui_cells_title">@Html.Encode(ViewBag.Today.ToString("MM-dd")):&nbsp;当天累计红包 @Model.Count(m => m.Bonus > 0) 个，合计 @String.Format("{0:F}", Model.Sum(m => m.Bonus)) 元</div>
 <div class="weui_cells weui_cells_access">
     @foreach (var item in Model.OrderByDescending(m => m.Rep_Total))
     {
         <a class="weui_cell" href="javascript:;" data-rel="@item.Id">
-            <div class="weui_cell_bd weui_cell_primary">
-                @if ((item.Bonus ?? 0) > 0)
+            <div class="weui_cell_hd">
+                @if (item.Status == 4)
                 {
-                    <p><i class="fa fa-heart text-primary"></i>&nbsp; @Html.Encode(item.StoreName)</p>
+                    <i class="weui_icon_circle" style="margin:0 10px 0 0"></i>
                 }
                 else
                 {
-                    <p>@Html.Encode(item.StoreName)</p>
+                    <i class="weui_icon_success" style="margin:0 10px 0 0"></i>
                 }
             </div>
-            <div class="weui_cell_ft">@Html.Encode(item.Rep_Total)</div>
+            <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Html.Encode(item.StoreName)</p>
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(item.Rep_Total) (@String.Format("{0:F}",item.Bonus??0))</div>
         </a>
     }
 </div>
@@ -62,6 +65,9 @@
             }
         });
     }
+    function cancelpost() {
+        hideActionSheet(weuiActionsheet, mask);
+    }
     $("a.weui_cell").click(function () {
         $.ajax({
             url: "/Seller/Wx_Manager_ConfirmRedPack",
@@ -87,4 +93,12 @@
             mask.hide();
         });
     }
+    function cal_textlength() {
+        return $("#Bonus_Remark").val().length;
+    }
+    $("#Bonus_Remark").change(function () {
+        var tl = cal_textlength();
+        $("#current_length").text(tl);
+    });
+
 </script>

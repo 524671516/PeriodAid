@@ -715,6 +715,7 @@ namespace PeriodAid.Controllers
                 var uncheckin = from m in today_schedule
                                 where m.Off_Checkin.Any(p => p.Status == 0)
                                 select m;
+                ViewBag.Title = today.ToString("MM-dd") + ": 未签到门店";
                 return View(uncheckin);
             }
             if(status == 1)
@@ -723,6 +724,7 @@ namespace PeriodAid.Controllers
                 var uncheckout = from m in today_schedule
                                      where m.Off_Checkin.Any(p => p.Status == 1)
                                      select m;
+                ViewBag.Title = today.ToString("MM-dd") + ": 未签退门店";
                 return View(uncheckout);
             }
             if (status == 2)
@@ -732,6 +734,7 @@ namespace PeriodAid.Controllers
                                where m.Off_Checkin.Any(p => p.Status == 2) &&
                                storelist.Contains(m.Off_Store_Id)
                                select m;
+                ViewBag.Title = today.ToString("MM-dd") + ": 未提报销量门店";
                 return View(unreport);
             }
             else
@@ -745,7 +748,7 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == checkid);
             if (item != null)
             {
-                return Json(new { result = "SUCCESS", res = new { SellerName = item.Off_Seller.Name, StoreName = item.Off_Checkin_Schedule.Off_Store.StoreName, Subscribe = item.Off_Checkin_Schedule.Subscribe.ToString("MM-dd") } });
+                return Json(new { result = "SUCCESS", res = new { SellerName = item.Off_Seller.Name, StoreName = item.Off_Checkin_Schedule.Off_Store.StoreName, Subscribe = item.Off_Checkin_Schedule.Subscribe.ToString("MM-dd"), Status = item.Status } });
             }
             return Json(new { result = "FAIL" });
         }
@@ -917,15 +920,17 @@ namespace PeriodAid.Controllers
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             DateTime today = Convert.ToDateTime(date);
+            ViewBag.Today = today;
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var list = from m in offlineDB.Off_Checkin
                        where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
                        && m.Off_Checkin_Schedule.Subscribe == today
-                       && m.Status == 4
+                       && m.Status >= 4
                        select new Wx_ManagerReportListViewModel
                        {
                            Id = m.Id,
+                           Status = m.Status,
                            Rep_Black = m.Rep_Black,
                            Rep_Brown = m.Rep_Brown,
                            Rep_Dates = m.Rep_Dates,
@@ -947,6 +952,7 @@ namespace PeriodAid.Controllers
             Wx_ManagerReportListViewModel model = new Wx_ManagerReportListViewModel()
             {
                 Id = record.Id,
+                Status = record.Status,
                 Rep_Brown = record.Rep_Brown ?? 0,
                 Rep_Black = record.Rep_Black ?? 0,
                 Rep_Lemon = record.Rep_Lemon ?? 0,
@@ -990,6 +996,53 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
             
+        }
+
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_EventList()
+        {
+            ViewBag.today = DateTime.Now;
+            return View();
+        }
+        [Authorize(Roles ="Manager")]
+        [HttpPost]
+        public async Task<ActionResult> Wx_Manager_EventList_Partial(string date)
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            DateTime today = Convert.ToDateTime(date);
+            ViewBag.Today = today;
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var schedulelist = from m in offlineDB.Off_Checkin_Schedule
+                               where m.Subscribe == today
+                               && storelist.Contains(m.Off_Store_Id)
+                               select m;
+            return PartialView(schedulelist);
+        }
+        [Authorize(Roles = "Manager")]
+        [HttpPost]
+        public ActionResult Wx_Manager_DeleteEvent(int scheduleid)
+        {
+            try
+            {
+                var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == scheduleid);
+                if (item.Off_Checkin.Any(m => m.Status >= 5))
+                {
+                    return Content("FAIL");
+                    
+                }
+                else
+                {
+                    offlineDB.Off_Checkin.RemoveRange(item.Off_Checkin);
+                    offlineDB.Off_Checkin_Schedule.Remove(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+            }
+            catch
+            {
+                return Content("ERROR");
+            }
         }
     }
 }

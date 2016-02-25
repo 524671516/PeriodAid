@@ -21,33 +21,31 @@
     <div class="hd">
         <h2 class="page_title text-center">门店列表</h2>
     </div>
+    <div class="weui_cells_title">@ViewBag.Title</div>
+<div class="weui_cells weui_cells_access">
     @foreach (PeriodAid.Models.Off_Checkin_Schedule item_null in ViewBag.uncheckin_null)
     {
-        <div class="weui_cells_title">@Html.Encode(item_null.Off_Store.StoreName) (@Html.Encode(item_null.Subscribe.ToString("MM-dd")))</div>
-        <div class="weui_cells weui_cells_access">
-            <a class="weui_cell" href="/Seller/Wx_Manager_StoreSellerList?StoreId=@item_null.Off_Store_Id">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>查看促销员名单</p>
-                </div>
-                <div class="weui_cell_ft"></div>
-            </a>
-        </div>
+
+        <a class="weui_cell" href="/Seller/Wx_Manager_StoreSellerList?StoreId=@item_null.Off_Store_Id">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>@Html.Encode(item_null.Off_Store.StoreName)</p>
+            </div>
+            <div class="weui_cell_ft">无数据</div>
+        </a>
     }
     @foreach (var item in Model)
     {
-        <div class="weui_cells_title">@Html.Encode(item.Off_Store.StoreName) (@Html.Encode(item.Subscribe.ToString("MM-dd")))</div>
-        <div class="weui_cells weui_cells_access">
-            @foreach (var checkin in item.Off_Checkin.Where(m => m.Status == ViewBag.Status))
+            foreach (var checkin in item.Off_Checkin.Where(m => m.Status == ViewBag.Status))
             {
                 <a class="weui_cell actionlink" href="javascript:;" data-rel="@Html.Encode(checkin.Id)">
                     <div class="weui_cell_bd weui_cell_primary">
-                        <p>@Html.Encode(checkin.Off_Seller.Name)</p>
+                        <p>@Html.Encode(checkin.Off_Checkin_Schedule.Off_Store.StoreName)</p>
                     </div>
                     <div class="weui_cell_ft">@Html.Encode(checkin.Off_Seller.Mobile)</div>
                 </a>
             }
-        </div>
     }
+    </div>
     <br />
     <div class="container">
         <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_primary" id="submit-btn">
@@ -103,8 +101,12 @@
                 type: "post",
                 success: function (data) {
                     if (data.result == "SUCCESS") {
+                        $("#proxy-checkin-btn").removeClass("hidden");
                         $("#text-name").html("<b>" + data.res.SellerName + "</b>");
                         $("#text-store").text(data.res.StoreName + " (" + data.res.Subscribe + ")");
+                        if (data.res.Status != 0) {
+                            $("#proxy-checkin-btn").addClass("hidden");
+                        }
                         weuiActionsheet.addClass('weui_actionsheet_toggle');
                         mask.show().addClass('weui_fade_toggle').click(function () {
                             hideActionSheet(weuiActionsheet, mask);
