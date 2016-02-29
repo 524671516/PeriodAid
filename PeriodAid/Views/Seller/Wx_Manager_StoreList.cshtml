@@ -36,9 +36,9 @@
             <div class="weui_cell_ft">@Html.Encode(ViewBag.Mobile)</div>
         </div>
     </div>
-    <div class="weui_cells_title">店铺巡查</div>
+    <div class="weui_cells_title">店铺巡查 (共 @Html.Encode(Model.Count()) 家)</div>
     <div class="weui_cells weui_cells_access">
-        @foreach (var item in Model)
+        @foreach (var item in Model.OrderBy(m=>m.StoreName))
         {
             <a class="weui_cell store_details" href="javascript:;" latitude ="@item.Latitude" longitude ="@item.Longitude" address = "@item.Address" storename ="@item.StoreName">
                 <div class="weui_cell_bd weui_cell_primary">

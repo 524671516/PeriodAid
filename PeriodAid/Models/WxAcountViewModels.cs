@@ -58,36 +58,5 @@ namespace PeriodAid.Models
         public string NickName { get; set; }
     }
     
-    public class Wx_ManagerReportListViewModel
-    {
-        public int Id { get; set; }
-
-        public int Status { get; set; }
-
-        public string StoreName { get; set; }
-
-        public string SellerName { get; set; }
-
-        public int? Rep_Brown { get; set; }
-
-        public int? Rep_Black { get; set; }
-        
-        public int? Rep_Lemon { get; set; }
-
-        public int? Rep_Honey { get; set; }
-
-        public int? Rep_Dates { get; set; }
-
-        public int? Rep_Other { get; set; }
-
-        public int? Rep_Total { get; set; }
-
-        [Required(ErrorMessage ="金额不能为空")]
-        [Range(0, 200, ErrorMessage ="奖金金额不能大于200元")]
-        public decimal? Bonus { get; set; }
-
-        [Required(ErrorMessage ="红包说明不能为空")]
-        [StringLength(128, ErrorMessage = "不超过128个字符")]
-        public string Bonus_Remark { get; set; }
-    }
+    
 }

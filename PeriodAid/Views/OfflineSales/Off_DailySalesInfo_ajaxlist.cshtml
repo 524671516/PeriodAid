@@ -11,9 +11,6 @@
             门店名称
         </th>
         <th style="width:8%">
-            门店系统
-        </th>
-        <th style="width:8%">
             红糖姜茶
         </th>
         <th style="width:8%">
@@ -31,6 +28,9 @@
         <th style="width:8%">
             销售员姓名
         </th>
+        <th style="width:5%">工资</th>
+        <th style="width:5%">奖金</th>
+        <th style="width:5%">扣款</th>
         <th></th>
     </tr>
 
@@ -41,9 +41,6 @@
         </td>
         <td class="ellipsis">
             @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
-        </td>
-        <td class="ellipsis">
-            @Html.DisplayFor(modelItem => item.Off_Store.StoreSystem)
         </td>
         <td class="ellipsis">
             @Html.DisplayFor(modelItem => item.Item_Brown)
@@ -62,6 +59,15 @@
         </td>
         <td class="ellipsis">
             @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Salary)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Bonus)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Debit)
         </td>
         <td class="ellipsis">
             @Html.ActionLink("修改","Ajax_EditDailyInfo", new { id= item.Id}, new { @class="btn btn-info btn-sm edit-button"})

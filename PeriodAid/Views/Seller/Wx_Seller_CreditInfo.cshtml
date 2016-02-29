@@ -1,0 +1,87 @@
+﻿@model PeriodAid.Models.Wx_SellerCreditViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员考勤</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="hd">
+        <h2 class="page_title text-center">修改个人信息</h2>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("错误", new { @id = "error-message", @class = "hidden" })
+        @Html.HiddenFor(m=>m.Id)
+        @Html.HiddenFor(m=>m.Name)
+        @Html.HiddenFor(m=>m.Mobile)
+        <div class="weui_cells_title">完善账户信息</div>
+        <div class="weui_cells">
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">@Html.Encode(Model.Name)</div>
+                <div class="weui_cell_ft">@Html.Encode(Model.Mobile)</div>
+            </div>
+        </div>
+        <div class="weui_cells weui_cells_form">
+            
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">证件</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.IdNumber, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入身份证号码" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">银行</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.DropDownListFor(m => m.CardName, ViewBag.BankList as SelectList, "- 请选择 -", new { @class = "weui_input" })
+                </div>
+                <div class="weui_cell_ft">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">卡号</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.CardNo, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入银行卡号" } })
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="container">
+            <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
+                确认并提交
+            </button>
+            <a href="/Seller/Wx_Seller_Home" class="weui_btn weui_btn_default">返回首页</a>
+        </div>
+    }
+    <div class="error-label container" style="display:none;">
+        <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+        <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+    </div>
+    <br /><br />
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+        $(function () {
+            if ($(".input-validation-error").length > 0) {
+                $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+                $(".error-label").show();
+                setTimeout(function () {
+                    $(".error-label").fadeOut(1000)
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

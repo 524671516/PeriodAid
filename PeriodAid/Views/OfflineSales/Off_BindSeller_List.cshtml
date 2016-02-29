@@ -6,25 +6,26 @@
 }
 @Html.Partial("Off_Seller_Controller")
 <br />
-    <table class="table table-condensed table-striped">
-        <tr>
-            <th>
-                姓名
-            </th>
-            <th>
-                联系方式
-            </th>
-            <th>
-                注册时间
-            </th>
-            <th>
-                绑定促销员姓名
-            </th>
-            <th>绑定促销员所属门店</th>
-            <th></th>
-        </tr>
-    
-    @foreach (var item in Model) {
+<table class="table table-condensed table-striped">
+    <tr>
+        <th>
+            姓名
+        </th>
+        <th>
+            联系方式
+        </th>
+        <th>
+            注册时间
+        </th>
+        <th>
+            绑定促销员姓名
+        </th>
+        <th>绑定促销员所属门店</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.NickName)
@@ -32,7 +33,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Mobile)
             </td>
-            
+
             <td>
                 @Html.DisplayFor(modelItem => item.ApplicationDate)
             </td>
@@ -40,16 +41,22 @@
                 @Html.DisplayFor(modelItem => item.Off_Seller.Name)
             </td>
             <td>
-                
-                @Html.Encode(item.Off_Seller==null?"":item.Off_Seller.Off_Store.StoreName)
+
+                @Html.Encode(item.Off_Seller == null ? "" : item.Off_Seller.Off_Store.StoreName)
             </td>
             <td>
                 @Html.ActionLink("修改", "Off_BindSeller", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
+                @if (!item.Bind)
+                {
+                    @Html.ActionLink("设置管理员", "Off_UpdateManager", new { id = item.Id }, new { @class = "btn btn-sm btn-danger manager-button" })
+                    @Html.Encode(" ")
+                    @Html.ActionLink("设置区域", "Off_Manager_AddStore", new { id=item.Id}, new { @class="btn btn-sm btn-primary"})
+                }
             </td>
         </tr>
     }
-    
-    </table>
+
+</table>
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -71,6 +78,17 @@
             success: function (data) {
                 $("#editcontent").html(data);
                 $('#myModal').modal()
+            }
+        });
+        return false;
+    });
+    $(".manager-button").click(function () {
+        var link_url = $(this).attr("href");
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                if (data == "SUCCESS");
+                window.location.reload();
             }
         });
         return false;

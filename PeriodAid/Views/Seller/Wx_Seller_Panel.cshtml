@@ -1,6 +1,6 @@
 ﻿@model PeriodAid.Models.Off_Checkin
 
-<div class="weui_cells_title">今日任务</div>
+<div class="weui_cells_title">任务</div>
 <div class="weui_cells weui_cells_access">
     <!--判断是否可以签到-->
     @if (ViewBag.CheckIn)
@@ -123,7 +123,7 @@
         <div class="weui_cell_ft"></div>
     </a>
 </div>
-<div class="weui_cells_title">考勤信息</div>
+<div class="weui_cells_title">工具</div>
 <div class="weui_cells weui_cells_access">
     <a class="weui_cell" href="@Url.Action("Wx_Seller_ScheduleList", "Seller", new { SellerId = ViewBag.SellerId})">
         <div class="weui_cell_bd weui_cell_primary">
@@ -138,6 +138,12 @@
         </div>
         <div class="weui_cell_ft">
         </div>
-
+    </a>
+    <a class="weui_cell" href="@Url.Action("Wx_Seller_CreditInfo","Seller", new { SellerId= ViewBag.SellerId})">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>完善账户信息</p>
+        </div>
+        <div class="weui_cell_ft">
+        </div>
     </a>
 </div>

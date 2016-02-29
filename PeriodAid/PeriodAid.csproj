@@ -507,6 +507,10 @@
     <Content Include="Views\Seller\Wx_Manager_ProxyCheckIn.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_EventList.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_EventList_Partial.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_ViewCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CreateEvent.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_AddStore.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_CreditInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

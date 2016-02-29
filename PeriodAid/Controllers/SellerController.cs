@@ -639,6 +639,68 @@ namespace PeriodAid.Controllers
                 return PartialView(SalaryList);
             }
         }
+        public ActionResult Wx_Seller_CreditInfo(int SellerId)
+        {
+            var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId);
+            if (Seller != null)
+            {
+                List<Object> banklist = new List<object>();
+                banklist.Add(new { Key = "中国银行", Value = "中国银行" });
+                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
+                banklist.Add(new { Key = "中国农业银行", Value = "中国农业银行" });
+                banklist.Add(new { Key = "中国建设银行", Value = "中国建设银行" });
+                banklist.Add(new { Key = "交通银行", Value = "交通银行" });
+                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                {
+                    CardName = Seller.CardName,
+                    CardNo = Seller.CardNo,
+                    Id = Seller.Id,
+                    IdNumber = Seller.IdNumber,
+                    Name = Seller.Name,
+                    Mobile = Seller.Mobile
+                };
+                return View(model);
+            }
+            return View("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Wx_Seller_CreditInfo(Wx_SellerCreditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var item = new Wx_SellerCreditViewModel();
+                if (TryUpdateModel(item))
+                {
+                    var seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == item.Id);
+                    if (seller != null)
+                    {
+                        seller.IdNumber = item.IdNumber;
+                        seller.CardName = item.CardName;
+                        seller.CardNo = item.CardNo;
+                        seller.UploadUser = User.Identity.Name;
+                        seller.UploadTime = DateTime.Now;
+                        offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                        offlineDB.SaveChanges();
+                        return RedirectToAction("Wx_Seller_Home");
+                    }
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                List<Object> banklist = new List<object>();
+                banklist.Add(new { Key = "中国银行", Value = "中国银行" });
+                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
+                banklist.Add(new { Key = "中国农业银行", Value = "中国农业银行" });
+                banklist.Add(new { Key = "中国建设银行", Value = "中国建设银行" });
+                banklist.Add(new { Key = "交通银行", Value = "交通银行" });
+                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                return View(model);
+            }
+            
+        }
 
         [AllowAnonymous]
         public ActionResult Wx_Seller_Guide()
@@ -808,7 +870,6 @@ namespace PeriodAid.Controllers
             ViewBag.SellerMobile = item.Off_Seller.Mobile;
             return View(item);
         }
-        
         [Authorize(Roles = "Manager")]
         [ValidateAntiForgeryToken, HttpPost]
         public ActionResult Wx_Manager_ProxyCheckIn(Off_Checkin model)
@@ -858,6 +919,53 @@ namespace PeriodAid.Controllers
             ViewBag.Mobile = user.PhoneNumber;
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
             return View(manager.Off_Store);
+        }
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_ViewCheckIn(int checkid)
+        {
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == checkid);
+            ViewBag.CheckIn = item;
+            return View(item);
+        }
+        [Authorize(Roles ="Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Wx_Manager_ViewCheckIn(Off_Checkin model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin item = new Off_Checkin();
+                if (TryUpdateModel(item))
+                {
+                    model.Confirm_Remark = item.Confirm_Remark;
+                    offlineDB.Entry(model).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Manager_Home");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "请填写正确内容");
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == model.Id);
+                ViewBag.CheckIn = item;
+                return View(model);
+            }
         }
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_CheckReport(int CheckId)
@@ -1043,6 +1151,69 @@ namespace PeriodAid.Controllers
             {
                 return Content("ERROR");
             }
+        }
+        [Authorize(Roles ="Manager")]
+        public async Task<ActionResult> Wx_Manager_CreateEvent()
+        {
+            var schedule = new Wx_ManagerCreateScheduleViewModel();
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+            ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+            var today_org = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+            schedule.Subscribe = today_org;
+            schedule.Standard_CheckIn = "10:00";
+            schedule.Standard_CheckOut = "21:00";
+            return View(schedule);
+        }
+        [Authorize(Roles = "Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Wx_Manager_CreateEvent(Wx_ManagerCreateScheduleViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (TryUpdateModel(model))
+                {
+                    var exist_list = from m in offlineDB.Off_Checkin_Schedule
+                                     where m.Off_Store_Id == model.Off_Store_Id &&
+                                     m.Subscribe == model.Subscribe
+                                     select m;
+                    if (exist_list.Count() == 0)
+                    {
+                        Off_Checkin_Schedule item = new Off_Checkin_Schedule()
+                        {
+                            Off_Store_Id = model.Off_Store_Id,
+                            Subscribe = model.Subscribe,
+                            Standard_Salary = model.Standard_Salary,
+                            Standard_CheckIn = Convert.ToDateTime(model.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckIn),
+                            Standard_CheckOut = Convert.ToDateTime(model.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckOut)
+                        };
+                        offlineDB.Off_Checkin_Schedule.Add(item);
+                        offlineDB.SaveChanges();
+                        return RedirectToAction("Wx_Manager_Home");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "店铺当天活动已存在，无法添加");
+                        var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                        var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+                        var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                        ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                        return View(model);
+                    }
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "提交错误，请根据提示修改");
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+                var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                return View(model);
+            }
+            
         }
     }
 }
