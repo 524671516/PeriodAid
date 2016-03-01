@@ -309,6 +309,10 @@ namespace PeriodAid.Models
 
         [Required]
         [StringLength(20)]
+        public string AccountName { get; set; }
+
+        [Required]
+        [StringLength(20)]
         [RegularExpression("(^\\d{18}$)|(^\\d{15}$)|(^\\d{17}(\\d|X|x))", ErrorMessage = "格式错误")]
         public string IdNumber { get; set; }
 

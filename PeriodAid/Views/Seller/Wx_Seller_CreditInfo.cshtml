@@ -52,6 +52,12 @@
                 </div>
             </div>
             <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">户名</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.AccountName, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入开户人姓名" } })
+                </div>
+            </div>
+            <div class="weui_cell">
                 <div class="weui_cell_hd"><label for="" class="weui_label">卡号</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.EditorFor(m => m.CardNo, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入银行卡号" } })

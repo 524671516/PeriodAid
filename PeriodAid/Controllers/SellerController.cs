@@ -114,7 +114,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return Content("1");
+                return View("Error");
             }
         }
         [AllowAnonymous]
@@ -313,20 +313,27 @@ namespace PeriodAid.Controllers
             var userbind = from m in offlineDB.Off_Membership_Bind
                            where m.UserName == User.Identity.Name
                            select new { SellerId = m.Off_Seller_Id, StoreName = m.Off_Seller.Off_Store.StoreName };
-            var checked_item = userbind.FirstOrDefault(m => m.SellerId != null);
-            if (checked_item != null)
+            if (userbind != null)
             {
-                ViewBag.bindlist = new SelectList(userbind, "SellerId", "StoreName", checked_item.SellerId);
+                var checked_item = userbind.FirstOrDefault(m => m.SellerId != null);
+                if (checked_item != null)
+                {
+                    ViewBag.bindlist = new SelectList(userbind, "SellerId", "StoreName", checked_item.SellerId);
+                }
+                else
+                {
+                    ViewBag.bindlist = new SelectList(userbind, "SellerId", "StoreName");
+                }
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                ViewBag.NickName = user.NickName;
+                ViewBag.Mobile = user.PhoneNumber;
+                ViewBag.SellerId = userbind.FirstOrDefault().SellerId;
+                return View(user);
             }
             else
             {
-                ViewBag.bindlist = new SelectList(userbind, "SellerId", "StoreName");
+                return View("Error");
             }
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            ViewBag.NickName = user.NickName;
-            ViewBag.Mobile = user.PhoneNumber;
-            ViewBag.SellerId = userbind.FirstOrDefault().SellerId;
-            return View(user);
         }
 
         public PartialViewResult Wx_Seller_Panel(int? SellerId)
@@ -354,6 +361,8 @@ namespace PeriodAid.Controllers
         }
         public async Task<ActionResult> Wx_Seller_CheckIn(int ScheduleId, int SellerId)
         {
+            if (!Wx_Seller_ConfirmSellerId(SellerId))
+                return View("Error");
             WeChatUtilities utilities = new WeChatUtilities();
             string _url = ViewBag.Url = Request.Url.ToString();
             ViewBag.AppId = utilities.getAppId();
@@ -364,31 +373,38 @@ namespace PeriodAid.Controllers
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             ViewBag.NickName = user.NickName;
-            int storeId = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId).StoreId;
+            var Store = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId);
+            if(Store == null)
+            {
+                return View("Error");
+            }
+            var storeId = Store.StoreId;
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == ScheduleId);
-            if (item.Subscribe == today && item.Off_Store_Id == storeId)
+            if (item != null)
             {
-                var checkitem = offlineDB.Off_Checkin.SingleOrDefault(m => m.Off_Schedule_Id == item.Id && m.Off_Seller_Id == SellerId && m.Status != -1);
-                if (checkitem != null)
+                if (item.Subscribe == today && item.Off_Store_Id == storeId)
                 {
-                    return View(checkitem);
-                }
-                else
-                {
-                    checkitem = new Off_Checkin()
+                    var checkitem = offlineDB.Off_Checkin.SingleOrDefault(m => m.Off_Schedule_Id == item.Id && m.Off_Seller_Id == SellerId && m.Status != -1);
+                    if (checkitem != null)
                     {
-                        Off_Seller_Id = SellerId,
-                        Off_Schedule_Id = ScheduleId,
-                        Status = 0
-                    };
-                    offlineDB.Off_Checkin.Add(checkitem);
-                    offlineDB.SaveChanges();
-                    return View(checkitem);
+                        return View(checkitem);
+                    }
+                    else
+                    {
+                        checkitem = new Off_Checkin()
+                        {
+                            Off_Seller_Id = SellerId,
+                            Off_Schedule_Id = ScheduleId,
+                            Status = 0
+                        };
+                        offlineDB.Off_Checkin.Add(checkitem);
+                        offlineDB.SaveChanges();
+                        return View(checkitem);
+                    }
                 }
             }
-            else
-                return View("Error");
+            return View("Error");
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -397,11 +413,18 @@ namespace PeriodAid.Controllers
             Off_Checkin checkin = new Off_Checkin();
             if (TryUpdateModel(checkin))
             {
-                checkin.CheckinTime = DateTime.Now;
-                checkin.Status = 1;
-                offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
-                offlineDB.SaveChanges();
-                return RedirectToAction("Wx_Seller_Home");
+                try
+                {
+                    checkin.CheckinTime = DateTime.Now;
+                    checkin.Status = 1;
+                    offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Seller_Home");
+                }
+                catch
+                {
+                    return View("Error");
+                }
             }
             else
             {
@@ -430,7 +453,6 @@ namespace PeriodAid.Controllers
                 string aa = ex.Message;
                 CommonUtilities.writeLog(aa);
             }
-
             return Json(new { result = "FAIL" });
         }
         public FileResult ThumbnailImage(string filename)
@@ -516,11 +538,17 @@ namespace PeriodAid.Controllers
             Off_Checkin checkin = new Off_Checkin();
             if (TryUpdateModel(checkin))
             {
-                checkin.CheckoutTime = DateTime.Now;
-                checkin.Status = 2;
-                offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
-                offlineDB.SaveChanges();
-                return RedirectToAction("Wx_Seller_Home");
+                try {
+                    checkin.CheckoutTime = DateTime.Now;
+                    checkin.Status = 2;
+                    offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Seller_Home");
+                }
+                catch
+                {
+                    return View("Error");
+                }
             }
             else
             {
@@ -530,31 +558,39 @@ namespace PeriodAid.Controllers
 
         public ActionResult Wx_Seller_Report(int SellerId)
         {
-            WeChatUtilities utilities = new WeChatUtilities();
-            string _url = ViewBag.Url = Request.Url.ToString();
-            ViewBag.AppId = utilities.getAppId();
-            string _nonce = CommonUtilities.generateNonce();
-            ViewBag.Nonce = _nonce;
-            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
-            ViewBag.TimeStamp = _timeStamp;
-            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
-            ViewBag.StoreName = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId).Off_Store.StoreName;
-            var reportlist = from m in offlineDB.Off_Checkin
-                             where m.Off_Seller_Id == SellerId
-                             && (m.Status == 2 || m.Status == 3)
-                             select new { Id = m.Id, ReportDate = m.Off_Checkin_Schedule.Subscribe };
-            List<Object> attendance = new List<Object>();
-            foreach (var i in reportlist)
-            {
-                attendance.Add(new { Key = i.Id, Value = i.ReportDate.ToString("yyyy-MM-dd") });
+            if (!Wx_Seller_ConfirmSellerId(SellerId))
+                return View("Error");
+            try {
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                ViewBag.StoreName = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId).Off_Store.StoreName;
+                var reportlist = from m in offlineDB.Off_Checkin
+                                 where m.Off_Seller_Id == SellerId
+                                 && (m.Status == 2 || m.Status == 3)
+                                 select new { Id = m.Id, ReportDate = m.Off_Checkin_Schedule.Subscribe };
+                List<Object> attendance = new List<Object>();
+                foreach (var i in reportlist)
+                {
+                    attendance.Add(new { Key = i.Id, Value = i.ReportDate.ToString("yyyy-MM-dd") });
+                }
+                if (attendance.Count > 0)
+                    ViewBag.Report = new SelectList(attendance, "Key", "Value", reportlist.FirstOrDefault().Id);
+                else
+                {
+                    ViewBag.Report = null;
+                }
+                return View();
             }
-            if (attendance.Count > 0)
-                ViewBag.Report = new SelectList(attendance, "Key", "Value", reportlist.FirstOrDefault().Id);
-            else
+            catch
             {
-                ViewBag.Report = null;
+                return View("Error");
             }
-            return View();
         }
 
         public ActionResult Wx_Seller_EditReport(int CheckId)
@@ -587,30 +623,41 @@ namespace PeriodAid.Controllers
 
         public ActionResult Wx_Seller_ScheduleList(int SellerId)
         {
+            if (!Wx_Seller_ConfirmSellerId(SellerId))
+                return View("Error");
             var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId);
-            ViewBag.StoreName = Seller.Off_Store.StoreName;
-            var currentTime = DateTime.Now;
-            //今日以前4个
-            var schedule_before = (from m in offlineDB.Off_Checkin_Schedule
-                                   where m.Off_Store_Id == Seller.StoreId
-                                   && m.Subscribe <= currentTime
-                                   select m).Take(4);
-            //今日以后6个
-            var schedule_after = (from m in offlineDB.Off_Checkin_Schedule
-                                  where m.Off_Store_Id == Seller.StoreId
-                                  && m.Subscribe > currentTime
-                                  select m).Take(10 - schedule_before.Count());
-            var schedule = schedule_before.Concat(schedule_after);
-            return View(schedule);
+            if (Seller != null)
+            {
+                ViewBag.StoreName = Seller.Off_Store.StoreName;
+                var currentTime = DateTime.Now;
+                //今日以前4个
+                var schedule_before = (from m in offlineDB.Off_Checkin_Schedule
+                                       where m.Off_Store_Id == Seller.StoreId
+                                       && m.Subscribe <= currentTime
+                                       orderby m.Subscribe descending
+                                       select m).Take(4);
+                //今日以后6个
+                var schedule_after = (from m in offlineDB.Off_Checkin_Schedule
+                                      where m.Off_Store_Id == Seller.StoreId
+                                      && m.Subscribe > currentTime
+                                      select m).Take(10 - schedule_before.Count());
+                var schedule = schedule_before.Concat(schedule_after);
+                return View(schedule);
+            }
+            return View("Error");
         }
 
         public ActionResult Wx_Seller_ConfirmedData(int SellerId)
         {
+            if (!Wx_Seller_ConfirmSellerId(SellerId))
+                return View("Error");
             ViewBag.SellerId = SellerId;
             return View();
         }
         public ActionResult Wx_Seller_SalaryResult(int SellerId, bool current)
         {
+            if (!Wx_Seller_ConfirmSellerId(SellerId))
+                return View("Error");
             DateTime MonthCurrent = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1); ;
             if (current)
             {
@@ -641,6 +688,8 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Wx_Seller_CreditInfo(int SellerId)
         {
+            if (!Wx_Seller_ConfirmSellerId(SellerId))
+                return View("Error");
             var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId);
             if (Seller != null)
             {
@@ -658,7 +707,8 @@ namespace PeriodAid.Controllers
                     Id = Seller.Id,
                     IdNumber = Seller.IdNumber,
                     Name = Seller.Name,
-                    Mobile = Seller.Mobile
+                    Mobile = Seller.Mobile, 
+                    AccountName = Seller.AccountName
                 };
                 return View(model);
             }
@@ -680,6 +730,7 @@ namespace PeriodAid.Controllers
                         seller.CardNo = item.CardNo;
                         seller.UploadUser = User.Identity.Name;
                         seller.UploadTime = DateTime.Now;
+                        seller.AccountName = item.AccountName;
                         offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
                         offlineDB.SaveChanges();
                         return RedirectToAction("Wx_Seller_Home");
@@ -699,7 +750,6 @@ namespace PeriodAid.Controllers
                 ViewBag.BankList = new SelectList(banklist, "Key", "Value");
                 return View(model);
             }
-            
         }
 
         [AllowAnonymous]
@@ -720,7 +770,19 @@ namespace PeriodAid.Controllers
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View();
         }
+        public bool Wx_Seller_ConfirmSellerId(int SellerId)
+        {
+            var userbind = (from m in offlineDB.Off_Membership_Bind
+                           where m.UserName == User.Identity.Name
+                           select m.Off_Seller_Id);
+            if (userbind.Contains(SellerId))
+                return true;
+            else
+                return false;
+        }
 
+
+        //管理员页面
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_Home()
         {
@@ -735,7 +797,7 @@ namespace PeriodAid.Controllers
                                  && m.Subscribe == today
                                  select m;
             ViewBag.uncheckin_null = (from m in today_schedule
-                                      where m.Off_Checkin.Count() == 0
+                                      where m.Off_Checkin.Count(p => p.Status >= 0) == 0
                                       select m).Count();
             ViewBag.uncheckin = (from m in today_schedule
                                  where m.Off_Checkin.Any(p => p.Status == 0)
@@ -772,7 +834,7 @@ namespace PeriodAid.Controllers
             if (status == 0)
             {
                 ViewBag.uncheckin_null = from m in today_schedule
-                                         where m.Off_Checkin.Count() == 0
+                                         where m.Off_Checkin.Count(p => p.Status >= 0) == 0
                                          select m;
                 var uncheckin = from m in today_schedule
                                 where m.Off_Checkin.Any(p => p.Status == 0)

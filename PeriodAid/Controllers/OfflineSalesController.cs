@@ -3599,7 +3599,7 @@ namespace PeriodAid.Controllers
         {
             var list = from m in offlineDB.Off_Checkin_Schedule
                        group m by m.Subscribe into g
-                       select new ScheduleList { Subscribe = g.Key, Count = g.Count() };
+                       select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
             return View(list);
         }
         public ActionResult Off_ScheduleDetails(string date)
@@ -3964,9 +3964,10 @@ namespace PeriodAid.Controllers
         {
             int _page = page ?? 1;
             int _status = status ?? 4;
+            // 按照活动日期排序
             var list = (from m in offlineDB.Off_Checkin
                        where m.Status == _status
-                       orderby m.Id descending
+                       orderby m.Off_Checkin_Schedule.Subscribe descending
                        select m).ToPagedList(_page, 50);
             return PartialView(list);
         }
@@ -4106,6 +4107,7 @@ namespace PeriodAid.Controllers
     {
         public DateTime Subscribe { get; set; }
         public int Count { get; set; }
+        public int Unfinished { get; set; }
     }
     public class Excel_DataMessage
     {

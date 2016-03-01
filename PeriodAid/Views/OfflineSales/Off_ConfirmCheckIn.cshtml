@@ -386,4 +386,10 @@
         $('#myModal').modal();
         return false;
     });
+    $("button").click(function () {
+        $(this).text("提交中...").attr("disabled", "disabled");
+        setTimeout(3000);
+        $("form").submit();
+        return false;
+    });
 </script>

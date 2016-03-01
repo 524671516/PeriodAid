@@ -936,6 +936,9 @@ namespace PeriodAid.Models
         public int StoreId { get; set; }
 
         [StringLength(20)]
+        public string AccountName { get; set; }
+
+        [StringLength(20)]
         public string IdNumber { get; set; }
 
         [StringLength(50)]

@@ -10,25 +10,29 @@
 <div>
     <table class="table table-condensed table-striped" style="table-layout:fixed; width:100%;">
         <tr>
-            <th style="width:60%">
+            <th style="width:40%">
                 活动预定时间
             </th>
-            <th style="width:20%">
+            <th style="width:12%">
                 活动门店数量
             </th>
+            <th>已完成门店数量</th>
             <th></th>
         </tr>
 
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td class="ellipsis">
                     @Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))
                 </td>
-                <td>
+                <td class="ellipsis">
                     @Html.DisplayFor(modelItem => item.Count)
                 </td>
                 <td>
+                    @Html.Encode(item.Unfinished)
+                </td>
+                <td class="ellipsis">
                     @Html.ActionLink("查看", "Off_ScheduleDetails", new { date = item.Subscribe }, new { @class = "btn btn-info btn-sm edit-button" })
                 </td>
             </tr>
