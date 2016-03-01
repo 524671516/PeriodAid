@@ -4050,7 +4050,8 @@ namespace PeriodAid.Controllers
             }
             offlineDB.Entry(manager).State = System.Data.Entity.EntityState.Modified;
             offlineDB.SaveChanges();
-            return Content("SUCCESS");
+            string s= "SUCCESS";
+            return Content(s);
         }
 
         private byte[] convertCSV(byte[] array)
