@@ -3518,6 +3518,7 @@ namespace PeriodAid.Controllers
                            Salary = g.Sum(m => m.Salary) == null ? 0 : g.Sum(m => m.Salary),
                            Bonus = g.Sum(m => m.Bonus) == null ? 0 : g.Sum(m => m.Bonus),
                            Debit =g.Sum(m=>m.Debit) == null? 0 : g.Sum(m=>m.Debit),
+                           AccountName = g.Key.AccountName,
                            All = g.Count(m => m.Attendance == 0),
                            Delay = g.Count(m => m.Attendance == 1),
                            Leave = g.Count(m=> m.Attendance ==2),
@@ -3533,6 +3534,7 @@ namespace PeriodAid.Controllers
             csv.WriteField("电话号码");
             csv.WriteField("身份证号码");
             csv.WriteField("开户行");
+            csv.WriteField("开户人姓名");
             csv.WriteField("银行卡号");
             csv.WriteField("工资");
             csv.WriteField("奖金");
@@ -3550,6 +3552,7 @@ namespace PeriodAid.Controllers
                 csv.WriteField("'" + item.Mobile);
                 csv.WriteField("'" + item.IdNumber);
                 csv.WriteField(item.CardName);
+                csv.WriteField(item.AccountName);
                 csv.WriteField("'" + item.CardNo);
                 csv.WriteField(item.Salary);
                 csv.WriteField(item.Bonus);
