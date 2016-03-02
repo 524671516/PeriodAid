@@ -39,5 +39,10 @@ namespace PeriodAid.Controllers
             MemoryStream ms = CommonUtilities.generate_QR_Code(url);
             return File(ms.ToArray(), @"image/png");
         }
+        public FileResult ajax_generateQRCode(string url)
+        {
+            MemoryStream ms = CommonUtilities.generate_QR_Code(url);
+            return File(ms.ToArray(), @"image/png");
+        }
     }
 }
