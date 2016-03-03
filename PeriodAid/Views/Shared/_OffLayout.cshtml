@@ -16,32 +16,247 @@
     <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
     <script src="~/Scripts/jquery-ui.min.js"></script>
     @RenderSection("header", required:false)
+    <style>
+        .nav-left {
+        list-style:none;padding:0;
+        }
+        .nav-left > li{
+        padding-top:5px;
+        }
+        .box * {
+           font-size:12px;        
+        }
+        .box a {
+        text-decoration:none;
+        }
+    </style>
 </head>
 <body class="reset">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <div class="navbar-brand">线下销售信息后台系统</div>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("门店信息", "Off_Store_main", "OfflineSales")</li>
-                    <li>@Html.ActionLink("销售数据", "Off_Sales_main", "OfflineSales")</li>
-                    <li>@Html.ActionLink("费用数据", "Off_Expenses_List", "OfflineSales")</li>
-                    <li>@Html.ActionLink("人员信息", "Off_Seller_main", "OfflineSales")</li>
-                    <li>@Html.ActionLink("销售确认", "Off_CheckIn_List", "OfflineSales")</li>
+                    <li>@Html.ActionLink("线上销售", "Index", "Home")</li>
+                    <li>@Html.ActionLink("线下销售", "Off_Store_main", "OfflineSales")</li>
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                            工具　<span class="caret"></span>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
+                            <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
+                            <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
+                        </ul>
+                    </li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        <br /><br />
-        @RenderBody()
+    <div class="container box" style="margin-top:40px;">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    门店信息 <span class="caret"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a href="/OfflineSales/Off_Store_main"><i class="fa fa-search"></i>&nbsp;&nbsp;门店列表</a></li>
+                                    <li><a href="/OfflineSales/UploadStore"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a></li>
+                                    <li><a href="/OfflineSales/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    销售数据 <span class="caret"></span>
+                                </a> 
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a href="/OfflineSales/UploadDailyInfo"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传日报表</a></li>
+                                    <li><a href="/OfflineSales/UploadMonthInfo"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传月报表</a></li>
+                                    <li><a href="/OfflineSales/Off_Sales_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看日报表</a></li>
+                                    <li><a href="/OfflineSales/Off_Sales_Month"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看月报表</a></li>
+                                    <li><a href="/OfflineSales/Off_ScheduleList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看活动记录</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    费用数据 <span class="caret"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a href="Scripts::">费用列表</a></li>
+                                    <li>@Html.ActionLink("新增费用", "Off_Expenses_Add")</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFour">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    人员信息 <span class="caret"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a href="/OfflineSales/UploadSeller"><i class="fa fa-upload"></i>&nbsp;&nbsp;上传促销员信息</a></li>
+                                    <li><a href="/OfflineSales/Off_Seller_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看促销员</a></li>
+                                    <li><button style="border:none;background-color:white;color:#428bca;padding:0;"><i class="fa fa-download"></i>&nbsp;&nbsp;下载考勤数据</button></li>
+                                    <li><button style="border:none;background-color:white;color:#428bca;padding:0;" id="download-salary"><i class="fa fa-download"></i>&nbsp;&nbsp;下载工资数据</button></li>
+                                    <li><a href="/OfflineSales/Off_BindSeller_List"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定促销员</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFive">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    销售确认 <span class="caret"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li>@Html.ActionLink("无数据", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("未签到", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("未签退", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("未提报", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("未确认", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("已确认", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("已结算", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("已作废", "Off_CheckIn_List_ajax")</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingSix">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                    督导管理 <span class="caret"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseSix" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSix">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    @*<li>@Html.ActionLink("门店信息", "Off_Store_main", "OfflineSales")</li>
+                                    <li>@Html.ActionLink("销售数据", "Off_Sales_main", "OfflineSales")</li>
+                                    <li>@Html.ActionLink("费用数据", "Off_Expenses_List", "OfflineSales")</li>
+                                    <li>@Html.ActionLink("人员信息", "Off_Seller_main", "OfflineSales")</li>
+                                    <li>@Html.ActionLink("销售确认", "Off_CheckIn_List", "OfflineSales")</li>*@
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="container body-content">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hidden" id="pagenumber">
+        @RenderSection("page", required: true)
+    </div>
+    <div class="modal fade" id="downloadModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">下载工资数据表</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label for="start-date" class="sr-only">开始时间</label>
+                                <input type="text" id="start-date" class="form-control input-sm" placeholder="开始时间" />
+                            </div>
+                            <div class="form-group">
+                                <label for="end-date" class="sr-only">开始时间</label>
+                                <input type="text" id="end-date" class="form-control input-sm" placeholder="结束时间" />
+                            </div>
+                            <button type="submit" class="btn btn-default btn-sm" id="download-submit"><i class="fa fa-download"></i>&nbsp;&nbsp;下载</button>
+                        </form><br />
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery.form.min.js"></script>
     @RenderSection("scripts", required: false)
+    <script>
+    $(function () {
+        $("#start-date").datepicker();
+        $("#end-date").datepicker();
+        $("#download-salary").click(function () {
+            $("#downloadModal").modal();
+        });
+        $("#download-submit").click(function () {
+            var start = $("#start-date").val();
+            var end = $("#end-date").val();
+            //$("#start-date").val("");
+            //$("#end-date").val("");
+            window.location.href = "/OfflineSales/Ajax_DownloadSalary?start=" + start + "&end=" + end;
+            return false;
+        });
+        if ($("#pagenumber").text().trim() == "2") {
+            $(".panel-collapse").removeClass("in");
+            $("div[aria-labelledby='headingTwo']").addClass("in");
+        } 
+        if ($("#pagenumber").text().trim() == "3") {
+           $(".panel-collapse").removeClass("in");
+           $("div[aria-labelledby='headingThree']").addClass("in");
+        }
+        if ($("#pagenumber").text().trim() == "4") {
+            $(".panel-collapse").removeClass("in");
+            $("div[aria-labelledby='headingFour']").addClass("in");
+        }
+        if ($("#pagenumber").text().trim() == "5") {
+            $(".panel-collapse").removeClass("in");
+            $("div[aria-labelledby='headingFive']").addClass("in");
+        }    
+    });
+    </script>
 </body>
 </html>
