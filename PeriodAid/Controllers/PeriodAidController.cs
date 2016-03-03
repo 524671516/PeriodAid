@@ -17,7 +17,7 @@ namespace PeriodAid.Controllers
         private ApplicationUserManager _userManager;
         private PeriodAidDataContext periodDB = new PeriodAidDataContext();
         public PeriodAidController()
-        {
+        { 
         }
 
         public PeriodAidController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
