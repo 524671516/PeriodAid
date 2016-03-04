@@ -1,9 +1,11 @@
 ﻿@model PeriodAid.Models.ConfirmCheckIn_ViewModel
-
 @{
     ViewBag.Title = "Off_ConfirmCheckIn";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
+@section page{
+    5
+    }
 @section header{
     <style>
         .img-list {
@@ -111,7 +113,7 @@
 </div>
 <br />
 <h5><b>销量数据</b></h5>
-@using (Html.BeginForm())
+@using (Html.BeginForm("Off_ConfirmCheckIn","OfflineSales", FormMethod.Post, new { @id= "confirm-form" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.CheckIn_Id)
@@ -364,7 +366,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <a href="javascript:;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
                 <h4 class="modal-title">查看图片</h4>
             </div>
             <div class="modal-body" id="editcontent">
@@ -389,7 +391,7 @@
     $("button").click(function () {
         $(this).text("提交中...").attr("disabled", "disabled");
         setTimeout(3000);
-        $("form").submit();
+        $("#confirm-form").submit();
         return false;
     });
 </script>

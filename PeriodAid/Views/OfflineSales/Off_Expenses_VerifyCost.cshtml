@@ -3,7 +3,9 @@
     ViewBag.Title = "修改结算信息";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
-
+@section page{
+    3
+}
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -131,16 +133,15 @@
         @foreach (var item in Model.Off_Expenses_Payment)
         {
             <tr>
-                <td class="col-md-2">
+                <td class="col-md-3">
                     <div class="input-group">
                         <div class="input-group-addon"><small>日期</small></div>
                         <input class="form-control input-sm date-select" name="apdate" value="@Convert.ToDateTime(item.ApplicationDate).ToString("yyyy-MM-dd")">
                     </div>
                 </td>
-                <td class="col-md-2">
+                <td class="col-md-3">
                     <input type="hidden" name="detailid" value="@item.Id">
                     <div class="input-group">
-
                         <div class="input-group-addon"><small>核销类型</small></div>
                         <select class="form-control input-sm valid" name="detaillist">
                             @if (item.VerifyType == 0)
@@ -168,7 +169,7 @@
                         <input class="form-control input-sm" name="detailfee" type="number" value="@item.VerifyCost">
                     </div>
                 </td>
-                <td class="col-md-5">
+                <td class="col-md-3">
                     <div class="input-group">
                         <div class="input-group-addon"><small>备注</small></div>
                         <input class="form-control input-sm" name="detailremarks" value="@item.Remarks">
@@ -187,12 +188,12 @@
         $(function () {
             $(".date-select").datepicker();
             $("#add-details-btn").click(function () {
-                $html = "<tr><td class=\"col-md-2\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm date-select\" name=\"apdate\"></div>" +
-                    "</td><td class=\"col-md-2\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>核销类型</small></div>" +
+                $html = "<tr><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm date-select\" name=\"apdate\"></div>" +
+                    "</td><td class=\"col-md-3\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>核销类型</small></div>" +
                     "<select class=\"form-control input-sm valid\" name=\"detaillist\"><option value=\"0\">现金</option>" +
                     "<option value=\"1\">货抵</option></select>" +
                     "</div></td><td class=\"col-md-2\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用</small></div><input class=\"form-control input-sm\" name=\"detailfee\" type=\"number\" value=\"0\">" +
-                    "</div></td><td class=\"col-md-5\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
+                    "</div></td><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
                     "</div></td><td class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></td></tr>";
                 $("#list-table").append($html);
                 $(".date-select").datepicker();

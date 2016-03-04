@@ -115,7 +115,7 @@
                         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                             <div class="panel-body">
                                 <ul class="nav-left">
-                                    <li><a href="Scripts::">费用列表</a></li>
+                                    <li><a href="/OfflineSales/Off_Expenses_List">费用列表</a></li>
                                     <li>@Html.ActionLink("新增费用", "Off_Expenses_Add")</li>
                                 </ul>
                             </div>
@@ -152,14 +152,9 @@
                         <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
                             <div class="panel-body">
                                 <ul class="nav-left">
-                                    <li>@Html.ActionLink("无数据", "Off_CheckIn_List_ajax")</li>
-                                    <li>@Html.ActionLink("未签到", "Off_CheckIn_List_ajax")</li>
-                                    <li>@Html.ActionLink("未签退", "Off_CheckIn_List_ajax")</li>
-                                    <li>@Html.ActionLink("未提报", "Off_CheckIn_List_ajax")</li>
-                                    <li>@Html.ActionLink("未确认", "Off_CheckIn_List_ajax")</li>
-                                    <li>@Html.ActionLink("已确认", "Off_CheckIn_List_ajax")</li>
-                                    <li>@Html.ActionLink("已结算", "Off_CheckIn_List_ajax")</li>
-                                    <li>@Html.ActionLink("已作废", "Off_CheckIn_List_ajax")</li>
+                                    <li>@Html.ActionLink("查询促销记录", "Off_CheckIn_List")</li>
+                                    <li>@Html.ActionLink("确认促销", "Off_CheckIn_List")</li>
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -257,6 +252,7 @@
             $("div[aria-labelledby='headingFive']").addClass("in");
         }    
     });
+    
     </script>
 </body>
 </html>
