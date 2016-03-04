@@ -9,6 +9,7 @@ using System.Net;
 using System.Xml;
 using System.IO;
 using PeriodAid.Models;
+using System.Threading.Tasks;
 
 namespace PeriodAid.Controllers
 {
@@ -21,6 +22,12 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+        public async Task<ActionResult> QueryWxPack()
+        {
+            AppPayUtilites appPay = new AppPayUtilites();
+            var result = await appPay.WxRedPackQuery("WXREDPACK14570698067653");
+            return Content(result);
+        }
         #region 微信支付通知接口
         /// <summary>
         /// 支付通知接口

@@ -201,6 +201,7 @@
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
+    <Compile Include="DAL\AppPayUtilites.cs" />
     <Compile Include="DAL\CommonUtilities.cs" />
     <Compile Include="DAL\GPRSPrinter.cs" />
     <Compile Include="DAL\PeriodAidUtilities.cs" />
