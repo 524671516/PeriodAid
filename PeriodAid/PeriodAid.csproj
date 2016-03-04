@@ -272,6 +272,7 @@
     <Content Include="Content\images\mark_other.png" />
     <Content Include="Content\images\mark_wem.png" />
     <Content Include="Content\images\period-aid-logo.png" />
+    <Content Include="Content\images\phone-ban.png" />
     <Content Include="Content\images\qrcode_for_sqz1760.jpg" />
     <Content Include="Content\images\share-pic.png" />
     <Content Include="Content\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
@@ -527,6 +528,7 @@
     <Content Include="Views\OfflineSales\Off_Manager_AddStore.cshtml" />
     <Content Include="Views\Seller\Wx_Seller_CreditInfo.cshtml" />
     <Content Include="Views\Seller\Error.cshtml" />
+    <Content Include="Views\Custom\LyyjPromotion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

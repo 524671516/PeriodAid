@@ -530,6 +530,9 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
+        public ActionResult LyyjPromotion()
+        {
+            return View();
+        }
     }
 }

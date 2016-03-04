@@ -6,14 +6,40 @@
 @section page{
     5
     }
-<div class="col-md-12">
-   
+@model PagedList.IPagedList<PeriodAid.Models.Off_Checkin>
+@using PagedList.Mvc;
+@using PeriodAid.Models
+<div class="row">
+    <div class="col-md-8">
+            <div role="presentation" class="dropdown">
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="drop-btn" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                    <span id="drop-name">查询菜单</span>&nbsp;<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="drop-btn">
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=0">无数据</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=0">未签到</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=1">未签退</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=2">未提报</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=3">未确认</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=4">已确认</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=5">已结算</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=-1">已作废</a></li>
+                </ul>
+            </div>
+    </div>
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="销售查询" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
 </div>
 <br />
-<div class="col-md-12" id="expenseslist">
-
+<div class="container-fluid" id="expenseslist">
+    
 </div>
-
 @section scripts{
     <script>
         $(function () {
@@ -46,18 +72,20 @@
             });
         });
         $(".btn-filter").click(function () {
-            $(".btn-filter").removeClass("btn-success btn-default").addClass("btn-default");
+            //$(".btn-filter").removeClass("btn-success btn-default").addClass("btn-default");
             var button = $(this);
-            var url = $(button).attr("href");
+            var url = $(button).attr("data-target");
+            var name = $(button).text();
+            $("#drop-name").text(name);
             $.ajax({
                 url: url,
                 success: function (data) {
                     //alert("33");
-                    $(button).removeClass("btn-default").addClass("btn-success");
+                    //$(button).removeClass("btn-default").addClass("btn-success");
+                    //$(button).remove().
                     $("#expenseslist").html(data);
                 }
             });
-            return false;
         });
         
     </script>
