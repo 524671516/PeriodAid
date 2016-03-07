@@ -4053,6 +4053,34 @@ namespace PeriodAid.Controllers
             return Content("SUCCESS");
         }
 
+        public ActionResult Off_CreateStore()
+        {
+            var store = new Off_Store();
+            return PartialView(store);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_CreateStore(Off_Store model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Store item = new Off_Store();
+                if (TryUpdateModel(item))
+                {
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    offlineDB.Off_Store.Add(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return PartialView(model);
+            }
+        }
+
         private byte[] convertCSV(byte[] array)
         {
             byte[] outBuffer = new byte[array.Length + 3];
