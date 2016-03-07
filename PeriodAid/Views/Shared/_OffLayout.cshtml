@@ -191,6 +191,10 @@
     <div class="hidden" id="pagenumber">
         @RenderSection("page", required: true)
     </div>
+    
+    <a class="btn btn-default hidden" id="to-top" aria-label="Left Align" style="position:fixed;bottom:20px;right:200px;">
+        <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+    </a>
     <div class="modal fade" id="downloadModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -250,8 +254,26 @@
         if ($("#pagenumber").text().trim() == "5") {
             $(".panel-collapse").removeClass("in");
             $("div[aria-labelledby='headingFive']").addClass("in");
-        }    
+        }
+        $(document).scroll(function () {
+            if (window.pageYOffset > 0) {
+                $("#to-top").removeClass("hidden");
+            }
+            else
+                $("#to-top").addClass("hidden");
+
+        })
     });
+    $("#to-top").click(function () {
+        scoll_ani();
+    })
+    function scoll_ani() {
+        if (window.pageYOffset > 0) {
+            $(document).scrollTop(window.pageYOffset - 50);
+            setTimeout(scoll_ani, 50);
+        }
+    }
+    
     
     </script>
 </body>

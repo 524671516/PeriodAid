@@ -39,6 +39,7 @@
         <td>@Html.DisplayFor(modelItem => item.CardName)</td>
         <td>
             @Html.ActionLink("修改", "Ajax_EditSeller", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
+            <button class="btn btn-sm btn-danger btn-lg del-btn">删除</button>
         </td>
     </tr>
 }
@@ -46,7 +47,7 @@
 </table>
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Seller_ajaxlist", new { page , query=""}))</div>
 
-<div class="modal fade" id="myModal">
+<div class="modal fade" id="myModal" >
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -109,5 +110,10 @@
             });
             return false;
         });
+        $(".del-btn").click(function () {
+            var result = confirm("是/否")
+            window.location.reload();
+        });
+        return false
     });
 </script>

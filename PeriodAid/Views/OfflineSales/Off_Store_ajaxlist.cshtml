@@ -1,8 +1,8 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
 @using PagedList.Mvc;
 
-
-<table class="table table-condensed table-striped" style=" table-layout: fixed;width:100%;">
+<a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a><br /><br />
+<table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
     <tr>
         <th style="width:15%">
             门店名称
@@ -47,7 +47,10 @@
         </td>
         <td>
             @Html.ActionLink("修改", "Ajax_EditStore", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
+            <button class="btn btn-sm btn-danger btn-lg del-btn"  >删除</button>
+            @*@Html.ActionLink("删除", "", new { id = off }, new { @class = "btn btn-sm btn-danger edit-button" })*@
         </td>
+        
     </tr>
 }
 
@@ -66,6 +69,37 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">门店信息</h4>
+            </div>
+            <div class="modal-body" id="addcontent">
+                
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- Button trigger modal -->
+@*<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    Launch demo modal
+</button>*@
+<!-- Modal -->
+<div class="modal fade" id="myModa2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <h4 class="modal-body">
+                是否删除该门店信息？
+            </h4>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default">是</button>
+                <button type="button" class="btn btn-primary">否</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     $(function () {
@@ -92,6 +126,35 @@
             });
             return false;
         });
-
+        $("#add-btn").click(function () {
+            var link_url = "/OfflineSales/Off_CreateStore";
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#addcontent").html(data);
+                    $('#addModal').modal()
+                }
+            });
+            return false;
+        });
+        $(".del-btn").click(function () {
+            var result = confirm("是/否");
+            if (result) {
+                //alert("success");
+                window.location.reload();
+                //$.ajax({
+                //    url: "/OfflineSales/Off_Store_ajaxlist",
+                //    data: {
+                //        query: $("#search-query").val()
+                //    },
+                //    success: function (data) {
+                //        $("#list-container").html(data);
+                //    }
+                    
+                //});
+            }
+            
+        })
+       
     });
 </script>
