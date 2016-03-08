@@ -87,7 +87,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="保存" class="btn btn-default" />
+                <input type="submit" value="保存" id="submit-btn" class="btn btn-default"/>
             </div>
         </div>
     </div>
@@ -95,13 +95,23 @@
 
 <script>
     $(function () {
-        $('#ajaxaddform').ajaxForm(function (data) {
+        $("#submit-btn").click(function () {
+            $(this).attr("disabled", "disabled").val("添加中...");
+            setTimeout(formsubmit, 3000);
+            
+            return false;
+        })
+        
+    });
+    function formsubmit() {
+        $('#ajaxaddform').ajaxSubmit(function (data) {
             if (data == "SUCCESS") {
                 alert("添加成功");
                 $('#addModal').modal('hide');
                 $.ajax({
                     url: "/OfflineSales/Off_Store_ajaxlist",
                     success: function (data) {
+                        ///setTimeout(3000);
                         $("#list-container").html(data);
                     }
                 });
@@ -109,9 +119,8 @@
             else {
                 $("#addcontent").html(data);
             }
-            return false
         });
-    });
+    }
     function refresh_page() {
 
     }

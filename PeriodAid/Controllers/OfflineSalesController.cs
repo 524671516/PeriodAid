@@ -4080,6 +4080,33 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
+        public ActionResult Off_CreateSalesDaily()
+        {
+            var item = new Off_SalesInfo_Daily();
+            return PartialView(item);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_CreateSalesDaily(Off_SalesInfo_Daily model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_SalesInfo_Daily item = new Off_SalesInfo_Daily();
+                if (TryUpdateModel(item))
+                {
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    offlineDB.Off_SalesInfo_Daily.Add(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return PartialView(model);
+            }
+        }
 
         private byte[] convertCSV(byte[] array)
         {

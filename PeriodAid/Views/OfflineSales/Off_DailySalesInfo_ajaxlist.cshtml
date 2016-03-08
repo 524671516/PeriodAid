@@ -1,8 +1,8 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
     @using PagedList.Mvc;
 
-
-<table class="table table-condensed table-striped" style=" table-layout: fixed;width:100%;">
+<a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a><br /><br />
+<table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
     <tr>
         <th style="width:10%">
             日期
@@ -10,27 +10,27 @@
         <th style="width:15%">
             门店名称
         </th>
-        <th style="width:8%">
-            红糖姜茶
+        <th style="width:7%">
+            红糖
         </th>
-        <th style="width:8%">
-            黑糖姜茶
+        <th style="width:7%">
+            黑糖
         </th>
-        <th style="width:8%">
-            柠檬姜茶
+        <th style="width:7%">
+            柠檬
         </th>
-        <th style="width:8%">
-            蜂蜜姜茶
+        <th style="width:7%">
+            蜂蜜
         </th>
-        <th style="width:8%">
-            红枣姜茶
+        <th style="width:7%">
+            红枣
         </th>
-        <th style="width:8%">
+        <th style="width:7%">
             销售员姓名
         </th>
-        <th style="width:5%">工资</th>
-        <th style="width:5%">奖金</th>
-        <th style="width:5%">扣款</th>
+        <th style="width:7%">工资</th>
+        <th style="width:7%">奖金</th>
+        <th style="width:7%">扣款</th>
         <th></th>
     </tr>
 
@@ -71,6 +71,7 @@
         </td>
         <td class="ellipsis">
             @Html.ActionLink("修改","Ajax_EditDailyInfo", new { id= item.Id}, new { @class="btn btn-info btn-sm edit-button"})
+            <button type="button" id="del-btn" class="btn btn-danger btn-sm btn-lg">删除</button>
         </td>
     </tr>
 }
@@ -82,9 +83,22 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">修改促销员</h4>
+                <h4 class="modal-title">修改报表</h4>
             </div>
             <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">新增报表</h4>
+            </div>
+            <div class="modal-body" id="addcontent">
 
             </div>
         </div><!-- /.modal-content -->
@@ -116,5 +130,24 @@
             });
             return false;
         });
+        $("#add-btn").click(function () {
+            var link_url = "/OfflineSales/Off_CreateSalesDaily"
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#addcontent").html(data);
+                    $("#addModal").modal()
+                }
+            });
+            return false
+
+        })
+        $("#del-btn").click(function () {
+            var result = confirm("是/否")
+            if (result) {
+                alert("success")
+                window.location.reload();
+            }
+        })
     });
 </script>

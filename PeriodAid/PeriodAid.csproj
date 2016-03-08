@@ -530,6 +530,7 @@
     <Content Include="Views\Seller\Error.cshtml" />
     <Content Include="Views\Custom\LyyjPromotion.cshtml" />
     <Content Include="Views\OfflineSales\Off_CreateStore.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CreateSalesDaily.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
