@@ -3598,12 +3598,29 @@ namespace PeriodAid.Controllers
         #endregion
 
         #region 绑定促销门店
-        public ActionResult Off_ScheduleList()
+        public ActionResult Off_ScheduleList(bool? history)
         {
-            var list = from m in offlineDB.Off_Checkin_Schedule
-                       group m by m.Subscribe into g
-                       select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
-            return View(list);
+            bool _history = history ?? false;
+            var currentTime = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            if (_history)
+            {
+                var list = from m in offlineDB.Off_Checkin_Schedule
+                           where m.Subscribe<currentTime
+                           group m by m.Subscribe into g
+                           orderby g.Key descending
+                           select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
+                return View(list);
+            }
+            else
+            {
+                var list = from m in offlineDB.Off_Checkin_Schedule
+                           where m.Subscribe >= currentTime
+                           group m by m.Subscribe into g
+                           orderby g.Key
+                           select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
+                return View(list);
+            }
+            
         }
         public ActionResult Off_ScheduleDetails(string date)
         {
@@ -4143,6 +4160,62 @@ namespace PeriodAid.Controllers
                 try
                 {
                     offlineDB.Off_SalesInfo_Daily.Remove(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                catch
+                {
+                    return Content("FAIL");
+                }
+            }
+            return Content("FAIL");
+        }
+
+        public ActionResult Off_CreateSalesMonth()
+        {
+            var item = new Off_SalesInfo_Month();
+            var storelist = from m in offlineDB.Off_Store
+                            orderby m.StoreName
+                            select new { Key = m.Id, Value = m.StoreName };
+            ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+            return PartialView(item);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_CreateSalesMonth(Off_SalesInfo_Month model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_SalesInfo_Month item = new Off_SalesInfo_Month();
+                if (TryUpdateModel(item))
+                {
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    offlineDB.Off_SalesInfo_Month.Add(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                var storelist = from m in offlineDB.Off_Store
+                                orderby m.StoreName
+                                select new { Key = m.Id, Value = m.StoreName };
+                ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+                return PartialView(model);
+            }
+        }
+        // 0308
+        [HttpPost]
+        public ActionResult Off_DeleteSalesMonth(int id)
+        {
+            var item = offlineDB.Off_SalesInfo_Month.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                try
+                {
+                    offlineDB.Off_SalesInfo_Month.Remove(item);
                     offlineDB.SaveChanges();
                     return Content("SUCCESS");
                 }

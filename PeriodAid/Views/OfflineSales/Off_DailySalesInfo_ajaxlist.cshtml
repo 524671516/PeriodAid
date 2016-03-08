@@ -1,7 +1,9 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
     @using PagedList.Mvc;
 
-<a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a><br /><br />
+<a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a>
+<a class="btn btn-info btn-sm" href="/OfflineSales/UploadDailyInfo" style="margin-left:5px;"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a>
+<br /><br />
 <table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
     <tr>
         <th style="width:10%">
@@ -25,12 +27,12 @@
         <th style="width:7%">
             红枣
         </th>
-        <th style="width:7%">
+        <th style="width:9%">
             销售员姓名
         </th>
         <th style="width:7%">工资</th>
-        <th style="width:7%">奖金</th>
-        <th style="width:7%">扣款</th>
+        <th style="width:6%">奖金</th>
+        <th style="width:6%">扣款</th>
         <th></th>
     </tr>
 
@@ -71,7 +73,7 @@
         </td>
         <td class="ellipsis">
             @Html.ActionLink("修改","Ajax_EditDailyInfo", new { id= item.Id}, new { @class="btn btn-info btn-sm edit-button"})
-            <button type="button" id="del-btn" class="btn btn-danger btn-sm btn-lg">删除</button>
+            <a class="btn btn-danger btn-sm btn-lg del-btn" href="/OfflineSales/Off_DeleteSalesDaily?id=@item.Id">删除</a>
         </td>
     </tr>
 }
@@ -142,12 +144,22 @@
             return false
 
         })
-        $("#del-btn").click(function () {
-            var result = confirm("是/否")
+        $(".del-btn").click(function () {
+            var result = confirm("确定删除吗？")
             if (result) {
-                alert("success")
-                window.location.reload();
+                var url = $(this).attr("href")
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data == "SUCCESS") {
+                            window.location.reload();
+                        }
+                    }
+                });
+               
             }
+            return false;
         })
     });
 </script>

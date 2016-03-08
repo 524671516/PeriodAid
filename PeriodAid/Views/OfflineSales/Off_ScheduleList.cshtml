@@ -9,7 +9,19 @@
     2
 }
 <br />
-<a class="btn btn-info btn-sm" id="add-btn" href="/OfflineSales/Off_Add_Schedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a><br /><br />
+<div>
+    <a class="btn btn-info btn-sm" id="add-btn" href="/OfflineSales/Off_Add_Schedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a>
+    <div class="btn-group" style="margin-left:5px;">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            活动记录 &nbsp;<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="/OfflineSales/Off_ScheduleList">最新记录</a></li>
+            <li><a href="/OfflineSales/Off_ScheduleList?history=true">历史记录</a></li>
+        </ul>
+    </div>
+</div>
+<br /><br />
 <div>
     <table class="table table-condensed table-striped" style="table-layout:fixed; width:100%;">
         <tr>
