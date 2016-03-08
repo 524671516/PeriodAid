@@ -4080,9 +4080,31 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
+        //0308
+        [HttpPost]
+        public ActionResult Off_DeleteStore(int id)
+        {
+            var item = offlineDB.Off_Store.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                try { offlineDB.Off_Store.Remove(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                catch
+                {
+                    return Content("FAIL");
+                }
+            }
+            return Content("FAIL");
+        }
         public ActionResult Off_CreateSalesDaily()
         {
             var item = new Off_SalesInfo_Daily();
+            var storelist = from m in offlineDB.Off_Store
+                            orderby m.StoreName
+                            select new { Key = m.Id, Value = m.StoreName };
+            ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
             return PartialView(item);
         }
         [HttpPost, ValidateAntiForgeryToken]
@@ -4104,8 +4126,32 @@ namespace PeriodAid.Controllers
             else
             {
                 ModelState.AddModelError("", "发生错误");
+                var storelist = from m in offlineDB.Off_Store
+                                orderby m.StoreName
+                                select new { Key = m.Id, Value = m.StoreName };
+                ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
                 return PartialView(model);
             }
+        }
+        // 0308
+        [HttpPost]
+        public ActionResult Off_DeleteSalesDaily(int id)
+        {
+            var item = offlineDB.Off_SalesInfo_Daily.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                try
+                {
+                    offlineDB.Off_SalesInfo_Daily.Remove(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                catch
+                {
+                    return Content("FAIL");
+                }
+            }
+            return Content("FAIL");
         }
 
         private byte[] convertCSV(byte[] array)

@@ -11,7 +11,7 @@
         <div class="form-group">
             <label class="control-label col-md-3">门店名称</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.StoreId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.StoreId, ViewBag.StoreDropDown as SelectList,"- 请选择 -", new { @class = "form-control"  })
                 @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -78,12 +78,12 @@
         <div class="form-group">
             <label class="control-label col-md-3">考勤</label>
             <div class="col-md-9">
-                <select class="form-control" data-val="true" data-val-length="字段 Region 必须是最大长度为 20 的字符串。" data-val-length-max="20" id="Region" name="Region">
+                <select class="form-control" data-val="true" data-val-length="字段 Region 必须是最大长度为 20 的字符串。" data-val-length-max="20" id="Attendance" name="Attendance">
                     <option value="">- 请选择 -</option>
-                    <option value="">全勤</option>
-                    <option value="">迟到</option>
-                    <option value="">早退</option>
-                    <option value="">旷工</option>
+                    <option value="0">全勤</option>
+                    <option value="1">迟到</option>
+                    <option value="2">早退</option>
+                    <option value="3">旷工</option>
                 </select>
             </div>
         </div>
@@ -122,7 +122,9 @@
 }
 <script>
     $(function(){
-        $("#time").datepicker();
+        $("#time").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
     });
     //$(function () {
     //$("#submit-btn").click(function () {
