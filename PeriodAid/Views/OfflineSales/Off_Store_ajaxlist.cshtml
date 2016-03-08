@@ -47,7 +47,7 @@
         </td>
         <td>
             @Html.ActionLink("修改", "Ajax_EditStore", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
-            <button class="btn btn-sm btn-danger btn-lg del-btn"  >删除</button>
+            <a class="btn btn-sm btn-danger btn-lg del-btn" href="/OfflineSales/Off_DeleteStore?id=@item.Id" >删除</a>
             @*@Html.ActionLink("删除", "", new { id = off }, new { @class = "btn btn-sm btn-danger edit-button" })*@
         </td>
         
@@ -138,21 +138,36 @@
             return false;
         });
         $(".del-btn").click(function () {
-            var result = confirm("是/否");
+            var result = confirm("确定删除吗？");
             if (result) {
-                //alert("success");
-                window.location.reload();
-                //$.ajax({
-                //    url: "/OfflineSales/Off_Store_ajaxlist",
-                //    data: {
-                //        query: $("#search-query").val()
-                //    },
-                //    success: function (data) {
-                //        $("#list-container").html(data);
-                //    }
-                    
-                //});
+                var url = $(this).attr("href");
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data == "SUCCESS") {
+                            window.location.reload();
+                        }
+                    }
+                });
+                
             }
+            return false;
+            //var result = confirm("是/否");
+            //if (result) {
+            //    //alert("success");
+            //    window.location.reload();
+            //    //$.ajax({
+            //    //    url: "/OfflineSales/Off_Store_ajaxlist",
+            //    //    data: {
+            //    //        query: $("#search-query").val()
+            //    //    },
+            //    //    success: function (data) {
+            //    //        $("#list-container").html(data);
+            //    //    }
+                    
+            //    //});
+            //}
             
         })
        

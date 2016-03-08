@@ -1,6 +1,8 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Month>
 @using PagedList.Mvc;
-<a class="btn btn-sm btn-info" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a><br /><br />
+<a class="btn btn-sm btn-info" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a>
+<a class="btn btn-sm btn-info" href="/OfflineSales/UploadMonthInfo" style="margin-left:5px;"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传月报表</a>
+<br /><br />
 <table class="table table-condensed table-striped">
     <tr>
         <th style="width:8%">月份</th>
@@ -74,7 +76,7 @@
         </td>
         <td class="ellipsis">
             @Html.ActionLink("修改", "Ajax_EditMonthInfo", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
-            <a class="btn btn-danger btn-sm" id="del-btn">删除</a>
+            <a class="btn btn-danger btn-sm del-bn" href="/OfflineSales/Off_DeleteSalesMonth?id=@item.Id">删除</a>
         </td>
     </tr>
 }
@@ -101,7 +103,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">增加报表</h4>
             </div>
-            <div class="modal-body" id="editcontent">
+            <div class="modal-body" id="addMonthcontent">
 
             </div>
         </div><!-- /.modal-content -->
@@ -134,23 +136,31 @@
             return false;
         });
         $("#add-btn").click(function () {
-            var link_url = ""
+            var link_url = "/OfflineSales/Off_CreateSalesMonth"
             $.ajax({
                 url: link_url,
                 success: function (data) {
-                    $("#editcontent").html(data)
+                    $("#addMonthcontent").html(data)
                     $("#addModal").modal()
                 }
 
             })
         });
-        $("#del-btn").click(function () {
-            var result = confirm("是/否")
+        $(".del-bn").click(function () {
+            var result = confirm("确定删除吗？")
             if (result) {
-                alert("success")
-                window.location.reload();
+                var url = $(this).attr("href");
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success:function(data){
+                        if (data == "SUCCESS") {
+                            window.location.reload()
+                        }
+                    }
+                })
             }
-
+            return false;
         })
         
     });

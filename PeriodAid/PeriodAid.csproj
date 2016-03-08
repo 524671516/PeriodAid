@@ -531,6 +531,7 @@
     <Content Include="Views\Custom\LyyjPromotion.cshtml" />
     <Content Include="Views\OfflineSales\Off_CreateStore.cshtml" />
     <Content Include="Views\OfflineSales\Off_CreateSalesDaily.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CreateSalesMonth.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

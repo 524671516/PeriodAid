@@ -19,7 +19,7 @@
         <div class="form-group">
             <label class="control-label col-md-3">日期</label>
             <div class="col-md-9">
-                <input type="text" id="time" class="form-control input-sm" placeholder="时间" />
+                <input type="text" id="Date" name="Date" class="form-control input-sm" placeholder="时间" />
                 @*@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger time" })*@
             </div>
@@ -122,19 +122,19 @@
 }
 <script>
     $(function(){
-        $("#time").datepicker({
+        $("#Date").datepicker({
             dateFormat: 'yy-mm-dd'
         });
     });
-    //$(function () {
-    //$("#submit-btn").click(function () {
-    //$(this).attr("disabled", "disabled").val("添加中...");
-    //     setTimeout(formsubmit, 3000);
+    $(function () {
+    $("#submit-btn").click(function () {
+    $(this).attr("disabled", "disabled").val("添加中...");
+         setTimeout(formsubmit, 3000);
 
-    //       return false;
-    //  })
+           return false;
+      })
 
-    //});
+    });
     function formsubmit() {
         $('#ajaxaddForm').ajaxSubmit(function (data) {
             if (data == "SUCCESS") {
