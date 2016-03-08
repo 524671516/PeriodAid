@@ -31,9 +31,12 @@
     </div>
     <br />
     <div class="container">
+        @if (User.IsInRole("Senior"))
+        {
         <a href="/Seller/Wx_Manager_CreateEvent" class="weui_btn weui_btn_primary">
             新增活动
         </a>
+        }
         <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default">
             返回首页
         </a>
@@ -70,7 +73,11 @@
         <div class="weui_mask_transition" id="mask"></div>
         <div class="weui_actionsheet" id="weui_actionsheet">
             <div class="weui_actionsheet_action">
-                <div class="weui_actionsheet_cell action_sheet_cell_danger" id="cancel-schedule-btn">作废</div>
+                <div class="weui_actionsheet_cell action_sheet_cell_primary" id="add-checkin-btn">代签到</div>
+                @if (User.IsInRole("Senior"))
+                {
+                    <div class="weui_actionsheet_cell action_sheet_cell_danger" id="cancel-schedule-btn">作废</div>
+                }
             </div>
             <div class="weui_actionsheet_action">
                 <div class="weui_actionsheet_cell" id="cancel-btn">取消</div>
@@ -147,7 +154,6 @@
                 },
                 type: "post",
                 success: function (data) {
-                    
                     if (data == "SUCCESS") {
                         $("#toast_success").show();
                         $.ajax({
@@ -167,6 +173,10 @@
                     }
                 }
             })
+        });
+        $("#add-checkin-btn").click(function () {
+            var id = $("#currentid").val();
+            window.location.href = "/Seller/Wx_Manager_CreateCheckIn?sid=" + id;
         });
     </script>
 </body>

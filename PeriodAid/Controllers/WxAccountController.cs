@@ -58,7 +58,23 @@ namespace PeriodAid.Controllers
                 _userManager = value;
             }
         }
+        public ActionResult Wx_Login(string redirectUrl)
+        {
+            string user_Agent = HttpContext.Request.UserAgent;
+            if (user_Agent.Contains("MicroMessenger"))
+            {
+                //return Content("微信");
+                string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/WxAccount/Wx_Authorization");
+                string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + "0" + "#wechat_redirect";
 
+                return Redirect(url);
+            }
+            else
+            {
+                return Content("其他");
+            }
+        }
 
         public ActionResult LoginManager()
         {

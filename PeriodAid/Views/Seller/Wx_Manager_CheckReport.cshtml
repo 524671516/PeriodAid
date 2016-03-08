@@ -35,29 +35,65 @@
             </div>
             <div class="weui_cell_ft">@Html.Encode(ViewBag.CheckIn.Off_Seller.Name)</div>
         </a>
+        @if (Model.CheckinLocation != "" && Model.CheckinLocation != "N/A")
+        {
         <a class="weui_cell" href="javascript:;" id="checkinlbs" location="@Model.CheckinLocation">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到时间</p>
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckinTime)</div>
         </a>
+        }
+        else
+        {
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>签到时间</p>
+                </div>
+                <div class="weui_cell_ft_none">代签</div>
+            </a>
+        }
+        @if (Model.CheckinPhoto != "")
+        {
         <a class="weui_cell" href="javascript:;" id="checkinimg" data-target="@Model.CheckinPhoto">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到图片</p>
             </div>
             <div class="weui_cell_ft">点击查看</div>
         </a>
+        }
+        else
+        {
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>签到图片</p>
+                </div>
+                <div class="weui_cell_ft_none">无</div>
+            </a>
+        }
+        @if (Model.CheckoutLocation != "" && Model.CheckoutLocation!="N/A")
+        {
         <a class="weui_cell" href="javascript:;" id="checkoutlbs" location="@Model.CheckoutLocation">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签退时间</p>
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckoutTime)</div>
         </a>
+        }
+        else
+        {
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>签退时间</p>
+                </div>
+                <div class="weui_cell_ft_none">代签</div>
+            </a>
+        }
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>提报时间</p>
             </div>
-            <div class="weui_cell_ft">@Html.Encode(Model.Report_Time)</div>
+            <div class="weui_cell_ft_none">@Html.Encode(Model.Report_Time)</div>
         </div>
     </div>
     
@@ -137,6 +173,9 @@
             <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
                 确认并审核
             </button>
+            <a href="javascript:;" class="weui_btn weui_btn_warn" id="delete-btn">
+                作废
+            </a>
             <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default">
                 返回首页
             </a>
@@ -145,6 +184,17 @@
     <div class="error-label container" style="display:none;">
         <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
         <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+    </div>
+    <div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
+        <div class="weui_mask"></div>
+        <div class="weui_dialog">
+            <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+            <div class="weui_dialog_bd">是否要删除当前签到记录？</div>
+            <div class="weui_dialog_ft">
+                <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+                <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
+            </div>
+        </div>
     </div>
     <br /><br />
     @Scripts.Render("~/bundles/jquery")
@@ -256,6 +306,31 @@
                             scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
                             infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
                         });
+                    }
+                }
+            });
+        });
+        $("#delete-btn").click(function () {
+            $("#dialog_confirm").show();
+        });
+        $("#dialog_cancel_btn").click(function () {
+            $("#dialog_confirm").hide();
+        });
+        $("#dialog_confirm_btn").click(function () {
+            $("#dialog_confirm_btn").attr("disabled", "disabled").text("删除中...").removeClass("primary").addClass("default");
+            $.ajax({
+                url: "/Seller/Wx_Manager_DeleteCheckin",
+                type: "post",
+                data: {
+                    checkid: $("#Id").val()
+                },
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        window.location.href = "/Seller/Wx_Manager_Home";
+                    }
+                    else {
+                        alert("删除失败");
+                        window.location.href = "/Seller/Wx_Manager_Home";
                     }
                 }
             });

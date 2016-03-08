@@ -273,6 +273,7 @@ namespace PeriodAid.Controllers
                 }
             }
             ViewBag.Code = code;
+            ViewBag.Background = "webapp_voice_background.jpg";
             switch (code)
             {
                 case "A4DGSPG1":
@@ -290,6 +291,16 @@ namespace PeriodAid.Controllers
                 case "DC39K9BS":
                     ViewBag.voice = "audio_04.mp3";
                     ViewBag.voice_img = "audio_01_background.jpg";
+                    break;
+                case "EB2FSP4M":
+                    ViewBag.voice = "audio_05.mp3";
+                    ViewBag.voice_img = "audio_05_background.jpg";
+                    ViewBag.Background = "webapp_voice_38_background.jpg";
+                    break;
+                case "FPO84BVA":
+                    ViewBag.voice = "audio_05.mp3";
+                    ViewBag.voice_img = "audio_06_background.jpg";
+                    ViewBag.Background = "webapp_voice_38_background.jpg";
                     break;
                 default:
                     break;

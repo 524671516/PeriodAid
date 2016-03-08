@@ -22,10 +22,17 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public async Task<ActionResult> QueryWxPack()
+        public async Task<ActionResult> QueryWxPack(string orderno)
         {
             AppPayUtilites appPay = new AppPayUtilites();
-            var result = await appPay.WxRedPackQuery("WXREDPACK14570698067653");
+            var result = await appPay.WxRedPackQuery(orderno);
+            return Content(result);
+        }
+        public async Task<ActionResult> CreateWxPack(string openid)
+        {
+
+            AppPayUtilites appPay = new AppPayUtilites();
+            var result = await appPay.WxRedPackCreate(openid, 100);
             return Content(result);
         }
         #region 微信支付通知接口

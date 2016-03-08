@@ -60,7 +60,8 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Index()
         {
-            return View();
+            //return View();
+            return Content(HttpContext.Request.Url.Host);
         }
 
         [AllowAnonymous]
@@ -946,7 +947,7 @@ namespace PeriodAid.Controllers
                     checkin.CheckoutLocation = "N/A";
                     checkin.ConfirmTime = DateTime.Now;
                     checkin.ConfirmUser = User.Identity.Name;
-                    checkin.Status = 4;
+                    checkin.Status = 3;
                     offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.SaveChanges();
                     return RedirectToAction("Wx_Manager_Home");
@@ -961,6 +962,67 @@ namespace PeriodAid.Controllers
                 ViewBag.Subscribe = item.Off_Checkin_Schedule.Subscribe;
                 ViewBag.SellerName = item.Off_Seller.Name;
                 ViewBag.SellerMobile = item.Off_Seller.Mobile;
+                return View(model);
+            }
+        }
+        /* 新建签到 */
+        [Authorize(Roles = "Manager")]
+        public ActionResult Wx_Manager_CreateCheckIn(int sid)
+        {
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == sid);
+            ViewBag.StoreName = schedule.Off_Store.StoreName;
+            ViewBag.Subscribe = schedule.Subscribe;
+            Off_Checkin item = new Off_Checkin()
+            {
+                Off_Schedule_Id = sid,
+                Status = 0
+            };
+            var sellerlist = from m in offlineDB.Off_Seller
+                             where m.StoreId == schedule.Off_Store_Id
+                             select m;
+            ViewBag.SellerDropDown = new SelectList(sellerlist, "Id", "Name");
+            return View(item);
+        }
+        [Authorize(Roles = "Manager")]
+        [ValidateAntiForgeryToken, HttpPost]
+        public ActionResult Wx_Manager_CreateCheckIn(Off_Checkin model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin checkin = new Off_Checkin();
+                if (TryUpdateModel(checkin))
+                {
+                    checkin.Report_Time = DateTime.Now;
+                    checkin.CheckinLocation = "N/A";
+                    checkin.CheckoutLocation = "N/A";
+                    checkin.ConfirmTime = DateTime.Now;
+                    checkin.ConfirmUser = User.Identity.Name;
+                    checkin.Status = 3;
+                    //offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.Off_Checkin.Add(checkin);
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Manager_Home");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == model.Off_Schedule_Id);
+                ViewBag.StoreName = schedule.Off_Store.StoreName;
+                ViewBag.Subscribe = schedule.Subscribe;
+                var sellerlist = from m in offlineDB.Off_Seller
+                                 where m.StoreId == schedule.Off_Store_Id
+                                 select m;
+                ViewBag.SellerDropDown = new SelectList(sellerlist, "Id", "Name");
                 return View(model);
             }
         }
@@ -1078,6 +1140,7 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
+        
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_ReportList()
         {

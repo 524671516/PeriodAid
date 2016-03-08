@@ -108,7 +108,6 @@ namespace PeriodAid.Models
 
         public int total_num { get; set; }
 
-        [Required]
         [StringLength(128)]
         public string wishing { get; set; }
 
@@ -127,14 +126,15 @@ namespace PeriodAid.Models
 
         [StringLength(32)]
         public string reason { get; set; }
-
-        [Required]
+        
         [StringLength(32)]
         public string hb_type { get; set; }
 
-        [Required]
         [StringLength(32)]
         public string send_type { get; set; }
+
+        [StringLength(128)]
+        public string err_code_desc { get; set; }
 
         public DateTime? send_time { get; set; }
 

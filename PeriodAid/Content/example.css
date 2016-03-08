@@ -38,3 +38,6 @@ label,p,span{
 .action_sheet_cell_danger{
     color:#d9534f;
 }
+.weui_cell_ft_none{
+    color:#888;
+}

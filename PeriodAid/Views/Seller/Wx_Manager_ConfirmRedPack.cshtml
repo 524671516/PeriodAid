@@ -13,7 +13,7 @@
         <div class="col-xs-4"></div>
     </div>
 </div>
-@if (Model.Status == 4)
+@if (Model.Status == 4 && User.IsInRole("Senior"))
 {
     using (Html.BeginForm())
     {
