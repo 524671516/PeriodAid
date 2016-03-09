@@ -1,0 +1,180 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin>
+
+@{
+    ViewBag.Title = "Off_QueryCheckIn";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+@section page{
+    5}
+
+<h2>Off_QueryCheckIn</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Off_Schedule_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Off_Seller_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CheckinTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CheckinLocation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CheckinPhoto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CheckoutTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CheckoutLocation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rep_Brown)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rep_Black)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rep_Honey)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rep_Lemon)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rep_Dates)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rep_Other)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rep_Image)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remark)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Report_Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ConfirmUser)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ConfirmTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Confirm_Remark)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Bonus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Bonus_Remark)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Bonus_User)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SubmitUser)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SubmitTime)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Off_Schedule_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Off_Seller_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CheckinTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CheckinLocation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CheckinPhoto)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CheckoutTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CheckoutLocation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rep_Brown)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rep_Black)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rep_Honey)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rep_Lemon)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rep_Dates)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rep_Other)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rep_Image)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remark)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Report_Time)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ConfirmUser)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ConfirmTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Confirm_Remark)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Bonus)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Bonus_Remark)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Bonus_User)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SubmitUser)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SubmitTime)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

@@ -3727,7 +3727,7 @@ namespace PeriodAid.Controllers
                         }
                     }
                     offlineDB.SaveChanges();
-                    return RedirectToAction("Off_Seller_main");
+                    return RedirectToAction("Off_ScheduleList");
                 }
                 else
                 {
@@ -3739,7 +3739,6 @@ namespace PeriodAid.Controllers
                     return View(model);
                 }
             }
-            
             return RedirectToAction("Off_ScheduleList");
         }
         [HttpPost]
@@ -4247,6 +4246,19 @@ namespace PeriodAid.Controllers
             }
             return Content("FAIL");
         }
+        // 0309 查询促销签到记录 /OfflineSales/Off_QueryCheckIn
+        public ActionResult Off_QueryCheckIn(DateTime? start, DateTime? end, string query)
+        {
+            DateTime _end = end ?? Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            DateTime _start = start ?? _end.AddDays(-1);
+            var list = from m in offlineDB.Off_Checkin
+                       where m.Off_Checkin_Schedule.Subscribe >= _start &&
+                       m.Off_Checkin_Schedule.Subscribe <= _end &&
+                       m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query)
+                       select m;
+            return View(list);
+        }
+
 
         private byte[] convertCSV(byte[] array)
         {
