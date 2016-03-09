@@ -4227,6 +4227,27 @@ namespace PeriodAid.Controllers
             return Content("FAIL");
         }
 
+        // 0309 删除促销员信息 /OfflineSales/Off_DeleteSeller
+        [HttpPost]
+        public ActionResult Off_DeleteSeller(int id)
+        {
+            var item = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                try
+                {
+                    offlineDB.Off_Seller.Remove(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                catch
+                {
+                    return Content("FAIL");
+                }
+            }
+            return Content("FAIL");
+        }
+
         private byte[] convertCSV(byte[] array)
         {
             byte[] outBuffer = new byte[array.Length + 3];
@@ -4236,6 +4257,8 @@ namespace PeriodAid.Controllers
             Array.Copy(array, 0, outBuffer, 3, array.Length);
             return outBuffer;
         }
+        
+
     }
 
     public class Form_Product_Details
