@@ -12,7 +12,7 @@
             <label class="control-label col-md-2">店铺名称</label>
             
             <div class="col-md-10">
-                @Html.EditorFor(model => model.StoreId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.StoreId, ViewBag.StoreDropDown as SelectList, "- 请选择 -", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
             </div>
         </div>

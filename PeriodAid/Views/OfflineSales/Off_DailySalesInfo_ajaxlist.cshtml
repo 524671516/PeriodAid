@@ -9,7 +9,7 @@
         <th style="width:10%">
             日期
         </th>
-        <th style="width:15%">
+        <th style="width:15%" title="门店名称">
             门店名称
         </th>
         <th style="width:7%">
@@ -42,7 +42,9 @@
             @Html.DisplayFor(modelItem => item.Date)
         </td>
         <td class="ellipsis">
-            @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+            <span title="@Html.Encode(item.Off_Store.StoreName)">
+                @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+            </span>
         </td>
         <td class="ellipsis">
             @Html.DisplayFor(modelItem => item.Item_Brown)

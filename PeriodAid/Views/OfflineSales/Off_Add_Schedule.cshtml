@@ -16,7 +16,7 @@
     }
 @Html.Partial("Off_Sales_Control")
 <br />
-@using (Html.BeginForm())
+@using (Html.BeginForm("Off_Add_Schedule", "OfflineSales", FormMethod.Post, new { @id = "ajaxAdd_Schedule" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -45,7 +45,7 @@
                 </div><br />
                 <div class="row">
                     <div class="col-md-10 col-md-offset-2">
-                        <button class="btn btn-success" id="submit_btn">提交</button>
+                        <input type="submit" class="btn btn-success" id="submit_btn" value="提交" />
                     </div>
                 </div>
             </div>
@@ -86,8 +86,39 @@
             }
         });
     });
-    /*$("#submit_btn").click(function () {
-        alert($("#BeginTime").val())
-    });*/
+    $(function () {
+        $("#submit_btn").click(function () {
+            $(this).attr("disabled", "disabled").val("提交中...");
+            //setTimeout(formsubmit, 3000);
+            //formsubmit();
+            $("#ajaxAdd_Schedule").submit();
+            $(this).removeAttr("disabled").val("提交");
+            return false;
+        })
+
+    });
+    //function formsubmit() {
+        //$('#ajaxAdd_Schedule').ajaxSubmit(function (data) {
+        //    if (data == "SUCCESS") {
+        //        alert("添加成功");
+        //        $('#addModal').modal('hide');
+        //        //$.ajax({
+        //        //    url: "/OfflineSales/Off_Store_ajaxlist",
+        //        //    success: function (data) {
+        //        //        ///setTimeout(3000);
+        //        //        $("#list-container").html(data);
+        //        //    }
+        //        //});
+        //        window.location.href = "/OfflineSales/Off_ScheduleList";
+        //    }
+        //    else {
+        //        $("#addcontent").html(data);
+        //    }
+        //});
+        //$("#ajaxAdd_Schedule").submit();
+    //}
+    function refresh_page() {
+
+    }
 
 </script>

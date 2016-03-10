@@ -16,14 +16,14 @@
                     <span id="drop-name">查询菜单</span>&nbsp;<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="drop-btn">
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=0">无数据</a></li>
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=0">未签到</a></li>
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=1">未签退</a></li>
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=2">未提报</a></li>
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=3">未确认</a></li>
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=4">已确认</a></li>
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=5">已结算</a></li>
-                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=-1">已作废</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=0" data-rel="0">无数据</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=0" data-rel="0">未签到</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=1" data-rel="1">未签退</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=2" data-rel="2">未提报</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=3" data-rel="3">未确认</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=4" data-rel="4">已确认</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=5" data-rel="5">已结算</a></li>
+                    <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_CheckIn_List_ajax?status=-1" data-rel="-1">已作废</a></li>
                 </ul>
             </div>
     </div>
@@ -40,6 +40,7 @@
 <div class="container-fluid" id="expenseslist">
     
 </div>
+<input type="hidden" id="status-val" />
 @section scripts{
     <script>
         $(function () {
@@ -60,10 +61,16 @@
                             if (data == "SUCCESS") {
                                 $.ajax({
                                     url: "/OfflineSales/Off_CheckIn_List_ajax",
+                                    data:{
+                                        status: $("#status-val").val()
+                                    },
                                     success: function (data) {
                                         $("#expenseslist").html(data);
                                     }
                                 });
+                            }
+                            else if(data == "FAIL"){
+                                alert("无法作废")
                             }
                         }
                     });
@@ -77,6 +84,7 @@
             var url = $(button).attr("data-target");
             var name = $(button).text();
             $("#drop-name").text(name);
+            $("#status-val").val($(button).attr("data-rel"));
             $.ajax({
                 url: url,
                 success: function (data) {

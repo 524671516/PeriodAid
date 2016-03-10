@@ -107,17 +107,17 @@
         $('#ajaxaddform').ajaxSubmit(function (data) {
             if (data == "SUCCESS") {
                 alert("添加成功");
-                $('#addModal').modal('hide');
+                $('').modal('hide');
                 $.ajax({
                     url: "/OfflineSales/Off_Store_ajaxlist",
                     success: function (data) {
                         ///setTimeout(3000);
-                        $("#list-container").html(data);
+                        $("").html(data);
                     }
                 });
             }
             else {
-                $("#addcontent").html(data);
+                $("").html(data);
             }
         });
     }

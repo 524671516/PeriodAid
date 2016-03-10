@@ -58,10 +58,14 @@
                 }
             </td>
             <td class="ellipsis">
+                <span title="@Html.Encode(item.StoreSystem)">
                 @Html.DisplayFor(modelItem => item.StoreSystem)
+                </span>
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Distributor)
+                <span title="@Html.Encode(item.Distributor)">
+                    @Html.DisplayFor(modelItem => item.Distributor)
+                </span>
             </td>
             <td class="ellipsis">
                 @if (item.PaymentType == 0)

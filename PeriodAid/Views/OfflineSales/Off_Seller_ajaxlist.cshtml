@@ -41,7 +41,7 @@
         <td>@Html.DisplayFor(modelItem => item.CardName)</td>
         <td>
             @Html.ActionLink("修改", "Ajax_EditSeller", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
-            <button class="btn btn-sm btn-danger btn-lg del-btn">删除</button>
+            <a class="btn btn-sm btn-danger btn-lg del" href="/OfflineSales/Off_DeleteSeller?id=@item.Id">删除</a>
         </td>
     </tr>
 }
@@ -112,10 +112,24 @@
             });
             return false;
         });
-        $(".del-btn").click(function () {
-            var result = confirm("是/否")
-            window.location.reload();
-        });
-        return false
+        $(".del").click(function () {
+            var result = confirm("确定删除促销员信息吗？")
+            if (result) {
+                var url = $(this).attr("href")
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success:function(data){
+                        if(data=="SUCCESS"){
+                            window.location.reload();
+                        } else if (data == "FAIL") {
+                            alert("删除错误");
+                        }
+                    }
+                })
+            }
+            return false;
+        })
+        
     });
 </script>

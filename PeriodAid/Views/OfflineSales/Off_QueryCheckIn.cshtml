@@ -1,180 +1,216 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Checkin>
-
+@using PagedList.Mvc;
+@using PeriodAid.Models;
 @{
     ViewBag.Title = "Off_QueryCheckIn";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
 @section page{
-    5}
+    5
+}
 
-<h2>Off_QueryCheckIn</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+<div class="row">
+    <div class="col-xs-2">
+        <input type="text" class="form-control" placeholder="开始时间" id="start-date">
+    </div>
+    <div class="col-xs-2">
+        <input type="text" class="form-control" placeholder="结束时间" id="end-date">
+    </div>
+    <div class="col-xs-4">
+        <input type="text" class="form-control" placeholder="关键词" id="dta">
+    </div>
+    <div class="col-xs-2">
+        <button class="btn btn-info" id="query">搜索</button>
+    </div>
+</div>
+<br /><br />
+<table class="table table-condensed table-striped h6" style="table-layout: fixed;width:100%;">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Off_Schedule_Id)
+        <th style="width:15%">
+            活动时间
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
+        <th style="width:10%">
+            状态
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Off_Seller_Id)
+        <th style="width:20%">
+            店铺名称
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CheckinTime)
+        <th style="width:15%">
+            促销员姓名
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CheckinLocation)
+        <th style="width:10%">
+            确认人
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CheckinPhoto)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CheckoutTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CheckoutLocation)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rep_Brown)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rep_Black)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rep_Honey)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rep_Lemon)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rep_Dates)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rep_Other)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rep_Image)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Remark)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Report_Time)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ConfirmUser)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ConfirmTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Confirm_Remark)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Bonus)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Bonus_Remark)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Bonus_User)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SubmitUser)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SubmitTime)
+        <th style="width:15%">
+            确认时间
         </th>
         <th></th>
     </tr>
+    @*@foreach (var item in Model)
+            {
+                <tr>
+                    <td class="ellipsis">
+                        @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+                    </td>
+                    <td class="ellipsis">
+                        @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+                    </td>
+                    <td class="ellipsis">
+                        @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+                    </td>
+                    <td class="ellipsis">
+                        @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+                    </td>
+                    <td class="ellipsis">
+                        @Html.DisplayFor(modelItem => item.ConfirmUser)
+                    </td>
+                    <td class="ellipsis">
+                        @Html.DisplayFor(modelItem => item.ConfirmTime)
+                    </td>
+                    <td class="ellipsis">
+                        @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                        @if (item.Status == 0)
+                        {
+                            @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                        }
+                        @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
+                    </td>
+                </tr>
+            }
+        </table>*@
+    @foreach (var item in Model)
+    {
+        if (item.Status < 0)
+        {
+            <tr class="text-danger">
+                <td class="ellipsis">
+                    @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+                </td>
+                <td class="ellipsis">
+                    @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmUser)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmTime)
+                </td>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Off_Schedule_Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Off_Seller_Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CheckinTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CheckinLocation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CheckinPhoto)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CheckoutTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CheckoutLocation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rep_Brown)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rep_Black)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rep_Honey)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rep_Lemon)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rep_Dates)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rep_Other)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rep_Image)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Remark)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Report_Time)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ConfirmUser)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ConfirmTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Confirm_Remark)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Bonus)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Bonus_Remark)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Bonus_User)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SubmitUser)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SubmitTime)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+                <td class="ellipsis">
+                    @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                    @if (item.Status == 0)
+                    {
+                        @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                    }
+                    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
+                </td>
+            </tr>
+        }
+        else if (item.Status >= 5)
+        {
+            <tr class="text-success">
+            <td class="ellipsis">
+                @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td class="ellipsis">
+                @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ConfirmUser)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ConfirmTime)
+            </td>
+
+            <td class="ellipsis">
+                @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                @if (item.Status == 0)
+                    {
+                    @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
+            </td>
+
+        </tr>
+        }
+        else
+        {
+            <tr>
+                <td class="ellipsis">
+                    @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+                </td>
+                <td class="ellipsis">
+                    @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmUser)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmTime)
+                </td>
+
+                <td class="ellipsis">
+                    @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                    @if (item.Status == 0)
+    {
+        @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                    }
+    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
+                </td>
+
+            </tr>
+        }
+
+    }
 
 </table>
+
+<script>
+    $(function () {
+        $("#start-date").val(getUrlParam("start"));
+        $("#end-date").val(getUrlParam("end"));
+        $("#dta").val(getUrlParam("query"))
+        $("#start-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $("#end-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $("#query").click(function () {
+            //alert("搜索页面")
+            var start = $("#start-date").val();
+            var end = $("#end-date").val();
+            var query = $("#dta").val();
+            window.location.href = "/OfflineSales/Off_QueryCheckIn?start=" + start + "&end=" + end + "&query=" + query;
+
+        })
+
+    });
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+
+    }
+    
+
+</script>
