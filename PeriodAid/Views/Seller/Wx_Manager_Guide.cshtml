@@ -1,4 +1,5 @@
 ﻿
+
 @{
     Layout = null;
 }
@@ -7,11 +8,143 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Wx_Manager_Guide</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员管理 使用指南</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <style type="text/css">
+        h1 {
+            color: #3cc51f;
+        }
+
+        h2, h3 {
+            color: #de7c23;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 24px;
+        }
+    </style>
 </head>
 <body>
-    <div> 
+    <article class="weui_article">
+        <h1>使用指南</h1>
+        <section>
+            <h2 class="title">1. 促销管理员每日工作流程及要求</h2>
+            <p>
+                <img src="~/Content/images/guide-01-1.jpg" class="img-responsive" />
+                每日工作流程主要分为：<br />1. 签到；2. 签退；3.提报销量；4.确认销量<br />
+                管理员每日需查看所管理门店的基本工作情况，如有错误或者不实之处可管理更改。
+            </p>
+            <br />
+            <h2 class="title">2. 准备工作</h2>
+            <section>
+                <h3>2.1 登陆</h3>
+                <p>
+                    关注“寿全斋官方微信”(sqz1760)，直接回复"促销员"，进入页面。<br />
+                    <img src="~/Content/images/guide-01-3.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>2.2 注册</h3>
+                <p>
+                    首次进入系统后台需要使用您的微信号进行注册，请正确填写您的姓名、手机号码以及我们发送的短信验证码进行注册。
+                </p>
+            </section>
+            <section>
+                <h3>2.3 等待绑定</h3>
+                <p>
+                    注册完成后需要等待工作人员将您的账户与您的工作店铺进行绑定。完成注册后请尽快与超级管理员联系，尽快进行店铺绑定并进行日常的操作。<br />
+                    (PS:注册与绑定的工作仅需要在第一次进入系统时操作)<br />
+                    <img src="~/Content/images/guide-ex-08.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <br />
+            <h2 class="title">3. 每日操作内容</h2>
+            <section>
+                <h3>3.1 今日未签到</h3>
+                <p>点击今日未签到，可显示管理门店下的未签到门店。若显示无数据状态，视为该门店无促销员登陆签到过；若显示数据，如：姓名等，则说明该门店促销员登陆过却未签到过；<br />
+                    点击无数据门店会出现该门店的绑定促销员信息电话；有数据门店会显示该门店下的促销员，可代签到或者作废等；
+
+                    <br />
+                    <img src="~/Content/images/guide-ex-01.jpg" class="img-responsive" />
+                    @*(PS:如获取位置信息失败，请确保手机处于有信号状态并且手机开启位置信息)<br />
+                    <img src="~/Content/images/guide-02-2.jpg" class="img-responsive" />*@
+                </p>
+            </section>
+            <section>
+                <h3>3.2 今日未签退</h3>
+                <p>
+                    点击今日未签退，显示未签到的门店（无显示则没有未签到的门店），点击门店可查看促销员信息，也可将该促销员信息作废。<br />
+                    查看促销员信息，可看到促销员的详细数据（您还可以进行审核备注）；<br />
+
+                    <img src="~/Content/images/guide-ex-02.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>3.3 未提报销量</h3>
+                <p>
+                    点击未提报销量，显示未提报销量的门店；点击门店可显示门店促销员信息
+<br />
+                    查看数据可显示签到信息，可查看签到时间、图片，添加审核备注即可提交<br />
+
+                    <img src="~/Content/images/guide-ex-03.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>3.4 销量待确认</h3>
+                <p>
+                    点击销售确认，可显示签到信息、提报信息、审核备注<br />
+                    可点击“确认并审核”也可选择“作废”
+
+                    <br />
+                    查看数据可显示签到信息，可查看签到时间、图片，添加审核备注即可提交<br />
+
+                    <img src="~/Content/images/guide-ex-05.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <br />
+            <h2 class="title">4. 其他功能</h2>
+            <section>
+                <h3>4.1 查看销量排名</h3>
+                <p>
+                    管理员可以查看门店销量排名，点击进入显示当日所管理门店下的销量，可更换日期查看。<br />
+                    点击门店名称可显示详细的销量信息。<br />
+                    <img src="~/Content/images/guide-ex-04.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>4.2 查看活动门店列表</h3>
+                <p>
+                    点击活动门店列表，可查看近期活动门店，也可更换时间查看；<br />
+                    点击门店可代签到或者作废<br />
+                    点击新增活动，可添加活动信息<br />
+                    <img src="~/Content/images/guide-ex-06.jpg" class="img-responsive" />
+                </p>
+            </section>
+            <section>
+                <h3>4.3 管辖门店列表</h3>
+                <p>
+                    可查看您所管理的所有门店<br />
+                    <img src="~/Content/images/guide-ex-07.jpg" class="img-responsive" />
+                </p>
+            </section>
+        </section>
+    </article>
+    <div class="container">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a href="/Seller/Wx_Seller_Home" class="weui_btn weui_btn_primary" id="submit-btn">
+                返回首页
+            </a>
+        }
     </div>
+    <br /><br />
 </body>
 </html>
