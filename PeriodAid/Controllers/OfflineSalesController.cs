@@ -4011,63 +4011,13 @@ namespace PeriodAid.Controllers
             }
             item.Bind = false;
             item.Off_Seller_Id = null;
-            offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            //offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            offlineDB.Off_Membership_Bind.Remove(item);
             offlineDB.SaveChanges();
             return Content("SUCCESS");
         }
-        public ActionResult Off_Manager_AddStore(int id)
-        {
-            var item = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id);
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == item.UserName);
-            if (manager != null)
-            {
-                ViewBag.StoreList = manager.Off_Store.OrderBy(m=>m.StoreName);
-                var storesystem = from m in offlineDB.Off_Store
-                                  group m by m.StoreSystem into g
-                                  orderby g.Key
-                                  select new { Key = g.Key, Value = g.Key };
-                ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
-                ViewBag.Name = manager.NickName;
-                ViewBag.ManagerId = manager.Id;
-                return View();
-            }
-            else
-            {
-                return View();
-            }
-        }
-        public JsonResult Off_GetStoreName(int storeid)
-        {
-            var item = offlineDB.Off_Store.SingleOrDefault(m => m.Id == storeid).StoreName;
-            return Json(new { id = storeid, name = item }, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult Off_Manager_AjaxAddStore(int managerId, string arr_list)
-        {
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == managerId);
-            var currentlist = manager.Off_Store.Select(m => m.Id);
-            string[] arr_temp = arr_list.Split(',');
-            List<int> arr_int = new List<int>();
-            foreach(var s in arr_temp)
-            {
-                arr_int.Add(Convert.ToInt32(s));
-            }
-            var select_list = (from m in offlineDB.Off_Store
-                               where arr_int.Contains(m.Id)
-                               select m).Select(m => m.Id);
-            var removelist = currentlist.Except(select_list);
-            var addlist = select_list.Except(currentlist);
-            foreach(var item1 in removelist)
-            {
-                manager.Off_Store.Remove(offlineDB.Off_Store.SingleOrDefault(m=>m.Id== item1));
-            }
-            foreach(var item2 in addlist)
-            {
-                manager.Off_Store.Add(offlineDB.Off_Store.SingleOrDefault(m => m.Id == item2));
-            }
-            offlineDB.Entry(manager).State = System.Data.Entity.EntityState.Modified;
-            offlineDB.SaveChanges();
-            return Content("SUCCESS");
-        }
+
+        
 
         public ActionResult Off_CreateStore()
         {
@@ -4257,6 +4207,79 @@ namespace PeriodAid.Controllers
                        m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query)
                        select m;
             return View(list);
+        }
+
+        // 0310 管理员列表
+        public ActionResult Off_Manager_List()
+        {
+            var list = from m in offlineDB.Off_StoreManager
+                       select m;
+            return View(list);
+        }
+
+        // 0310 升级为超级管理员
+        public ActionResult Off_Manager_UpdateSenior(int id)
+        {
+            var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
+            var user = UserManager.FindByName(item.UserName);
+            UserManager.AddToRole(user.Id, "Senior");
+            item.Status = 2;
+            offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            offlineDB.SaveChanges();
+            return Content("SUCCESS");
+        }
+        public ActionResult Off_Manager_AddStore(int id)
+        {
+            //var item = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
+            if (manager != null)
+            {
+                ViewBag.StoreList = manager.Off_Store.OrderBy(m => m.StoreName);
+                var storesystem = from m in offlineDB.Off_Store
+                                  group m by m.StoreSystem into g
+                                  orderby g.Key
+                                  select new { Key = g.Key, Value = g.Key };
+                ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                ViewBag.Name = manager.NickName;
+                ViewBag.ManagerId = manager.Id;
+                return View();
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public JsonResult Off_GetStoreName(int storeid)
+        {
+            var item = offlineDB.Off_Store.SingleOrDefault(m => m.Id == storeid).StoreName;
+            return Json(new { id = storeid, name = item }, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult Off_Manager_AjaxAddStore(int managerId, string arr_list)
+        {
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == managerId);
+            var currentlist = manager.Off_Store.Select(m => m.Id);
+            string[] arr_temp = arr_list.Split(',');
+            List<int> arr_int = new List<int>();
+            foreach (var s in arr_temp)
+            {
+                arr_int.Add(Convert.ToInt32(s));
+            }
+            var select_list = (from m in offlineDB.Off_Store
+                               where arr_int.Contains(m.Id)
+                               select m).Select(m => m.Id);
+            var removelist = currentlist.Except(select_list);
+            var addlist = select_list.Except(currentlist);
+            foreach (var item1 in removelist)
+            {
+                manager.Off_Store.Remove(offlineDB.Off_Store.SingleOrDefault(m => m.Id == item1));
+            }
+            foreach (var item2 in addlist)
+            {
+                manager.Off_Store.Add(offlineDB.Off_Store.SingleOrDefault(m => m.Id == item2));
+            }
+            offlineDB.Entry(manager).State = System.Data.Entity.EntityState.Modified;
+            offlineDB.SaveChanges();
+            return Content("SUCCESS");
         }
 
 

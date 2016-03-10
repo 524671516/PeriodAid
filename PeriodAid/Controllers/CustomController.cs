@@ -19,6 +19,7 @@ namespace PeriodAid.Controllers
     {
         // GET: Custom
         OfflineSales offlineDB = new OfflineSales();
+        Promotion promotionDB = new Promotion();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         
@@ -57,6 +58,8 @@ namespace PeriodAid.Controllers
         }
 
         public ActionResult Index()
+
+
         {
             return View();
         }
@@ -545,5 +548,100 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        // 糖酒会活动红包发送
+        #region 糖酒会活动红包发送
+        public ActionResult Wx_Redirect_RedPack_Tjh()
+        {
+            string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Custom/Wx_RedPack_Tjh_Authorization");
+            string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + "0" + "#wechat_redirect";
+            return Redirect(url);
+        }
+        public ActionResult Wx_RedPack_Tjh_Authorization(string code, string state)
+        {
+            WeChatUtilities wechat = new WeChatUtilities();
+            var jat = wechat.getWebOauthAccessToken(code);
+            //var userinfo = wechat.getWebOauthUserInfo(jat.access_token, jat.openid);
+            return RedirectToAction("Wx_RedPack_Tjh_main", new { open_id = jat.openid });
+        }
+        public ActionResult Wx_RedPack_Tjh_main(string open_id)
+        {
+            bool exist = promotionDB.Promotion_TJH.Where(m => m.openId == open_id).Count() > 0;
+            if (!exist)
+            {
+                var order = new Promotion_TJH()
+                {
+                    openId = open_id
+                };
+                return View(order);
+            }
+            else
+                return RedirectToAction("Wx_RedPack_Tjh_Result", new { openId = open_id });
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Wx_RedPack_Tjh_main(Promotion_TJH model)
+        {
+            if (ModelState.IsValid)
+            {
+                // 写入数据
+                Promotion_TJH item = new Promotion_TJH();
+                if (TryUpdateModel(item))
+                {
+                    Random r = new Random(DateTime.Now.Millisecond);
+                    string billno = "WxRedPackTjh_" + CommonUtilities.generateTimeStamp() + r.Next(1000, 9999);
+                    item.mch_billno = billno;
+                    item.status = 0;
+                    item.submit_time = DateTime.Now;
+                    promotionDB.Promotion_TJH.Add(item);
+                    await promotionDB.SaveChangesAsync();
+                    // 创建红包
+                    int amount = r.Next(100, 500);
+                    AppPayUtilites pay = new AppPayUtilites();
+                    string result = await pay.WxRedPackCreate(item.openId, amount, item.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
+                    //
+                    item.mch_result = result;
+                    promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    await promotionDB.SaveChangesAsync();
+                    return RedirectToAction("Wx_RedPack_Tjh_Result", new { openid = item.openId });
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "数据录入错误");
+                return View(model);
+            }
+        }
+        public async Task<ActionResult> Wx_RedPack_Tjh_Result(string openid)
+        {
+            try
+            {
+                var item = promotionDB.Promotion_TJH.SingleOrDefault(m => m.openId == openid);
+                if (item != null)
+                {
+                    if (item.status == 0)
+                    {
+                        AppPayUtilites pay = new AppPayUtilites();
+                        string result = await pay.WxRedPackQuery(item.mch_billno);
+                        if (result == "RECEIVED" || result == "FAILED" || result == "REFUND")
+                        {
+                            item.status = 1;
+                            item.mch_result = result;
+                            promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                            await promotionDB.SaveChangesAsync();
+                        }
+                        return Content(result);
+                    }
+                    return Content("RECEIVED");
+                }
+                return Content("NONE");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+        }
+        #endregion
     }
 }

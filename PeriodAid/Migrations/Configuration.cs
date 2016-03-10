@@ -5,14 +5,14 @@ namespace PeriodAid.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.AppPay>
+    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.Promotion>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(PeriodAid.Models.AppPay context)
+        protected override void Seed(PeriodAid.Models.Promotion context)
         {
             //  This method will be called after migrating to the latest version.
 
