@@ -1340,5 +1340,11 @@ namespace PeriodAid.Controllers
             }
             
         }
+
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_Guide()
+        {
+            return View();
+        }
     }
 }

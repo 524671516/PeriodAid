@@ -9,6 +9,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace PeriodAid.DAL
 {
@@ -25,16 +26,18 @@ namespace PeriodAid.DAL
 
         public async Task<string> WxRedPackCreate(string openid, int amount)
         {
-            var result = await WxRedPackCreate(openid, amount, "红包发放", "寿全斋", "红包发放", "恭喜获得红包");
+            Random random = new Random();
+            string mch_billno = "WXREDPACK" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
+            var result = await WxRedPackCreate(openid, amount, mch_billno, "红包发放", "寿全斋", "红包发放", "恭喜获得红包");
             return result;
         }
-        public async Task<string> WxRedPackCreate(string openid, int amount, string act_name, string send_name, string remark, string wishing)
+        public async Task<string> WxRedPackCreate(string openid, int amount, string mch_billno, string act_name, string send_name, string remark, string wishing)
         {
             
-            Random random = new Random();
+            
             //Wx_WebOauthAccessToken webToken = utilities.getWebOauthAccessToken(code);
             string nonce_str = CommonUtilities.generateNonce();
-            string mch_billno = "WXREDPACK" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
+            //string mch_billno = "WXREDPACK" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
             string mch_id = WeUtil.getMchId();
             string wxappid = WeUtil.getAppId();
             string re_openid = openid;
@@ -158,11 +161,12 @@ namespace PeriodAid.DAL
                 StreamReader reader = new StreamReader(response.GetResponseStream());
                 XmlSerializer xmldes = new XmlSerializer(typeof(WxHBInfo_List));
                 WxHBInfo_List info = xmldes.Deserialize(reader) as WxHBInfo_List;
-                // 判断是否读取成功
+                //判断是否读取成功
                 if (info.return_code == "SUCCESS")
                 {
                     if (info.result_code == "SUCCESS")
                     {
+                        //return info.hblist.hbinfo.FirstOrDefault().rcv_time;
                         // 状态一致，返回当前状态
                         if (order.status == info.status)
                         {
@@ -178,6 +182,7 @@ namespace PeriodAid.DAL
                             else
                                 order.refund_time = Convert.ToDateTime(info.refund_time);
                             order.refund_amount = info.refund_amount;
+                            order.send_type = info.send_type;
                             order.detail_id = info.detail_id;
                             if (info.send_time == null)
                                 order.send_time = null;
@@ -185,7 +190,7 @@ namespace PeriodAid.DAL
                                 order.send_time = Convert.ToDateTime(info.send_time);
                             order.total_amount = info.total_amount;
                             order.total_num = info.total_num;
-                            var hbinfo = info.hblist.FirstOrDefault();
+                            var hbinfo = info.hblist.hbinfo.FirstOrDefault();
                             if (hbinfo != null)
                             {
                                 if (hbinfo.rcv_time == null)
@@ -203,7 +208,6 @@ namespace PeriodAid.DAL
                         return info.err_code_des;
                     }
                 }
-                return info.return_msg;
             }
             return order.status;
         }
@@ -251,11 +255,15 @@ namespace PeriodAid.DAL
         public string wishing { get; set; }
         public string remark { get; set; }
         public string act_name { get; set; }
-        [XmlElement("hblist")]
-        public List<WxHBInfo> hblist { get; set; }
+        [XmlElement(ElementName ="hblist")]
+        public hblist hblist { get; set; }
     }
-    [XmlRoot("hbinfo")]
-    public class WxHBInfo
+    public class hblist
+    {
+        [XmlElement(ElementName ="hbinfo")]
+        public List<hbinfo> hbinfo { get; set; }
+    }
+    public class hbinfo
     {
         public string openid { get; set; }
         public string status { get; set; }
@@ -279,5 +287,13 @@ namespace PeriodAid.DAL
         public string send_time { get; set; }
         public string send_listid { get; set; }
 
+    }
+    public enum Wx_RedPack_Status
+    {
+        SENDING = 1,
+        SENT = 2,
+        RECEIVED = 3,
+        FAILED = 4,
+        REFUND = 5
     }
 }
