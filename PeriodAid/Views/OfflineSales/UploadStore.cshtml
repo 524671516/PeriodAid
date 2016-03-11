@@ -5,28 +5,17 @@
 @section page{
     1
     }
-<div class="row">
-    <div class="col-xs-8">
-    </div>
-    <div class="col-xs-4">
-        <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
-            <span class="input-group-btn">
-                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
-            </span>
-        </div>
-    </div>
-</div>
+
 <br />
 <h4><b>上传门店数据</b></h4>
 <div class="row">
-    @using (Html.BeginForm("UploadStore", "OfflineSales", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("UploadStore", "OfflineSales", FormMethod.Post, new { enctype = "multipart/form-data",id = "file-from" }))
     {
         <div class="col-xs-4">
             <div class="input-group">
                 <input type="file" name="xlsxfile" id="xlsxfile" class="form-control input-sm" accept=".xlsx" />
                 <span class="input-group-btn">
-                    <button class="btn btn-success btn-sm">上传</button>
+                    <button class="btn btn-success btn-sm" id="rev">上传</button>
                 </span>
             </div>
         </div>
@@ -35,3 +24,16 @@
         </div>
     }
 </div>
+<script>
+    $("#rev").click(function () {
+        if ($("#xlsxfile").val() == "") {
+            alert("无文件上传")
+        }
+        else {
+        $("#file-from").submit()
+        }
+        return false
+    })
+
+
+</script>

@@ -8,8 +8,6 @@
 @section page{
     5
 }
-
-
 <div class="row">
     <div class="col-xs-2">
         <input type="text" class="form-control" placeholder="开始时间" id="start-date">
@@ -47,38 +45,6 @@
         </th>
         <th></th>
     </tr>
-    @*@foreach (var item in Model)
-            {
-                <tr>
-                    <td class="ellipsis">
-                        @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
-                    </td>
-                    <td class="ellipsis">
-                        @Html.Encode(ParseStatus.CheckInStatus(item.Status))
-                    </td>
-                    <td class="ellipsis">
-                        @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
-                    </td>
-                    <td class="ellipsis">
-                        @Html.DisplayFor(modelItem => item.Off_Seller.Name)
-                    </td>
-                    <td class="ellipsis">
-                        @Html.DisplayFor(modelItem => item.ConfirmUser)
-                    </td>
-                    <td class="ellipsis">
-                        @Html.DisplayFor(modelItem => item.ConfirmTime)
-                    </td>
-                    <td class="ellipsis">
-                        @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
-                        @if (item.Status == 0)
-                        {
-                            @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
-                        }
-                        @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
-                    </td>
-                </tr>
-            }
-        </table>*@
     @foreach (var item in Model)
     {
         if (item.Status < 0)
@@ -109,7 +75,7 @@
                     {
                         @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
                     }
-                    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
+                    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn dele"})
                 </td>
             </tr>
         }
@@ -141,7 +107,7 @@
                     {
                     @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
                 }
-                @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
+                @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn dele" })
             </td>
 
         </tr>
@@ -174,7 +140,7 @@
     {
         @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
                     }
-    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn" })
+    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn dele"})
                 </td>
 
             </tr>
@@ -188,7 +154,7 @@
     $(function () {
         $("#start-date").val(getUrlParam("start"));
         $("#end-date").val(getUrlParam("end"));
-        $("#dta").val(getUrlParam("query"))
+       // $("#dta").val(getUrlParam("query"))
         $("#start-date").datepicker({
             dateFormat: 'yy-mm-dd'
         });
@@ -205,12 +171,25 @@
         })
 
     });
+
     function getUrlParam(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
         var r = window.location.search.substr(1).match(reg);  //匹配目标参数
         if (r != null) return unescape(r[2]); return null; //返回参数值
-
     }
     
-
+    $(".dele").click(function () {
+        var result = confirm("确定要作废吗？")
+        if (result) {
+            var link_url = $(this).attr("href")
+            $.ajax({
+                type: "post",
+                url: link_url,
+                success: function (data) {
+                    alert("无法作废")
+                }
+            })
+        }
+        return false
+    })
 </script>
