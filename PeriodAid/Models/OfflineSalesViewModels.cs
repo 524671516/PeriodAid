@@ -363,6 +363,13 @@ namespace PeriodAid.Models
             }
         }
     }
+    public enum ManagerTaskStatus
+    {
+        Canceled = -1,
+        Reported = 0,
+        Confirmed = 1
+    }
+    
     public class ParseStatus
     {
         public static string AttendanceStatus(int? code)
@@ -407,5 +414,27 @@ namespace PeriodAid.Models
                     return "其他";
             }
         }
+        public string getManagerTaskStatus(ManagerTaskStatus status)
+        {
+            string result = String.Empty;
+            switch (status)
+            {
+                case ManagerTaskStatus.Canceled:
+                    result = "已作废";
+                    break;
+                case ManagerTaskStatus.Reported:
+                    result = "已提交";
+                    break;
+                case ManagerTaskStatus.Confirmed:
+                    result = "已确认";
+                    break;
+                default:
+                    result = "未知";
+                    break;
+            }
+            return result;
+        }
+
+
     }
 }

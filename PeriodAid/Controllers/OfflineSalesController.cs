@@ -4315,6 +4315,82 @@ namespace PeriodAid.Controllers
             offlineDB.SaveChanges();
             return Content("SUCCESS");
         }
+        // 0314 督导工作汇报列表
+        public ActionResult Off_Manager_TaskList()
+        {
+            return View();
+        }
+        public PartialViewResult Off_Manager_TaskList_Ajax(string query, int? status, int? page)
+        {
+            int _status = status ?? 0;
+            int _page = page ?? 0;
+            if (query == null)
+            {
+                var list = (from m in offlineDB.Off_Manager_Task
+                           where m.Status == _status
+                           select m).ToPagedList(_page,30);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in offlineDB.Off_Manager_Task
+                           where m.Status == _status
+                           && m.NickName.Contains(query)
+                           select m).ToPagedList(_page, 30);
+                return PartialView(list);
+            }
+        }
+
+        // 0314 审核督导工作
+        public ActionResult Off_Manager_EditTask(int id)
+        {
+            var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
+            if (item != null){
+                return View(item);
+            }
+            else
+            {
+                return View("Error");
+            }
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Manager_EditTask(Off_Manager_Task model)
+        {
+            if(ModelState.IsValid)
+            {
+                var item = new Off_Manager_Task();
+                if (TryUpdateModel(item))
+                {
+                    item.Eval_User = User.Identity.Name;
+                    item.Eval_Time = DateTime.Now;
+                    item.Status = 2;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Manager_TaskList");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                return View(model);
+            }
+        }
+
+        // 0314 作废当日工作内容
+        public ActionResult Off_Manager_CancelTask(int id)
+        {
+            var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                item.Status = (int)ManagerTaskStatus.Confirmed;
+                offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            return Content("FAIL");
+        }
+
 
         private byte[] convertCSV(byte[] array)
         {

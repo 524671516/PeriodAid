@@ -1279,8 +1279,12 @@ namespace PeriodAid.Models
         [StringLength(32)]
         public string UserName{get;set;}
 
+        [StringLength(32)]
+        public string NickName { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime TaskDate { get; set; }
+
         [StringLength(512)]
         public string Event_Complete { get; set; }
 

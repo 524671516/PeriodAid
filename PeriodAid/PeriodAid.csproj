@@ -553,6 +553,8 @@
     <Content Include="Views\Seller\Wx_Manager_TaskHome.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_TaskReport_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_TaskReport.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_TaskList.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_TaskList_Ajax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

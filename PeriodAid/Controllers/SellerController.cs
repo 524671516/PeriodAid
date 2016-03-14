@@ -1450,7 +1450,8 @@ namespace PeriodAid.Controllers
                 {
                     TaskDate = today,
                     Status = 0,
-                    UserName = User.Identity.Name
+                    UserName = User.Identity.Name,
+                    NickName = manager.NickName
                 };
                 offlineDB.Off_Manager_Task.Add(item);
                 await offlineDB.SaveChangesAsync();
