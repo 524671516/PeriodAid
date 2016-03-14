@@ -3571,7 +3571,7 @@ namespace PeriodAid.Controllers
         #region 绑定促销员
         public ActionResult Off_BindSeller_List(string query)
         {
-            if (query.Trim() == "")
+            if (query==null)
             {
                 var list = offlineDB.Off_Membership_Bind.OrderByDescending(m => m.ApplicationDate);
                 return View(list);
@@ -3994,7 +3994,7 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             int _status = status ?? 4;
             // 按照活动日期排序
-            if (query == "")
+            if (query==null)
             {
                 var list = (from m in offlineDB.Off_Checkin
                             where m.Status == _status
