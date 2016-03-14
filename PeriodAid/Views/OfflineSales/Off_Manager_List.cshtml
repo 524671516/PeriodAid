@@ -31,7 +31,15 @@
             @Html.DisplayFor(modelItem => item.Id)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Status)
+            @if (item.Status == 1)
+            {
+                <span>管理员</span>
+
+            }
+            else {
+                <span>超级管理员</span>
+            }
+
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.NickName)
@@ -63,10 +71,9 @@
                 alert("提升成功");
             }
         });
-        $(this).addClass("hidden");
         return false;
     });
-    
+   
 
 </script>
 

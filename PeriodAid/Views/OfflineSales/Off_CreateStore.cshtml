@@ -106,8 +106,8 @@
     function formsubmit() {
         $('#ajaxaddform').ajaxSubmit(function (data) {
             if (data == "SUCCESS") {
-                alert("添加成功");
                 $('#addModal').modal('hide');
+                alert("添加成功");
                 $.ajax({
                     url: "/OfflineSales/Off_Store_ajaxlist",
                     success: function (data) {
