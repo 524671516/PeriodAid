@@ -53,6 +53,8 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_Event> Off_Event { get; set; }
         public virtual DbSet<Off_Checkin> Off_Checkin { get; set; }
         public virtual DbSet<Off_StoreManager> Off_StoreManager { get; set; }
+        public virtual DbSet<Off_Manager_Task> Off_Manager_Task { get; set; }
+        public virtual DbSet<Off_Manager_CheckIn> Off_Manager_CheckIn { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -220,6 +222,12 @@ namespace PeriodAid.Models
                 .HasMany(e=>e.Off_Expenses_Payment)
                 .WithRequired(e => e.Off_Expenses)
                 .HasForeignKey(e => e.ExpensesId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Off_Manager_Task>()
+                .HasMany(e => e.Off_Manager_CheckIn)
+                .WithRequired(e => e.Off_Manager_Task)
+                .HasForeignKey(e => e.Manager_EventId)
                 .WillCascadeOnDelete(true);
         }
     }
@@ -1250,13 +1258,74 @@ namespace PeriodAid.Models
 
         public int Status { get; set; }
 
+        [StringLength(32)]
         public string UserName { get; set; }
 
+        [StringLength(32)]
         public string NickName { get; set; }
 
+        [StringLength(32)]
         public string Mobile { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Store> Off_Store { get; set; }
+    }
+
+    public partial class Off_Manager_Task
+    {
+        public int Id { get; set; }
+
+        public int Status { get; set; }
+        [StringLength(32)]
+        public string UserName{get;set;}
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime TaskDate { get; set; }
+        [StringLength(512)]
+        public string Event_Complete { get; set; }
+
+        [StringLength(512)]
+        public string Event_UnComplete { get; set; }
+
+        [StringLength(512)]
+        public string Event_Assistance { get; set; }
+
+        public int? Eval_Value { get; set; }
+
+        [StringLength(256)]
+        public string Eval_Remark { get; set; }
+
+        [StringLength(32)]
+        public string Eval_User { get; set; }
+
+        public DateTime? Eval_Time { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Manager_CheckIn> Off_Manager_CheckIn { get; set; }
+    }
+
+    public partial class Off_Manager_CheckIn
+    {
+        public int Id { get; set; }
+
+        public int Manager_EventId { get; set; }
+
+        public bool Canceled { get; set; }
+
+        [StringLength(64)]
+        public string Location { get; set; }
+
+        [StringLength(128)]
+        public string Location_Desc { get; set; }
+
+        [StringLength(64)]
+        public string Photo { get; set; }
+
+        [StringLength(64)]
+        public string Remark { get; set; }
+
+        public DateTime CheckIn_Time { get; set; }
+
+        public virtual Off_Manager_Task Off_Manager_Task { get; set; }
     }
 }

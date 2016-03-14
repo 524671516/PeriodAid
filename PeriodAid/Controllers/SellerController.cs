@@ -514,6 +514,66 @@ namespace PeriodAid.Controllers
             }
             //return File(null);
         }
+        public FileResult ThumbnailImage_Box(string filename)
+        {
+            string folder = HttpContext.Server.MapPath("~/Content/checkin-img/");
+            Bitmap originalImage = new Bitmap(folder + filename);
+            int towidth = 100;
+            int toheight = 100;
+
+            int x = 0;
+            int y = 0;
+            int ow = originalImage.Width;
+            int oh = originalImage.Height;
+            if (originalImage.Width >= originalImage.Height)
+            {
+                x = (originalImage.Width - originalImage.Height) / 2;
+                ow = oh;
+            }
+            else
+            {
+                y = (originalImage.Height - originalImage.Width) / 2;
+                oh = ow;
+            }
+            System.Drawing.Image bitmap = new System.Drawing.Bitmap(towidth, toheight);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap);
+
+            //设置高质量插值法
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+
+            //设置高质量,低速度呈现平滑程度
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+            //清空画布并以透明背景色填充
+            g.Clear(System.Drawing.Color.White);
+
+            //在指定位置并且按指定大小绘制原图片的指定部分
+            g.DrawImage(originalImage, new System.Drawing.Rectangle(0, 0, towidth, toheight),
+                    new System.Drawing.Rectangle(x, y, ow, oh),
+                    System.Drawing.GraphicsUnit.Pixel);
+            try
+            {
+                //以jpg格式保存缩略图
+                MemoryStream s = new MemoryStream();
+
+                bitmap.Save(s, ImageFormat.Jpeg);
+                byte[] imgdata = s.ToArray();
+                //s.Read(imgdata, 0, imgdata.Length);
+                //s.Seek(0, SeekOrigin.Begin);
+                return File(imgdata, "image/jpeg");
+            }
+            catch (System.Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                originalImage.Dispose();
+                bitmap.Dispose();
+                g.Dispose();
+            }
+            //return File(null);
+        }
         public async Task<ActionResult> Wx_Seller_CheckOut(int CheckId)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == CheckId);
@@ -1345,6 +1405,188 @@ namespace PeriodAid.Controllers
         public ActionResult Wx_Manager_Guide()
         {
             return View();
+        }
+
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_TaskHome()
+        {
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
+            ViewBag.NickName = manager.NickName;
+            ViewBag.Mobile = manager.Mobile;
+            var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+            if (task == null)
+            {
+                ViewBag.CheckInCount = 0;
+            }
+            else
+                ViewBag.CheckInCount = task.Off_Manager_CheckIn.Count(m=>m.Canceled==false);
+            return View();
+        }
+
+        [Authorize(Roles ="Manager")]
+        public async Task<ActionResult> Wx_Manager_AddCheckIn()
+        {
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
+            ViewBag.NickName = manager.NickName;
+            var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            if (task != null)
+            {
+                Off_Manager_CheckIn checkin = new Off_Manager_CheckIn();
+                return View(checkin);
+            }
+            else
+            {
+                Off_Manager_Task item = new Off_Manager_Task()
+                {
+                    TaskDate = today,
+                    Status = 0,
+                    UserName = User.Identity.Name
+                };
+                offlineDB.Off_Manager_Task.Add(item);
+                await offlineDB.SaveChangesAsync();
+                Off_Manager_CheckIn checkin = new Off_Manager_CheckIn();
+                return View(checkin);
+            }
+        }
+
+        [Authorize(Roles ="Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Wx_Manager_AddCheckIn(Off_Manager_CheckIn model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_CheckIn item = new Off_Manager_CheckIn();
+                var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+                if (TryUpdateModel(item))
+                {
+                    item.Off_Manager_Task = task;
+                    item.CheckIn_Time = DateTime.Now;
+                    offlineDB.Off_Manager_CheckIn.Add(item);
+                    await offlineDB.SaveChangesAsync();
+                    return RedirectToAction("Wx_Manager_TaskHome");
+                }
+                return View("Manager_Error");
+            }
+            else
+            {
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
+                ViewBag.NickName = manager.NickName;
+                var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                return View(model);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        public ActionResult Wx_Manager_CheckInView()
+        {
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.UserName == User.Identity.Name
+                       && m.Status == 0
+                       orderby m.TaskDate descending
+                       select m;
+            List<Object> attendance = new List<Object>();
+            foreach (var i in list)
+            {
+                attendance.Add(new { Key = i.Id, Value = i.TaskDate.ToString("yyyy-MM-dd") });
+            }
+            if (attendance.Count > 0)
+                ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Id);
+            return View();
+        }
+
+        [Authorize(Roles = "Manager")]
+        public ActionResult Wx_Manager_CheckInList_Ajax(int id)
+        {
+            var list = from m in offlineDB.Off_Manager_CheckIn
+                       where m.Manager_EventId == id
+                       && m.Canceled == false
+                       select m;
+            ViewBag.TaskId = id;
+            return PartialView(list);
+        }
+
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_TaskReport(int? id)
+        {
+
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.UserName == User.Identity.Name
+                       && m.Status == 0
+                       orderby m.TaskDate descending
+                       select m;
+            List<Object> attendance = new List<Object>();
+            foreach (var i in list)
+            {
+                attendance.Add(new { Key = i.Id, Value = i.TaskDate.ToString("yyyy-MM-dd") });
+            }
+            int _id = id ?? list.FirstOrDefault().Id;
+            if (attendance.Count > 0)
+                ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", _id);
+            return View();
+        }
+
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_TaskReport_Ajax(int id)
+        {
+            var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
+            return PartialView(item);
+        }
+
+        [Authorize(Roles ="Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Wx_Manager_TaskReport_Ajax(Off_Manager_Task model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Task item = new Off_Manager_Task();
+                if (TryUpdateModel(item))
+                {
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    await offlineDB.SaveChangesAsync();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return PartialView(model);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpPost]
+        public JsonResult Wx_Manager_CancelCheckIn_Ajax(int id)
+        {
+            var item = offlineDB.Off_Manager_CheckIn.SingleOrDefault(m => m.Id == id);
+            if(item.Off_Manager_Task.UserName== User.Identity.Name)
+            {
+                item.Canceled = true;
+                offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FAIL" });
         }
     }
 }

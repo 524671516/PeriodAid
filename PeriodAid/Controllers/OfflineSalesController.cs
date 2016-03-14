@@ -3569,10 +3569,20 @@ namespace PeriodAid.Controllers
             return File(convertCSV(stream.ToArray()), "@text/csv", "工资信息" + start.ToShortDateString() + "-" + end.ToShortDateString() + ".csv");
         }
         #region 绑定促销员
-        public ActionResult Off_BindSeller_List()
+        public ActionResult Off_BindSeller_List(string query)
         {
-            var list = offlineDB.Off_Membership_Bind.OrderByDescending(m => m.ApplicationDate);
-            return View(list);
+            if (query.Trim() == "")
+            {
+                var list = offlineDB.Off_Membership_Bind.OrderByDescending(m => m.ApplicationDate);
+                return View(list);
+            }
+            else
+            {
+                var list = from m in offlineDB.Off_Membership_Bind
+                           where (m.NickName.Contains(query) || m.Off_Seller.Off_Store.StoreName.Contains(query))
+                           select m;
+                return View(list);
+            }
         }
         public ActionResult Off_BindSeller(int id)
         {
@@ -3979,16 +3989,28 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        public PartialViewResult Off_CheckIn_List_ajax(int? status, int? page)
+        public PartialViewResult Off_CheckIn_List_ajax(int? status, int? page, string query)
         {
             int _page = page ?? 1;
             int _status = status ?? 4;
             // 按照活动日期排序
-            var list = (from m in offlineDB.Off_Checkin
-                       where m.Status == _status
-                       orderby m.Off_Checkin_Schedule.Subscribe descending
-                       select m).ToPagedList(_page, 50);
-            return PartialView(list);
+            if (query == "")
+            {
+                var list = (from m in offlineDB.Off_Checkin
+                            where m.Status == _status
+                            orderby m.Off_Checkin_Schedule.Subscribe descending
+                            select m).ToPagedList(_page, 50);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in offlineDB.Off_Checkin
+                            where m.Status == _status
+                            && (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
+                            orderby m.Off_Checkin_Schedule.Subscribe descending
+                            select m).ToPagedList(_page, 50);
+                return PartialView(list);
+            }
         }
         #endregion
         public ActionResult Off_UpdateManager(int id)
@@ -4228,6 +4250,7 @@ namespace PeriodAid.Controllers
             offlineDB.SaveChanges();
             return Content("SUCCESS");
         }
+
         public ActionResult Off_Manager_AddStore(int id)
         {
             //var item = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id);
@@ -4281,7 +4304,17 @@ namespace PeriodAid.Controllers
             offlineDB.SaveChanges();
             return Content("SUCCESS");
         }
-
+        // 0314 降级为普通管理员
+        public ActionResult Off_Manager_ReduceManager(int id)
+        {
+            var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
+            var user = UserManager.FindByName(item.UserName);
+            UserManager.RemoveFromRole(user.Id, "Senior");
+            item.Status = 1;
+            offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            offlineDB.SaveChanges();
+            return Content("SUCCESS");
+        }
 
         private byte[] convertCSV(byte[] array)
         {

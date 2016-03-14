@@ -211,6 +211,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603110958367_03111457.cs" />
+    <Compile Include="Migrations\201603110958367_03111457.Designer.cs">
+      <DependentUpon>201603110958367_03111457.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -543,6 +547,12 @@
     <Content Include="Views\Seller\_Wx_Manager_Layout.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_CreateCheckIn.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_List.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_AddCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CheckInList_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CheckInView.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_TaskHome.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_TaskReport_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_TaskReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -555,6 +565,11 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201603110958367_03111457.resx">
+      <DependentUpon>201603110958367_03111457.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
