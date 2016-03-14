@@ -7,13 +7,13 @@ namespace PeriodAid.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class _03071226 : IMigrationMetadata
+    public sealed partial class _03111457 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(_03071226));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(_03111457));
         
         string IMigrationMetadata.Id
         {
-            get { return "201603070426571_03071226"; }
+            get { return "201603110958367_03111457"; }
         }
         
         string IMigrationMetadata.Source

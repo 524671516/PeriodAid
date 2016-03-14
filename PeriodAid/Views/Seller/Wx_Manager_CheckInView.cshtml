@@ -1,0 +1,157 @@
+﻿
+@{
+    ViewBag.Title = "促销员管理";
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+    ViewBag.Current = 0;
+}
+<div class="hd">
+    <h2 class="page_title text-center">查看签到数据</h2>
+</div>
+<input type="hidden" id="select-id" />
+@if (ViewBag.checkinlist != null)
+{
+    <div class="weui_cells_title">选择日期</div>
+    <div class="weui_cells">
+        <div class="weui_cell weui_cell_select">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.DropDownList("checklist", ViewBag.checkinlist as SelectList, new { @class = "weui_select", @id = "task_id" })
+            </div>
+        </div>
+    </div>
+    <br />
+    <div id="form_zone"></div>
+    <br />
+    <div class="container">
+        <a href="/Seller/Wx_Manager_TaskHome" class="weui_btn weui_btn_default">返回</a>
+    </div>
+    <br /><br />
+}
+<div id="actionSheet_wrap">
+    <div class="weui_mask_transition" id="mask"></div>
+    <div class="weui_actionsheet" id="weui_actionsheet">
+        <div class="weui_actionsheet_action">
+            <div class="weui_actionsheet_cell action_sheet_cell_danger" id="cancel-cin-btn">作废</div>
+        </div>
+        <div class="weui_actionsheet_action">
+            <div class="weui_actionsheet_cell" id="cancel-btn">取消</div>
+        </div>
+        <br /><br /><br />
+    </div>
+</div>
+<div id="toast_success" style="display: none;">
+    <div class="weui_mask_transparent"></div>
+    <div class="weui_toast">
+        <i class="weui_icon_toast"></i>
+        <p class="weui_toast_content">已删除</p>
+    </div>
+</div>
+<div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+        <div class="weui_dialog_bd">是否确定作废当前签到信息？</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
+        </div>
+    </div>
+</div>
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd">提示</div>
+        <div class="weui_dialog_bd" id="dialog_text">无法删除当前活动</div>
+        <div class="weui_dialog_ft">
+            <a href="#" class="weui_btn_dialog primary" id="alert-btn">确定</a>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var mask = $('#mask');
+        var weuiActionsheet = $('#weui_actionsheet');
+        $("#cancel-btn").click(function () {
+            hideActionSheet(weuiActionsheet, mask);
+        });
+        $(function () {
+            $.ajax({
+                url: "/Seller/Wx_Manager_CheckInlist_Ajax",
+                data: {
+                    id:$("#task_id").val()
+                },
+                success:function(data){
+                    $("#form_zone").html(data);
+                }
+            })
+        });
+        $("#task_id").change(function () {
+            $.ajax({
+                url: "/Seller/Wx_Manager_CheckInlist_Ajax",
+                data: {
+                    id: $("#task_id").val()
+                },
+                success: function (data) {
+                    $("#form_zone").html(data);
+                }
+            })
+        });
+        $("#cancel-schedule-btn").click(function () {
+            hideActionSheet(weuiActionsheet, mask);
+        });
+        function hideActionSheet(weuiActionsheet, mask) {
+            weuiActionsheet.removeClass('weui_actionsheet_toggle');
+            mask.removeClass('weui_fade_toggle');
+            weuiActionsheet.on('transitionend', function () {
+                mask.hide();
+            }).on('webkitTransitionEnd', function () {
+                mask.hide();
+            });
+        }
+        function openactionsheet(schedule) {
+            $("#select-id").val(schedule);
+            weuiActionsheet.addClass('weui_actionsheet_toggle');
+            mask.show().addClass('weui_fade_toggle').click(function () {
+                hideActionSheet(weuiActionsheet, mask);
+            });
+            weuiActionsheet.unbind('transitionend').unbind('webkitTransitionEnd');
+        }
+        $("#cancel-cin-btn").click(function () {
+            hideActionSheet(weuiActionsheet, mask);
+            $("#dialog_confirm").show();
+        });
+        $("#dialog_cancel_btn").click(function () {
+            $("#dialog_confirm").hide();
+            return false;
+        });
+        $("#dialog_confirm_btn").click(function () {
+            $("#dialog_confirm").hide();
+            $.ajax({
+                url: "/Seller/Wx_Manager_CancelCheckIn_Ajax",
+                data: {
+                    id: $("#select-id").val()
+                },
+                type: "post",
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#toast_success").show();
+                        $.ajax({
+                            url: "/Seller/Wx_Manager_CheckInlist_Ajax",
+                            data: {
+                                id: $("#task_id").val()
+                            },
+                            success: function (data) {
+                                $("#form_zone").html(data);
+                                $("#toast_success").fadeOut(500);
+                            }
+                        });
+                        
+                    }
+                    else {
+                        $("#dialog_alert").show();
+                    }
+                }
+            })
+        });
+    </script>
+    }

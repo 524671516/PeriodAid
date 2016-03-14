@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "促销员管理";
+    ViewBag.Current = 0;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+}
+<div class="hd">
+    <h2 class="page_title text-center">签到</h2>
+</div>
+<div class="weui_cells">
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>@Html.Encode(ViewBag.NickName)</p>
+        </div>
+        <div class="weui_cell_ft">@Html.Encode(ViewBag.Mobile)</div>
+    </div>
+</div>
+<div class="weui_cells_title">今日签到</div>
+<div class="weui_cells weui_cells_access">
+    <a class="weui_cell salary_details" href="/Seller/Wx_Manager_AddCheckIn">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>添加签到信息</p>
+        </div>
+        <div class="weui_cell_ft">已签到 @ViewBag.CheckInCount 次</div>
+    </a>
+    <a class="weui_cell salary_details" href="/Seller/Wx_Manager_TaskReport">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>工作日报</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+</div>
+<div class="weui_cells_title">信息查询</div>
+<div class="weui_cells weui_cells_access">
+    <a class="weui_cell salary_details" href="/Seller/Wx_Manager_CheckInView">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>查看签到信息</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+</div>
