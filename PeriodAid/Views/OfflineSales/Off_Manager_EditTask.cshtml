@@ -1,0 +1,141 @@
+﻿@model PeriodAid.Models.Off_Manager_Task
+
+@{
+    ViewBag.Title = "Off_Manager_EditTask";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+@section page{
+    6
+    }
+@using (Html.BeginForm("Off_Manager_EditTask", "OfflineSales", FormMethod.Post, new { @id = "editTask_Schedule" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h5><b>基本信息</b></h5>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>状态</small></div>
+                    <input type="text" class="input-sm form-control" value="@Model.Status" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>用户名</small></div>
+                    <input type="text" class="input-sm form-control" value="@Model.UserName" readonly />
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>时间</small></div>
+                    <input type="text" class="input-sm form-control" value="@Model.TaskDate.ToString("yyyy-MM-dd")" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>昵称</small></div>
+                    <input type="text" class="input-sm form-control" value="@Model.NickName" readonly />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <h5><b>详细内容</b></h5>
+    <div class="container">
+        <div class="input-group">
+            <div class="input-group-addon"><small>未完成内容</small></div>
+            <input type="text" class="input-sm form-control" value="@Model.Event_UnComplete" title="@Model.Event_UnComplete" readonly />
+        </div><br />
+
+        <div class="input-group">
+            <div class="input-group-addon"><small>已完成内容</small></div>
+            <input type="text" class="input-sm form-control" value="@Model.Event_Complete" title="@Model.Event_Complete" readonly />
+        </div><br />
+
+
+        <div class="input-group">
+            <div class="input-group-addon"><small>需协调工作</small></div>
+            <input type="text" class="input-sm form-control" value="@Model.Event_Assistance" title="@Model.Event_Assistance" readonly />
+        </div>
+    </div>
+    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>图片</small></div>
+                    <input type="text" class="input-sm form-control" value="" readonly />
+                    <span class="input-group-btn">
+                        <a class="btn btn-default btn-sm photo_btn" href="~/Content/checkin-img/@Model.Photo"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>评分</small></div>
+                    <input type="text" class="input-sm form-control" value="@Model.Eval_Value" />
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>评分备注</small></div>
+                    <input type="text" class="input-sm form-control" value="@Model.Eval_Remark" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+}
+    @if (@Model.Status == -1)
+    {
+        <button class="btn btn-danger btn-sm">作废</button>
+        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
+    }
+    else if (Model.Status == 0)
+    {
+        <button class="btn btn-success btn-sm">提交</button>
+        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
+
+    }
+    else {
+        <button class="btn btn-warning btn-sm">审核</button>
+        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
+    }
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+                <h4 class="modal-title">查看图片</h4>
+            </div>
+            <div class="modal-body row" id="editcontent">
+                <div class="col-md-4">
+                    <img src="#" class="img-thumbnail img-responsive" />
+                </div>
+                <div class="col-md-4">
+                    <img src="#" class="img-thumbnail img-responsive" />
+                </div>
+                <div class="col-md-4">
+                    <img src="#" class="img-thumbnail img-responsive" />
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script>
+    $(".photo_btn").click(function () {
+        var url = $(this).attr("href")
+        $("#img-view").attr("src", url),
+        $("#myModal").modal()
+
+    })
+    $("button").click(function () {
+        $(this).text("提交中...").attr("disabled", "disabled");
+        setTimeout(3000);
+        $("#editTask_Schedule").submit();
+        $(this).removeAttr("disabled").val("提交")
+        return false;
+    });
+</script>
