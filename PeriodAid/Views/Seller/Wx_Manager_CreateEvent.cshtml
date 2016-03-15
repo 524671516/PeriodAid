@@ -1,21 +1,11 @@
 ﻿@model PeriodAid.Models.Wx_ManagerCreateScheduleViewModel
 
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 工具";
+    ViewBag.Current = 2;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>促销员管理</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
+
     <div class="hd">
         <h2 class="page_title text-center">新建活动</h2>
     </div>
@@ -64,7 +54,7 @@
             <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
                 确认并添加
             </button>
-            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default">
+            <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default" style="margin-top:5px;">
                 返回首页
             </a>
         </div>
@@ -74,7 +64,7 @@
         <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
     </div>
     <br /><br />
-    @Scripts.Render("~/bundles/jquery")
+@section scripts{
     <script>
         $(function () {
             if ($("#error-message").find("li").length > 0) {
@@ -96,5 +86,4 @@
             }
         });
     </script>
-</body>
-</html>
+    }

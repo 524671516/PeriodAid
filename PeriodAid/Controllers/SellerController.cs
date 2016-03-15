@@ -1408,13 +1408,13 @@ namespace PeriodAid.Controllers
         }
 
         [Authorize(Roles ="Manager")]
-        public ActionResult Wx_Manager_TaskHome()
+        public ActionResult Wx_Manager_Task()
         {
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
             ViewBag.NickName = manager.NickName;
             ViewBag.Mobile = manager.Mobile;
             var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name);
             if (task == null)
             {
                 ViewBag.CheckInCount = 0;
@@ -1430,7 +1430,7 @@ namespace PeriodAid.Controllers
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
             ViewBag.NickName = manager.NickName;
             var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName==User.Identity.Name);
             WeChatUtilities utilities = new WeChatUtilities();
             string _url = ViewBag.Url = Request.Url.ToString();
             ViewBag.AppId = utilities.getAppId();
@@ -1449,7 +1449,7 @@ namespace PeriodAid.Controllers
                 Off_Manager_Task item = new Off_Manager_Task()
                 {
                     TaskDate = today,
-                    Status = 0,
+                    Status = (int)ManagerTaskStatus.Reported,
                     UserName = User.Identity.Name,
                     NickName = manager.NickName
                 };
@@ -1468,14 +1468,14 @@ namespace PeriodAid.Controllers
             {
                 Off_Manager_CheckIn item = new Off_Manager_CheckIn();
                 var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status>=0&&m.UserName==User.Identity.Name);
                 if (TryUpdateModel(item))
                 {
                     item.Off_Manager_Task = task;
                     item.CheckIn_Time = DateTime.Now;
                     offlineDB.Off_Manager_CheckIn.Add(item);
                     await offlineDB.SaveChangesAsync();
-                    return RedirectToAction("Wx_Manager_TaskHome");
+                    return RedirectToAction("Wx_Manager_Task");
                 }
                 return View("Manager_Error");
             }
@@ -1543,6 +1543,15 @@ namespace PeriodAid.Controllers
             int _id = id ?? list.FirstOrDefault().Id;
             if (attendance.Count > 0)
                 ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", _id);
+
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View();
         }
 
@@ -1550,6 +1559,7 @@ namespace PeriodAid.Controllers
         public ActionResult Wx_Manager_TaskReport_Ajax(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
+            
             return PartialView(item);
         }
 
@@ -1588,6 +1598,14 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "SUCCESS" });
             }
             return Json(new { result = "FAIL" });
+        }
+
+        public ActionResult Wx_Manager_Tools()
+        {
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
+            ViewBag.NickName = manager.NickName;
+            ViewBag.Mobile = manager.Mobile;
+            return View();
         }
     }
 }

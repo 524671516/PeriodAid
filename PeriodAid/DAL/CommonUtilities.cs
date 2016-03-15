@@ -143,6 +143,16 @@ namespace PeriodAid.DAL
             ms.Close();
             return ms;
         }
+
+        public static string getFirst(string photos)
+        {
+            if (photos != "")
+            {
+                var list = photos.Split(',');
+                return list[0];
+            }
+            return "";
+        }
     }
 
     #region 网页参数格式化帮助类
@@ -201,6 +211,8 @@ namespace PeriodAid.DAL
         }
     }
     #endregion
+
+    
 
 
 }

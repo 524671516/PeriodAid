@@ -1,27 +1,16 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
 
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 巡店";
+    ViewBag.Current = 1;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>促销员管理</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
-    <input type="hidden" id="current-checkid" />
-    <div class="hd">
-        <h2 class="page_title text-center">门店列表</h2>
-    </div>
-    <div class="weui_cells_title">@ViewBag.Title</div>
+<input type="hidden" id="current-checkid" />
+<div class="hd">
+    <h2 class="page_title text-center">门店列表</h2>
+</div>
+<div class="weui_cells_title">@ViewBag.Title</div>
 <div class="weui_cells weui_cells_access">
     @foreach (PeriodAid.Models.Off_Checkin_Schedule item_null in ViewBag.uncheckin_null)
     {
@@ -35,56 +24,58 @@
     }
     @foreach (var item in Model)
     {
-            foreach (var checkin in item.Off_Checkin.Where(m => m.Status == ViewBag.Status))
-            {
-                <a class="weui_cell actionlink" href="javascript:;" data-rel="@Html.Encode(checkin.Id)">
-                    <div class="weui_cell_bd weui_cell_primary">
-                        <p>@Html.Encode(checkin.Off_Checkin_Schedule.Off_Store.StoreName)</p>
-                    </div>
-                    <div class="weui_cell_ft">@Html.Encode(checkin.Off_Seller.Mobile)</div>
-                </a>
-            }
-    }
-    </div>
-    <br />
-    <div class="container">
-        <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_primary" id="submit-btn">
-            返回首页
-        </a>
-    </div>
-    <div id="actionSheet_wrap">
-        <div class="weui_mask_transition" id="mask"></div>
-        <div class="weui_actionsheet" id="weui_actionsheet">
-            <div class="container" style="padding-top:15px; padding-bottom:10px;">
-                <div class="row">
-                    <div class="col-xs-4" id="text-name"></div>
-                    <div class="col-xs-8 text-right" id="text-store"></div>
+        foreach (var checkin in item.Off_Checkin.Where(m => m.Status == ViewBag.Status))
+        {
+            <a class="weui_cell actionlink" href="javascript:;" data-rel="@Html.Encode(checkin.Id)">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Html.Encode(checkin.Off_Checkin_Schedule.Off_Store.StoreName)</p>
                 </div>
-            </div>
-            <div class="weui_actionsheet_action">
-                <div class="weui_actionsheet_cell action_sheet_cell_primary" id="proxy-checkin-btn">代签到</div>
-                <div class="weui_actionsheet_cell action_sheet_cell_primary" id="view-checkin-btn">查看</div>
-                <div class="weui_actionsheet_cell action_sheet_cell_danger" id="cancel-checkin-btn">作废</div>
-            </div>
-            <div class="weui_actionsheet_action">
-                
-                <div class="weui_actionsheet_cell" id="cancel-btn">取消</div>
-            </div>
-        </div>
-    </div>
-    <div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
-        <div class="weui_mask"></div>
-        <div class="weui_dialog">
-            <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
-            <div class="weui_dialog_bd">是否确定作废当前签到记录？</div>
-            <div class="weui_dialog_ft">
-                <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
-                <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
+                <div class="weui_cell_ft">@Html.Encode(checkin.Off_Seller.Mobile)</div>
+            </a>
+        }
+    }
+</div>
+<br />
+<div class="container">
+    <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default" id="submit-btn">
+        返回首页
+    </a>
+</div>
+<div id="actionSheet_wrap">
+    <div class="weui_mask_transition" id="mask"></div>
+    <div class="weui_actionsheet" id="weui_actionsheet">
+        <div class="container" style="padding-top:15px; padding-bottom:10px;">
+            <div class="row">
+                <div class="col-xs-4" id="text-name"></div>
+                <div class="col-xs-8 text-right" id="text-store"></div>
             </div>
         </div>
+        <div class="weui_actionsheet_action">
+            <div class="weui_actionsheet_cell action_sheet_cell_primary" id="proxy-checkin-btn">代签到</div>
+            <div class="weui_actionsheet_cell action_sheet_cell_primary" id="view-checkin-btn">查看</div>
+            <div class="weui_actionsheet_cell action_sheet_cell_danger" id="cancel-checkin-btn">作废</div>
+        </div>
+        <div class="weui_actionsheet_action">
+
+            <div class="weui_actionsheet_cell" id="cancel-btn">取消</div>
+        </div>
+        <br /><br /><br />
     </div>
-    <br /><br />
-    @Scripts.Render("~/bundles/jquery")
+</div>
+<div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+        <div class="weui_dialog_bd">是否确定作废当前签到记录？</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
+        </div>
+        <br /><br /><br />
+    </div>
+</div>
+<br /><br />
+@section scripts{
     <script>
         var mask = $('#mask');
         var weuiActionsheet = $('#weui_actionsheet');
@@ -120,7 +111,7 @@
                         weuiActionsheet.unbind('transitionend').unbind('webkitTransitionEnd');
                     }
                 }
-            });            
+            });
         });
         $("#cancel-checkin-btn").click(function () {
             hideActionSheet(weuiActionsheet, mask);
@@ -160,5 +151,4 @@
             });
         }
     </script>
-</body>
-</html>
+}

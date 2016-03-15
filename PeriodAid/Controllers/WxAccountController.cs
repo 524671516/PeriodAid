@@ -299,7 +299,7 @@ namespace PeriodAid.Controllers
 
         public async Task<ActionResult> TestLogin(string username)
         {
-            var user = UserManager.FindByName("13636314852");
+            var user = UserManager.FindByName("13817657312");
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return Content("Success");
         }

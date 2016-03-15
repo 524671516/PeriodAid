@@ -57,6 +57,28 @@ namespace PeriodAid.Models
         [Display(Name = "姓名")]
         public string NickName { get; set; }
     }
-    
-    
+
+    public class Promotion_TJH_ViewModel
+    {
+        [Required]
+        [StringLength(32)]
+        public string openId { get; set; }
+
+        [Required(ErrorMessage = "请填写姓名")]
+        [StringLength(10, ErrorMessage = "姓名不得大于10个字符")]
+        [Display(Name = "姓名")]
+        public string name { get; set; }
+
+        [Required(ErrorMessage = "请填写电话号码")]
+        [StringLength(32, ErrorMessage = "电话号码不得大于32个字符")]
+        [RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
+        [Display(Name = "手机号码")]
+        public string mobile { get; set; }
+
+        [Required(ErrorMessage = "请选择您的职业")]
+        [StringLength(32, ErrorMessage = "职位不得大于32个字符")]
+        [Display(Name = "职业")]
+        public string branch { get; set; }
+    }
+
 }

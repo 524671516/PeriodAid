@@ -1,21 +1,12 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Store>
 
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 工具";
+    ViewBag.Current = 2;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>促销员管理</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
+
+
     <div class="hidden">
         <span id="code">@ViewBag.Code</span>
         <span id="voice-img">@ViewBag.voice_img</span>
@@ -24,9 +15,6 @@
         <span id="nonce">@ViewBag.Nonce</span>
         <span id="url">@ViewBag.Url</span>
         <span id="signature">@ViewBag.Signature</span>
-    </div>
-    <div class="hd">
-        <h2 class="page_title text-center">促销员管理</h2>
     </div>
     <div class="weui_cells">
         <div class="weui_cell">
@@ -50,12 +38,12 @@
     </div>
     <br />
     <div class="container">
-        <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_primary" id="submit-btn">
+        <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default" id="submit-btn">
             返回首页
         </a>
     </div>
     <br /><br />
-    @Scripts.Render("~/bundles/jquery")
+@section scripts{
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
     <script>
         //parseFloat
@@ -95,5 +83,4 @@
             });
         });
     </script>
-</body>
-</html>
+    }

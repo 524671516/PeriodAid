@@ -4363,7 +4363,7 @@ namespace PeriodAid.Controllers
                 {
                     item.Eval_User = User.Identity.Name;
                     item.Eval_Time = DateTime.Now;
-                    item.Status = 2;
+                    item.Status = (int)ManagerTaskStatus.Confirmed;
                     offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.SaveChanges();
                     return RedirectToAction("Off_Manager_TaskList");
