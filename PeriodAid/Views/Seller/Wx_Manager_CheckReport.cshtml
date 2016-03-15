@@ -1,156 +1,145 @@
 ﻿@model PeriodAid.Models.Off_Checkin
 
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 巡店";
+    ViewBag.Current = 1;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>促销员管理</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
-    <div class="hidden">
-        <span id="appId">@ViewBag.AppId</span>
-        <span id="timeStamp">@ViewBag.TimeStamp</span>
-        <span id="nonce">@ViewBag.Nonce</span>
-        <span id="url">@ViewBag.Url</span>
-        <span id="signature">@ViewBag.Signature</span>
-    </div>
-    <div class="hd">
-        <h2 class="page_title text-center">销售数据确认</h2>
-    </div>
-    <div class="weui_cells_title">签到信息</div>
-    <div class="weui_cells weui_cells_access">
-        <a class="weui_cell" href="javascript:;" id="storelbs" latitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Latitude" longitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Longitude" address="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Address" storename="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName">
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>@Html.Encode(ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName)</p>
-            </div>
-            <div class="weui_cell_ft">@Html.Encode(ViewBag.CheckIn.Off_Seller.Name)</div>
-        </a>
-        @if (Model.CheckinLocation != "" && Model.CheckinLocation != "N/A")
-        {
+<div class="hidden">
+    <span id="appId">@ViewBag.AppId</span>
+    <span id="timeStamp">@ViewBag.TimeStamp</span>
+    <span id="nonce">@ViewBag.Nonce</span>
+    <span id="url">@ViewBag.Url</span>
+    <span id="signature">@ViewBag.Signature</span>
+</div>
+<div class="hd">
+    <h2 class="page_title text-center">销售数据确认</h2>
+</div>
+<div class="weui_cells_title">签到信息</div>
+<div class="weui_cells weui_cells_access">
+    <a class="weui_cell" href="javascript:;" id="storelbs" latitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Latitude" longitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Longitude" address="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Address" storename="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>@Html.Encode(ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName)</p>
+        </div>
+        <div class="weui_cell_ft">@Html.Encode(ViewBag.CheckIn.Off_Seller.Name)</div>
+    </a>
+    @if (Model.CheckinLocation != "" && Model.CheckinLocation != "N/A")
+    {
         <a class="weui_cell" href="javascript:;" id="checkinlbs" location="@Model.CheckinLocation">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到时间</p>
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckinTime)</div>
         </a>
-        }
-        else
-        {
-            <a class="weui_cell" href="javascript:;">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>签到时间</p>
-                </div>
-                <div class="weui_cell_ft_none">代签</div>
-            </a>
-        }
-        @if (Model.CheckinPhoto != "")
-        {
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到时间</p>
+            </div>
+            <div class="weui_cell_ft_none">代签</div>
+        </a>
+    }
+    @if (Model.CheckinPhoto != "")
+    {
         <a class="weui_cell" href="javascript:;" id="checkinimg" data-target="@Model.CheckinPhoto">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到图片</p>
             </div>
             <div class="weui_cell_ft">点击查看</div>
         </a>
-        }
-        else
-        {
-            <a class="weui_cell" href="javascript:;">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>签到图片</p>
-                </div>
-                <div class="weui_cell_ft_none">无</div>
-            </a>
-        }
-        @if (Model.CheckoutLocation != "" && Model.CheckoutLocation!="N/A")
-        {
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到图片</p>
+            </div>
+            <div class="weui_cell_ft_none">无</div>
+        </a>
+    }
+    @if (Model.CheckoutLocation != "" && Model.CheckoutLocation != "N/A")
+    {
         <a class="weui_cell" href="javascript:;" id="checkoutlbs" location="@Model.CheckoutLocation">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签退时间</p>
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckoutTime)</div>
         </a>
-        }
-        else
-        {
-            <a class="weui_cell" href="javascript:;">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>签退时间</p>
-                </div>
-                <div class="weui_cell_ft_none">代签</div>
-            </a>
-        }
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退时间</p>
+            </div>
+            <div class="weui_cell_ft_none">代签</div>
+        </a>
+    }
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>提报时间</p>
+        </div>
+        <div class="weui_cell_ft_none">@Html.Encode(Model.Report_Time)</div>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Off_Seller_Id)
+    @Html.HiddenFor(m => m.Off_Schedule_Id)
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.CheckinTime)
+    @Html.HiddenFor(m => m.CheckinPhoto)
+    @Html.HiddenFor(m => m.CheckinLocation)
+    @Html.HiddenFor(m => m.CheckoutTime)
+    @Html.HiddenFor(m => m.CheckoutLocation)
+    @Html.HiddenFor(m => m.Report_Time)
+    <div class="weui_cells_title">提报信息</div>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">红糖</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+            <div class="weui_cell_ft">
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">黑糖</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">柠檬</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">蜂蜜</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">红枣</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
+            </div>
+        </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
-                <p>提报时间</p>
+                @Html.TextAreaFor(m => m.Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入简报" })
+                <div class="weui_textarea_counter"><abbr id="current_length">0</abbr>/500</div>
             </div>
-            <div class="weui_cell_ft_none">@Html.Encode(Model.Report_Time)</div>
         </div>
     </div>
-    
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
-        @Html.HiddenFor(m => m.Id)
-        @Html.HiddenFor(m => m.Off_Seller_Id)
-        @Html.HiddenFor(m => m.Off_Schedule_Id)
-        @Html.HiddenFor(m => m.Status)
-        @Html.HiddenFor(m => m.CheckinTime)
-        @Html.HiddenFor(m => m.CheckinPhoto)
-        @Html.HiddenFor(m => m.CheckinLocation)
-        @Html.HiddenFor(m => m.CheckoutTime)
-        @Html.HiddenFor(m => m.CheckoutLocation)
-        @Html.HiddenFor(m => m.Report_Time)
-        <div class="weui_cells_title">提报信息</div>
-        <div class="weui_cells weui_cells_form">
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">红糖</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-                </div>
-                <div class="weui_cell_ft">
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">黑糖</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">柠檬</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">蜂蜜</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">红枣</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    @Html.TextAreaFor(m => m.Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入简报" })
-                    <div class="weui_textarea_counter"><abbr id="current_length">0</abbr>/500</div>
-                </div>
-            </div>
-        </div>
         @Html.HiddenFor(m => m.Rep_Image)
         <div class="weui_cells weui_cells_access">
             <a class="weui_cell" href="javascript:;" id="preview-btn">
@@ -173,31 +162,32 @@
             <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
                 确认并审核
             </button>
-            <a href="javascript:;" class="weui_btn weui_btn_warn" id="delete-btn">
-                作废
-            </a>
-            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default">
+            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default" style="margin-top:5px;">
                 返回首页
             </a>
+            <a href="javascript:;" class="weui_btn weui_btn_warn" id="delete-btn" style="margin-top:5px; margin-left:30%; margin-right:30%;">
+                作废
+            </a>
+
         </div>
-    }
-    <div class="error-label container" style="display:none;">
-        <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
-        <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
-    </div>
-    <div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
-        <div class="weui_mask"></div>
-        <div class="weui_dialog">
-            <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
-            <div class="weui_dialog_bd">是否要删除当前签到记录？</div>
-            <div class="weui_dialog_ft">
-                <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
-                <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
-            </div>
+}
+<div class="error-label container" style="display:none;">
+    <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+    <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+</div>
+<div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+        <div class="weui_dialog_bd">是否要删除当前签到记录？</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
         </div>
     </div>
-    <br /><br />
-    @Scripts.Render("~/bundles/jquery")
+</div>
+<br /><br />
+@section scripts{
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
     <script>
         //parseFloat
@@ -224,7 +214,7 @@
             }
         });
         function cal_textlength(name) {
-            return $("#"+name).val().length;
+            return $("#" + name).val().length;
         }
         $("#Remark").change(function () {
             var tl = cal_textlength("Remark");
@@ -363,5 +353,4 @@
         });
 
     </script>
-</body>
-</html>
+}

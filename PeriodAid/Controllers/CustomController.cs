@@ -22,7 +22,7 @@ namespace PeriodAid.Controllers
         Promotion promotionDB = new Promotion();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        
+
         public CustomController()
         {
 
@@ -80,7 +80,7 @@ namespace PeriodAid.Controllers
             WeChatUtilities wechat = new WeChatUtilities();
             var jat = wechat.getWebOauthAccessToken(code);
             var userinfo = wechat.getWebOauthUserInfo(jat.access_token, jat.openid);
-            return RedirectToAction("UploadImage", new { open_id = userinfo.openid, nickname = Url.Encode(userinfo.nickname)});
+            return RedirectToAction("UploadImage", new { open_id = userinfo.openid, nickname = Url.Encode(userinfo.nickname) });
         }
 
         // 欢迎界面&上传图片
@@ -159,7 +159,7 @@ namespace PeriodAid.Controllers
             {
                 return View("Error");
             }
-            
+
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -197,7 +197,7 @@ namespace PeriodAid.Controllers
             {
                 ModelState.AddModelError("", "初始化信息错误");
                 return View(model);
-            }            
+            }
         }
 
         public ActionResult CustomSuccess(int orderId)
@@ -238,7 +238,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return File(folder+ filename, @"image/jpeg");
+                return File(folder + filename, @"image/jpeg");
             }
         }
         #endregion
@@ -264,7 +264,8 @@ namespace PeriodAid.Controllers
             {
                 Random r = new Random(Convert.ToInt32(CommonUtilities.generateTimeStamp()));
                 int rand_digit = r.Next(0, 2);
-                switch(rand_digit){
+                switch (rand_digit)
+                {
                     case 0:
                         code = "A4DGSPG1";
                         break;
@@ -392,13 +393,13 @@ namespace PeriodAid.Controllers
             {
                 item.Status = 1;
                 offlineDB.SaveChanges();
-                return Json(new { result = "SUCCESS"});
+                return Json(new { result = "SUCCESS" });
             }
             else
             {
-                return Json(new { result = "FAIL"});
+                return Json(new { result = "FAIL" });
             }
-            
+
         }
         public ActionResult Benefits_info(string open_id)
         {
@@ -422,7 +423,7 @@ namespace PeriodAid.Controllers
             regionList.Add(new SelectListItem() { Text = "广东", Value = "广东" });
             regionList.Add(new SelectListItem() { Text = "深圳", Value = "深圳" });
             regionList.Add(new SelectListItem() { Text = "其他", Value = "其他" });
-            ViewBag.Region = new SelectList(regionList, "Value", "Text","-请选择区域-");
+            ViewBag.Region = new SelectList(regionList, "Value", "Text", "-请选择区域-");
 
 
 
@@ -551,6 +552,12 @@ namespace PeriodAid.Controllers
 
         // 糖酒会活动红包发送
         #region 糖酒会活动红包发送
+        public ActionResult Wx_Beacon_Tjh()
+        {
+            return View();
+        }
+
+
         public ActionResult Wx_Redirect_RedPack_Tjh()
         {
             string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Custom/Wx_RedPack_Tjh_Authorization");
@@ -570,46 +577,65 @@ namespace PeriodAid.Controllers
             bool exist = promotionDB.Promotion_TJH.Where(m => m.openId == open_id).Count() > 0;
             if (!exist)
             {
-                var order = new Promotion_TJH()
+                var order = new Promotion_TJH_ViewModel()
                 {
                     openId = open_id
                 };
+                List<SelectListItem> industryList = new List<SelectListItem>();
+                industryList.Add(new SelectListItem() { Text = "媒体", Value = "媒体" });
+                industryList.Add(new SelectListItem() { Text = "经销商", Value = "经销商" });
+                industryList.Add(new SelectListItem() { Text = "采购", Value = "采购" });
+                industryList.Add(new SelectListItem() { Text = "广告", Value = "广告" });
+                industryList.Add(new SelectListItem() { Text = "其他", Value = "其他" });
+                ViewBag.Industry = new SelectList(industryList, "Value", "Text", "-请选择行业-");
                 return View(order);
             }
             else
                 return RedirectToAction("Wx_RedPack_Tjh_Result", new { openId = open_id });
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Wx_RedPack_Tjh_main(Promotion_TJH model)
+        public async Task<ActionResult> Wx_RedPack_Tjh_main(Promotion_TJH_ViewModel model)
         {
             if (ModelState.IsValid)
             {
                 // 写入数据
-                Promotion_TJH item = new Promotion_TJH();
+                Promotion_TJH_ViewModel item = new Promotion_TJH_ViewModel();
                 if (TryUpdateModel(item))
                 {
+                    Promotion_TJH entry = new Promotion_TJH();
+                    entry.name = item.name;
+                    entry.openId = item.openId;
+                    entry.mobile = item.mobile;
+                    entry.branch = item.branch;
                     Random r = new Random(DateTime.Now.Millisecond);
                     string billno = "WxRedPackTjh_" + CommonUtilities.generateTimeStamp() + r.Next(1000, 9999);
-                    item.mch_billno = billno;
-                    item.status = 0;
-                    item.submit_time = DateTime.Now;
-                    promotionDB.Promotion_TJH.Add(item);
+                    entry.mch_billno = billno;
+                    entry.status = 0;
+                    entry.submit_time = DateTime.Now;
+                    promotionDB.Promotion_TJH.Add(entry);
                     await promotionDB.SaveChangesAsync();
                     // 创建红包
                     int amount = r.Next(100, 500);
                     AppPayUtilites pay = new AppPayUtilites();
-                    string result = await pay.WxRedPackCreate(item.openId, amount, item.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
+                    string result = await pay.WxRedPackCreate(entry.openId, amount, entry.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
                     //
-                    item.mch_result = result;
-                    promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    await promotionDB.SaveChangesAsync();
-                    return RedirectToAction("Wx_RedPack_Tjh_Result", new { openid = item.openId });
+                    entry.mch_result = result;
+                    promotionDB.Entry(entry).State = System.Data.Entity.EntityState.Modified;
+                    promotionDB.SaveChanges();
+                    return RedirectToAction("Wx_RedPack_Tjh_Result", new { openid = model.openId });
                 }
                 return View("Error");
             }
             else
             {
                 ModelState.AddModelError("", "数据录入错误");
+                List<SelectListItem> industryList = new List<SelectListItem>();
+                industryList.Add(new SelectListItem() { Text = "媒体", Value = "媒体" });
+                industryList.Add(new SelectListItem() { Text = "经销商", Value = "经销商" });
+                industryList.Add(new SelectListItem() { Text = "采购", Value = "采购" });
+                industryList.Add(new SelectListItem() { Text = "广告", Value = "广告" });
+                industryList.Add(new SelectListItem() { Text = "其他", Value = "其他" });
+                ViewBag.Industry = new SelectList(industryList, "Value", "Text", "-请选择行业-");
                 return View(model);
             }
         }
@@ -624,24 +650,55 @@ namespace PeriodAid.Controllers
                     {
                         AppPayUtilites pay = new AppPayUtilites();
                         string result = await pay.WxRedPackQuery(item.mch_billno);
-                        if (result == "RECEIVED" || result == "FAILED" || result == "REFUND")
+                        CommonUtilities.writeLog(result);
+                        if (result == "RECEIVED")
                         {
                             item.status = 1;
                             item.mch_result = result;
                             promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                             await promotionDB.SaveChangesAsync();
+                            return View("Wx_RedPack_Tjh_Success");
                         }
-                        return Content(result);
+                        else if (result == "FAILED")
+                        {
+                            item.status = 2;
+                            item.mch_result = result;
+                            promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                            await promotionDB.SaveChangesAsync();
+                            return View("Wx_RedPack_Tjh_Fail");
+                        }
+                        else if (result == "REFUND")
+                        {
+                            item.status = 3;
+                            item.mch_result = result;
+                            promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                            await promotionDB.SaveChangesAsync();
+                            return View("Wx_RedPack_Tjh_Fail");
+                        }
+                        else
+                        {
+                            item.status = 0;
+                            item.mch_result = result;
+                            promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                            await promotionDB.SaveChangesAsync();
+                            return View("Wx_RedPack_Tjh_Success");
+                        }
                     }
-                    return Content("RECEIVED");
+                    else
+                    {
+                        if(item.status == 1)
+                            return View("Wx_RedPack_Tjh_Success");
+                        else
+                            return View("Wx_RedPack_Tjh_Fail");
+                    }
                 }
-                return Content("NONE");
+                return View("Wx_RedPack_Tjh_Fail");
             }
-            catch
+            catch 
             {
-                return Content("FAIL");
+                return View("Error");
             }
+            #endregion
         }
-        #endregion
     }
 }

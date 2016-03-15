@@ -1,22 +1,11 @@
 ﻿@model PeriodAid.Models.Off_Checkin
 
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 巡店";
+    ViewBag.Current = 1;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>促销员管理</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
     <div class="hidden">
         <span id="appId">@ViewBag.AppId</span>
         <span id="timeStamp">@ViewBag.TimeStamp</span>
@@ -81,13 +70,13 @@
             <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
                 提交备注
             </button>
-            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default">
+            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default" style="margin-top:5px;">
                 返回首页
             </a>
         </div>
     }
     <br /><br />
-    @Scripts.Render("~/bundles/jquery")
+@section scripts{
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
     <script>
         //parseFloat
@@ -212,5 +201,4 @@
             });
         });
     </script>
-</body>
-</html>
+    }

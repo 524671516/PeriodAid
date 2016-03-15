@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "促销员管理";
+    ViewBag.Title = "督导管理 签到";
     Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
     ViewBag.Current = 0;
 }
@@ -22,7 +22,7 @@
     <div id="form_zone"></div>
     <br />
     <div class="container">
-        <a href="/Seller/Wx_Manager_TaskHome" class="weui_btn weui_btn_default">返回</a>
+        <a href="/Seller/Wx_Manager_Task" class="weui_btn weui_btn_default">返回</a>
     </div>
     <br /><br />
 }
@@ -142,7 +142,7 @@
                             },
                             success: function (data) {
                                 $("#form_zone").html(data);
-                                $("#toast_success").fadeOut(500);
+                                $("#toast_success").fadeOut(1500);
                             }
                         });
                         

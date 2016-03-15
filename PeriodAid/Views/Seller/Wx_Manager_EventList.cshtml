@@ -1,22 +1,11 @@
 ﻿
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 工具";
+    ViewBag.Current = 2;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
 
-<!DOCTYPE html>
 
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>管理员 活动门店列表</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
     <input type="hidden" value="0" name="currentid" id="currentid" />
     <div class="weui_cells_title">选择日期</div>
     <div class="weui_cells weui_cells_form">
@@ -37,7 +26,7 @@
             新增活动
         </a>
         }
-        <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default">
+        <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default" style="margin-top:5px;">
             返回首页
         </a>
     </div>
@@ -82,10 +71,11 @@
             <div class="weui_actionsheet_action">
                 <div class="weui_actionsheet_cell" id="cancel-btn">取消</div>
             </div>
+            <br /><br /><br />
         </div>
     </div>
     <br /><br />
-    @Scripts.Render("~/bundles/jquery")
+@section scripts{
     <script>
         var mask = $('#mask');
         var weuiActionsheet = $('#weui_actionsheet');
@@ -179,5 +169,4 @@
             window.location.href = "/Seller/Wx_Manager_CreateCheckIn?sid=" + id;
         });
     </script>
-</body>
-</html>
+    }

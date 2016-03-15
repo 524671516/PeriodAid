@@ -211,9 +211,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603110958367_03111457.cs" />
-    <Compile Include="Migrations\201603110958367_03111457.Designer.cs">
-      <DependentUpon>201603110958367_03111457.cs</DependentUpon>
+    <Compile Include="Migrations\201603140952463_03141752.cs" />
+    <Compile Include="Migrations\201603140952463_03141752.Designer.cs">
+      <DependentUpon>201603140952463_03141752.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -283,6 +283,10 @@
     <Content Include="Content\images\period-aid-logo.png" />
     <Content Include="Content\images\phone-ban.png" />
     <Content Include="Content\images\qrcode_for_sqz1760.jpg" />
+    <Content Include="Content\images\redmoney_01.png" />
+    <Content Include="Content\images\redmoney_02.png" />
+    <Content Include="Content\images\redmoney_03.png" />
+    <Content Include="Content\images\redmoney_04.png" />
     <Content Include="Content\images\share-pic.png" />
     <Content Include="Content\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
     <Content Include="Content\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
@@ -550,11 +554,15 @@
     <Content Include="Views\Seller\Wx_Manager_AddCheckIn.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_CheckInList_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_CheckInView.cshtml" />
-    <Content Include="Views\Seller\Wx_Manager_TaskHome.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Task.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_TaskReport_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_TaskReport.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_TaskList.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_TaskList_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Tools.cshtml" />
+    <Content Include="Views\Custom\Wx_RedPack_Tjh_Success.cshtml" />
+    <Content Include="Views\Custom\Wx_RedPack_Tjh_Fail.cshtml" />
+    <Content Include="Views\Custom\Wx_Beacon_Tjh.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -569,8 +577,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603110958367_03111457.resx">
-      <DependentUpon>201603110958367_03111457.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603140952463_03141752.resx">
+      <DependentUpon>201603140952463_03141752.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
@@ -587,7 +595,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54260</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

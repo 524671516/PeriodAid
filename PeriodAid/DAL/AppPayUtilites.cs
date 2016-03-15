@@ -190,9 +190,9 @@ namespace PeriodAid.DAL
                                 order.send_time = Convert.ToDateTime(info.send_time);
                             order.total_amount = info.total_amount;
                             order.total_num = info.total_num;
-                            var hbinfo = info.hblist.hbinfo.FirstOrDefault();
-                            if (hbinfo != null)
+                            if (info.hblist!=null)
                             {
+                                var hbinfo = info.hblist.hbinfo.FirstOrDefault();
                                 if (hbinfo.rcv_time == null)
                                     order.rcv_time = null;
                                 else

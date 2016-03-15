@@ -1,21 +1,11 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Seller>
 
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 巡店";
+    ViewBag.Current = 0;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>促销员管理</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
+
     <div class="hd">
         <h2 class="page_title text-center">销售员列表</h2>
     </div>
@@ -33,10 +23,8 @@
     </div>
     <br />
     <div class="container">
-        <a href="/Seller/Wx_Manager_UnCheckInList?status=0" class="weui_btn weui_btn_primary" id="submit-btn">
+        <a href="/Seller/Wx_Manager_UnCheckInList?status=0" class="weui_btn weui_btn_default" id="submit-btn">
             返回列表
         </a>
     </div>
     <br /><br />
-</body>
-</html>

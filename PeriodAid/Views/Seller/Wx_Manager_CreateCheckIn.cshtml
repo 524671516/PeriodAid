@@ -1,22 +1,10 @@
 ﻿@model PeriodAid.Models.Off_Checkin
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 工具";
+    ViewBag.Current = 2;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>促销员管理</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/weui.min.css" rel="stylesheet" />
-    <link href="~/Content/example.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-</head>
-<body>
     <div class="hidden">
         <span id="code">@ViewBag.Code</span>
         <span id="voice-img">@ViewBag.voice_img</span>
@@ -200,8 +188,7 @@
         <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
     </div>
     <br /><br />
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+@section scripts{
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
     <script>
         wx.config({
@@ -428,5 +415,4 @@
             $(".error-label").hide();
         });
     </script>
-</body>
-</html>
+    }
