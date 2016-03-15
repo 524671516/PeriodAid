@@ -1599,13 +1599,36 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-
+        [Authorize(Roles ="Manager")]
         public ActionResult Wx_Manager_Tools()
         {
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
             ViewBag.NickName = manager.NickName;
             ViewBag.Mobile = manager.Mobile;
             return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult Wx_Manager_QuerySeller()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public JsonResult Wx_Manager_AjaxSellerName(string query)
+        {
+            var list = from m in offlineDB.Off_Seller
+                       where m.Name.Contains(query)
+                       select new { Id = m.Id, Name = m.Name };
+            return Json(new { result = "SUCCESS", data = list });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public JsonResult Wx_Manager_AjaxSellerDetails(int id)
+        {
+            var item = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            return Json(new { result = "SUCCESS", data = new { Name = item.Name, Mobile = item.Mobile, CardNo = item.CardNo, CardName = item.CardName, StoreName = item.Off_Store.StoreName, AccountName = item.AccountName, IDNumber = item.IdNumber } });
         }
     }
 }

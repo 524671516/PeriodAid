@@ -563,6 +563,7 @@
     <Content Include="Views\Custom\Wx_RedPack_Tjh_Success.cshtml" />
     <Content Include="Views\Custom\Wx_RedPack_Tjh_Fail.cshtml" />
     <Content Include="Views\Custom\Wx_Beacon_Tjh.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_QuerySeller.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

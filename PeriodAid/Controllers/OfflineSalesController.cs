@@ -4385,7 +4385,7 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
             if (item != null)
             {
-                item.Status = (int)ManagerTaskStatus.Confirmed;
+                item.Status = (int)ManagerTaskStatus.Canceled;
                 offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                 offlineDB.SaveChanges();
                 return Content("SUCCESS");
