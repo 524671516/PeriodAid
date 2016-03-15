@@ -148,8 +148,8 @@
                         <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
                             <div class="panel-body">
                                 <ul class="nav-left">
-                                    <li>@Html.ActionLink("查询促销记录", "Off_QueryCheckIn")</li>
-                                    <li>@Html.ActionLink("确认促销", "Off_CheckIn_List")</li>
+                                    <li>@Html.ActionLink("查询促销记录", "Off_QueryCheckIn", "OfflineSales")</li>
+                                    <li>@Html.ActionLink("确认促销", "Off_CheckIn_List", "OfflineSales")</li>
                                     
                                 </ul>
                             </div>
@@ -167,6 +167,7 @@
                             <div class="panel-body">
                                 <ul class="nav-left">
                                     <li>@Html.ActionLink("管理员", "Off_Manager_list", "OfflineSales")</li>
+                                    <li>@Html.ActionLink("督导签到管理", "Off_Manager_TaskList", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>

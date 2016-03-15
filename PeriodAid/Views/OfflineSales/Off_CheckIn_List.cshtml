@@ -62,7 +62,7 @@
                                 $.ajax({
                                     url: "/OfflineSales/Off_CheckIn_List_ajax",
                                     data:{
-                                        status: $("#status-val").val()
+                                        status: $("#status-val").val() + "&query="
                                     },
                                     success: function (data) {
                                         $("#expenseslist").html(data);
@@ -95,6 +95,22 @@
                 }
             });
         });
-        
+        $("#search-btn").click(function () {
+            
+            var url = "/OfflineSales/Off_CheckIn_List_ajax"
+            $.ajax({
+                url: url,
+                data:{
+                    status: $("#status-val").val(),
+                    query:$("#search-query").val()
+                },
+                success: function (data) {
+                    $("#expenseslist").html(data);
+
+                }
+            })
+
+
+        })
     </script>
 }

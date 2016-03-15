@@ -8,6 +8,17 @@
 @section page{
     5
 }
+@{ 
+
+    var query = Request.Url.Query;
+    string result = "";
+    if (query.IndexOf("query=") != -1)
+    {
+        var start = query.Substring(query.IndexOf("query="), query.Length - query.IndexOf("query="));
+        var end = start.Substring(0, start.IndexOf("&") == -1 ? start.Length : start.IndexOf("&"));
+        result = end.Substring(6, end.Length - 6);
+    }
+}
 <div class="row">
     <div class="col-xs-2">
         <input type="text" class="form-control" placeholder="开始时间" id="start-date">
@@ -16,7 +27,7 @@
         <input type="text" class="form-control" placeholder="结束时间" id="end-date">
     </div>
     <div class="col-xs-4">
-        <input type="text" class="form-control" placeholder="关键词" id="dta">
+        <input type="text" class="form-control" placeholder="关键词" id="dta" value="@Html.Encode(result)">
     </div>
     <div class="col-xs-2">
         <button class="btn btn-info" id="query">搜索</button>
@@ -154,7 +165,7 @@
     $(function () {
         $("#start-date").val(getUrlParam("start"));
         $("#end-date").val(getUrlParam("end"));
-       // $("#dta").val(getUrlParam("query"))
+        $("#dta").val(decodeURIComponent($("#dta").val()));
         $("#start-date").datepicker({
             dateFormat: 'yy-mm-dd'
         });
@@ -176,6 +187,7 @@
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
         var r = window.location.search.substr(1).match(reg);  //匹配目标参数
         if (r != null) return unescape(r[2]); return null; //返回参数值
+        
     }
     
     $(".dele").click(function () {

@@ -51,9 +51,11 @@
             @if (item.Status == 1)
             {
             @Html.ActionLink("设置超级管理员", "Off_Manager_UpdateSenior", new { id = item.Id }, new { @class = "btn btn-sm btn-danger manager-button surper-btn" })
+            }else{
+                <a class="btn btn-sm btn-warning btn-back" href="/OfflineSales/Off_Manager_ReduceManager?Id=@item.Id">撤销</a>
             }
             @Html.ActionLink("设置区域", "Off_Manager_AddStore", new { id = item.Id }, new { @class = "btn btn-sm btn-primary"})
-          
+            
         </td>
     </tr>
 }
@@ -71,8 +73,24 @@
                 alert("提升成功");
             }
         });
-        return false;
+        return false; 
     });
+    $(".btn-back").click(function () {
+        var result = confirm("确定要撤销吗？")
+        if (result) {
+            var url = $(this).attr("href")
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        window.location.reload()
+                    }
+                }
+            })
+            return false;
+        }
+
+    })
    
 
 </script>

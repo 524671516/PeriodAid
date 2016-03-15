@@ -1,87 +1,73 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Task>
-@using PagedList.Mvc
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+
+@section page{
+    6
+    }
+<br /><br />
+<table class="table table-condensed table-striped h6" style="table-layout:fixed;width:100%;">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
+        <th style="width:15%">
+            状态
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UserName)
+        <th style="width:15%">
+            电话
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.NickName)
+        <th style="width:15%">
+            时间
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TaskDate)
+        <th style="width:20%">
+            管理员姓名
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Event_Complete)
+        <th style="width:25%">
+            备注
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Event_UnComplete)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Event_Assistance)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Eval_Value)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Eval_Remark)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Eval_User)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Eval_Time)
-        </th>
+
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UserName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NickName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TaskDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Event_Complete)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Event_UnComplete)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Event_Assistance)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Eval_Value)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Eval_Remark)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Eval_User)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Eval_Time)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Event_UnComplete)
+            </td>
+            
+            <td>
+                @Html.ActionLink("编辑", "Off_Manager_EditTask", new { id = item.Id }, new { @class = "btn btn-info btn-xs editor" }) 
+                <a class="btn btn-xs btn-danger delt" href="/OfflineSales/Off_Manager_CancelTask?id=@item.Id">删除</a>
+            </td>
+        </tr>
+    }
 
 </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Manager_TaskList", new { page, query = "" }))</div>
+<script>
+    $(".delt").click(function () {
+        var result = confirm("确定删除该信息吗？")
+        if (result) {
+            var link_url = $(this).attr("href")
+            $.ajax({
+                type: "post",
+                url: link_url,
+                success: function (data) {
+                        window.location.reload();
+                }
+            })
+        }
+        return false
+    })
+</script>

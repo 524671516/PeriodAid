@@ -4323,12 +4323,13 @@ namespace PeriodAid.Controllers
         public PartialViewResult Off_Manager_TaskList_Ajax(string query, int? status, int? page)
         {
             int _status = status ?? 0;
-            int _page = page ?? 0;
+            int _page = page ?? 1;
             if (query == null)
             {
                 var list = (from m in offlineDB.Off_Manager_Task
                            where m.Status == _status
-                           select m).ToPagedList(_page,30);
+                            orderby m.TaskDate descending
+                            select m).ToPagedList(_page,3);
                 return PartialView(list);
             }
             else
@@ -4336,7 +4337,8 @@ namespace PeriodAid.Controllers
                 var list = (from m in offlineDB.Off_Manager_Task
                            where m.Status == _status
                            && m.NickName.Contains(query)
-                           select m).ToPagedList(_page, 30);
+                           orderby m.TaskDate descending
+                           select m).ToPagedList(_page, 3);
                 return PartialView(list);
             }
         }
