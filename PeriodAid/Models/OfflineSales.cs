@@ -1325,7 +1325,7 @@ namespace PeriodAid.Models
         [StringLength(128)]
         public string Location_Desc { get; set; }
 
-        [StringLength(64)]
+        [StringLength(128)]
         public string Photo { get; set; }
 
         [StringLength(64)]

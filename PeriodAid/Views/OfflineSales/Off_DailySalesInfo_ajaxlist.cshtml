@@ -1,9 +1,22 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
     @using PagedList.Mvc;
 
-<a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a>
-<a class="btn btn-info btn-sm" href="/OfflineSales/UploadDailyInfo" style="margin-left:5px;"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a>
-<br /><br />
+
+<div class="row">
+    <div class="col-xs-8">
+        <a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a>
+        <a class="btn btn-info btn-sm" href="/OfflineSales/UploadDailyInfo" style="margin-left:5px;"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a>
+    </div>
+    <div class="col-xs-4">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+<br />
 <table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
     <tr>
         <th style="width:10%">
@@ -114,7 +127,9 @@
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
             var query = $("#search-query").val();
-            l = l + "&query=" + query;
+            if (query.trim() != "") {
+                l = l + "&query=" + query;
+            }
             $.ajax({
                 url: l,
                 success: function (data) {

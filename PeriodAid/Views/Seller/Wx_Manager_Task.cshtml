@@ -17,7 +17,7 @@
 </div>
 <div class="weui_cells_title">今日签到</div>
 <div class="weui_cells weui_cells_access">
-    <a class="weui_cell salary_details" href="/Seller/Wx_Manager_AddCheckIn">
+    <a class="weui_cell salary_details" href="/Seller/Wx_Manager_AddCheckIn" id="add-btn">
         <div class="weui_cell_bd weui_cell_primary">
             <p>添加签到信息</p>
         </div>
@@ -39,3 +39,17 @@
         <div class="weui_cell_ft"></div>
     </a>
 </div>
+@section scripts{
+<script>
+    $("#add-btn").click(function () {
+        //alert($(this).attr("disabled"));
+        if ($(this).attr("disabled") != "disabled") {
+            $("#add-btn").attr("disabled", "disabled").text("载入中...");
+            var url = $(this).attr("href");
+            window.location.href = url;
+        }
+        return false;
+    });
+</script>
+    }
+

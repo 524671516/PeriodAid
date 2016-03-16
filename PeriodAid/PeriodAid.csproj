@@ -211,9 +211,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603140952463_03141752.cs" />
-    <Compile Include="Migrations\201603140952463_03141752.Designer.cs">
-      <DependentUpon>201603140952463_03141752.cs</DependentUpon>
+    <Compile Include="Migrations\201603160315382_03161115.cs" />
+    <Compile Include="Migrations\201603160315382_03161115.Designer.cs">
+      <DependentUpon>201603160315382_03161115.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -564,6 +564,7 @@
     <Content Include="Views\Custom\Wx_RedPack_Tjh_Fail.cshtml" />
     <Content Include="Views\Custom\Wx_Beacon_Tjh.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_QuerySeller.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_EditTask.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -578,8 +579,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603140952463_03141752.resx">
-      <DependentUpon>201603140952463_03141752.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603160315382_03161115.resx">
+      <DependentUpon>201603160315382_03161115.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

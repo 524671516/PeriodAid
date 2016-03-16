@@ -1468,7 +1468,7 @@ namespace PeriodAid.Controllers
             {
                 Off_Manager_CheckIn item = new Off_Manager_CheckIn();
                 var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status>=0&&m.UserName==User.Identity.Name);
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name);
                 if (TryUpdateModel(item))
                 {
                     item.Off_Manager_Task = task;
@@ -1484,7 +1484,7 @@ namespace PeriodAid.Controllers
                 var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
                 ViewBag.NickName = manager.NickName;
                 var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today);
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.UserName == User.Identity.Name && m.Status == 0);
                 WeChatUtilities utilities = new WeChatUtilities();
                 string _url = ViewBag.Url = Request.Url.ToString();
                 ViewBag.AppId = utilities.getAppId();

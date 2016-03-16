@@ -161,7 +161,20 @@
         $(function () {
             var tl = cal_textlength();
             $("#current_length").text(tl);
-            
+            if ($("#Photo").val() != "") {
+                img_array = $("#Photo").val().split(',');
+            }
+            $("#current_image").text(img_array.length);
+            if (img_array.length > 0) {
+                for (var i = 0; i < img_array.length; i++) {
+                    var html_img = "<li class='weui_uploader_file' style='background-image:url(/Seller/ThumbnailImage?filename=" + img_array[i] + ")' data-target='" + img_array[i] + "'></li>";
+                    $("#img-upload-list").append(html_img);
+                }
+            }
+            if ($("#Location").val().trim() != "") {
+                $("#location-btn").find("i").attr("class", "weui_icon_success");
+                $("#location-btn").find(".weui_cell_ft").text("位置获取成功");
+            }
             if ($(".input-validation-error").length > 0) {
                 $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
                 $(".error-label").show();
