@@ -414,7 +414,7 @@ namespace PeriodAid.Models
                     return "其他";
             }
         }
-        public string getManagerTaskStatus(ManagerTaskStatus status)
+        public static string getManagerTaskStatus(ManagerTaskStatus status)
         {
             string result = String.Empty;
             switch (status)

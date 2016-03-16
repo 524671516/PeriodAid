@@ -248,6 +248,10 @@
             $(".panel-collapse").removeClass("in");
             $("div[aria-labelledby='headingFive']").addClass("in");
         }
+        if ($("#pagenumber").text().trim() == "6") {
+            $(".panel-collapse").removeClass("in");
+            $("div[aria-labelledby='headingSix']").addClass("in");
+        }
         $(document).scroll(function () {
             if (window.pageYOffset > 0) {
                 $("#to-top").removeClass("hidden");

@@ -21,7 +21,7 @@
             管理员姓名
         </th>
         <th style="width:25%">
-            备注
+            签到数
         </th>
 
         <th></th>
@@ -31,7 +31,7 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                @Html.Encode(ParseStatus.getManagerTaskStatus((ManagerTaskStatus)item.Status))
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserName)
@@ -43,7 +43,7 @@
                 @Html.DisplayFor(modelItem => item.NickName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Event_UnComplete)
+                @Html.Encode(item.Off_Manager_CheckIn.Count(m=>m.Canceled==false))
             </td>
             
             <td>
@@ -54,7 +54,7 @@
     }
 
 </table>
-<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Manager_TaskList", new { page, query = "" }))</div>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Manager_TaskList_Ajax", new { page } ))</div>
 <script>
     $(".delt").click(function () {
         var result = confirm("确定删除该信息吗？")
@@ -64,10 +64,24 @@
                 type: "post",
                 url: link_url,
                 success: function (data) {
-                        window.location.reload();
+                    window.location.reload();
                 }
             })
         }
-        return false
-    })
+        return false;
+    });
+    $(".pagination a").click(function () {
+        var url = $(this).attr("href");
+        var query = $("#dtat").val();
+        if (query.trim() != "") {
+            url += "&query=" + query;
+        }
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $("#list-container").html(data);
+            }
+        })
+        return false;
+    });
 </script>

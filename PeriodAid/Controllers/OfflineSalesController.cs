@@ -4329,7 +4329,7 @@ namespace PeriodAid.Controllers
                 var list = (from m in offlineDB.Off_Manager_Task
                            where m.Status == _status
                             orderby m.TaskDate descending
-                            select m).ToPagedList(_page,3);
+                            select m).ToPagedList(_page,30);
                 return PartialView(list);
             }
             else
@@ -4338,7 +4338,7 @@ namespace PeriodAid.Controllers
                            where m.Status == _status
                            && m.NickName.Contains(query)
                            orderby m.TaskDate descending
-                           select m).ToPagedList(_page, 3);
+                           select m).ToPagedList(_page, 30);
                 return PartialView(list);
             }
         }

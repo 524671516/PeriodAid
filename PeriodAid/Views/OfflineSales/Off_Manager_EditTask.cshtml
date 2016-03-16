@@ -1,12 +1,26 @@
 ﻿@model PeriodAid.Models.Off_Manager_Task
-
+@using PeriodAid.Models;
 @{
     ViewBag.Title = "Off_Manager_EditTask";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
 @section page{
     6
-    }
+}
+@section header{
+    <style type="text/css">
+        .img-list {
+            width: 120px;
+            height: 120px;
+            margin: 10px;
+            border: 1px solid #eee;
+            float: left;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+}
 @using (Html.BeginForm("Off_Manager_EditTask", "OfflineSales", FormMethod.Post, new { @id = "editTask_Schedule" }))
 {
     @Html.AntiForgeryToken()
@@ -17,7 +31,7 @@
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>状态</small></div>
-                    <input type="text" class="input-sm form-control" value="@Model.Status" readonly />
+                    <input type="text" class="input-sm form-control" value="@Html.Encode(ParseStatus.getManagerTaskStatus((ManagerTaskStatus)Model.Status))" readonly />
                 </div>
             </div>
             <div class="col-md-3">
@@ -61,24 +75,68 @@
         </div>
     </div>
     <br />
+    <h5><b>图片</b></h5>
+    <div class="container">
+        <div class="col-md-12">
+            @{
+                string[] imglist = new string[] { };
+                if (Model.Photo != null)
+                {
+                    imglist = Model.Photo.Split(',');
+                }
+            }
+            @foreach (var g in imglist)
+                {
+                <div class="img-list" data-rel="@g" style="background-image:url('/Content/checkin-img/@g')"></div>
+            }
+        </div>
+    </div>
+    <br />
+    <h5><b>签到记录</b></h5>
+    <div class="container">
+        @foreach (var item in Model.Off_Manager_CheckIn.Where(m=>m.Canceled==false))
+        {
+            <div class="row" style="margin-top:5px;">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>时间</small></div>
+                        <input type="text" class="input-sm form-control" value="@item.CheckIn_Time.ToString("HH:mm")" readonly />
+                        <span class="input-group-btn">
+                            <a class="btn btn-default btn-sm check-photo" data-target="@item.Photo"><i class="fa fa-search"></i></a>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>位置</small></div>
+                        <input type="text" class="input-sm form-control" value="@item.Location_Desc" readonly />
+                        <span class="input-group-btn">
+                            <a class="btn btn-default btn-sm" href="/OfflineSales/Off_ConfirmCheckIn_Map?trans=true&lbs=@item.Location" target="_blank"><i class="fa fa-search"></i></a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>备注</small></div>
+                        <input type="text" class="input-sm form-control" value="@item.Remark" readonly />
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+    <br />
+    <h5><b>其他</b></h5>
     <div class="container">
         <div class="row">
-            <div class="col-md-3">
-                <div class="input-group">
-                    <div class="input-group-addon"><small>图片</small></div>
-                    <input type="text" class="input-sm form-control" value="" readonly />
-                    <span class="input-group-btn">
-                        <a class="btn btn-default btn-sm photo_btn" href="~/Content/checkin-img/@Model.Photo"><i class="fa fa-search"></i></a>
-                    </span>
-                </div>
-            </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
                 <div class="input-group">
                     <div class="input-group-addon"><small>评分</small></div>
                     <input type="text" class="input-sm form-control" value="@Model.Eval_Value" />
                 </div>
             </div>
-            <div class="col-md-7">
+            <div class="col-md-8">
                 <div class="input-group">
                     <div class="input-group-addon"><small>评分备注</small></div>
                     <input type="text" class="input-sm form-control" value="@Model.Eval_Remark" />
@@ -87,22 +145,24 @@
         </div>
     </div>
     <br />
+                }
+@if (@Model.Status == -1)
+{
+    <button class="btn btn-danger btn-sm">作废</button>
+    <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
 }
-    @if (@Model.Status == -1)
-    {
-        <button class="btn btn-danger btn-sm">作废</button>
-        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
-    }
-    else if (Model.Status == 0)
-    {
-        <button class="btn btn-success btn-sm">提交</button>
-        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
+else if (Model.Status == 0)
+{
+    <button class="btn btn-success btn-sm">提交</button>
+    <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
 
-    }
-    else {
-        <button class="btn btn-warning btn-sm">审核</button>
-        <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
-    }
+}
+else
+{
+    <button class="btn btn-warning btn-sm">审核</button>
+    <a class="btn btn-default btn-sm" href="/OfflineSales/Off_Manager_TaskList" type="button">返回</a>
+}
+
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -110,19 +170,27 @@
                 <a href="javascript:;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
                 <h4 class="modal-title">查看图片</h4>
             </div>
-            <div class="modal-body row" id="editcontent">
-                <div class="col-md-4">
-                    <img src="#" class="img-thumbnail img-responsive" />
-                </div>
-                <div class="col-md-4">
-                    <img src="#" class="img-thumbnail img-responsive" />
-                </div>
-                <div class="col-md-4">
-                    <img src="#" class="img-thumbnail img-responsive" />
-                </div>
+            <div class="modal-body" id="editcontent">
+                <img id="img-view" href="#" class="img-thumbnail img-responsive" style="max-height:400px; max-width:600px;" />
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="msModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <h4 class="modal-title" id="myModalLabel_01">查看图片</h4>
+            </div>
+            <div class="modal-body" id="carousel-body">
+                
+                    
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     $(".photo_btn").click(function () {
@@ -138,4 +206,30 @@
         $(this).removeAttr("disabled").val("提交")
         return false;
     });
+    $(".img-list").click(function () {
+        var link_url = "/Content/checkin-img/" + $(this).attr("data-rel");
+        $("#img-view").attr("src", link_url);
+        $('#myModal').modal();
+        return false;
+    });
+    $(".check-photo").click(function () {
+        $("#carousel-body").html("");
+        var photos = $(this).attr("data-target") + "";
+        var photo_array = photos.split(",");
+        $("#carousel-body").append("<div id='carousel-example-generic' class='carousel slide' data-ride='carousel'><div class='carousel-inner' role='listbox' id='phone_con'>");
+        for (var i = 0; i < photo_array.length; i++) {
+            if (i == 0) {
+                $("#carousel-body").append("<div class='item active'><img class='img-thumbnail img-responsive' src='/Content/checkin-img/" + photo_array[i] + "' style='max-width:600px; max-height:450px;margin-left:auto; margin-right:auto;'></div>");
+            }
+            else {
+                $("#carousel-body").append("<div class='item'><img class='img-thumbnail img-responsive' src='/Content/checkin-img/" + photo_array[i] + "' style='max-width:600px; max-height:450px;margin-left:auto; margin-right:auto;'></div>");
+            }
+        }
+        $("#carousel-body").append("</div><a class='left carousel-control' href='#carousel-example-generic' role='button' data-slide='prev'>'<span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>" +
+                    "</a><a class='right carousel-control' href='#carousel-example-generic' role='button' data-slide='next'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span></a></div>");
+        //$('.carousel').carousel();
+        $("#msModal").modal();
+    });
+    
 </script>
+

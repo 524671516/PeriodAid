@@ -1620,7 +1620,7 @@ namespace PeriodAid.Controllers
             var list = from m in offlineDB.Off_Seller
                        where m.Name.Contains(query)
                        select new { Id = m.Id, Name = m.Name };
-            return Json(new { result = "SUCCESS", data = list });
+            return Json(new { result = "SUCCESS", data = list.Take(5) });
         }
 
         [AllowAnonymous]
