@@ -96,7 +96,7 @@ else
         selectlist.each(function () {
             arr_list.push($(this).attr("value"));
         });
-        alert(arr_list);
+        //alert(arr_list);
         $.ajax({
             url: "/OfflineSales/Off_Manager_AjaxAddStore",
             data: {
@@ -110,9 +110,6 @@ else
             }
         })
     });
-    /*$("#submit_btn").click(function () {
-        alert($("#BeginTime").val())
-    });*/
     function refresh_list() {
         $.ajax({
             url: "/OfflineSales/Off_Add_Schedule_StoreList",

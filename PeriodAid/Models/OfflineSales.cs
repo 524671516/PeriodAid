@@ -55,6 +55,7 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_StoreManager> Off_StoreManager { get; set; }
         public virtual DbSet<Off_Manager_Task> Off_Manager_Task { get; set; }
         public virtual DbSet<Off_Manager_CheckIn> Off_Manager_CheckIn { get; set; }
+        public virtual DbSet<Off_AVG_SalesData> Off_AVG_SalesData { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1334,5 +1335,24 @@ namespace PeriodAid.Models
         public DateTime CheckIn_Time { get; set; }
 
         public virtual Off_Manager_Task Off_Manager_Task { get; set; }
+    }
+
+    public partial class Off_AVG_SalesData
+    {
+        public int Id { get; set; }
+
+        public int StoreId { get; set; }
+
+        public int DayOfWeek { get; set; }
+
+        public decimal? AVG_BROWN { get; set; }
+
+        public decimal? AVG_BLACK { get; set; }
+
+        public decimal? AVG_LEMON { get; set; }
+
+        public decimal? AVG_HONEY { get; set; }
+
+        public decimal? AVG_DATES { get; set; }
     }
 }

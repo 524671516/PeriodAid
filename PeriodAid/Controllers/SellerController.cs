@@ -1665,8 +1665,8 @@ namespace PeriodAid.Controllers
         public JsonResult Wx_Manager_AjaxSellerName(string query)
         {
             var list = from m in offlineDB.Off_Seller
-                       where m.Name.Contains(query)
-                       select new { Id = m.Id, Name = m.Name };
+                       where m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query)
+                       select new { Id = m.Id, Name = m.Name, Store = m.Off_Store.StoreName };
             return Json(new { result = "SUCCESS", data = list.Take(5) });
         }
 
