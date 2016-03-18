@@ -561,6 +561,9 @@
     <Content Include="Views\Custom\Wx_Beacon_Tjh.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_QuerySeller.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_EditTask.cshtml" />
+    <Content Include="Views\Seller\Wx_Senior_AllCheckInList.cshtml" />
+    <Content Include="Views\Seller\Wx_Senior_AllCheckInList_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Senior_CheckInDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

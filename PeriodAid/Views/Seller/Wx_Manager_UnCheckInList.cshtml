@@ -51,8 +51,8 @@
             </div>
         </div>
         <div class="weui_actionsheet_action">
-            <div class="weui_actionsheet_cell action_sheet_cell_primary" id="proxy-checkin-btn">代签到</div>
-            <div class="weui_actionsheet_cell action_sheet_cell_primary" id="view-checkin-btn">查看</div>
+            <div class="weui_actionsheet_cell action_sheet_cell_default" id="view-checkin-btn">备注</div>
+            <div class="weui_actionsheet_cell action_sheet_cell_primary" id="proxy-checkin-btn">补充数据</div>
             <div class="weui_actionsheet_cell action_sheet_cell_danger" id="cancel-checkin-btn">作废</div>
         </div>
         <div class="weui_actionsheet_action">
@@ -93,17 +93,9 @@
                 type: "post",
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $("#proxy-checkin-btn").removeClass("hidden");
                         $("#text-name").html("<b>" + data.res.SellerName + "</b>");
                         $("#text-store").text(data.res.StoreName + " (" + data.res.Subscribe + ")");
-                        if (data.res.Status != 0) {
-                            $("#proxy-checkin-btn").addClass("hidden");
-                            $("#view-checkin-btn").removeClass("hidden");
-                        }
-                        else {
-                            $("#proxy-checkin-btn").removeClass("hidden");
-                            $("#view-checkin-btn").addClass("hidden");
-                        }
+                        
                         weuiActionsheet.addClass('weui_actionsheet_toggle');
                         mask.show().addClass('weui_fade_toggle').click(function () {
                             hideActionSheet(weuiActionsheet, mask);

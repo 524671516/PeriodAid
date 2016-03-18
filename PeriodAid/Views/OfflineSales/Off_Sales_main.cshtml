@@ -21,17 +21,30 @@
                     $("#list-container").html(data);
                 }
             });
-            $("#search-btn").click(function () {
-                $.ajax({
-                    url: "/OfflineSales/Off_DailySalesInfo_ajaxlist",
-                    data:{
-                        query: $("#search-query").val()
-                    },
-                    success: function (data) {
-                        $("#list-container").html(data);
-                    }
-                });
+
+        });
+        $("#search-btn").click(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_DailySalesInfo_ajaxlist",
+                data:{
+                    query: $("#search-query").val()
+                },
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
             });
+        });
+        $("#add-btn").click(function () {
+            var link_url = "/OfflineSales/Off_CreateSalesDaily"
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#addcontent").html(data);
+                    $("#addModal").modal()
+                }
+            });
+            return false
+
         })
     </script>
 }

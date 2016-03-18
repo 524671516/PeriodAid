@@ -135,7 +135,7 @@
         </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
-                @Html.TextAreaFor(m => m.Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入简报" })
+                @Html.TextAreaFor(m => m.Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入简报", @readonly ="readonly" })
                 <div class="weui_textarea_counter"><abbr id="current_length">0</abbr>/500</div>
             </div>
         </div>
@@ -186,6 +186,16 @@
         </div>
     </div>
 </div>
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd">提示</div>
+        <div class="weui_dialog_bd" id="dialog_text">当前无可查看图片</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog primary" id="alert-btn">确定</a>
+        </div>
+    </div>
+</div>
 <br /><br />
 @section scripts{
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
@@ -225,24 +235,38 @@
             $("#current_length_2").text(tl);
         });
         $("#preview-btn").click(function () {
-            var images = $("#Rep_Image").val().split(',');
-            for (var i = 0; i < images.length; i++) {
-                images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+            if ($("#Rep_Image").val().trim() != "") {
+                var images = $("#Rep_Image").val().split(',');
+                for (var i = 0; i < images.length; i++) {
+                    images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+                }
+                wx.previewImage({
+                    current: images[0], // 当前显示图片的http链接
+                    urls: images // 需要预览的图片http链接列表
+                });
             }
-            wx.previewImage({
-                current: images[0], // 当前显示图片的http链接
-                urls: images // 需要预览的图片http链接列表
-            });
+            else {
+                $("#dialog_alert").show();
+            }
         });
+        $("#alert-btn").click(function () {
+            $("#dialog_alert").hide();
+        })
         $("#checkinimg").click(function () {
-            var images = $(this).attr("data-target").split(',');
-            for (var i = 0; i < images.length; i++) {
-                images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+            var photos = $(this).attr("data-target");
+            if (photos.trim() != "") {
+                var images = photos.split(',');
+                for (var i = 0; i < images.length; i++) {
+                    images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+                }
+                wx.previewImage({
+                    current: images[0], // 当前显示图片的http链接
+                    urls: images // 需要预览的图片http链接列表
+                });
             }
-            wx.previewImage({
-                current: images[0], // 当前显示图片的http链接
-                urls: images // 需要预览的图片http链接列表
-            })
+            else {
+                $("#dialog_alert").show();
+            }
         });
         $("#checkinlbs").click(function () {
             var lbs = $(this).attr("location").split(',');

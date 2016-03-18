@@ -4121,6 +4121,15 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
+        [HttpPost]
+        public ActionResult Off_Ajax_GetStoreSeller(int id)
+        {
+            var list = from m in offlineDB.Off_Seller
+                       where m.StoreId == id
+                       select new { Id = m.Id, Name = m.Name };
+            return Json(new { result = "SUCCESS", data = list });
+        }
+
         // 0308
         [HttpPost]
         public ActionResult Off_DeleteSalesDaily(int id)

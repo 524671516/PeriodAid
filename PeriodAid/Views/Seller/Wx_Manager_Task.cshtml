@@ -34,10 +34,19 @@
 <div class="weui_cells weui_cells_access">
     <a class="weui_cell salary_details" href="/Seller/Wx_Manager_CheckInView">
         <div class="weui_cell_bd weui_cell_primary">
-            <p>查看签到信息</p>
+            <p>查看个人签到信息</p>
         </div>
         <div class="weui_cell_ft"></div>
     </a>
+    @if (User.IsInRole("Senior"))
+    {
+    <a class="weui_cell salary_details" href="/Seller/Wx_Senior_AllCheckInList">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>查看其他签到</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+    }
 </div>
 @section scripts{
 <script>

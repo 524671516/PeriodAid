@@ -68,10 +68,12 @@
         <div class="form-group">
             <label class="control-label col-md-3">销售员姓名</label>
             <div class="col-md-9">
+                <select id="SellerId" name="SellerId" class="form-control">
+                    <option value="">- 请选择 -</option>
+                </select>
                 @*@Html.DropDownListFor(model=>model.SellerId, ViewBag.Sellerlist as SelectList, "- 请选择 -", new { @class="form-control"})
                 @Html.ValidationMessageFor(model => model.SellerId, "", new { @class = "text-danger" })*@
-                @Html.EditorFor(model => model.SellerId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SellerId, "", new { @class = "text-danger" })
+                
             </div>
         </div>
 
@@ -122,18 +124,33 @@
 }
 <script>
     $(function(){
-        $("#Date").datepicker({
-            dateFormat: 'yy-mm-dd'
-        });
+        
     });
-    $(function () {
+    $("#Date").datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
     $("#submit-btn").click(function () {
-    $(this).attr("disabled", "disabled").val("添加中...");
-         setTimeout(formsubmit, 1000);
+        $(this).attr("disabled", "disabled").val("添加中...");
+        setTimeout(formsubmit, 1000);
 
-           return false;
-      })
-
+        return false;
+    });
+    $("#StoreId").bind("change", function () {
+        $.ajax({
+            url: "/OfflineSales/Off_Ajax_GetStoreSeller",
+            data: {
+                id: $("#StoreId").val()
+            },
+            type: "post",
+            success: function (data) {
+                if(data.result=="SUCCESS"){
+                    $("#SellerId").html("").append("<option value=''>- 请选择 -</option>");
+                    for (var i = 0; i < data.data.length; i++) {
+                        $("#SellerId").append("<option value='" + data.data[i].Id + "'>" + data.data[i].Name + "</option>");
+                    }
+                }
+            }
+        })
     });
     function formsubmit() {
         $('#ajaxaddForm').ajaxSubmit(function (data) {
@@ -153,8 +170,6 @@
             }
         });
     }
-    function refresh_page() {
-
-    }
+    
 </script>
 

@@ -1,22 +1,6 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
-    @using PagedList.Mvc;
+@using PagedList.Mvc;
 
-
-<div class="row">
-    <div class="col-xs-8">
-        <a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a>
-        <a class="btn btn-info btn-sm" href="/OfflineSales/UploadDailyInfo" style="margin-left:5px;"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a>
-    </div>
-    <div class="col-xs-4">
-        <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
-            <span class="input-group-btn">
-                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
-            </span>
-        </div>
-    </div>
-</div>
-<br />
 <table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
     <tr>
         <th style="width:10%">
@@ -149,18 +133,6 @@
             });
             return false;
         });
-        $("#add-btn").click(function () {
-            var link_url = "/OfflineSales/Off_CreateSalesDaily"
-            $.ajax({
-                url: link_url,
-                success: function (data) {
-                    $("#addcontent").html(data);
-                    $("#addModal").modal()
-                }
-            });
-            return false
-
-        })
         $(".del-btn").click(function () {
             var result = confirm("确定删除吗？")
             if (result) {

@@ -131,6 +131,7 @@
             <a href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
                 确认并提交
             </a>
+            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default" style="margin-top:10px;">返回首页</a>
         </div>
     }
     <div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
@@ -139,7 +140,7 @@
             <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
             <div class="weui_dialog_bd">销量数据已提报，重新提报会覆盖之前的数据，是否确认操作？</div>
             <div class="weui_dialog_ft">
-                <a href="/Seller/Wx_Seller_Home" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+                <a href="/Seller/Wx_Manager_Home" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
                 <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
             </div>
         </div>
@@ -186,6 +187,27 @@
             <p class="weui_toast_content">图片上传中...</p>
         </div>
     </div>
+<div id="submitToast" class="weui_loading_toast" style="display:none;">
+    <div class="weui_mask_transparent"></div>
+    <div class="weui_toast">
+        <div class="weui_loading">
+            <!-- :) -->
+            <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+        </div>
+        <p class="weui_toast_content">提交中...</p>
+    </div>
+</div>
     <div class="error-label container" style="display:none;">
         <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
         <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
@@ -245,25 +267,14 @@
             }
         });
         $("#submit-btn").click(function () {
-            if (img_array.length == 0) {
-                $("#dialog_text").text("请至少上传1张图片");
-                $("#dialog_alert").show();
-            }
-            else if (chk_img_array.length == 0) {
-                $("#dialog_text").text("请至少上传1张签到图片");
-                $("#dialog_alert").show();
-            }
-            else if ($("#Confirm_Remark").val().length == 0) {
+            if ($("#Confirm_Remark").val().length == 0) {
                 $("#dialog_text").text("请提交带签到备注信息");
                 $("#dialog_alert").show();
             }
             else {
-                if ($("#Report_Time").val() != "") {
-                    $("#dialog_confirm").show();
-                }
-                else {
-                    $("form").submit();
-                }
+                $("#submit-btn").attr("disabled", "disabled").text("提交中...");
+                $("#submitToast").show();
+                $("form").submit();
             }
         });
         $("#dialog_confirm_btn").click(function () {
