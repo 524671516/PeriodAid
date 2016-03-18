@@ -94,7 +94,7 @@
     <br />
     <h5><b>签到记录</b></h5>
     <div class="container">
-        @foreach (var item in Model.Off_Manager_CheckIn.Where(m=>m.Canceled==false))
+        @foreach (var item in Model.Off_Manager_CheckIn.Where(m => m.Canceled == false))
         {
             <div class="row" style="margin-top:5px;">
                 <div class="col-md-3">
@@ -186,9 +186,21 @@ else
                 <h4 class="modal-title" id="myModalLabel_01">查看图片</h4>
             </div>
             <div class="modal-body" id="carousel-body">
-                
-                    
+                <div class="carousel-inner" role="listbox" id="modal_con">
+                    <img class='img-thumbnail img-responsive' src='/Content/checkin-img/131021529529080785.jpg' style='max-width:600px; max-height:450px;margin-left:auto; margin-right:auto;display:block;' />
+                </div>
+                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+                <input type="hidden" value="0" id="current-pos" />
+                <input type="hidden" value="" id="current-photos" />
             </div>
+
         </div>
     </div>
 </div>
@@ -213,23 +225,36 @@ else
         return false;
     });
     $(".check-photo").click(function () {
-        $("#carousel-body").html("");
+        
         var photos = $(this).attr("data-target") + "";
         var photo_array = photos.split(",");
-        $("#carousel-body").append("<div id='carousel-example-generic' class='carousel slide' data-ride='carousel'><div class='carousel-inner' role='listbox' id='phone_con'>");
-        for (var i = 0; i < photo_array.length; i++) {
-            if (i == 0) {
-                $("#carousel-body").append("<div class='item active'><img class='img-thumbnail img-responsive' src='/Content/checkin-img/" + photo_array[i] + "' style='max-width:600px; max-height:450px;margin-left:auto; margin-right:auto;'></div>");
-            }
-            else {
-                $("#carousel-body").append("<div class='item'><img class='img-thumbnail img-responsive' src='/Content/checkin-img/" + photo_array[i] + "' style='max-width:600px; max-height:450px;margin-left:auto; margin-right:auto;'></div>");
-            }
-        }
-        $("#carousel-body").append("</div><a class='left carousel-control' href='#carousel-example-generic' role='button' data-slide='prev'>'<span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>" +
-                    "</a><a class='right carousel-control' href='#carousel-example-generic' role='button' data-slide='next'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span></a></div>");
-        //$('.carousel').carousel();
+        $("#modal_con img").attr("src", "/Content/checkin-img/" + photo_array[0]);
+        $("#current-photos").val(photos);
         $("#msModal").modal();
     });
-    
+    $(".left.carousel-control").click(function () {
+        var photo_array = $("#current-photos").val().split(",");
+        var next = 0;
+        if ($("#current-pos").val() == 0) {
+            next = photo_array.length - 1;
+        }
+        else {
+            next = parseInt($("#current-pos").val()) - 1;
+        }
+        $("#current-pos").val(next);
+        $("#modal_con img").attr("src", "/Content/checkin-img/" + photo_array[next]);
+    });
+    $(".right.carousel-control").click(function () {
+        var photo_array = $("#current-photos").val().split(",");
+        var next = 0;
+        if ($("#current-pos").val() == (photo_array.length - 1)) {
+            next = 0;
+        }
+        else {
+            next = parseInt($("#current-pos").val()) + 1;
+        }
+        $("#current-pos").val(next);
+        $("#modal_con img").attr("src", "/Content/checkin-img/" + photo_array[next]);
+    });
 </script>
 

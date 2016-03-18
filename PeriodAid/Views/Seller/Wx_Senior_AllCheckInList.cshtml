@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewBag.Title = "督导管理 签到";
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+    ViewBag.Current = 0;
+}
+<div class="hd">
+    <h2 class="page_title text-center">查看签到数据</h2>
+</div>
+<input type="hidden" id="select-id" />
+@if (ViewBag.checkinlist != null)
+{
+    <div class="weui_cells_title">选择日期</div>
+    <div class="weui_cells">
+        <div class="weui_cell weui_cell_select">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.DropDownList("checklist", ViewBag.checkinlist as SelectList, new { @class = "weui_select", @id = "task_id" })
+            </div>
+        </div>
+    </div>
+    <div id="form_zone"></div>
+    <br />
+    <div class="container">
+        <a href="/Seller/Wx_Manager_Task" class="weui_btn weui_btn_default">返回</a>
+    </div>
+    <br /><br />
+}
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/Seller/Wx_Senior_AllCheckInlist_Ajax",
+                data: {
+                    date: $("#task_id").val()
+                },
+                success: function (data) {
+                    $("#form_zone").html(data);
+                }
+            })
+        });
+        $("#task_id").change(function () {
+            $.ajax({
+                url: "/Seller/Wx_Senior_AllCheckInlist_Ajax",
+                data: {
+                    date: $("#task_id").val()
+                },
+                success: function (data) {
+                    $("#form_zone").html(data);
+                }
+            })
+        });
+    </script>
+}

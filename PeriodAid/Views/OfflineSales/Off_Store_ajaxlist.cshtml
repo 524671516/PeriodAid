@@ -1,9 +1,7 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
 @using PagedList.Mvc;
 
-<a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a>
-<a class="btn btn-info btn-sm" href="/OfflineSales/UploadStore" style="margin-left:5px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a>
-<br /><br />
+
 <table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
     <tr>
         <th style="width:15%">
@@ -128,17 +126,7 @@
             });
             return false;
         });
-        $("#add-btn").click(function () {
-            var link_url = "/OfflineSales/Off_CreateStore";
-            $.ajax({
-                url: link_url,
-                success: function (data) {
-                    $("#addcontent").html(data);
-                    $('#addModal').modal()
-                }
-            });
-            return false;
-        });
+        
         $(".del-btn").click(function () {
             var result = confirm("确定删除吗？");
             if (result) {
@@ -155,21 +143,6 @@
                 
             }
             return false;
-            //var result = confirm("是/否");
-            //if (result) {
-            //    //alert("success");
-            //    window.location.reload();
-            //    //$.ajax({
-            //    //    url: "/OfflineSales/Off_Store_ajaxlist",
-            //    //    data: {
-            //    //        query: $("#search-query").val()
-            //    //    },
-            //    //    success: function (data) {
-            //    //        $("#list-container").html(data);
-            //    //    }
-                    
-            //    //});
-            //}
             
         })
        

@@ -1003,8 +1003,8 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(checkin))
                 {
                     checkin.Report_Time = DateTime.Now;
-                    checkin.CheckinLocation = "N/A";
-                    checkin.CheckoutLocation = "N/A";
+                    checkin.CheckinLocation = checkin.CheckinLocation == null ? "N/A" : checkin.CheckinLocation;
+                    checkin.CheckoutLocation = checkin.CheckoutLocation == null ? "N/A" : checkin.CheckoutLocation;
                     checkin.ConfirmTime = DateTime.Now;
                     checkin.ConfirmUser = User.Identity.Name;
                     checkin.Status = 3;
@@ -1608,11 +1608,58 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+        // 0317 查看所有人签到列表
+        [Authorize(Roles = "Senior")]
+        public ActionResult Wx_Senior_AllCheckInList()
+        {
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.Status == 0
+                       group m by m.TaskDate into g
+                       select new { g.Key };
+            list = list.OrderByDescending(m => m.Key);
+            List<Object> attendance = new List<Object>();
+            foreach (var i in list)
+            {
+                attendance.Add(new { Key = i.Key, Value = i.Key.ToString("yyyy-MM-dd") });
+            }
+            if (attendance.Count > 0)
+                ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Key);
+            return View();
+        }
+
+        // 0317 查看所有人签到列表-AJAX
+        public ActionResult Wx_Senior_AllCheckInList_Ajax(string date)
+        {
+            var _date = Convert.ToDateTime(date);
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.TaskDate == _date && m.Status >= 0
+                       select m;
+            return PartialView(list);
+        }
+
+
+        // 0317 查看签到详情信息
+        [Authorize(Roles ="Senior")]
+        public ActionResult Wx_Senior_CheckInDetails(int id)
+        {
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
+            return View(item);
+        }
+
         [AllowAnonymous]
         public ActionResult Wx_Manager_QuerySeller()
         {
             return View();
         }
+
         [AllowAnonymous]
         [HttpPost]
         public JsonResult Wx_Manager_AjaxSellerName(string query)
