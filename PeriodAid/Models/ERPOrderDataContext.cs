@@ -258,7 +258,7 @@
         [StringLength(64)]
         public string invoice_title { get; set; }
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string invoice_content { get; set; }
 
         public decimal? invoice_amount { get; set; }

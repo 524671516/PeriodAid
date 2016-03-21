@@ -38,6 +38,7 @@ namespace PeriodAid.DAL
                 create_time = DateTime.Now
             };
             erpdb.taskstatus.Add(currenttask);
+            string[] results;
             erpdb.SaveChanges();
             if (totalcount > 10000)
             {
@@ -67,7 +68,7 @@ namespace PeriodAid.DAL
                     {
                         if (j == 20)
                         {
-                            string[] results = await Task.WhenAll<string>(alltasks);
+                            results = await Task.WhenAll<string>(alltasks);
                             if (results.Contains("Fail"))
                             {
                                 currenttask.status = -1;
@@ -87,7 +88,13 @@ namespace PeriodAid.DAL
                 {
                     CommonUtilities.writeLog(e.Message);
                 }
-                await Task.WhenAll(alltasks);
+                results = await Task.WhenAll<string>(alltasks);
+                if (results.Contains("Fail"))
+                {
+                    currenttask.status = -1;
+                    erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
+                    erpdb.SaveChanges();
+                }
                 currenttask.currentcount = totalcount;
                 currenttask.finish_time = DateTime.Now;
                 currenttask.status = 1;
