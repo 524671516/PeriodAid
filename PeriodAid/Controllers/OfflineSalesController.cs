@@ -67,7 +67,7 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        
+
 
         #region 销售数据表(旧版)
         public ActionResult Sales_Home()
@@ -3412,7 +3412,7 @@ namespace PeriodAid.Controllers
         {
             int _page = page ?? 1;
             var list = (from m in offlineDB.Off_Expenses
-                        where m.Status>=0
+                        where m.Status >= 0
                         orderby m.Id descending
                         select m).ToPagedList(_page, 50);
             return PartialView(list);
@@ -3453,7 +3453,7 @@ namespace PeriodAid.Controllers
         {
             var listcontent = "";
             int i = 0;
-            foreach(var item in form.GetValues("list"))
+            foreach (var item in form.GetValues("list"))
             {
                 listcontent += item.ToString();
                 i++;
@@ -3510,19 +3510,19 @@ namespace PeriodAid.Controllers
                        {
                            Name = g.Key.Name,
                            StoreName = g.Key.Off_Store.StoreName,
-                           Distributor= g.Key.Off_Store.Distributor,
+                           Distributor = g.Key.Off_Store.Distributor,
                            Mobile = g.Key.Mobile,
                            IdNumber = g.Key.IdNumber,
                            CardName = g.Key.CardName,
                            CardNo = g.Key.CardNo,
                            Salary = g.Sum(m => m.Salary) == null ? 0 : g.Sum(m => m.Salary),
                            Bonus = g.Sum(m => m.Bonus) == null ? 0 : g.Sum(m => m.Bonus),
-                           Debit =g.Sum(m=>m.Debit) == null? 0 : g.Sum(m=>m.Debit),
+                           Debit = g.Sum(m => m.Debit) == null ? 0 : g.Sum(m => m.Debit),
                            AccountName = g.Key.AccountName,
                            All = g.Count(m => m.Attendance == 0),
                            Delay = g.Count(m => m.Attendance == 1),
-                           Leave = g.Count(m=> m.Attendance ==2),
-                           Absence = g.Count(m=>m.Attendance ==3)
+                           Leave = g.Count(m => m.Attendance == 2),
+                           Absence = g.Count(m => m.Attendance == 3)
                        };
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);
@@ -3571,7 +3571,7 @@ namespace PeriodAid.Controllers
         #region 绑定促销员
         public ActionResult Off_BindSeller_List(string query)
         {
-            if (query==null)
+            if (query == null)
             {
                 var list = offlineDB.Off_Membership_Bind.OrderByDescending(m => m.ApplicationDate);
                 return View(list);
@@ -3615,7 +3615,7 @@ namespace PeriodAid.Controllers
             if (_history)
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
-                           where m.Subscribe<currentTime
+                           where m.Subscribe < currentTime
                            group m by m.Subscribe into g
                            orderby g.Key descending
                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
@@ -3630,7 +3630,7 @@ namespace PeriodAid.Controllers
                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
                 return View(list);
             }
-            
+
         }
         public ActionResult Off_ScheduleDetails(string date)
         {
@@ -3692,7 +3692,7 @@ namespace PeriodAid.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if(model.StartDate > model.EndDate)
+                    if (model.StartDate > model.EndDate)
                     {
                         var storesystem = from m in offlineDB.Off_Store
                                           group m by m.StoreSystem into g
@@ -3702,7 +3702,7 @@ namespace PeriodAid.Controllers
                         ModelState.AddModelError("", "开始日期不得大于结束日期");
                         return View(model);
                     }
-                    if(form["StoreList"].ToString().Trim() == "")
+                    if (form["StoreList"].ToString().Trim() == "")
                     {
                         var storesystem = from m in offlineDB.Off_Store
                                           group m by m.StoreSystem into g
@@ -3714,11 +3714,11 @@ namespace PeriodAid.Controllers
                     }
                     var datelength = Convert.ToInt32(model.EndDate.Subtract(model.StartDate).TotalDays);
                     // 每天循环
-                    for (int i=0; i <= datelength; i++)
+                    for (int i = 0; i <= datelength; i++)
                     {
-                        
+
                         string[] storelist = form["StoreList"].ToString().Split(',');
-                        for (int j = 0; j < storelist.Length;j++)
+                        for (int j = 0; j < storelist.Length; j++)
                         {
                             string[] begintime = model.BeginTime.Split(':');
                             string[] finishtime = model.FinishTime.Split(':');
@@ -3852,15 +3852,18 @@ namespace PeriodAid.Controllers
                     offlineDB.SaveChanges();
                     return RedirectToAction("Off_CheckIn_List");
                 }
-                else if(item.Status == 3)
+                else if (item.Status >= 0 && item.Status <= 3)
                 {
                     item.Status = 4;
+
                     item.Rep_Lemon = model.Rep_Lemon;
                     item.Rep_Brown = model.Rep_Brown;
                     item.Rep_Black = model.Rep_Black;
                     item.Rep_Honey = model.Rep_Honey;
                     item.Rep_Dates = model.Rep_Dates;
                     item.Rep_Other = model.Rep_Other;
+                    item.CheckinLocation = item.CheckinLocation ?? "N/A";
+                    item.CheckoutLocation = item.CheckoutLocation ?? "N/A";
                     item.Confirm_Remark = model.Confirm_Remark;
                     item.ConfirmUser = User.Identity.Name;
                     item.ConfirmTime = DateTime.Now;
@@ -3946,7 +3949,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult Off_CreateCheckIn_FileUpload(FormCollection form)
         {
-            var  files = Request.Files;
+            var files = Request.Files;
             string msg = string.Empty;
             string error = string.Empty;
             string imgurl;
@@ -3973,7 +3976,7 @@ namespace PeriodAid.Controllers
         public ActionResult Off_CancelCheckIn(int id)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
-            if(item.Status>=0 && item.Status < 5)
+            if (item.Status >= 0 && item.Status < 5)
             {
                 item.Status = -1;
                 offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
@@ -3994,7 +3997,7 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             int _status = status ?? 4;
             // 按照活动日期排序
-            if (query==null)
+            if (query == null)
             {
                 var list = (from m in offlineDB.Off_Checkin
                             where m.Status == _status
@@ -4039,7 +4042,7 @@ namespace PeriodAid.Controllers
             return Content("SUCCESS");
         }
 
-        
+
 
         public ActionResult Off_CreateStore()
         {
@@ -4075,7 +4078,9 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_Store.SingleOrDefault(m => m.Id == id);
             if (item != null)
             {
-                try { offlineDB.Off_Store.Remove(item);
+                try
+                {
+                    offlineDB.Off_Store.Remove(item);
                     offlineDB.SaveChanges();
                     return Content("SUCCESS");
                 }
@@ -4336,18 +4341,18 @@ namespace PeriodAid.Controllers
             if (query == null)
             {
                 var list = (from m in offlineDB.Off_Manager_Task
-                           where m.Status == _status
+                            where m.Status == _status
                             orderby m.TaskDate descending
-                            select m).ToPagedList(_page,30);
+                            select m).ToPagedList(_page, 30);
                 return PartialView(list);
             }
             else
             {
                 var list = (from m in offlineDB.Off_Manager_Task
-                           where m.Status == _status
-                           && m.NickName.Contains(query)
-                           orderby m.TaskDate descending
-                           select m).ToPagedList(_page, 30);
+                            where m.Status == _status
+                            && m.NickName.Contains(query)
+                            orderby m.TaskDate descending
+                            select m).ToPagedList(_page, 30);
                 return PartialView(list);
             }
         }
@@ -4356,7 +4361,8 @@ namespace PeriodAid.Controllers
         public ActionResult Off_Manager_EditTask(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
-            if (item != null){
+            if (item != null)
+            {
                 return View(item);
             }
             else
@@ -4367,7 +4373,7 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Manager_EditTask(Off_Manager_Task model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var item = new Off_Manager_Task();
                 if (TryUpdateModel(item))
@@ -4412,7 +4418,7 @@ namespace PeriodAid.Controllers
             Array.Copy(array, 0, outBuffer, 3, array.Length);
             return outBuffer;
         }
-        
+
 
     }
 

@@ -29,7 +29,7 @@
                 <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd")" readonly />
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
             <div class="input-group">
                 <div class="input-group-addon"><small>店铺名称</small></div>
                 <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Off_Store.StoreName" readonly />
@@ -45,7 +45,6 @@
                 <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Seller.Name" readonly />
             </div>
         </div>
-        <div class="col-md-3"></div>
     </div>
 </div>
 <br />
@@ -54,7 +53,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="input-group">
-                <div class="input-group-addon"><small>标准签到时间</small></div>
+                <div class="input-group-addon"><small>标准签到</small></div>
                 <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Standard_CheckIn" readonly />
             </div>
         </div>
@@ -90,7 +89,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="input-group">
-                <div class="input-group-addon"><small>标准签退时间</small></div>
+                <div class="input-group-addon"><small>标准签退</small></div>
                 <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Standard_CheckOut" readonly />
             </div>
         </div>
@@ -119,7 +118,7 @@
     @Html.HiddenFor(m => m.CheckIn_Id)
     <div class="container">
         <div class="row">
-            @if (ViewBag.CheckItem.Status == 3)
+            @if (ViewBag.CheckItem.Status <= 3 && ViewBag.CheckItem.Status>=0)
             {
                 <div class="col-md-2">
                     <div class="input-group">
@@ -246,7 +245,7 @@
                     <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.ConfirmTime" readonly />
                 </div>
             </div>
-            @if (ViewBag.CheckItem.Status == 3)
+            @if (ViewBag.CheckItem.Status <=3&& ViewBag.CheckItem.Status>=0)
             {
                 <div class="col-md-5">
                     <div class="input-group">
@@ -351,7 +350,7 @@
             {
                 <button class="btn btn-success btn-sm">确认结算</button> <a href="/OfflineSales/Off_CheckIn_List" class="btn btn-default btn-sm">返回</a>
             }
-            else if (ViewBag.CheckItem.Status == 3)
+            else if (ViewBag.CheckItem.Status<=3&&ViewBag.CheckItem.Status>=0)
             {
                 <button class="btn btn-success btn-sm">确认销售</button> <a href="/OfflineSales/Off_CheckIn_List" class="btn btn-default btn-sm">返回</a>
             }

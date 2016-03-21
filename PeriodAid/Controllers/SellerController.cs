@@ -1697,13 +1697,14 @@ namespace PeriodAid.Controllers
             return View(item);
         }
 
-        [AllowAnonymous]
+        // 0319 查询促销员
+        [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_QuerySeller()
         {
             return View();
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public JsonResult Wx_Manager_AjaxSellerName(string query)
         {
@@ -1713,7 +1714,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS", data = list.Take(5) });
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public JsonResult Wx_Manager_AjaxSellerDetails(int id)
         {
