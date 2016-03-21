@@ -265,6 +265,10 @@ namespace PeriodAid.Models
 
         public int? Rep_Total { get; set; }
 
+        public decimal? AVG_Total { get; set; }
+
+        public int StoreId { get; set; }
+
         [Required(ErrorMessage = "金额不能为空")]
         [Range(0, 200, ErrorMessage = "奖金金额不能大于200元")]
         public decimal? Bonus { get; set; }

@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<PeriodAid.Models.Wx_ManagerReportListViewModel>
 
 <div class="weui_cells_title">@Html.Encode(ViewBag.Today.ToString("MM-dd")):&nbsp;当天累计红包 @Model.Count(m => m.Bonus > 0) 个，合计 @String.Format("{0:F}", Model.Sum(m => m.Bonus)) 元</div>
-<div class="weui_cells weui_cells_access">
+<div class="weui_cells">
     @foreach (var item in Model.OrderByDescending(m => m.Rep_Total))
     {
-        <a class="weui_cell" href="javascript:;" data-rel="@item.Id">
+        <div class="weui_cell store_item" data-rel="@item.Id">
             <div class="weui_cell_hd">
                 @if (item.Status == 4)
                 {
@@ -12,14 +12,20 @@
                 }
                 else
                 {
-                    <i class="weui_icon_success" style="margin:0 10px 0 0"></i>
+                    <i class="fa fa-check text-success" style="margin:0 5px 0 0"></i>
                 }
             </div>
             <div class="weui_cell_bd weui_cell_primary">
-                    <p>@Html.Encode(item.StoreName)</p>
+                <p>@Html.Encode(item.StoreName)&nbsp;
+                @if (item.Bonus != null)
+                {
+                    <i class="fa fa-gift text-muted"></i>
+                }</p>
             </div>
-            <div class="weui_cell_ft">@Html.Encode(item.Rep_Total) (@String.Format("{0:F}",item.Bonus??0))</div>
-        </a>
+            <div class="weui_cell_ft"><i class="fa fa-history"></i>&nbsp;@Html.Encode(item.AVG_Total)&nbsp;&nbsp;<i class="fa fa-tags"></i>&nbsp;@Html.Encode(item.Rep_Total)
+                
+            </div>
+        </div>
     }
 </div>
 <div id="actionSheet_wrap">
@@ -68,7 +74,7 @@
     function cancelpost() {
         hideActionSheet(weuiActionsheet, mask);
     }
-    $("a.weui_cell").click(function () {
+    $(".store_item").click(function () {
         $.ajax({
             url: "/Seller/Wx_Manager_ConfirmRedPack",
             data: {

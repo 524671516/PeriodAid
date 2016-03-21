@@ -341,6 +341,17 @@ namespace PeriodAid.Controllers
         {
             int storeId = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId).StoreId;
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var dow = today.DayOfWeek;
+            var dowinfo = from m in offlineDB.Off_AVG_SalesData
+                          where m.DayOfWeek == (int)dow && m.StoreId == storeId
+                          select new { BR = m.AVG_BROWN, BL = m.AVG_BLACK, DT = m.AVG_DATES, HN = m.AVG_HONEY, LM = m.AVG_LEMON };
+            if (dowinfo.Count() == 0)
+                ViewBag.AVG_Info = 0;
+            else
+            {
+                var l = dowinfo.FirstOrDefault();
+                ViewBag.AVG_Info = (l.BL ?? 0) + (l.LM ?? 0) + (l.HN ?? 0) + (l.BR ?? 0) + (l.DT ?? 0);
+            }
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == storeId);
             ViewBag.SellerId = SellerId;
             if (item != null)
@@ -1214,13 +1225,18 @@ namespace PeriodAid.Controllers
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             DateTime today = Convert.ToDateTime(date);
             ViewBag.Today = today;
+            int dow = (int)today.DayOfWeek;
+            if(dow == 0)
+            {
+                dow = 7;
+            }
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
             var storelist = manager.Off_Store.Select(m => m.Id);
-            var list = from m in offlineDB.Off_Checkin
+            var listview = from m in offlineDB.Off_Checkin
                        where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
                        && m.Off_Checkin_Schedule.Subscribe == today
                        && m.Status >= 4
-                       select new Wx_ManagerReportListViewModel
+                       select new
                        {
                            Id = m.Id,
                            Status = m.Status,
@@ -1230,12 +1246,39 @@ namespace PeriodAid.Controllers
                            Rep_Honey = m.Rep_Honey,
                            Rep_Lemon = m.Rep_Lemon,
                            Rep_Other = m.Rep_Other,
+                           StoreId = m.Off_Checkin_Schedule.Off_Store_Id,
                            SellerName = m.Off_Seller.Name,
                            StoreName = m.Off_Checkin_Schedule.Off_Store.StoreName,
                            Rep_Total = ((m.Rep_Brown ?? 0) + (m.Rep_Black ?? 0) + (m.Rep_Honey ?? 0) + (m.Rep_Lemon ?? 0) + (m.Rep_Dates ?? 0) + (m.Rep_Other ?? 0)),
                            Bonus = m.Bonus
                        };
-            return PartialView(list);
+            //var storelist = list.Select(m => m.StoreId);
+            var avglist = from m in offlineDB.Off_AVG_SalesData
+                          where m.DayOfWeek == dow &&
+                          storelist.Contains(m.StoreId)
+                          select new { StoreId = m.StoreId, AVG_Total = ((m.AVG_LEMON ?? 0) + (m.AVG_HONEY ?? 0) + (m.AVG_DATES ?? 0) + (m.AVG_BROWN ?? 0) + (m.AVG_BLACK ?? 0)) };
+
+            var finallist = from m1 in listview
+                            join m2 in avglist on m1.StoreId equals m2.StoreId into lists
+                            from m in lists.DefaultIfEmpty()
+                            select new Wx_ManagerReportListViewModel
+                            {
+                                Id = m1.Id,
+                                Status = m1.Status,
+                                Rep_Black = m1.Rep_Black,
+                                Rep_Brown = m1.Rep_Brown,
+                                Rep_Dates = m1.Rep_Dates,
+                                Rep_Honey = m1.Rep_Honey,
+                                Rep_Lemon = m1.Rep_Lemon,
+                                Rep_Other = m1.Rep_Other,
+                                StoreId = m1.StoreId,
+                                SellerName = m1.SellerName,
+                                StoreName = m1.StoreName,
+                                Rep_Total = m1.Rep_Total,
+                                Bonus = m1.Bonus,
+                                AVG_Total = m.AVG_Total
+                            };
+            return PartialView(finallist);
         }
 
         [Authorize(Roles ="Manager")]
