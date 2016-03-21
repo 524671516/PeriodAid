@@ -565,7 +565,9 @@
     <Content Include="Views\Seller\Wx_Senior_AllCheckInList.cshtml" />
     <Content Include="Views\Seller\Wx_Senior_AllCheckInList_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Senior_CheckInDetails.cshtml" />
-    <Content Include="Views\ERPOrder\Index.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Order_List.cshtml" />
+    <Content Include="Views\ERPOrder\_ERPOrder_Layout.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Member_List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
