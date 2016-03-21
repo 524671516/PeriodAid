@@ -13,12 +13,12 @@ using System.Web.Mvc;
 
 namespace PeriodAid.DAL
 {
-    public class AppPayUtilites
+    public class AppPayUtilities
     {
         private AppPay PaymentDb;
         private WeChatUtilities WeUtil;
         private const string notify_url = "http://webapp.shouquanzhai.cn/Pay/wx_pay_nofity";
-        public AppPayUtilites()
+        public AppPayUtilities()
         {
             PaymentDb = new AppPay();
             WeUtil = new WeChatUtilities();

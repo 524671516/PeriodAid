@@ -202,8 +202,9 @@
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
-    <Compile Include="DAL\AppPayUtilites.cs" />
+    <Compile Include="DAL\AppPayUtilities.cs" />
     <Compile Include="DAL\CommonUtilities.cs" />
+    <Compile Include="DAL\ERPOrderUtilities.cs" />
     <Compile Include="DAL\GPRSPrinter.cs" />
     <Compile Include="DAL\PeriodAidUtilities.cs" />
     <Compile Include="DAL\ValidateCode.cs" />
@@ -212,10 +213,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603210857396_20160321.cs" />
+    <Compile Include="Migrations\201603210857396_20160321.Designer.cs">
+      <DependentUpon>201603210857396_20160321.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
     <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\ERPOrderDataContext.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\OfflineSales.cs" />
@@ -568,6 +574,7 @@
     <Content Include="Views\ERPOrder\Download_Order_List.cshtml" />
     <Content Include="Views\ERPOrder\_ERPOrder_Layout.cshtml" />
     <Content Include="Views\ERPOrder\Download_Member_List.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Order_List_Ajax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -580,6 +587,11 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201603210857396_20160321.resx">
+      <DependentUpon>201603210857396_20160321.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

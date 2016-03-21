@@ -616,7 +616,7 @@ namespace PeriodAid.Controllers
                     await promotionDB.SaveChangesAsync();
                     // 创建红包
                     int amount = r.Next(100, 500);
-                    AppPayUtilites pay = new AppPayUtilites();
+                    AppPayUtilities pay = new AppPayUtilities();
                     string result = await pay.WxRedPackCreate(entry.openId, amount, entry.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
                     //
                     entry.mch_result = result;
@@ -648,7 +648,7 @@ namespace PeriodAid.Controllers
                 {
                     if (item.status == 0)
                     {
-                        AppPayUtilites pay = new AppPayUtilites();
+                        AppPayUtilities pay = new AppPayUtilities();
                         string result = await pay.WxRedPackQuery(item.mch_billno);
                         CommonUtilities.writeLog(result);
                         if (result == "RECEIVED")

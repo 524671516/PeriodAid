@@ -1,0 +1,43 @@
+﻿@model IEnumerable<PeriodAid.Models.taskstatus>
+
+
+<table class="table table-condensed table-striped h6" style="table-layout:fixed;width:100%;">
+    <tbody>
+        <tr>
+            <td style="width:10%">任务</td>
+            <td style="width:20%">开始时间</td>
+            <td style="width:20%">结束时间</td>
+            <td style="width:20%">订单名称</td>
+            <td style="width:15%">状态</td>
+            <td style="width:15%">完成度</td>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.create_time)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.finish_time)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.totalcount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.currentcount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.message)
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>

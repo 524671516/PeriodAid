@@ -15,20 +15,19 @@
         <button class="btn btn-info" id="query">下载</button>
     </div>
 </div><br />
-<table class="table table-condensed table-striped h6" style="table-layout:fixed;width:100%;">
-    <tbody>
-        <tr>
-            <td style="width:10%">任务</td>
-            <td style="width:20%">开始时间</td>
-            <td style="width:20%">结束时间</td>
-            <td style="width:20%">订单名称</td>
-            <td style="width:15%">状态</td>
-            <td style="width:15%">完成度</td>
-        </tr>
-    </tbody>
-</table>
+<div id="table-content">
+
+</div>
 @section scripts{
     <script>
+        $(function () {
+            $.ajax({
+                url: "/ERPOrder/Download_Order_List_Ajax",
+                success: function (data) {
+                    $("#table-content").html(data);
+                }
+            })
+        });
         $(".start-date").datepicker({
             dateFormat: 'yy-mm-dd'
         });
@@ -39,13 +38,25 @@
             var start = $('.start-date').val();
             var end = $('.end-date').val();
             //var status = status
-            var link_url = "/ERPOrder/Download_Order_Status_Ajax?start="+ start + "&end" + end 
+            var link_url = "/ERPOrder/Download_Order_Start_Ajax"
             $.ajax({
                 url: link_url,
                 data: {
+                    st: start,
+                    et: end
+                },
+                type: "post",
+                success: function (data) {
 
                 }
-            })
+            });
+            alert("开始下载");
+            $.ajax({
+                url: "/ERPOrder/Download_Order_List_Ajax",
+                success: function (data) {
+                    $("#table-content").html(data);
+                }
+            });
         })
     </script>
     }

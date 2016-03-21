@@ -24,14 +24,14 @@ namespace PeriodAid.Controllers
 
         public async Task<ActionResult> QueryWxPack(string orderno)
         {
-            AppPayUtilites appPay = new AppPayUtilites();
+            AppPayUtilities appPay = new AppPayUtilities();
             var result = await appPay.WxRedPackQuery(orderno);
             return Content(result);
         }
         public async Task<ActionResult> CreateWxPack(string openid)
         {
 
-            AppPayUtilites appPay = new AppPayUtilites();
+            AppPayUtilities appPay = new AppPayUtilities();
             var result = await appPay.WxRedPackCreate(openid, 100);
             return Content(result);
         }
