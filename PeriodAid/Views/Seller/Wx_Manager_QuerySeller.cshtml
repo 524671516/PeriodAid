@@ -1,17 +1,160 @@
 ﻿
 @{
-    Layout = null;
+    ViewBag.Title = "督导管理 工具";
+    ViewBag.Current = 2;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Wx_Manager_QuerySeller</title>
-</head>
-<body>
-    <div> 
+    <div class="container" style="border-bottom:none;">
+        <br />
+        <div class="weui_search_bar" id="search_bar">
+            <form class="weui_search_outer">
+                <div class="weui_search_inner">
+                    <i class="weui_icon_search"></i>
+                    <input type="search" class="weui_search_input" id="search_input" placeholder="搜索" required>
+                    <a href="javascript:;" class="weui_icon_clear" id="search_clear"></a>
+                </div>
+                <label for="search_input" class="weui_search_text" id="search_text">
+                    <i class="weui_icon_search"></i>
+                    <span>搜索</span>
+                </label>
+            </form>
+            <a href="javascript:cancel_input();" class="weui_search_cancel" id="search_cancel">取消</a>
+        </div>
+        <div class="weui_cells weui_cells_access search_show" id="search_show" style="display:none; margin-top:0;position:absolute;width:100%; z-index:999;">
+        </div>
+        <div class="weui_cells" id="weui_con">
+            <div class="weui_cell">
+                <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-shopping-bag"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>店铺名称</p>
+                </div>
+                <span class="weui_cell_ft" id="storeName" style="display:inline-block"></span>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-user"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>姓名</p>
+                </div>
+                <span class="weui_cell_ft" id="name"></span>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-phone-square"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>电话</p>
+                </div>
+                <span class="" id="mobile" style="display:inline-block"></span>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card-alt"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>身份证号码</p>
+                </div>
+                <span class="weui_cell_ft" id="idNumber" style="display:inline-block"></span>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-user"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>开户人姓名</p>
+                </div>
+                <span class="weui_cell_ft" id="accountName" style="display:inline-block"></span>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>开户行</p>
+                </div>
+                <span class="weui_cell_ft" id="cardName" style="display:inline-block"></span>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card-alt"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>银行账号</p>
+                </div>
+                <span class="weui_cell_ft" id="carNd" style="display:inline-block"></span>
+            </div>
+            
+            
+        </div>
     </div>
-</body>
-</html>
+@section scripts{
+<script>
+    $("#weui_con").hide();
+    $(function () {
+        $("#search_show").delegate(".search_item", "click", function () {
+            var id = $(this).attr("data-target");
+            $.ajax({
+                url: "/Seller/Wx_Manager_AjaxSellerDetails",
+                data: {
+                    id: id
+                },
+                type: "post",
+                success: function (data) {
+                    $("#name").text(data.data.Name);
+                    $("#mobile").text(data.data.Mobile);
+                    $("#carNd").text(data.data.CardNo);
+                    $("#cardName").text(data.data.CardName);
+                    $("#storeName").text(data.data.StoreName);
+                    $("#accountName").text(data.data.AccountName);
+                    $("#idNumber").text(data.data.IdNumber);
+                    $("#search_show").hide();
+                    $("#search_input").val('');
+                    $("#weui_con").show();
+                    if ($("#accountName").text('')) {
+                        $("#accountName").text('')
+                    }
+                }
+            })
+        });
+
+    })
+    $("#search_input").focus(function () {
+        var $weuiSearchBar = $('#search_bar');
+        $weuiSearchBar.addClass("weui_search_focusing")
+    });
+    $("#search_input").blur(function () {
+        var $weuiSearchBar = $('#search_bar');
+        $weuiSearchBar.removeClass('weui_search_focusing');
+        if ($(this).val()) {
+            $('#search_text').hide();
+        } else {
+            $('#search_text').show();
+        }
+    });
+    $("#search_cancel").click(function () {
+        $("#search_show").hide();
+        $("#search_input").val('');
+    });
+    $("#search_clear").click(function () {
+        $("#search_show").hide();
+        $("#search_input").val('');
+    })
+    $("#search_input").keyup(function () {
+        var $searchShow = $("#search_show")
+        if ($(this).val() != "") {
+            $.ajax({
+                url: "/Seller/Wx_Manager_AjaxSellerName",
+                data: {
+                    query: $("#search_input").val()
+                },
+                type: "post",
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#search_show").html("");
+                        for (var i = 0; i < data.data.length; i++) {
+                            var item = data.data[i];
+                            var txt = "<div class='weui_cell search_item' data-target='" + item.Id + "'><div class='weui_cell_bd weui_cell_primary'><p>" + item.Name + "</p></div><div class='weui_cell_ft'>" + item.Store + "</div></div>";
+                            $("#search_show").append(txt);
+                        }
+                        $searchShow.show();
+                    }
+                }
+            })
+        } else {
+            $searchShow.hide();
+        }
+    })
+
+
+</script>
+}
