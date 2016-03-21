@@ -3855,7 +3855,6 @@ namespace PeriodAid.Controllers
                 else if (item.Status >= 0 && item.Status <= 3)
                 {
                     item.Status = 4;
-
                     item.Rep_Lemon = model.Rep_Lemon;
                     item.Rep_Brown = model.Rep_Brown;
                     item.Rep_Black = model.Rep_Black;

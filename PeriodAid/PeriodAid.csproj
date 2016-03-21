@@ -192,6 +192,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CustomController.cs" />
+    <Compile Include="Controllers\ERPOrderController.cs" />
     <Compile Include="Controllers\ExaminationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -564,6 +565,7 @@
     <Content Include="Views\Seller\Wx_Senior_AllCheckInList.cshtml" />
     <Content Include="Views\Seller\Wx_Senior_AllCheckInList_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Senior_CheckInDetails.cshtml" />
+    <Content Include="Views\ERPOrder\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
