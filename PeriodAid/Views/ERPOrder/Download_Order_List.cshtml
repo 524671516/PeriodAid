@@ -40,36 +40,46 @@
         $("#query").click(function () {
             var start = $('.start-date').val();
             var end = $('.end-date').val();
+            var link_url = "/ERPOrder/Download_Order_Start_Ajax";
+            if (start == '', end == '') {
+                window.alert("无数据下载")
+            } else {
+                $.ajax({
+                    url: link_url,
+                    data: {
+                        st: start,
+                        et: end
+                    },
+                    type: "post",
+                    success: function (data) {
+                    }
+
+                });
+                alert("开始下载");
+                $.ajax({
+                    url: "/ERPOrder/Download_Order_List_Ajax",
+                    success: function (data) {
+                        $("#table-content").html(data);
+                    }
+                });
+            }
+            
+        })
+        $("#reset").click(function () {
             var link_url = "/ERPOrder/Download_Order_Start_Ajax"
             $.ajax({
                 url: link_url,
-                data: {
-                    st: start,
-                    et: end
-                },
                 type: "post",
                 success: function (data) {
-
+                    
                 }
             });
-            alert("开始下载");
             $.ajax({
                 url: "/ERPOrder/Download_Order_List_Ajax",
                 success: function (data) {
                     $("#table-content").html(data);
                 }
             });
-        })
-        $("#reset").click(function () {
-            var link_url = "/ERPOrder/Download_Order_List_Ajax"
-            $.ajax({
-                url: link_url,
-                type: "post",
-                success: function (data) {
-                    $("#table-content").html(data);
-                }
-            });
-            alert("刷新")
         })
     </script>
     }
