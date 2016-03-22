@@ -4,12 +4,13 @@
 <table class="table table-condensed table-striped h6" style="table-layout:fixed;width:100%;">
     <tbody>
         <tr>
-            <td style="width:10%">任务</td>
-            <td style="width:20%">开始时间</td>
-            <td style="width:20%">结束时间</td>
-            <td style="width:15%">状态</td>
-            <td style="width:20%">订单数量</td>
-            <td style="width:15%">完成度</td>
+            <td style="width:20%">任务</td>
+            <td style="width:17%">开始时间</td>
+            <td style="width:17%">结束时间</td>
+            <td style="width:10%">状态</td>
+            <td style="width:10%">订单数量</td>
+            <td style="width:12%">完成度</td>
+            <td style="width:14%"></td>
         </tr>
         @foreach (var item in Model)
         {
@@ -23,15 +24,38 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.finish_time)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.status)
-                </td>
+                @if (item.status == 0)
+                {
+                    <td>
+                        未完成
+                    </td>
+                }
+                else if (item.status == 1)
+                {
+                    <td>
+                        完成
+                    </td>
+                }
+                else {
+                    <td>
+                        下载失败
+                    </td>
+                }
+
+                
                 <td>
                     @Html.DisplayFor(modelItem => item.totalcount)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.currentcount)
-                </td>
+                    @if (item.totalcount == 0) {
+                        item.totalcount = item.totalcount + 1;
+                    }
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="@Html.Encode(item.currentcount)" aria-valuemin="0" aria-valuemax="@Html.Encode(item.totalcount)" style="width:@Html.Encode(item.currentcount/(item.totalcount)*100)%;min-width: 0.75em;">
+                            @Html.Encode(item.currentcount/ (item.totalcount) * 100)%
+                        </div>
+                    </div>
+                  </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.message)
                 </td>

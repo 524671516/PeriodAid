@@ -7,10 +7,10 @@
 }
 <div class="row">
     <div class="col-xs-4">
-        <input type="text" class="form-control hasDatepicker start-date" placeholder="开始时间">
+        <input type="text" class="form-control start-date" placeholder="开始时间">
     </div>
     <div class="col-xs-4">
-        <input type="text" class="form-control hasDatepicker end-date" placeholder="结束时间">
+        <input type="text" class="form-control end-date" placeholder="结束时间">
     </div>
     <div class="col-xs-1">
         <button class="btn btn-info" id="query">下载</button>
@@ -22,3 +22,59 @@
 <div id="table-content">
 
 </div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/ERPOrder/Download_Member_Status_Ajax",
+                success: function (data) {
+                    $("#table-content").html(data);
+                }
+            })
+        });
+        $(".start-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $(".end-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        })
+        $("#query").click(function () {
+            var start = $('.start-date').val();
+            var end = $('.end-date').val();
+            var link_url = "/ERPOrder/";
+            if (start == '', end == '') {
+                window.alert("无数据下载")
+            } else {
+                $.ajax({
+                    url: link_url,
+                    data: {
+                        st: start,
+                        et: end
+                    },
+                    type: "post",
+                    success: function (data) {
+                    }
+
+                });
+                alert("开始下载");
+                $.ajax({
+                    url: "/ERPOrder/",
+                    success: function (data) {
+                        $("#table-content").html(data);
+                    }
+                });
+            }
+
+        })
+        $("#reset").click(function () {
+            var link_url = "/ERPOrder/"
+            $.ajax({
+                url: link_url,
+                type: "post",
+                success: function (data) {
+                    $("#table-content").html(data);
+                }
+            });
+        })
+</script>
+    }
