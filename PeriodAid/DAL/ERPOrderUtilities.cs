@@ -346,6 +346,7 @@ namespace PeriodAid.DAL
                 {
                     currenttask.finish_time = DateTime.Now;
                     currenttask.status = 1;
+                    currenttask.currentcount = totalcount;
                     erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
                     erpdb.SaveChanges();
                     return 0;
@@ -480,6 +481,9 @@ namespace PeriodAid.DAL
                                     erpdb.vips.AddRange(r.vips);
                                     erpdb.SaveChanges();
                                     flag = true;
+                                    status.currentcount += 100;
+                                    erpdb.Entry(status).State = System.Data.Entity.EntityState.Modified;
+                                    erpdb.SaveChanges();
                                     CommonUtilities.writeLog("Success: page: " + page + ", retry_count: " + retry_count);
                                 }
                             }
