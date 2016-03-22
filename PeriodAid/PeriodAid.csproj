@@ -213,13 +213,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603210857396_20160321.cs" />
-    <Compile Include="Migrations\201603210857396_20160321.Designer.cs">
-      <DependentUpon>201603210857396_20160321.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603211000080_201603211800.cs" />
-    <Compile Include="Migrations\201603211000080_201603211800.Designer.cs">
-      <DependentUpon>201603211000080_201603211800.cs</DependentUpon>
+    <Compile Include="Migrations\201603220347531_03221147.cs" />
+    <Compile Include="Migrations\201603220347531_03221147.Designer.cs">
+      <DependentUpon>201603220347531_03221147.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -579,6 +575,8 @@
     <Content Include="Views\ERPOrder\_ERPOrder_Layout.cshtml" />
     <Content Include="Views\ERPOrder\Download_Member_List.cshtml" />
     <Content Include="Views\ERPOrder\Download_Order_List_Ajax.cshtml" />
+    <Content Include="Views\ERPOrder\Index.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Member_List_Ajax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -593,11 +591,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603210857396_20160321.resx">
-      <DependentUpon>201603210857396_20160321.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603211000080_201603211800.resx">
-      <DependentUpon>201603211000080_201603211800.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603220347531_03221147.resx">
+      <DependentUpon>201603220347531_03221147.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

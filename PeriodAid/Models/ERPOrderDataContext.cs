@@ -306,6 +306,8 @@
         public int id { get; set; }
         [StringLength(64)]
         public string name { get; set; }
+        
+        public int type { get; set; }
 
         public int status { get; set; }
 

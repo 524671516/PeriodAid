@@ -63,6 +63,7 @@ namespace PeriodAid.Controllers
         public ActionResult Download_Order_List_Ajax()
         {
             var list = from m in erpdb.taskstatus
+                       where m.type==0
                        orderby m.id descending
                        select m;
             return PartialView(list);
@@ -73,6 +74,15 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+        public ActionResult Download_Member_List_Ajax()
+        {
+            var list = from m in erpdb.taskstatus
+                       where m.type == 1
+                       orderby m.id descending
+                       select m;
+            return PartialView(list);
+        }
+
         [HttpPost]
         public async Task<JsonResult> Download_Order_Start_Ajax(string st, string et)
         {
@@ -81,9 +91,12 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
 
-        public JsonResult Download_Member_Status_Ajax(int id)
+        [HttpPost]
+        public async Task<JsonResult> Download_Vips_Start_Ajax(string st, string et)
         {
-            return Json(new { });
+            ERPOrderUtilities util = new ERPOrderUtilities();
+            await util.Download_ERPVips(st, et);
+            return Json(new { result = "SUCCESS" });
         }
     }
 }
