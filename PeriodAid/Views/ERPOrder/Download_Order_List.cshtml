@@ -60,24 +60,19 @@
                     url: "/ERPOrder/Download_Order_List_Ajax",
                     success: function (data) {
                         $("#table-content").html(data);
+                        $(".start-data").val('');
+                        $(".end-data").val('');
                     }
                 });
             }
             
         })
         $("#reset").click(function () {
-            var link_url = "/ERPOrder/Download_Order_Start_Ajax"
-            $.ajax({
-                url: link_url,
-                type: "post",
-                success: function (data) {
-                    
-                }
-            });
             $.ajax({
                 url: "/ERPOrder/Download_Order_List_Ajax",
                 success: function (data) {
                     $("#table-content").html(data);
+                    
                 }
             });
         })

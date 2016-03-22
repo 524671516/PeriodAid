@@ -26,7 +26,7 @@
     <script>
         $(function () {
             $.ajax({
-                url: "/ERPOrder/Download_Member_Status_Ajax",
+                url: "/ERPOrder/Download_Member_List_Ajax",
                 success: function (data) {
                     $("#table-content").html(data);
                 }
@@ -41,7 +41,7 @@
         $("#query").click(function () {
             var start = $('.start-date').val();
             var end = $('.end-date').val();
-            var link_url = "/ERPOrder/";
+            var link_url = "/ERPOrder/Download_Vips_Start_Ajax";
             if (start == '', end == '') {
                 window.alert("无数据下载")
             } else {
@@ -58,21 +58,24 @@
                 });
                 alert("开始下载");
                 $.ajax({
-                    url: "/ERPOrder/",
+                    url: "/ERPOrder/Download_Member_List_Ajax",
                     success: function (data) {
                         $("#table-content").html(data);
+                        $(".start-date").val('');
+                        $(".end-date").val('');
                     }
                 });
             }
 
         })
         $("#reset").click(function () {
-            var link_url = "/ERPOrder/"
+            var link_url = "/ERPOrder/Download_Member_List_Ajax"
             $.ajax({
                 url: link_url,
                 type: "post",
                 success: function (data) {
                     $("#table-content").html(data);
+                    
                 }
             });
         })
