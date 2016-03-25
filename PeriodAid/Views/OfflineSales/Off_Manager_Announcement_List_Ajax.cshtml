@@ -69,17 +69,19 @@
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Manager_Announcement_List_Ajax", new { page }))</div>
 
 <script>
+    $("#edit-btn").click(function () {
+
+    })
         $(".del-btn").click(function () {
             var result = confirm("确定删除该信息吗？");
             if (result) {
                 var url = $(this).attr("href");
-                alert(url);
                 $.ajax({
                     url:url,
                     type: "post",
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            $("#list").html()
+                            $("#list").html(data)
                         } else {
                             alert("删除失败")
                         }

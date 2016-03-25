@@ -22,10 +22,35 @@
             <select multiple id="selectList_rem" class="form-control input-sm" style="height:240px; font-size:1em;"></select>
         </div>
         <div class="col-md-9">
-            <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <div class="input-group-addon "><small>开始时间</small></div>
+                        <input type="text" class="input-sm form-control start-date" value="@Model.StartTime"/>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>结束时间</small></div>
+                        <input type="text" class="input-sm form-control end-date" value="@Model.FinishTime" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group col-md-12">
+                    <div class="input-group-addon"><small>工作列表</small></div>
+                    <select id="selectList_list" class="form-control input-sm" style="width:"></select>
+                </div>
+            </div>
+
+
+
+
+            @*<div class="form-horizontal">
                 <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
+
                     @Html.LabelFor(model => model.ManagerUserName, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.ManagerUserName, new { htmlAttributes = new { @class = "form-control" } })
@@ -37,7 +62,7 @@
                     @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
+                        
                     </div>
                 </div>
 
@@ -91,15 +116,22 @@
 
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Create" class="btn btn-default" />
+                        <input type="submit" value="提交" class="btn btn-default" />
                     </div>
                 </div>
-            </div>
+            </div>*@
         </div>
     </div>
 }
 <script>
     $(function () {
+
+        $(".start-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $(".end-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
         var link_url = "/OfflineSales/Off_Manager_List_Ajax"
         $.ajax({
             url: link_url,
@@ -113,25 +145,32 @@
                 }
             }
         })
+        
     });
     $("#add-btn").click(function () {
-        var addlist = $("#selectList_add").val() + "";
-        var currentlist = $("#selectList_rem").val() + "";
-        var arr_add = addlist.split(",");
-        var arr_current = currentlist.split(",");
-        for (var i = 0; i < addlist.length; i++) {
-            if (arr_current.indexOf(arr_add[i]) == -1) {
-                $.ajax({
-                    url: "/OfflineSales/Off_Manager_List_Ajax=" + addlist[i],
-                    success: function (data) {
-                        $("#selectList_rem").append("<option value='" + data.managerlist[i].UserName + "' >" + data.managerlist[i].NickName + "</option>");
-                        refresh_list();
-                    }
-                });
-
-            }
+        var selectvalue = $("#selectList_add").val()+"";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = "<option value=\"" + managerArray[i] + "\">" + $("option[value='" + managerArray[i] + "']").text() + "</option>";
+            //alert(optionitem);
+            $("#selectList_rem").append(optionitem);
+            $("#selectList_add option[value='" + managerArray[i] + "']").remove();
         }
+        //alert(selectlist);
+
     });
+    $("#remove-btn").click(function () {
+        var selectRem = $("#selectList_rem").val() + "";
+        var arry_rem = selectRem.split(",");
+        for (var i = 0; i < arry_rem.length; i++) {
+            var option_con = "<option value=\"" + arry_rem[i] + "\">" + $("option[value='" + arry_rem[i] + "']").text() + "</option>";
+            $("#selectList_rem option[value='" + arry_rem[i] + "']").remove();
+            $("#selectList_add").append(option_con)
+            
+        }
+    })
+    
+    
 </script>
 
 
