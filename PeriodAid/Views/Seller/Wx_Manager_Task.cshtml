@@ -5,14 +5,20 @@
     Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
 <div class="hd">
-    <h2 class="page_title text-center">督导管理 签到</h2>
+    <h3 class="page_title text-center">督导管理 签到</h3>
 </div>
-<div class="weui_cells">
-    <div class="weui_cell">
-        <div class="weui_cell_bd weui_cell_primary">
-            <p>@Html.Encode(ViewBag.NickName)</p>
-        </div>
-        <div class="weui_cell_ft">@Html.Encode(ViewBag.Mobile)</div>
+<div class="weui_cells_title">督导重点工作</div>
+<div class="weui_panel weui_panel_access" style="margin-top:0">
+    <div class="weui_panel_bd">
+        <a href="@Url.Action("Wx_Manager_AnnouncementList","Seller")" class="weui_media_box weui_media_appmsg">
+            <div class="weui_media_hd">
+                <i class="fa fa-calendar-check-o fa-4x text-info"></i>
+            </div>
+            <div class="weui_media_bd">
+                <span class="weui_media_title h4"><b>本周工作&nbsp;(@Html.Encode(ViewBag.Weekly))</b></span>
+                <p class="weui_media_desc" style="margin-top:5px;">当前重点工作项目: @Html.Encode(ViewBag.AnnounceCount)</p>
+            </div>
+        </a>
     </div>
 </div>
 <div class="weui_cells_title">今日签到</div>
