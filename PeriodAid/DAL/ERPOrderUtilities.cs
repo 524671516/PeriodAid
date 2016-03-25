@@ -297,7 +297,7 @@ namespace PeriodAid.DAL
             else
             {
                 // 删除已有的数据
-                string sql = "DELETE FROM vips where createtime>='" + st.ToShortDateString() + "' AND createtime<='" + et.ToShortDateString() + "'";
+                string sql = "DELETE FROM vips where created>='" + st.ToShortDateString() + "' AND created<='" + et.ToShortDateString() + "'";
                 CommonUtilities.writeLog("sql" + sql);
                 erpdb.Database.ExecuteSqlCommand(sql);
                 CommonUtilities.writeLog("Remove Success");
@@ -464,6 +464,7 @@ namespace PeriodAid.DAL
                             Vips_Result r = JsonConvert.DeserializeObject<Vips_Result>(result);
                             if (r != null)
                             {
+                                
                                 if (r.vips.Count > 0)
                                 {
                                     foreach (var item in r.vips)

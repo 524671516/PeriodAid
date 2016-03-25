@@ -56,6 +56,8 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_Manager_Task> Off_Manager_Task { get; set; }
         public virtual DbSet<Off_Manager_CheckIn> Off_Manager_CheckIn { get; set; }
         public virtual DbSet<Off_AVG_SalesData> Off_AVG_SalesData { get; set; }
+        public virtual DbSet<Off_Manager_Announcement> Off_Manager_Announcement { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1354,5 +1356,33 @@ namespace PeriodAid.Models
         public decimal? AVG_HONEY { get; set; }
 
         public decimal? AVG_DATES { get; set; }
+    }
+
+    public partial class Off_Manager_Announcement
+    {
+        public int Id { get; set; }
+
+        [StringLength(512)]
+        public string ManagerUserName { get; set; }
+
+        public DateTime StartTime { get; set; }
+
+        public DateTime FinishTime { get; set; }
+
+        [Range(1, 5)]
+        public int Priority { get; set; }
+
+        [StringLength(64)]
+        public string Title { get; set; }
+
+        [StringLength(1024)]
+        public string Content { get; set; }
+
+        [StringLength(64)]
+        public string SubmitUser { get; set; }
+
+        public DateTime SubmitTime { get; set; }
+
+        
     }
 }

@@ -4406,6 +4406,103 @@ namespace PeriodAid.Controllers
             }
             return Content("FAIL");
         }
+        // 0325 公告列表
+        public ActionResult Off_Manager_Announcement_List()
+        {
+            return View();
+        }
+
+        public ActionResult Off_Manager_Announcement_List_Ajax(int? page)
+        {
+            int _page = page ?? 1;
+            var list = (from m in offlineDB.Off_Manager_Announcement
+                        orderby m.Priority descending, m.FinishTime descending
+                        select m).ToPagedList(_page, 30);
+            return PartialView();
+        }
+        // 0325 添加公告
+        public ActionResult Off_Manager_Announcement_Create()
+        {
+            Off_Manager_Announcement model = new Off_Manager_Announcement();
+            return View(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Manager_Announcement_Create(Off_Manager_Announcement model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Announcement item = new Off_Manager_Announcement();
+                if (TryUpdateModel(item))
+                {
+                    item.SubmitTime = DateTime.Now;
+                    item.SubmitUser = User.Identity.Name;
+                    offlineDB.Off_Manager_Announcement.Add(item);
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Manager_Announcement_List");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+
+        // 0325 修改公告
+        public ActionResult Off_Manager_Announcement_Edit(int id)
+        {
+            Off_Manager_Announcement model = offlineDB.Off_Manager_Announcement.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+                return View(model);
+            else
+                return View("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Manager_Announcement_Edit(Off_Manager_Announcement model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Announcement item = new Off_Manager_Announcement();
+                if (TryUpdateModel(item))
+                {
+                    item.SubmitTime = DateTime.Now;
+                    item.SubmitUser = User.Identity.Name;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Manager_Announcement_List");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+
+        // 0325 删除公告
+        [HttpPost]
+        public ActionResult Off_Manager_Announcement_Delete_Ajax(int id)
+        {
+            Off_Manager_Announcement model = offlineDB.Off_Manager_Announcement.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+            {
+                offlineDB.Off_Manager_Announcement.Remove(model);
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        // 0325 获取督导列表
+        [HttpPost]
+        public ActionResult Off_Manager_List_Ajax()
+        {
+            var list = from m in offlineDB.Off_StoreManager
+                       select new { UserName = m.UserName, NickName = m.NickName };
+            return Json(new { result = "SUCCESS", managerlist = list });
+        }
 
 
         private byte[] convertCSV(byte[] array)

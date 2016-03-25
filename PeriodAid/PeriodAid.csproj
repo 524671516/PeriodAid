@@ -213,10 +213,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603240540321_03241340.cs" />
-    <Compile Include="Migrations\201603240540321_03241340.Designer.cs">
-      <DependentUpon>201603240540321_03241340.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -577,6 +573,10 @@
     <Content Include="Views\ERPOrder\Download_Order_List_Ajax.cshtml" />
     <Content Include="Views\ERPOrder\Index.cshtml" />
     <Content Include="Views\ERPOrder\Download_Member_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_Create.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -589,11 +589,6 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603240540321_03241340.resx">
-      <DependentUpon>201603240540321_03241340.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
