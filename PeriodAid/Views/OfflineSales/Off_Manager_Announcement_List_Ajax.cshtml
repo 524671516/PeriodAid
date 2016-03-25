@@ -1,69 +1,92 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Announcement>
-@using PagedList.Mvc
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+<table class="table" style="width:100%;">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ManagerUserName)
+        <th style="width:10%;">
+            联系人
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StartTime)
+        <th style="width:13%;">
+            开始时间
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FinishTime)
+        <th style="width:13%;">
+            结束时间
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Priority)
+        <th style="width:10%;">
+            督导列表
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
+        <th style="width:7%;">
+            标题
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Content)
+        <th style="width:5%;">
+            内容
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SubmitUser)
+        <th style="width:15%;">
+            操作人
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SubmitTime)
+        <th style="width:13%;">
+            操作时间
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ManagerUserName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StartTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FinishTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Priority)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Content)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SubmitUser)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SubmitTime)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerUserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinishTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Content)*@
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubmitUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubmitTime)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "Off_Manager_Announcement_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
+                <a class="btn btn-danger btn-xs cancel-btn del-btn" href="/OfflineSales/Off_Manager_Announcement_Delete_Ajax?id=@item.Id">删除</a>
+                @*@Html.ActionLink("删除", "javascript:;", new { id=item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn del-btn" })*@
+            </td>
+        </tr>
+    }
 
 </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Manager_Announcement_List_Ajax", new { page }))</div>
+
+<script>
+        $(".del-btn").click(function () {
+            var result = confirm("确定删除该信息吗？");
+            if (result) {
+                var url = $(this).attr("href");
+                alert(url);
+                $.ajax({
+                    url:url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#list").html()
+                        } else {
+                            alert("删除失败")
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+</script>
+
