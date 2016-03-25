@@ -1383,6 +1383,6 @@ namespace PeriodAid.Models
 
         public DateTime SubmitTime { get; set; }
 
-        
+        public bool Status { get; set; }
     }
 }

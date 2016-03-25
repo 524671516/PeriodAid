@@ -4418,7 +4418,7 @@ namespace PeriodAid.Controllers
             var list = (from m in offlineDB.Off_Manager_Announcement
                         orderby m.Priority descending, m.FinishTime descending
                         select m).ToPagedList(_page, 30);
-            return PartialView();
+            return PartialView(list);
         }
         // 0325 添加公告
         public ActionResult Off_Manager_Announcement_Create()

@@ -1486,10 +1486,12 @@ namespace PeriodAid.Controllers
         [Authorize(Roles ="Manager")]
         public ActionResult Wx_Manager_Task()
         {
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
-            ViewBag.NickName = manager.NickName;
-            ViewBag.Mobile = manager.Mobile;
             var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            ViewBag.Weekly = today.AddDays(1 - (int)today.DayOfWeek).ToString("MM/dd") + " - " + today.AddDays(7 - (int)today.DayOfWeek).ToString("MM/dd");
+            ViewBag.AnnounceCount = (from m in offlineDB.Off_Manager_Announcement
+                                where m.ManagerUserName.Contains(User.Identity.Name)
+                                && today >= m.StartTime && today < m.FinishTime
+                                select m).Count();
             var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name);
             if (task == null)
             {
@@ -1753,6 +1755,19 @@ namespace PeriodAid.Controllers
         {
             var item = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
             return Json(new { result = "SUCCESS", data = new { Name = item.Name, Mobile = item.Mobile, CardNo = item.CardNo, CardName = item.CardName, StoreName = item.Off_Store.StoreName, AccountName = item.AccountName, IDNumber = item.IdNumber } });
+        }
+
+        // 0325 当日重点工作列表
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_AnnouncementList()
+        {
+            var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var list = from m in offlineDB.Off_Manager_Announcement
+                       where m.ManagerUserName.Contains(User.Identity.Name)
+                       && today >= m.StartTime && today < m.FinishTime
+                       orderby m.Priority descending, m.SubmitTime descending
+                       select m;
+            return View(list);
         }
     }
 }

@@ -53,5 +53,10 @@ label, p, span {
     color: #888;
 }
 
+.weui_panel a:hover, .weui_panel a:visited{
+    color:#000;
+    text-decoration:none;
+}
+
 
 

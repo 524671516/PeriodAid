@@ -577,6 +577,7 @@
     <Content Include="Views\OfflineSales\Off_Manager_Announcement_List_Ajax.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_Announcement_Create.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_Announcement_Edit.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_AnnouncementList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
