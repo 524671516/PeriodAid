@@ -57,6 +57,7 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_Manager_CheckIn> Off_Manager_CheckIn { get; set; }
         public virtual DbSet<Off_AVG_SalesData> Off_AVG_SalesData { get; set; }
         public virtual DbSet<Off_Manager_Announcement> Off_Manager_Announcement { get; set; }
+        public virtual DbSet<Off_Manager_Request> Off_Manager_Request { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -213,6 +214,12 @@ namespace PeriodAid.Models
                 .HasMany(e => e.Off_Checkin_Schedule)
                 .WithRequired(e => e.Off_Store)
                 .HasForeignKey(e => e.Off_Store_Id)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Off_Store>()
+                .HasMany(e => e.Off_Manager_Request)
+                .WithRequired(e => e.Off_Store)
+                .HasForeignKey(e => e.StoreId)
                 .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Off_Expenses>()
@@ -923,6 +930,9 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_StoreManager> Off_StoreManager { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Manager_Request> Off_Manager_Request { get; set; }
     }
 
     public partial class Off_Seller
@@ -1384,5 +1394,38 @@ namespace PeriodAid.Models
         public DateTime SubmitTime { get; set; }
 
         public bool Status { get; set; }
+    }
+
+    public partial class Off_Manager_Request
+    {
+        public int Id { get; set; }
+
+        [StringLength(512)]
+        public string ManagerUserName { get; set; }
+
+        public int StoreId { get; set; }
+
+        public int Status { get; set; }
+
+        [StringLength(64)]
+        public string RequestType { get; set; }
+
+        [StringLength(1024)]
+        public string RuquestContent { get; set; }
+
+        [StringLength(512)]
+        public string RequestRemark { get; set; }
+
+        public DateTime RequestTime { get; set; }
+
+        [StringLength(512)]
+        public string ReplyContent { get; set; }
+
+        [StringLength(64)]
+        public string ReplyUser { get; set; }
+
+        public DateTime? ReplyTime { get; set; }
+
+        public virtual Off_Store Off_Store { get; set; }
     }
 }
