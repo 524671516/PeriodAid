@@ -4,7 +4,30 @@
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
 @section page{
-    6}
+    6
+    }
+<br />
+<div>
+    <a class="btn btn-info btn-sm" id="add-btn" href="/OfflineSales/Off_Manager_Announcement_Create"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动</a>
+</div><br />
+<div id="list">
 
-<h2>Off_Manager_Announcement_List</h2>
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            var url = "/OfflineSales/Off_Manager_Announcement_List_Ajax"
+            $.ajax({
+                url: url,
+                success: function (list) {
+                    $("#list").html(list);
+                }
+            });
+        });
+        
+
+    </script>
+    }
+
+
 
