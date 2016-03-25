@@ -51,7 +51,7 @@
                         item.totalcount = item.totalcount + 1;
                     }
                     <div class="progress" style="margin-bottom:0;">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="@Html.Encode(item.currentcount)" aria-valuemin="0" aria-valuemax="@Html.Encode(item.totalcount)" style="width:@Html.Encode(Convert.ToInt32((Convert.ToDecimal(item.currentcount) / Convert.ToDecimal(item.totalcount)) * 100))%;">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="@Html.Encode(item.currentcount)" aria-valuemin="0" aria-valuemax="@Html.Encode(item.totalcount)" style="width:@Html.Encode(Convert.ToInt32 ((Convert.ToDecimal(item.currentcount) / Convert.ToDecimal(item.totalcount)) * 100))%;">
                            
                         </div>
                     </div>
