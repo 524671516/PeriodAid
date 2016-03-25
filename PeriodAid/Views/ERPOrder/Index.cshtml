@@ -9,9 +9,25 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 </head>
 <body>
-    <div> 
+    <div id="content">
+        <a class="a" href="javascript:;" myname="333">test1</a>
     </div>
+    <a id="add" href="#">add</a>
+    <script>
+        function test(abc, i) {
+            if (i <= 5) {
+                alert(abc);
+                setTimeout(test, 1000, abc, i + 1);
+            }
+        }
+        test("bbc", 0);
+        //setTimeout(test, 5000, "ccd");
+        //setInterval(test, 1000, "bac");
+    </script>
+    <div id="b">bbc</div>
+    
 </body>
 </html>

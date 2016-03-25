@@ -39,22 +39,26 @@
             modelBuilder.Entity<orders>()
                 .HasMany(e => e.deliverys)
                 .WithRequired(e => e.orders)
-                .HasForeignKey(e => e.orderid);
+                .HasForeignKey(e => e.orderid)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<orders>()
                 .HasMany(e => e.details)
                 .WithRequired(e => e.orders)
-                .HasForeignKey(e => e.orderid);
+                .HasForeignKey(e => e.orderid)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<orders>()
                 .HasMany(e => e.invoices)
                 .WithRequired(e => e.orders)
-                .HasForeignKey(e => e.orderid);
+                .HasForeignKey(e => e.orderid)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<orders>()
                 .HasMany(e => e.payments)
                 .WithRequired(e => e.orders)
-                .HasForeignKey(e => e.orderid);
+                .HasForeignKey(e => e.orderid)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<vips>()
                 .HasMany(e => e.receive_infos)
@@ -212,7 +216,7 @@
 
         public decimal? amount { get; set; }
 
-        public decimal? refund { get; set; }
+        public bool? refund { get; set; }
 
         [StringLength(64)]
         public string item_code { get; set; }
@@ -372,7 +376,7 @@
         [StringLength(32)]
         public string phone { get; set; }
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string address { get; set; }
 
         [StringLength(64)]

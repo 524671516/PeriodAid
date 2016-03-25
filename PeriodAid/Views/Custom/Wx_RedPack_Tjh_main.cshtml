@@ -50,7 +50,7 @@
                         </div>
                         <br />
                         <div class="form-group text-center">
-                            <input type="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;立&nbsp;即&nbsp;领&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;" class="btn btn-default btn-danger btn-pr btn-lg" />
+                            <input type="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;立&nbsp;即&nbsp;领&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;" class="btn btn-default btn-danger btn-pr btn-lg" id="submit-btn" />
                         </div>
                     </div>
                 }
@@ -61,7 +61,11 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/JavaScript.js"></script>
     <script>
-
+        $("#submit-btn").click(function () {
+            $(this).attr("disabled", "disabled").addClass("disabled").val("发送中...");
+            $("form").submit();
+            return false;
+        })
     </script>
 </body>
 

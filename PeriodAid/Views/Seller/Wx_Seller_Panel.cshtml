@@ -1,13 +1,48 @@
 ﻿@model PeriodAid.Models.Off_Checkin
 
+<input type="hidden" id="checkout_status" value="false" />
+@if (Model != null)
+{
+    <input type="hidden" id="checkin_status" value="@Model.Status" />
+}
 <div class="weui_cells_title">今日任务</div>
 <div class="weui_panel weui_panel_access" style="margin-top:0;">
     <div class="weui_panel_bd">
         <div class="weui_media_box weui_media_text">
-            <h4 class="weui_media_title"><b>店铺同期平均销量：&nbsp;<span class="text-primary">@Html.Encode(ViewBag.AVG_Info)</span>&nbsp;盒</b></h4>
-            <p class="weui_media_desc hidden">今天是 @Html.Encode(DateTime.Now.ToString("yyyy年MM月dd日"))，星期五，根据历史纪录，店铺在每周五的平均销量为 @Html.Encode(ViewBag.AVG_Info) 盒，请以尽可能超过该数据</p>
+            <p class="weui_media_title h4"><b>店铺同期平均销量：&nbsp;<span class="text-primary">@Html.Encode(ViewBag.AVG_Info)</span>&nbsp;盒</b></p>
+            @if (ViewBag.CheckIn)
+            {
+                if (Model != null)
+                {
+                    if (Model.Status == 0)
+                    {
+                        <p class="weui_media_desc">今日未签到</p>
+                    }
+                    else if (Model.Status == 1)
+                    {
+                        <p class="weui_media_desc"><b class="text-success">已签到</b>&nbsp;&nbsp;&nbsp;&nbsp;您已于今日 @Html.Encode(Convert.ToDateTime(Model.CheckinTime).ToString("HH:mm")) 签到成功</p>
+                    }
+                    else if(Model.Status ==2)
+                    {
+                        <p class="weui_media_desc"><b class="text-success">已签退</b>&nbsp;&nbsp;&nbsp;&nbsp;您已于今日 @Html.Encode(Convert.ToDateTime(Model.CheckoutTime).ToString("HH:mm")) 签退成功</p>
+                    }
+                    else
+                    {
+                        <p class="weui_media_desc"><b class="text-success">已提报</b>&nbsp;&nbsp;&nbsp;&nbsp;您已于今日 @Html.Encode(Convert.ToDateTime(Model.Report_Time).ToString("HH:mm")) 提报销量</p>
+                    }
+                }
+                else
+                {
+                    <p class="weui_media_desc">今日未签到</p>
+                }
+            }
+            else
+            {
+                <p class="weui_media_desc">今日无日程</p>
+            }
         </div>
     </div>
+    
     <div class="weui_cells weui_cells_access" style="margin-top:0;">
         @if (ViewBag.CheckIn)
         {
@@ -16,178 +51,93 @@
                 if (Model.Status == 0)
                 {
                     <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = ViewBag.ScheduleId, SellerId = ViewBag.SellerId})">
-                        <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
                         <div class="weui_cell_bd weui_cell_primary">
                             <p>开始签到</p>
                         </div>
                         <div class="weui_cell_ft">可签到</div>
                     </a>
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount)</div>
+                    </a>
                 }
                 else if (Model.Status == 1)
                 {
-                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckOut", "Seller", new { CheckId = Model.Id})">
-                        <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
+                    <a class="weui_cell checkout_btn" href="javascript:;" checkid="@Model.Id" sellerid="@ViewBag.SellerId">
                         <div class="weui_cell_bd weui_cell_primary">
                             <p>今日签退</p>
                         </div>
                         <div class="weui_cell_ft">可签退</div>
+                    </a>
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+                    </a>
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = ViewBag.ScheduleId, SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>更多操作</p>
+                        </div>
+                        <div class="weui_cell_ft">重新签到</div>
+                    </a>
+                }
+                else if(Model.Status ==2)
+                {
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+                    </a>
+                    <a class="weui_cell checkout_btn" href="javascript:;" checkid="@Model.Id" sellerid="@ViewBag.SellerId">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>更多操作</p>
+                        </div>
+                        <div class="weui_cell_ft">重新签退</div>
+                    </a>
+                }
+                else
+                {
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
                     </a>
                 }
             }
             else
             {
                 <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = ViewBag.ScheduleId, SellerId = ViewBag.SellerId})">
-                    <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
                     <div class="weui_cell_bd weui_cell_primary">
                         <p>开始签到</p>
                     </div>
                     <div class="weui_cell_ft">可签到</div>
                 </a>
+                <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>销售报表</p>
+                    </div>
+                    <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+                </a>
             }
         }
         else
         {
-            <a class="weui_cell" href="javascript:;">
-                <div class="weui_cell_hd"><i class="weui_icon_circle" style="margin:0 10px 0 0"></i></div>
+            <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
                 <div class="weui_cell_bd weui_cell_primary">
-                    <p>不可签到</p>
+                    <p>销售报表</p>
                 </div>
-                <div class="weui_cell_ft">无日程</div>
+                <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
             </a>
         }
-        <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
-            <div class="weui_cell_hd"><i class="weui_icon_info" style="margin:0 10px 0 0"></i></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>销售报表</p>
-            </div>
-            <div class="weui_cell_ft"></div>
-        </a>
-    </div>
 
+    </div>
 </div>
-@*<div class="weui_cells_title">任务</div>
-    <div class="weui_cells weui_cells_access">
-        <!--判断是否可以签到-->
-        @if (ViewBag.CheckIn)
-        {
-            <!--是否含有数据-->
-            if (Model != null)
-            {
-                if (Model.Status == 0)
-                {
-                    <!--未签到-->
-                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = Model.Off_Checkin_Schedule.Id, SellerId = ViewBag.SellerId})">
-                        <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签到</p>
-                        </div>
-                        <div class="weui_cell_ft">可签到</div>
-                    </a>
-                    <a class="weui_cell" href="javascript:;">
-                        <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签退</p>
-                        </div>
-                        <div class="weui_cell_ft">不可操作</div>
-                    </a>
-                }
-                else if (Model.Status == 1)
-                {
-                    <!--已签到-->
-                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = Model.Off_Checkin_Schedule.Id, SellerId = ViewBag.SellerId})">
-                        <div class="weui_cell_hd"><i class="weui_icon_success" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签到</p>
-                        </div>
-                        <div class="weui_cell_ft">已签到</div>
-                    </a>
-                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckOut", "Seller", new { CheckId = Model.Id})">
-                        <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签退</p>
-                        </div>
-                        <div class="weui_cell_ft">可签退</div>
-                    </a>
-                }
-                else if (Model.Status == 2 || Model.Status == 3)
-                {
-                    <!--已签退-->
-                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = Model.Off_Checkin_Schedule.Id, SellerId = ViewBag.SellerId})">
-                        <div class="weui_cell_hd"><i class="weui_icon_success" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签到</p>
-                        </div>
-                        <div class="weui_cell_ft">已签到</div>
-                    </a>
-                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckOut", "Seller", new { CheckId = Model.Id})">
-                        <div class="weui_cell_hd"><i class="weui_icon_success" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签退</p>
-                        </div>
-                        <div class="weui_cell_ft">已签退</div>
-                    </a>
-                }
-                else
-                {
-                    <a class="weui_cell" href="javascript:;">
-                        <div class="weui_cell_hd"><i class="weui_icon_success" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签到</p>
-                        </div>
-                        <div class="weui_cell_ft">已确认销量，不可操作</div>
-                    </a>
-                    <a class="weui_cell" href="javascript:;">
-                        <div class="weui_cell_hd"><i class="weui_icon_success" style="margin:0 10px 0 0"></i></div>
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p>今日签退</p>
-                        </div>
-                        <div class="weui_cell_ft">已确认销量，不可操作</div>
-                    </a>
-                }
-            }
-            else
-            {
-                <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = ViewBag.ScheduleId, SellerId = ViewBag.SellerId})">
-                    <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
-                    <div class="weui_cell_bd weui_cell_primary">
-                        <p>今日签到</p>
-                    </div>
-                    <div class="weui_cell_ft">可签到</div>
-                </a>
-                <a class="weui_cell" href="javascript:;">
-                    <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0"></i></div>
-                    <div class="weui_cell_bd weui_cell_primary">
-                        <p>今日签退</p>
-                    </div>
-                    <div class="weui_cell_ft">不可操作</div>
-                </a>
-            }
-        }
-        else
-        {
-            <a class="weui_cell" href="javascript:;">
-                <div class="weui_cell_hd"><i class="weui_icon_circle" style="margin:0 10px 0 0"></i></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>不可签到</p>
-                </div>
-                <div class="weui_cell_ft">无日程</div>
-            </a>
-            <a class="weui_cell" href="javascript:;">
-                <div class="weui_cell_hd"><i class="weui_icon_circle" style="margin:0 10px 0 0"></i></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>不可签退</p>
-                </div>
-                <div class="weui_cell_ft">无日程</div>
-            </a>
-        }
-        <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
-            <div class="weui_cell_hd"><i class="weui_icon_info" style="margin:0 10px 0 0"></i></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>销售报表</p>
-            </div>
-            <div class="weui_cell_ft"></div>
-        </a>
-    </div>*@
+
 <div class="weui_cells_title">工具</div>
 <div class="weui_cells weui_cells_access">
     <a class="weui_cell" href="@Url.Action("Wx_Seller_ScheduleList", "Seller", new { SellerId = ViewBag.SellerId})">
@@ -212,3 +162,93 @@
         </div>
     </a>
 </div>
+<div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+        <div class="weui_dialog_bd">今日已签退，重新签退会更新签到时间和您的位置信息，是否确认操作？</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
+        </div>
+    </div>
+</div>
+<script>
+    $(".checkout_btn").click(function () {
+        // 确认状态是否需要提示
+        $btn = $(this);
+        if ($("#checkin_status").val() == 1) {
+            submit_checkout($btn.attr("checkid"), $btn.attr("sellerid"));
+        }
+        else {
+            $("#dialog_confirm").show();
+            $("#dialog_confirm").attr("checkid", $btn.attr("checkid")).attr("sellerid", $btn.attr("sellerid"));
+        }
+    });
+    $("#dialog_cancel_btn").click(function () {
+        $("#dialog_confirm").hide();
+    });
+    $("#dialog_confirm_btn").click(function () {
+        $("#dialog_confirm").hide();
+        submit_checkout($("#dialog_confirm").attr("checkid"), $("#dialog_confirm").attr("sellerid"));
+    })
+    function submit_checkout(checkid, sellerid) {
+        $("#loadingToast").show();
+        //setTimeout(testfail, 5000);
+        // 获取地址
+        var location = "";
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function (res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
+                location = longitude + "," + latitude;
+                // 写入数据
+                $.ajax({
+                    url: "/Seller/Wx_Seller_CheckOut_Ajax",
+                    data: {
+                        CheckId: checkid,
+                        lbs: location
+                    },
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            // 刷新页面
+                            $.ajax({
+                                url: "/Seller/Wx_Seller_Panel",
+                                data: {
+                                    SellerId: sellerid
+                                },
+                                type: "post",
+                                success: function (data) {
+                                    // 提示完成
+                                    $("#loadingToast").hide();
+                                    $("#toast_success").show();
+                                    setTimeout(function () {
+                                        $("#toast_success").fadeOut(500);
+                                    }, 1000);
+                                    // 刷新页面
+                                    $("#control-panel").html(data);
+                                }
+                            });
+                        }
+                        else {
+                            $("#loadingToast").hide();
+                            $("#dialog_alert").show();
+                        }
+                    }
+                });
+            },
+            fail: function (res) {
+                // 获取失败
+                $("#loadingToast").hide();
+                $("#dialog_alert").show();
+            }
+        });
+    }
+    $("#alert-btn").click(function () {
+        $("#dialog_alert").hide();
+    })
+</script>

@@ -329,6 +329,14 @@ namespace PeriodAid.Controllers
                 ViewBag.NickName = user.NickName;
                 ViewBag.Mobile = user.PhoneNumber;
                 ViewBag.SellerId = userbind.FirstOrDefault().SellerId;
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
                 return View(user);
             }
             else
@@ -353,6 +361,7 @@ namespace PeriodAid.Controllers
                 ViewBag.AVG_Info = (l.BL ?? 0) + (l.LM ?? 0) + (l.HN ?? 0) + (l.BR ?? 0) + (l.DT ?? 0);
             }
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == storeId);
+            ViewBag.ReportCount = offlineDB.Off_Checkin.Where(m => m.Off_Seller_Id == SellerId && m.Status == 2).Count();
             ViewBag.SellerId = SellerId;
             if (item != null)
             {
@@ -625,6 +634,30 @@ namespace PeriodAid.Controllers
             else
             {
                 return View("Error");
+            }
+        }
+
+        [HttpPost]
+        public JsonResult Wx_Seller_CheckOut_Ajax(int CheckId, string lbs)
+        {
+            try {
+                Off_Checkin checkin = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == CheckId);
+                if (checkin != null) {
+                    checkin.CheckoutLocation = lbs;
+                    checkin.CheckoutTime = DateTime.Now;
+                    checkin.Status = 2;
+                    offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                {
+                    return Json(new { result = "FAIL" });
+                }
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
             }
         }
 

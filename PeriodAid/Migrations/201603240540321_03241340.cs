@@ -3,16 +3,16 @@ namespace PeriodAid.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class _03221147 : DbMigration
+    public partial class _03241340 : DbMigration
     {
         public override void Up()
         {
-            AddColumn("dbo.taskstatus", "type", c => c.Int(nullable: false));
+            AlterColumn("dbo.details", "refund", c => c.Boolean());
         }
         
         public override void Down()
         {
-            DropColumn("dbo.taskstatus", "type");
+            AlterColumn("dbo.details", "refund", c => c.Decimal(precision: 18, scale: 2));
         }
     }
 }

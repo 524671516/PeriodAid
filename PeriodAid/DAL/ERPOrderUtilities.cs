@@ -53,16 +53,10 @@ namespace PeriodAid.DAL
             }
             else
             {
-                var existlist = from m in erpdb.orders
-                                where m.createtime >= st && m.createtime <= et
-                                select m;
-                var existcount = existlist.Count();
-                if (existlist != null)
-                {
-                    erpdb.orders.RemoveRange(existlist);
-                    erpdb.SaveChanges();
-                    CommonUtilities.writeLog("Remove Success, Count: " + existcount);
-                }
+                string sql = "DELETE FROM orders where createtime>='" + st.ToShortDateString() + "' AND createtime<='" + et.ToShortDateString() + "'";
+                CommonUtilities.writeLog("sql" + sql);
+                erpdb.Database.ExecuteSqlCommand(sql);
+                CommonUtilities.writeLog("Remove Success");
                 List<Task<string>> alltasks = new List<Task<string>>();
                 int j = 0;
                 try
@@ -151,8 +145,12 @@ namespace PeriodAid.DAL
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         result = reader.ReadToEnd();
+                        //修改数据合法性
+                        StringBuilder sb = new StringBuilder(result);
+                        sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                        sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
                         JavaScriptSerializer serializer = new JavaScriptSerializer();
-                        Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
+                        Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(sb.ToString());
                         if (r != null)
                         {
                             return r.total;
@@ -217,8 +215,11 @@ namespace PeriodAid.DAL
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         result = reader.ReadToEnd();
+                        StringBuilder sb = new StringBuilder(result);
+                        sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                        sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
                         JavaScriptSerializer serializer = new JavaScriptSerializer();
-                        Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
+                        Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(sb.ToString());
                         if (r != null)
                         {
                             if (r.orders.Count > 0)
@@ -296,16 +297,10 @@ namespace PeriodAid.DAL
             else
             {
                 // 删除已有的数据
-                var existlist = from m in erpdb.vips
-                                where m.created >= st && m.created <= et
-                                select m;
-                var existcount = existlist.Count();
-                if (existlist != null)
-                {
-                    erpdb.vips.RemoveRange(existlist);
-                    erpdb.SaveChanges();
-                    CommonUtilities.writeLog("Remove Success, Count: " + existcount);
-                }
+                string sql = "DELETE FROM vips where createtime>='" + st.ToShortDateString() + "' AND createtime<='" + et.ToShortDateString() + "'";
+                CommonUtilities.writeLog("sql" + sql);
+                erpdb.Database.ExecuteSqlCommand(sql);
+                CommonUtilities.writeLog("Remove Success");
                 List<Task<string>> alltasks = new List<Task<string>>();
                 int j = 0;
                 try

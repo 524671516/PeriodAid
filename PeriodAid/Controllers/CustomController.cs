@@ -599,32 +599,40 @@ namespace PeriodAid.Controllers
             if (ModelState.IsValid)
             {
                 // 写入数据
-                Promotion_TJH_ViewModel item = new Promotion_TJH_ViewModel();
-                if (TryUpdateModel(item))
+                var existitem = promotionDB.Promotion_TJH.SingleOrDefault(m => m.openId == model.openId);
+                if (existitem == null)
                 {
-                    Promotion_TJH entry = new Promotion_TJH();
-                    entry.name = item.name;
-                    entry.openId = item.openId;
-                    entry.mobile = item.mobile;
-                    entry.branch = item.branch;
-                    Random r = new Random(DateTime.Now.Millisecond);
-                    string billno = "WxRedPackTjh_" + CommonUtilities.generateTimeStamp() + r.Next(1000, 9999);
-                    entry.mch_billno = billno;
-                    entry.status = 0;
-                    entry.submit_time = DateTime.Now;
-                    promotionDB.Promotion_TJH.Add(entry);
-                    await promotionDB.SaveChangesAsync();
-                    // 创建红包
-                    int amount = r.Next(100, 500);
-                    AppPayUtilities pay = new AppPayUtilities();
-                    string result = await pay.WxRedPackCreate(entry.openId, amount, entry.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
-                    //
-                    entry.mch_result = result;
-                    promotionDB.Entry(entry).State = System.Data.Entity.EntityState.Modified;
-                    promotionDB.SaveChanges();
-                    return RedirectToAction("Wx_RedPack_Tjh_Result", new { openid = model.openId });
+                    Promotion_TJH_ViewModel item = new Promotion_TJH_ViewModel();
+                    if (TryUpdateModel(item))
+                    {
+                        Promotion_TJH entry = new Promotion_TJH();
+                        entry.name = item.name;
+                        entry.openId = item.openId;
+                        entry.mobile = item.mobile;
+                        entry.branch = item.branch;
+                        Random r = new Random(DateTime.Now.Millisecond);
+                        string billno = "WxRedPackTjh_" + CommonUtilities.generateTimeStamp() + r.Next(1000, 9999);
+                        entry.mch_billno = billno;
+                        entry.status = 0;
+                        entry.submit_time = DateTime.Now;
+                        promotionDB.Promotion_TJH.Add(entry);
+                        await promotionDB.SaveChangesAsync();
+                        // 创建红包
+                        int amount = r.Next(100, 500);
+                        AppPayUtilities pay = new AppPayUtilities();
+                        string result = await pay.WxRedPackCreate(entry.openId, amount, entry.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
+                        //
+                        entry.mch_result = result;
+                        promotionDB.Entry(entry).State = System.Data.Entity.EntityState.Modified;
+                        promotionDB.SaveChanges();
+                        return RedirectToAction("Wx_RedPack_Tjh_Result", new { openid = model.openId });
+                    }
+                    return View("Error");
                 }
-                return View("Error");
+                else
+                {
+                    return RedirectToAction("Wx_RedPack_Tjh_Result", new { openId = model.openId });
+                }
             }
             else
             {
