@@ -1411,7 +1411,7 @@ namespace PeriodAid.Models
         public string RequestType { get; set; }
 
         [StringLength(1024)]
-        public string RuquestContent { get; set; }
+        public string RequestContent { get; set; }
 
         [StringLength(512)]
         public string RequestRemark { get; set; }
