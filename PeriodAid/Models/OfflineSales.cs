@@ -1400,7 +1400,7 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
-        [StringLength(512)]
+        [StringLength(64)]
         public string ManagerUserName { get; set; }
 
         public int StoreId { get; set; }

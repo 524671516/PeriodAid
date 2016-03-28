@@ -54,6 +54,30 @@
     </a>
     }
 </div>
+<div class="weui_cells_title">需求提报</div>
+<div class="weui_cells weui_cells_access">
+    <a class="weui_cell salary_details" href="/Seller/Wx_Manager_Request_Create">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>店铺需求提报</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+    <a class="weui_cell salary_details" href="/Seller/Wx_Manager_Request_List">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>已提报续期列表</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+    @if (User.IsInRole("Senior"))
+    {
+        <a class="weui_cell salary_details" href="/Seller/Wx_Senior_AllCheckInList">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>查看其他签到</p>
+            </div>
+            <div class="weui_cell_ft"></div>
+        </a>
+    }
+</div>
 @section scripts{
 <script>
     $("#add-btn").click(function () {
