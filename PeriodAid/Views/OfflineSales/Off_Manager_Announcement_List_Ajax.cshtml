@@ -3,7 +3,7 @@
 @using PeriodAid.Models;
 <table class="table" style="width:100%;">
     <tr>
-        <th style="width:10%;">
+        <th style= "width:10%;">
             联系人
         </th>
         <th style="width:13%;">
@@ -12,35 +12,35 @@
         <th style="width:13%;">
             结束时间
         </th>
-        <th style="width:10%;">
+        <th style="width:13%;">
             督导列表
         </th>
-        <th style="width:7%;">
+        <th style="width:10%;">
             标题
         </th>
-        <th style="width:5%;">
+        <th style="width:28%;">
             内容
         </th>
-        <th style="width:15%;">
+        @*<th style="width:15%;">
             操作人
         </th>
         <th style="width:13%;">
             操作时间
-        </th>
+        </th>*@
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
-            <td>
+            <td style= "overflow:hidden; overflow-wrap:break-word; max-width:100px;">
                 @Html.DisplayFor(modelItem => item.ManagerUserName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
+                @Html.Encode( item.StartTime.ToString("yyyy-MM-dd"))
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FinishTime)
+                @Html.Encode(item.FinishTime.ToString("yyyy-MM-dd"))
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Priority)
@@ -49,18 +49,12 @@
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @*@Html.DisplayFor(modelItem => item.Content)*@
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubmitUser)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubmitTime)
+                @Html.DisplayFor(modelItem => item.Content)
             </td>
             <td>
                 @Html.ActionLink("修改", "Off_Manager_Announcement_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
                 <a class="btn btn-danger btn-xs cancel-btn del-btn" href="/OfflineSales/Off_Manager_Announcement_Delete_Ajax?id=@item.Id">删除</a>
-                @*@Html.ActionLink("删除", "javascript:;", new { id=item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn del-btn" })*@
+                
             </td>
         </tr>
     }
@@ -81,7 +75,13 @@
                     type: "post",
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            $("#list").html(data)
+                            var url = "/OfflineSales/Off_Manager_Announcement_List_Ajax"
+                            $.ajax({
+                                url: url,
+                                success: function (list) {
+                                    $("#list").html(list);
+                                }
+                            });
                         } else {
                             alert("删除失败")
                         }

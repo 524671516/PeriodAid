@@ -10,96 +10,195 @@
 @using (Html.BeginForm("Off_Manager_Announcement_Edit", "OfflineSales", FormMethod.Post, new { @id = "editajax" }))
 {
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(m=>m.ManagerUserName)
+    <div class="row">
+        <div class="col-md-3">
+            <select multiple id="selectList_add" class="form-control input-sm" style="height:240px; font-size:1em;"></select>
 
-    <div class="form-horizontal">
-        <h4>管理员日报</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
-        <div class="form-group">
-            <label class="control-label col-md-2">联系人</label>
-            @*@Html.LabelFor(model => model.ManagerUserName, htmlAttributes: new { @class = "control-label col-md-2" })*@
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ManagerUserName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ManagerUserName, "", new { @class = "text-danger" })
+            <div class="container" style="margin-top:5px;margin-bottom:5px;">
+                <a class="btn btn-default" href="javascript:;" id="add-btn">添加</a>
+                <a class="btn btn-default" href="javascript:;" id="remove-btn" style="margin-left:40px;">移除</a>
             </div>
+            <select multiple id="selectList_rem" class="form-control input-sm" style="height:240px; font-size:1em;"></select>
+            <div id="select-false" class="text-danger"></div>
         </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">开始时间</label>
-            @*@Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-2" })*@
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">结束时间</label>
-            @*@Html.LabelFor(model => model.FinishTime, htmlAttributes: new { @class = "control-label col-md-2" })*@
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FinishTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FinishTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">督导列表</label>
-            @*@Html.LabelFor(model => model.Priority, htmlAttributes: new { @class = "control-label col-md-2" })*@
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Priority, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Priority, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">标题</label>
-            @*@Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })*@
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">内容</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">操作人</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SubmitUser, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SubmitUser, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">操作时间</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SubmitTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SubmitTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="保存" class="btn btn-default btn-save" />
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>开始时间</small></div>
+                        <input type="text" class="input-sm form-control start-date" id="StartTime" name="StartTime" value="@Model.StartTime.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>结束时间</small></div>
+                        <input type="text" class="input-sm form-control end-date" id="FinishTime" name="FinishTime" value="@Model.FinishTime.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div id="false-date" class="text-danger"></div>
+                </div>
+            </div><br />
+            <div class="row">
+                <div class="input-group col-md-12">
+                    <div class="input-group-addon"><small>工作列表</small></div>
+                    <select class="form-control input-sm" style="width:100%;" id="Priority" name="Priority">
+                        @if (Model.Priority == 1)
+                        {
+                            <option value="1" selected>低</option>
+                            <option value="3">普通</option>
+                            <option value="5">最高</option>
+                        }
+                        else if (Model.Priority == 3)
+                        {
+                            <option value="1">低</option>
+                            <option value="3" selected>普通</option>
+                            <option value="5">最高</option>
+                        }
+                        else {
+                            <option value="1" selected>低</option>
+                            <option value="3">普通</option>
+                            <option value="5" selected>最高</option>
+                        }
+                    </select>
+                </div>
+            </div><br />
+            <div class="row">
+                <div class="input-group col-md-12">
+                    <div class="input-group-addon"><small>标题</small></div>
+                    <input class="form-control input-sm" style="width:100%;" id="Title" name="Title"  value="@Model.Title"/>
+                </div>
+                <div id="false-con" class="col-md-12 col-md-offset-1 text-danger"></div>
+            </div><br />
+            <div class="row">
+                <div class="input-group col-md-12">
+                    <div class="input-group-addon" style="padding-bottom:170px;"><small>内容</small></div>
+                    <textarea class="form-control input-sm" rows="10" id="Content" name="Content">@Model.Content</textarea>
+                </div>
+            </div><br />
+            <div class="row">
+                <div class="col-md-2">
+                   <input type="submit" class="btn btn-success" value="提交" />
+                </div>
+                <div class="col-md-1">
+                    <a class="btn btn-default" href="/OfflineSales/Off_Manager_Announcement_List">返回</a>
+                </div>
             </div>
         </div>
     </div>
 }
+<script>
+    $(function () {
+        $(".start-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $(".end-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        var link_url = "/OfflineSales/Off_Manager_List_Ajax"
+        $.ajax({
+            url: link_url,
+            type: "post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    for (var i = 0; i < data.managerlist.length; i++) {
+                        $("#selectList_add").append("<option value='" + data.managerlist[i].UserName + "' >" + data.managerlist[i].NickName + "</option>");
+                    }
+                    var s = ($("#ManagerUserName").val()).split(',');
+                    for (var i = 0; i < s.length; i++) {
+                        existName(s[i]);
+                    }
+                }
+            }
+        });
+        //var selectLst = 
+    });
+    function existName(username) {
+        var nickname = $("#selectList_add option[value='" + username + "']").text();
+        $("#selectList_rem").append("<option value='" + username + "'>" + nickname + "</option>");
+        $("#selectList_add option[value='" + username + "']").remove();
+    }
+    function TitleName() {
+        //alert("0");
+        var title = document.getElementById("false-con");
+        if ($("#Title").val().length == 0) {
+            title.textContent = "标题值不能为空"
+        } else {
+            title.textContent =""
+        }
+    };
+    var titlecon = document.getElementById("Title");
+    titlecon.addEventListener('blur',TitleName,false)
+    $("#add-btn").click(function () {
+        var selectvalue = $("#selectList_add").val()+"";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = "<option value=\"" + managerArray[i] + "\">" + $("option[value='" + managerArray[i] + "']").text() + "</option>";
+            //alert(optionitem);
+            $("#selectList_rem").append(optionitem);
+            $("#selectList_add option[value='" + managerArray[i] + "']").remove();
+        }
+        //alert(selectlist);
+        setManagerUserName();
 
-@section scripts{
-    <script>
-        $(".btn-save").click(function () {
-            var url = "/OfflineSales/Off_Manager_Announcement_List";
+    });
+    $("#remove-btn").click(function () {
+        var selectRem = $("#selectList_rem").val() + "";
+        var arry_rem = selectRem.split(",");
+        for (var i = 0; i < arry_rem.length; i++) {
+            var option_con = "<option value=\"" + arry_rem[i] + "\">" + $("option[value='" + arry_rem[i] + "']").text() + "</option>";
+            $("#selectList_rem option[value='" + arry_rem[i] + "']").remove();
+            $("#selectList_add").append(option_con)
 
-        })
+        }
+        setManagerUserName();
+    });
+    $(".btn-save").click(function () {
 
-    </script>
-}
+    });
+    $("#editajax").submit(function () {
+        var start = $("#StartTime").val();
+        var end = $("#FinishTime").val();
+        var select = $("#ManagerUserName").val().trim();
+        var title = $("#Title").val();
+        var _start = new Date(start);
+        var _end = new Date(end);
+        var bool = true;
+        if (_end <= _start) {
+            $("#false-date").text("结束时间不能超过开始时间");
+            bool = false;
+        }
+        if (select == "") {
+            $("#select-false").text("联系人不能为空");
+            bool = false;
+        }
+        if (title.length == 0) {
+            $("#false-con").text("标题不能为空");
+            bool = false;
+        }
+        if (start == "") {
+            $("#false-date").text("开始时间不能为空");
+            bool = false;
+        }
+        if (end == "") {
+            $("#false-date").text("借宿时间不能为空");
+            bool = false;
+        }
+        if (!bool)
+            return false;
+        else {
+
+        }
+
+    });
+    function setManagerUserName() {
+        var s = new Array();
+        $("#selectList_rem option").each(function () {
+            s.push($(this).attr("value"));
+        });
+        $("#ManagerUserName").val(s);
+    }
+
+
+
+</script>
+
