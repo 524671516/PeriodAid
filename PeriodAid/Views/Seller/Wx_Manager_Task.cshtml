@@ -64,20 +64,12 @@
     </a>
     <a class="weui_cell salary_details" href="/Seller/Wx_Manager_Request_List">
         <div class="weui_cell_bd weui_cell_primary">
-            <p>已提报续期列表</p>
+            <p>已提报需求列表</p>
         </div>
         <div class="weui_cell_ft"></div>
     </a>
-    @if (User.IsInRole("Senior"))
-    {
-        <a class="weui_cell salary_details" href="/Seller/Wx_Senior_AllCheckInList">
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>查看其他签到</p>
-            </div>
-            <div class="weui_cell_ft"></div>
-        </a>
-    }
 </div>
+<br /><br />
 @section scripts{
 <script>
     $("#add-btn").click(function () {

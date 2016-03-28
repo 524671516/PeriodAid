@@ -1775,16 +1775,23 @@ namespace PeriodAid.Controllers
         public async Task<ActionResult> Wx_Manager_Request_Create()
         {
             Off_Manager_Request request = new Off_Manager_Request();
+            request.ManagerUserName = User.Identity.Name;
+            request.Status = 0;
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
             var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
             ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+            List<Object> typelist = new List<object>();
+            typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+            typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+            typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+            ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
             return View(request);
         }
         
         [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult Wx_Manager_Request_Create(Off_Manager_Request model)
+        public async Task<ActionResult> Wx_Manager_Request_Create(Off_Manager_Request model)
         {
             if (ModelState.IsValid)
             {
@@ -1802,6 +1809,154 @@ namespace PeriodAid.Controllers
             else
             {
                 ModelState.AddModelError("", "发生错误");
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+                var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                List<Object> typelist = new List<object>();
+                typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+                typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+                typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+                ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+                return View(model);
+            }
+        }
+        // 0328 督导需求变更
+        [Authorize(Roles = "Manager")]
+        public async Task<ActionResult> Wx_Manager_Request_Edit(int id)
+        {
+            var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+                var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                ViewBag.StoreList = new SelectList(storelist, "Key", "Value", item.StoreId);
+                List<Object> typelist = new List<object>();
+                typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+                typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+                typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+                ViewBag.TypeList = new SelectList(typelist, "Key", "Value", item.RequestType);
+                return View(item);
+            }
+            return View("Error");
+        }
+        [Authorize(Roles ="Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Wx_Manager_Request_Edit(Off_Manager_Request model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Request item = new Off_Manager_Request();
+                if (TryUpdateModel(item))
+                {
+                    item.ManagerUserName = User.Identity.Name;
+                    item.RequestTime = DateTime.Now;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Manager_Task");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+                var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                List<Object> typelist = new List<object>();
+                typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+                typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+                typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+                ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+                return View(model);
+            }
+        }
+        // 0328 督导需求列表
+        [Authorize(Roles ="Manager")]
+        public ActionResult Wx_Manager_Request_List()
+        {
+            if (User.IsInRole("Senior"))
+            {
+                var list = from m in offlineDB.Off_Manager_Request
+                           where m.Status >= 0
+                           select m;
+                return View(list);
+            }
+            else
+            {
+                var list = from m in offlineDB.Off_Manager_Request
+                           where m.Status >= 0 && m.ManagerUserName == User.Identity.Name
+                           select m;
+                return View(list);
+            }
+        }
+
+        // 0328 作废督导需求列表
+        [Authorize(Roles = "Manager")]
+        [HttpPost]
+        public ActionResult Wx_Manager_Request_Cancel_Ajax(int id)
+        {
+            var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            item.Status = -1;
+            offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            offlineDB.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
+
+        // 0328 审核督导列表
+        [Authorize(Roles = "Manager")]
+        public ActionResult Wx_Manager_Request_Check(int id)
+        {
+            var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            return View(item);
+        }
+        [Authorize(Roles ="Senior")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Wx_Manager_Request_Check(Off_Manager_Request model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Request item = new Off_Manager_Request();
+                if (TryUpdateModel(item))
+                {
+                    item.ReplyTime = DateTime.Now;
+                    item.ReplyUser = User.Identity.Name;
+                    item.Status = 1;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Manager_Request_List");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Error");
+                return View(model);
+            }
+        }
+        [Authorize(Roles = "Senior")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Wx_Manager_Request_Dismiss(Off_Manager_Request model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Request item = new Off_Manager_Request();
+                if (TryUpdateModel(item))
+                {
+                    item.ReplyTime = DateTime.Now;
+                    item.ReplyUser = User.Identity.Name;
+                    item.Status = 3;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Manager_Request_List");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Error");
                 return View(model);
             }
         }

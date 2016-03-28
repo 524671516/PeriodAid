@@ -439,6 +439,26 @@ namespace PeriodAid.Models
             return result;
         }
 
+        public static string getManagerRequestStatus(int? code)
+        {
+            string result = String.Empty;
+            switch (code)
+            {
+                case -1:
+                    return "作废";
+                case 0:
+                    return "已提交";
+                case 1:
+                    return "已审核";
+                case 2:
+                    return "已完成";
+                case 3:
+                    return "已驳回";
+                default:
+                    return "未知";
+            }
+        }
+
 
     }
 }
