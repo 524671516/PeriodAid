@@ -1769,5 +1769,41 @@ namespace PeriodAid.Controllers
                        select m;
             return View(list);
         }
+
+        // 0325 督导需求提交
+        [Authorize(Roles = "Manager")]
+        public async Task<ActionResult> Wx_Manager_Request_Create()
+        {
+            Off_Manager_Request request = new Off_Manager_Request();
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+            ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+            return View(request);
+        }
+        
+        [Authorize(Roles = "Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Wx_Manager_Request_Create(Off_Manager_Request model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Request item = new Off_Manager_Request();
+                if (TryUpdateModel(item))
+                {
+                    item.ManagerUserName = User.Identity.Name;
+                    item.RequestTime = DateTime.Now;
+                    offlineDB.Off_Manager_Request.Add(item);
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Wx_Manager_Task");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
     }
 }
