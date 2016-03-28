@@ -31,6 +31,7 @@
                         <div class="input-group-addon" ><small>开始时间</small></div>
                         <input type="text" class="input-sm form-control start-date" id="StartTime" name="StartTime"/>
                     </div>
+                    <div id="fal-date" class="text-danger"></div>
                 </div>
                 <div class="col-md-5">
                     <div class="input-group">
@@ -146,11 +147,11 @@
             bool = false;
         }
         if (start == "") {
-            $("#false-date").text("开始时间不能为空");
+            $("#fal-date").text("开始时间不能为空");
             bool = false;
         }
         if (end == "") {
-            $("#false-date").text("借宿时间不能为空");
+            $("#false-date").text("结束时间不能为空");
             bool = false;
         }
         if (!bool)
