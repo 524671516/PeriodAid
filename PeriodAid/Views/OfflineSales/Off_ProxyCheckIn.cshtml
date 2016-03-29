@@ -180,7 +180,7 @@
                     //alert(data.imgurl);
                     //$("#img1").attr("src", data.imgurl);
                     $("#CheckinPhoto").val(data.imgurl);
-                    $("#checkin-img-list").html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('/Content/checkin-img/" + data.imgurl + "')\"></div>");
+                    $("#checkin-img-list").html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + data.imgurl + "')\"></div>");
                     if (typeof (data.error) != 'undefined') {
                         if (data.error != '') {
                             alert(data.error);
@@ -216,7 +216,7 @@
                     $("#report-img-list").html("");
                     for(var item in filearray)
                     {
-                        $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('/Content/checkin-img/" + filearray[item] + "')\"></div>");
+                        $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + filearray[item] + "')\"></div>");
                     }
                     //$("#img1").attr("src", data.imgurl);
                     //$("#CheckinPhoto").val(data.imgurl);
@@ -236,7 +236,7 @@
             return false;
         }
         $(".img-list").click(function () {
-            var link_url = "/Content/checkin-img/" + $(this).attr("data-rel");
+            var link_url = "//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + $(this).attr("data-rel");
             $("#img-view").attr("src", link_url);
             $('#myModal').modal();
             return false;

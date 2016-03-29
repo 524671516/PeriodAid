@@ -206,6 +206,7 @@
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
+    <Compile Include="DAL\AliOSSUtilities.cs" />
     <Compile Include="DAL\AppPayUtilities.cs" />
     <Compile Include="DAL\CommonUtilities.cs" />
     <Compile Include="DAL\ERPOrderUtilities.cs" />
