@@ -77,7 +77,7 @@
                 <div class="input-group-addon"><small>签到图片</small></div>
                 <input type="text" class="input-sm form-control" value="" readonly />
                 <span class="input-group-btn">
-                    <a class="btn btn-default btn-sm photo_btn" href="//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/@ViewBag.CheckItem.CheckinPhoto"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-default btn-sm photo_btn" href="//cdn2.shouquanzhai.cn/checkin-img/@ViewBag.CheckItem.CheckinPhoto"><i class="fa fa-search"></i></a>
                 </span>
             </div>
         </div>
@@ -219,7 +219,7 @@
                 }
                 @foreach (var item in imglist)
                 {
-                    <div class="img-list" data-rel="@item" style="background-image:url('//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/@item')"></div>
+                    <div class="img-list" data-rel="@item" style="background-image:url('//cdn2.shouquanzhai.cn/checkin-img/@item')"></div>
                 }
             </div>
         </div>
@@ -382,7 +382,7 @@
         return false;
     });
     $(".img-list").click(function () {
-        var link_url = "//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + $(this).attr("data-rel");
+        var link_url = "//cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
         $("#img-view").attr("src", link_url);
         $('#myModal').modal();
         return false;
