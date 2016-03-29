@@ -4555,6 +4555,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0329 驳回需求
+        [HttpPost]
         public ActionResult Off_Manager_Request_Dismiss_Ajax(int id)
         {
             Off_Manager_Request model = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
