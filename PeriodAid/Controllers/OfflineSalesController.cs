@@ -4510,12 +4510,14 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult Off_Manager_Request_List_Ajax()
+        public ActionResult Off_Manager_Request_List_Ajax(int? page)
+            
         {
-            var list = from m in offlineDB.Off_Manager_Request
-                       where m.Status >= 0
-                       orderby m.Status, m.Id descending
-                       select m;
+            var _page = page ?? 1;
+            var list = (from m in offlineDB.Off_Manager_Request
+                        where m.Status >= 0
+                        orderby m.Status, m.Id descending
+                        select m).ToPagedList(_page, 20);
             return PartialView(list);
         }
 

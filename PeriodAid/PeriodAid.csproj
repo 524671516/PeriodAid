@@ -586,6 +586,9 @@
     <Content Include="Views\Seller\Wx_Manager_Request_Edit.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_Request_List.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_Request_Check.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Request_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Request_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Request_Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

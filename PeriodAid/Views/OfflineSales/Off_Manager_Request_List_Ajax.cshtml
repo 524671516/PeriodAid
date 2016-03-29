@@ -1,0 +1,81 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Request>
+@using PagedList.Mvc;
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ManagerUserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StoreId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestContent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestRemark)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReplyContent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReplyUser)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReplyTime)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ManagerUserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StoreId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequestType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequestContent)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequestRemark)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequestTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReplyContent)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReplyUser)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReplyTime)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+</table>
