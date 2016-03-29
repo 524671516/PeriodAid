@@ -72,13 +72,13 @@
 </div>
 <article class="weui_article" style="background-color:#fff;">
     <section>
-        <h3>已完成工作</h3>
+        <h3>重点工作内容</h3>
         <p>
             @Html.Raw(@Html.Encode(Model.Event_Complete == null ? "无" : Model.Event_Complete).Replace("\n", "<br />"))
         </p>
     </section>
     <section>
-        <h3>未完成工作</h3>
+        <h3>普通工作内容</h3>
         <p>
             @Html.Raw(Html.Encode(Model.Event_UnComplete == null ? "无" : Model.Event_UnComplete).Replace("\n", "<br />"))
         </p>

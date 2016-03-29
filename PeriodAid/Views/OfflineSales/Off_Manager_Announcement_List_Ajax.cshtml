@@ -28,7 +28,7 @@
     {
         <tr>
             <td style= "overflow:hidden; overflow-wrap:break-word; max-width:100px;">
-                @Html.DisplayFor(modelItem => item.ManagerUserName)
+                @Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickNameCollection(item.ManagerUserName))
             </td>
             <td>
                 @Html.Encode( item.StartTime.ToString("yyyy-MM-dd"))

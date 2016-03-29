@@ -1,5 +1,7 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Request>
 @using PagedList.Mvc;
+@using PeriodAid.Models;
+
 @section page{
     6
     }
@@ -8,19 +10,25 @@
     <tr>
         <th style="width:15%;">
             店铺
+            @*@Html.DisplayNameFor(model => model.ManagerUserName)*@
         </th>
         <th style="width:10%;">
             状态
+            @*@Html.DisplayNameFor(model => model.StoreId)*@
         </th>
         <th style="width:10%;">
             提报类型
+            @*@Html.DisplayNameFor(model => model.Status)*@
         </th>
         <th style="width:25%;">
-            内容   
+            内容
+            @*@Html.DisplayNameFor(model => model.RequestType)*@
         </th>
         <th style="width:25%;">
             备注
+            @*@Html.DisplayNameFor(model => model.RequestContent)*@
         </th>
+
         <th></th>
     </tr>
 
@@ -28,10 +36,10 @@
     <tr>
         
         <td>
-            @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+            @Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickName(item.ManagerUserName))
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Status)
+            @Html.Encode(ParseStatus.getManagerRequestStatus(item.Status))
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.RequestType)
@@ -44,9 +52,11 @@
         </td>
         
         <td>
-            @Html.ActionLink("修改", "Off_Manager_Request_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
-            
+            @Html.ActionLink("查看", "Off_Manager_Request_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
+            @if (item.Status == 0)
+            {
             <a class="btn btn-danger btn-xs cancel-btn btn-del" href="/OfflineSales/Off_Manager_Request_Dismiss_Ajax?id=@item.Id">驳回</a>
+            }
         </td>
     </tr>
 }
@@ -61,10 +71,10 @@
                 url:link_url,
                 type: "post",
                 success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        var url = "/OfflineSales/Off_Manager_Request_List_Ajax"
+                    if (data.result == "success") {
+                        var url = "/Offlinesales/Off_Manager_Request_List_Ajax"
                         $.ajax({
-                             url: url,
+                            url: url,
                             success: function (list) {
                                 $("#requestList").html(list)
                             }

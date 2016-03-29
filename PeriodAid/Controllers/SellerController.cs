@@ -1779,7 +1779,7 @@ namespace PeriodAid.Controllers
             var list = from m in offlineDB.Off_Manager_Announcement
                        where m.ManagerUserName.Contains(User.Identity.Name)
                        && today >= m.StartTime && today < m.FinishTime
-                       orderby m.Priority descending, m.SubmitTime descending
+                       orderby m.Status, m.Priority descending, m.SubmitTime descending
                        select m;
             return View(list);
         }
@@ -1895,6 +1895,7 @@ namespace PeriodAid.Controllers
             {
                 var list = from m in offlineDB.Off_Manager_Request
                            where m.Status >= 0
+                           orderby m.Status, m.Id descending
                            select m;
                 return View(list);
             }
@@ -1902,6 +1903,7 @@ namespace PeriodAid.Controllers
             {
                 var list = from m in offlineDB.Off_Manager_Request
                            where m.Status >= 0 && m.ManagerUserName == User.Identity.Name
+                           orderby m.Status, m.Id descending
                            select m;
                 return View(list);
             }

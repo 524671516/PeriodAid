@@ -4578,6 +4578,21 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
+        public static string getManagerNickName(string username)
+        {
+            OfflineSales offlineDB = new OfflineSales();
+            return offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == username).NickName;
+        }
+        public static string getManagerNickNameCollection(string usernames)
+        {
+            string[] names = usernames.Split(',');
+            string[] nicknames = new string[names.Length];
+            for(int i = 0; i < names.Length; i++)
+            {
+                nicknames[i] = getManagerNickName(names[i]);
+            }
+            return string.Join(",", nicknames);
+        }
 
         private byte[] convertCSV(byte[] array)
         {
