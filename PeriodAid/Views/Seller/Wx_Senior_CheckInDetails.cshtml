@@ -14,7 +14,7 @@
             color: #3cc51f;
         }
 
-        .weui_article h2, h3 {
+        .weui_article h2, .weui_article h3 {
             color: #de7c23;
             font-weight: bold;
         }
@@ -124,7 +124,7 @@
             if (photos != "") {
                 var images = photos.split(',');
                 for (var i = 0; i < images.length; i++) {
-                    images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+                    images[i] = "http://offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + images[i];
                 }
                 wx.previewImage({
                     current: images[0], // 当前显示图片的http链接
@@ -140,7 +140,7 @@
             if (photos != "") {
                 var images = photos.split(',');
                 for (var i = 0; i < images.length; i++) {
-                    images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+                    images[i] = "http://offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + images[i];
                 }
                 if (images.length >= 0) {
                     wx.previewImage({

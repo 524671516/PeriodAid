@@ -10,7 +10,7 @@ namespace PeriodAid.DAL
     {
         private const string AccessKey = "04nGoi0uof51Tbcn";
         private const string AccessSecret = "1z4XQF95OBX5nnMfcDukoItI85tB6s";
-        private const string endpoint = "http://offlinesales.oss-cn-hangzhou.aliyuncs.com";
+        private const string endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
         private OssClient client;
         public AliOSSUtilities()
         {
@@ -20,6 +20,15 @@ namespace PeriodAid.DAL
         {
             MemoryStream ms = new MemoryStream(content);
             client.PutObject("offlinesales", filename, ms);
+        }
+        public void PutObject(Stream stream, string filename)
+        {
+            client.PutObject("offlinesales", filename, stream);
+        }
+        public Stream GetObject(string filename)
+        {
+            OssObject downfile = client.GetObject("offlinesales", filename);
+            return downfile.Content;
         }
     }
 }
