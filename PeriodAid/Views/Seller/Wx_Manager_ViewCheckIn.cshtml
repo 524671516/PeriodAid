@@ -111,7 +111,7 @@
         $("#checkinimg").click(function () {
             var images = $(this).attr("data-target").split(',');
             for (var i = 0; i < images.length; i++) {
-                images[i] = "http://webapp.shouquanzhai.cn/Content/checkin-img/" + images[i];
+                images[i] = "http://offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + images[i];
             }
             wx.previewImage({
                 current: images[0], // 当前显示图片的http链接

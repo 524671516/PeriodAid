@@ -55,7 +55,7 @@
                 <div class="input-group">
                     <div class="input-group-addon"><small>签到图片</small></div>
                     @Html.HiddenFor(m => m.CheckinPhoto)
-                    <input type="file" id="checkin-file" name="checkin-file" class="form-control input-sm" />
+                    <input type="file" id="checkin-file" name="checkin-file" class="form-control input-sm" accept=".jpg,.png,.gif" />
                     <span class="input-group-btn">
                         <a class="btn btn-default btn-sm" href="javascript:;" id="checkin-btn" target="_blank"><i class="fa fa-upload"></i></a>
                     </span>
@@ -114,7 +114,7 @@
                 <div class="input-group">
                     <div class="input-group-addon"><small>销量图片</small></div>
                     @Html.HiddenFor(m => m.Rep_Image)
-                    <input type="file" id="report-file" name="report-file" class="form-control input-sm" />
+                    <input type="file" id="report-file" name="report-file" class="form-control input-sm" accept=".jpg,.png,.gif" />
                     <span class="input-group-btn">
                         <a class="btn btn-default btn-sm" href="javascript:;" id="report-btn" target="_blank"><i class="fa fa-upload"></i></a>
                     </span>
@@ -179,13 +179,14 @@
 
                     //alert(data.imgurl);
                     //$("#img1").attr("src", data.imgurl);
-                    $("#CheckinPhoto").val(data.imgurl);
-                    $("#checkin-img-list").html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + data.imgurl + "')\"></div>");
                     if (typeof (data.error) != 'undefined') {
                         if (data.error != '') {
                             alert(data.error);
                         } else {
                             alert("上传成功");
+                            $("#CheckinPhoto").val(data.imgurl);
+                            $("#checkin-img-list").html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + data.imgurl + "')\"></div>");
+
                         }
                     }
                 },
@@ -207,17 +208,7 @@
                 success: function (data, status)  //服务器成功响应处理函数
                 {
                     //alert("333");
-                    var filearray = new Array();
-                    if ($("#Rep_Image").val() != "") {
-                        filearray = $("#Rep_Image").val().trim().split(',');
-                    }
-                    filearray.push(data.imgurl);
-                    $("#Rep_Image").val(filearray);
-                    $("#report-img-list").html("");
-                    for(var item in filearray)
-                    {
-                        $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + filearray[item] + "')\"></div>");
-                    }
+                    
                     //$("#img1").attr("src", data.imgurl);
                     
                     if (typeof (data.error) != 'undefined') {
@@ -225,6 +216,16 @@
                             alert(data.error);
                         } else {
                             alert("上传成功");
+                            var filearray = new Array();
+                            if ($("#Rep_Image").val() != "") {
+                                filearray = $("#Rep_Image").val().trim().split(',');
+                            }
+                            filearray.push(data.imgurl);
+                            $("#Rep_Image").val(filearray);
+                            $("#report-img-list").html("");
+                            for (var item in filearray) {
+                                $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('//offlinesales.oss-cn-hangzhou.aliyuncs.com/checkin-img/" + filearray[item] + "')\"></div>");
+                            }
                         }
                     }
                 },

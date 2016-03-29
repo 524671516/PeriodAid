@@ -3954,12 +3954,20 @@ namespace PeriodAid.Controllers
             string imgurl;
             if (files.Count > 0)
             {
-                string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
-                files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
-                msg = "成功! 文件大小为:" + files[0].ContentLength;
-                imgurl = filename;
-                string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
-                return Content(res);
+                if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
+                {
+                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                    //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(files[0].InputStream, "checkin-img/" + filename);
+                    msg = "成功! 文件大小为:" + files[0].ContentLength;
+                    imgurl = filename;
+                    string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
+                    return Content(res);
+                }
+                else {
+                    error = "文件错误"; 
+                }
             }
             string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
             return Content(err_res);

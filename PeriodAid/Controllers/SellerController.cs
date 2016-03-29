@@ -463,10 +463,24 @@ namespace PeriodAid.Controllers
                 HttpWebRequest req = (HttpWebRequest)(WebRequest.Create(httpUrl));
                 req.Method = "GET";
                 HttpWebResponse res = (HttpWebResponse)(req.GetResponse());
-                Bitmap img = new Bitmap(res.GetResponseStream());//获取图片流
-                string folder = HttpContext.Server.MapPath("~/Content/checkin-img/");
+                //Bitmap img = new Bitmap(res.GetResponseStream());//获取图片流
+                //string folder = HttpContext.Server.MapPath("~/Content/checkin-img/");
                 string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
-                img.Save(folder + filename);//随机名
+                //img.Save(folder + filename);//随机名
+                AliOSSUtilities util = new AliOSSUtilities();
+                Stream inStream = res.GetResponseStream();
+                MemoryStream ms = new MemoryStream();
+                byte[] buffer = new byte[1024];
+                while (true)
+                {
+                    int sz = inStream.Read(buffer, 0, 1024);
+                    if (sz == 0)
+                        break;
+                    ms.Write(buffer, 0, sz);
+                }
+                ms.Position = 0;
+
+                util.PutObject(ms.ToArray(), "checkin-img/" + filename);
                 return Json(new { result = "SUCCESS", filename = filename });
             }
             catch (Exception ex)
@@ -478,8 +492,8 @@ namespace PeriodAid.Controllers
         }
         public FileResult ThumbnailImage(string filename)
         {
-            string folder = HttpContext.Server.MapPath("~/Content/checkin-img/");
-            Bitmap originalImage = new Bitmap(folder + filename);
+            AliOSSUtilities util = new AliOSSUtilities();
+            Bitmap originalImage = new Bitmap(util.GetObject("checkin-img/" + filename));
             int towidth = 100;
             int toheight = 100;
 
@@ -536,8 +550,8 @@ namespace PeriodAid.Controllers
         }
         public FileResult ThumbnailImage_Box(string filename)
         {
-            string folder = HttpContext.Server.MapPath("~/Content/checkin-img/");
-            Bitmap originalImage = new Bitmap(folder + filename);
+            AliOSSUtilities util = new AliOSSUtilities();
+            Bitmap originalImage = new Bitmap(util.GetObject("checkin-img/" + filename));
             int towidth = 100;
             int toheight = 100;
 
