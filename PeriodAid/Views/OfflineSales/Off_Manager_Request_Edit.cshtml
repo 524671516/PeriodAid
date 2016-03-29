@@ -4,107 +4,120 @@
     ViewBag.Title = "Off_Manager_Request_Edit";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
-
-<h2>Off_Manager_Request_Edit</h2>
-
-@using (Html.BeginForm())
+@section page{
+    6
+    }
+@using (Html.BeginForm("Off_Manager_Request_Edit", "OfflineSales", FormMethod.Post, new { @id = "requestAjax" }))
 {
     @Html.AntiForgeryToken()
-    
+    @Html.ValidationSummary()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.StoreId)
+    @Html.HiddenFor(model => model.ManagerUserName)
+    @Html.HiddenFor(model => model.Status)
     <div class="form-horizontal">
-        <h4>Off_Manager_Request</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
+       
+@if (Model.Status == 3)
+{
         <div class="form-group">
-            @Html.LabelFor(model => model.ManagerUserName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                <label class="control-label col-md-4">店铺名称:</label>
+                <div class="col-md-8">
+                    <input class="form-control" value="@Model.Off_Store.StoreName" readonly />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="control-label col-md-4">提报类型:</label>
+                <div class="col-md-8">
+                    <input id="RequestType" name="RequestType" class="form-control" value="@Model.RequestType" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">内容:</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ManagerUserName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ManagerUserName, "", new { @class = "text-danger" })
+                <input id="RequestContent" name="RequestContent" class="form-control" value="@Model.RequestContent" readonly/>            
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.StoreId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">备注:</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.StoreId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
+                <input id="RequestRemark" name="RequestRemark" class="form-control" value="@Model.RequestRemark" readonly />       
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">提报时间:</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                <input id="RequestTime" name="RequestTime" class="form-control" value="@Model.RequestTime" readonly />              
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.RequestType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">回复内容:</label>
+            <div class="col-md-10">               
+                @Html.EditorFor(model => model.ReplyContent, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ReplyContent, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group" style="margin-left:5px;">
+            @*<button id="request-btn" class="btn btn-success col-lg-offset-2" style="margin-right:15px;">审核</button>*@
+            <a class="btn btn-default col-lg-offset-2" href="/OfflineSales/Off_Manager_Request_List">返回</a>
+        </div>
+}
+else {
+    <div class="form-group">
+        <div class="col-md-6">
+            <label class="control-label col-md-4">店铺名称:</label>
+            <div class="col-md-8">
+                <input class="form-control" value="@Model.Off_Store.StoreName" readonly />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label class="control-label col-md-4">提报类型:</label>
+            <div class="col-md-8">
+                <input id="RequestType" name="RequestType" class="form-control" value="@Model.RequestType" readonly />
+            </div>
+        </div>
+    </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">内容:</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.RequestType, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RequestType, "", new { @class = "text-danger" })
+                <input id="RequestContent" name="RequestContent" class="form-control" value="@Model.RequestContent" readonly />
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.RequestContent, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">备注:</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.RequestContent, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RequestContent, "", new { @class = "text-danger" })
+                <input id="RequestRemark" name="RequestRemark" class="form-control" value="@Model.RequestRemark" readonly />
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.RequestRemark, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">提报时间:</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.RequestRemark, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RequestRemark, "", new { @class = "text-danger" })
+                <input id="RequestTime" name="RequestTime" class="form-control" value="@Model.RequestTime" readonly />
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.RequestTime, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RequestTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RequestTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ReplyContent, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">回复内容:</label>
             <div class="col-md-10">
                 @Html.EditorFor(model => model.ReplyContent, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.ReplyContent, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ReplyUser, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ReplyUser, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ReplyUser, "", new { @class = "text-danger" })
-            </div>
+        <div class="form-group" style="margin-left:5px;">
+            <button id="request-btn" class="btn btn-success col-lg-offset-2" style="margin-right:15px;">审核</button>
+            <a class="btn btn-default" href="/OfflineSales/Off_Manager_Request_List">返回</a>
         </div>
+}
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ReplyTime, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ReplyTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ReplyTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+
+

@@ -1,51 +1,40 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Request>
 @using PagedList.Mvc;
+@section page{
+    6
+    }
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+<table class="table" style="width:100%;">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ManagerUserName)
+        <th style="width:15%;">
+            店铺
+            @*@Html.DisplayNameFor(model => model.ManagerUserName)*@
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StoreId)
+        <th style="width:10%;">
+            状态
+            @*@Html.DisplayNameFor(model => model.StoreId)*@
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
+        <th style="width:10%;">
+            提报类型
+            @*@Html.DisplayNameFor(model => model.Status)*@
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RequestType)
+        <th style="width:25%;">
+            内容
+            @*@Html.DisplayNameFor(model => model.RequestType)*@
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RequestContent)
+        <th style="width:25%;">
+            备注
+            @*@Html.DisplayNameFor(model => model.RequestContent)*@
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RequestRemark)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RequestTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReplyContent)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReplyUser)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReplyTime)
-        </th>
+
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
+        
         <td>
-            @Html.DisplayFor(modelItem => item.ManagerUserName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StoreId)
+            @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Status)
@@ -59,23 +48,37 @@
         <td>
             @Html.DisplayFor(modelItem => item.RequestRemark)
         </td>
+        
         <td>
-            @Html.DisplayFor(modelItem => item.RequestTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReplyContent)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReplyUser)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReplyTime)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("修改", "Off_Manager_Request_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
+            
+            <a class="btn btn-danger btn-xs cancel-btn del-btn" href="/OfflineSales/Off_Manager_Request_Dismiss_Ajax?id=@item.Id">驳回</a>
         </td>
     </tr>
 }
 </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Manager_Request_List_Ajax", new { page }))</div>
+<script>
+    $(".del-btn").click(function () {
+        var result = confirm("是否驳回该类需求提报")
+        if (result == "SUCCESS") {
+            var link_url = $(this).attr(href);
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        var url = "/OfflineSales/Off_Manager_Request_List_Ajax"
+                        $.ajax({
+                            url: url,
+                            success: function (list) {
+                                $("#requestList").html(list)
+                            }
+                        })
+                    } else {
+                        alert("驳回无效")
+                    }
+                }
+            })
+        }
+    })
+</script>

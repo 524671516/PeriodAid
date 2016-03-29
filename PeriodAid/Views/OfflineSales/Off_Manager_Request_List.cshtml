@@ -3,6 +3,22 @@
     ViewBag.Title = "Off_Manager_Request_List";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
+@section page{
+    6
+    }
+<br />
+<div id="requestList">
 
-<h2>Off_Manager_Request_List</h2>
+</div>
+<script>
+    $(function () {
+        var url = "/OfflineSales/Off_Manager_Request_List_Ajax"
+        $.ajax({
+            url: url,
+            success: function (list) {
+                $("#requestList").html(list)
+            }
+        })
+    })
+</script>
 
