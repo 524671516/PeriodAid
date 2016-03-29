@@ -8,25 +8,19 @@
     <tr>
         <th style="width:15%;">
             店铺
-            @*@Html.DisplayNameFor(model => model.ManagerUserName)*@
         </th>
         <th style="width:10%;">
             状态
-            @*@Html.DisplayNameFor(model => model.StoreId)*@
         </th>
         <th style="width:10%;">
             提报类型
-            @*@Html.DisplayNameFor(model => model.Status)*@
         </th>
         <th style="width:25%;">
-            内容
-            @*@Html.DisplayNameFor(model => model.RequestType)*@
+            内容   
         </th>
         <th style="width:25%;">
             备注
-            @*@Html.DisplayNameFor(model => model.RequestContent)*@
         </th>
-
         <th></th>
     </tr>
 
@@ -67,12 +61,12 @@
                 url:link_url,
                 type: "post",
                 success: function (data) {
-                    if (data.result == "success") {
-                        var url = "/offlinesales/off_manager_request_list_ajax"
+                    if (data.result == "SUCCESS") {
+                        var url = "/OfflineSales/Off_Manager_Request_List_Ajax"
                         $.ajax({
-                            url: url,
+                             url: url,
                             success: function (list) {
-                                $("#requestlist").html(list)
+                                $("#requestList").html(list)
                             }
                         })
                     } else {
