@@ -1,5 +1,7 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Request>
 @using PagedList.Mvc;
+@using PeriodAid.Models;
+
 @section page{
     6
     }
@@ -34,10 +36,10 @@
     <tr>
         
         <td>
-            @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+            @Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickName(item.ManagerUserName))
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Status)
+            @Html.Encode(ParseStatus.getManagerRequestStatus(item.Status))
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.RequestType)
@@ -50,9 +52,11 @@
         </td>
         
         <td>
-            @Html.ActionLink("修改", "Off_Manager_Request_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
-            
+            @Html.ActionLink("查看", "Off_Manager_Request_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
+            @if (item.Status == 0)
+            {
             <a class="btn btn-danger btn-xs cancel-btn btn-del" href="/OfflineSales/Off_Manager_Request_Dismiss_Ajax?id=@item.Id">驳回</a>
+            }
         </td>
     </tr>
 }
@@ -68,11 +72,11 @@
                 type: "post",
                 success: function (data) {
                     if (data.result == "success") {
-                        var url = "/offlinesales/off_manager_request_list_ajax"
+                        var url = "/Offlinesales/Off_Manager_Request_List_Ajax"
                         $.ajax({
                             url: url,
                             success: function (list) {
-                                $("#requestlist").html(list)
+                                $("#requestList").html(list)
                             }
                         })
                     } else {

@@ -11,13 +11,13 @@
     <div class="weui_cells weui_cells_form">
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
-                @Html.TextAreaFor(m => m.Event_Complete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入已完成工作" })
+                @Html.TextAreaFor(m => m.Event_Complete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入重点工作内容" })
                 <div class="weui_textarea_counter"><abbr id="current_length_cp">0</abbr>/500</div>
             </div>
         </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
-                @Html.TextAreaFor(m => m.Event_UnComplete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入未完成工作" })
+                @Html.TextAreaFor(m => m.Event_UnComplete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入一般工作内容" })
                 <div class="weui_textarea_counter"><abbr id="current_length_uc">0</abbr>/500</div>
             </div>
         </div>
