@@ -4504,6 +4504,69 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS", managerlist = list });
         }
 
+        // 0329 获取需求列表
+        public ActionResult Off_Manager_Request_List()
+        {
+            return View();
+        }
+
+        public ActionResult Off_Manager_Request_List_Ajax()
+        {
+            var list = from m in offlineDB.Off_Manager_Request
+                       where m.Status >= 0
+                       orderby m.Status, m.Id descending
+                       select m;
+            return PartialView(list);
+        }
+
+        // 0329 修改需求详情
+        public ActionResult Off_Manager_Request_Edit(int id)
+        {
+            Off_Manager_Request model = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+                return View(model);
+            else
+                return View("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Manager_Request_Edit(Off_Manager_Request model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Request item = new Off_Manager_Request();
+                if (TryUpdateModel(item))
+                {
+                    item.Status = 2;
+                    item.ReplyTime = DateTime.Now;
+                    item.ReplyUser = User.Identity.Name;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Manager_Request_List");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+
+        // 0329 驳回需求
+        public ActionResult Off_Manager_Request_Dismiss_Ajax(int id)
+        {
+            Off_Manager_Request model = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+            {
+                model.Status = 3;
+                model.ReplyUser = User.Identity.Name;
+                model.ReplyTime = DateTime.Now;
+                offlineDB.Entry(model).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FAIL" });
+        }
 
         private byte[] convertCSV(byte[] array)
         {
