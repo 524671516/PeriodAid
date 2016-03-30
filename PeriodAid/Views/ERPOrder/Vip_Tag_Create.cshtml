@@ -4,5 +4,67 @@
     Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
 }
 <!--当前已有标签的列表以及对应的会员数，可以额外添加/删除对应的标签，并且删除会员的标签信息-->
-<h2>Vip_Tag_Create</h2>
-
+<div class="row">
+    <div class="col-md-8">
+        <a class="btn btn-info btn-sm" href="/ERPOrder/Vip_Tag_Setup"><i class="fa fa-plus"></i>&nbsp;&nbsp;筛选会员打标</a>
+        <a class="btn btn-info btn-sm" href="/ERPOrder/Vip_Tag_Upload"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传会员打标</a>
+    </div>
+</div><br />
+<table class="table" style="width:100%">
+    <tr>
+        <th>
+            标签列表
+        </th>
+        <th>
+            会员数量
+        </th>
+        <th>
+            最后打标时间
+        </th>
+        <th></th>
+    </tr>
+    <tr>
+        <td>普通会员</td>
+        <td>12850</td>
+        <td>2016-03-28 17:20</td>
+        <td>
+            <button class="btn btn-info btn-xs" id="add-btn">添加</button>
+            <button class="btn btn-danger btn-xs" id="false-btn">删除</button>
+        </td>
+    </tr>
+    <tr>
+        <td>高级会员</td>
+        <td>2850</td>
+        <td>2016-03-28 17:00</td>
+        <td>
+            <button class="btn btn-info btn-xs">添加</button>
+            <button class="btn btn-danger btn-xs">删除</button>
+        </td>
+    </tr>
+    <tr>
+        <td>天猫会员</td>
+        <td>3320</td>
+        <td>2016-03-28 17:10</td>
+        <td>
+            <button class="btn btn-info btn-xs">添加</button>
+            <button class="btn btn-danger btn-xs">删除</button>
+        </td>
+    </tr>
+    <tr>
+        <td>微信会员</td>
+        <td>201540</td>
+        <td>2016-03-28 17:40</td>
+        <td>
+            <button class="btn btn-info btn-xs">添加</button>
+            <button class="btn btn-danger btn-xs">删除</button>
+        </td>
+    </tr>
+</table>
+<script>
+    $("#add-btn").click(function () {
+        alert("增加该会员打标下的会员数")
+    });
+    $("#false-btn").click(function () {
+        alert("删除该会员打标信息")
+    })
+</script>

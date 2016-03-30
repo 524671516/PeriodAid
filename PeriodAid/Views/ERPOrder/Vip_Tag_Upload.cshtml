@@ -4,5 +4,36 @@
     Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
 }
 <!--添加上传文件，内容是订单编号以及选择对应的下拉菜单（标签名称），点击完成后，所有订单编号所对应的会员会添加标签-->
-<h2>Vip_Tag_Upload</h2>
+<h4><b>上传会员打标文件</b></h4><br />
+<div class="row">
+    <div class="col-xs-3">
+        <input type="text" class="form-control" value="订单编号"/>
+    </div>
+    <div class="col-xs-3">
+        <select class="form-control">
+            <option>标签名称</option>
+            <option selected>高级会员</option>
+            <option selected>普通会员</option>
+            <option selected>其他会员</option>
+        </select>
+    </div>
+    <div class="col-xs-5">
+        <div class="input-group">
+            <input type="file" name="xlsxfile" id="xlsxfile" class="form-control input-sm" accept=".xlsx">
+            <span class="input-group-btn">
+                <button class="btn btn-success btn-sm" id="rev">上传</button>
+                
+            </span>
+            <span class="input-group-btn">
+                <a href="/ERPOrder/Vip_Tag_Create" class="btn btn-default"  style="margin-left:15px;">返回</a>
+            </span>
+        </div>
+        
+    </div>
+</div>
+<script>
+    $("#rev").click(function () {
+        alert("上传选择好的文件")
+    })
+</script>
 
