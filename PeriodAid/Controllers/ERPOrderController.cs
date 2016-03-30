@@ -98,5 +98,23 @@ namespace PeriodAid.Controllers
             await util.Download_ERPVips(st, et);
             return Json(new { result = "SUCCESS" });
         }
+
+        // 0330 会员标签设定
+        public ActionResult Vip_Tag_Setup()
+        {
+            return View();
+        }
+
+        // 0330 会员标签创建
+        public ActionResult Vip_Tag_Create()
+        {
+            return View();
+        }
+
+        // 0330 会员标签上传
+        public ActionResult Vip_Tag_Upload()
+        {
+            return View();
+        }
     }
 }

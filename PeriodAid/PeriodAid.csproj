@@ -594,6 +594,9 @@
     <Content Include="Views\OfflineSales\Off_Manager_Request_List.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_Request_List_Ajax.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_Request_Edit.cshtml" />
+    <Content Include="Views\ERPOrder\Vip_Tag_Setup.cshtml" />
+    <Content Include="Views\ERPOrder\Vip_Tag_Create.cshtml" />
+    <Content Include="Views\ERPOrder\Vip_Tag_Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
