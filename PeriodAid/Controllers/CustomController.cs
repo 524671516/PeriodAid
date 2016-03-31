@@ -706,7 +706,61 @@ namespace PeriodAid.Controllers
             {
                 return View("Error");
             }
-            #endregion
+        }
+        #endregion
+
+        public async Task<ActionResult> QueryAllRedPack()
+        {
+            var list = from m in promotionDB.Promotion_TJH
+                       where m.status == 0
+                       select m;
+            int count = 0;
+            foreach(var item in list)
+            {
+                AppPayUtilities pay = new AppPayUtilities();
+                string result = await pay.WxRedPackQuery(item.mch_billno);
+                CommonUtilities.writeLog(result);
+                if (result == "RECEIVED")
+                {
+                    item.status = 1;
+                    item.mch_result = result;
+                    promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+                else if (result == "FAILED")
+                {
+                    item.status = 2;
+                    item.mch_result = result;
+                    promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+                else if (result == "REFUND")
+                {
+                    item.status = 3;
+                    item.mch_result = result;
+                    promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+                else
+                {
+                    item.status = 0;
+                    item.mch_result = result;
+                    promotionDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+                count++;
+            }
+            await promotionDB.SaveChangesAsync();
+            return Content("SUCCESS:" + count);
+        }
+
+        public ActionResult TestVoice()
+        {
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            return View();
         }
     }
 }

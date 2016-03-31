@@ -218,10 +218,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603290645587_03291445.cs" />
-    <Compile Include="Migrations\201603290645587_03291445.Designer.cs">
-      <DependentUpon>201603290645587_03291445.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -597,6 +593,8 @@
     <Content Include="Views\ERPOrder\Vip_Tag_Setup.cshtml" />
     <Content Include="Views\ERPOrder\Vip_Tag_Create.cshtml" />
     <Content Include="Views\ERPOrder\Vip_Tag_Upload.cshtml" />
+    <Content Include="Views\ERPOrder\teststores.cshtml" />
+    <Content Include="Views\Custom\TestVoice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -609,11 +607,6 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603290645587_03291445.resx">
-      <DependentUpon>201603290645587_03291445.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

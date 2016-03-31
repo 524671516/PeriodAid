@@ -28,12 +28,35 @@
                 <a href="/ERPOrder/Vip_Tag_Create" class="btn btn-default"  style="margin-left:15px;">返回</a>
             </span>
         </div>
-        
     </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-xs-4">
+        <textarea id="orderidlist" rows="10" class="form-control input-sm"></textarea>
+    </div>
+    <div class="col-xs-6">@Html.DropDownList("taglist", ViewBag.SelectList as SelectList, "- 请选择 -", new { @class="form-control input-sm"})</div>
+    <div class="col-xs-2"><a href="javascript:;" class="btn btn-default btn-sm" id="start-btn">开始</a></div>
 </div>
 <script>
     $("#rev").click(function () {
         alert("上传选择好的文件")
+    });
+    $("#start-btn").click(function () {
+        $btn = $(this);
+        $btn.attr("disabled","disabled").html("<i class=\"fa fa-spinner fa-spin\"></i>")
+        $.ajax({
+            url: "/ERPOrder/setTag",
+            type: "post",
+            data: {
+                orderids: $("#orderidlist").val().trim(),
+                tagid: $("#taglist").val()
+            },
+            success: function (data) {
+                alert(data);
+                $btn.removeAttr("disabled").text("开始");
+            }
+        })
     })
 </script>
 

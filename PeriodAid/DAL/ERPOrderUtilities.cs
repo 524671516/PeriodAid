@@ -9,6 +9,7 @@ using System.IO;
 using System.Web.Script.Serialization;
 using System.Text;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 
 namespace PeriodAid.DAL
 {
@@ -502,6 +503,126 @@ namespace PeriodAid.DAL
         }
         #endregion
 
+        public async Task<List<shops>> getERPShops()
+        {
+            string json = "{" +
+                    "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.shop.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"page_size\":100," +
+                    "\"page_no\":" + 1 +
+                    "}";
+            string signature = sign(json, AppSecret);
+            string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
+            var request = WebRequest.Create(post_url) as HttpWebRequest;
+            string info = "{" +
+                "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.shop.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"page_size\":100," +
+                    "\"page_no\":" + 1 +"," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            //return Content(info);
+            string result = "";
+            try
+            {
+                request.ContentType = "text/json";
+                request.Method = "post";
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = await request.GetResponseAsync() as HttpWebResponse;
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = reader.ReadToEnd();
+                        //return Content(result);
+                        JavaScriptSerializer serializer = new JavaScriptSerializer();
+                        Stores_Result r = JsonConvert.DeserializeObject<Stores_Result>(result);
+                        if (r != null)
+                        {
+                            return r.shops;
+                        }
+                        return null;
+                    }
+                }
+
+            }
+            catch (UriFormatException)
+            {
+                return null;
+                //return Content(uex.Message);// 出错处理
+            }
+            catch (WebException)
+            {
+                return null;//return Content(ex.Message);// 出错处理
+            }
+        }
+
+        public async Task<int> setTags(IEnumerable<VipIds> vipids, int tagid)
+        {
+            int success = 0;
+            foreach (var item in vipids)
+            {
+                try
+                {
+                    var vip = erpdb.vips.SingleOrDefault(m => m.id == item.id);
+                    var tag = erpdb.tags.SingleOrDefault(m => m.id == tagid);
+                    if (vip.tags.Contains(tag))
+                    {
+
+                    }
+                    else
+                    {
+                        vip.tags.Add(tag);
+                        success++;
+                    }
+                }
+                catch
+                {
+                    //return -1;
+                }
+            }
+            await erpdb.SaveChangesAsync();
+            return success;
+        }
+
+        public IEnumerable<VipIds> getVipIds(string orderid)
+        {
+            string[] ids = orderid.Split('\n');
+            // 加'号
+            for (int i = 0; i < ids.Length; i++)
+            {
+                ids[i] = "'" + ids[i] + "'";
+            }
+            string formated_ids = string.Join(",", ids);
+            string sql = "SELECT T1.[id] FROM[ORDERERP].[dbo].[vips] as T1 left join[ORDERERP].[dbo].[orders] as T2 on " +
+                "T1.name = T2.vip_name and T1.shop_name = T2.shop_name " +
+                "where T2.platform_code in (" + formated_ids + ") group by T1.[id]";
+            //SqlParameter[] parm = { new SqlParameter("content", formated_ids) };
+            var vipids = erpdb.Database.SqlQuery<VipIds>(sql);
+            return vipids;
+        }
+
+        private string addTags(string originaltags, string tagname)
+        {
+            if (originaltags.Contains(tagname))
+            {
+                return originaltags;
+            }
+            else if (originaltags.Trim() == "")
+            {
+                return tagname;
+            }
+            else
+            {
+                return originaltags + "," + tagname;
+            }
+        }
+
+
 
         private string sign(string json, string secret)
         {
@@ -537,5 +658,31 @@ namespace PeriodAid.DAL
         public string requestMethod { get; set; }//请求接口方法
         public List<vips> vips { get; set; }
         public int total;
+    }
+
+    public class Stores_Result
+    {
+        public bool success { get; set; }
+        public string errorCode { get; set; }//错误代码
+        public string subErrorCode { get; set; }//子错误代码
+        public string errorDesc { get; set; }//错误描述
+        public string subErrorDesc { get; set; }//子错误描述
+        public string requestMethod { get; set; }//
+        public List<shops> shops { get; set; }
+        public int total;
+    }
+
+    public class shops
+    {
+        public string id { get; set; }
+        public string nick { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+        public string type_name { get; set; }
+    }
+
+    public class VipIds
+    {
+        public int id { get; set; }
     }
 }

@@ -31,6 +31,7 @@
         public virtual DbSet<taskstatus> taskstatus { get; set; }
         public virtual DbSet<vips> vips { get; set; }
         public virtual DbSet<receive_infos> receive_infos { get; set; }
+        public virtual DbSet<tags> tags { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -65,6 +66,8 @@
                 .WithRequired(e => e.vips)
                 .HasForeignKey(e => e.vipid)
                 .WillCascadeOnDelete(true);
+
+            
         }
 
     }
@@ -363,6 +366,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<receive_infos> receive_infos { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tags> tags { get; set; }
     }
     public partial class receive_infos
     {
@@ -387,6 +393,18 @@
 
         public virtual vips vips { get; set; }
     }
+
+    public partial class tags
+    {
+        public int id { get; set; }
+
+        [StringLength(16)]
+        public string name { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<vips> vips { get; set; }
+    }
+
+    
 }
 
     //public class MyEntity

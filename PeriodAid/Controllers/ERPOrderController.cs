@@ -108,13 +108,37 @@ namespace PeriodAid.Controllers
         // 0330 会员标签创建
         public ActionResult Vip_Tag_Create()
         {
-            return View();
+            var taglist = from m in erpdb.tags
+                          select m;
+            return View(taglist);
         }
 
         // 0330 会员标签上传
         public ActionResult Vip_Tag_Upload()
         {
+            var taglist = from m in erpdb.tags
+                          select new { Key = m.id, Value = m.name };
+            ViewBag.SelectList = new SelectList(taglist, "Key", "Value");
             return View();
+        }
+
+        public async Task<ActionResult> teststores()
+        {
+            ERPOrderUtilities util = new ERPOrderUtilities();
+            var stores = await util.getERPShops();
+            var list = from m in stores
+                       select new { Key = m.name, Value = m.name };
+            ViewBag.SelectList = new SelectList(list, "Key", "Value");
+            return View();
+        }
+        [HttpPost]
+        public async Task<ActionResult> setTag(string orderids, int tagid)
+        {
+            ERPOrderUtilities util = new ERPOrderUtilities();
+            var vipidlist = util.getVipIds(orderids);
+            //return Content(vipidlist.Count() + "");
+            int success = await util.setTags(vipidlist, tagid);
+            return Content("成功：" + success);
         }
     }
 }

@@ -211,6 +211,18 @@ namespace PeriodAid.DAL
             }
             return order.status;
         }
+
+        public async Task<string> WxRedPackQueryAll()
+        {
+            var list = from m in PaymentDb.WxRedPackOrder
+                       where m.status == "SENT"
+                       select m;
+            foreach(var item in list)
+            {
+                await WxRedPackQuery(item.mch_billno);
+            }
+            return "SUCCESS";
+        }
         private string parseXml(List<QueryParameter> parameters, string sign)
         {
             var list = parameters.OrderBy(m => m.Name).ToList();
