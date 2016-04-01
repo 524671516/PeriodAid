@@ -15,26 +15,53 @@
     <link href="~/Content/weui.min.css" rel="stylesheet" />
     <link href="~/Content/example.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <style type="text/css">
         h1 {
-            color:#3cc51f;
+            color: #3cc51f;
         }
-        h2, h3{
-            color:#de7c23; font-weight:bold;
+
+        h2, h3 {
+            color: #de7c23;
+            font-weight: bold;
         }
-        p{
-            font-size:14px; line-height:24px;
+
+        h4 {
+            color: #337ab7;
+            font-size: 14px;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 24px;
         }
     </style>
 </head>
 <body>
+    
     <article class="weui_article">
         <h1>使用指南</h1>
+        <div class="container">
+            <div id="mod_player_wrap" class="mod_player_wrap" data-content="t0191jjrtls">
+                <div class="mod_inner">
+                    <div id="mod_inner" class="mod_player_section center mod_independent">
+                        <div>
+                            <div id="mod_player" class="mod_player">
+                                <div id="mod_player_skin"><embed wmode="transparent" flashvars="vid=d0157vytxq5&amp;autoplay=0&amp;list=2&amp;adplay=1&amp;showcfg=1&amp;tpid=0&amp;pic=http://www.shouquanzhai.cn/Content/image/web/video01.jpg&amp;share=1" src="http://imgcache.qq.com/tencentvideo_v1/player/TPout.swf?max_age=86400&amp;v=20130507" quality="high" name="tenvideo_flash_player_1459498358401" id="tenvideo_flash_player_1459498358401" bgcolor="#000000" align="middle" allowscriptaccess="always" allowfullscreen="true" type="application/x-shockwave-flash" pluginspage="http://get.adobe.com/cn/flashplayer/"></div>
+                                <!-- 这个div是播放器准备输出的位置 --><!-- 引入腾讯视频播放器组件 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <section>
             <h2 class="title">1. 促销员每日工作流程及要求</h2>
-            <p><img src="~/Content/images/guide-01-1.jpg" class="img-responsive" />
-            每日工作流程主要分为：<br />1. 签到；2. 签退；3.提报销量；<br />
-            促销员完成以上考勤流程，即视作完成当日促销，我们在确认销量后将及时将您的工资和奖金进行结算</p>
+            <p>
+                <img src="~/Content/images/guide-01-1.jpg" class="img-responsive" />
+                每日工作流程主要分为：<br />1. 签到；2. 签退；3.提报销量；<br />
+                促销员完成以上考勤流程，即视作完成当日促销，我们在确认销量后将及时将您的工资和奖金进行结算
+            </p>
             <br />
             <h2 class="title">2. 准备工作</h2>
             <section>
@@ -110,12 +137,47 @@
         </section>
     </article>
     <div class="container">
-        @if (User.Identity.IsAuthenticated) { 
-        <a href="/Seller/Wx_Seller_Home" class="weui_btn weui_btn_primary" id="submit-btn">
-            返回首页
-        </a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a href="/Seller/Wx_Seller_Home" class="weui_btn weui_btn_primary" id="submit-btn">
+                返回首页
+            </a>
         }
     </div>
-    <br /><br />
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script language="javascript" src="http://qzs.qq.com/tencentvideo_v1/js/tvp/tvp.player.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        $(function () {
+            var device_width = $(window).width();
+            var scale = 400 / 480;
+            var video_width = 0
+            var video_height = 0;
+                video_width = device_width * 0.85;
+                video_height = device_width * 0.85 * scale;
+            
+                //$("#myModalLabel").html($(this).attr("data-title"));
+                var video = new tvp.VideoInfo();
+                //向视频对象传入视频vid
+                video.setVid("t0191jjrtls");
+                //定义播放器对象
+                var player = new tvp.Player(video_width, video_height);
+                //设置播放器初始化时加载的视频
+                player.setCurVideo(video);
+                //设置精简皮肤，仅点播有效
+                //player.addParam("flashskin", "http://imgcache.qq.com/minivideo_v1/vd/res/skins/TencentPlayerMiniSkin.swf");
+                //输出播放器,参数就是上面div的id，希望输出到哪个HTML元素里，就写哪个元素的id
+                player.addParam("autoplay", "0");
+                player.addParam("wmode", "transparent");
+                //player.addParam("pic", "http://www.shouquanzhai.cn" + $(this).attr("data-target"));
+                player.write("mod_player_skin");
+                //$('#myModal').modal();
+                $("#mod_player_wrap").attr({
+                    "width": video_width,
+                    "height": video_height
+                });
+            
+        });
+
+    </script>
 </body>
 </html>
