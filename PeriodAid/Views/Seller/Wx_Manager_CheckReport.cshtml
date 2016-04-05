@@ -154,7 +154,7 @@
             <div class="weui_cell">
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.TextAreaFor(m => m.Confirm_Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入审核备注" })
-                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500</div>
+                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500&nbsp;<i id="startRecord" class="fa fa-volume-up"></i><i id="stopRecord" class="fa fa-volume-off" style="display:none;"></i></div>
                 </div>
             </div>
         </div><br />
@@ -207,7 +207,8 @@
             timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
             nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
             signature: $("#signature").text(),// 必填，签名，见附录1
-            jsApiList: ['previewImage', 'openLocation']
+            jsApiList: ['previewImage', 'openLocation', 'startRecord',
+                'stopRecord', 'translateVoice' ]
             //必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
         $(function () {
@@ -374,6 +375,34 @@
                     }
                 }
             });
+        });
+        //录音功能
+        $("#startRecord").click(function () {
+            wx.startRecord();
+            $(this).hide();
+            $("#stopRecord").show();
+        });
+        $("#stopRecord").click(function () {
+            $("#startRecord").show();
+            $(this).hide();
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            $("#Confirm_Remark").val($("#Confirm_Remark").val() + res.translateResult);
+                            //alert(res.translateResult); // 语音识别的结果
+                            $("#current_length_2").text(cal_textlength("Confirm_Remark"));//weui_textarea_counter的数字计算
+                            //获取焦点后光标在字符串后 
+                            //其原理就是获得焦点后重新把自己复制粘帖一下 
+                            var t = $("#Confirm_Remark").val();
+                            $("#Confirm_Remark").val("").focus().val(t);
+                        }
+                    });
+                }
+            });//结束录音
         });
 
     </script>

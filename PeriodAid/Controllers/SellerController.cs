@@ -1800,6 +1800,14 @@ namespace PeriodAid.Controllers
             typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
             typelist.Add(new { Key = "问题调整", Value = "问题调整" });
             ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View(request);
         }
         
@@ -1832,6 +1840,14 @@ namespace PeriodAid.Controllers
                 typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
                 typelist.Add(new { Key = "问题调整", Value = "问题调整" });
                 ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
                 return View(model);
             }
         }
