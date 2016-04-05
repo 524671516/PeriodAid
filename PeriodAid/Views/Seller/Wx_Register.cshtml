@@ -75,7 +75,7 @@
                         </div>
                         <br />
                         <div class="form-group text-center">
-                            <input type="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;册&nbsp;&nbsp;&nbsp;&nbsp;" class="btn btn-default btn-danger btn-pr btn-lg" />
+                            <input type="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;册&nbsp;&nbsp;&nbsp;&nbsp;" id="submit-btn" class="btn btn-default btn-danger btn-pr btn-lg" />
                         </div>
                     </div>
                 }
@@ -116,6 +116,11 @@
                 });
             });
         });
+        $("#submit-btn").click(function () {
+            $(this).attr("disabled", "disabled").val("提交中...");
+            $("form").submit();
+            return false;
+        })
         function settime(val) {
             if (countdown == 0) {
                 $(val).removeAttr("disabled");
