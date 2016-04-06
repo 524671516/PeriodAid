@@ -284,6 +284,7 @@
     <Content Include="Content\images\mark_6.png" />
     <Content Include="Content\images\mark_other.png" />
     <Content Include="Content\images\mark_wem.png" />
+    <Content Include="Content\images\new_xiaomi.jpg" />
     <Content Include="Content\images\period-aid-logo.png" />
     <Content Include="Content\images\phone-ban.png" />
     <Content Include="Content\images\qrcode_for_sqz1760.jpg" />
@@ -586,7 +587,6 @@
     <Content Include="Views\Seller\Wx_Manager_Request_Create.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_Request_Edit.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_Request_List.cshtml" />
-    <Content Include="Views\Seller\Wx_Manager_Request_Check.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_Request_List.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_Request_List_Ajax.cshtml" />
     <Content Include="Views\OfflineSales\Off_Manager_Request_Edit.cshtml" />
@@ -595,6 +595,7 @@
     <Content Include="Views\ERPOrder\Vip_Tag_Upload.cshtml" />
     <Content Include="Views\ERPOrder\teststores.cshtml" />
     <Content Include="Views\Custom\TestVoice.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Request_Check.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
