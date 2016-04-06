@@ -349,9 +349,14 @@ namespace PeriodAid.Controllers
         {
             int storeId = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId).StoreId;
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var dow = today.DayOfWeek;
+            int dow = (int)today.DayOfWeek;
+            //int dow = (int)new DateTime(2016, 04, 03).DayOfWeek;
+            if (dow == 0)
+            {
+                dow = 7;
+            }
             var dowinfo = from m in offlineDB.Off_AVG_SalesData
-                          where m.DayOfWeek == (int)dow && m.StoreId == storeId
+                          where m.DayOfWeek == dow && m.StoreId == storeId
                           select new { BR = m.AVG_BROWN, BL = m.AVG_BLACK, DT = m.AVG_DATES, HN = m.AVG_HONEY, LM = m.AVG_LEMON };
             if (dowinfo.Count() == 0)
                 ViewBag.AVG_Info = 0;
@@ -1260,14 +1265,20 @@ namespace PeriodAid.Controllers
         }
         
         [Authorize(Roles = "Manager")]
-        public ActionResult Wx_Manager_ReportList()
+        public async Task<ActionResult> Wx_Manager_ReportList()
         {
             ViewBag.today = DateTime.Now;
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var storelist = from m in manager.Off_Store
+                            group m by m.StoreSystem into g
+                            select new { Key = g.Key };
+            ViewBag.StoreSystem = new SelectList(storelist, "Key", "Key", storelist.FirstOrDefault().Key);
             return View();
         }
         [HttpPost]
         [Authorize(Roles = "Manager")]
-        public async Task<ActionResult> Wx_Manager_ReportList_Partial(string date)
+        public async Task<ActionResult> Wx_Manager_ReportList_Partial(string date, string storesystem)
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             DateTime today = Convert.ToDateTime(date);
@@ -1278,7 +1289,7 @@ namespace PeriodAid.Controllers
                 dow = 7;
             }
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
-            var storelist = manager.Off_Store.Select(m => m.Id);
+            var storelist = manager.Off_Store.Where(m=>m.StoreSystem==storesystem).Select(m => m.Id);
             var listview = from m in offlineDB.Off_Checkin
                        where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
                        && m.Off_Checkin_Schedule.Subscribe == today
@@ -1800,6 +1811,14 @@ namespace PeriodAid.Controllers
             typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
             typelist.Add(new { Key = "问题调整", Value = "问题调整" });
             ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View(request);
         }
         
@@ -1832,6 +1851,14 @@ namespace PeriodAid.Controllers
                 typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
                 typelist.Add(new { Key = "问题调整", Value = "问题调整" });
                 ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
                 return View(model);
             }
         }

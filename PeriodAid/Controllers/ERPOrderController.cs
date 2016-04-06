@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ERPOrderController : Controller
     {
         //OfflineSales offlineDB = new OfflineSales();
@@ -132,10 +133,20 @@ namespace PeriodAid.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> setTag(string orderids, int tagid)
+        public async Task<ActionResult> setTagByOrderId(string orderids, int tagid)
         {
             ERPOrderUtilities util = new ERPOrderUtilities();
-            var vipidlist = util.getVipIds(orderids);
+            var vipidlist = util.getVipIdsByOrderId(orderids);
+            //return Content(vipidlist.Count() + "");
+            int success = await util.setTags(vipidlist, tagid);
+            return Content("成功：" + success);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> setTagByVipName(string vipnames, int tagid)
+        {
+            ERPOrderUtilities util = new ERPOrderUtilities();
+            var vipidlist = util.getVipIdsByVipName(vipnames);
             //return Content(vipidlist.Count() + "");
             int success = await util.setTags(vipidlist, tagid);
             return Content("成功：" + success);

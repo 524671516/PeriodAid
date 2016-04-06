@@ -564,12 +564,12 @@ namespace PeriodAid.DAL
         public async Task<int> setTags(IEnumerable<VipIds> vipids, int tagid)
         {
             int success = 0;
+            var tag = erpdb.tags.SingleOrDefault(m => m.id == tagid);
             foreach (var item in vipids)
             {
                 try
                 {
                     var vip = erpdb.vips.SingleOrDefault(m => m.id == item.id);
-                    var tag = erpdb.tags.SingleOrDefault(m => m.id == tagid);
                     if (vip.tags.Contains(tag))
                     {
 
@@ -586,10 +586,13 @@ namespace PeriodAid.DAL
                 }
             }
             await erpdb.SaveChangesAsync();
+            tag.totalcount = tag.vips.Count;
+            erpdb.Entry(tag).State = System.Data.Entity.EntityState.Modified;
+            await erpdb.SaveChangesAsync();
             return success;
         }
 
-        public IEnumerable<VipIds> getVipIds(string orderid)
+        public IEnumerable<VipIds> getVipIdsByOrderId(string orderid)
         {
             string[] ids = orderid.Split('\n');
             // 加'号
@@ -605,6 +608,25 @@ namespace PeriodAid.DAL
             string sql = "SELECT T1.[id] FROM[ORDERERP].[dbo].[vips] as T1 left join[ORDERERP].[dbo].[orders] as T2 on " +
                 "T1.name = T2.vip_name and T1.shop_name = T2.shop_name " +
                 "where T2.platform_code in (" + formated_ids + ") group by T1.[id]";
+            //SqlParameter[] parm = { new SqlParameter("content", formated_ids) };
+            var vipids = erpdb.Database.SqlQuery<VipIds>(sql);
+            return vipids;
+        }
+        public IEnumerable<VipIds> getVipIdsByVipName(string vipname)
+        {
+            string[] ids = vipname.Split('\n');
+            // 加'号
+            List<string> resultstring = new List<string>();
+            for (int i = 0; i < ids.Length; i++)
+            {
+                if (ids[i].Trim().Length > 0)
+                {
+                    resultstring.Add("'" + ids[i].Trim() + "'");
+                }
+            }
+            string formated_ids = string.Join(",", resultstring.ToArray());
+            string sql = "SELECT T1.[id] FROM [ORDERERP].[dbo].[vips] as T1 "
+                +"where T1.name in (" + formated_ids + ") group by T1.[id]";
             //SqlParameter[] parm = { new SqlParameter("content", formated_ids) };
             var vipids = erpdb.Database.SqlQuery<VipIds>(sql);
             return vipids;
