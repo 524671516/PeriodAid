@@ -5,7 +5,31 @@
     ViewBag.Current = 1;
     Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
-
+@section header{
+    <style>
+        .weui_dialog_01 {
+        position:fixed;
+        top: 50%;
+        left: 50%;
+        z-index:13;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        border:1px solid #eee;
+        background-color:#333;
+        border-radius:50%;
+        width:220px;
+        height:220px;
+        }
+        .voice_con {
+        position:relative;
+        line-height:1px;
+        }
+        .voice_con .microphone {
+        font-size:100px;
+        color:#777;
+        }
+    </style>
+    }
 <div class="hidden">
     <span id="appId">@ViewBag.AppId</span>
     <span id="timeStamp">@ViewBag.TimeStamp</span>
@@ -154,7 +178,8 @@
             <div class="weui_cell">
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.TextAreaFor(m => m.Confirm_Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入审核备注" })
-                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500&nbsp;<i id="startRecord" class="fa fa-volume-up"></i><i id="stopRecord" class="fa fa-volume-off" style="display:none;"></i></div>
+                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog1"><i class="fa fa-microphone"></i></a></div>
+                    
                 </div>
             </div>
         </div><br />
@@ -171,6 +196,21 @@
 
         </div>
 }
+<div class="weui_dialog_confirm" id="diaLg" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        @*<div class="weui_dialog_hd">
+            <h5 class="weui_dialog_title" style="color:#777; display:none;">正在识别语音...</h5>
+        </div>*@
+        <div class="voice_con">
+            <a id="startRecord" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stopRecord" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
 <div class="error-label container" style="display:none;">
     <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
     <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
@@ -377,14 +417,35 @@
             });
         });
         //录音功能
+        $(".weui_mask").click(function () {
+            $("#diaLg").hide();
+            wx.stopRecord();
+            $("#startRecord").show();
+            $("#stopRecord").hide();
+            $(".weui_dialog_title").hide();
+        });
+        $("#close_btn").click(function () {
+            $("#diaLg").hide();
+            wx.stopRecord();
+            $("#stopRecord").hide();
+            $(".weui_dialog_title").hide();
+            $("#startRecord").show();
+            
+        });
+        $("#showDialog1").click(function () {
+            $("#diaLg").show();
+        })
         $("#startRecord").click(function () {
             wx.startRecord();
             $(this).hide();
             $("#stopRecord").show();
+            $(".weui_dialog_title").show();
         });
         $("#stopRecord").click(function () {
             $("#startRecord").show();
             $(this).hide();
+            $("#diaLg").hide();
+            $(".weui_dialog_title").hide();
             wx.stopRecord({
                 success: function (res) {
                     var localId = res.localId;
@@ -404,6 +465,7 @@
                 }
             });//结束录音
         });
+       
 
     </script>
 }

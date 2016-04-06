@@ -4,6 +4,32 @@
     Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
     ViewBag.Current = 0;
 }
+@section header{
+    <style>
+        .weui_dialog_01 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 13;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            border: 1px solid #eee;
+            background-color: #333;
+            opacity: 0.5;
+            border-radius: 50%;
+            width: 220px;
+            height: 220px;
+        }
+        .voice_con {
+        position:relative;
+        line-height:1px;
+        }
+        .voice_con .microphone {
+        font-size:100px;
+        color:#777;
+        }
+    </style>
+}
 <div class="hidden">
     <span id="appId">@ViewBag.AppId</span>
     <span id="timeStamp">@ViewBag.TimeStamp</span>

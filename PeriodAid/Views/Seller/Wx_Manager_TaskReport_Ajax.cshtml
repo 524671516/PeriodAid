@@ -12,19 +12,19 @@
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 @Html.TextAreaFor(m => m.Event_Complete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入重点工作内容" })
-                <div class="weui_textarea_counter"><abbr id="current_length_cp">0</abbr>/500&nbsp;<i id="startRecord" class="fa fa-volume-up"></i><i id="stopRecord" class="fa fa-volume-off" style="display:none;"></i></div>
+                <div class="weui_textarea_counter"><abbr id="current_length_cp">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog1"><i class="fa fa-microphone"></i></a></div>
             </div>
         </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 @Html.TextAreaFor(m => m.Event_UnComplete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入一般工作内容" })
-                <div class="weui_textarea_counter"><abbr id="current_length_uc">0</abbr>/500&nbsp;<i id="start_record" class="fa fa-volume-up"></i><i id="stop_record" class="fa fa-volume-off" style="display:none;"></i></div>
+                <div class="weui_textarea_counter"><abbr id="current_length_uc">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog2"><i class="fa fa-microphone"></i></a></div>
             </div>
         </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 @Html.TextAreaFor(m => m.Event_Assistance, new { @class = "weui_textarea", rows = "3", placeholder = "请输入需协调工作" })
-                <div class="weui_textarea_counter"><abbr id="current_length_as">0</abbr>/500&nbsp;<i id="start-record" class="fa fa-volume-up"></i><i id="stop-record" class="fa fa-volume-off" style="display:none;"></i></div>
+                <div class="weui_textarea_counter"><abbr id="current_length_as">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog3"><i class="fa fa-microphone"></i></a></div>
             </div>
         </div>
         @Html.HiddenFor(model=>model.Photo)
@@ -87,7 +87,45 @@
         </div>
     </div>
 </div>
-
+@*Event_Complete语音识别*@
+<div class="weui_dialog_confirm" id="diaLg1" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        <div class="voice_con">
+            <a id="startRecord" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stopRecord" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn1" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
+@*Event_UnComplete语音识别*@
+<div class="weui_dialog_confirm" id="diaLg2" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        <div class="voice_con">
+            <a id="start_record" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stop_record" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn2" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
+@*Event_Assistance语音识别*@
+<div class="weui_dialog_confirm" id="diaLg3" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        <div class="voice_con">
+            <a id="start-record" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stop-record" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn3" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
 <script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     var img_max = 7;
@@ -228,42 +266,82 @@
         }
     };
     //Event_Complete录音功能
-    $("#startRecord").click(function () {
-        wx.startRecord();
-        $(this).hide();
-        $("#stopRecord").show();
-    });
-    $("#stopRecord").click(function () {
+    $(".weui_mask").click(function () {
+        $("#diaLg1").hide();
+        wx.stopRecord();
         $("#startRecord").show();
-        $(this).hide();
-        wx.stopRecord({
-            success: function (res) {
-                var localId = res.localId;
-                wx.translateVoice({
-                    localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
-                    isShowProgressTips: 1, // 默认为1，显示进度提示
-                    success: function (res) {
-                        //Event_Complete
-                        $("#Event_Complete").val($("#Event_Complete").val() + res.translateResult);// Event_Complete的语音识别的结果 
-                        $("#current_length_cp").text(cal_length($("#current_length_cp").text($("#Event_Complete").val().length)));//weui_textarea_counter的数字计算
-                        //获取焦点后光标在字符串后 
-                        //其原理就是获得焦点后重新把自己复制粘帖一下 
-                        var t = $("#Event_Complete").val();
-                        $("#Event_Complete").val("").focus().val(t);
-                    }
-                });
-            }
-        });//结束录音
+        $("#stopRecord").hide();
+        $(".weui_dialog_title").hide();
     });
+    $("#close_btn1").click(function () {
+        $("#diaLg1").hide();
+        wx.stopRecord();
+        $("#stopRecord").hide();
+        $(".weui_dialog_title").hide();
+        $("#startRecord").show();
+    });
+        $("#showDialog1").click(function () {
+            $("#diaLg1").show();
+        });
+        $("#startRecord").click(function () {
+            wx.startRecord();
+            $(this).hide();
+            $("#stopRecord").show();
+            $(".weui_dialog_title").show()
+        });
+        $("#stopRecord").click(function () {
+            $("#startRecord").show();
+            $(this).hide();
+            $("#diaLg1").hide();
+            $(".weui_dialog_title").hide();
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            //Event_Complete
+                            $("#Event_Complete").val($("#Event_Complete").val() + res.translateResult);// Event_Complete的语音识别的结果 
+                            $("#current_length_cp").text(cal_length($("#current_length_cp").text($("#Event_Complete").val().length)));//weui_textarea_counter的数字计算
+                            //获取焦点后光标在字符串后 
+                            //其原理就是获得焦点后重新把自己复制粘帖一下 
+                            var t = $("#Event_Complete").val();
+                            $("#Event_Complete").val("").focus().val(t);
+                        }
+                    });
+                }
+            });//结束录音
+        });
     //Event_UnComplete语音功能
+    $(".weui_mask").click(function () {
+        $("#diaLg2").hide();
+        wx.stopRecord();
+        $("#start_record").show();
+        $("#stop_record").hide();
+        $(".weui_dialog_title").hide();
+        });
+    $("#close_btn2").click(function () {
+        $("#diaLg2").hide();
+        wx.stopRecord();
+        $("#stop_record").hide();
+        $(".weui_dialog_title").hide();
+        $("#start_record").show();
+    });
+    $("#showDialog2").click(function () {
+        $("#diaLg2").show();
+    });
     $("#start_record").click(function () {
         wx.startRecord();
         $(this).hide();
         $("#stop_record").show();
+        $(".weui_dialog_title").show()
     });
     $("#stop_record").click(function () {
         $("#start_record").show();
         $(this).hide();
+        $("#diaLg2").hide();
+        $(".weui_dialog_title").hide();
         wx.stopRecord({
             success: function (res) {
                 var localId = res.localId;
@@ -284,14 +362,34 @@
         });//结束录音
     });
     //Event_Assistance录音功能
+    $(".weui_mask").click(function () {
+        $("#diaLg3").hide();
+        wx.stopRecord();
+        $("#start-record").show();
+        $("#stop-record").hide();
+        $(".weui_dialog_title").hide();
+    });
+    $("#close_btn3").click(function () {
+        $("#diaLg3").hide();
+        wx.stopRecord();
+        $("#stop-record").hide();
+        $(".weui_dialog_title").hide();
+        $("#start-record").show();
+    });
+    $("#showDialog3").click(function () {
+        $("#diaLg3").show();
+    });
     $("#start-record").click(function () {
         wx.startRecord();
         $(this).hide();
         $("#stop-record").show();
+        $(".weui_dialog_title").show()
     });
     $("#stop-record").click(function () {
         $("#start-record").show();
         $(this).hide();
+        $("#diaLg3").hide();
+        $(".weui_dialog_title").hide();
         wx.stopRecord({
             success: function (res) {
                 var localId = res.localId;
