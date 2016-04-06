@@ -5,7 +5,7 @@
 }
 <!--添加上传文件，内容是订单编号以及选择对应的下拉菜单（标签名称），点击完成后，所有订单编号所对应的会员会添加标签-->
 <h4><b>上传会员打标文件</b></h4><br />
-<div class="row">
+@*<div class="row">
     <div class="col-xs-3">
         <input type="text" class="form-control" value="订单编号"/>
     </div>
@@ -29,13 +29,14 @@
             </span>
         </div>
     </div>
-</div>
+</div>*@
 <br />
 <div class="row">
     <div class="col-xs-4">
         <textarea id="orderidlist" rows="10" class="form-control input-sm"></textarea>
     </div>
-    <div class="col-xs-6">@Html.DropDownList("taglist", ViewBag.SelectList as SelectList, "- 请选择 -", new { @class="form-control input-sm"})</div>
+    <div class="col-xs-2"><select id="typelist" class="form-control input-sm"><option value="id">订单号</option><option value="name">会员名</option></select></div>
+    <div class="col-xs-4">@Html.DropDownList("taglist", ViewBag.SelectList as SelectList, "- 请选择 -", new { @class="form-control input-sm"})</div>
     <div class="col-xs-2"><a href="javascript:;" class="btn btn-default btn-sm" id="start-btn">开始</a></div>
 </div>
 <script>
@@ -44,19 +45,39 @@
     });
     $("#start-btn").click(function () {
         $btn = $(this);
-        $btn.attr("disabled","disabled").html("<i class=\"fa fa-spinner fa-spin\"></i>")
-        $.ajax({
-            url: "/ERPOrder/setTag",
-            type: "post",
-            data: {
-                orderids: $("#orderidlist").val().trim(),
-                tagid: $("#taglist").val()
-            },
-            success: function (data) {
-                alert(data);
-                $btn.removeAttr("disabled").text("开始");
+        if ($("#typelist").val() != "") {
+            if ($("#typelist").val() == "id") {
+                $btn.attr("disabled", "disabled").html("<i class=\"fa fa-spinner fa-spin\"></i>");
+                $.ajax({
+                    url: "/ERPOrder/setTagByOrderId",
+                    type: "post",
+                    data: {
+                        orderids: $("#orderidlist").val().trim(),
+                        tagid: $("#taglist").val()
+                    },
+                    success: function (data) {
+                        alert(data);
+                        $btn.removeAttr("disabled").text("开始");
+                    }
+                });
             }
-        })
+            else if ($("#typelist").val() == "name") {
+                $btn.attr("disabled", "disabled").html("<i class=\"fa fa-spinner fa-spin\"></i>");
+                $.ajax({
+                    url: "/ERPOrder/setTagByVipName",
+                    type: "post",
+                    data: {
+                        vipnames: $("#orderidlist").val().trim(),
+                        tagid: $("#taglist").val()
+                    },
+                    success: function (data) {
+                        alert(data);
+                        $btn.removeAttr("disabled").text("开始");
+                    }
+                })
+            }
+        }
+        
     })
 </script>
 
