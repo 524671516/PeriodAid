@@ -1187,6 +1187,8 @@ namespace PeriodAid.Models
 
         public int Status { get; set; }
 
+        public bool Proxy { get; set; }
+
         public int Off_Seller_Id { get; set; }
 
         public DateTime? CheckinTime { get; set; }
@@ -1198,6 +1200,9 @@ namespace PeriodAid.Models
         public string CheckinPhoto { get; set; }
 
         public DateTime? CheckoutTime { get; set; }
+
+        [StringLength(64)]
+        public string CheckoutPhoto { get; set; }
 
         [StringLength(64)]
         public string CheckoutLocation { get; set; }
