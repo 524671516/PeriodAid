@@ -38,7 +38,6 @@
     </style>
 </head>
 <body>
-    
     <article class="weui_article">
         <h1>使用指南</h1>
         <div class="container">
@@ -144,6 +143,7 @@
             </a>
         }
     </div>
+    <br /><br />
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script language="javascript" src="http://qzs.qq.com/tencentvideo_v1/js/tvp/tvp.player.js" charset="utf-8"></script>
     <script type="text/javascript">
@@ -168,7 +168,7 @@
                 //输出播放器,参数就是上面div的id，希望输出到哪个HTML元素里，就写哪个元素的id
                 player.addParam("autoplay", "0");
                 player.addParam("wmode", "transparent");
-                //player.addParam("pic", "http://www.shouquanzhai.cn" + $(this).attr("data-target"));
+                player.addParam("pic", "http://cdn2.shouquanzhai.cn/userguide_pic.jpg");
                 player.write("mod_player_skin");
                 //$('#myModal').modal();
                 $("#mod_player_wrap").attr({

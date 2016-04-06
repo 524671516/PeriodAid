@@ -593,11 +593,15 @@ namespace PeriodAid.DAL
         {
             string[] ids = orderid.Split('\n');
             // 加'号
+            List<string> resultstring = new List<string>();
             for (int i = 0; i < ids.Length; i++)
             {
-                ids[i] = "'" + ids[i] + "'";
+                if (ids[i].Trim().Length > 0)
+                {
+                    resultstring.Add("'" + ids[i].Trim() + "'");
+                }
             }
-            string formated_ids = string.Join(",", ids);
+            string formated_ids = string.Join(",", resultstring.ToArray());
             string sql = "SELECT T1.[id] FROM[ORDERERP].[dbo].[vips] as T1 left join[ORDERERP].[dbo].[orders] as T2 on " +
                 "T1.name = T2.vip_name and T1.shop_name = T2.shop_name " +
                 "where T2.platform_code in (" + formated_ids + ") group by T1.[id]";
