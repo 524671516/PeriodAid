@@ -1,0 +1,185 @@
+﻿@model PeriodAid.Models.Off_Manager_Request
+
+@{
+    ViewBag.Title = "审核督导申请";
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+}
+@section header{
+    <style>
+        .weui_dialog_01 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 13;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            border: 1px solid #eee;
+            background-color: #333;
+            opacity: 0.5;
+            border-radius: 50%;
+            width: 220px;
+            height: 220px;
+        }
+
+        .voice_con {
+            position: relative;
+            line-height: 75px;
+            margin-top: 15px;
+        }
+
+            .voice_con .microphone {
+                font-size: 100px;
+                color: #777;
+            }
+    </style>
+}
+<div class="hidden">
+    <span id="appId">@ViewBag.AppId</span>
+    <span id="timeStamp">@ViewBag.TimeStamp</span>
+    <span id="nonce">@ViewBag.Nonce</span>
+    <span id="url">@ViewBag.Url</span>
+    <span id="signature">@ViewBag.Signature</span>
+</div>
+<div class="hd">
+    <h3 class="page_title text-center">督导管理 店铺需求提交</h3>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.ManagerUserName)
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.StoreId)
+    @Html.HiddenFor(m => m.RequestType)
+    @Html.HiddenFor(m => m.RequestTime)
+    <div class="weui_cells_title">添加需求信息</div>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">店铺</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.Encode(Model.Off_Store.StoreName)
+            </div>
+            <div class="weui_cell_ft">
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">类型</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.Encode(Model.RequestType)
+            </div>
+            <div class="weui_cell_ft">
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.TextAreaFor(m => m.RequestContent, new { @class = "weui_textarea", rows = "3", placeholder = "请输入详细需求内容", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label for="" class="weui_label">备注</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.EditorFor(m => m.RequestRemark, new { htmlAttributes = new { @class = "weui_input", @readonly = "readonly" } })
+            </div>
+        </div>
+        @if (User.IsInRole("Senior") && Model.Status == 0)
+        {
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.TextAreaFor(m => m.ReplyContent, new { @class = "weui_textarea", rows = "3", placeholder = "请输入审核备注" })
+                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog1"><i class="fa fa-volume-up"></i></a></div>
+                </div>
+            </div>
+        }
+    </div>
+    <br />
+    <div class="container">
+        @if (User.IsInRole("Senior") && Model.Status == 0)
+        {
+            <a href="javascript:;" type="submit" class="weui_btn weui_btn_primary" id="submit-btn">审核</a>
+            <a href="/Seller/Wx_Manager_Task" class="weui_btn weui_btn_default" style="margin-top:5px;">返回</a>
+            <a href="javascript:;" type="button" class="weui_btn weui_btn_warn" style="margin-top:5px;" id="dismiss-btn">驳回</a>
+        }
+        else
+        {
+            <a href="/Seller/Wx_Manager_Task" class="weui_btn weui_btn_default">返回</a>
+        }
+    </div>
+    <br /><br />
+}
+<div class="weui_dialog_confirm" id="diaLg" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <div class="weui_dialog_hd">
+            <strong class="weui_dialog_title" style="color:#777; display:none;">正在识别语音...</strong>
+        </div>
+        <div class="voice_con">
+            <a id="startRecord" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i></a>
+            <a id="stopRecord" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i></a>
+        </div>
+        <a href="javascript:;" id="close_btn" class="weui_btn weui_btn_mini weui_btn_primary" style="padding-top:-15px;">关闭</a>
+    </div>
+</div>
+@section scripts{
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+    <script>
+        //parseFloat
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: $("#appId").text(), // 必填，公众号的唯一标识
+            timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
+            nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
+            signature: $("#signature").text(),// 必填，签名，见附录1
+            jsApiList: ['startRecord','stopRecord', 'translateVoice']
+            //必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+        $("#submit-btn").click(function () {
+            $(this).attr("disabled", "disabled").text("审核中...");
+            $("form").submit();
+            return false;
+        });
+        $("#dismiss-btn").click(function () {
+            $(this).attr("disabled", "disabled").text("驳回中...");
+            $("form").attr("action", "/Seller/Wx_Manager_Request_Dismiss");
+            $("form").submit();
+            return false;
+        });
+        //录音功能
+        $("#close_btn").click(function () {
+            $("#diaLg").hide();
+        });
+        $("#showDialog1").click(function () {
+            $("#diaLg").show();
+        })
+        $("#startRecord").click(function () {
+            wx.startRecord();
+            $(this).hide();
+            $("#stopRecord").show();
+            $(".weui_dialog_title").show()
+        });
+        $("#stopRecord").click(function () {
+            $("#startRecord").show();
+            $(this).hide();
+            $("#diaLg").hide();
+            $(".weui_dialog_title").hide();
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            $("#ReplyContent").val($("#ReplyContent").val() + res.translateResult);
+                            //alert(res.translateResult); // 语音识别的结果
+                            $("#current_length_2").text($("#ReplyContent").val().length);//weui_textarea_counter的数字计算
+                            //获取焦点后光标在字符串后 
+                            //其原理就是获得焦点后重新把自己复制粘帖一下 
+                            var t = $("#ReplyContent").val();
+                            $("#ReplyContent").val("").focus().val(t);
+                        }
+                    });
+                }
+            });//结束录音
+        });
+    </script>
+}

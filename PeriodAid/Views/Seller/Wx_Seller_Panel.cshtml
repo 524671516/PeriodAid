@@ -66,7 +66,7 @@
                 }
                 else if (Model.Status == 1)
                 {
-                    <a class="weui_cell checkout_btn" href="javascript:;" checkid="@Model.Id" sellerid="@ViewBag.SellerId">
+                    <a class="weui_cell checkout_btn" href="@Url.Action("Wx_Seller_CheckOut", "Seller", new { SellerId = ViewBag.SellerId, CheckId = Model.Id })">
                         <div class="weui_cell_bd weui_cell_primary">
                             <p>今日签退</p>
                         </div>
@@ -93,7 +93,7 @@
                         </div>
                         <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
                     </a>
-                    <a class="weui_cell checkout_btn" href="javascript:;" checkid="@Model.Id" sellerid="@ViewBag.SellerId">
+                    <a class="weui_cell checkout_btn" href="@Url.Action("Wx_Seller_CheckOut", "Seller", new { SellerId = ViewBag.SellerId,CheckId = Model.Id})">
                         <div class="weui_cell_bd weui_cell_primary">
                             <p>更多操作</p>
                         </div>
@@ -163,18 +163,7 @@
         </div>
     </a>
 </div>
-<div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
-    <div class="weui_mask"></div>
-    <div class="weui_dialog">
-        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
-        <div class="weui_dialog_bd">今日已签退，重新签退会更新签到时间和您的位置信息，是否确认操作？</div>
-        <div class="weui_dialog_ft">
-            <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
-            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
-        </div>
-    </div>
-</div>
-<script>
+@*<script>
     $(".checkout_btn").click(function () {
         // 确认状态是否需要提示
         $btn = $(this);
@@ -294,4 +283,4 @@
         });
         $("#dialog_alert").hide();
     })
-</script>
+</script>*@
