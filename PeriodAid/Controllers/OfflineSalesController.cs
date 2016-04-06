@@ -3880,6 +3880,7 @@ namespace PeriodAid.Controllers
                     item.Confirm_Remark = model.Confirm_Remark;
                     item.ConfirmUser = User.Identity.Name;
                     item.ConfirmTime = DateTime.Now;
+                    item.Proxy = true;
                     offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.SaveChanges();
                     return RedirectToAction("Off_CheckIn_List");
@@ -3896,6 +3897,7 @@ namespace PeriodAid.Controllers
 
             Off_Checkin item = new Off_Checkin();
             item.Status = 3;
+            item.Proxy = true;
             item.Off_Schedule_Id = scheduleId;
             var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == scheduleId);
             ViewBag.StoreName = schedule.Off_Store.StoreName;
@@ -3922,6 +3924,7 @@ namespace PeriodAid.Controllers
                     item.CheckoutLocation = "N/A";
                     item.ConfirmTime = DateTime.Now;
                     item.ConfirmUser = User.Identity.Name;
+                    item.Proxy = true;
                     item.Status = 4;
                     offlineDB.Off_Checkin.Add(item);
                     //offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
@@ -3951,6 +3954,7 @@ namespace PeriodAid.Controllers
                     item.CheckoutTime = null;
                     item.ConfirmTime = DateTime.Now;
                     item.ConfirmUser = User.Identity.Name;
+                    item.Proxy = true;
                     item.Status = 4;
                     offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.SaveChanges();
