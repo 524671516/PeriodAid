@@ -1953,6 +1953,14 @@ namespace PeriodAid.Controllers
         public ActionResult Wx_Manager_Request_Check(int id)
         {
             var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View(item);
         }
         [Authorize(Roles ="Senior")]
@@ -1976,6 +1984,14 @@ namespace PeriodAid.Controllers
             else
             {
                 ModelState.AddModelError("", "Error");
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
                 return View(model);
             }
         }
