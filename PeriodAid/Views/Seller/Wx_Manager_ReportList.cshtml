@@ -14,15 +14,6 @@
         <div class="weui_cell_ft">
         </div>
     </div>
-    <div class="weui_cell weui_cell_select weui_select_after">
-        <div class="weui_cell_hd">
-            <label for="" class="weui_label">系统</label>
-        </div>
-        <div class="weui_cell_bd weui_cell_primary">
-            @Html.DropDownList("checklist", ViewBag.StoreSystem as SelectList, new { @class = "weui_select", @id = "storesystem", style="padding-left:0"})
-        </div>
-    </div>
-
 </div>
 <div id="list-content">
 </div>
@@ -50,8 +41,7 @@
             $.ajax({
                 url: "Wx_Manager_ReportList_Partial",
                 data: {
-                    date: $("#list_date").val(),
-                    storesystem: $("#storesystem").val()
+                    date: $("#list_date").val()
                 },
                 type: "post",
                 success: function (data) {
@@ -59,26 +49,23 @@
                 }
             });
         });
-        
+        $("#search_btn").click(function () {
+            $.ajax({
+                url: "/Seller/Wx_Manager_ReportList_Partial",
+                data: {
+                    date: $("#list_date").val()
+                },
+                type: "post",
+                success: function (data) {
+                    $("#list-content").html(data);
+                }
+            });
+        });
         $("#list_date").change(function (data) {
             $.ajax({
                 url: "/Seller/Wx_Manager_ReportList_Partial",
                 data: {
-                    date: $("#list_date").val(),
-                    storesystem: $("#storesystem").val()
-                },
-                type: "post",
-                success: function (data) {
-                    $("#list-content").html(data);
-                }
-            });
-        });
-        $("#storesystem").change(function (data) {
-            $.ajax({
-                url: "/Seller/Wx_Manager_ReportList_Partial",
-                data: {
-                    date: $("#list_date").val(),
-                    storesystem: $("#storesystem").val()
+                    date: $("#list_date").val()
                 },
                 type: "post",
                 success: function (data) {

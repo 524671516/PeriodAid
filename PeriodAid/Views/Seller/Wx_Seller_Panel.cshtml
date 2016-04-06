@@ -4,7 +4,6 @@
 @if (Model != null)
 {
     <input type="hidden" id="checkin_status" value="@Model.Status" />
-    <input type="hidden" id="checkout_location" />
 }
 <div class="weui_cells_title">今日任务</div>
 <div class="weui_panel weui_panel_access" style="margin-top:0;">
@@ -192,19 +191,11 @@
     $("#dialog_confirm_btn").click(function () {
         $("#dialog_confirm").hide();
         submit_checkout($("#dialog_confirm").attr("checkid"), $("#dialog_confirm").attr("sellerid"));
-    });
-    function checkvalue(checkid, sellerid) {
-        $("#loadingToast").hide();
-        if ($("#checkout_location").val().trim() == "") {
-            $("#dialog_alert").show();
-            $("#checkout_location").val("N/A");
-            $("#alert-btn").attr("checkid", checkid).attr("sellerid", sellerid);
-        }
-    }
+    })
     function submit_checkout(checkid, sellerid) {
         $("#loadingToast").show();
-        //10秒以后确认是否获取到值
-        setTimeout(checkvalue, 10000, checkid, sellerid);
+        //setTimeout(testfail, 5000);
+        // 获取地址
         var location = "";
         wx.getLocation({
             type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
@@ -213,13 +204,13 @@
                 var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
                 var speed = res.speed; // 速度，以米/每秒计
                 var accuracy = res.accuracy; // 位置精度
-                $("#checkout_location").val(longitude + "," + latitude);
+                location = longitude + "," + latitude;
                 // 写入数据
                 $.ajax({
                     url: "/Seller/Wx_Seller_CheckOut_Ajax",
                     data: {
                         CheckId: checkid,
-                        lbs: $("#checkout_location").val()
+                        lbs: location
                     },
                     type: "post",
                     success: function (data) {
@@ -254,44 +245,10 @@
                 // 获取失败
                 $("#loadingToast").hide();
                 $("#dialog_alert").show();
-                $("#checkout_location").val("N/A");
-                $("#alert-btn").attr("checkid", checkid).attr("sellerid", sellerid);
             }
         });
     }
     $("#alert-btn").click(function () {
-        var checkid = $("#alert-btn").attr("checkid");
-        var sellerid = $("#alert-btn").attr("sellerid");
-        console.log(sellerid);
-        console.log(checkid);
-        $.ajax({
-            url: "/Seller/Wx_Seller_CheckOut_Ajax",
-            data: {
-                CheckId: checkid,
-                lbs: $("#checkout_location").val()
-            },
-            type: "post",
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    // 刷新页面
-                    $.ajax({
-                        url: "/Seller/Wx_Seller_Panel",
-                        data: {
-                            SellerId: sellerid
-                        },
-                        type: "post",
-                        success: function (data) {
-                            // 提示完成
-                            $("#toast_success").show();
-                            setTimeout(function () {
-                                $("#toast_success").fadeOut(500);
-                            }, 1000);
-                            $("#control-panel").html(data);
-                        }
-                    });
-                }
-            }
-        });
         $("#dialog_alert").hide();
     })
 </script>

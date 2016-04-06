@@ -3637,7 +3637,6 @@ namespace PeriodAid.Controllers
             DateTime day = DateTime.Parse(date);
             var list = from m in offlineDB.Off_Checkin_Schedule
                        where m.Subscribe == day
-                       orderby m.Off_Store.StoreName
                        select m;
             return View(list);
         }
@@ -3726,28 +3725,15 @@ namespace PeriodAid.Controllers
                             int year = model.StartDate.AddDays(i).Year;
                             int month = model.StartDate.AddDays(i).Month;
                             int day = model.StartDate.AddDays(i).Day;
-                            int storeid = Convert.ToInt32(storelist[j]);
-                            DateTime subscribe = model.StartDate.AddDays(i);
-                            var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Off_Store_Id == storeid && m.Subscribe == subscribe);
-                            if (schedule == null)
+                            Off_Checkin_Schedule schedule = new Off_Checkin_Schedule()
                             {
-                                schedule = new Off_Checkin_Schedule()
-                                {
-                                    Off_Store_Id =storeid,
-                                    Subscribe = subscribe,
-                                    Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
-                                    Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
-                                    Standard_Salary = model.Salary
-                                };
-                                offlineDB.Off_Checkin_Schedule.Add(schedule);
-                            }
-                            else
-                            {
-                                schedule.Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0);
-                                schedule.Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0);
-                                schedule.Standard_Salary = model.Salary;
-                                offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
-                            }
+                                Off_Store_Id = Convert.ToInt32(storelist[j]),
+                                Subscribe = model.StartDate.AddDays(i),
+                                Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
+                                Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
+                                Standard_Salary = model.Salary
+                            };
+                            offlineDB.Off_Checkin_Schedule.Add(schedule);
                         }
                     }
                     offlineDB.SaveChanges();
@@ -4261,7 +4247,7 @@ namespace PeriodAid.Controllers
             var list = from m in offlineDB.Off_Checkin
                        where m.Off_Checkin_Schedule.Subscribe >= _start &&
                        m.Off_Checkin_Schedule.Subscribe <= _end &&
-                       (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
+                       m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query)
                        select m;
             return View(list);
         }

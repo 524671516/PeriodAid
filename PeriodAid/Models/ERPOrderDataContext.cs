@@ -400,9 +400,6 @@
 
         [StringLength(16)]
         public string name { get; set; }
-
-        public int totalcount { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<vips> vips { get; set; }
     }
