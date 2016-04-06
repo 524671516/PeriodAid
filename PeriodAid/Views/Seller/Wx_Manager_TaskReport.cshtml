@@ -40,7 +40,8 @@
             timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
             nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
             signature: $("#signature").text(),// 必填，签名，见附录1
-            jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation']
+            jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'startRecord',
+                'stopRecord', 'translateVoice']
             //必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
         $(function () {

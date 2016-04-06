@@ -12,19 +12,19 @@
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 @Html.TextAreaFor(m => m.Event_Complete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入重点工作内容" })
-                <div class="weui_textarea_counter"><abbr id="current_length_cp">0</abbr>/500</div>
+                <div class="weui_textarea_counter"><abbr id="current_length_cp">0</abbr>/500&nbsp;<i id="startRecord" class="fa fa-volume-up"></i><i id="stopRecord" class="fa fa-volume-off" style="display:none;"></i></div>
             </div>
         </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 @Html.TextAreaFor(m => m.Event_UnComplete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入一般工作内容" })
-                <div class="weui_textarea_counter"><abbr id="current_length_uc">0</abbr>/500</div>
+                <div class="weui_textarea_counter"><abbr id="current_length_uc">0</abbr>/500&nbsp;<i id="start_record" class="fa fa-volume-up"></i><i id="stop_record" class="fa fa-volume-off" style="display:none;"></i></div>
             </div>
         </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 @Html.TextAreaFor(m => m.Event_Assistance, new { @class = "weui_textarea", rows = "3", placeholder = "请输入需协调工作" })
-                <div class="weui_textarea_counter"><abbr id="current_length_as">0</abbr>/500</div>
+                <div class="weui_textarea_counter"><abbr id="current_length_as">0</abbr>/500&nbsp;<i id="start-record" class="fa fa-volume-up"></i><i id="stop-record" class="fa fa-volume-off" style="display:none;"></i></div>
             </div>
         </div>
         @Html.HiddenFor(model=>model.Photo)
@@ -226,5 +226,89 @@
             $("#Photo").val(img_array);
             //alert($("#Rep_Image").val());
         }
-    }
+    };
+    //Event_Complete录音功能
+    $("#startRecord").click(function () {
+        wx.startRecord();
+        $(this).hide();
+        $("#stopRecord").show();
+    });
+    $("#stopRecord").click(function () {
+        $("#startRecord").show();
+        $(this).hide();
+        wx.stopRecord({
+            success: function (res) {
+                var localId = res.localId;
+                wx.translateVoice({
+                    localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (res) {
+                        //Event_Complete
+                        $("#Event_Complete").val($("#Event_Complete").val() + res.translateResult);// Event_Complete的语音识别的结果 
+                        $("#current_length_cp").text(cal_length($("#current_length_cp").text($("#Event_Complete").val().length)));//weui_textarea_counter的数字计算
+                        //获取焦点后光标在字符串后 
+                        //其原理就是获得焦点后重新把自己复制粘帖一下 
+                        var t = $("#Event_Complete").val();
+                        $("#Event_Complete").val("").focus().val(t);
+                    }
+                });
+            }
+        });//结束录音
+    });
+    //Event_UnComplete语音功能
+    $("#start_record").click(function () {
+        wx.startRecord();
+        $(this).hide();
+        $("#stop_record").show();
+    });
+    $("#stop_record").click(function () {
+        $("#start_record").show();
+        $(this).hide();
+        wx.stopRecord({
+            success: function (res) {
+                var localId = res.localId;
+                wx.translateVoice({
+                    localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (res) {
+                        //Event_UnComplete
+                        $("#Event_UnComplete").val($("#Event_UnComplete").val() + res.translateResult);//Event_UnComplete的输入框结果
+                        $("#current_length_uc").text(cal_length($("#current_length_uc").text($("#Event_UnComplete").val().length)));//输入框字的数量
+                        //获取焦点后光标在字符串后 
+                        //其原理就是获得焦点后重新把自己复制粘帖一下 
+                        var t = $("#Event_UnComplete").val();
+                        $("#Event_UnComplete").val("").focus().val(t);
+                    }
+                });
+            }
+        });//结束录音
+    });
+    //Event_Assistance录音功能
+    $("#start-record").click(function () {
+        wx.startRecord();
+        $(this).hide();
+        $("#stop-record").show();
+    });
+    $("#stop-record").click(function () {
+        $("#start-record").show();
+        $(this).hide();
+        wx.stopRecord({
+            success: function (res) {
+                var localId = res.localId;
+                wx.translateVoice({
+                    localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (res) {
+                        //Event_Assistance
+                        $("#Event_Assistance").val($("#Event_Assistance").val() + res.translateResult);//current_length_as的输入框结果
+                        $("#current_length_as").text(cal_length($("#current_length_as").text($("#Event_Assistance").val().length)))//输入框字的数量
+                        //获取焦点后光标在字符串后 
+                        //其原理就是获得焦点后重新把自己复制粘帖一下 
+                        var t = $("#Event_Assistance").val();
+                        $("#Event_Assistance").val("").focus().val(t);
+                    }
+                });
+            }
+        });//结束录音
+    });
 </script>
