@@ -27,7 +27,6 @@
     @Html.HiddenFor(m=>m.Id)
     @Html.HiddenFor(m=>m.Off_Schedule_Id)
     @Html.HiddenFor(m=>m.Status)
-    @Html.HiddenFor(m=>m.Proxy)
     <div class="container">
         <div class="row">
             <div class="col-md-3">
@@ -62,13 +61,27 @@
                     </span>
                 </div>
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>签退图片</small></div>
+                    @Html.HiddenFor(m =>m.CheckoutPhoto)
+                    <input type="file" id="checkout-file" name="checkout-file" class="form-control input-sm" accept=".jpg,.png,.gif"/>
+                    <span class="input-group-btn">
+                        <a class="btn btn-default btn-sm" href="javascript:;" id="checkout-btn" target="_blank"><i class="fa fa-upload"></i></a>
+                    </span>
+                </div>
+            </div>
             <div class="col-md-3"></div>
         </div>
         <br />
         <div class="row">
-            <div class="col-md-12 h6">签到图片</div>
-            <div class="col-md-12" id="checkin-img-list"></div>
+            <div class="col-md-6 h6">签到图片</div>
+            <div class="col-md-6 h6">签退图片</div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-6" id="checkin-img-list"></div>
+            <div class="col-md-6" id="checkout-img-list"></div>
         </div>
         <br />
         <div class="row">
@@ -161,19 +174,22 @@
     <script type="text/javascript">
         $(function () {
             $("#checkin-btn").click(function () {
-                ajaxFileUpload();
+                ajaxFileUpload("CheckinPhoto", "checkin-img-list", "checkin-file");
 
+            });
+            $("#checkout-btn").click(function () {
+                ajaxFileUpload("CheckoutPhoto", "checkout-img-list", "checkout-file");
             });
             $("#report-btn").click(function () {
                 Report_ajaxFileUpload();
             });
         })
-        function ajaxFileUpload() {
+        function ajaxFileUpload(targetname,imglist,fileelment) {
             $.ajaxFileUpload({
                 url: '/OfflineSales/Off_CreateCheckIn_FileUpload', //用于文件上传的服务器端请求地址
                 type: 'post',
                 secureuri: false, //是否需要安全协议，一般设置为false
-                fileElementId: 'checkin-file', //文件上传域的ID
+                fileElementId: fileelment, //文件上传域的ID
                 dataType: 'json', //返回值类型 一般设置为json
                 success: function (data, status)  //服务器成功响应处理函数
                 {
@@ -185,9 +201,8 @@
                             alert(data.error);
                         } else {
                             alert("上传成功");
-                            $("#CheckinPhoto").val(data.imgurl);
-                            $("#checkin-img-list").html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
-
+                            $("#" + targetname).val(data.imgurl);
+                            $("#" + imglist).html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
                         }
                     }
                 },
@@ -197,8 +212,7 @@
                 }
             });
             return false;
-        }
-
+        };
         function Report_ajaxFileUpload() {
             $.ajaxFileUpload({
                 url: '/OfflineSales/Off_CreateCheckIn_FileUpload', //用于文件上传的服务器端请求地址

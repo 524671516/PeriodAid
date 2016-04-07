@@ -5,7 +5,33 @@
     ViewBag.Current = 1;
     Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
+@section header{
+    <style>
+        .weui_dialog_01 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 13;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            border: 1px solid #eee;
+            background-color: #333;
+            border-radius: 50%;
+            width: 220px;
+            height: 220px;
+        }
 
+        .voice_con {
+            position: relative;
+            line-height: 1px;
+        }
+
+            .voice_con .microphone {
+                font-size: 100px;
+                color: #777;
+            }
+    </style>
+}
     <div class="hidden">
         <span id="appId">@ViewBag.AppId</span>
         <span id="timeStamp">@ViewBag.TimeStamp</span>
@@ -45,7 +71,7 @@
         <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckoutPhoto">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到图片</p>
-            </div>
+    </div>
             <div class="weui_cell_ft">点击查看</div>
         </a>
     </div>
@@ -67,7 +93,7 @@
             <div class="weui_cell">
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.TextAreaFor(m => m.Confirm_Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入审核备注" })
-                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500</div>
+                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog1"><i class="fa fa-microphone"></i></a></div>
                 </div>
             </div>
         </div>
@@ -82,14 +108,16 @@
         </div>
     }
     <br /><br />
-<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+<div class="weui_dialog_confirm" id="diaLg" style="display:none">
     <div class="weui_mask"></div>
-    <div class="weui_dialog">
-        <div class="weui_dialog_hd">提示</div>
-        <div class="weui_dialog_bd" id="dialog_text">当前无可查看图片</div>
-        <div class="weui_dialog_ft">
-            <a href="javascript:;" class="weui_btn_dialog primary" id="alert-btn">确定</a>
+    <div class="weui_dialog_01">
+        <br />
+        <div class="voice_con">
+            <a id="startRecord" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stopRecord" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
         </div>
+        <a href="javascript:;" id="close_btn" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
     </div>
 </div>
 @section scripts{
@@ -102,7 +130,8 @@
             timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
             nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
             signature: $("#signature").text(),// 必填，签名，见附录1
-            jsApiList: ['previewImage', 'openLocation']
+            jsApiList: ['previewImage', 'openLocation','startRecord',
+            'stopRecord', 'translateVoice']
             //必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
         $(function () {
@@ -128,12 +157,12 @@
             var photos = $(this).attr("data-target");
             if (photos.trim() != "") {
                 var images = photos.split(',');
-                for (var i = 0; i < images.length; i++) {
-                    images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
-                }
-                wx.previewImage({
-                    current: images[0], // 当前显示图片的http链接
-                    urls: images // 需要预览的图片http链接列表
+            for (var i = 0; i < images.length; i++) {
+                images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
+            }
+            wx.previewImage({
+                current: images[0], // 当前显示图片的http链接
+                urls: images // 需要预览的图片http链接列表
                 });
             }
             else {
@@ -221,6 +250,55 @@
                     }
                 }
             });
+        });
+        //录音功能
+        $(".weui_mask").click(function () {
+            $("#diaLg").hide();
+            wx.stopRecord();
+            $("#startRecord").show();
+            $("#stopRecord").hide();
+            $(".weui_dialog_title").hide();
+        });
+        $("#close_btn").click(function () {
+            $("#diaLg").hide();
+            wx.stopRecord();
+            $("#stopRecord").hide();
+            $(".weui_dialog_title").hide();
+            $("#startRecord").show();
+
+        });
+        $("#showDialog1").click(function () {
+            $("#diaLg").show();
+        })
+        $("#startRecord").click(function () {
+            wx.startRecord();
+            $(this).hide();
+            $("#stopRecord").show();
+            $(".weui_dialog_title").show();
+        });
+        $("#stopRecord").click(function () {
+            $("#startRecord").show();
+            $(this).hide();
+            $("#diaLg").hide();
+            $(".weui_dialog_title").hide();
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            $("#Confirm_Remark").val($("#Confirm_Remark").val() + res.translateResult);
+                            //alert(res.translateResult); // 语音识别的结果
+                            $("#current_length_2").text(cal_textlength("Confirm_Remark"));//weui_textarea_counter的数字计算
+                            //获取焦点后光标在字符串后 
+                            //其原理就是获得焦点后重新把自己复制粘帖一下 
+                            var t = $("#Confirm_Remark").val();
+                            $("#Confirm_Remark").val("").focus().val(t);
+                }
+            });
+                }
+            });//结束录音
         });
     </script>
     }
