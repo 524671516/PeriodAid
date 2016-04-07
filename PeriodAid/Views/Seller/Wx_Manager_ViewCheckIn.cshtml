@@ -56,7 +56,7 @@
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckinTime)</div>
         </a>
-        <a class="weui_cell" href="javascript:;" id="checkinimg" data-target="@Model.CheckinPhoto">
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckinPhoto">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到图片</p>
             </div>
@@ -67,6 +67,12 @@
                 <p>签退时间</p>
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckoutTime)</div>
+        </a>
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckoutPhoto">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到图片</p>
+    </div>
+            <div class="weui_cell_ft">点击查看</div>
         </a>
     </div>
     @using (Html.BeginForm())
@@ -147,15 +153,21 @@
             var tl = cal_textlength("Confirm_Remark");
             $("#current_length_2").text(tl);
         });
-        $("#checkinimg").click(function () {
-            var images = $(this).attr("data-target").split(',');
+        $(".singlepreview").click(function () {
+            var photos = $(this).attr("data-target");
+            if (photos.trim() != "") {
+                var images = photos.split(',');
             for (var i = 0; i < images.length; i++) {
                 images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
             }
             wx.previewImage({
                 current: images[0], // 当前显示图片的http链接
                 urls: images // 需要预览的图片http链接列表
-            })
+                });
+            }
+            else {
+                $("#dialog_alert").show();
+            }
         });
         $("#checkinlbs").click(function () {
             var lbs = $(this).attr("location").split(',');
@@ -283,8 +295,8 @@
                             //其原理就是获得焦点后重新把自己复制粘帖一下 
                             var t = $("#Confirm_Remark").val();
                             $("#Confirm_Remark").val("").focus().val(t);
-                        }
-                    });
+                }
+            });
                 }
             });//结束录音
         });

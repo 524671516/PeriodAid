@@ -68,7 +68,7 @@
     }
     @if (Model.CheckinPhoto != "")
     {
-        <a class="weui_cell" href="javascript:;" id="checkinimg" data-target="@Model.CheckinPhoto">
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckinPhoto">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到图片</p>
             </div>
@@ -100,6 +100,24 @@
                 <p>签退时间</p>
             </div>
             <div class="weui_cell_ft_none">代签</div>
+        </a>
+    }
+    @if (Model.CheckinPhoto != "")
+    {
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckoutPhoto">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退图片</p>
+            </div>
+            <div class="weui_cell_ft">点击查看</div>
+        </a>
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退图片</p>
+            </div>
+            <div class="weui_cell_ft_none">无</div>
         </a>
     }
     <div class="weui_cell">
@@ -293,7 +311,7 @@
         $("#alert-btn").click(function () {
             $("#dialog_alert").hide();
         })
-        $("#checkinimg").click(function () {
+        $(".singlepreview").click(function () {
             var photos = $(this).attr("data-target");
             if (photos.trim() != "") {
                 var images = photos.split(',');

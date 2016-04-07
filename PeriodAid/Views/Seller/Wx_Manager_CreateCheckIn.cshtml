@@ -261,7 +261,7 @@
             }
             $("#checkout-img-upload-list").html("");
             if ($("#CheckoutPhoto").val() != "") {
-                chk_img_array = $("#CheckoutPhoto").val().split(',');
+                chkout_img_array = $("#CheckoutPhoto").val().split(',');
             }
             //alert(img_array.length);
             $("#current_image").text(img_array.length);
@@ -280,7 +280,7 @@
             }
             if (chkout_img_array.length > 0) {
                 for (var i = 0; i < chkout_img_array.length; i++) {
-                    var html_img = "<li class='weui_uploader_file' style='background-image:url(/Seller/ThumbnailImage?filename=" + chk_img_array[i] + ")' data-target='" + chk_img_array[i] + "'></li>";
+                    var html_img = "<li class='weui_uploader_file' style='background-image:url(/Seller/ThumbnailImage?filename=" + chkout_img_array[i] + ")' data-target='" + chkout_img_array[i] + "'></li>";
                     $("#checkout-img-upload-list").append(html_img);
                 }
             }
