@@ -58,7 +58,7 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_AVG_SalesData> Off_AVG_SalesData { get; set; }
         public virtual DbSet<Off_Manager_Announcement> Off_Manager_Announcement { get; set; }
         public virtual DbSet<Off_Manager_Request> Off_Manager_Request { get; set; }
-
+        public virtual DbSet<Off_BonusRequest> Off_BonusRequest { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -184,6 +184,11 @@ namespace PeriodAid.Models
                 .HasMany(e => e.Off_Checkin)
                 .WithRequired(e => e.Off_Checkin_Schedule)
                 .HasForeignKey(e => e.Off_Schedule_Id)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Off_Checkin>().HasMany(e => e.Off_BonusRequest)
+                .WithRequired(e => e.Off_Checkin)
+                .HasForeignKey(e => e.CheckinId)
                 .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Off_Store>()
@@ -1252,6 +1257,9 @@ namespace PeriodAid.Models
 
         public virtual Off_Checkin_Schedule Off_Checkin_Schedule { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_BonusRequest> Off_BonusRequest{ get; set; }
+
     }
 
     public partial class Off_Event
@@ -1432,5 +1440,34 @@ namespace PeriodAid.Models
         public DateTime? ReplyTime { get; set; }
 
         public virtual Off_Store Off_Store { get; set; }
+    }
+
+    public partial class Off_BonusRequest
+    {
+        public int Id { get; set; }
+
+        public int CheckinId { get; set; }
+
+        public int Status { get; set; }
+
+        [StringLength(64)]
+        public string ReceiveOpenId { get; set; }
+
+        [StringLength(128)]
+        public string ReceiveUserName { get; set; }
+        
+        public int ReceiveAmount { get; set; }
+
+        [StringLength(128)]
+        public string RequestUserName { get; set; }
+
+        public DateTime RequestTime { get; set; }
+
+        [StringLength(128)]
+        public string CommitUserName { get; set; }
+
+        public DateTime? CommitTime { get; set; }
+
+        public virtual Off_Checkin Off_Checkin { get; set; }
     }
 }
