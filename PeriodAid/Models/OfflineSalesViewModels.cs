@@ -231,6 +231,8 @@ namespace PeriodAid.Models
 
         public int AttendanceStatus { get; set; }
 
+        public bool Proxy { get; set; }
+
         public decimal? Salary { get; set; }
 
         public decimal? Bonus { get; set; }

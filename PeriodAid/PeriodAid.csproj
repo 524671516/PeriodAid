@@ -598,6 +598,7 @@
     <Content Include="Views\ERPOrder\teststores.cshtml" />
     <Content Include="Views\Custom\TestVoice.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_Request_Check.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Schedule_Statistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -242,21 +242,27 @@
                     <input type="text" class="input-sm form-control" value="@(PeriodAid.Models.ParseStatus.CheckInStatus(ViewBag.CheckItem.Status))" readonly />
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="input-group">
-                    <div class="input-group-addon"><small>确认人</small></div>
-                    <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.ConfirmUser" readonly />
+                    <div class="input-group-addon"><small>督导代签</small></div>
+                    <input type="text" class="input-sm form-control" value="@(ViewBag.CheckItem.Proxy?"是":"否")" readonly />
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="input-group">
+                    <div class="input-group-addon"><small>确认人</small></div>
+                    <input type="text" class="input-sm form-control" value="@PeriodAid.Controllers.OfflineSalesController.getManagerNickName(ViewBag.CheckItem.ConfirmUser)" readonly />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
                     <div class="input-group-addon"><small>确认时间</small></div>
                     <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.ConfirmTime" readonly />
                 </div>
-            </div>
+            </div><br /><br />
             @if (ViewBag.CheckItem.Status <=3&& ViewBag.CheckItem.Status>=0)
             {
-                <div class="col-md-5">
+                <div class="col-md-12">
                     <div class="input-group">
                         <div class="input-group-addon"><small>确认备注</small></div>
                         @Html.EditorFor(m => m.Confirm_Remark, new { htmlAttributes = new { @class = "form-control input-sm" } })
@@ -265,14 +271,14 @@
             }
             else
             {
-                <div class="col-md-5">
+                <div class="col-md-12">
                     <div class="input-group">
                         <div class="input-group-addon"><small>确认备注</small></div>
                         @Html.EditorFor(m => m.Confirm_Remark, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
                     </div>
                 </div>
             }
-            <br /><br />
+            <br />
             @if (ViewBag.CheckItem.Status == 4)
             {
                 <div class="col-md-2">
