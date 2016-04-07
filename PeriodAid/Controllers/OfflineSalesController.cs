@@ -3615,7 +3615,7 @@ namespace PeriodAid.Controllers
             if (_history)
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
-                           where m.Subscribe < currentTime
+                           where m.Subscribe <= currentTime
                            group m by m.Subscribe into g
                            orderby g.Key descending
                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
@@ -3624,7 +3624,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
-                           where m.Subscribe >= currentTime
+                           where m.Subscribe > currentTime
                            group m by m.Subscribe into g
                            orderby g.Key
                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
@@ -3822,6 +3822,7 @@ namespace PeriodAid.Controllers
                 Rep_Lemon = item.Rep_Lemon,
                 Rep_Other = item.Rep_Other,
                 Remark = item.Remark,
+                Proxy = item.Proxy,
                 Bonus_Remark = item.Bonus_Remark,
                 Confirm_Remark = item.Confirm_Remark
             };
@@ -3875,6 +3876,7 @@ namespace PeriodAid.Controllers
                     item.Rep_Honey = model.Rep_Honey;
                     item.Rep_Dates = model.Rep_Dates;
                     item.Rep_Other = model.Rep_Other;
+                    item.Proxy = model.Proxy;
                     item.CheckinLocation = item.CheckinLocation ?? "N/A";
                     item.CheckoutLocation = item.CheckoutLocation ?? "N/A";
                     item.Confirm_Remark = model.Confirm_Remark;
@@ -4596,10 +4598,40 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
+        // 0407 活动统计页面
+        public ActionResult Off_Schedule_Statistic(string datetime)
+        {
+            ViewBag.CurrentDate = datetime;
+            return View();
+        }
+
+        // 0407 活动数据AJAX
+        [HttpPost]
+        public JsonResult Off_Schedule_Statistic_Ajax(string datetime)
+        {
+            DateTime targetDate = Convert.ToDateTime(datetime);
+            var schedulelist = from m in offlineDB.Off_Checkin_Schedule
+                               where m.Subscribe == targetDate
+                               select m;
+            int self = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && !m.Proxy));
+            int proxy = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && m.Proxy));
+            int rest = schedulelist.Count() - self - proxy;
+            return Json(new { result = "SUCCESS", totalcount = schedulelist.Count(), selfcount = self, proxycount = proxy, restcount = rest });
+        }
         public static string getManagerNickName(string username)
         {
+            if (username == null)
+            {
+                return "";
+            }
             OfflineSales offlineDB = new OfflineSales();
-            return offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == username).NickName;
+            var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == username);
+            if (item !=null)
+            return item.NickName;
+            else
+            {
+                return username;
+            }
         }
         public static string getManagerNickNameCollection(string usernames)
         {
