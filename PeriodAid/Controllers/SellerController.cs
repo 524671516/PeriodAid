@@ -422,7 +422,8 @@ namespace PeriodAid.Controllers
                         {
                             Off_Seller_Id = SellerId,
                             Off_Schedule_Id = ScheduleId,
-                            Status = 0
+                            Status = 0,
+                            Proxy = false
                         };
                         offlineDB.Off_Checkin.Add(checkitem);
                         offlineDB.SaveChanges();
@@ -1070,6 +1071,7 @@ namespace PeriodAid.Controllers
                     checkin.CheckoutLocation = checkin.CheckoutLocation == null ? "N/A" : checkin.CheckoutLocation;
                     checkin.ConfirmTime = DateTime.Now;
                     checkin.ConfirmUser = User.Identity.Name;
+                    checkin.Proxy = true;
                     checkin.Status = 3;
                     offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.SaveChanges();
@@ -1128,6 +1130,7 @@ namespace PeriodAid.Controllers
                     checkin.CheckoutLocation = "N/A";
                     checkin.ConfirmTime = DateTime.Now;
                     checkin.ConfirmUser = User.Identity.Name;
+                    checkin.Proxy = true;
                     checkin.Status = 3;
                     //offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.Off_Checkin.Add(checkin);
