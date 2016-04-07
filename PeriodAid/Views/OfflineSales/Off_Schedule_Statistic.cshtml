@@ -3,6 +3,79 @@
     ViewBag.Title = "Off_Schedule_Statistic";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
+@section page{
+    2
+    }
+@section header{
+    <style>
+        .count{
+        list-style-type:none;
+        padding-left:1px;
+        }
+        .count li {
+        padding:10px 0 10px 0;
+        }
+    </style>
+    }
+<div id="countList" class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" id="date-time" name="date-time" class="form-control" placeholder="活动时间">
+        </div>
+        <div class="col-md-2">
+            <button id="search-btn" class="btn btn-primary">搜索</button>
+        </div>
+    </div><br />
+    <div class="row">
+        <div class="col-md-4">
+            <ul class="count">
+                <li>
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>门店总数</small></div>
+                        <input type="text" id="totalcount" class="input-sm form-control" value="" />
+                    </div>
+                </li>
+                <li>
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>已签到</small></div>
+                        <input type="text" id="selfcount" class="input-sm form-control" value=""/>
+                    </div>
+                </li>
+                <li>
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>代签</small></div>
+                        <input type="text" id="proxycount" class="input-sm form-control" value="" />
+                    </div>
+                </li>
+                <li>
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>其他</small></div>
+                        <input type="text" id="restcount" class="input-sm form-control" value="" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-8">
 
-<h2>Off_Schedule_Statistic</h2>
+        </div>
+    </div>
+</div>
+<script>
+    $("#search-btn").click(function () {
+        var url = "/OfflineSales/Off_Schedule_Statistic_Ajax";
+        $.ajax({
+            url: url,
+            type: "post",
+            success: function (data) {
+                if (data == "SUCCESS") {
+                    $("#totalcount").val(totalcount);
+                    $("#selfcount").val(selfcount);
+                    $("#proxycount").val(proxycount);
+                    $("#restcount").val(restcount);
+                    $("#countList").html();
+                }
+            }
+        })
+    })
+</script>
 

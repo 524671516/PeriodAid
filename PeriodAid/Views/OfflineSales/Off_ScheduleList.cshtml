@@ -15,7 +15,7 @@
             活动记录 &nbsp;<span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-            <li><a href="/OfflineSales/Off_ScheduleList">最新记录</a></li>
+            <li><a href="/OfflineSales/Off_ScheduleList">预约记录</a></li>
             <li><a href="/OfflineSales/Off_ScheduleList?history=true">历史记录</a></li>
         </ul>
     </div>
@@ -48,6 +48,7 @@
                 </td>
                 <td class="ellipsis">
                     @Html.ActionLink("查看", "Off_ScheduleDetails", new { date = item.Subscribe }, new { @class = "btn btn-info btn-sm edit-button" })
+                    @Html.ActionLink("查看数据", "Off_Schedule_Statistic", new { datetime = item.Subscribe }, new { @class = "btn btn-primary btn-sm edit-button" })
                 </td>
             </tr>
         }
