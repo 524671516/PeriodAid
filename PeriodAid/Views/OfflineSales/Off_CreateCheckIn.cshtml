@@ -27,7 +27,6 @@
     @Html.HiddenFor(m=>m.Id)
     @Html.HiddenFor(m=>m.Off_Schedule_Id)
     @Html.HiddenFor(m=>m.Status)
-    @Html.HiddenFor(m=>m.Proxy)
     <div class="container">
         <div class="row">
             <div class="col-md-3">
@@ -175,22 +174,22 @@
     <script type="text/javascript">
         $(function () {
             $("#checkin-btn").click(function () {
-                ajaxFileUploadIn();
+                ajaxFileUpload("CheckinPhoto", "checkin-img-list", "checkin-file");
 
             });
             $("#checkout-btn").click(function () {
-                ajaxFileUploadOut();
-            })
+                ajaxFileUpload("CheckoutPhoto", "checkout-img-list", "checkout-file");
+            });
             $("#report-btn").click(function () {
-                Report_ajaxFileUpload(checkout);
+                Report_ajaxFileUpload();
             });
         })
-        function ajaxFileUploadIn() {
+        function ajaxFileUpload(targetname,imglist,fileelment) {
             $.ajaxFileUpload({
                 url: '/OfflineSales/Off_CreateCheckIn_FileUpload', //用于文件上传的服务器端请求地址
                 type: 'post',
                 secureuri: false, //是否需要安全协议，一般设置为false
-                fileElementId: 'checkin-file', //文件上传域的ID
+                fileElementId: fileelment, //文件上传域的ID
                 dataType: 'json', //返回值类型 一般设置为json
                 success: function (data, status)  //服务器成功响应处理函数
                 {
@@ -202,8 +201,8 @@
                             alert(data.error);
                         } else {
                             alert("上传成功");
-                            $("#CheckinPhoto").val(data.imgurl);
-                            $("#checkin-img-list").html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
+                            $("#" + targetname).val(data.imgurl);
+                            $("#" + imglist).html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
                         }
                     }
                 },
@@ -214,35 +213,6 @@
             });
             return false;
         };
-        function ajaxFileUploadOut() {
-            $.ajaxFileUpload({
-                url: '/OfflineSales/Off_CreateCheckIn_FileUpload', //用于文件上传的服务器端请求地址
-                type: 'post',
-                secureuri: false, //是否需要安全协议，一般设置为false
-                fileElementId: 'checkout-file', //文件上传域的ID
-                dataType: 'json', //返回值类型 一般设置为json
-                success: function (data, status)  //服务器成功响应处理函数
-                {
-
-                    //alert(data.imgurl);
-                    //$("#img1").attr("src", data.imgurl);
-                    if (typeof (data.error) != 'undefined') {
-                        if (data.error != '') {
-                            alert(data.error);
-                        } else {
-                            alert("上传成功");
-                            $("#CheckoutPhoto").val(data.imgurl);
-                            $("#checkout-img-list").html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
-                        }
-                    }
-                },
-                error: function (data, status, e)//服务器响应失败处理函数
-                {
-                    alert(e);
-                }
-            });
-            return false;
-        }
         function Report_ajaxFileUpload() {
             $.ajaxFileUpload({
                 url: '/OfflineSales/Off_CreateCheckIn_FileUpload', //用于文件上传的服务器端请求地址
