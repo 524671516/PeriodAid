@@ -30,7 +30,7 @@
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckinTime)</div>
         </a>
-        <a class="weui_cell" href="javascript:;" id="checkinimg" data-target="@Model.CheckinPhoto">
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckinPhoto">
             <div class="weui_cell_bd weui_cell_primary">
                 <p>签到图片</p>
             </div>
@@ -41,6 +41,12 @@
                 <p>签退时间</p>
             </div>
             <div class="weui_cell_ft">@Html.Encode(Model.CheckoutTime)</div>
+        </a>
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckoutPhoto">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到图片</p>
+            </div>
+            <div class="weui_cell_ft">点击查看</div>
         </a>
     </div>
     @using (Html.BeginForm())
@@ -76,6 +82,16 @@
         </div>
     }
     <br /><br />
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd">提示</div>
+        <div class="weui_dialog_bd" id="dialog_text">当前无可查看图片</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog primary" id="alert-btn">确定</a>
+        </div>
+    </div>
+</div>
 @section scripts{
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
     <script>
@@ -108,15 +124,21 @@
             var tl = cal_textlength("Confirm_Remark");
             $("#current_length_2").text(tl);
         });
-        $("#checkinimg").click(function () {
-            var images = $(this).attr("data-target").split(',');
-            for (var i = 0; i < images.length; i++) {
-                images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
+        $(".singlepreview").click(function () {
+            var photos = $(this).attr("data-target");
+            if (photos.trim() != "") {
+                var images = photos.split(',');
+                for (var i = 0; i < images.length; i++) {
+                    images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
+                }
+                wx.previewImage({
+                    current: images[0], // 当前显示图片的http链接
+                    urls: images // 需要预览的图片http链接列表
+                });
             }
-            wx.previewImage({
-                current: images[0], // 当前显示图片的http链接
-                urls: images // 需要预览的图片http链接列表
-            })
+            else {
+                $("#dialog_alert").show();
+            }
         });
         $("#checkinlbs").click(function () {
             var lbs = $(this).attr("location").split(',');
