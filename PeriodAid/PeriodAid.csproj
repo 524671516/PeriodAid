@@ -284,6 +284,8 @@
     <Content Include="Content\images\mark_6.png" />
     <Content Include="Content\images\mark_other.png" />
     <Content Include="Content\images\mark_wem.png" />
+    <Content Include="Content\images\new_huawei.jpg" />
+    <Content Include="Content\images\new_sanxing.jpg" />
     <Content Include="Content\images\new_xiaomi.jpg" />
     <Content Include="Content\images\period-aid-logo.png" />
     <Content Include="Content\images\phone-ban.png" />
