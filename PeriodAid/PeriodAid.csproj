@@ -347,6 +347,7 @@
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\JavaScript.js" />
     <Content Include="Scripts\Jcrop.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
