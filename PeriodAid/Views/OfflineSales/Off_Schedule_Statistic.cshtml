@@ -97,22 +97,22 @@
         <div class="col-md-8">
             <div class="row text-center">
            
-                    <h1><strong style="font-size:24px;">活动签到数据饼状图</strong></h1>
+                    <div style="padding-top:10px;"><strong style="font-size:24px;">活动签到数据饼状图</strong></div>
                 
-                    <canvas id="myChart" width="300" height="300" style=""></canvas>
+                <div id="canvas-map"><canvas id="myChart" width="200" height="200" style=""></canvas></div>
                     <ul class="count">
-                        <li style="float:left;">
-                            <div style="font-size:18px;">
+                        <li style="float:left;margin-left:300px;">
+                            <div style="font-size:12px;">
                                 <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#d9534f"></span> 签到
                             </div>
                         </li>
-                        <li style="float:left;margin-left:20px;margin-right:20px;">
-                            <div style="font-size:18px;">
+                        <li style="float:left;margin-left:15px;margin-right:15px;">
+                            <div style="font-size:12px;">
                                 <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#f0ad4e"></span> 代签到
                             </div>
                         </li>
                         <li style="float:left;">
-                            <div style="font-size:18px;">
+                            <div style="font-size:12px;">
                                 <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#5bc0de"></span> 其他
                             </div>
                         </li>
@@ -161,7 +161,7 @@
                         "aria-valuenow": data.restcount,
                         "aria-valuemax": data.totalcount
                     });
-                    $("#rate").val((data.selfcount / data.totalcount) * 100 + "%");
+                    $("#rate").val(((data.selfcount / data.totalcount) * 100).toFixed(2) + "%");
                     //$("#countList").html(data);
                     //制作饼状图
                     var pieData = [
@@ -183,15 +183,12 @@
                                      //highlight: "#FFC870",
                                      label: "其他"
                                  },
-
-
                     ];
-
-
                     var ctx = document.getElementById("myChart").getContext("2d");
-                    window.myPie = new Chart(ctx).Pie(pieData);
+                    new Chart(ctx).Pie(pieData);
                 }
             }
+
         });
         $("#search-btn").click(function () {
             var url = "/OfflineSales/Off_Schedule_Statistic_Ajax";
@@ -229,36 +226,33 @@
                             "aria-valuenow": data.restcount,
                             "aria-valuemax": data.totalcount
                         });
-                        $("#rate").val((data.selfcount / data.totalcount) * 100 + "%");
+                        $("#rate").val(((data.selfcount / data.totalcount) * 100).toFixed(2) + "%");
                         //$("#countList").html(data);
                         //制作饼状图
                         var pieData = [
                                      {
                                          value: data.selfcount,
-                                         color: "#F7464A",
-                                         highlight: "#FF5A5E",
+                                         color: "#d9534f",
+                                         //highlight: "#FF5A5E",
                                          label: "签到"
                                      },
                                      {
                                          value: data.proxycount,
-                                         color: "#46BFBD",
-                                         highlight: "#5AD3D1",
+                                         color: "#f0ad4e",
+                                         //highlight: "#5AD3D1",
                                          label: "代签到"
                                      },
                                      {
                                          value: data.restcount,
-                                         color: "#FDB45C",
-                                         highlight: "#FFC870",
+                                         color: "#5bc0de",
+                                         //highlight: "#FFC870",
                                          label: "其他"
                                      },
-
-
                         ];
-
-
+                        $("#myChart").remove();
+                        $("#canvas-map").html("<canvas id=\"myChart\" width=\"200\" height=\"200\"></canvas>");
                         var ctx = document.getElementById("myChart").getContext("2d");
-                        window.myPie = new Chart(ctx).Pie(pieData);
-
+                        new Chart(ctx).Pie(pieData);
                     }
                 }
             })
