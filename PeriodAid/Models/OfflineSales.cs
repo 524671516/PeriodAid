@@ -1158,6 +1158,8 @@ namespace PeriodAid.Models
         
         public bool Bind { get; set; }
 
+        public bool Recruit { get; set; }
+
         public int? Off_Seller_Id { get; set; }
         
         public DateTime ApplicationDate { get; set; }

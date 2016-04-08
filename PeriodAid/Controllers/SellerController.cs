@@ -166,8 +166,6 @@ namespace PeriodAid.Controllers
 
                     var user = new ApplicationUser { UserName = model.Mobile, Email = model.Open_Id, PhoneNumber = model.Mobile, AccessToken = model.AccessToken, OpenId = model.Open_Id };
                     var result = await UserManager.CreateAsync(user, open_id);
-                    //await UserManager.AddToRole(user, )
-                    //user.Roles.Add
                     if (result.Succeeded)
                     {
                         smsRecord.Status = true;
@@ -176,16 +174,20 @@ namespace PeriodAid.Controllers
                         UserManager.Update(user);
                         await UserManager.AddToRoleAsync(user.Id, "Seller");
                         //Roles.AddUserToRole(user.UserName, "Seller");
-                        Off_Membership_Bind ofb = new Off_Membership_Bind()
+                        Off_Membership_Bind ofb = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == user.UserName);
+                        if (ofb == null)
                         {
-                            ApplicationDate = DateTime.Now,
-                            Bind = false,
-                            Mobile = model.Mobile,
-                            NickName = model.NickName,
-                            UserName = user.UserName
-                        };
-                        offlineDB.Off_Membership_Bind.Add(ofb);
-                        await offlineDB.SaveChangesAsync();
+                            ofb = new Off_Membership_Bind()
+                            {
+                                ApplicationDate = DateTime.Now,
+                                Bind = false,
+                                Mobile = model.Mobile,
+                                NickName = model.NickName,
+                                UserName = user.UserName
+                            };
+                            offlineDB.Off_Membership_Bind.Add(ofb);
+                            await offlineDB.SaveChangesAsync();
+                        }
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToAction("Wx_Seller_Home");
                     }
@@ -906,6 +908,16 @@ namespace PeriodAid.Controllers
                 return false;
         }
 
+        [HttpPost]
+        public JsonResult Wx_Seller_IsRecruit()
+        {
+            var userbind = from m in offlineDB.Off_Membership_Bind
+                           where m.UserName == User.Identity.Name
+                           select m;
+            bool isRecruit = userbind.Any(m => m.Recruit);
+            return Json(new { result = "SUCCESS", recruit = isRecruit });
+        }
+
 
         //管理员页面
         [Authorize(Roles = "Manager")]
@@ -1379,6 +1391,19 @@ namespace PeriodAid.Controllers
                     record.Bonus_User = User.Identity.Name;
                     record.Bonus = item.Bonus;
                     offlineDB.Entry(record).State = System.Data.Entity.EntityState.Modified;
+                    var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == record.Off_Seller_Id);
+                    var user = UserManager.FindByName(binduser.UserName);
+                    Off_BonusRequest bonusrequest = new Off_BonusRequest()
+                    {
+                        CheckinId = item.Id,
+                        ReceiveUserName = user.UserName,
+                        ReceiveOpenId = user.OpenId,
+                        ReceiveAmount = Convert.ToInt32(item.Bonus * 100),
+                        RequestUserName = User.Identity.Name,
+                        RequestTime = DateTime.Now,
+                        Status = 0
+                    };
+                    offlineDB.Off_BonusRequest.Add(bonusrequest);
                     offlineDB.SaveChanges();
                     return Content("SUCCESS");
                 }
