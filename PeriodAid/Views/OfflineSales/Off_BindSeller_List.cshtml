@@ -107,13 +107,16 @@
     });
     $(".manager-button").click(function () {
         var link_url = $(this).attr("href");
-        $.ajax({
-            url: link_url,
-            success: function (data) {
-                if (data == "SUCCESS");
-                window.location.reload();
-            }
-        });
+        var result = confirm("是否设置为管理员");
+        if (result == "SUCCESS") {
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    if (data == "SUCCESS");
+                    window.location.reload();
+                }
+            });
+        }
         return false;
     });
     $(function () {
