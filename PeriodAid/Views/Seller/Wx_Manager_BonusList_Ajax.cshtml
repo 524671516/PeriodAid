@@ -1,0 +1,18 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_BonusRequest>
+<div class="weui_cells_title">待确认红包列表</div>
+<div class="weui_cells weui_cells_checkbox">
+    @foreach (var item in Model)
+    {
+    <label class="weui_cell weui_check_label" for="@item.Id">
+        <div class="weui_cell_hd">
+            <input type="checkbox" class="weui_check" name="checkbox1" id="@item.Id">
+            <i class="weui_icon_checked"></i>
+        </div>
+        <div class="weui_cell_bd weui_cell_primary" style="font-weight:normal;">
+            <p>@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)</p>
+        </div>
+        <div class="weui_cell_ft" style="font-weight:normal;">@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd")+": "+item.Off_Checkin.Bonus)</div>
+    </label>
+    }
+    
+</div>

@@ -4331,13 +4331,15 @@ namespace PeriodAid.Controllers
             var select_list = (from m in offlineDB.Off_Store
                                where arr_int.Contains(m.Id)
                                select m).Select(m => m.Id);
-            var removelist = currentlist.Except(select_list);
-            var addlist = select_list.Except(currentlist);
-            foreach (var item1 in removelist)
+            var storelist = (from m in manager.Off_Store
+                             select m.Id).ToList();
+            foreach(var item in storelist)
             {
-                manager.Off_Store.Remove(offlineDB.Off_Store.SingleOrDefault(m => m.Id == item1));
+                var temp = offlineDB.Off_Store.SingleOrDefault(m => m.Id == item);
+                manager.Off_Store.Remove(temp);
             }
-            foreach (var item2 in addlist)
+            
+            foreach (var item2 in select_list)
             {
                 manager.Off_Store.Add(offlineDB.Off_Store.SingleOrDefault(m => m.Id == item2));
             }
