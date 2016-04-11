@@ -597,6 +597,8 @@
     <Content Include="Views\Custom\TestVoice.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_Request_Check.cshtml" />
     <Content Include="Views\OfflineSales\Off_Schedule_Statistic.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_BonusList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_BonusList_Ajax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

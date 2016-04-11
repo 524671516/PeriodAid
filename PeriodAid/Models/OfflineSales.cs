@@ -1470,6 +1470,9 @@ namespace PeriodAid.Models
 
         public DateTime? CommitTime { get; set; }
 
+        [StringLength(256)]
+        public string Mch_BillNo { get; set; }
+
         public virtual Off_Checkin Off_Checkin { get; set; }
     }
 }

@@ -50,7 +50,8 @@
                 $.ajax({
                     url: "Wx_Manager_ReportList_Partial",
                     data: {
-                        date: $("#list_date").val()
+                        date: $("#list_date").val(),
+                        storesystem: $("#storesystem").val()
                     },
                     type: "post",
                     success: function (data) {

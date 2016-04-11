@@ -41,6 +41,15 @@
         </div>
         <div class="weui_cell_ft"></div>
     </a>
+    @if (User.IsInRole("Senior"))
+    {
+        <a class="weui_cell" href="/Seller/Wx_Manager_BonusList">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>确认促销员奖励</p>
+            </div>
+            <div class="weui_cell_ft"></div>
+        </a>
+    }
 </div>
 <div class="weui_cells_title">使用帮助</div>
 <div class="weui_cells weui_cells_access">
