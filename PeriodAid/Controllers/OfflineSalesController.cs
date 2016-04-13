@@ -4620,6 +4620,35 @@ namespace PeriodAid.Controllers
             int rest = schedulelist.Count() - self - proxy;
             return Json(new { result = "SUCCESS", totalcount = schedulelist.Count(), selfcount = self, proxycount = proxy, restcount = rest });
         }
+        // 0413 统计数据-渠道数据
+        public ActionResult Off_Statistic_StoreSystem()
+        {
+            return View();
+        }
+        public JsonResult Off_Statistic_StoreSystem_Ajax(string startdate, string enddate, string storesystem)
+        {
+            DateTime st = Convert.ToDateTime(startdate);
+            DateTime et = Convert.ToDateTime(enddate);
+            var data = from m in offlineDB.Off_SalesInfo_Daily
+                       where m.Date >= st && m.Date <= et && m.Off_Store.StoreSystem.Contains(storesystem)
+                       group m by m.Date into g
+                       select new { date = g.Key, count = g.Count(), brown = g.Sum(m => m.Item_Brown), black = g.Sum(m => m.Item_Black), lemon = g.Sum(m => m.Item_Lemon), honey = g.Sum(m => m.Item_Honey), dates = g.Sum(m => m.Item_Dates) };
+            return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
+
+        }
+        // 0413 统计数据-门店数据
+        public ActionResult Off_Statistic_Store()
+        {
+            return View();
+        }
+        // 0413 统计数据-促销员数据
+        public ActionResult Off_Statistic_Seller()
+        {
+            return View();
+        }
+
+
+
         public static string getManagerNickName(string username)
         {
             if (username == null)

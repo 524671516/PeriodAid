@@ -62,7 +62,8 @@
                                 $.ajax({
                                     url: "/OfflineSales/Off_CheckIn_List_ajax",
                                     data:{
-                                        status: $("#status-val").val() + "&query="
+                                        status: $("#status-val").val(),
+                                        query: $("#search-query").val()
                                     },
                                     success: function (data) {
                                         $("#expenseslist").html(data);

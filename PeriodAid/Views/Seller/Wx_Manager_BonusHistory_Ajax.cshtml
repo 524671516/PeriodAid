@@ -1,0 +1,20 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_BonusRequest>
+    @using PeriodAid.Models;
+<div class="weui_panel weui_panel_access">
+    <div class="weui_panel_hd">红包列表</div>
+    <div class="weui_panel_bd">
+        @foreach (var item in Model)
+        {
+        <div class="weui_media_box weui_media_text" style="padding:5px 15px;">
+            <h4 class="weui_media_title">@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd")+"："+item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)</h4>
+            <p class="weui_media_desc">红包金额：@Html.Encode(item.Off_Checkin.Bonus)元&nbsp;&nbsp;|&nbsp;&nbsp;红包状态：@Html.Encode(ParseStatus.getBonusRequestStatus(item.Status))</p>
+        </div>
+        }
+    </div>
+</div><br />
+<div class="container">
+    <button onclick="start_query();" class="weui_btn weui_btn_primary">更新发放情况</button>
+    <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default" style="margin-top:5px;">
+        返回首页
+    </a>
+</div>

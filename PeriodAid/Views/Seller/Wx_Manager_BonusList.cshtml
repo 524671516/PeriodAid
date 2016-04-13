@@ -1,18 +1,28 @@
 ﻿
 @{
-    ViewBag.Title = "Wx_Manager_BonusList";
+    ViewBag.Title = "督导管理 - 红包管理";
     Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
     ViewBag.Current = 2;
 }
+<div class="navbar">
+    <div class="bd" style="height: 100%;">
+        <div class="weui_tab">
+            <div class="weui_navbar">
+                <div class="weui_navbar_item weui_bar_item_on" data-rel="/Seller/Wx_Manager_BonusList_Ajax">
+                    红包发放
+                </div>
+                <div class="weui_navbar_item" data-rel="/Seller/Wx_Manager_BonusHistory_Ajax">
+                    红包记录
+                </div>
+            </div>
+            <div class="weui_tab_bd">
 
-<div id="bonuslist"></div><br />
-<div class="container">
-    <button onclick ="open_confirm();" class="weui_btn weui_btn_primary weui_btn_disabled" disabled >确认红包并发放</button>
-    <button onclick="open_dismiss();" class="weui_btn weui_btn_warn weui_btn_disabled" disabled>驳回红包</button>
-    <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default">
-        返回首页
-    </a>
+            </div>
+        </div>
+    </div>
 </div>
+<div id="bonuslist"></div>
+
 <div class="weui_dialog_confirm" id="dismiss_dialog" style="display:none;">
     <div class="weui_mask"></div>
     <div class="weui_dialog">
@@ -42,12 +52,33 @@
         <p class="weui_toast_content">已完成</p>
     </div>
 </div>
+<div id="loadingToast" class="weui_loading_toast" style="display:none;">
+    <div class="weui_mask_transparent"></div>
+    <div class="weui_toast">
+        <div class="weui_loading">
+            <!-- :) -->
+            <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+        </div>
+        <p class="weui_toast_content">提交中...</p>
+    </div>
+</div>
 <br /><br />
 @section scripts{
     <script>
         $(function () {
             $.ajax({
-                url: "Wx_Manager_BonusList_Ajax",
+                url: "/Seller/Wx_Manager_BonusList_Ajax",
                 success: function (data) {
                     $("#bonuslist").html(data);
                 }
@@ -60,6 +91,17 @@
                     $("button.weui_btn").addClass("weui_btn_disabled").attr("disabled");
                 }
             });
+        });
+        $(".weui_navbar_item").click(function () {
+            var url = $(this).attr("data-rel");
+            $(".weui_navbar_item").removeClass("weui_bar_item_on");
+            $(this).addClass("weui_bar_item_on");
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $("#bonuslist").html(data);
+                }
+            })
         });
         function open_dismiss() {
             $("#dismiss_dialog").show();
@@ -88,7 +130,7 @@
                             $("#toast_success").hide();
                         }, 1000);
                         $.ajax({
-                            url: "Wx_Manager_BonusList_Ajax",
+                            url: "/Seller/Wx_Manager_BonusList_Ajax",
                             success: function (data) {
                                 $("#bonuslist").html(data);
                             }
@@ -102,7 +144,8 @@
             var id_Array = new Array();
             $(".weui_check:checked").each(function () {
                 id_Array.push($(this).attr("id"));
-            })
+            });
+            $("#loadingToast").show();
             $.ajax({
                 url: "/Seller/Wx_Manager_BonusList_Confirm",
                 data: {
@@ -110,13 +153,14 @@
                 },
                 type: "post",
                 success: function (data) {
+                    $("#loadingToast").hide();
                     if (data.result == "SUCCESS") {
                         $("#toast_success").show();
                         setTimeout(function () {
                             $("#toast_success").hide();
                         }, 1000);
                         $.ajax({
-                            url: "Wx_Manager_BonusList_Ajax",
+                            url: "/Seller/Wx_Manager_BonusList_Ajax",
                             success: function (data) {
                                 $("#bonuslist").html(data);
                             }
@@ -125,6 +169,28 @@
                 }
             });
             $("#confirm_dialog").hide();
+        }
+        function start_query() {
+            $("#loadingToast").show();
+            $.ajax({
+                url: "/Seller/Wx_Manager_BonusQuery_Ajax",
+                type: "post",
+                success: function (data) {
+                    $("#loadingToast").hide();
+                    if (data.result == "SUCCESS") {
+                        $("#toast_success").show();
+                        setTimeout(function () {
+                            $("#toast_success").hide();
+                        }, 1000);
+                        $.ajax({
+                            url: "/Seller/Wx_Manager_BonusHistory_Ajax",
+                            success: function (data) {
+                                $("#bonuslist").html(data);
+                            }
+                        });
+                    }
+                }
+            })
         }
     </script>
     }
