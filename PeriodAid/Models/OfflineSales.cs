@@ -1475,4 +1475,5 @@ namespace PeriodAid.Models
 
         public virtual Off_Checkin Off_Checkin { get; set; }
     }
+    
 }

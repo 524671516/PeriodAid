@@ -460,6 +460,27 @@ namespace PeriodAid.Models
                     return "未知";
             }
         }
+        public static string getBonusRequestStatus(int? code)
+        {
+            string result = String.Empty;
+            switch (code)
+            {
+                case -1:
+                    return "作废";
+                case 0:
+                    return "待审核";
+                case 1:
+                    return "已发送";
+                case 2:
+                    return "已收款";
+                case 3:
+                    return "发送失败";
+                case 4:
+                    return "已退款";
+                default:
+                    return "未知";
+            }
+        }
 
 
     }

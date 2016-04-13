@@ -1397,7 +1397,7 @@ namespace PeriodAid.Controllers
                     offlineDB.Entry(record).State = System.Data.Entity.EntityState.Modified;
                     var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == record.Off_Seller_Id);
                     var user = UserManager.FindByName(binduser.UserName);
-                    Off_BonusRequest bonusrequest = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.CheckinId == item.Id);
+                    Off_BonusRequest bonusrequest = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.CheckinId == item.Id && m.Status >= 0);
                     if (bonusrequest != null)
                     {
                         bonusrequest.ReceiveAmount = Convert.ToInt32(item.Bonus * 100);
@@ -2084,7 +2084,8 @@ namespace PeriodAid.Controllers
                     "SELECT CheckinId FROM Off_BonusRequest WHERE Id IN (" + bonuslist + ")" +
                     ")";
                 offlineDB.Database.ExecuteSqlCommand(presql);
-                string sql = "DELETE FROM Off_BonusRequest WHERE Id IN (" + bonuslist + ")";
+                string time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                string sql = "UPDATE Off_BonusRequest SET Status = -1, CommitUserName = '" + User.Identity.Name + "', CommitTime = '" + time + "'  WHERE Id IN (" + bonuslist + ")";
                 offlineDB.Database.ExecuteSqlCommand(sql);
                 return Json(new { result = "SUCCESS" });
             }
@@ -2106,14 +2107,21 @@ namespace PeriodAid.Controllers
                 {
                     int order = Convert.ToInt32(orderid);
                     var item = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.Id == order);
-                    string mch_billno = "SELLERRP" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
-                    string remark = item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd") + "促销红包";
-                    string result = await apppay.WxRedPackCreate(item.ReceiveOpenId, item.ReceiveAmount, mch_billno, "促销员红包", "寿全斋", remark, "感谢您的努力付出！");
-                    if (result == "SUCCESS")
+                    if (item.Status == 0)
                     {
-                        item.Mch_BillNo = mch_billno;
-                        item.Status = 1;
-                        offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        string mch_billno = "SELLERRP" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
+                        string remark = item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd") + "促销红包";
+                        string result = await apppay.WxRedPackCreate(item.ReceiveOpenId, item.ReceiveAmount, mch_billno, "促销员红包", "寿全斋", remark, remark);
+                        if (result == "SUCCESS")
+                        {
+                            item.Mch_BillNo = mch_billno;
+                            item.Status = 1;
+                            item.CommitUserName = User.Identity.Name;
+                            item.CommitTime = DateTime.Now;
+                            offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+
+                        }
+                        await Task.Delay(10000);
                     }
                     //offlineDB.SaveChanges();
                 }
@@ -2125,6 +2133,56 @@ namespace PeriodAid.Controllers
             await offlineDB.SaveChangesAsync();
             return Json(new { result = "SUCCESS" });
         }
+        [Authorize(Roles = "Senior")]
+        public ActionResult Wx_Manager_BonusHistory_Ajax()
+        {
+            var list = (from m in offlineDB.Off_BonusRequest
+                       where m.Status > 0
+                       orderby m.CommitTime descending
+                       select m).Take(30);
+            return PartialView(list);
+        }
+        [Authorize(Roles ="Senior")]
+        [HttpPost]
+        public async Task<ActionResult> Wx_Manager_BonusQuery_Ajax()
+        {
+            var query_list = from m in offlineDB.Off_BonusRequest
+                             where m.Status == 1
+                             orderby m.CommitTime descending
+                             select m;
+            AppPayUtilities pay = new AppPayUtilities();
+            foreach (var item in query_list)
+            {
+                try
+                {
+                    string result = await pay.WxRedPackQuery(item.Mch_BillNo);
+                    switch (result)
+                    {
+                        case "SENT":
+                            item.Status = 1;
+                            break;
+                        case "RECEIVED":
+                            item.Status = 2;
+                            break;
+                        case "FAIL":
+                            item.Status = 3;
+                            break;
+                        case "REFUND":
+                            item.Status = 4;
+                            break;
+                        default:
+                            item.Status = 1;
+                            break;
+                    }
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+                catch
+                {
 
+                }
+            }
+            offlineDB.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
     }
 }
