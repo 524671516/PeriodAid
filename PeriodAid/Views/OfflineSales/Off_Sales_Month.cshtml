@@ -22,17 +22,13 @@
 <div id="list-container">
 
 </div>
+@*区域图表*@
 <div class="row">
-    <div class="col-md-9">
-        <div class="row">
-            <div class="col-md-9">
-                <canvas id="myChart" width="500" height="400"></canvas>
-            </div>
-            <ul class="list-unstyled col-md-3">
-                <li><span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:rgba(220,220,220,1)"></span>&nbsp;大润发</li>
-                <li><span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:rgba(151,187,205,1)"></span>&nbsp;欧尚</li>
-            </ul>
-        </div>
+    <div class="col-md-2">
+        <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+    </div>
+    <div class="col-md-2">
+        <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
     </div>
     <div class="col-md-3">
         <select class="form-control valid" id="StoreSystem" name="StoreSystem">
@@ -61,6 +57,112 @@
             <option value="郑州丹尼斯">郑州丹尼斯</option>
         </select>
     </div>
+    <div class="col-md-2">
+        <button id="data-btn" class="btn btn-info">查看</button>
+    </div>
+</div><br />
+<div class="row">
+    <div class="col-md-6">
+        <h4 class="text-center"><strong>区域每天销售总额折线图(单位：盒/天)</strong></h4><br />
+        <canvas id="myChart_Line" width="500" height="400"></canvas>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <h4 class="text-center"><strong>区域每天各个种类销售总额蛛网图(单位：盒/天)</strong></h4><br />
+        <canvas id="myChart_Rabar" width="400" height="400"></canvas>
+    </div>
+</div>
+@*区域门店图表*@
+<div class="row">
+    <div class="col-md-2">
+        <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+    </div>
+    <div class="col-md-2">
+        <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
+    </div>
+    <div class="col-md-3">
+        @*@Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control", id = "StoreSystem" })*@
+        <select class="form-control" id="StoreSystem" name="StoreSystem">
+            <option value="-区域-">-区域-</option>
+            <option value="北国系统">北国系统</option>
+            <option value="卜蜂莲花">卜蜂莲花</option>
+            <option value="承德宽广">承德宽广</option>
+            <option value="大润发">大润发</option>
+            <option value="贵阳北京华联">贵阳北京华联</option>
+            <option value="国泰">国泰</option>
+            <option value="邯郸美食林">邯郸美食林</option>
+            <option value="河南南阳">河南南阳</option>
+            <option value="华联">华联</option>
+            <option value="华润">华润</option>
+            <option value="家乐福">家乐福</option>
+            <option value="乐购">乐购</option>
+            <option value="农工商">农工商</option>
+            <option value="欧尚">欧尚</option>
+            <option value="三江购物">三江购物</option>
+            <option value="山西金威">山西金威</option>
+            <option value="世纪联华">世纪联华</option>
+            <option value="苏果">苏果</option>
+            <option value="苏州精品超市">苏州精品超市</option>
+            <option value="天津华润">天津华润</option>
+            <option value="沃尔玛">沃尔玛</option>
+            <option value="郑州丹尼斯">郑州丹尼斯</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select id="StoreList" name="StoreList" class="form-control input-sm"></select>
+    </div>
+    <div class="col-md-2">
+        <button id="data-btn" class="btn btn-info">查看</button>
+    </div>
+</div><br />
+<div class="row">
+    <div class="col-md-6">
+        <h4 class="text-center"><strong>每个区域下的门店每天销售总额柱状图(单位：盒/天)</strong></h4><br />
+        <canvas id="myChart_Bar" width="500" height="400"></canvas>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <h4 class="text-center"><strong>每个区域下的门店每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
+        <canvas id="myChart_Pie" width="350" height="350"></canvas>
+    </div>
+</div>
+@*促销员图表*@
+<div class="row">
+    <div class="col-md-2">
+        <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+    </div>
+    <div class="col-md-2">
+        <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
+    </div>
+    <div class="col-md-3">
+        <input class="form-control" value="促销员"/>
+    </div>
+    <div class="col-md-2">
+        <button id="data-btn" class="btn btn-info">查看</button>
+    </div>
+</div><br />
+<div class="row">
+
+        <h4 class="text-center"><strong>促销员每天销售总额折线图(单位：盒/天)</strong></h4><br />
+        <div class="row">
+            <div class="col-md-6"><canvas id="myChart_Line_seller" width="500" height="400"></canvas></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <ul class="count list-unstyled h6">
+                    <li>
+                        
+                            <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#d9534f"></span> 历史平均销量
+                        
+                    </li>
+                    <li>
+                        
+                            <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#f0ad4e"></span> 促销员销量
+                       
+                    </li>
+                </ul>
+            </div>
+        </div>
+
 </div>
 <script src="~/Scripts/Chart.js"></script>
 @section scripts{
@@ -84,9 +186,79 @@
                 });
             });
         })
+        $("#data-startTime").datepicker({
+            dateFormat: 'yy-mm-dd'
+        }); $("#data-endTime").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
         //区域销售折线图
-        var data = {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
+        var data_Line = {
+            labels: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+            datasets: [
+                {
+                    fillColor: "rgba(220,220,220,0)",
+                    strokeColor: "red",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    data: [65, 59, 90, 81, 56, 55, 40]
+                }
+            ]
+        };
+        //区域各个种类销售蛛网图
+        var data_Rabar = {
+            labels: ["红糖姜茶", "蜂蜜姜茶", "黑糖姜茶", "柠檬姜茶", "红枣姜茶"],
+            datasets: [
+                {
+                    fillColor: "rgba(220,220,220,0.5)",
+                    strokeColor: "blue",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    data: [10, 5, 21, 0, 0]
+                }
+            ]
+        }
+        //每个区域下的门店每天销售总额柱状图
+        var data_Bar = {
+            labels: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+            datasets: [
+                {
+                    fillColor: "rgba(220,220,220,0.5)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    data: [65, 59, 90, 81, 56, 55, 40]
+                }
+            ]
+        }
+        //每个区域下的门店每天各个种类销售总额饼状图
+        var data_Pie = [
+	{
+	    value: 30,
+	    color: "#F38630",
+        label:'黑糖姜茶'
+	},
+	{
+	    value: 50,
+	    color: "#E0E4CC",
+	    label: '红糖姜茶'
+	},
+	{
+	    value: 100,
+	    color: "#69D2E7",
+	    label: '柠檬姜茶'
+	},
+    {
+        value: 15,
+        color: "#FFD2aa",
+        label: '红枣姜茶'
+    },
+    {
+        value: 120,
+        color: "#ccD2E7",
+        label: '蜂蜜姜茶'
+    }
+        ]
+        //促销员每天销售总额折线图
+        var data_Line_seller = {
+            labels: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
             datasets: [
                 {
                     fillColor: "rgba(220,220,220,0.5)",
@@ -173,7 +345,7 @@
             datasetStrokeWidth: 2,
 
             // 是否填充数据集
-            datasetFill: false,
+            datasetFill: true,
 
             // 是否执行动画
             animation: true,
@@ -188,10 +360,31 @@
             onAnimationComplete: null
 
         }
-        var ctx = $("#myChart").get(0).getContext("2d");
-        new Chart(ctx).Line(data, defaults);
-//制作柱状图
-
+        var ctx_Line = $("#myChart_Line").get(0).getContext("2d");
+        new Chart(ctx_Line).Line(data_Line, defaults);
+        var ctx_Radar = $("#myChart_Rabar").get(0).getContext("2d");
+        new Chart(ctx_Radar).Radar(data_Rabar, defaults);
+        var ctx_Bar = $("#myChart_Bar").get(0).getContext("2d");
+        new Chart(ctx_Bar).Bar(data_Bar, defaults);
+        var ctx_Pie = $("#myChart_Pie").get(0).getContext("2d");
+        new Chart(ctx_Pie).Pie(data_Pie, defaults);
+        var ctx_Line_seller = $("#myChart_Line_seller").get(0).getContext("2d");
+        new Chart(ctx_Line_seller).Line(data_Line_seller, defaults);
+        //$("#StoreSystem").change(function () {
+        //    $.ajax({
+        //        url: "/OfflineSales/Off_Add_Schedule_StoreList",
+        //        type: "post",
+        //        data: {
+        //            storesystem: $("#StoreSystem").val()
+        //        },
+        //        success: function (data) {
+        //            $("#StoreList").html("");
+        //            for (var i = 0; i < data.StoreList.length; i++) {
+        //                $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+        //            }
+        //        }
+        //    });
+        //});
     </script>
 }
 
