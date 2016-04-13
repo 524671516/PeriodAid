@@ -22,56 +22,6 @@
 <div id="list-container">
 
 </div>
-@*区域图表*@
-<div class="row">
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
-    </div>
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
-    </div>
-    <div class="col-md-3">
-        <select class="form-control valid" id="StoreSystem" name="StoreSystem">
-            <option value="-区域-">-区域-</option>
-            <option value="北国系统">北国系统</option>
-            <option value="卜蜂莲花">卜蜂莲花</option>
-            <option value="承德宽广">承德宽广</option>
-            <option value="大润发">大润发</option>
-            <option value="贵阳北京华联">贵阳北京华联</option>
-            <option value="国泰">国泰</option>
-            <option value="邯郸美食林">邯郸美食林</option>
-            <option value="河南南阳">河南南阳</option>
-            <option value="华联">华联</option>
-            <option value="华润">华润</option>
-            <option value="家乐福">家乐福</option>
-            <option value="乐购">乐购</option>
-            <option value="农工商">农工商</option>
-            <option value="欧尚">欧尚</option>
-            <option value="三江购物">三江购物</option>
-            <option value="山西金威">山西金威</option>
-            <option value="世纪联华">世纪联华</option>
-            <option value="苏果">苏果</option>
-            <option value="苏州精品超市">苏州精品超市</option>
-            <option value="天津华润">天津华润</option>
-            <option value="沃尔玛">沃尔玛</option>
-            <option value="郑州丹尼斯">郑州丹尼斯</option>
-        </select>
-    </div>
-    <div class="col-md-2">
-        <button id="data-btn" class="btn btn-info">查看</button>
-    </div>
-</div><br />
-<div class="row">
-    <div class="col-md-6">
-        <h4 class="text-center"><strong>区域每天销售总额折线图(单位：盒/天)</strong></h4><br />
-        <canvas id="myChart_Line" width="500" height="400"></canvas>
-    </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-5">
-        <h4 class="text-center"><strong>区域每天各个种类销售总额蛛网图(单位：盒/天)</strong></h4><br />
-        <canvas id="myChart_Rabar" width="400" height="400"></canvas>
-    </div>
-</div>
 @*区域门店图表*@
 <div class="row">
     <div class="col-md-2">
@@ -81,7 +31,6 @@
         <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
     </div>
     <div class="col-md-3">
-        @*@Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control", id = "StoreSystem" })*@
         <select class="form-control" id="StoreSystem" name="StoreSystem">
             <option value="-区域-">-区域-</option>
             <option value="北国系统">北国系统</option>
@@ -191,32 +140,6 @@
         }); $("#data-endTime").datepicker({
             dateFormat: 'yy-mm-dd'
         });
-        //区域销售折线图
-        var data_Line = {
-            labels: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
-            datasets: [
-                {
-                    fillColor: "rgba(220,220,220,0)",
-                    strokeColor: "red",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    data: [65, 59, 90, 81, 56, 55, 40]
-                }
-            ]
-        };
-        //区域各个种类销售蛛网图
-        var data_Rabar = {
-            labels: ["红糖姜茶", "蜂蜜姜茶", "黑糖姜茶", "柠檬姜茶", "红枣姜茶"],
-            datasets: [
-                {
-                    fillColor: "rgba(220,220,220,0.5)",
-                    strokeColor: "blue",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    data: [10, 5, 21, 0, 0]
-                }
-            ]
-        }
         //每个区域下的门店每天销售总额柱状图
         var data_Bar = {
             labels: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
@@ -360,10 +283,6 @@
             onAnimationComplete: null
 
         }
-        var ctx_Line = $("#myChart_Line").get(0).getContext("2d");
-        new Chart(ctx_Line).Line(data_Line, defaults);
-        var ctx_Radar = $("#myChart_Rabar").get(0).getContext("2d");
-        new Chart(ctx_Radar).Radar(data_Rabar, defaults);
         var ctx_Bar = $("#myChart_Bar").get(0).getContext("2d");
         new Chart(ctx_Bar).Bar(data_Bar, defaults);
         var ctx_Pie = $("#myChart_Pie").get(0).getContext("2d");
