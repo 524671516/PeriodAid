@@ -4673,12 +4673,14 @@ namespace PeriodAid.Controllers
         }
         public JsonResult Off_Statistic_Seller_Ajax(string startdate, string enddate, int sellerid)
         {
-            DateTime st = Convert.ToDateTime(startdate);
-            DateTime et = Convert.ToDateTime(enddate);
-            var data = from m in offlineDB.Off_SalesInfo_Daily
-                       where m.Date >= st && m.Date <= et && m.SellerId == sellerid
-                       group m by m.Date into g
-                       select new { date = g.Key, count = g.Count(), brown = g.Sum(m => m.Item_Brown), black = g.Sum(m => m.Item_Black), lemon = g.Sum(m => m.Item_Lemon), honey = g.Sum(m => m.Item_Honey), dates = g.Sum(m => m.Item_Dates) };
+            string st = Convert.ToDateTime(startdate).ToString("yyyy-MM-dd");
+            string et = Convert.ToDateTime(enddate).ToString("yyyy-MM-dd");
+            string sql = "SET DATEFIRST 1;" + "Select Date, Item_Brown, Item_Black, Item_Lemon, Item_Honey, Item_Dates, AVG_BROWN, AVG_BLACK, AVG_LEMON, AVG_HONEY, AVG_DATES" +
+                " from (SELECT Date, DATEPART(DW, T1.Date) as DW, T1.StoreId, Item_Brown, Item_Black, Item_Lemon, Item_Honey, Item_Dates" +
+                 " FROM Off_SalesInfo_Daily as T1" +
+                "  where Date >= '" + st + "' and Date <= '" + et + "' and SellerId = " + sellerid + ") as T3 left join Off_AVG_SalesData as T4" +
+                "  on T3.DW = T4.DayOfWeek and T4.StoreId = T3.StoreId";
+            var data = offlineDB.Database.SqlQuery<Seller_Statistic>(sql);
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
         }
 
@@ -4782,6 +4784,20 @@ namespace PeriodAid.Controllers
             this.message = message;
             this.error = error;
         }
+    }
+    public class Seller_Statistic
+    {
+        public DateTime Date { get; set; }
+        public int? Item_Brown { get; set; }
+        public int? Item_Black { get; set; }
+        public int? Item_Lemon { get; set; }
+        public int? item_Honey { get; set; }
+        public int? item_Dates { get; set; }
+        public decimal? AVG_BROWN { get; set; }
+        public decimal? AVG_BLACK { get; set; }
+        public decimal? AVG_LEMON { get; set; }
+        public decimal? AVG_HONEY { get; set; }
+        public decimal? AVG_DATES { get; set; }
     }
     public enum Expenses_Name
     {
