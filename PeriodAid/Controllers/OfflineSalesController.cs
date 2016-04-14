@@ -4675,11 +4675,13 @@ namespace PeriodAid.Controllers
         {
             string st = Convert.ToDateTime(startdate).ToString("yyyy-MM-dd");
             string et = Convert.ToDateTime(enddate).ToString("yyyy-MM-dd");
-            string sql = "SET DATEFIRST 1;" + "Select Date, Item_Brown, Item_Black, Item_Lemon, Item_Honey, Item_Dates, AVG_BROWN, AVG_BLACK, AVG_LEMON, AVG_HONEY, AVG_DATES" +
+            string sql = "SET DATEFIRST 1;" + "Select Date, isnull(Item_Brown, 0) as Item_Brown, isnull(Item_Black, 0) as Item_Black, isnull(Item_Lemon,0) as Item_Lemon, isnull(Item_Honey,0) as Item_Honey, isnull(Item_Dates,0) as Item_Dates," +
+                " AVG_BROWN, AVG_BLACK, AVG_LEMON, AVG_HONEY, AVG_DATES" +
                 " from (SELECT Date, DATEPART(DW, T1.Date) as DW, T1.StoreId, Item_Brown, Item_Black, Item_Lemon, Item_Honey, Item_Dates" +
-                 " FROM Off_SalesInfo_Daily as T1" +
-                "  where Date >= '" + st + "' and Date <= '" + et + "' and SellerId = " + sellerid + ") as T3 left join Off_AVG_SalesData as T4" +
-                "  on T3.DW = T4.DayOfWeek and T4.StoreId = T3.StoreId";
+                " FROM Off_SalesInfo_Daily as T1" +
+                " where Date >= '" + st + "' and Date <= '" + et + "' and SellerId = " + sellerid + ") as T3 left join Off_AVG_SalesData as T4" +
+                " on T3.DW = T4.DayOfWeek and T4.StoreId = T3.StoreId" +
+                " order by T3.Date";
             var data = offlineDB.Database.SqlQuery<Seller_Statistic>(sql);
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
         }
