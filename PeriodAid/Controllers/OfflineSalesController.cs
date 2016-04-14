@@ -4623,6 +4623,11 @@ namespace PeriodAid.Controllers
         // 0413 统计数据-渠道数据
         public ActionResult Off_Statistic_StoreSystem()
         {
+            var storesystem = from m in offlineDB.Off_Store
+                              group m by m.StoreSystem into g
+                              orderby g.Key
+                              select new { Key = g.Key, Value = g.Key };
+            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
             return View();
         }
         public JsonResult Off_Statistic_StoreSystem_Ajax(string startdate, string enddate, string storesystem)
@@ -4639,12 +4644,42 @@ namespace PeriodAid.Controllers
         // 0413 统计数据-门店数据
         public ActionResult Off_Statistic_Store()
         {
+            var storesystem = from m in offlineDB.Off_Store
+                              group m by m.StoreSystem into g
+                              orderby g.Key
+                              select new { Key = g.Key, Value = g.Key };
+            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
             return View();
+        }
+        public JsonResult Off_Statistic_Store_Ajax(string startdate, string enddate, int storeid)
+        {
+            DateTime st = Convert.ToDateTime(startdate);
+            DateTime et = Convert.ToDateTime(enddate);
+            var data = from m in offlineDB.Off_SalesInfo_Daily
+                       where m.Date >= st && m.Date <= et && m.StoreId == storeid
+                       group m by m.Date into g
+                       select new { date = g.Key, count = g.Count(), brown = g.Sum(m => m.Item_Brown), black = g.Sum(m => m.Item_Black), lemon = g.Sum(m => m.Item_Lemon), honey = g.Sum(m => m.Item_Honey), dates = g.Sum(m => m.Item_Dates) };
+            return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
         }
         // 0413 统计数据-促销员数据
         public ActionResult Off_Statistic_Seller()
         {
+            var storesystem = from m in offlineDB.Off_Store
+                              group m by m.StoreSystem into g
+                              orderby g.Key
+                              select new { Key = g.Key, Value = g.Key };
+            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
             return View();
+        }
+        public JsonResult Off_Statistic_Seller_Ajax(string startdate, string enddate, int sellerid)
+        {
+            DateTime st = Convert.ToDateTime(startdate);
+            DateTime et = Convert.ToDateTime(enddate);
+            var data = from m in offlineDB.Off_SalesInfo_Daily
+                       where m.Date >= st && m.Date <= et && m.SellerId == sellerid
+                       group m by m.Date into g
+                       select new { date = g.Key, count = g.Count(), brown = g.Sum(m => m.Item_Brown), black = g.Sum(m => m.Item_Black), lemon = g.Sum(m => m.Item_Lemon), honey = g.Sum(m => m.Item_Honey), dates = g.Sum(m => m.Item_Dates) };
+            return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
         }
 
 

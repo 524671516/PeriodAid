@@ -33,23 +33,22 @@
     <div class="weui_panel_bd">
         @foreach (var item in Model.OrderByDescending(m => m.Rep_Total))
         {
-        <div class="weui_media_box weui_media_text store_item" data-rel="@item.Id" style="padding:5px 15px 10px 15px;">
+        <div class="weui_media_box weui_media_text store_item" data-rel="@item.Id" style="padding:1px 15px 10px 15px;">
             <h4 class="weui_media_title">
-                @if (item.Status == 4)
-                {
-                <i class="fa fa-circle-thin text-muted" style="margin:0 5px 0 0"></i>
+            @if (item.Status == 4)
+            {
+                <span><b>@Html.Encode(item.StoreName)&nbsp;&nbsp;</b></span>
             }
             else
             {
-                <i class="fa fa-check text-success" style="margin:0 5px 0 0"></i>
+                <span class="text-success"><b>@Html.Encode(item.StoreName)&nbsp;&nbsp;</b></span>
             }
-            @Html.Encode(item.StoreName)&nbsp;
             @if (item.Bonus != null)
-                {
-                <i class="fa fa-gift text-muted"></i> @Html.Encode(item.Bonus)
+            {
+                <i class="fa fa-gift text-danger"></i> @Html.Encode(item.Bonus+"元")
             }
             </h4>
-            <p class="weui_media_desc"><i class="fa fa-user"></i>&nbsp;@Html.Encode(item.SellerName)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-history"></i>&nbsp;@Html.Encode(item.AVG_Total)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-tags"></i>&nbsp;@Html.Encode(item.Rep_Total)</p>
+            <p class="weui_media_desc"><i class="fa fa-user"></i>&nbsp;@Html.Encode(item.SellerName)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-history"></i>&nbsp;@Html.Encode(item.AVG_Total)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-tags"></i>&nbsp;@Html.Encode(item.Rep_Total)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-suitcase" aria-hidden="true"></i>&nbsp;@Html.Encode(PeriodAid.Models.ParseStatus.CheckInStatus(item.Status))</p>
         </div>
         }
     </div>
@@ -84,6 +83,26 @@
                         $("#list-content").html(data);
                     }
                 });
+            }
+            else if (data == "FAIL") {
+                hideActionSheet(weuiActionsheet, mask);
+                $("#dialog_alert").show();
+                $.ajax({
+                    url: "Wx_Manager_ReportList_Partial",
+                    data: {
+                        date: $("#list_date").val(),
+                        storesystem: $("#storesystem").val()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#list-content").html(data);
+                    }
+                });
+            }
+            else if (data == "FAIL-2") {
+                hideActionSheet(weuiActionsheet, mask);
+                $("#dialog_alert_2").show();
+                
             }
             else {
                 $("#weui_actionsheet").html(data);

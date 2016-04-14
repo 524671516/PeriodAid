@@ -1,19 +1,7 @@
 ﻿@model PeriodAid.Models.Wx_ManagerReportListViewModel
 
-<div class="container">
-    <br />
-    <div class="row">
-        <div class="col-xs-8" style="margin-bottom:10px; font-weight:bold;">@Html.Encode(Model.StoreName)</div>
-        <div class="col-xs-4" style="margin-bottom:10px; font-weight:bold;">@Html.Encode(Model.SellerName)</div>
-        <div class="col-xs-4">红糖：@Html.Encode(Model.Rep_Brown)</div>
-        <div class="col-xs-4">黑糖：@Html.Encode(Model.Rep_Black)</div>
-        <div class="col-xs-4">柠檬：@Html.Encode(Model.Rep_Lemon)</div>
-        <div class="col-xs-4">蜂蜜：@Html.Encode(Model.Rep_Honey)</div>
-        <div class="col-xs-4">红枣：@Html.Encode(Model.Rep_Dates)</div>
-        <div class="col-xs-4"></div>
-    </div>
-</div>
-@if (Model.Status == 4 && User.IsInRole("Senior"))
+
+@if (Model.Status == 4)
 {
     using (Html.BeginForm())
     {
@@ -29,6 +17,7 @@
         @Html.HiddenFor(m => m.Rep_Total)
         @Html.HiddenFor(m => m.SellerName)
         @Html.HiddenFor(m => m.StoreName)
+        <div class="weui_cells_title">红包金额提交</div>
         <div class="weui_cells weui_cells_form">
             <div class="weui_cell">
                 <div class="weui_cell_hd"><label for="" class="weui_label">奖金</label></div>

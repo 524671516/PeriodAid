@@ -604,6 +604,8 @@
     <Content Include="Views\Seller\Wx_Manager_BonusList_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_BonusHistory_Ajax.cshtml" />
     <Content Include="Views\OfflineSales\Off_Statistic_StoreSystem.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Statistic_Seller.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Statistic_Store.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
