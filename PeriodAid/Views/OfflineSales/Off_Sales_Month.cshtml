@@ -24,57 +24,99 @@
 </div>
 @*区域门店图表*@
 <div class="row">
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
+            </div>
+            <div class="col-md-4">
+                <select class="form-control" id="StoreSystem" name="StoreSystem">
+                    <option value="-区域-">-区域-</option>
+                    <option value="北国系统">北国系统</option>
+                    <option value="卜蜂莲花">卜蜂莲花</option>
+                    <option value="承德宽广">承德宽广</option>
+                    <option value="大润发">大润发</option>
+                    <option value="贵阳北京华联">贵阳北京华联</option>
+                    <option value="国泰">国泰</option>
+                    <option value="邯郸美食林">邯郸美食林</option>
+                    <option value="河南南阳">河南南阳</option>
+                    <option value="华联">华联</option>
+                    <option value="华润">华润</option>
+                    <option value="家乐福">家乐福</option>
+                    <option value="乐购">乐购</option>
+                    <option value="农工商">农工商</option>
+                    <option value="欧尚">欧尚</option>
+                    <option value="三江购物">三江购物</option>
+                    <option value="山西金威">山西金威</option>
+                    <option value="世纪联华">世纪联华</option>
+                    <option value="苏果">苏果</option>
+                    <option value="苏州精品超市">苏州精品超市</option>
+                    <option value="天津华润">天津华润</option>
+                    <option value="沃尔玛">沃尔玛</option>
+                    <option value="郑州丹尼斯">郑州丹尼斯</option>
+                </select>
+            </div>
+        </div><br />
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="text-center"><strong>每个区域下的门店每天销售总额柱状图(单位：盒/天)</strong></h4><br />
+                <div id="Bar_map"><canvas id="myChart_Bar" width="500" height="400"></canvas></div>
+            </div><br />
+            <div class="col-md-12">
+                <h4 class="text-center"><strong>每个区域下的门店每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
+                <div class="row">
+                    <div id="Pie_map" class="col-md-6"><canvas id="myChart_Pie" width="300" height="300"></canvas></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-3">
+                        <ul class="list-unstyled h6">
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#F38630"></span> 黑糖姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#E0E4CC"></span> 红糖姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#69D2E7"></span> 柠檬姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#ccD2E7"></span> 蜂蜜姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#FFD2aa"></span> 红枣姜茶
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
-    </div>
-    <div class="col-md-3">
-        <select class="form-control" id="StoreSystem" name="StoreSystem">
-            <option value="-区域-">-区域-</option>
-            <option value="北国系统">北国系统</option>
-            <option value="卜蜂莲花">卜蜂莲花</option>
-            <option value="承德宽广">承德宽广</option>
-            <option value="大润发">大润发</option>
-            <option value="贵阳北京华联">贵阳北京华联</option>
-            <option value="国泰">国泰</option>
-            <option value="邯郸美食林">邯郸美食林</option>
-            <option value="河南南阳">河南南阳</option>
-            <option value="华联">华联</option>
-            <option value="华润">华润</option>
-            <option value="家乐福">家乐福</option>
-            <option value="乐购">乐购</option>
-            <option value="农工商">农工商</option>
-            <option value="欧尚">欧尚</option>
-            <option value="三江购物">三江购物</option>
-            <option value="山西金威">山西金威</option>
-            <option value="世纪联华">世纪联华</option>
-            <option value="苏果">苏果</option>
-            <option value="苏州精品超市">苏州精品超市</option>
-            <option value="天津华润">天津华润</option>
-            <option value="沃尔玛">沃尔玛</option>
-            <option value="郑州丹尼斯">郑州丹尼斯</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select id="StoreList" name="StoreList" class="form-control input-sm"></select>
-    </div>
-    <div class="col-md-2">
-        <button id="data-btn" class="btn btn-info">查看</button>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-7">
+                <input id="storeName" name="storeName" class="form-control" placeholder="门店名称" /><br />
+                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px; font-size:1em;"></select>
+            </div>
+            <div class="col-md-4">
+                <button id="data-btn" class="btn btn-info">查看</button>
+            </div>
+        </div>
     </div>
 </div><br />
-<div class="row">
+@*<div class="row">
     <div class="col-md-6">
         <h4 class="text-center"><strong>每个区域下的门店每天销售总额柱状图(单位：盒/天)</strong></h4><br />
         <canvas id="myChart_Bar" width="500" height="400"></canvas>
     </div>
     <div class="col-md-1"></div>
-    <div class="col-md-5">
+    <div class="col-md-6">
         <h4 class="text-center"><strong>每个区域下的门店每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
         <canvas id="myChart_Pie" width="350" height="350"></canvas>
     </div>
-</div>
+</div>*@
 @*促销员图表*@
 <div class="row">
     <div class="col-md-2">
@@ -84,7 +126,7 @@
         <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
     </div>
     <div class="col-md-3">
-        <input class="form-control" value="促销员"/>
+        <input id="seller" class="form-control" placeholder="促销员"/>
     </div>
     <div class="col-md-2">
         <button id="data-btn" class="btn btn-info">查看</button>
@@ -126,7 +168,7 @@
             $("#search-btn").click(function () {
                 $.ajax({
                     url: "/OfflineSales/Off_MonthSalesInfo_ajaxlist",
-                    data:{
+                    data: {
                         query: $("#search-query").val()
                     },
                     success: function (data) {
@@ -134,6 +176,27 @@
                     }
                 });
             });
+        });
+        $("#StoreSystem").change(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_Add_Schedule_StoreList",
+                type: "post",
+                data: {
+                    storesystem: $("#StoreSystem").val()
+                },
+                success: function (data) {
+                    $("#StoreList").html("");
+                    for (var i = 0; i < data.StoreList.length; i++) {
+                        $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                    }
+                }
+            });
+        });
+        $("#data-btn").click(function () {
+            for (var i = 0; i < data.StoreList.length; i++) {
+                var storeList = "<option value=\"" + data.StoreList[i].ID + "\">" + $("option[value='" + data.StoreList[i].ID + "']").text() + "</option>"
+                $("#storeName").append(storeList)
+            }
         })
         $("#data-startTime").datepicker({
             dateFormat: 'yy-mm-dd'

@@ -100,116 +100,121 @@
                 storesystem: storesystem
             },
             success: function (data) {
-                var countList = data.brown + data.black + data.lemon + data.honey + data.dates;//每天销售总额
-                //区域销售折线图
-                var deeint = parseInt(data.data[0].date.replace(/\D/igm, ""));
-                var resultdata = data.data;
-                var dee = new Date(deeint)
-                //alert(dee.getMonth() + "-" + dee.getDay() + "," + dee.getDate());
-                var totalarray = new Array();
-                var datearray = new Array();
-                var total_brown = 0;
-                var total_black = 0;
-                var total_lemon = 0;
-                var total_honey = 0;
-                var total_dates = 0;
-                for (var i = 0; i < resultdata.length; i++) {
-                    var deeint = parseInt(data.data[i].date.replace(/\D/igm, ""));
+                if (data.data.length == 0) {
+                    alert("该区域在此时间内无数据");
+                } else {
+                    var countList = data.brown + data.black + data.lemon + data.honey + data.dates;//每天销售总额
+                    //区域销售折线图
+                    var deeint = parseInt(data.data[0].date.replace(/\D/igm, ""));
+                    var resultdata = data.data;
                     var dee = new Date(deeint)
-                    datearray.push(dee.Format("MM-dd"));
-                    var totaltemp = resultdata[i].brown + resultdata[i].black + resultdata[i].dates;
-                    totalarray.push(totaltemp);
-                    total_brown += resultdata[i].brown;
-                    total_black += resultdata[i].black;
-                    total_lemon += resultdata[i].lemon;
-                    total_dates += resultdata[i].dates;
-                    total_honey += resultdata[i].honey; 
+                    //alert(dee.getMonth() + "-" + dee.getDay() + "," + dee.getDate());
+                    var totalarray = new Array();
+                    var datearray = new Array();
+                    var total_brown = 0;
+                    var total_black = 0;
+                    var total_lemon = 0;
+                    var total_honey = 0;
+                    var total_dates = 0;
+                    for (var i = 0; i < resultdata.length; i++) {
+                        var deeint = parseInt(data.data[i].date.replace(/\D/igm, ""));
+                        var dee = new Date(deeint)
+                        datearray.push(dee.Format("MM-dd"));
+                        var totaltemp = resultdata[i].brown + resultdata[i].black + resultdata[i].dates;
+                        totalarray.push(totaltemp);
+                        total_brown += resultdata[i].brown;
+                        total_black += resultdata[i].black;
+                        total_lemon += resultdata[i].lemon;
+                        total_dates += resultdata[i].dates;
+                        total_honey += resultdata[i].honey;
+                    }
+                    console.log(datearray);
+                    console.log(totalarray);
+
+                    var data_Line = {
+                        labels: datearray,
+                        datasets: [
+                            {
+                                fillColor: "rgba(220,220,220,0)",
+                                strokeColor: "red",
+                                pointColor: "rgba(151,187,205,1)",
+                                pointStrokeColor: "#fff",
+                                data: totalarray
+                            }
+                        ]
+                    };
+                    //区域各个种类销售柱状图
+                    var data_Pie = [
+                                       {
+                                           value: total_black,
+                                           color: "#F38630",
+                                           label: '黑糖姜茶'
+                                       },
+                                       {
+                                           value: total_brown,
+                                           color: "#E0E4CC",
+                                           label: '红糖姜茶'
+                                       },
+                                       {
+                                           value: total_lemon,
+                                           color: "#69D2E7",
+                                           label: '柠檬姜茶'
+                                       },
+                                       {
+                                           value: total_dates,
+                                           color: "#FFD2aa",
+                                           label: '红枣姜茶'
+                                       },
+                                       {
+                                           value: total_honey,
+                                           color: "#ccD2E7",
+                                           label: '蜂蜜姜茶'
+                                       }
+                    ];
+                    //折线图数据参考
+                    var defaults = {
+
+                        //Boolean - If we show the scale above the chart data			
+                        scaleOverlay: false,
+
+                        //Boolean - If we want to override with a hard coded scale
+                        scaleOverride: false,
+                        //** Required if scaleOverride is true **
+                        //Number - The number of steps in a hard coded scale
+                        scaleSteps: 20,
+
+                        //Number - The value jump in the hard coded scale
+                        scaleStepWidth: 20,
+
+                        // Y 轴的起始值
+                        scaleStartValue: 0,
+
+                        // 是否显示网格
+                        scaleShowGridLines: false,
+
+                        // 是否使用贝塞尔曲线? 即:线条是否弯曲
+                        bezierCurve: true,
+
+                        // 线条的宽度, 即:数据集
+                        datasetStrokeWidth: 1,
+
+                        // 是否填充数据集
+                        datasetFill: true,
+
+                        pointHitDetectionRadius:1
+                    };
+                    $("#myChart_Line").remove();
+                    $("#myChart_Pie").remove();
+                    $("#line-map").html("<canvas id=\"myChart_Line\" width=\"500\" height=\"400\"></canvas>");
+                    $("#pie-map").html("<canvas id=\"myChart_Pie\" width=\"250\" height=\"250\"></canvas>")
+                    //var ctx_Line = $("#myChart_Line").get(0).getContext("2d");
+                    var ctx = document.getElementById("myChart_Line").getContext("2d");
+                    new Chart(ctx).Line(data_Line, defaults);
+                    //var ctx_Pie = $("#myChart_Pie").get(0).getContext("2d");
+                    var ctx = document.getElementById("myChart_Pie").getContext("2d")
+                    new Chart(ctx).Pie(data_Pie);
+                    //$("#map").html(data)
                 }
-                console.log(datearray);
-                console.log(totalarray);
-
-                var data_Line = {
-                    labels: datearray,
-                    datasets: [
-                        {  
-                            fillColor: "rgba(220,220,220,0)",
-                            strokeColor: "red",
-                            pointColor: "rgba(151,187,205,1)",
-                            pointStrokeColor: "#fff",
-                            data: totalarray
-                        }
-                    ]
-                };
-                //区域各个种类销售柱状图
-                var data_Pie = [
-                                   {
-                                       value: total_black,
-                                       color: "#F38630",
-                                       label: '黑糖姜茶'
-                                   },
-                                   {
-                                       value: total_brown,
-                                       color: "#E0E4CC",
-                                       label: '红糖姜茶'
-                                   },
-                                   {
-                                       value: total_lemon,
-                                       color: "#69D2E7",
-                                       label: '柠檬姜茶'
-                                   },
-                                   {
-                                       value: total_dates,
-                                       color: "#FFD2aa",
-                                       label: '红枣姜茶'
-                                   },
-                                   {
-                                       value: total_honey,
-                                       color: "#ccD2E7",
-                                       label: '蜂蜜姜茶'
-                                   }
-                ];
-                //折线图数据参考
-                var defaults = {
-
-                    //Boolean - If we show the scale above the chart data			
-                    scaleOverlay: false,
-
-                    //Boolean - If we want to override with a hard coded scale
-                    scaleOverride: true,
-                    //** Required if scaleOverride is true **
-                    //Number - The number of steps in a hard coded scale
-                    scaleSteps: 20,
-
-                    //Number - The value jump in the hard coded scale
-                    scaleStepWidth: 50,
-
-                    // Y 轴的起始值
-                    scaleStartValue: 0,
-
-                    // 是否显示网格
-                    scaleShowGridLines: false,
-
-                    // 是否使用贝塞尔曲线? 即:线条是否弯曲
-                    bezierCurve: false,
-
-                    // 线条的宽度, 即:数据集
-                    datasetStrokeWidth: 2,
-
-                    // 是否填充数据集
-                    datasetFill: true,
-
-                };
-                $("#myChart_Line").remove();
-                $("#myChart_Pie").remove();
-                $("#line-map").html("<canvas id=\"myChart_Line\" width=\"500\" height=\"400\"></canvas>");
-                $("#pie-map").html("<canvas id=\"myChart_Pie\" width=\"250\" height=\"250\"></canvas>")
-                //var ctx_Line = $("#myChart_Line").get(0).getContext("2d");
-                var ctx = document.getElementById("myChart_Line").getContext("2d");
-                new Chart(ctx).Line(data_Line, defaults);
-                //var ctx_Pie = $("#myChart_Pie").get(0).getContext("2d");
-                var ctx = document.getElementById("myChart_Pie").getContext("2d")
-                new Chart(ctx).Pie(data_Pie);
-                //$("#map").html(data)
             }
         });
         return false
