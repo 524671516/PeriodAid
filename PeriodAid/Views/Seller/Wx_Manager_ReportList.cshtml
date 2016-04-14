@@ -39,6 +39,26 @@
         <p class="weui_toast_content">已提交</p>
     </div>
 </div>
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">注意</strong></div>
+        <div class="weui_dialog_bd">该促销员未注册系统，无法发放红包！</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:close_dialog();" class="weui_btn_dialog primary">确定</a>
+        </div>
+    </div>
+</div>
+<div class="weui_dialog_alert" id="dialog_alert_2" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">注意</strong></div>
+        <div class="weui_dialog_bd">红包已发放，无法修改红包数据</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:close_dialog_2();" class="weui_btn_dialog primary">确定</a>
+        </div>
+    </div>
+</div>
 <div class="error-label container" style="display:none;">
     <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
     <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
@@ -86,5 +106,11 @@
                 }
             });
         });
+        function close_dialog() {
+            $("#dialog_alert").hide();
+        }
+        function close_dialog_2() {
+            $("#dialog_alert_2").hide();
+        }
     </script>
 }

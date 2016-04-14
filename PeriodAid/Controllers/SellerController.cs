@@ -1396,12 +1396,25 @@ namespace PeriodAid.Controllers
                     record.Bonus = item.Bonus;
                     offlineDB.Entry(record).State = System.Data.Entity.EntityState.Modified;
                     var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == record.Off_Seller_Id);
+                    
+                    if (binduser == null)
+                    {
+                        offlineDB.SaveChanges();
+                        return Content("FAIL");
+                    }
                     var user = UserManager.FindByName(binduser.UserName);
                     Off_BonusRequest bonusrequest = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.CheckinId == item.Id && m.Status >= 0);
                     if (bonusrequest != null)
                     {
-                        bonusrequest.ReceiveAmount = Convert.ToInt32(item.Bonus * 100);
-                        offlineDB.Entry(bonusrequest).State = System.Data.Entity.EntityState.Modified;
+                        if (bonusrequest.Status == 0)
+                        {
+                            bonusrequest.ReceiveAmount = Convert.ToInt32(item.Bonus * 100);
+                            offlineDB.Entry(bonusrequest).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        else
+                        {
+                            return Content("FAIL-2");
+                        }
                     }
                     else
                     {
