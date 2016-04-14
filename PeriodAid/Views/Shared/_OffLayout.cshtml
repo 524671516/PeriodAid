@@ -186,7 +186,8 @@
                             <div class="panel-body">
                                 <ul class="nav-left">
                                     <li>@Html.ActionLink("区域数据图表", "Off_Statistic_StoreSystem", "OfflineSales")</li>
-                                    
+                                    <li>@Html.ActionLink("区域门店数据图表", "Off_Statistic_Store", "OfflineSales")</li>
+                                    <li>@Html.ActionLink("促销员销售数据图表", "Off_Statistic_Seller", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
@@ -271,6 +272,10 @@
             $(".panel-collapse").removeClass("in");
             $("div[aria-labelledby='headingSix']").addClass("in");
         }
+        if ($("#pagenumber").text().trim() == "7") {
+            $(".panel-collapse").removeClass("in");
+            $("div[aria-labelledby='headingSeven']").addClass("in");
+        }
         $(document).scroll(function () {
             if (window.pageYOffset > 0) {
                 $("#to-top").removeClass("hidden");
@@ -288,9 +293,7 @@
             $(document).scrollTop(window.pageYOffset - 50);
             setTimeout(scoll_ani, 50);
         }
-    }
-    
-    
+    }    
     </script>
 </body>
 </html>

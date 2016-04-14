@@ -3,6 +3,232 @@
     ViewBag.Title = "Off_Statistic_Store";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
+@section page{
+    7
+    }
+<div class="row">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
+            </div>
+            <div class="col-md-4">
+                <select class="form-control" id="StoreSystem" name="StoreSystem">
+                    <option value="-区域-">-区域-</option>
+                    <option value="北国系统">北国系统</option>
+                    <option value="卜蜂莲花">卜蜂莲花</option>
+                    <option value="承德宽广">承德宽广</option>
+                    <option value="大润发">大润发</option>
+                    <option value="贵阳北京华联">贵阳北京华联</option>
+                    <option value="国泰">国泰</option>
+                    <option value="邯郸美食林">邯郸美食林</option>
+                    <option value="河南南阳">河南南阳</option>
+                    <option value="华联">华联</option>
+                    <option value="华润">华润</option>
+                    <option value="家乐福">家乐福</option>
+                    <option value="乐购">乐购</option>
+                    <option value="农工商">农工商</option>
+                    <option value="欧尚">欧尚</option>
+                    <option value="三江购物">三江购物</option>
+                    <option value="山西金威">山西金威</option>
+                    <option value="世纪联华">世纪联华</option>
+                    <option value="苏果">苏果</option>
+                    <option value="苏州精品超市">苏州精品超市</option>
+                    <option value="天津华润">天津华润</option>
+                    <option value="沃尔玛">沃尔玛</option>
+                    <option value="郑州丹尼斯">郑州丹尼斯</option>
+                </select>
+            </div>
+        </div><br />
+        <div id="map" class="row" style="display:none;">
+            <div class="col-md-12">
+                <h4 class="text-center"><strong>每个区域下的门店每天销售总额柱状图(单位：盒/天)</strong></h4><br />
+                <div id="Bar_map"><canvas id="myChart_Bar" width="500" height="400"></canvas></div>
+            </div><br />
+            <div class="col-md-12">
+                <h4 class="text-center"><strong>每个区域下的门店每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
+                <div class="row">
+                    <div id="Pie_map" class="col-md-6"><canvas id="myChart_Pie" width="300" height="300"></canvas></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-3">
+                        <ul class="list-unstyled h6">
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#F38630"></span> 黑糖姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#E0E4CC"></span> 红糖姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#69D2E7"></span> 柠檬姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#ccD2E7"></span> 蜂蜜姜茶
+                            </li>
+                            <li>
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#FFD2aa"></span> 红枣姜茶
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-<h2>Off_Statistic_Store</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-7">
+                <input id="storeName" name="storeName" class="form-control" placeholder="门店名称" /><br />
+                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px; font-size:1em;display:none"></select>
+            </div>
+            <div class="col-md-4">
+                <button id="data-btn" class="btn btn-info">查看</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/Chart.js"></script>
+<script>
+    $("#data-startTime").datepicker({
+        dateFormat: 'yy-mm-dd'
+    }); 
+    $("#data-endTime").datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+    $("#StoreSystem").change(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_Add_Schedule_StoreList",
+            type: "post",
+            data: {
+                storesystem: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").show();
+                $("#StoreList").html("");
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                }
+
+            }
+        });
+    });
+    $("#data-btn").click(function () {
+        var start = $("#data-startTime").val();
+        var end = $("#data-endTime").val();
+        var storeid = encodeURI(encodeURI($("#StoreList").val()));
+        var selectvalue = $("#StoreList").val() + "";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = $("option[value='" + managerArray[i] + "']").text();
+            $("#storeName").val(optionitem);
+        }
+        var link_url = "/OfflineSales/Off_Statistic_Store_Ajax";
+        $.ajax({
+            url: link_url,
+            data: {
+                startdate: start,
+                enddate: end,
+                storeid: storeid
+            },
+            success: function (data) {
+                if (data.data.length == 0) {
+                    alert("该区域门店下的这段时间内没有销售数据")
+                } else {
+                    $("#map").show();
+                    //var countList = data.brown + data.black + data.lemon + data.honey + data.dates;//每天销售总额
+                    var deeint = parseInt(data.data[0].date.replace(/\D/igm, ""));
+                    var resultdata = data.data;
+                    var dee = new Date(deeint)//设置时间格式
+                    var totalarray = new Array();//销售总额
+                    var datearray = new Array();//显示时间
+                    var total_brown = 0;
+                    var total_black = 0;
+                    var total_lemon = 0;
+                    var total_honey = 0;
+                    var total_dates = 0;
+                    for (var i = 0; i < data.data.length; i++) {
+                        var deeint = parseInt(data.data[i].date.replace(/\D/igm, ""));
+                        var dee = new Date(deeint)
+                        datearray.push(dee.Format("MM-dd"));
+                        var totaltemp = resultdata[i].brown + resultdata[i].black + resultdata[i].dates + resultdata[i].honey + resultdata[i].lemon;//每天销售总额
+                        totalarray.push(totaltemp);
+                        total_brown += resultdata[i].brown;
+                        total_black += resultdata[i].black;
+                        total_dates += resultdata[i].dates;
+                        total_honey += resultdata[i].honey;
+                        total_lemon += resultdata[i].lemon;
+                    };
+                    console.log(datearray);
+                    console.log(totalarray);
+                    //每个区域下的门店每天销售总额柱状图
+                    var data_Bar = {
+                        labels: datearray,
+                        datasets: [
+                            {
+                                fillColor: "rgba(220,220,220,0.5)",
+                                strokeColor: "rgba(220,220,220,1)",
+                                data: totalarray
+                            }
+                        ]
+                    };
+                    //每个区域下的门店每天各个种类销售总额饼状图
+                    var data_Pie = [
+                                {
+                                    value: total_black,
+                                    color: "#F38630",
+                                    label: '黑糖姜茶'
+                                },
+                                {
+                                    value: total_brown,
+                                    color: "#E0E4CC",
+                                    label: '红糖姜茶'
+                                },
+                                {
+                                    value: total_lemon,
+                                    color: "#69D2E7",
+                                    label: '柠檬姜茶'
+                                },
+                                {
+                                    value: total_dates,
+                                    color: "#FFD2aa",
+                                    label: '红枣姜茶'
+                                },
+                                {
+                                    value: total_honey,
+                                    color: "#ccD2E7",
+                                    label: '蜂蜜姜茶'
+                                }
+                    ];
+                    $("#myChart_Bar").remove();
+                    $("#myChart_Pie").remove();
+                    $("#Bar_map").html("<canvas id=\"myChart_Bar\" width=\"500\" height=\"400\"></canvas>");
+                    $("#Pie_map").html("<canvas id=\"myChart_Pie\" width=\"300\" height=\"300\"></canvas>")
+                    var ctx_Bar = $("#myChart_Bar").get(0).getContext("2d");
+                    new Chart(ctx_Bar).Bar(data_Bar);
+                    var ctx_Pie = $("#myChart_Pie").get(0).getContext("2d");
+                    new Chart(ctx_Pie).Pie(data_Pie);
+                }
+            }
+        })
+    });
+    Date.prototype.Format = function (fmt) { //author: meizz   
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份   
+            "d+": this.getDate(),                    //日   
+            "h+": this.getHours(),                   //小时   
+            "m+": this.getMinutes(),                 //分   
+            "s+": this.getSeconds(),                 //秒   
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度   
+            "S": this.getMilliseconds()             //毫秒   
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+</script>
 
