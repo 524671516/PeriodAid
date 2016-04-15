@@ -56,19 +56,19 @@
                     <div class="col-md-3">
                         <ul class="list-unstyled h6">
                             <li>
-                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#F38630"></span> 黑糖姜茶
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#201510"></span> 黑糖姜茶
                             </li>
                             <li>
-                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#E0E4CC"></span> 红糖姜茶
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#b11c36"></span> 红糖姜茶
                             </li>
                             <li>
-                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#69D2E7"></span> 柠檬姜茶
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#fdf796"></span> 柠檬姜茶
                             </li>
                             <li>
-                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#ccD2E7"></span> 蜂蜜姜茶
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#ecb268"></span> 蜂蜜姜茶
                             </li>
                             <li>
-                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#FFD2aa"></span> 红枣姜茶
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:#e94f30"></span> 红枣姜茶
                             </li>
                         </ul>
                     </div>
@@ -137,10 +137,7 @@
                     alert("该区域门店下的这段时间内没有销售数据")
                 } else {
                     $("#map").show();
-                    //var countList = data.brown + data.black + data.lemon + data.honey + data.dates;//每天销售总额
-                    var deeint = parseInt(data.data[0].date.replace(/\D/igm, ""));
                     var resultdata = data.data;
-                    var dee = new Date(deeint)//设置时间格式
                     var totalarray = new Array();//销售总额
                     var datearray = new Array();//显示时间
                     var total_brown = 0;
@@ -167,8 +164,8 @@
                         labels: datearray,
                         datasets: [
                             {
-                                fillColor: "rgba(220,220,220,0.5)",
-                                strokeColor: "rgba(220,220,220,1)",
+                                fillColor: "rgba(57,138,206,0.5)",
+                                strokeColor: "rgba(57,138,206,1)",
                                 data: totalarray
                             }
                         ]
@@ -177,27 +174,27 @@
                     var data_Pie = [
                                 {
                                     value: total_black,
-                                    color: "#F38630",
+                                    color: "#201510",
                                     label: '黑糖姜茶'
                                 },
                                 {
                                     value: total_brown,
-                                    color: "#E0E4CC",
+                                    color: "#b11c36",
                                     label: '红糖姜茶'
                                 },
                                 {
                                     value: total_lemon,
-                                    color: "#69D2E7",
+                                    color: "#fdf796",
                                     label: '柠檬姜茶'
                                 },
                                 {
                                     value: total_dates,
-                                    color: "#FFD2aa",
+                                    color: "#e94f30",
                                     label: '红枣姜茶'
                                 },
                                 {
                                     value: total_honey,
-                                    color: "#ccD2E7",
+                                    color: "#ecb268",
                                     label: '蜂蜜姜茶'
                                 }
                     ];
@@ -229,6 +226,6 @@
             if (new RegExp("(" + k + ")").test(fmt))
                 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
-    }
+    };
 </script>
 

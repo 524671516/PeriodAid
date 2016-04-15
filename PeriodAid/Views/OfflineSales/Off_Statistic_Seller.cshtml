@@ -7,19 +7,26 @@
     7
     }
 <div class="row">
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+    <div class="row">
+        <div class="col-md-2">
+            <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
+        </div>
+        <div class="col-md-2">
+            <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
+        </div>
+        <div class="col-md-3">
+            <input id="seller" class="form-control" placeholder="促销员" />
+            <input id="project-id" class="form-control hidden" />
+            <p id="project-description"></p>
+        </div>
+        <div class="col-md-2">
+            <button id="data-btn" class="btn btn-info">查看</button>
+        </div>
     </div>
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
-    </div>
-    <div class="col-md-3">
-        <input id="seller" class="form-control" placeholder="促销员" />
-        <input id="project-id" class="form-control hidden" />
-        <p id="project-description"></p>
-    </div>
-    <div class="col-md-2">
-        <button id="data-btn" class="btn btn-info">查看</button>
+    <div id="seller-box" class="row hidden">
+        <div class="col-md-4">
+            <input id="seller-item" name="seller-item" class="form-control" disabled />
+        </div>
     </div>
 </div><br />
 <div id="map" class="row" style="display:none;">
@@ -30,10 +37,10 @@
         <div class="col-md-3">
             <ul class="count list-unstyled h6">
                 <li>
-                    <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:rgba(220,220,220,1)"></span> 历史平均销量
+                    <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:rgba(233,79,48,1)"></span> 历史平均销量
                 </li>
                 <li>
-                    <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:rgba(151,187,205,1)"></span> 促销员销量
+                    <span class="glyphicon glyphicon-stop" aria-hidden="true" style="color:rgba(48,161,233,1)"></span> 促销员销量
                 </li>
             </ul>
         </div>
@@ -50,10 +57,10 @@
     });
     function split(val) {
         return val.split(/,\s*/);
-    }
+    };
     function extractLast(term) {
         return split(term).pop();
-    }
+    };
     $(function () {
         $("#seller").autocomplete({
             minLength: 0,
@@ -69,7 +76,7 @@
                     data: {
                         query: request.term
                     },
-                    dataType:"json",
+                    dataType: "json",
                     success: function (data) {
                         response(data.data);
                     }
@@ -80,21 +87,18 @@
                 // custom minLength
                 var term = extractLast(this.value);
                 console.log(term);
-                if (term.length < 2) {
+                if (term.length < 1) {
                     return false;
                 }
             },
             focus: function () {
-                //$("#seller").val(ui);
                 return false;
             },
             select: function (event, ui) {
+                $("#seller-box").removeClass("hidden");
+                $("#seller-item").val(ui.item.label + " - - - > " + ui.item.desc);
                 $("#seller").val(ui.item.label);
-                console.log(ui.item.label);
                 $("#project-id").val(ui.item.value);
-                $("#project-description").html(ui.item.desc);
-                // $("#project-icon").attr("src", "images/" + ui.item.icon);
-
                 return false;
             }
         });
@@ -124,7 +128,6 @@
                             var dee = new Date(deeint)
                             datearray.push(dee.Format("MM-dd"));
                             var totaltemp = resultdata[i].Item_Brown + resultdata[i].Item_Black + resultdata[i].Item_Lemon + resultdata[i].Item_Honey + resultdata[i].Item_Dates;
-                            //console.log(resultdata[i].Item_Brown + "," + resultdata[i].Item_Black + "," + resultdata[i].Item_Lemon + "," + resultdata[i].Item_Honey + "," + resultdata[i].Item_Dates);
                             totalarray.push(totaltemp);
                             var avgtotaltemp = resultdata[i].AVG_BROWN + resultdata[i].AVG_BLACK + resultdata[i].AVG_LEMON + resultdata[i].AVG_HONEY + resultdata[i].AVG_DATES;
                             evatotalarry.push(avgtotaltemp)
@@ -137,16 +140,16 @@
                             labels: datearray,
                             datasets: [
                                 {
-                                    fillColor: "rgba(220,220,220,0.5)",
-                                    strokeColor: "rgba(217,220,220,1)",
-                                    pointColor: "rgba(220,220,220,1)",
+                                    fillColor: "rgba(233,79,48,0.5)",
+                                    strokeColor: "rgba(233,79,48,1)",
+                                    pointColor: "rgba(233,79,48,1)",
                                     pointStrokeColor: "#fff",
                                     data: evatotalarry
                                 },
                                 {
-                                    fillColor: "rgba(151,187,205,0.5)",
-                                    strokeColor: "rgba(151,187,205,1)",
-                                    pointColor: "rgba(151,187,205,1)",
+                                    fillColor: "rgba(48,161,233,0.5)",
+                                    strokeColor: "rgba(48,161,233,1)",
+                                    pointColor: "rgba(48,161,233,1)",
                                     pointStrokeColor: "#fff",
                                     data: totalarray
                                 }
@@ -187,14 +190,11 @@
                         $("#seller-map").html("<canvas id=\"myChart_Line_seller\" width=\"500\" height=\"400\"></canvas>");
                         var ctx_Line_seller = $("#myChart_Line_seller").get(0).getContext("2d");
                         new Chart(ctx_Line_seller).Line(data_Line_seller, defaults);
-
                     }
-
-
                 }
             })
         })
-    })
+    });
     Date.prototype.Format = function (fmt) { //author: meizz   
         var o = {
             "M+": this.getMonth() + 1,                 //月份   
@@ -211,6 +211,6 @@
             if (new RegExp("(" + k + ")").test(fmt))
                 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
-    }
+    };
 </script>
 
