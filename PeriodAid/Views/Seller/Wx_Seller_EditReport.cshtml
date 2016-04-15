@@ -158,6 +158,20 @@
     var img_max = 7;
     var img_array = new Array();
     $(function () {
+        $.ajax({
+            url: "/Seller/Wx_Seller_IsRecruit",
+            type: "post",
+            data: {
+                sellerid: $("#Off_Seller_Id").val()
+            },
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    if (data.recruit) {
+                        $("#dialog2").show();
+                    }
+                }
+            }
+        })
         var tl = cal_textlength();
         $("#current_length").text(tl);
         $("#img-upload-list").html("");

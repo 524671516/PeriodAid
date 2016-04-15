@@ -86,7 +86,6 @@
             search: function () {
                 // custom minLength
                 var term = extractLast(this.value);
-                console.log(term);
                 if (term.length < 1) {
                     return false;
                 }
@@ -132,9 +131,6 @@
                             var avgtotaltemp = resultdata[i].AVG_BROWN + resultdata[i].AVG_BLACK + resultdata[i].AVG_LEMON + resultdata[i].AVG_HONEY + resultdata[i].AVG_DATES;
                             evatotalarry.push(avgtotaltemp)
                         }
-                        console.log(datearray);
-                        console.log(totalarray);
-                        console.log(evatotalarry);
                         //促销员每天销售总额折线图
                         var data_Line_seller = {
                             labels: datearray,

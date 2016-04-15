@@ -913,12 +913,10 @@ namespace PeriodAid.Controllers
         }
 
         [HttpPost]
-        public JsonResult Wx_Seller_IsRecruit()
+        public JsonResult Wx_Seller_IsRecruit(int sellerid)
         {
-            var userbind = from m in offlineDB.Off_Membership_Bind
-                           where m.UserName == User.Identity.Name
-                           select m;
-            bool isRecruit = userbind.Any(m => m.Recruit);
+            int confirmCount = offlineDB.Off_Checkin.Where(m => m.Off_Seller_Id == sellerid && m.Status > 3).Count();
+            bool isRecruit = confirmCount > 4 ? false : true;
             return Json(new { result = "SUCCESS", recruit = isRecruit });
         }
 

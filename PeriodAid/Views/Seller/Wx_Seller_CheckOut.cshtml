@@ -151,13 +151,12 @@
             </div>
         </div>
     </div>
-    <div class="weui_dialog_alert hidden" id="dialog2">
+    <div class="weui_dialog_alert" id="dialog2" style="display:none;">
         <div class="weui_mask"></div>
         <div class="weui_dialog">
-            <a href="javascript:;" class="weui_cell_ft close-btn" style="display:block;margin-right:12px;margin-top:5px;"><i class="weui_icon_clear"></i></a>
-            <div><strong class="weui_dialog_title">温馨提示</strong></div>
-            <div class="weui_dialog_bd"><i class="weui_icon_warn"></i>&nbsp;请上传规定的签退图片</div>
-            <a href="javascript:;" class="pre-view" style="font-size:12px;display:block;padding-top:5px">示例图片</a>
+            <div class="weui_dialog_hd">温馨提示</div>
+            <div class="weui_dialog_bd">请上传带有上班编码的签退图片</div>
+            <a href="javascript:;" class="pre-view btn btn-default btn-sm" style="margin-top:10px;">查看示例图片</a>
             <div class="weui_dialog_ft">
                 <a href="javascript:;" class="weui_btn_dialog primary sure-btn">确定</a>
             </div>
@@ -183,11 +182,12 @@
             $.ajax({
                 url: url,
                 type: "post",
+                data: {
+                    sellerid: $("#Off_Seller_Id").val()
+                },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        if (!data.recruit) {
-                            //alert("老用户")
-                        } else {
+                        if (data.recruit) {
                             $("#dialog2").show();
                         }
                     }
@@ -195,17 +195,14 @@
             })
         });
         $(".pre-view").click(function () {
-            var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131044869399795538.jpg";
+            var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
             var image = urls.split(',');
             wx.previewImage({
                 current: image[0], // 当前显示图片的http链接
                 urls: image // 需要预览的图片http链接列表
             });
-        })
-        $("#dialog2>.weui_mask").click(function () {
-            $("#dialog2").hide();
         });
-        $(".close-btn").click(function () {
+        $("#dialog2>.weui_mask").click(function () {
             $("#dialog2").hide();
         });
         $(".sure-btn").click(function () {
@@ -214,7 +211,6 @@
         //等待提交
         function checkvalue() {
             $("#loadingToast").hide();
-            console.log($("#CheckoutLocation").val());
             if ($("#CheckoutLocation").val().trim() == "") {
                 $("#dialog_alert").show();
                 $("#CheckoutLocation").val("N/A");
