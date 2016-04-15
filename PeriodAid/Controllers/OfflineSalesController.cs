@@ -4799,8 +4799,8 @@ namespace PeriodAid.Controllers
         public int? Item_Brown { get; set; }
         public int? Item_Black { get; set; }
         public int? Item_Lemon { get; set; }
-        public int? item_Honey { get; set; }
-        public int? item_Dates { get; set; }
+        public int? Item_Honey { get; set; }
+        public int? Item_Dates { get; set; }
         public decimal? AVG_BROWN { get; set; }
         public decimal? AVG_BLACK { get; set; }
         public decimal? AVG_LEMON { get; set; }
