@@ -151,5 +151,11 @@ namespace PeriodAid.Controllers
             int success = await util.setTags(vipidlist, tagid);
             return Content("成功：" + success);
         }
+
+        public ActionResult GetItems()
+        {
+            ERPOrderUtilities util = new ERPOrderUtilities();
+            return Content(util.getERPItems());
+        }
     }
 }
