@@ -23,6 +23,7 @@
             <button id="data-btn" class="btn btn-info">查看</button>
         </div>
     </div>
+    <span id="danger" class="text-danger h5"></span>
     <div id="seller-box" class="row hidden">
         <div class="col-md-4">
             <input id="seller-item" name="seller-item" class="form-control" disabled />
@@ -96,7 +97,7 @@
             },
             select: function (event, ui) {
                 $("#seller-box").removeClass("hidden");
-                $("#seller-item").val(ui.item.label + " - - - > " + ui.item.desc);
+                $("#seller-item").val(ui.item.label + " ———— " + ui.item.desc);
                 $("#seller").val(ui.item.label);
                 $("#project-id").val(ui.item.value);
                 return false;
@@ -107,92 +108,97 @@
             var end = $("#data-endTime").val();
             var sellerid = $("#project-id").val();
             var link_url = "/OfflineSales/Off_Statistic_Seller_Ajax";
-            $.ajax({
-                url: link_url,
-                data: {
-                    startdate: start,
-                    enddate: end,
-                    sellerid: sellerid
-                },
-                success: function (data) {
-                    if (data.data.length == 0) {
-                        alert("该促销员在此时间内无数据")
-                    } else {
-                        $("#map").show();
-                        var resultdata = data.data;
-                        var totalarray = new Array();
-                        var datearray = new Array();
-                        var evatotalarry = new Array();
-                        for (var i = 0; i < resultdata.length; i++) {
-                            var deeint = parseInt(resultdata[i].Date.replace(/\D/igm, ""));
-                            var dee = new Date(deeint)
-                            datearray.push(dee.Format("MM-dd"));
-                            var totaltemp = resultdata[i].Item_Brown + resultdata[i].Item_Black + resultdata[i].Item_Lemon + resultdata[i].Item_Honey + resultdata[i].Item_Dates;
-                            totalarray.push(totaltemp);
-                            var avgtotaltemp = resultdata[i].AVG_BROWN + resultdata[i].AVG_BLACK + resultdata[i].AVG_LEMON + resultdata[i].AVG_HONEY + resultdata[i].AVG_DATES;
-                            evatotalarry.push(avgtotaltemp)
+            if (start > end) {
+                $("#danger").text("开始时间不能大于结束时间")
+            } else {
+                $("#danger").addClass("hidden")
+                $.ajax({
+                    url: link_url,
+                    data: {
+                        startdate: start,
+                        enddate: end,
+                        sellerid: sellerid
+                    },
+                    success: function (data) {
+                        if (data.data.length == 0) {
+                            alert("该促销员在此时间内无数据")
+                        } else {
+                            $("#map").show();
+                            var resultdata = data.data;
+                            var totalarray = new Array();
+                            var datearray = new Array();
+                            var evatotalarry = new Array();
+                            for (var i = 0; i < resultdata.length; i++) {
+                                var deeint = parseInt(resultdata[i].Date.replace(/\D/igm, ""));
+                                var dee = new Date(deeint)
+                                datearray.push(dee.Format("MM-dd"));
+                                var totaltemp = resultdata[i].Item_Brown + resultdata[i].Item_Black + resultdata[i].Item_Lemon + resultdata[i].Item_Honey + resultdata[i].Item_Dates;
+                                totalarray.push(totaltemp);
+                                var avgtotaltemp = resultdata[i].AVG_BROWN + resultdata[i].AVG_BLACK + resultdata[i].AVG_LEMON + resultdata[i].AVG_HONEY + resultdata[i].AVG_DATES;
+                                evatotalarry.push(avgtotaltemp)
+                            }
+                            console.log(datearray);
+                            console.log(totalarray);
+                            console.log(evatotalarry);
+                            //促销员每天销售总额折线图
+                            var data_Line_seller = {
+                                labels: datearray,
+                                datasets: [
+                                    {
+                                        fillColor: "rgba(233,79,48,0.5)",
+                                        strokeColor: "rgba(233,79,48,1)",
+                                        pointColor: "rgba(233,79,48,1)",
+                                        pointStrokeColor: "#fff",
+                                        data: evatotalarry
+                                    },
+                                    {
+                                        fillColor: "rgba(48,161,233,0.5)",
+                                        strokeColor: "rgba(48,161,233,1)",
+                                        pointColor: "rgba(48,161,233,1)",
+                                        pointStrokeColor: "#fff",
+                                        data: totalarray
+                                    }
+                                ]
+                            }
+                            var defaults = {
+
+                                //Boolean - If we show the scale above the chart data			
+                                scaleOverlay: false,
+
+                                //Boolean - If we want to override with a hard coded scale
+                                scaleOverride: false,
+                                //** Required if scaleOverride is true **
+                                //Number - The number of steps in a hard coded scale
+                                scaleSteps: 20,
+
+                                //Number - The value jump in the hard coded scale
+                                scaleStepWidth: 20,
+
+                                // Y 轴的起始值
+                                scaleStartValue: 0,
+
+                                // 是否显示网格
+                                scaleShowGridLines: true,
+
+                                // 是否使用贝塞尔曲线? 即:线条是否弯曲
+                                bezierCurve: true,
+
+                                // 线条的宽度, 即:数据集
+                                datasetStrokeWidth: 1,
+
+                                // 是否填充数据集
+                                datasetFill: false,
+
+                                pointHitDetectionRadius: 1
+                            };
+                            $("#myChart_Line_seller").remove();
+                            $("#seller-map").html("<canvas id=\"myChart_Line_seller\" width=\"500\" height=\"400\"></canvas>");
+                            var ctx_Line_seller = $("#myChart_Line_seller").get(0).getContext("2d");
+                            new Chart(ctx_Line_seller).Line(data_Line_seller, defaults);
                         }
-                        console.log(datearray);
-                        console.log(totalarray);
-                        console.log(evatotalarry);
-                        //促销员每天销售总额折线图
-                        var data_Line_seller = {
-                            labels: datearray,
-                            datasets: [
-                                {
-                                    fillColor: "rgba(233,79,48,0.5)",
-                                    strokeColor: "rgba(233,79,48,1)",
-                                    pointColor: "rgba(233,79,48,1)",
-                                    pointStrokeColor: "#fff",
-                                    data: evatotalarry
-                                },
-                                {
-                                    fillColor: "rgba(48,161,233,0.5)",
-                                    strokeColor: "rgba(48,161,233,1)",
-                                    pointColor: "rgba(48,161,233,1)",
-                                    pointStrokeColor: "#fff",
-                                    data: totalarray
-                                }
-                            ]
-                        }
-                        var defaults = {
-
-                            //Boolean - If we show the scale above the chart data			
-                            scaleOverlay: false,
-
-                            //Boolean - If we want to override with a hard coded scale
-                            scaleOverride: false,
-                            //** Required if scaleOverride is true **
-                            //Number - The number of steps in a hard coded scale
-                            scaleSteps: 20,
-
-                            //Number - The value jump in the hard coded scale
-                            scaleStepWidth: 20,
-
-                            // Y 轴的起始值
-                            scaleStartValue: 0,
-
-                            // 是否显示网格
-                            scaleShowGridLines: true,
-
-                            // 是否使用贝塞尔曲线? 即:线条是否弯曲
-                            bezierCurve: true,
-
-                            // 线条的宽度, 即:数据集
-                            datasetStrokeWidth: 1,
-
-                            // 是否填充数据集
-                            datasetFill: false,
-
-                            pointHitDetectionRadius: 1
-                        };
-                        $("#myChart_Line_seller").remove();
-                        $("#seller-map").html("<canvas id=\"myChart_Line_seller\" width=\"500\" height=\"400\"></canvas>");
-                        var ctx_Line_seller = $("#myChart_Line_seller").get(0).getContext("2d");
-                        new Chart(ctx_Line_seller).Line(data_Line_seller, defaults);
                     }
-                }
-            })
+                })
+            }
         })
     });
     Date.prototype.Format = function (fmt) { //author: meizz   
