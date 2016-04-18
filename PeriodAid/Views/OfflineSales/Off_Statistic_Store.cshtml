@@ -46,11 +46,11 @@
         <span id="danger" class="text-danger h5"></span><br />
         <div id="map" class="row" style="display:none;">
             <div class="col-md-12">
-                <h4 class="text-center"><strong>每个区域下的门店每天销售总额柱状图(单位：盒/天)</strong></h4><br />
+                <h4 class="text-center"><strong><span id="statistic_01"></span>每天销售总额柱状图(单位：盒/天)</strong></h4><br />
                 <div id="Bar_map"><canvas id="myChart_Bar" width="500" height="400"></canvas></div>
             </div><br />
             <div class="col-md-12">
-                <h4 class="text-center"><strong>每个区域下的门店每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
+                <h4 class="text-center"><strong><span id="statistic_02"></span>每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
                 <div class="row">
                     <div id="Pie_map" class="col-md-6"><canvas id="myChart_Pie" width="300" height="300"></canvas></div>
                     <div class="col-md-2"></div>
@@ -124,6 +124,8 @@
         for (var i = 0; i < managerArray.length; i++) {
             var optionitem = $("option[value='" + managerArray[i] + "']").text();
             $("#storeName").val(optionitem);
+            $("#statistic_01").text(optionitem);
+            $("#statistic_02").text(optionitem);
         }
         var link_url = "/OfflineSales/Off_Statistic_Store_Ajax";
         if (start > end) {

@@ -48,12 +48,12 @@
 <br />
     <div id="map" class="row" style="display:none">
         <div class="col-md-6">
-            <h4 class="text-center"><strong>区域每天销售总额折线图(单位：盒/天)</strong></h4><br />
+            <h4 class="text-center"><strong><span id="statistic_01"></span>区域每天销售总额折线图(单位：盒/天)</strong></h4><br />
             <div id="line-map"><canvas id="myChart_Line" width="450" height="350"></canvas></div>
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-5">
-            <h4 class="text-center"><strong>区域每天各个种类销售总额柱状图(单位：盒/天)</strong></h4><br />
+            <h4 class="text-center"><strong><span id="statistic_02"></span>区域每天各个种类销售总额柱状图(单位：盒/天)</strong></h4><br />
             <div class="row">
                 <div id="pie-map" class="col-md-6"><canvas id="myChart_Pie" width="250" height="250"></canvas></div>
                 <div class="col-md-3"></div>
@@ -91,6 +91,8 @@
         var start = $("#data-startTime").val();
         var end = $("#data-endTime").val();
         var storesystem = $("#StoreSystem").val();
+        $("#statistic_01").text(storesystem);
+        $("#statistic_02").text(storesystem);
         var link_url = "/OfflineSales/Off_Statistic_StoreSystem_Ajax";
         if (start > end) {
             $("#danger").text("开始时间不能大于结束时间")

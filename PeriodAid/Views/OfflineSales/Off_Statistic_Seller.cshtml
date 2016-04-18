@@ -31,7 +31,7 @@
     </div>
 </div><br />
 <div id="map" class="row" style="display:none;">
-    <h4 class="text-center"><strong>促销员每天销售总额折线图(单位：盒/天)</strong></h4><br />
+    <h4 class="text-center"><strong><span id="statistic_01"></span>每天销售总额折线图(单位：盒/天)</strong></h4><br />
     <div class="row">
         <div id="seller-map" class="col-md-6"><canvas id="myChart_Line_seller" width="500" height="400"></canvas></div>
         <div class="col-md-1"></div>
@@ -100,6 +100,7 @@
                 $("#seller-item").val(ui.item.label + " ———— " + ui.item.desc);
                 $("#seller").val(ui.item.label);
                 $("#project-id").val(ui.item.value);
+                $("#statistic_01").text(ui.item.label);
                 return false;
             }
         });
