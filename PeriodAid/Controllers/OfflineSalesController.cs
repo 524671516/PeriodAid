@@ -3610,7 +3610,7 @@ namespace PeriodAid.Controllers
         #region 绑定促销门店
         public ActionResult Off_ScheduleList(bool? history)
         {
-            bool _history = history ?? false;
+            bool _history = history ?? true;
             var currentTime = Convert.ToDateTime(DateTime.Now.ToShortDateString());
             if (_history)
             {
