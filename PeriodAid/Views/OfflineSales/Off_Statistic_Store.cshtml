@@ -42,14 +42,15 @@
                     <option value="郑州丹尼斯">郑州丹尼斯</option>
                 </select>
             </div>
-        </div><br />
+        </div>
+        <span id="danger" class="text-danger h5"></span><br />
         <div id="map" class="row" style="display:none;">
             <div class="col-md-12">
-                <h4 class="text-center"><strong>每个区域下的门店每天销售总额柱状图(单位：盒/天)</strong></h4><br />
+                <h4 class="text-center"><strong><span id="statistic_01"></span>每天销售总额柱状图(单位：盒/天)</strong></h4><br />
                 <div id="Bar_map"><canvas id="myChart_Bar" width="500" height="400"></canvas></div>
             </div><br />
             <div class="col-md-12">
-                <h4 class="text-center"><strong>每个区域下的门店每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
+                <h4 class="text-center"><strong><span id="statistic_02"></span>每天各个种类销售总额饼状图(单位：盒/天)</strong></h4><br />
                 <div class="row">
                     <div id="Pie_map" class="col-md-6"><canvas id="myChart_Pie" width="300" height="300"></canvas></div>
                     <div class="col-md-2"></div>
@@ -123,90 +124,99 @@
         for (var i = 0; i < managerArray.length; i++) {
             var optionitem = $("option[value='" + managerArray[i] + "']").text();
             $("#storeName").val(optionitem);
+            $("#statistic_01").text(optionitem);
+            $("#statistic_02").text(optionitem);
         }
         var link_url = "/OfflineSales/Off_Statistic_Store_Ajax";
-        $.ajax({
-            url: link_url,
-            data: {
-                startdate: start,
-                enddate: end,
-                storeid: storeid
-            },
-            success: function (data) {
-                if (data.data.length == 0) {
-                    alert("该区域门店下的这段时间内没有销售数据")
-                } else {
-                    $("#map").show();
-                    var resultdata = data.data;
-                    var totalarray = new Array();//销售总额
-                    var datearray = new Array();//显示时间
-                    var total_brown = 0;
-                    var total_black = 0;
-                    var total_lemon = 0;
-                    var total_honey = 0;
-                    var total_dates = 0;
-                    for (var i = 0; i < data.data.length; i++) {
-                        var deeint = parseInt(data.data[i].date.replace(/\D/igm, ""));
-                        var dee = new Date(deeint)
-                        datearray.push(dee.Format("MM-dd"));
-                        var totaltemp = resultdata[i].brown + resultdata[i].black + resultdata[i].dates + resultdata[i].honey + resultdata[i].lemon;//每天销售总额
-                        totalarray.push(totaltemp);
-                        total_brown += resultdata[i].brown;
-                        total_black += resultdata[i].black;
-                        total_dates += resultdata[i].dates;
-                        total_honey += resultdata[i].honey;
-                        total_lemon += resultdata[i].lemon;
-                    };
-                    //每个区域下的门店每天销售总额柱状图
-                    var data_Bar = {
-                        labels: datearray,
-                        datasets: [
-                            {
-                                fillColor: "rgba(57,138,206,0.5)",
-                                strokeColor: "rgba(57,138,206,1)",
-                                data: totalarray
-                            }
-                        ]
-                    };
-                    //每个区域下的门店每天各个种类销售总额饼状图
-                    var data_Pie = [
+        if (start > end) {
+            $("#danger").text("开始时间不能大于结束时间")
+        } else {
+            $("#danger").addClass("hidden")
+            $.ajax({
+                url: link_url,
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    storeid: storeid
+                },
+                success: function (data) {
+                    if (data.data.length == 0) {
+                        alert("该区域门店下的这段时间内没有销售数据")
+                    } else {
+                        $("#map").show();
+                        var resultdata = data.data;
+                        var totalarray = new Array();//销售总额
+                        var datearray = new Array();//显示时间
+                        var total_brown = 0;
+                        var total_black = 0;
+                        var total_lemon = 0;
+                        var total_honey = 0;
+                        var total_dates = 0;
+                        for (var i = 0; i < data.data.length; i++) {
+                            var deeint = parseInt(data.data[i].date.replace(/\D/igm, ""));
+                            var dee = new Date(deeint)
+                            datearray.push(dee.Format("MM-dd"));
+                            var totaltemp = resultdata[i].brown + resultdata[i].black + resultdata[i].dates + resultdata[i].honey + resultdata[i].lemon;//每天销售总额
+                            totalarray.push(totaltemp);
+                            total_brown += resultdata[i].brown;
+                            total_black += resultdata[i].black;
+                            total_dates += resultdata[i].dates;
+                            total_honey += resultdata[i].honey;
+                            total_lemon += resultdata[i].lemon;
+                        };
+                        console.log(datearray);
+                        console.log(totalarray);
+                        //每个区域下的门店每天销售总额柱状图
+                        var data_Bar = {
+                            labels: datearray,
+                            datasets: [
                                 {
-                                    value: total_black,
-                                    color: "#201510",
-                                    label: '黑糖姜茶'
-                                },
-                                {
-                                    value: total_brown,
-                                    color: "#b11c36",
-                                    label: '红糖姜茶'
-                                },
-                                {
-                                    value: total_lemon,
-                                    color: "#fdf796",
-                                    label: '柠檬姜茶'
-                                },
-                                {
-                                    value: total_dates,
-                                    color: "#e94f30",
-                                    label: '红枣姜茶'
-                                },
-                                {
-                                    value: total_honey,
-                                    color: "#ecb268",
-                                    label: '蜂蜜姜茶'
+                                    fillColor: "rgba(57,138,206,0.5)",
+                                    strokeColor: "rgba(57,138,206,1)",
+                                    data: totalarray
                                 }
-                    ];
-                    $("#myChart_Bar").remove();
-                    $("#myChart_Pie").remove();
-                    $("#Bar_map").html("<canvas id=\"myChart_Bar\" width=\"500\" height=\"400\"></canvas>");
-                    $("#Pie_map").html("<canvas id=\"myChart_Pie\" width=\"300\" height=\"300\"></canvas>")
-                    var ctx_Bar = $("#myChart_Bar").get(0).getContext("2d");
-                    new Chart(ctx_Bar).Bar(data_Bar);
-                    var ctx_Pie = $("#myChart_Pie").get(0).getContext("2d");
-                    new Chart(ctx_Pie).Pie(data_Pie);
+                            ]
+                        };
+                        //每个区域下的门店每天各个种类销售总额饼状图
+                        var data_Pie = [
+                                    {
+                                        value: total_black,
+                                        color: "#201510",
+                                        label: '黑糖姜茶'
+                                    },
+                                    {
+                                        value: total_brown,
+                                        color: "#b11c36",
+                                        label: '红糖姜茶'
+                                    },
+                                    {
+                                        value: total_lemon,
+                                        color: "#fdf796",
+                                        label: '柠檬姜茶'
+                                    },
+                                    {
+                                        value: total_dates,
+                                        color: "#e94f30",
+                                        label: '红枣姜茶'
+                                    },
+                                    {
+                                        value: total_honey,
+                                        color: "#ecb268",
+                                        label: '蜂蜜姜茶'
+                                    }
+                        ];
+                        $("#myChart_Bar").remove();
+                        $("#myChart_Pie").remove();
+                        $("#Bar_map").html("<canvas id=\"myChart_Bar\" width=\"500\" height=\"400\"></canvas>");
+                        $("#Pie_map").html("<canvas id=\"myChart_Pie\" width=\"300\" height=\"300\"></canvas>")
+                        var ctx_Bar = $("#myChart_Bar").get(0).getContext("2d");
+                        new Chart(ctx_Bar).Bar(data_Bar);
+                        var ctx_Pie = $("#myChart_Pie").get(0).getContext("2d");
+                        new Chart(ctx_Pie).Pie(data_Pie);
+                    }
                 }
-            }
-        })
+            })
+        }
     });
     Date.prototype.Format = function (fmt) { //author: meizz   
         var o = {
