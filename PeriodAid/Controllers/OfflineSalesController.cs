@@ -3637,7 +3637,7 @@ namespace PeriodAid.Controllers
         {
             DateTime day = DateTime.Parse(date);
             ViewBag.CurrentDate = date;
-            if (query.Trim() != "")
+            if (query!=null)
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
                            where m.Subscribe == day && m.Off_Store.StoreName.Contains(query)
