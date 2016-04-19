@@ -7,8 +7,20 @@
 @section page{
     2
     }
-<a class="btn btn-info btn-sm" id="add-btn" href="/OfflineSales/Off_Add_Schedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a><br /><br />
-<table class="table table-condensed table-striped" style="table-layout:fixed; width:100%;">
+<div class="row">
+    <div class="col-md-4"><a class="btn btn-info btn-sm" id="add-btn" href="/OfflineSales/Off_Add_Schedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a></div>
+    <div class="col-md-4"></div>
+    <div class="col-xs-4">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search" value="">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div><br /><br />
+<input type="hidden" value="@ViewBag.CurrentDate" id="current_date"/>
+<table class="table table-condensed table-striped" style="table-layout:fixed; width:100%;" id="tableList">
     <tr>
         <th style="width:10%">
             时间
@@ -16,17 +28,17 @@
         <th style="width:15%">
             店铺名称
         </th>
-        <th style="width:10%">
+        <th style="width:15%">
             标准签到时间
         </th>
-        <th style="width:10%">
+        <th style="width:15%">
             标准签退时间
         </th>
         <th style="width:10%">
             标准工资
         </th>
-        <th style="width:6%">签到数</th>
-        <th style="width:6%">提报数</th>
+        <th style="width:8%">签到数</th>
+        <th style="width:8%">提报数</th>
         <th></th>
     </tr>
 
@@ -81,6 +93,12 @@
 </div><!-- /.modal -->
 <script src="~/Scripts/jquery.form.min.js"></script>
 <script>
+    $("#search-btn").click(function () {
+        var query = $("#search").val();
+        var url = "/OfflineSales/Off_ScheduleDetails?date=" + $("#current_date").val() + "&query=" + $("#search").val();
+        $("#search").val(query);
+        window.location.href = url;
+    })
     $(".edit-button").click(function () {
         var link_url = $(this).attr("href");
         $.ajax({
