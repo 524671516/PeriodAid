@@ -560,6 +560,58 @@ namespace PeriodAid.DAL
                 return null;//return Content(ex.Message);// 出错处理
             }
         }
+        public string getERPItems()
+        {
+            string json = "{" +
+                    "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.items.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"code\":\"sqz003_2\"," +
+                    "\"page_size\":100," +
+                    "\"page_no\":" + 1 +
+                    "}";
+            string signature = sign(json, AppSecret);
+            string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
+            var request = WebRequest.Create(post_url) as HttpWebRequest;
+            string info = "{" +
+                "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.items.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"code\":\"sqz003_2\"," +
+                    "\"page_size\":100," +
+                    "\"page_no\":" + 1 + "," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            //return Content(info);
+            string result = "";
+            try
+            {
+                request.ContentType = "text/json";
+                request.Method = "post";
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = request.GetResponse();
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = reader.ReadToEnd();
+                        return result;
+                    }
+                }
+
+            }
+            catch (UriFormatException)
+            {
+                return null;
+                //return Content(uex.Message);// 出错处理
+            }
+            catch (WebException)
+            {
+                return null;//return Content(ex.Message);// 出错处理
+            }
+        }
 
         public async Task<int> setTags(IEnumerable<VipIds> vipids, int tagid)
         {

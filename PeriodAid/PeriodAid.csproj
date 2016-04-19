@@ -245,8 +245,6 @@
     <Content Include="Content\bootstrap-switch.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\checkin-img\130981806066116407.jpg" />
-    <Content Include="Content\checkin-img\130985353047038610.jpg" />
     <Content Include="Content\CustomSite.css" />
     <Content Include="Content\example.css" />
     <Content Include="Content\font-awesome-ie7.min.css" />
@@ -609,6 +607,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
   </ItemGroup>
   <ItemGroup>

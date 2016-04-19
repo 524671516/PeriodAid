@@ -3408,11 +3408,12 @@ namespace PeriodAid.Controllers
                 return View("Error");
 
         }
-        public ActionResult Off_Expenses_AjaxList(int? page)
+        public ActionResult Off_Expenses_AjaxList(int? page, int? type)
         {
+            int _type = type ?? 0;
             int _page = page ?? 1;
             var list = (from m in offlineDB.Off_Expenses
-                        where m.Status >= 0
+                        where m.Status >= 0 && m.PaymentType==_type
                         orderby m.Id descending
                         select m).ToPagedList(_page, 50);
             return PartialView(list);
@@ -3610,7 +3611,7 @@ namespace PeriodAid.Controllers
         #region 绑定促销门店
         public ActionResult Off_ScheduleList(bool? history)
         {
-            bool _history = history ?? false;
+            bool _history = history ?? true;
             var currentTime = Convert.ToDateTime(DateTime.Now.ToShortDateString());
             if (_history)
             {

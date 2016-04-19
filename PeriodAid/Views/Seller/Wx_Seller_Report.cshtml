@@ -63,13 +63,12 @@
         </div>
         <br /><br />
     }
-    <div class="weui_dialog_alert hidden" id="dialog2">
+    <div class="weui_dialog_alert" id="dialog2" style="display:none;">
         <div class="weui_mask"></div>
         <div class="weui_dialog">
-            <a href="javascript:;" class="weui_cell_ft close-btn" style="display:block;margin-right:12px;margin-top:5px;"><i class="weui_icon_clear"></i></a>
-            <div><strong class="weui_dialog_title">温馨提示</strong></div>
-            <div class="weui_dialog_bd"><i class="weui_icon_warn"></i>&nbsp;请上传规定的销量图片</div>
-            <a href="javascript:;" class="pre-view" style="font-size:12px;display:block;padding-top:5px">示例图片</a>
+            <div class="weui_dialog_hd">温馨提示</div>
+            <div class="weui_dialog_bd">请上传证明门店真实销量的系统截图照片</div>
+            <a href="javascript:;" class="pre-view btn btn-default btn-sm" style="margin-top:10px;">查看示例图片</a>
             <div class="weui_dialog_ft">
                 <a href="javascript:;" class="weui_btn_dialog primary sure-btn">确定</a>
             </div>
@@ -92,20 +91,6 @@
         });
         //新用户弹窗
         $(function () {
-            var url = "/Seller/Wx_Seller_IsRecruit";
-            $.ajax({
-                url: url,
-                type: "post",
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        if (!data.recruit) {
-                            //alert("老用户")
-                        } else {
-                            $("#dialog2").show();
-                        }
-                    }
-                }
-            })
             $.ajax({
                 url: "/Seller/Wx_Seller_EditReport",
                 data: {
@@ -128,7 +113,7 @@
             })
         });
         $(".pre-view").click(function () {
-            var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131044869399795538.jpg";
+            var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131046821453176088.jpg,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0931.JPG,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0932.JPG,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0933.JPG,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0934.JPG";
             var image = urls.split(',');
             wx.previewImage({
                 current: image[0], // 当前显示图片的http链接
@@ -136,9 +121,6 @@
             });
         })
         $("#dialog2>.weui_mask").click(function () {
-            $("#dialog2").hide();
-        });
-        $(".close-btn").click(function () {
             $("#dialog2").hide();
         });
         $(".sure-btn").click(function () {
