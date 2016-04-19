@@ -32,6 +32,9 @@
         public virtual DbSet<vips> vips { get; set; }
         public virtual DbSet<receive_infos> receive_infos { get; set; }
         public virtual DbSet<tags> tags { get; set; }
+        public virtual DbSet<items> items { get; set; }
+        public virtual DbSet<skus> skus { get; set; }
+        public virtual DbSet<combine_items> combine_items { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -67,6 +70,17 @@
                 .HasForeignKey(e => e.vipid)
                 .WillCascadeOnDelete(true);
 
+            modelBuilder.Entity<items>()
+                .HasMany(e => e.skus)
+                .WithRequired(e => e.items)
+                .HasForeignKey(e => e.itemsid)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<items>()
+                .HasMany(e => e.combine_items)
+                .WithRequired(e => e.items)
+                .HasForeignKey(e => e.itemsid)
+                .WillCascadeOnDelete(true);
             
         }
 
@@ -392,6 +406,136 @@
         public string tel { get; set; }
 
         public virtual vips vips { get; set; }
+    }
+    public partial class items
+    {
+        public long id { get; set; }
+
+        public DateTime? create_date { get; set; }
+
+        public DateTime? modify_date { get; set; }
+
+        [StringLength(32)]
+        public string code { get; set; }
+
+        [StringLength(128)]
+        public string name { get; set; }
+
+        [StringLength(256)]
+        public string note { get; set; }
+
+        public decimal? weight { get; set; }
+
+        public bool combine { get; set; }
+
+        [StringLength(128)]
+        public string simple_name { get; set; }
+
+        [StringLength(32)]
+        public string category_code { get; set; }
+
+        [StringLength(64)]
+        public string category_name { get; set; }
+
+        [StringLength(32)]
+        public string supplier_code { get; set; }
+
+        [StringLength(32)]
+        public string item_unit_code { get; set; }
+
+        public decimal? package_point { get; set; }
+
+        public decimal? sales_point { get; set; }
+
+        public decimal? sales_price { get; set; }
+
+        public decimal? purchase_price { get; set; }
+
+        public decimal? agent_price { get; set; }
+
+        public decimal? cost_price { get; set; }
+
+        [StringLength(32)]
+        public string stock_status_code { get; set; }
+
+        [StringLength(256)]
+        public string pic_url { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<skus> skus { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<combine_items> combine_items { get; set; }
+    }
+    public partial class skus
+    {
+        public long id { get; set; }
+
+        public long itemsid { get; set; }
+
+        [StringLength(32)]
+        public string code { get; set; }
+
+        [StringLength(128)]
+        public string name { get; set; }
+
+        [StringLength(256)]
+        public string note { get; set; }
+        
+        public decimal? weight { get; set; }
+
+        public decimal? package_point { get; set; }
+
+        public decimal? sales_point { get; set; }
+
+        public decimal? sales_price { get; set; }
+
+        public decimal? purchase_price { get; set; }
+
+        public decimal? agent_price { get; set; }
+
+        public decimal? cost_price { get; set; }
+
+        [StringLength(32)]
+        public string stock_status_code { get; set; }
+
+        [StringLength(32)]
+        public string bar_code { get; set; }
+
+        public virtual items items { get; set; }
+    }
+    public partial class combine_items
+    {
+        public long id { get; set; }
+
+        public long itemsid { get; set; }
+
+        public DateTime? create_date { get; set; }
+
+        public DateTime? modify_date { get; set; }
+
+        public decimal? qty { get; set; }
+
+        public decimal? percent { get; set; }
+
+        [StringLength(32)]
+        public string item_code { get; set; }
+
+        [StringLength(128)]
+        public string item_name { get; set; }
+
+        [StringLength(128)]
+        public string simple_name { get; set; }
+
+        [StringLength(32)]
+        public string item_sku_code { get; set; }
+
+        [StringLength(128)]
+        public string item_sku_name { get; set; }
+
+        public decimal? sales_price { get; set; }
+
+        public virtual items items { get; set; }
     }
 
     public partial class tags

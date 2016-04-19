@@ -503,6 +503,83 @@ namespace PeriodAid.DAL
         }
         #endregion
 
+        public async Task<int> Download_ERPItems()
+        {
+            int totalcount = await getERPItems_Count();
+            taskstatus currenttask = new taskstatus()
+            {
+                name = "Items-" + DateTime.Now.ToShortDateString(),
+                totalcount = totalcount,
+                currentcount = 0,
+                status = 0,
+                type = 2,
+                create_time = DateTime.Now
+            };
+            erpdb.taskstatus.Add(currenttask);
+            erpdb.SaveChanges();
+            string[] results;
+            if (totalcount > 10000)
+            {
+                currenttask.status = -1;
+                currenttask.message = "超过10000条数据，获取失败";
+                erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
+                erpdb.SaveChanges();
+                return -1;
+            }
+            else
+            {
+                // 删除已有的数据
+                string sql = "DELETE FROM items";
+                CommonUtilities.writeLog("sql" + sql);
+                erpdb.Database.ExecuteSqlCommand(sql);
+                CommonUtilities.writeLog("Remove Success");
+                List<Task<string>> alltasks = new List<Task<string>>();
+                int j = 0;
+                try
+                {
+                    for (int i = 1; i <= (totalcount / 100) + 1; i++)
+                    {
+                        if (j == 20)
+                        {
+                            results = await Task.WhenAll<string>(alltasks);
+                            if (results.Contains("FAIL"))
+                            {
+                                currenttask.status = -1;
+                                erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
+                                erpdb.SaveChanges();
+                                return -1;
+                            }
+                            alltasks = new List<Task<string>>();
+                            j = 0;
+                        }
+                        Task<string> newtask = getERPItems(i, currenttask.id);
+                        alltasks.Add(newtask);
+                        j++;
+                    }
+                }
+                catch (Exception e)
+                {
+                    CommonUtilities.writeLog(e.Message);
+                }
+                results = await Task.WhenAll<string>(alltasks);
+                if (results.Contains("FAIL"))
+                {
+                    currenttask.status = -1;
+                    erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
+                    erpdb.SaveChanges();
+                    return -1;
+                }
+                else
+                {
+                    currenttask.finish_time = DateTime.Now;
+                    currenttask.status = 1;
+                    currenttask.currentcount = totalcount;
+                    erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
+                    erpdb.SaveChanges();
+                    return 0;
+                }
+            }
+        }
         public async Task<List<shops>> getERPShops()
         {
             string json = "{" +
@@ -560,6 +637,145 @@ namespace PeriodAid.DAL
                 return null;//return Content(ex.Message);// 出错处理
             }
         }
+        public async Task<int> getERPItems_Count()
+        {
+            string json = "{" +
+                    "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.items.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"page_size\":1," +
+                    "\"page_no\":" + 1 +
+                    "}";
+            string signature = sign(json, AppSecret);
+            string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
+            var request = WebRequest.Create(post_url) as HttpWebRequest;
+            string info = "{" +
+                "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.items.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"page_size\":1," +
+                    "\"page_no\":" + 1 + "," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            //return Content(info);
+            string result = "";
+            try
+            {
+                request.ContentType = "text/json";
+                request.Method = "post";
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = await request.GetResponseAsync() as HttpWebResponse;
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = reader.ReadToEnd();
+                        //return Content(result);
+                        JavaScriptSerializer serializer = new JavaScriptSerializer();
+                        Items_Result r = JsonConvert.DeserializeObject<Items_Result>(result);
+                        if (r != null)
+                        {
+                            return r.total;
+                        }
+                        return -1;
+                    }
+                }
+
+            }
+            catch (UriFormatException)
+            {
+                return -1;
+                //return Content(uex.Message);// 出错处理
+            }
+            catch (WebException)
+            {
+                return -1;//return Content(ex.Message);// 出错处理
+            }
+        }
+
+        public async Task<string> getERPItems(int page, int statusid)
+        {
+            var status = erpdb.taskstatus.SingleOrDefault(m => m.id == statusid);
+            if (status != null)
+            {
+                string json = "{" +
+                        "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.items.get\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"," +
+                        "\"page_size\":100," +
+                        "\"page_no\":" + page + 
+                        "}";
+                string signature = sign(json, AppSecret);
+                string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
+                string info = "{" +
+                    "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.items.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"page_size\":100," +
+                    "\"page_no\":" + page + "," +
+                    "\"sign\":\"" + signature + "\"" +
+                    "}";
+                //return Content(info);
+                string result = "";
+                int retry_count = 0;
+                bool flag = false;
+                while (!flag)
+                {
+                    if (retry_count > 10)
+                    {
+                        return "FAIL";
+                    }
+                    var request = WebRequest.Create(post_url) as HttpWebRequest;
+                    request.ContentType = "text/json";
+                    request.Method = "post";
+                    StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+                    try
+                    {
+                        streamWriter.Write(info);
+                        streamWriter.Flush();
+                        streamWriter.Close();
+                        var response = await request.GetResponseAsync();
+                        using (var reader = new StreamReader(response.GetResponseStream()))
+                        {
+                            result = reader.ReadToEnd();
+                            JavaScriptSerializer serializer = new JavaScriptSerializer();
+                            Items_Result r = JsonConvert.DeserializeObject<Items_Result>(result);
+                            if (r != null)
+                            {
+
+                                if (r.items.Count > 0)
+                                {
+                                    
+                                    erpdb.items.AddRange(r.items);
+                                    erpdb.SaveChanges();
+                                    flag = true;
+                                    status.currentcount += 100;
+                                    erpdb.Entry(status).State = System.Data.Entity.EntityState.Modified;
+                                    erpdb.SaveChanges();
+                                    CommonUtilities.writeLog("Success: page: " + page + ", retry_count: " + retry_count);
+                                }
+                            }
+                            else
+                            {
+                                //return Content("Fail");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        streamWriter.Close();
+                        CommonUtilities.writeLog("page: " + page + ", Exception: " + ex.Message);
+                    }
+                    retry_count++;
+                }
+                return "Success";
+            }
+            return "FAIL";
+        }
+
+
         public string getERPItems()
         {
             string json = "{" +
@@ -747,6 +963,17 @@ namespace PeriodAid.DAL
         public string subErrorDesc { get; set; }//子错误描述
         public string requestMethod { get; set; }//
         public List<shops> shops { get; set; }
+        public int total;
+    }
+    public class Items_Result
+    {
+        public bool success { get; set; }
+        public string errorCode { get; set; }//错误代码
+        public string subErrorCode { get; set; }//子错误代码
+        public string errorDesc { get; set; }//错误描述
+        public string subErrorDesc { get; set; }//子错误描述
+        public string requestMethod { get; set; }//
+        public List<items> items { get; set; }
         public int total;
     }
 

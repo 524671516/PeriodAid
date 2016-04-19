@@ -3633,14 +3633,26 @@ namespace PeriodAid.Controllers
             }
 
         }
-        public ActionResult Off_ScheduleDetails(string date)
+        public ActionResult Off_ScheduleDetails(string date, string query)
         {
             DateTime day = DateTime.Parse(date);
-            var list = from m in offlineDB.Off_Checkin_Schedule
-                       where m.Subscribe == day
-                       orderby m.Off_Store.StoreName
-                       select m;
-            return View(list);
+            ViewBag.CurrentDate = date;
+            if (query.Trim() != "")
+            {
+                var list = from m in offlineDB.Off_Checkin_Schedule
+                           where m.Subscribe == day && m.Off_Store.StoreName.Contains(query)
+                           orderby m.Off_Store.StoreName
+                           select m;
+                return View(list);
+            }
+            else
+            {
+                var list = from m in offlineDB.Off_Checkin_Schedule
+                           where m.Subscribe == day
+                           orderby m.Off_Store.StoreName
+                           select m;
+                return View(list);
+            }
         }
         public ActionResult Ajax_EditSchedule(int id)
         {

@@ -64,7 +64,7 @@ namespace PeriodAid.Controllers
         public ActionResult Download_Order_List_Ajax()
         {
             var list = from m in erpdb.taskstatus
-                       where m.type==0
+                       where m.type == 0
                        orderby m.id descending
                        select m;
             return PartialView(list);
@@ -152,10 +152,11 @@ namespace PeriodAid.Controllers
             return Content("成功：" + success);
         }
 
-        public ActionResult GetItems()
+        public async Task<ActionResult> GetItems()
         {
             ERPOrderUtilities util = new ERPOrderUtilities();
-            return Content(util.getERPItems());
+            await util.Download_ERPItems();
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
     }
 }
