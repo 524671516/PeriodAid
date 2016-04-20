@@ -70,7 +70,9 @@
         var link_url = "/OfflineSales/Off_Statistic_StoreSystem_Ajax";
         if (start > end) {
             $("#danger").text("开始时间不能大于结束时间")
-        } else {
+        } else if (start == "" || end == "") {
+            $("#danger").text("时间不能为空")
+        }else {
             $("#danger").addClass("hidden")
             $.ajax({
                 url: link_url,
@@ -82,7 +84,7 @@
                 success: function (data) {
                     if (data.data.length == 0) {
                         alert("该区域在此时间内无数据");
-                    } else {
+                    }else {
                         $("#map").show();
                         //区域销售折线图
                         var resultdata = data.data;
