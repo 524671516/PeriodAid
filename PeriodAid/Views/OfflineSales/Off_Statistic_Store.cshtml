@@ -47,6 +47,9 @@
         <div id="map" class="row" style="display:none;">
             <div class="col-md-12">
                 <div id="myChart_Bar" style="min-width:500px;height:500px"></div>
+            </div><br />
+            <div class="col-md-12">
+                <div id="myChart_Pie" style="min-width:400px;height:400px"></div>
             </div>
         </div>
     </div>
@@ -145,21 +148,35 @@
                             xAxis: {
                                 categories: datearray
                             },
-                            labels: {
-                                items: [{                                                     
-                                    html:  '各个种类销售总额饼状图(单位：盒/天)',                          
-                                    style: {                                                  
-                                        left: '40px',                                         
-                                        top: '8px',                                           
-                                        color: 'black'                                        
-                                    }                                                         
-                                }]                                                            
-                            },
                             series: [{
                                 type: 'column',
                                 name: '销售额度',
                                 data: totalarray
-                            }, {
+                            }] 
+                        });
+                        $("#myChart_Pie").highcharts({
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false
+                            },
+                            title: {
+                                text: optionitem + '每天销售总额饼状图(单位：盒/天)'
+                            },
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    showInLegend: true
+                                }
+                            },
+                            series: [{
                                 type: 'pie',
                                 name: '销售额度',
                                 data: [
@@ -197,13 +214,7 @@
                                         //sliced: true,
                                         //selected: true,
                                         color: "#ecb268"
-                                    }],
-                                center: [100, 80],
-                                size: 100,
-                                showInLegend: false,
-                                dataLabels: {
-                                    enabled: false
-                                }
+                                    }]
                             }]
                         });
                     }
