@@ -4698,6 +4698,7 @@ namespace PeriodAid.Controllers
             var data = offlineDB.Database.SqlQuery<Seller_Statistic>(sql);
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
         }
+
         public JsonResult Off_Statistic_QuerySeller_Ajax(string query)
         {
             var list = (from m in offlineDB.Off_Seller

@@ -7,6 +7,7 @@ using PeriodAid.Models;
 using PeriodAid.DAL;
 using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
+using PagedList;
 
 namespace PeriodAid.Controllers
 {
@@ -157,6 +158,119 @@ namespace PeriodAid.Controllers
             ERPOrderUtilities util = new ERPOrderUtilities();
             await util.Download_ERPItems();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GenericData_List()
+        {
+            return View();
+        }
+
+        public PartialViewResult GenericData_List_Ajax(string storename, int? page)
+        {
+            int _page = page ?? 0;
+            if (storename == null)
+            {
+                var list = (from m in erpdb.generic_data
+                            orderby m.date descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in erpdb.generic_data
+                           where m.storename == storename
+                           orderby m.date descending
+                           select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+        }
+        public ActionResult Create_GenericData()
+        {
+            generic_data data = new generic_data();
+            return View(data);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Create_GenericData(generic_data model)
+        {
+            if(ModelState.IsValid)
+            {
+                generic_data item = new generic_data();
+                if (TryUpdateModel(item))
+                {
+                    erpdb.generic_data.Add(item);
+                    erpdb.SaveChanges();
+                    return RedirectToAction("GenericData_List");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+        public ActionResult Edit_GenericData(int id)
+        {
+            try
+            {
+                var item = erpdb.generic_data.SingleOrDefault(m => m.id == id);
+                if (item != null)
+                {
+                    return View(item);
+                }
+                else
+                    return View("Error");
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Edit_GenericData(generic_data model)
+        {
+            if (ModelState.IsValid)
+            {
+                generic_data item = new generic_data();
+                if (TryUpdateModel(item))
+                {
+                    erpdb.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    erpdb.SaveChanges();
+                    return RedirectToAction("GenericData_List");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+        [HttpPost]
+        public ActionResult Delete_GenericData(int id)
+        {
+            try
+            {
+                var item = erpdb.generic_data.SingleOrDefault(m => m.id == id);
+                if (item != null)
+                {
+                    erpdb.generic_data.Remove(item);
+                    erpdb.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "FAIL" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
     }
 }

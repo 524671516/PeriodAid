@@ -1,0 +1,101 @@
+﻿@using PagedList
+@model PagedList<PeriodAid.Models.generic_data>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            日期
+        </th>
+        <th>
+            店铺
+        </th>
+        <th>销售额
+        </th>
+        <th>
+            访客数
+        </th>
+        <th>
+            浏览量
+        </th>
+        <th>
+            转化率
+        </th>
+        <th>
+            客单价
+        </th>
+        <th>
+            订单数
+        </th>
+        <th>
+            库存金额
+        </th>
+        <th>运费</th>
+        <th>
+            推广费用
+        </th>
+        <th>ROI</th>
+        <th>
+            发票
+        </th>
+        <th>
+            结算
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.storename)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sales_amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.uv)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.pv)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.convertion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.guest_avg_price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.order_count)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.storage_amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.delivery_amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.advertisement_fee)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.roi)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.invoice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.balance)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+        </td>
+    </tr>
+}
+
+</table>

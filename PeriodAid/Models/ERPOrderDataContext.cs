@@ -35,7 +35,9 @@
         public virtual DbSet<items> items { get; set; }
         public virtual DbSet<skus> skus { get; set; }
         public virtual DbSet<combine_items> combine_items { get; set; }
-
+        public virtual DbSet<generic_data> generic_data { get; set; }
+        public virtual DbSet<product_details> product_details { get; set; }
+        public virtual DbSet<product_generic_data> product_generic_data { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -83,8 +85,8 @@
                 .WillCascadeOnDelete(true);
             
         }
-
     }
+
     public partial class orders
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -536,6 +538,84 @@
         public decimal? sales_price { get; set; }
 
         public virtual items items { get; set; }
+    }
+
+    public partial class generic_data
+    {
+        public int id { get; set; }
+
+        public DateTime date { get; set; }
+
+        [StringLength(64)]
+        public string storename { get; set; }
+
+        public decimal sales_amount { get; set; }
+
+        public int? uv { get; set; }
+
+        public int? pv { get; set; }
+
+        public decimal? convertion { get; set; }
+
+        public decimal? guest_avg_price { get; set; }
+
+        public int? order_count { get; set; }
+
+        public decimal? storage_amount { get; set; }
+
+        public decimal? delivery_amount { get; set; }
+
+        public decimal? advertisement_fee { get; set; }
+
+        public decimal? roi { get; set; }
+
+        public bool invoice { get; set; }
+
+        public bool balance { get; set; }
+    }
+
+    public partial class product_details
+    {
+        public int id { get; set; }
+
+        public DateTime date { get; set; }
+
+        [StringLength(64)]
+        public string storename { get; set; }
+        
+        [StringLength(32)]
+        public string item_code { get; set; }
+
+        [StringLength(64)]
+        public string simple_name { get; set; }
+
+        public int sales_count { get; set; }
+
+        public decimal sales_amount { get; set; }
+    }
+
+    public partial class product_generic_data
+    {
+        public int id { get; set; }
+
+        public DateTime data { get; set; }
+
+        [StringLength(64)]
+        public string storename { get; set; }
+
+        [StringLength(32)]
+        public string item_code { get; set; }
+
+        [StringLength(64)]
+        public string simple_name { get; set; }
+
+        public int? uv { get; set; }
+
+        public int? pv { get; set; }
+
+        public int order_count { get; set; }
+
+        public int order_amount { get; set; }
     }
 
     public partial class tags
