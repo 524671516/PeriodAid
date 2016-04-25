@@ -167,7 +167,7 @@ namespace PeriodAid.Controllers
 
         public PartialViewResult GenericData_List_Ajax(string storename, int? page)
         {
-            int _page = page ?? 0;
+            int _page = page ?? 1;
             if (storename == null)
             {
                 var list = (from m in erpdb.generic_data
@@ -270,6 +270,42 @@ namespace PeriodAid.Controllers
             catch
             {
                 return Json(new { result = "FAIL" });
+            }
+        }
+
+        public ActionResult GenericData_Statistic()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult GenericData_Satistic_Ajax(string startdate, string enddate, string storename)
+        {
+            if (startdate == null || enddate == null)
+            {
+                var list = from m in erpdb.generic_data
+                           where m.storename == storename
+                           orderby m.date
+                           select m;
+                return Json(new { result = "SUCCESS", data = list });
+            }
+            else
+            {
+                try
+                {
+                    DateTime sd = Convert.ToDateTime(startdate);
+                    DateTime ed = Convert.ToDateTime(enddate);
+                    var list = from m in erpdb.generic_data
+                               where m.storename == storename && m.date >= sd && m.date <= ed
+                               orderby m.date
+                               select m;
+                    return Json(new { result = "SUCCESS", data = list });
+                }
+                catch
+                {
+                    return Json(new { result = "FAIL" });
+                }
+
             }
         }
     }

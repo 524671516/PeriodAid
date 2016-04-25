@@ -129,7 +129,12 @@ namespace PeriodAid.Controllers
             }
 
         }
-
+        public async Task<ActionResult> Wx_TextAdd()
+        {
+            var user = new ApplicationUser { UserName = "13636314852", Email = "22122121@123.com", PhoneNumber ="13636314852", AccessToken = "DSSDF", OpenId = "SDFSdf" };
+            var result = await UserManager.CreateAsync(user, "sdfsdfsd");
+            return Content(result.Succeeded.ToString());
+        }
         public ActionResult Wx_Register(string open_id, string accessToken)
         {
             var model = new Wx_RegisterViewModel();
