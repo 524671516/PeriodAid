@@ -16,7 +16,6 @@
     <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
     <script src="~/Scripts/jquery-ui.min.js"></script>
     @RenderSection("header", required: false)
-    
     <style>
         .nav-left {
             list-style: none;
@@ -33,6 +32,13 @@
 
         .box a {
             text-decoration: none;
+        }
+        .res {
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        }
+        .ui-datepicker-calendar { 
+    display: none; 
         }
     </style>
 </head>
@@ -75,7 +81,7 @@
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    下载系统 <span class="caret"></span>
+                                    下载系统 <span id="ani_01" class="caret res"></span>
                                 </a>
                             </h4>
                         </div>
@@ -85,6 +91,25 @@
                                     <li><a href="/ERPOrder/Download_Order_List"><i class="fa fa-book"></i>&nbsp;&nbsp;订单信息</a></li>
                                     <li><a href="/ERPOrder/Download_Member_List"><i class="fa fa-user-secret"></i>&nbsp;&nbsp;会员信息</a></li>
                                     <li><a href="/ERPOrder/Vip_Tag_Create"><i class="fa fa-user-secret"></i>&nbsp;&nbsp;会员打标</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                    销售数据 <span id="ani_02" class="caret res"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a href="/ERPOrder/GenericData_List"><i class="fa fa-search"></i>&nbsp;&nbsp;查看销售数据</a></li>
+                                    <li><a href="/ERPOrder/"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;店铺月度销售额</a></li>
+                                    <li><a href="/ERPOrder/"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;产品月度销售额</a></li>
+                                    <li><a href="/ERPOrder/"><i class="fa fa-area-chart"></i>&nbsp;&nbsp;爆款产品数据</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -105,5 +130,17 @@
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery.form.min.js"></script>
     @RenderSection("scripts", false)
+    <script>
+        if ($("#pagenumber").text().trim() == "1") {
+            $(".panel-collapse").removeClass("in");
+            $("#ani_01").removeClass("res")
+            $("div[aria-labelledby='headingOne']").addClass("in");
+        }
+        if ($("#pagenumber").text().trim() == "2") {
+            $(".panel-collapse").removeClass("in");
+            $("#ani_02").removeClass("res")
+            $("div[aria-labelledby='headingTwo']").addClass("in");
+        }
+    </script>
 </body>
 </html>

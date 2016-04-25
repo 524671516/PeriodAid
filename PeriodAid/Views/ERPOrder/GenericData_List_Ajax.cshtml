@@ -1,10 +1,7 @@
 ﻿@using PagedList
 @model PagedList<PeriodAid.Models.generic_data>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+<table class="table" style="width:110%;max-width:110%">
     <tr>
         <th>
             日期
@@ -91,11 +88,30 @@
             @Html.DisplayFor(modelItem => item.balance)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+            @Html.ActionLink("修改", "Edit_GenericData", new { id=item.id }, new { @class = "btn btn-sm btn-info edit-btn" }) 
+            @Html.ActionLink("删除", "Delete_GenericData", new { id=item.id }, new { @class = "btn btn-sm btn-danger del-btn" })
         </td>
     </tr>
 }
 
 </table>
+<script>
+    $(function () { 
+        $(".del-btn").click(function () {
+            var result = confirm("确定删除吗？");
+            if (result) {
+                var url = $(this).attr("href");
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+            return false;
+        });
+    })
+</script>

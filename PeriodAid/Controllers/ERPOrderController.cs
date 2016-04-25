@@ -167,7 +167,7 @@ namespace PeriodAid.Controllers
 
         public PartialViewResult GenericData_List_Ajax(string storename, int? page)
         {
-            int _page = page ?? 0;
+            int _page = page ?? 1;
             if (storename == null)
             {
                 var list = (from m in erpdb.generic_data
