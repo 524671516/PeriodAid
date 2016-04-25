@@ -1,0 +1,145 @@
+﻿@model PeriodAid.Models.generic_data
+
+@{
+    ViewBag.Title = "Create_GenericData";
+    Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
+}
+
+<h1><strong>上传销售数据</strong></h1>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="container">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>日期</small></div>
+                    <input class="input-sm form-control" type="text" id="date" name="date">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>店铺</small></div>
+                        @Html.EditorFor(model => model.storename, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                        @Html.ValidationMessageFor(model => model.storename, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div><br />
+        <div class="container">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>销售额</small></div>
+                    @Html.EditorFor(model => model.sales_amount, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.sales_amount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>库存金额</small></div>
+                    @Html.EditorFor(model => model.storage_amount, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.storage_amount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div><br />
+        <div class="container">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>浏览量</small></div>
+                    @Html.EditorFor(model => model.pv, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.pv, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>转化率</small></div>
+                    @Html.EditorFor(model => model.convertion, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.convertion, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>客单价</small></div>
+                    @Html.EditorFor(model => model.guest_avg_price, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.guest_avg_price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>访客数</small></div>
+                    @Html.EditorFor(model => model.uv, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.uv, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div><br />
+        <div class="container">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>订单数</small></div>
+                    @Html.EditorFor(model => model.order_count, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.order_count, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>运费</small></div>
+                    @Html.EditorFor(model => model.delivery_amount, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.delivery_amount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>推广费</small></div>
+                    @Html.EditorFor(model => model.advertisement_fee, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.advertisement_fee, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>ROI</small></div>
+                    @Html.EditorFor(model => model.roi, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.roi, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div><br />
+        <div class="container">
+            <div class="col-md-6">
+                <div class="control-label col-md-2"><strong>发票</strong></div>
+                <div class="checkbox col-md-2">
+                    @Html.EditorFor(model => model.invoice)
+                    @Html.ValidationMessageFor(model => model.invoice, "", new { @class = "text-danger" })
+                </div>
+                <div class="control-label col-md-2"><strong>结算</strong></div>
+                <div class="checkbox col-md-2">
+                    @Html.EditorFor(model => model.balance)
+                    @Html.ValidationMessageFor(model => model.balance, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div><br />
+        <div class="container">
+            <div class="col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $.datepicker.regional["zh-CN"] = { closeText: "关闭", prevText: "&#x3c;上月", nextText: "下月&#x3e;", currentText: "今天", monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], monthNamesShort: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"], dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"], weekHeader: "周", dateFormat: "yy-mm-dd", firstDay: 1, isRTL: !1, showMonthAfterYear: !0, yearSuffix: "年" }
+        $.datepicker.setDefaults($.datepicker.regional["zh-CN"]);
+        $("#date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFomat: 'yy-MM',
+            showButtonPanel: true,
+            onClose: function (dateText, inst) {
+                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                $(this).datepicker('setDate', new Date(year, month, 1));
+            }
+        })
+    })
+</script>
