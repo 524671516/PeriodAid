@@ -610,6 +610,7 @@
     <Content Include="Views\ERPOrder\GenericData_List_Ajax.cshtml" />
     <Content Include="Views\ERPOrder\Create_GenericData.cshtml" />
     <Content Include="Views\ERPOrder\Edit_GenericData.cshtml" />
+    <Content Include="Views\ERPOrder\GenericData_Statistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,5 +1,5 @@
-﻿@using PagedList
-@model PagedList<PeriodAid.Models.generic_data>
+﻿@model PagedList.IPagedList<PeriodAid.Models.generic_data>
+@using PagedList.Mvc; 
 
 <table class="table" style="width:110%;max-width:110%">
     <tr>
@@ -95,6 +95,7 @@
 }
 
 </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("GenericData_List_Ajax", new { page }))</div>
 <script>
     $(function () { 
         $(".del-btn").click(function () {

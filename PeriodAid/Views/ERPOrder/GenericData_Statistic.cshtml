@@ -1,0 +1,179 @@
+﻿@model PeriodAid.Models.generic_data
+
+@{
+    ViewBag.Title = "GenericData_Statistic";
+    Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-3"> <input class="form-control input-sm" id="start-date" name="start-date" placeholder="开始时间" /></div>
+    <div class="col-md-3"> <input class="form-control input-sm" id="end-date" name="end-date" placeholder="结束时间" /></div>
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div><br /><br />
+<div id="container" style="min-width:700px;height:400px"></div>
+<script src="~/Scripts/highcharts.js"></script>
+<script>
+    $(function () {
+        Date.prototype.Format = function (fmt) { //author: meizz   
+            var o = {
+                "M+": this.getMonth() + 1,                 //月份   
+                "d+": this.getDate(),                    //日   
+                "h+": this.getHours(),                   //小时   
+                "m+": this.getMinutes(),                 //分   
+                "s+": this.getSeconds(),                 //秒   
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度   
+                "S": this.getMilliseconds()             //毫秒   
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        //start--搜索
+        $.datepicker.regional["zh-CN"] = { closeText: "关闭", prevText: "&#x3c;上月", nextText: "下月&#x3e;", currentText: "今天", monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], monthNamesShort: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"], dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"], weekHeader: "周", dateFormat: "yy-mm-dd", firstDay: 1, isRTL: !1, showMonthAfterYear: !0, yearSuffix: "年" }
+        $.datepicker.setDefaults($.datepicker.regional["zh-CN"]);
+        $("#start-date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFomat: 'yy-MM',
+            showButtonPanel: false,
+            onClose: function (dateText, inst) {
+                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                $(this).datepicker('setDate', new Date(year, month, 1));
+            }
+        });
+        $("#end-date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFomat: 'yy-MM',
+            showButtonPanel: false,
+            onClose: function (dateText, inst) {
+                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                $(this).datepicker('setDate', new Date(year, month, 1));
+            }
+        });
+        $("#search-btn").click(function () {
+            var start = $("#start-date").val();
+            var end = $("#end-date").val();
+            var query = $("#search-query").val();
+            var link_url = "/ERPOrder/GenericData_Satistic_Ajax"
+            $.ajax({
+                url: link_url,
+                type: "post",
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    storename: query
+                },
+                success: function (data) {
+                    var resulttotal = data.data;
+                    var datearray = new Array();
+                    var order_count = new Array();
+                    var delivery_amount = new Array();
+                    var advertisement_fee = new Array();
+                    var roi = new Array();
+                    for (var i = 0; i < resulttotal.length; i++) {
+                        var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
+                        var newdate = new Date(date)
+                        datearray.push(newdate.Format("MM-dd"));
+                        var order = resulttotal[i].order_count
+                        order_count.push(order);
+                        var delivery = resulttotal[i].delivery_amount
+                        delivery_amount.push(delivery);
+                        var advertisement = resulttotal[i].advertisement_fee;
+                        advertisement_fee.push(advertisement);
+                        var ro = resulttotal[i].roi
+                        roi.push(ro);
+                    }
+                    //start--店铺月度销售额图表
+                    Highcharts.setOptions({
+                        lang: {
+                            numericSymbols: null
+                        }
+                    });//Y轴数值单位限制，默认值[k,M,G,T,P,E]
+                    $('#container').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: '店铺月度销售额图表'
+                        },
+                        //subtitle: {
+                        //    text: 'Source: WorldClimate.com'
+                        //},
+                        xAxis: {
+                            categories: datearray
+                        },
+                        yAxis: [{
+                            min: 0,
+                            title: {
+                                text: '费用（元）'
+                            }
+                        }, { // Primary yAxis
+                            //labels: {
+                            //    format: '{value}°C',
+                            //    style: {
+                            //        color: '#89A54E'
+                            //    }
+                            //},
+                            labels: {
+                                style: { color: '#89A54E' }
+                            },
+                            title: {
+                                text: '数量（个）',
+                                style: {
+                                    color: '#89A54E'
+                                }
+                            },
+                            opposite: true
+                        }],
+                        tooltip: {
+                            shared: true,
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: [{
+                            name: '运费',
+                            data: delivery_amount
+
+                        }, {
+                            name: '推广费',
+                            data: advertisement_fee
+
+                        }, {
+                            name: 'ROI',
+                            data: roi
+
+                        }, {
+                            name: '订单数',
+                            color: '#89A54E',
+                            type: 'spline',
+                            yAxis: 1,
+                            data: order_count,
+                            //tooltip: {
+                            //    valueSuffix: '°C'
+                            //}
+                        }]
+                    });//end
+                }
+            })
+        })//end
+       
+    });
+    
+</script>
