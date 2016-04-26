@@ -482,10 +482,16 @@ namespace PeriodAid.Controllers
             string nonce_str = CommonUtilities.generateNonce();
             string out_trade_no = "WXJSAPI_" + DateTime.Now.Ticks;
             Random r = new Random();
-            int total_fee = r.Next(100, 160) * 10;
+            int total_fee = 1580;
+            int baseRandom = r.Next(0, 99);
+            if (baseRandom < 3)
+            {
+                total_fee = r.Next(40, 158)*10;
+            }
+            else
+                total_fee = r.Next(108, 158) * 10;
             try
             {
-                
                 Wx_OrderResult result = createUnifiedOrder(_openId, body, out_trade_no, total_fee, WeChatUtilities.TRADE_TYPE_JSAPI,"");
                 if(result.Result == "SUCCESS")
                 {

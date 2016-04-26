@@ -598,7 +598,7 @@
     {
         public int id { get; set; }
 
-        public DateTime data { get; set; }
+        public DateTime date { get; set; }
 
         [StringLength(64)]
         public string storename { get; set; }
@@ -616,6 +616,10 @@
         public int order_count { get; set; }
 
         public int order_amount { get; set; }
+
+        public int? product_unit { get; set; }
+
+        public decimal? convertion { get; set; }
     }
 
     public partial class tags

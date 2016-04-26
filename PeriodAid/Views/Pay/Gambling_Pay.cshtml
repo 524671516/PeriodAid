@@ -85,12 +85,8 @@
             }
         }
 
-        .section1{
-            background: url(/Content/images/wx_gambling_background.jpg) 50% no-repeat;
-        }
-
         .btn-bg{
-            background-color:#fe5051; padding:20px 0;
+            height:0px; position:absolute;
         }
     </style>
 </head>
@@ -115,42 +111,18 @@
         </div>
     </div>
     <div class="hidden">
-        <!--
-            <span id="appId">@ViewBag.appId</span>
-            <span id="timeStamp">@ViewBag.timeStamp</span>
-            <span id="nonceStr">@ViewBag.nonceStr</span>
-            <span id="package">@ViewBag.package</span>
-            <span id="signType">@ViewBag.signType</span>
-            <span id="sign">@ViewBag.sign</span>
-        -->
+        
         <span id="openId">@ViewBag.openId</span>
         <span id="prepay_id"></span>
     </div>
-
-    <!--<div id="background-container">
-        <div class="section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center" id="gambling-container">
-                        <button id="startGambling" class="btn btn-default btn-lg">开始摇一摇</button>
-                    </div>
-                    <div class="col-12 text-center hidden" id="result-container">
-                        <h2><span id="moneyView"></span></h2><br />
-                        <button class="btn btn-success btn-lg" id="paybutton">立即支付</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-        -->
     <div class="container-fluid">
         <div class="row">
             @Html.AntiForgeryToken()
-            <img src="~/Content/images/wx_gambling_background_01.jpg" class="img-responsive" />
+            <img src="~/Content/images/wx_gambling_background02_01.jpg" class="img-responsive" />
             <div class="col-xs-12 text-center btn-bg">
                 <a href="javascript:void(0);" class="btn btn-success btn-lg" id="startGambling">&nbsp;&nbsp;开始摇一摇&nbsp;&nbsp;</a>
             </div>
-            <img src="~/Content/images/wx_gambling_background_03.jpg" class="img-responsive" />
+            <img src="~/Content/images/wx_gambling_background02_02.jpg" class="img-responsive" />
         </div>
     </div>
 

@@ -310,6 +310,9 @@
     <Content Include="Content\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Content\images\upfeathers.png" />
     <Content Include="Content\images\wx_gambling_background.jpg" />
+    <Content Include="Content\images\wx_gambling_background02.jpg" />
+    <Content Include="Content\images\wx_gambling_background02_01.jpg" />
+    <Content Include="Content\images\wx_gambling_background02_02.jpg" />
     <Content Include="Content\images\wx_gambling_background_01.jpg" />
     <Content Include="Content\images\wx_gambling_background_03.jpg" />
     <Content Include="Content\images\benefits_done.png" />
@@ -611,6 +614,16 @@
     <Content Include="Views\ERPOrder\Create_GenericData.cshtml" />
     <Content Include="Views\ERPOrder\Edit_GenericData.cshtml" />
     <Content Include="Views\ERPOrder\GenericData_Statistic.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_List.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_List_Ajax.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_Create.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_Edit.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_Statistic.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_List.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_List_Ajax.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_Create.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_Edit.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_Statistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

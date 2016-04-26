@@ -1,0 +1,78 @@
+﻿@model IEnumerable<PeriodAid.Models.product_generic_data>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            日期
+        </th>
+        <th>
+            店铺名称
+        </th>
+        <th>
+            商品编码
+        </th>
+        <th>
+            商品简称
+        </th>
+        <th>
+            访客数
+        </th>
+        <th>
+            浏览量
+        </th>
+        <th>
+            订单数
+        </th>
+        <th>
+            订单金额
+        </th>
+        <th>
+            转化率
+        </th>
+        <th>下单件数</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.storename)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.item_code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.simple_name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.uv)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.pv)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.order_count)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.order_amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.convertion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.product_unit)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+        </td>
+    </tr>
+}
+
+</table>

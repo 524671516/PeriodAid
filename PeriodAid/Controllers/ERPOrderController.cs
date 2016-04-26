@@ -159,7 +159,7 @@ namespace PeriodAid.Controllers
             await util.Download_ERPItems();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-
+        // 0422 店铺运营数据
         public ActionResult GenericData_List()
         {
             return View();
@@ -297,6 +297,278 @@ namespace PeriodAid.Controllers
                     DateTime ed = Convert.ToDateTime(enddate);
                     var list = from m in erpdb.generic_data
                                where m.storename == storename && m.date >= sd && m.date <= ed
+                               orderby m.date
+                               select m;
+                    return Json(new { result = "SUCCESS", data = list });
+                }
+                catch
+                {
+                    return Json(new { result = "FAIL" });
+                }
+
+            }
+        }
+        // 0426 产品销售明细
+        public ActionResult Product_Details_List()
+        {
+            return View();
+        }
+        public ActionResult Product_Details_List_Ajax(string storename, string date)
+        {
+            DateTime _date = Convert.ToDateTime(date);
+            var list = from m in erpdb.product_details
+                       where m.storename == storename && m.date == _date
+                       select m;
+            return PartialView(list);
+        }
+        public ActionResult Product_Details_Create()
+        {
+            product_details data = new product_details();
+            return View(data);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Product_Details_Create(product_details model)
+        {
+            if (ModelState.IsValid)
+            {
+                product_details item = new product_details();
+                if (TryUpdateModel(item))
+                {
+                    erpdb.product_details.Add(item);
+                    erpdb.SaveChanges();
+                    return RedirectToAction("Product_Details_List");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+        public ActionResult Product_Details_Edit(int id)
+        {
+            try
+            {
+                var item = erpdb.product_details.SingleOrDefault(m => m.id == id);
+                if (item != null)
+                {
+                    return View(item);
+                }
+                else
+                    return View("Error");
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Product_Details_Edit(product_details model)
+        {
+            if (ModelState.IsValid)
+            {
+                product_details item = new product_details();
+                if (TryUpdateModel(item))
+                {
+                    erpdb.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    erpdb.SaveChanges();
+                    return RedirectToAction("Product_Details_List");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+        [HttpPost]
+        public ActionResult Product_Details_Delete(int id)
+        {
+            try
+            {
+                var item = erpdb.product_details.SingleOrDefault(m => m.id == id);
+                if (item != null)
+                {
+                    erpdb.product_details.Remove(item);
+                    erpdb.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "FAIL" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        public ActionResult Product_Details_Statistic()
+        {
+            return View();
+        }
+        [HttpPost]
+        public JsonResult Product_Details_Statistic_Ajax(string storename, string startdate, string enddate, string itemcode)
+        {
+            if (startdate == null || enddate == null)
+            {
+                var list = from m in erpdb.product_details
+                           where m.storename == storename && m.item_code == itemcode
+                           orderby m.date
+                           select m;
+                return Json(new { result = "SUCCESS", data = list });
+            }
+            else
+            {
+                try
+                {
+                    DateTime sd = Convert.ToDateTime(startdate);
+                    DateTime ed = Convert.ToDateTime(enddate);
+                    var list = from m in erpdb.product_details
+                               where m.storename == storename && m.date >= sd && m.date <= ed && m.item_code== itemcode
+                               orderby m.date
+                               select m;
+                    return Json(new { result = "SUCCESS", data = list });
+                }
+                catch
+                {
+                    return Json(new { result = "FAIL" });
+                }
+
+            }
+        }
+        // 0426 产品运营数据
+        public ActionResult Product_Generic_Data_List()
+        {
+            return View();
+        }
+        public ActionResult Product_Generic_Data_List_Ajax(string storename, string date)
+        {
+            DateTime _date = Convert.ToDateTime(date);
+            var list = from m in erpdb.product_generic_data
+                       where m.storename == storename && m.date == _date
+                       select m;
+            return PartialView(list);
+        }
+        public ActionResult Product_Generic_Data_Create()
+        {
+            product_generic_data data = new product_generic_data();
+            return View(data);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Product_Generic_Data_Create(product_details model)
+        {
+            if (ModelState.IsValid)
+            {
+                product_generic_data item = new product_generic_data();
+                if (TryUpdateModel(item))
+                {
+                    erpdb.product_generic_data.Add(item);
+                    erpdb.SaveChanges();
+                    return RedirectToAction("Product_Generic_Data_List");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+        public ActionResult Product_Generic_Data_Edit(int id)
+        {
+            try
+            {
+                var item = erpdb.product_generic_data.SingleOrDefault(m => m.id == id);
+                if (item != null)
+                {
+                    return View(item);
+                }
+                else
+                    return View("Error");
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Product_Generic_Data_Edit(product_generic_data model)
+        {
+            if (ModelState.IsValid)
+            {
+                product_generic_data item = new product_generic_data();
+                if (TryUpdateModel(item))
+                {
+                    erpdb.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    erpdb.SaveChanges();
+                    return RedirectToAction("Product_Generic_Data_List");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+        [HttpPost]
+        public ActionResult Product_Generic_Data_Delete(int id)
+        {
+            try
+            {
+                var item = erpdb.product_generic_data.SingleOrDefault(m => m.id == id);
+                if (item != null)
+                {
+                    erpdb.product_generic_data.Remove(item);
+                    erpdb.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "FAIL" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        public ActionResult Product_Generic_Data_Statistic()
+        {
+            return View();
+        }
+        [HttpPost]
+        public JsonResult Product_Generic_Data_Statistic_Ajax(string storename, string startdate, string enddate, string itemcode)
+        {
+            if (startdate == null || enddate == null)
+            {
+                var list = from m in erpdb.product_generic_data
+                           where m.storename == storename && m.item_code == itemcode
+                           orderby m.date
+                           select m;
+                return Json(new { result = "SUCCESS", data = list });
+            }
+            else
+            {
+                try
+                {
+                    DateTime sd = Convert.ToDateTime(startdate);
+                    DateTime ed = Convert.ToDateTime(enddate);
+                    var list = from m in erpdb.product_generic_data
+                               where m.storename == storename && m.date >= sd && m.date <= ed && m.item_code == itemcode
                                orderby m.date
                                select m;
                     return Json(new { result = "SUCCESS", data = list });
