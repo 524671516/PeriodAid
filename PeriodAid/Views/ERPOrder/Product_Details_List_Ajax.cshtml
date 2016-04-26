@@ -1,0 +1,57 @@
+﻿@model IEnumerable<PeriodAid.Models.product_details>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            日期
+        </th>
+        <th>
+            店铺名称
+        </th>
+        <th>
+            商品编码
+        </th>
+        <th>
+            商品简称
+        </th>
+        <th>
+            销售数量
+        </th>
+        <th>
+            销售金额
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.storename)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.item_code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.simple_name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sales_count)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sales_amount)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+        </td>
+    </tr>
+}
+
+</table>
