@@ -27,8 +27,12 @@
             <div class="col-md-4">
                 <div class="input-group">
                     <div class="input-group-addon"><small>店铺</small></div>
-                    @Html.EditorFor(model => model.storename, new { htmlAttributes = new { @class = "form-control input-sm"} })
+                    <select class="form-control input-sm" id="storename" name="storename">
+                    @{
+                        Html.RenderPartial("ERP_StoreList");
 
+                    }</select>
+                    
                 </div>
                 <div>@Html.ValidationMessageFor(model => model.storename, "", new { @class = "text-danger" })</div>
             </div>
