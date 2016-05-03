@@ -76,15 +76,16 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult LoginManager()
+        public ActionResult LoginManager(int? state)
         {
             string user_Agent = HttpContext.Request.UserAgent;
+            int _state = state ?? 0;
             if(user_Agent.Contains("MicroMessenger"))
             {
                 //return Content("微信");
                 string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/WxAccount/Wx_Authorization");
                 string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
-                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + "0" + "#wechat_redirect";
+                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + _state + "#wechat_redirect";
 
                 return Redirect(url);
             }
@@ -128,12 +129,6 @@ namespace PeriodAid.Controllers
                 return Content("1");
             }
 
-        }
-        public async Task<ActionResult> Wx_TextAdd()
-        {
-            var user = new ApplicationUser { UserName = "13636314852", Email = "22122121@123.com", PhoneNumber ="13636314852", AccessToken = "DSSDF", OpenId = "SDFSdf" };
-            var result = await UserManager.CreateAsync(user, "sdfsdfsd");
-            return Content(result.Succeeded.ToString());
         }
         public ActionResult Wx_Register(string open_id, string accessToken)
         {
@@ -302,9 +297,12 @@ namespace PeriodAid.Controllers
                 return Content("Failure");
         }
 
-        public async Task<ActionResult> TestLogin(string username)
+        public async Task<ActionResult> TestLogin(string username, int systemid)
         {
+            string _username = username ?? "13636314852";
             var user = UserManager.FindByName("13636314852");
+            user.DefaultSystemId = systemid;
+            UserManager.Update(user);
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return Content("Success");
         }

@@ -11,6 +11,7 @@
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m=>m.ManagerUserName)
+    @Html.HiddenFor(m=>m.Off_System_Id)
     <div class="row">
         <div class="col-md-3">
             <select multiple id="selectList_add" class="form-control input-sm" style="height:240px; font-size:1em;"></select>

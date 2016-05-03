@@ -3,7 +3,7 @@
 @using (Html.BeginForm("Ajax_AddSeller", "OfflineSales", FormMethod.Post, new { @id="ajaxaddform"}))
 {
     @Html.AntiForgeryToken()
-    
+    @Html.HiddenFor(m=>m.Off_System_Id)
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">

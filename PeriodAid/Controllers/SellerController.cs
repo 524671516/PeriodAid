@@ -65,16 +65,16 @@ namespace PeriodAid.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult LoginManager()
+        public ActionResult LoginManager(int? systemid)
         {
-
+            int _systemid = systemid ?? 1;
             string user_Agent = HttpContext.Request.UserAgent;
             if (user_Agent.Contains("MicroMessenger"))
             {
                 //return Content("微信");
                 string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Seller/Authorization");
                 string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
-                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + "0" + "#wechat_redirect";
+                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + _systemid + "#wechat_redirect";
 
                 return Redirect(url);
             }
@@ -88,42 +88,39 @@ namespace PeriodAid.Controllers
         {
             //return Content(code);
             //string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
-            if (state == "0")
+            try
             {
-                // 微信普通登陆
                 WeChatUtilities wechat = new WeChatUtilities();
                 var jat = wechat.getWebOauthAccessToken(code);
                 var user = UserManager.FindByEmail(jat.openid);
+                int systemid = Convert.ToInt32(state);
                 if (user != null)
                 {
                     //var user = UserManager.FindByName("13636314852");
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                    return RedirectToAction("Wx_Seller_Redirect");
+                    string[] systemArray = user.OffSalesSystem.Split(',');
+                    if (systemArray.Contains(state))
+                    {
+                        user.DefaultSystemId = systemid;
+                        UserManager.Update(user);
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        return RedirectToAction("Wx_Seller_Redirect");
+                    }
                 }
                 //return Content(jat.openid + "," + jat.access_token);
-                return RedirectToAction("Wx_Register", "Seller", new { open_id = jat.openid, accessToken = jat.access_token });
+                return RedirectToAction("Wx_Register", "Seller", new { open_id = jat.openid, accessToken = jat.access_token, systemid = systemid });
             }
-            else if (state == "1")
-            {
-                // 微信信息更新
-                WeChatUtilities wechat = new WeChatUtilities();
-                var jat = wechat.getWebOauthAccessToken(code);
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                user.AccessToken = jat.access_token;
-                UserManager.Update(user);
-                return RedirectToAction("Wx_UpdateUserInfo");
-            }
-            else
+            catch
             {
                 return View("Error");
             }
         }
         [AllowAnonymous]
-        public ActionResult Wx_Register(string open_id, string accessToken)
+        public ActionResult Wx_Register(string open_id, string accessToken, int systemid)
         {
-            var model = new Wx_RegisterViewModel();
+            var model = new Wx_OffRegisterViewModel();
             model.Open_Id = open_id;
             model.AccessToken = accessToken;
+            model.SystemId = systemid;
             return View();
         }
         [AllowAnonymous]
@@ -133,13 +130,7 @@ namespace PeriodAid.Controllers
         {
             if (ModelState.IsValid)
             {
-                // 手机号校验
-                var exist_user = UserManager.FindByName(model.Mobile);
-                if (exist_user != null)
-                {
-                    ModelState.AddModelError("Mobile", "手机号已注册");
-                    return View(model);
-                }
+                
                 // 验证手机码
                 PeriodAidDataContext smsDB = new PeriodAidDataContext();
                 var smsRecord = (from m in smsDB.SMSRecord
@@ -163,36 +154,73 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-
-                    var user = new ApplicationUser { UserName = model.Mobile, Email = model.Open_Id, PhoneNumber = model.Mobile, AccessToken = model.AccessToken, OpenId = model.Open_Id };
-                    var result = await UserManager.CreateAsync(user, open_id);
-                    if (result.Succeeded)
+                    // 手机号校验
+                    var exist_user = UserManager.FindByName(model.Mobile);
+                    if (exist_user != null)
                     {
-                        smsRecord.Status = true;
-                        smsDB.SaveChanges();
-                        user.NickName = model.NickName;
-                        UserManager.Update(user);
-                        await UserManager.AddToRoleAsync(user.Id, "Seller");
-                        //Roles.AddUserToRole(user.UserName, "Seller");
-                        Off_Membership_Bind ofb = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == user.UserName);
-                        if (ofb == null)
+                        // 是否属于当前商家
+                        string[] SystemArray = exist_user.OffSalesSystem.Split(',');
+                        if (SystemArray.Contains(model.SystemId.ToString()))
                         {
-                            ofb = new Off_Membership_Bind()
-                            {
-                                ApplicationDate = DateTime.Now,
-                                Bind = false,
-                                Mobile = model.Mobile,
-                                NickName = model.NickName,
-                                UserName = user.UserName
-                            };
-                            offlineDB.Off_Membership_Bind.Add(ofb);
-                            await offlineDB.SaveChangesAsync();
+                            ModelState.AddModelError("Mobile", "手机号已注册");
+                            return View(model);
                         }
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToAction("Wx_Seller_Home");
+                        else
+                        {
+                            List<string> SystemList = SystemArray.ToList();
+                            SystemList.Add(model.SystemId.ToString());
+                            exist_user.OffSalesSystem =  string.Join(",", SystemList.ToArray());
+                            exist_user.DefaultSystemId = model.SystemId;
+                            UserManager.Update(exist_user);
+                            Off_Membership_Bind ofb = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == exist_user.UserName && m.Off_System_Id == model.SystemId);
+                            if (ofb == null)
+                            {
+                                ofb = new Off_Membership_Bind()
+                                {
+                                    ApplicationDate = DateTime.Now,
+                                    Bind = false,
+                                    Off_System_Id = model.SystemId,
+                                    Mobile = model.Mobile,
+                                    NickName = model.NickName,
+                                    UserName = model.Mobile
+                                };
+                                offlineDB.Off_Membership_Bind.Add(ofb);
+                                await offlineDB.SaveChangesAsync();
+                            }
+                            await SignInManager.SignInAsync(exist_user, isPersistent: false, rememberBrowser: false);
+                            return RedirectToAction("Wx_Seller_Home");
+                        }
                     }
                     else
-                        return Content("Failure");
+                    {
+                        var user = new ApplicationUser { UserName = model.Mobile, NickName = model.NickName, Email = model.Open_Id, PhoneNumber = model.Mobile, AccessToken = model.AccessToken, OpenId = model.Open_Id, DefaultSystemId = model.SystemId, OffSalesSystem = model.SystemId.ToString() };
+                        var result = await UserManager.CreateAsync(user, open_id);
+                        if (result.Succeeded)
+                        {
+                            smsRecord.Status = true;
+                            smsDB.SaveChanges();
+                            await UserManager.AddToRoleAsync(user.Id, "Seller");
+                            Off_Membership_Bind ofb = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == model.SystemId);
+                            if (ofb == null)
+                            {
+                                ofb = new Off_Membership_Bind()
+                                {
+                                    ApplicationDate = DateTime.Now,
+                                    Bind = false,
+                                    Off_System_Id = model.SystemId,
+                                    Mobile = model.Mobile,
+                                    NickName = model.NickName,
+                                    UserName = user.UserName
+                                };
+                                offlineDB.Off_Membership_Bind.Add(ofb);
+                                await offlineDB.SaveChangesAsync();
+                            }
+                            await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                            return RedirectToAction("Wx_Seller_Home");
+                        }
+                        else
+                            return Content("Failure");
+                    }
                 }
             }
             else
@@ -274,7 +302,7 @@ namespace PeriodAid.Controllers
                 return RedirectToAction("Wx_Seller_Register");
             }
         }
-
+        /* -- 暂时删除
         public ActionResult Wx_Seller_Register()
         {
             Wx_SellerRegisterViewModel model = new Wx_SellerRegisterViewModel();
@@ -307,14 +335,16 @@ namespace PeriodAid.Controllers
                 ModelState.AddModelError("", "注册失败");
                 return View(model);
             }
-        }
+        }*/
 
 
         // 促销员首页
         public async Task<ActionResult> Wx_Seller_Home()
         {
+            ApplicationUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var userbind = from m in offlineDB.Off_Membership_Bind
                            where m.UserName == User.Identity.Name
+                           && m.Off_System_Id == user.DefaultSystemId
                            select new { SellerId = m.Off_Seller_Id, StoreName = m.Off_Seller.Off_Store.StoreName };
             if (userbind != null)
             {
@@ -327,7 +357,7 @@ namespace PeriodAid.Controllers
                 {
                     ViewBag.bindlist = new SelectList(userbind, "SellerId", "StoreName");
                 }
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                //var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 ViewBag.NickName = user.NickName;
                 ViewBag.Mobile = user.PhoneNumber;
                 ViewBag.SellerId = userbind.FirstOrDefault().SellerId;
@@ -347,9 +377,10 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public PartialViewResult Wx_Seller_Panel(int? SellerId)
+        public async Task<PartialViewResult> Wx_Seller_Panel(int? SellerId)
         {
-            int storeId = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId).StoreId;
+            ApplicationUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            int storeId = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId && m.Off_System_Id == user.DefaultSystemId).StoreId;
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
             int dow = (int)today.DayOfWeek;
             //int dow = (int)new DateTime(2016, 04, 03).DayOfWeek;
@@ -367,7 +398,7 @@ namespace PeriodAid.Controllers
                 var l = dowinfo.FirstOrDefault();
                 ViewBag.AVG_Info = (l.BL ?? 0) + (l.LM ?? 0) + (l.HN ?? 0) + (l.BR ?? 0) + (l.DT ?? 0);
             }
-            var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == storeId);
+            var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == storeId && m.Off_System_Id == user.DefaultSystemId);
             ViewBag.ReportCount = offlineDB.Off_Checkin.Where(m => m.Off_Seller_Id == SellerId && m.Status == 2).Count();
             ViewBag.SellerId = SellerId;
             if (item != null)
@@ -903,8 +934,10 @@ namespace PeriodAid.Controllers
         }
         public bool Wx_Seller_ConfirmSellerId(int SellerId)
         {
+            ApplicationUser user = UserManager.FindById(User.Identity.GetUserId());
             var userbind = (from m in offlineDB.Off_Membership_Bind
                             where m.UserName == User.Identity.Name
+                            && m.Off_System_Id == user.DefaultSystemId
                             select m.Off_Seller_Id);
             if (userbind.Contains(SellerId))
                 return true;
@@ -929,7 +962,7 @@ namespace PeriodAid.Controllers
             ViewBag.NickName = user.NickName;
             ViewBag.Mobile = user.PhoneNumber;
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id== user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var today_schedule = from m in offlineDB.Off_Checkin_Schedule
                                  where storelist.Contains(m.Off_Store_Id)
@@ -960,7 +993,7 @@ namespace PeriodAid.Controllers
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var today_schedule = from m in offlineDB.Off_Checkin_Schedule
                                  where storelist.Contains(m.Off_Store_Id)
@@ -1043,7 +1076,7 @@ namespace PeriodAid.Controllers
         public async Task<ActionResult> Wx_Manager_UnReportList()
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var list = from m in offlineDB.Off_Checkin
                        where m.Status == 3 &&
@@ -1286,7 +1319,7 @@ namespace PeriodAid.Controllers
         {
             ViewBag.today = DateTime.Now;
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = from m in manager.Off_Store
                             group m by m.StoreSystem into g
                             select new { Key = g.Key };
@@ -1305,7 +1338,7 @@ namespace PeriodAid.Controllers
             {
                 dow = 7;
             }
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Where(m => m.StoreSystem == storesystem).Select(m => m.Id);
             var listview = from m in offlineDB.Off_Checkin
                            where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
@@ -1329,7 +1362,7 @@ namespace PeriodAid.Controllers
                            };
             //var storelist = list.Select(m => m.StoreId);
             var avglist = from m in offlineDB.Off_AVG_SalesData
-                          where m.DayOfWeek == dow &&
+                          where m.DayOfWeek == dow && m.Off_System_Id == user.DefaultSystemId &&
                           storelist.Contains(m.StoreId)
                           select new { StoreId = m.StoreId, AVG_Total = ((m.AVG_LEMON ?? 0) + (m.AVG_HONEY ?? 0) + (m.AVG_DATES ?? 0) + (m.AVG_BROWN ?? 0) + (m.AVG_BLACK ?? 0)) };
 
@@ -1386,6 +1419,7 @@ namespace PeriodAid.Controllers
             if (ModelState.IsValid)
             {
                 Wx_ManagerReportListViewModel item = new Wx_ManagerReportListViewModel();
+                ApplicationUser manager = UserManager.FindById(User.Identity.GetUserId());
                 if (TryUpdateModel(item))
                 {
                     var record = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == item.Id);
@@ -1393,7 +1427,7 @@ namespace PeriodAid.Controllers
                     record.Bonus_User = User.Identity.Name;
                     record.Bonus = item.Bonus;
                     offlineDB.Entry(record).State = System.Data.Entity.EntityState.Modified;
-                    var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == record.Off_Seller_Id);
+                    var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == record.Off_Seller_Id && m.Off_System_Id== manager.DefaultSystemId);
                     
                     if (binduser == null)
                     {
@@ -1457,7 +1491,7 @@ namespace PeriodAid.Controllers
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             DateTime today = Convert.ToDateTime(date);
             ViewBag.Today = today;
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var schedulelist = from m in offlineDB.Off_Checkin_Schedule
                                where m.Subscribe == today
@@ -1518,13 +1552,15 @@ namespace PeriodAid.Controllers
                                      select m;
                     if (exist_list.Count() == 0)
                     {
+                        var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                         Off_Checkin_Schedule item = new Off_Checkin_Schedule()
                         {
                             Off_Store_Id = model.Off_Store_Id,
                             Subscribe = model.Subscribe,
                             Standard_Salary = model.Standard_Salary,
                             Standard_CheckIn = Convert.ToDateTime(model.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckIn),
-                            Standard_CheckOut = Convert.ToDateTime(model.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckOut)
+                            Standard_CheckOut = Convert.ToDateTime(model.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckOut),
+                            Off_System_Id = user.DefaultSystemId
                         };
                         offlineDB.Off_Checkin_Schedule.Add(item);
                         offlineDB.SaveChanges();
@@ -1569,7 +1605,8 @@ namespace PeriodAid.Controllers
                                      where m.ManagerUserName.Contains(User.Identity.Name)
                                      && today >= m.StartTime && today < m.FinishTime
                                      select m).Count();
-            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
             if (task == null)
             {
                 ViewBag.CheckInCount = 0;
@@ -1582,10 +1619,11 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_AddCheckIn()
         {
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
             ViewBag.NickName = manager.NickName;
             var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name);
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == manager.UserName && m.Off_System_Id == user.DefaultSystemId);
             WeChatUtilities utilities = new WeChatUtilities();
             string _url = ViewBag.Url = Request.Url.ToString();
             ViewBag.AppId = utilities.getAppId();
@@ -1606,7 +1644,8 @@ namespace PeriodAid.Controllers
                     TaskDate = today,
                     Status = (int)ManagerTaskStatus.Reported,
                     UserName = User.Identity.Name,
-                    NickName = manager.NickName
+                    NickName = manager.NickName,
+                    Off_System_Id = user.DefaultSystemId
                 };
                 offlineDB.Off_Manager_Task.Add(item);
                 await offlineDB.SaveChangesAsync();
@@ -1623,7 +1662,8 @@ namespace PeriodAid.Controllers
             {
                 Off_Manager_CheckIn item = new Off_Manager_CheckIn();
                 var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name);
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
                 if (TryUpdateModel(item))
                 {
                     item.Off_Manager_Task = task;
@@ -1636,10 +1676,11 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
                 ViewBag.NickName = manager.NickName;
                 var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.UserName == User.Identity.Name && m.Status == 0);
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.UserName == User.Identity.Name && m.Status == 0 && m.Off_System_Id == user.DefaultSystemId);
                 WeChatUtilities utilities = new WeChatUtilities();
                 string _url = ViewBag.Url = Request.Url.ToString();
                 ViewBag.AppId = utilities.getAppId();
@@ -1655,8 +1696,9 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_CheckInView()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Manager_Task
-                       where m.UserName == User.Identity.Name
+                       where m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId
                        && m.Status == 0
                        orderby m.TaskDate descending
                        select m;
@@ -1684,9 +1726,9 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_TaskReport(int? id)
         {
-
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Manager_Task
-                       where m.UserName == User.Identity.Name
+                       where m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId
                        && m.Status == 0
                        orderby m.TaskDate descending
                        select m;
@@ -1757,7 +1799,8 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_Tools()
         {
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
             ViewBag.NickName = manager.NickName;
             ViewBag.Mobile = manager.Mobile;
             return View();
@@ -1767,8 +1810,10 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Senior")]
         public ActionResult Wx_Senior_AllCheckInList()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Manager_Task
                        where m.Status == 0
+                       && m.Off_System_Id == user.DefaultSystemId
                        group m by m.TaskDate into g
                        select new { g.Key };
             list = list.OrderByDescending(m => m.Key);
@@ -1786,8 +1831,10 @@ namespace PeriodAid.Controllers
         public ActionResult Wx_Senior_AllCheckInList_Ajax(string date)
         {
             var _date = Convert.ToDateTime(date);
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Manager_Task
                        where m.TaskDate == _date && m.Status >= 0
+                       && m.Off_System_Id == user.DefaultSystemId
                        select m;
             return PartialView(list);
         }
@@ -1820,8 +1867,10 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult Wx_Manager_AjaxSellerName(string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Seller
-                       where m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query)
+                       where (m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query))
+                       && m.Off_System_Id == user.DefaultSystemId
                        select new { Id = m.Id, Name = m.Name, Store = m.Off_Store.StoreName };
             return Json(new { result = "SUCCESS", data = list.Take(5) });
         }
@@ -1838,9 +1887,10 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_AnnouncementList()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
             var list = from m in offlineDB.Off_Manager_Announcement
-                       where m.ManagerUserName.Contains(User.Identity.Name)
+                       where m.Off_System_Id == user.DefaultSystemId && m.ManagerUserName.Contains(user.UserName)
                        && today >= m.StartTime && today < m.FinishTime
                        orderby m.Status, m.Priority descending, m.SubmitTime descending
                        select m;
@@ -1851,11 +1901,11 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_Request_Create()
         {
-            Off_Manager_Request request = new Off_Manager_Request();
-            request.ManagerUserName = User.Identity.Name;
-            request.Status = 0;
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            Off_Manager_Request request = new Off_Manager_Request();
+            request.ManagerUserName = user.UserName;
+            request.Status = 0;
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
             ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
             List<Object> typelist = new List<object>();
@@ -1895,7 +1945,7 @@ namespace PeriodAid.Controllers
             {
                 ModelState.AddModelError("", "发生错误");
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
                 var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
                 ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
                 List<Object> typelist = new List<object>();
@@ -1968,12 +2018,13 @@ namespace PeriodAid.Controllers
         }
         // 0328 督导需求列表
         [Authorize(Roles = "Manager")]
-        public ActionResult Wx_Manager_Request_List()
+        public async Task<ActionResult> Wx_Manager_Request_List()
         {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (User.IsInRole("Senior"))
             {
                 var list = from m in offlineDB.Off_Manager_Request
-                           where m.Status >= 0
+                           where m.Status >= 0 && m.Off_Store.Off_System_Id == user.DefaultSystemId
                            orderby m.Status, m.Id descending
                            select m;
                 return View(list);
@@ -1981,7 +2032,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = from m in offlineDB.Off_Manager_Request
-                           where m.Status >= 0 && m.ManagerUserName == User.Identity.Name
+                           where m.Status >= 0 && m.ManagerUserName == User.Identity.Name && m.Off_Store.Off_System_Id == user.DefaultSystemId
                            orderby m.Status, m.Id descending
                            select m;
                 return View(list);
@@ -2001,7 +2052,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0328 审核督导列表
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Senior")]
         public ActionResult Wx_Manager_Request_Check(int id)
         {
             var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
@@ -2079,8 +2130,10 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Senior")]
         public ActionResult Wx_Manager_BonusList_Ajax()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_BonusRequest
                        where m.Status == 0
+                       && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
                        orderby m.Off_Checkin.Off_Checkin_Schedule.Subscribe
                        select m;
             return PartialView(list);
@@ -2147,8 +2200,10 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "Senior")]
         public ActionResult Wx_Manager_BonusHistory_Ajax()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_BonusRequest
                        where m.Status > 0
+                       && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
                        orderby m.CommitTime descending
                        select m).Take(30);
             return PartialView(list);
@@ -2157,8 +2212,9 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public async Task<ActionResult> Wx_Manager_BonusQuery_Ajax()
         {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var query_list = from m in offlineDB.Off_BonusRequest
-                             where m.Status == 1
+                             where m.Status == 1 && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
                              orderby m.CommitTime descending
                              select m;
             AppPayUtilities pay = new AppPayUtilities();

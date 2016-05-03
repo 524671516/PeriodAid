@@ -13,18 +13,7 @@ namespace PeriodAid.Models
             : base("name=OfflineSalesConnection")
         {
         }
-
-        public virtual DbSet<Event> Event { get; set; }
-        public virtual DbSet<Product> Product { get; set; }
-        public virtual DbSet<Sales_Data> Sales_Data { get; set; }
-        public virtual DbSet<Sales_Details> Sales_Details { get; set; }
-        public virtual DbSet<Seller> Seller { get; set; }
-        public virtual DbSet<Store> Store { get; set; }
-        public virtual DbSet<Store_System> Store_System { get; set; }
-        public virtual DbSet<Store_Sales_Month> Store_Sales_Month { get; set; }
-        public virtual DbSet<Store_Sales_Month_Details> Store_Sales_Month_Details { get; set; }
-
-
+        
         public virtual DbSet<TestAnswer> TestAnswer { get; set; }
         public virtual DbSet<TestType> TestType { get; set; }
         public virtual DbSet<TestQuestion> TestQuestion { get; set; }
@@ -39,18 +28,15 @@ namespace PeriodAid.Models
 
         public virtual DbSet<Benefits> Benefits { get; set; }
 
-        public virtual DbSet<Off_Costs> Off_Costs { get; set; }
         public virtual DbSet<Off_SalesInfo_Daily> Off_SalesInfo_Daily { get; set; }
         public virtual DbSet<Off_SalesInfo_Month> Off_SalesInfo_Month { get; set; }
         public virtual DbSet<Off_Seller> Off_Seller { get; set; }
         public virtual DbSet<Off_Store> Off_Store { get; set; }
-        public virtual DbSet<Off_StoreSystem_Costs> Off_StoreSystem_Costs { get; set; }
         public virtual DbSet<Off_Expenses> Off_Expenses { get; set; }
         public virtual DbSet<Off_Expenses_Details> Off_Expenses_Details { get; set; }
         public virtual DbSet<Off_Expenses_Payment> Off_Expenses_Payment { get; set; }
         public virtual DbSet<Off_Membership_Bind> Off_Membership_Bind { get; set; }
         public virtual DbSet<Off_Checkin_Schedule> Off_Checkin_Schedule { get; set; }
-        public virtual DbSet<Off_Event> Off_Event { get; set; }
         public virtual DbSet<Off_Checkin> Off_Checkin { get; set; }
         public virtual DbSet<Off_StoreManager> Off_StoreManager { get; set; }
         public virtual DbSet<Off_Manager_Task> Off_Manager_Task { get; set; }
@@ -59,75 +45,14 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_Manager_Announcement> Off_Manager_Announcement { get; set; }
         public virtual DbSet<Off_Manager_Request> Off_Manager_Request { get; set; }
         public virtual DbSet<Off_BonusRequest> Off_BonusRequest { get; set; }
+        public virtual DbSet<Off_System> Off_System { get; set; }
+        public virtual DbSet<Off_Checkin_Product> Off_Checkin_Product { get; set; }
+        public virtual DbSet<Off_Product> Off_Product { get; set; }
+        public virtual DbSet<Off_Daily_Product> Off_Daily_Product { get; set; }
+        public virtual DbSet<Off_Sales_Template> Off_Sales_Template { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Event>()
-                .Property(e => e.Event_Summary)
-                .IsFixedLength();
-
-            modelBuilder.Entity<Store_Sales_Month_Details>()
-                .Property(e => e.Sales_Amount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<Product>()
-                .Property(e => e.Price)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<Product>()
-                .HasMany(e => e.Sales_Details)
-                .WithRequired(e => e.Product)
-                .HasForeignKey(e => e.Product_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Product>()
-                .HasMany(e => e.Store_Sales_Month_Details)
-                .WithRequired(e => e.Product)
-                .HasForeignKey(e => e.Product_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Sales_Data>()
-                .HasMany(e => e.Sales_Details)
-                .WithRequired(e => e.Sales_Data)
-                .HasForeignKey(e => e.Sales_Data_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Store_Sales_Month>()
-                .HasMany(e => e.Store_Sales_Month_Details)
-                .WithRequired(e => e.Store_Sales_Month)
-                .HasForeignKey(e => e.Store_Sales_Month_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Seller>()
-                .HasMany(e => e.Sales_Data)
-                .WithRequired(e => e.Seller)
-                .HasForeignKey(e => e.Seller_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Store>()
-                .HasMany(e => e.Event)
-                .WithRequired(e => e.Store)
-                .HasForeignKey(e => e.Store_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Store>()
-                .HasMany(e => e.Sales_Data)
-                .WithRequired(e => e.Store)
-                .HasForeignKey(e => e.Store_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Store>()
-                .HasMany(e => e.Store_Sales_Month)
-                .WithRequired(e => e.Store)
-                .HasForeignKey(e => e.Store_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Store_System>()
-                .HasMany(e => e.Store)
-                .WithRequired(e => e.Store_System)
-                .HasForeignKey(e => e.Store_System_Id)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<TestType>()
                 .HasMany(e => e.TestQuestion)
                 .WithRequired(e => e.TestType)
@@ -186,16 +111,23 @@ namespace PeriodAid.Models
                 .HasForeignKey(e => e.Off_Schedule_Id)
                 .WillCascadeOnDelete(true);
 
-            modelBuilder.Entity<Off_Checkin>().HasMany(e => e.Off_BonusRequest)
+            modelBuilder.Entity<Off_Checkin>()
+                .HasMany(e => e.Off_BonusRequest)
                 .WithRequired(e => e.Off_Checkin)
                 .HasForeignKey(e => e.CheckinId)
                 .WillCascadeOnDelete(true);
 
-            modelBuilder.Entity<Off_Store>()
-                .HasMany(e => e.Off_Costs)
-                .WithRequired(e => e.Off_Store)
-                .HasForeignKey(e => e.StoreId)
-                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<Off_Checkin>()
+                .HasMany(e => e.Off_Checkin_Product)
+                .WithRequired(e => e.Off_Checkin)
+                .HasForeignKey(e => e.CheckinId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Off_SalesInfo_Daily>()
+                .HasMany(e => e.Off_Daily_Product)
+                .WithRequired(e => e.Off_SalesInfo_Daily)
+                .HasForeignKey(e => e.DailyId)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Off_Store>()
                 .HasMany(e => e.Off_SalesInfo_Daily)
@@ -227,6 +159,91 @@ namespace PeriodAid.Models
                 .HasForeignKey(e => e.StoreId)
                 .WillCascadeOnDelete(true);
 
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Store)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Membership_Bind)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Seller)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_StoreManager)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Checkin_Schedule)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_AVG_SalesData)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Expenses)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Manager_Task)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Product)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Manager_Announcement)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Sales_Template)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_Sales_Template>()
+                .HasMany(e => e.Off_Checkin_Schedule)
+                .WithRequired(e => e.Off_Sales_Template)
+                .HasForeignKey(e => e.TemplateId)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<Off_Product>()
+                .HasMany(e => e.Off_Checkin_Product)
+                .WithRequired(e => e.Off_Product)
+                .HasForeignKey(e => e.ProductId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_Product>()
+                .HasMany(e => e.Off_Daily_Product)
+                .WithRequired(e => e.Off_Product)
+                .HasForeignKey(e => e.ProductId)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Off_Expenses>()
                 .HasMany(e => e.Off_Expenses_Details)
                 .WithRequired(e => e.Off_Expenses)
@@ -247,233 +264,7 @@ namespace PeriodAid.Models
         }
     }
 
-    #region 旧表
-    [Table("Event")]
-    public partial class Event
-    {
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(32)]
-        public string Event_Name { get; set; }
-
-        [Required]
-        public string Event_Date { get; set; }
-
-        public int Store_Id { get; set; }
-
-        [StringLength(512)]
-        public string Event_Details { get; set; }
-
-        [StringLength(10)]
-        public string Event_Summary { get; set; }
-
-        public virtual Store Store { get; set; }
-    }
-
-    [Table("Product")]
-    public partial class Product
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Product()
-        {
-            Sales_Details = new HashSet<Sales_Details>();
-        }
-
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(32)]
-        public string Product_Name { get; set; }
-
-        [StringLength(16)]
-        public string Product_Code { get; set; }
-
-        [StringLength(16)]
-        public string Product_Spec { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? Price { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sales_Details> Sales_Details { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Store_Sales_Month_Details> Store_Sales_Month_Details { get; set; }
-    }
-
-    public partial class Sales_Data
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Sales_Data()
-        {
-            Sales_Details = new HashSet<Sales_Details>();
-        }
-
-        public int Id { get; set; }
-
-        public DateTime Sales_Date { get; set; }
-
-        public int Store_Id { get; set; }
-
-        public int? Trial_Count { get; set; }
-
-        public int Seller_Id { get; set; }
-
-        public int? Max_Sale { get; set; }
-
-        public int? Feedback { get; set; }
-
-        [StringLength(32)]
-        public string Comsumption_Age { get; set; }
-
-        [StringLength(256)]
-        public string Summary { get; set; }
-
-        public bool Event { get; set; }
-
-        [StringLength(32)]
-        public string Event_Type { get; set; }
-
-        public virtual Seller Seller { get; set; }
-
-        public virtual Store Store { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sales_Details> Sales_Details { get; set; }
-    }
-    public partial class Store_Sales_Month
-    {
-        public int Id { get; set; }
-
-        public int Sales_Year { get; set; }
-
-        public int Sales_Month { get; set; }
-
-        public int Store_Id { get; set; }
-
-        public virtual Store Store { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Store_Sales_Month_Details> Store_Sales_Month_Details { get; set; }
-    }
-
-    public partial class Store_Sales_Month_Details
-    {
-
-        public int Id { get; set; }
-
-        public int Store_Sales_Month_Id { get; set; }
-
-        public int Product_Id { get; set; }
-
-        public int Sales_Num { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal Sales_Amount { get; set; }
-
-        public virtual Product Product { get; set; }
-
-        public virtual Store_Sales_Month Store_Sales_Month { get; set; }
-    }
-
-    public partial class Sales_Details
-    {
-        public int Id { get; set; }
-
-        public int Sales_Data_Id { get; set; }
-
-        public int Product_Id { get; set; }
-
-        public int Report_Num { get; set; }
-
-        public int? Checkout_Num { get; set; }
-
-        public virtual Product Product { get; set; }
-
-        public virtual Sales_Data Sales_Data { get; set; }
-    }
-
-    [Table("Seller")]
-    public partial class Seller
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Seller()
-        {
-            Sales_Data = new HashSet<Sales_Data>();
-        }
-
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(16)]
-        public string Name { get; set; }
-
-        [StringLength(32)]
-        public string Contact { get; set; }
-
-        public bool? Sex { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sales_Data> Sales_Data { get; set; }
-    }
-
-    [Table("Store")]
-    public partial class Store
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Store()
-        {
-            Event = new HashSet<Event>();
-            Sales_Data = new HashSet<Sales_Data>();
-        }
-
-        public int Id { get; set; }
-
-        [Required]
-        public int Store_System_Id { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string Store_Name { get; set; }
-
-        [StringLength(128)]
-        public string Address { get; set; }
-
-        [StringLength(32)]
-        public string Contact { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Event { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sales_Data> Sales_Data { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Store_Sales_Month> Store_Sales_Month { get; set; }
-
-        public virtual Store_System Store_System { get; set; }
-    }
-
-    public partial class Store_System
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Store_System()
-        {
-            Store = new HashSet<Store>();
-        }
-
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string System_Name { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Store> Store { get; set; }
-    }
-    #endregion
-
+    
     #region 考试系统
     /*---------- 考试系统 ----------*/
     [Table("TestAnswer")]
@@ -787,93 +578,69 @@ namespace PeriodAid.Models
     }
     #endregion
 
-    public partial class Off_StoreSystem_Costs
+    public partial class Off_System
     {
         public int Id { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime ApplicationDate { get; set; }
-        
-        [StringLength(50)]
-        public String StoreSystem { get; set; }
+        [StringLength(64)]
+        public string SystemName { get; set; }
 
-        [StringLength(50)]
-        public String Distributor { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Membership_Bind> Off_Membership_Bind { get; set; }
 
-        public decimal TotalFee { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Seller> Off_Seller { get; set; }
 
-        public decimal? Cash { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Store> Off_Store { get; set; }
 
-        public decimal? MortgageGoods { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_StoreManager> Off_StoreManager { get; set; }
 
-        [StringLength(50)]
-        public string Warrant { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Checkin_Schedule> Off_Checkin_Schedule { get; set; }
 
-        public bool Completed { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Expenses> Off_Expenses { get; set; }
 
-        public bool Checked { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Manager_Announcement> Off_Manager_Announcement { get; set; }
 
-        public bool Canceled { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Manager_Task> Off_Manager_Task { get; set; }
 
-        public DateTime? UploadTime { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_AVG_SalesData> Off_AVG_SalesData { get; set; }
 
-        [StringLength(255)]
-        public string UploadUser { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Product> Off_Product { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Sales_Template> Off_Sales_Template { get; set; }
     }
-
-    public partial class Off_Costs
+    public partial class Off_Product
     {
         public int Id { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime ApplicationDate { get; set; }
+        public int Off_System_Id { get; set; }
 
-        public int StoreId { get; set; }
+        public virtual Off_System Off_System { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? StartDate { get; set; }
+        public int status { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? EndDate { get; set; }
+        [StringLength(64)]
+        public string ItemCode { get; set; }
 
-        public bool Event_HB { get; set; }
+        [StringLength(128)]
+        public string ItemName { get; set; }
 
-        public bool Event_DT { get; set; }
+        public decimal? SalesPrice { get; set; }
 
-        public bool Event_TG { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Checkin_Product> Off_Checkin_Product { get; set; }
 
-        public bool Event_DJ { get; set; }
-
-        public bool Event_DL { get; set; }
-
-        public bool Event_TJ { get; set; }
-
-        public bool Event_SY { get; set; }
-
-        public bool Event_Other { get; set; }
-
-        public decimal? TotalFee { get; set; }
-
-        public decimal? Cash { get; set; }
-
-        public decimal? MortgageGoods { get; set; }
-
-        [StringLength(50)]
-        public string Warrant { get; set; }
-
-        public bool Checked { get; set; }
-
-        public bool Completed { get; set; }
-
-        public bool Canceled { get; set; }
-
-        public virtual Off_Store Off_Store { get; set; }
-
-        public DateTime? UploadTime { get; set; }
-
-        [StringLength(255)]
-        public string UploadUser { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Daily_Product> Off_Daily_Product { get; set; }
     }
 
     public partial class Off_Store
@@ -881,7 +648,6 @@ namespace PeriodAid.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Off_Store()
         {
-            Off_Costs = new HashSet<Off_Costs>();
             Off_SalesInfo_Daily = new HashSet<Off_SalesInfo_Daily>();
             Off_SalesInfo_Month = new HashSet<Off_SalesInfo_Month>();
         }
@@ -914,9 +680,7 @@ namespace PeriodAid.Models
 
         [StringLength(255)]
         public string UploadUser { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Off_Costs> Off_Costs { get; set; }
+        
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_SalesInfo_Daily> Off_SalesInfo_Daily { get; set; }
@@ -929,15 +693,17 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Checkin_Schedule> Off_Checkin_Schedule { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Off_Event> Off_Event { get; set; }
+        
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_StoreManager> Off_StoreManager { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Manager_Request> Off_Manager_Request { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
     }
 
     public partial class Off_Seller
@@ -988,6 +754,10 @@ namespace PeriodAid.Models
         public virtual ICollection<Off_Checkin> Off_Checkin { get; set; }
 
         public virtual Off_Store Off_Store { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
         
     }
 
@@ -1032,8 +802,31 @@ namespace PeriodAid.Models
         public virtual Off_Seller Off_Seller { get; set; }
 
         public virtual Off_Store Off_Store { get; set; }
-    }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Daily_Product> Off_Daily_Product { get; set; }
+    }
+    public partial class Off_Daily_Product
+    {
+        public int Id { get; set; }
+
+        public int ProductId { get; set; }
+
+        public int DailyId { get; set; }
+
+        [StringLength(64)]
+        public string ItemCode { get; set; }
+
+        public int? SalesCount { get; set; }
+
+        public int? StorageCount { get; set; }
+
+        public decimal? SalesAmount { get; set; }
+
+        public virtual Off_SalesInfo_Daily Off_SalesInfo_Daily { get; set; }
+
+        public virtual Off_Product Off_Product { get; set; }
+    }
     public partial class Off_SalesInfo_Month
     {
         public int Id { get; set; }
@@ -1094,6 +887,10 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Expenses_Payment> Off_Expenses_Payment { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
     }
 
     public partial class Off_Expenses_Details
@@ -1165,8 +962,31 @@ namespace PeriodAid.Models
         public DateTime ApplicationDate { get; set; }
 
         public virtual Off_Seller Off_Seller { get; set; }
-    }
 
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
+    }
+    public partial class Off_Sales_Template
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(128)]
+        public string TemplateName { get; set; }
+
+        public int Status { get; set; }
+
+        [Required]
+        public string ProductList { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Checkin_Schedule> Off_Checkin_Schedule { get; set; }
+    }
     public partial class Off_Checkin_Schedule
     {
         public int Id { get; set; }
@@ -1185,6 +1005,13 @@ namespace PeriodAid.Models
         public virtual ICollection<Off_Checkin> Off_Checkin { get; set; }
 
         public virtual Off_Store Off_Store { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
+
+        public int TemplateId { get; set; }
+        public virtual Off_Sales_Template Off_Sales_Template { get; set; }
     }
     public partial class Off_Checkin
     {
@@ -1262,22 +1089,30 @@ namespace PeriodAid.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_BonusRequest> Off_BonusRequest{ get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Checkin_Product> Off_Checkin_Product { get; set; }
     }
 
-    public partial class Off_Event
+    public partial class Off_Checkin_Product
     {
         public int Id { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public int CheckinId { get; set; }
 
-        public DateTime FinishDate { get; set; }
+        public int ProductId { get; set; }
 
-        public int Priority_Level { get; set; }
+        [StringLength(64)]
+        public string ItemCode { get; set; }
 
-        public decimal? Default_Salary { get; set; }
+        public int? SalesCount { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Off_Store> Off_Store { get; set; }
+        public int? StorageCount { get; set; }
+
+        public decimal? SalesAmount { get; set; }
+
+        public virtual Off_Checkin Off_Checkin { get; set; }
+
+        public virtual Off_Product Off_Product { get; set; }
     }
 
     public partial class Off_StoreManager
@@ -1297,6 +1132,10 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Store> Off_Store { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
     }
 
     public partial class Off_Manager_Task
@@ -1337,6 +1176,10 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Manager_CheckIn> Off_Manager_CheckIn { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
     }
 
     public partial class Off_Manager_CheckIn
@@ -1381,6 +1224,10 @@ namespace PeriodAid.Models
         public decimal? AVG_HONEY { get; set; }
 
         public decimal? AVG_DATES { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
     }
 
     public partial class Off_Manager_Announcement
@@ -1409,6 +1256,10 @@ namespace PeriodAid.Models
         public DateTime SubmitTime { get; set; }
 
         public bool Status { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
     }
 
     public partial class Off_Manager_Request

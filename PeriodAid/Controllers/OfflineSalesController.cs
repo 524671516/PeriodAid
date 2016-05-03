@@ -68,1786 +68,19 @@ namespace PeriodAid.Controllers
         }
 
 
-
-        #region 销售数据表(旧版)
-        public ActionResult Sales_Home()
-        {
-            return View();
-        }
-
-        public ActionResult Store_Home()
-        {
-            return View();
-        }
-
-        public ActionResult Seller_Home()
-        {
-            return View();
-        }
-
-        public ActionResult Event_Home()
-        {
-            return View();
-        }
-
-
-        /*------------ 门店系统 -----------*/
-
-        public ActionResult Create_Store_System()
-        {
-            //Store_System s_system = new Store_System();
-            Store_System_ViewModel model = new Store_System_ViewModel();
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult Create_Store_System(Store_System_ViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Store_System s_system = new Store_System()
-                {
-                    System_Name = model.System_Name
-                };
-                offlineDB.Store_System.Add(s_system);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Store_System");
-            }
-            else
-            {
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Edit_Store_System(int id)
-        {
-            var store_system = offlineDB.Store_System.SingleOrDefault(m => m.Id == id);
-            if (store_system != null)
-            {
-                Store_System_ViewModel model = new Store_System_ViewModel()
-                {
-                    System_Name = store_system.System_Name
-                };
-                return View(model);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult Edit_Store_System(int id, Store_System_ViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var s_system = offlineDB.Store_System.SingleOrDefault(m => m.Id == id);
-                if (s_system != null)
-                {
-                    s_system.System_Name = model.System_Name;
-                    offlineDB.SaveChanges();
-                    return RedirectToAction("List_Store_System");
-                }
-                else
-                {
-                    //ModelState.AddModelError("", "信息错误");
-                    return View("Error");
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult List_Store_System()
-        {
-            var list = from m in offlineDB.Store_System
-                       select m;
-            return View(list);
-        }
-
-        public ActionResult Delete_Store_System(int id)
-        {
-            var item = offlineDB.Store_System.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                Store_System_ViewModel model = new Store_System_ViewModel()
-                {
-                    System_Name = item.System_Name
-                };
-                return View(model);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult Delete_Store_System(int id, Store_System_ViewModel model)
-        {
-            var item = offlineDB.Store_System.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                offlineDB.Store_System.Remove(item);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Store_System");
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-
-        /************** 门店 **************/
-        public ActionResult List_Store()
-        {
-            var list = from m in offlineDB.Store
-                       select m;
-
-            return View(list);
-        }
-
-        public ActionResult Create_Store()
-        {
-            Store_ViewModel model = new Store_ViewModel();
-            ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult Create_Store(Store_ViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Store s = new Store()
-                {
-                    Store_System_Id = model.Store_System_Id,
-                    Address = model.Address,
-                    Contact = model.Contact,
-                    Store_Name = model.Store_Name
-                };
-                offlineDB.Store.Add(s);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Store");
-            }
-            else
-            {
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Edit_Store(int id)
-        {
-            var item = offlineDB.Store.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                Store_ViewModel model = new Store_ViewModel()
-                {
-                    Store_System_Id = item.Store_System_Id,
-                    Address = item.Address,
-                    Contact = item.Contact,
-                    Store_Name = item.Store_Name
-                };
-                return View(model);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult Edit_Store(int id, Store_ViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var item = offlineDB.Store.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    item.Store_System_Id = model.Store_System_Id;
-                    item.Store_Name = model.Store_Name;
-                    item.Address = model.Address;
-                    item.Contact = model.Contact;
-                    offlineDB.SaveChanges();
-                    return RedirectToAction("List_Store");
-                }
-                else
-                {
-                    return View("Error");
-                }
-            }
-            else
-            {
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Delete_Store(int id)
-        {
-            var item = offlineDB.Store.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-
-                return View(item);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-        [HttpPost]
-        public ActionResult Delete_Store(int id, Store model)
-        {
-            var item = offlineDB.Store.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                offlineDB.Store.Remove(item);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Store");
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        /*****************销售员************************/
-        public ActionResult List_Seller()
-        {
-            var list = from m in offlineDB.Seller
-                       select m;
-            return View(list);
-        }
-
-        public ActionResult Create_Seller()
-        {
-            Seller_ViewModel model = new Seller_ViewModel();
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult Create_Seller(Seller_ViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Seller s = new Seller()
-                {
-                    Sex = model.Sex,
-                    Name = model.Name,
-                    Contact = model.Contact
-                };
-                offlineDB.Seller.Add(s);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Seller");
-            }
-            else
-            {
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Edit_Seller(int id)
-        {
-            var item = offlineDB.Seller.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                Seller_ViewModel model = new Seller_ViewModel()
-                {
-                    Name = item.Name,
-                    Contact = item.Contact,
-                    Sex = item.Sex
-                };
-                return View(model);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult Edit_Seller(int id, Seller_ViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var item = offlineDB.Seller.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    item.Name = model.Name;
-                    item.Contact = model.Contact;
-                    item.Sex = model.Sex;
-                    offlineDB.SaveChanges();
-                    return RedirectToAction("List_Seller");
-                }
-                else
-                {
-                    return View("Error");
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Delete_Seller(int id)
-        {
-            var item = offlineDB.Seller.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                return View(item);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-        [HttpPost]
-        public ActionResult Delete_Seller(int id, Seller model)
-        {
-            var item = offlineDB.Seller.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                offlineDB.Seller.Remove(item);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Seller");
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        /**********销售信息***********/
-        public ActionResult List_Sales_Data(int page = 1)
-        {
-            //int final_page = page == null ? 1 : page;
-            var list = (from m in offlineDB.Sales_Data
-                        orderby m.Sales_Date descending
-                        select m).ToPagedList(page, 10);
-            ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-            var first_Store_System = offlineDB.Store_System.FirstOrDefault();
-            ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == first_Store_System.Id), "Id", "Store_Name");
-            return View(list);
-        }
-
-        [HttpPost]
-        public PartialViewResult List_Sales_Data_Date(DateTime? date, int? page)
-        {
-            if (date != null)
-            {
-                var list = from m in offlineDB.Sales_Data
-                           where m.Sales_Date == date
-                           orderby m.Sales_Date descending
-                           select m;
-                return PartialView(list);
-            }
-            else
-            {
-                var list = (from m in offlineDB.Sales_Data
-                            orderby m.Sales_Date descending
-                            select m).Take(40);
-                return PartialView(list);
-            }
-        }
-
-        [HttpPost]
-        public PartialViewResult List_sales_Data_Store(int? storesystem, int? store)
-        {
-            if (store != null)
-            {
-                var list = from m in offlineDB.Sales_Data
-                           where m.Store_Id == store
-                           orderby m.Sales_Date descending
-                           select m;
-                return PartialView(list);
-            }
-            else
-            {
-                if (storesystem != null)
-                {
-                    var list = from m in offlineDB.Sales_Data
-                               where m.Store.Store_System_Id == storesystem
-                               orderby m.Sales_Date descending
-                               select m;
-                    return PartialView(list);
-                }
-                else
-                {
-                    var list = (from m in offlineDB.Sales_Data
-                                orderby m.Sales_Date descending
-                                select m).Take(40);
-                    return PartialView(list);
-                }
-            }
-        }
-
-        public ActionResult Create_Sales_Data()
-        {
-            Sales_Data_ViewModel model = new Sales_Data_ViewModel();
-            ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-            var first_Store_System = offlineDB.Store_System.FirstOrDefault();
-            ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == first_Store_System.Id), "Id", "Store_Name");
-            ViewBag.Seller = new SelectList(offlineDB.Seller, "Id", "Name");
-            ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-            ViewBag.ProductDetails = new List<Form_Product_Details>();
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult Create_Sales_Data(Sales_Data_ViewModel model, FormCollection form)
-        {
-            if (ModelState.IsValid)
-            {
-                var exist_item = from m in offlineDB.Sales_Data
-                                 where m.Store_Id == model.Store_Id
-                                 && m.Sales_Date == model.Sales_Date
-                                 select m;
-                if (exist_item.Count() == 0)
-                {
-                    Sales_Data sales = new Sales_Data()
-                    {
-                        Store_Id = model.Store_Id,
-                        Sales_Date = model.Sales_Date,
-                        Trial_Count = model.Trial_Count,
-                        Seller_Id = model.Seller_Id,
-                        Max_Sale = model.Max_Sale,
-                        Feedback = model.Feedback,
-                        Event = model.Event,
-                        Summary = model.Summary,
-                        Comsumption_Age = model.Comsumption_Age,
-                        Event_Type = model.EventType
-                    };
-                    offlineDB.Sales_Data.Add(sales);
-                    offlineDB.SaveChanges();
-                    Progress_Sales_Details(sales, form);
-                    return RedirectToAction("List_Sales_Data");
-                }
-                else
-                {
-                    var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                    ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                    ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                    ViewBag.Seller = new SelectList(offlineDB.Seller, "Id", "Name");
-                    ViewBag.ProductDetails = GetForm_Sales_Details(form);
-                    ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                    ModelState.AddModelError("", "同一日期、同一门店记录不能重复");
-                    return View(model);
-                }
-            }
-            else
-            {
-                var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                ViewBag.Seller = new SelectList(offlineDB.Seller, "Id", "Name");
-                ViewBag.ProductDetails = GetForm_Sales_Details(form);
-                ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Edit_Sales_Data(int id)
-        {
-            var item = offlineDB.Sales_Data.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                var store = offlineDB.Store.SingleOrDefault(m => m.Id == item.Store_Id);
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", item.Store_Id);
-                ViewBag.Seller = new SelectList(offlineDB.Seller, "Id", "Name");
-                ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                Sales_Data_ViewModel model = new Sales_Data_ViewModel()
-                {
-                    Store_System_Id = store.Store_System_Id,
-                    Store_Id = item.Store_Id,
-                    Sales_Date = item.Sales_Date,
-                    Seller_Id = item.Seller_Id,
-                    Summary = item.Summary,
-                    Max_Sale = item.Max_Sale,
-                    Comsumption_Age = item.Comsumption_Age,
-                    Event = item.Event,
-                    Trial_Count = item.Trial_Count,
-                    Feedback = item.Feedback,
-                    EventType = item.Event_Type
-                };
-
-                var getlist = from m in offlineDB.Sales_Details
-                              where m.Sales_Data_Id == item.Id
-                              orderby m.Product_Id
-                              select m;
-                List<Form_Product_Details> details = new List<Form_Product_Details>();
-                foreach (var i in getlist)
-                {
-                    Form_Product_Details detail = new Form_Product_Details()
-                    {
-                        CheckNum = i.Checkout_Num,
-                        Product_Name = i.Product.Product_Name,
-                        Product_Code = i.Product.Product_Code,
-                        ReportNum = i.Report_Num
-                    };
-                    details.Add(detail);
-                }
-                ViewBag.ProductDetails = details;
-                return View(model);
-            }
-            else
-            {
-                return View("Error");
-            }
-
-        }
-        [HttpPost]
-        public ActionResult Edit_Sales_Data(int id, Sales_Data_ViewModel model, FormCollection form)
-        {
-            if (ModelState.IsValid)
-            {
-                // 同一个门店，同一个日期不能重复(除当前ID以外)
-                var exist_item = from m in offlineDB.Sales_Data
-                                 where m.Store_Id == model.Store_Id
-                                 && m.Sales_Date == model.Sales_Date
-                                 && m.Id != id
-                                 select m;
-                if (exist_item.Count() == 0)
-                {
-                    var item = offlineDB.Sales_Data.SingleOrDefault(m => m.Id == id);
-                    if (item != null)
-                    {
-                        item.Store_Id = model.Store_Id;
-                        item.Sales_Date = model.Sales_Date;
-                        item.Trial_Count = model.Trial_Count;
-                        item.Seller_Id = model.Seller_Id;
-                        item.Max_Sale = model.Max_Sale;
-                        item.Feedback = model.Feedback;
-                        item.Event = model.Event;
-                        item.Summary = model.Summary;
-                        item.Comsumption_Age = model.Comsumption_Age;
-                        item.Event_Type = model.EventType;
-
-                        offlineDB.SaveChanges();
-                        Progress_Sales_Details(item, form);
-                        return RedirectToAction("List_Sales_Data");
-                    }
-                    else
-                    {
-                        return View("Error");
-                    }
-                }
-                else
-                {
-                    var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                    ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                    ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                    ViewBag.Seller = new SelectList(offlineDB.Seller, "Id", "Name");
-                    ViewBag.ProductDetails = GetForm_Sales_Details(form);
-                    ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                    ModelState.AddModelError("", "同一日期、同一门店记录不能重复");
-                    return View(model);
-                }
-            }
-            else
-            {
-                var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                ViewBag.Seller = new SelectList(offlineDB.Seller, "Id", "Name");
-                ViewBag.ProductDetails = GetForm_Sales_Details(form);
-                ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Delete_Sales_Data(int id)
-        {
-            var item = offlineDB.Sales_Data.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                return View(item);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-        [HttpPost]
-        public ActionResult Delete_Sales_Data(int id, Sales_Data model)
-        {
-            var item = offlineDB.Sales_Data.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                var list = from m in offlineDB.Sales_Details
-                           where m.Sales_Data_Id == item.Id
-                           select m;
-                offlineDB.Sales_Details.RemoveRange(list);
-                offlineDB.Sales_Data.Remove(item);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Sales_Data");
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        public PartialViewResult DropDownList_Store(int store_system_id)
-        {
-            ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store_system_id), "Id", "Store_Name");
-            return PartialView();
-        }
-
-        private List<Form_Product_Details> GetForm_Sales_Details(FormCollection form)
-        {
-            List<Form_Product_Details> list = new List<Form_Product_Details>();
-            // 检查红糖姜茶
-            if (form["sqz122_report"] != null && form["sqz122_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz122_report"]);
-                int checkNum = Convert.ToInt32(form["sqz122_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz122",
-                    Product_Name = "红糖姜茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查黑糖姜茶
-            if (form["sqz123_report"] != null && form["sqz123_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz123_report"]);
-                int checkNum = Convert.ToInt32(form["sqz123_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz123",
-                    Product_Name = "黑糖姜茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查蜂蜜姜茶
-            if (form["sqz124_report"] != null && form["sqz124_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz124_report"]);
-                int checkNum = Convert.ToInt32(form["sqz124_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz124",
-                    Product_Name = "蜂蜜姜茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查柠檬姜茶
-            if (form["sqz125_report"] != null && form["sqz125_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz125_report"]);
-                int checkNum = Convert.ToInt32(form["sqz125_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz125",
-                    Product_Name = "柠檬姜茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查红枣姜茶
-            if (form["sqz126_report"] != null && form["sqz126_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz126_report"]);
-                int checkNum = Convert.ToInt32(form["sqz126_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz126",
-                    Product_Name = "红枣姜茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查薄荷姜茶
-            if (form["sqz127_report"] != null && form["sqz127_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz127_report"]);
-                int checkNum = Convert.ToInt32(form["sqz127_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz127",
-                    Product_Name = "薄荷姜茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查蜂蜜菊花茶
-            if (form["sqz128_report"] != null && form["sqz128_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz128_report"]);
-                int checkNum = Convert.ToInt32(form["sqz128_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz128",
-                    Product_Name = "蜂蜜菊花茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查陈皮酸梅汤
-            if (form["sqz129_report"] != null && form["sqz129_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz129_report"]);
-                int checkNum = Convert.ToInt32(form["sqz129_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz129",
-                    Product_Name = "陈皮酸梅汤",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            // 检查生姜红茶
-            if (form["sqz130_report"] != null && form["sqz130_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz130_report"]);
-                int checkNum = Convert.ToInt32(form["sqz130_check"]);
-                Form_Product_Details item = new Form_Product_Details()
-                {
-                    Product_Code = "sqz130",
-                    Product_Name = "生姜红茶",
-                    CheckNum = checkNum,
-                    ReportNum = reportNum
-                };
-                list.Add(item);
-            }
-            return list;
-        }
-        private void Progress_Sales_Details(Sales_Data sales, FormCollection form)
-        {
-
-            // 检查红糖姜茶
-            if (form["sqz122_report"] != null && form["sqz122_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz122_report"]);
-                int checkNum = Convert.ToInt32(form["sqz122_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 1);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 1,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz122_report"] == null || form["sqz122_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 1);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查黑糖姜茶
-            if (form["sqz123_report"] != null && form["sqz123_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz123_report"]);
-                int checkNum = Convert.ToInt32(form["sqz123_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 2);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 2,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz123_report"] == null || form["sqz123_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 2);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查蜂蜜姜茶
-            if (form["sqz124_report"] != null && form["sqz124_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz124_report"]);
-                int checkNum = Convert.ToInt32(form["sqz124_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 3);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 3,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz124_report"] == null || form["sqz124_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 3);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查柠檬姜茶
-            if (form["sqz125_report"] != null && form["sqz125_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz125_report"]);
-                int checkNum = Convert.ToInt32(form["sqz125_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 4);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 4,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz125_report"] == null || form["sqz125_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 4);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查红枣姜茶
-            if (form["sqz126_report"] != null && form["sqz126_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz126_report"]);
-                int checkNum = Convert.ToInt32(form["sqz126_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 5);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 5,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz126_report"] == null || form["sqz126_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 5);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查薄荷姜茶
-            if (form["sqz127_report"] != null && form["sqz127_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz127_report"]);
-                int checkNum = Convert.ToInt32(form["sqz127_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 6);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 6,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz127_report"] == null || form["sqz127_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 6);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查蜂蜜菊花茶
-            if (form["sqz128_report"] != null && form["sqz128_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz128_report"]);
-                int checkNum = Convert.ToInt32(form["sqz128_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 7);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 7,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz128_report"] == null || form["sqz128_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 7);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查陈皮酸梅
-            if (form["sqz129_report"] != null && form["sqz129_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz129_report"]);
-                int checkNum = Convert.ToInt32(form["sqz129_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 8);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 8,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz129_report"] == null || form["sqz129_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 8);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            // 检查生姜红茶
-            if (form["sqz130_report"] != null && form["sqz130_check"] != null)
-            {
-                // 表单内存在产品
-                int reportNum = Convert.ToInt32(form["sqz130_report"]);
-                int checkNum = Convert.ToInt32(form["sqz130_check"]);
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 9);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Report_Num = reportNum;
-                    item.Checkout_Num = checkNum;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Sales_Details detail = new Sales_Details()
-                    {
-                        Product_Id = 9,
-                        Sales_Data = sales,
-                        Checkout_Num = checkNum,
-                        Report_Num = reportNum
-                    };
-                    offlineDB.Sales_Details.Add(detail);
-                }
-            }
-            else if (form["sqz130_report"] == null || form["sqz130_check"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Sales_Details.SingleOrDefault(m => m.Sales_Data_Id == sales.Id && m.Product_Id == 1);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Sales_Details.Remove(item);
-                }
-            }
-            offlineDB.SaveChanges();
-        }
-        /************* 月度门店销售表 **************/
-        public ActionResult List_Store_Sales_Month()
-        {
-            var item = from m in offlineDB.Store_Sales_Month
-                       select m;
-            return View(item);
-        }
-
-        public ActionResult Create_Store_Sales_Month()
-        {
-            ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-            var first_Store_System = offlineDB.Store_System.FirstOrDefault();
-            ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == first_Store_System.Id), "Id", "Store_Name");
-            ViewBag.ProductDetails = new List<Form_Product_Sales_Month>();
-            ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-            Store_Sales_Month_ViewModel model = new Store_Sales_Month_ViewModel();
-            return View(model);
-        }
-        [HttpPost]
-        public ActionResult Create_Store_Sales_Month(Store_Sales_Month_ViewModel model, FormCollection form)
-        {
-            if (ModelState.IsValid)
-            {
-                // 同一日期、同一店铺已存在数据
-                var exist = offlineDB.Store_Sales_Month.SingleOrDefault(m => m.Sales_Year == model.Sales_Year && m.Sales_Month == model.Sales_Month && m.Store_Id == model.Store_Id);
-                // 没有数据，可以添加
-                if (exist == null)
-                {
-                    //var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                    Store_Sales_Month item = new Store_Sales_Month()
-                    {
-                        Sales_Month = model.Sales_Month,
-                        Sales_Year = model.Sales_Year,
-                        Store_Id = model.Store_Id
-                    };
-                    offlineDB.Store_Sales_Month.Add(item);
-                    offlineDB.SaveChanges();
-                    Progress_Store_Sales_Month_Details(item, form);
-                    return RedirectToAction("List_Store_Sales_Month");
-                }
-                else
-                {
-                    var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                    ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                    ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                    ViewBag.ProductDetails = GetForm_Sales_Month(form);
-                    ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                    ModelState.AddModelError("", "同一门店，同一店铺数据不能重复");
-                    return View(model);
-                }
-            }
-            else
-            {
-                var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                ViewBag.ProductDetails = GetForm_Sales_Month(form);
-                ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Edit_Store_Sales_Month(int id)
-        {
-            var item = offlineDB.Store_Sales_Month.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                var store = offlineDB.Store.SingleOrDefault(m => m.Id == item.Store_Id);
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", item.Store_Id);
-                List<Form_Product_Sales_Month> productlist = new List<Form_Product_Sales_Month>();
-                var getlist = from m in offlineDB.Store_Sales_Month_Details
-                              where m.Store_Sales_Month_Id == item.Id
-                              select m;
-                foreach (var i in getlist)
-                {
-                    Form_Product_Sales_Month j = new Form_Product_Sales_Month()
-                    {
-                        Product_Code = i.Product.Product_Code,
-                        Product_Name = i.Product.Product_Name,
-                        Sales_Count = i.Sales_Num,
-                        Sales_Amount = i.Sales_Amount
-                    };
-                    productlist.Add(j);
-                }
-                ViewBag.ProductDetails = productlist;
-                ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                Store_Sales_Month_ViewModel model = new Store_Sales_Month_ViewModel()
-                {
-                    Store_Id = item.Store_Id,
-                    Sales_Month = item.Sales_Month,
-                    Sales_Year = item.Sales_Year
-                };
-                return View(model);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-        [HttpPost]
-        public ActionResult Edit_Store_Sales_Month(int id, Store_Sales_Month_ViewModel model, FormCollection form)
-        {
-            if (ModelState.IsValid)
-            {
-                // 同一门店，同一日期不能重复
-                int exist_count = (from m in offlineDB.Store_Sales_Month
-                                   where m.Sales_Year == model.Sales_Year
-                                   && m.Sales_Month == model.Sales_Month
-                                   && m.Store_Id == model.Store_Id
-                                   && m.Id != id
-                                   select m).Count();
-                if (exist_count == 0)
-                {
-                    var item = offlineDB.Store_Sales_Month.SingleOrDefault(m => m.Id == id);
-                    if (offlineDB != null)
-                    {
-                        item.Sales_Month = model.Sales_Month;
-                        item.Sales_Year = model.Sales_Year;
-                        item.Store_Id = model.Store_Id;
-                        offlineDB.SaveChanges();
-                        Progress_Store_Sales_Month_Details(item, form);
-                        return RedirectToAction("List_Store_Sales_Month");
-                    }
-                    else
-                    {
-                        return View("Error");
-                    }
-                }
-                else
-                {
-                    var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                    ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                    ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                    ViewBag.ProductDetails = GetForm_Sales_Month(form);
-                    ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                    ModelState.AddModelError("", "同一时间、同一门店信息不能重复");
-                    return View(model);
-                }
-
-            }
-            else
-            {
-                var store = offlineDB.Store.SingleOrDefault(m => m.Id == model.Store_Id);
-                ViewBag.Store_System = new SelectList(offlineDB.Store_System, "Id", "System_Name");
-                ViewBag.Store = new SelectList(offlineDB.Store.Where(m => m.Store_System_Id == store.Store_System_Id), "Id", "Store_Name", model.Store_Id);
-                ViewBag.ProductDetails = GetForm_Sales_Month(form);
-                ViewBag.Product = new SelectList(offlineDB.Product, "Product_Code", "Product_Name");
-                ModelState.AddModelError("", "信息错误");
-                return View(model);
-            }
-        }
-
-        public ActionResult Delete_Store_Sales_Month(int id)
-        {
-            var item = offlineDB.Store_Sales_Month.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                return View(item);
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-        [HttpPost]
-        public ActionResult Delete_Store_Sales_Month(int id, Store_Sales_Month model)
-        {
-            var item = offlineDB.Store_Sales_Month.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                var list = from m in offlineDB.Store_Sales_Month_Details
-                           where m.Store_Sales_Month.Id == model.Id
-                           select m;
-                offlineDB.Store_Sales_Month_Details.RemoveRange(list);
-                offlineDB.Store_Sales_Month.Remove(item);
-                offlineDB.SaveChanges();
-                return RedirectToAction("List_Store_Sales_Month");
-            }
-            else
-            {
-                return View("Error");
-            }
-        }
-
-        private List<Form_Product_Sales_Month> GetForm_Sales_Month(FormCollection form)
-        {
-            List<Form_Product_Sales_Month> list = new List<Form_Product_Sales_Month>();
-            // 检查红糖姜茶
-            if (form["sqz122_count"] != null && form["sqz122_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz122_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz122_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz122",
-                    Product_Name = "红糖姜茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查黑糖姜茶
-            if (form["sqz123_count"] != null && form["sqz123_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz123_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz123_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz123",
-                    Product_Name = "黑糖姜茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查蜂蜜姜茶
-            if (form["sqz124_count"] != null && form["sqz124_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz124_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz124_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz124",
-                    Product_Name = "蜂蜜姜茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查柠檬姜茶
-            if (form["sqz125_count"] != null && form["sqz125_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz125_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz125_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz125",
-                    Product_Name = "柠檬姜茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查红枣姜茶
-            if (form["sqz126_count"] != null && form["sqz126_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz126_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz126_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz126",
-                    Product_Name = "红枣姜茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查薄荷姜茶
-            if (form["sqz127_count"] != null && form["sqz127_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz127_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz127_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz127",
-                    Product_Name = "薄荷姜茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查蜂蜜菊花茶
-            if (form["sqz128_count"] != null && form["sqz128_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz128_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz128_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz128",
-                    Product_Name = "蜂蜜菊花茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查陈皮酸梅汤
-            if (form["sqz129_count"] != null && form["sqz129_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz129_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz129_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz129",
-                    Product_Name = "陈皮酸梅汤",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            // 检查生姜红茶
-            if (form["sqz130_count"] != null && form["sqz130_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz130_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz130_amount"]);
-                Form_Product_Sales_Month item = new Form_Product_Sales_Month()
-                {
-                    Product_Code = "sqz130",
-                    Product_Name = "生姜红茶",
-                    Sales_Amount = amount,
-                    Sales_Count = count
-                };
-                list.Add(item);
-            }
-            return list;
-        }
-
-        private void Progress_Store_Sales_Month_Details(Store_Sales_Month data, FormCollection form)
-        {
-
-            // 检查红糖姜茶
-            if (form["sqz122_count"] != null && form["sqz122_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz122_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz122_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 1);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 1,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz122_count"] == null || form["sqz122_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 1);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            // 检查黑糖姜茶
-            if (form["sqz123_count"] != null && form["sqz123_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz123_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz123_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 2);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 2,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz123_count"] == null || form["sqz123_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 2);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-
-            // 检查蜂蜜姜茶
-            if (form["sqz124_count"] != null && form["sqz124_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz124_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz124_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 3);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 3,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz124_count"] == null || form["sqz124_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 3);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            // 检查柠檬姜茶
-            if (form["sqz125_count"] != null && form["sqz125_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz125_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz125_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 4);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 4,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz125_count"] == null || form["sqz125_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 4);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            // 检查红枣姜茶
-            if (form["sqz126_count"] != null && form["sqz126_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz126_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz126_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 5);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 5,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz126_count"] == null || form["sqz126_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 5);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            // 检查薄荷姜茶
-            if (form["sqz127_count"] != null && form["sqz127_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz127_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz127_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 6);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 6,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz127_count"] == null || form["sqz127_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 6);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            // 检查蜂蜜菊花茶
-            if (form["sqz128_count"] != null && form["sqz128_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz128_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz128_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 7);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 7,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz128_count"] == null || form["sqz128_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 7);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            // 检查陈皮酸梅
-            if (form["sqz129_count"] != null && form["sqz129_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz129_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz129_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 8);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 8,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz129_count"] == null || form["sqz129_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 8);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            // 检查生姜红茶
-            if (form["sqz130_count"] != null && form["sqz130_amount"] != null)
-            {
-                // 表单内存在产品
-                int count = Convert.ToInt32(form["sqz130_count"]);
-                decimal amount = Convert.ToDecimal(form["sqz130_amount"]);
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 9);
-                if (item != null)
-                {
-                    // 商品已存在
-                    item.Sales_Num = count;
-                    item.Sales_Amount = amount;
-                }
-                else
-                {
-                    // 商品不存在，需要添加
-                    Store_Sales_Month_Details detail = new Store_Sales_Month_Details()
-                    {
-                        Product_Id = 9,
-                        Store_Sales_Month_Id = data.Id,
-                        Sales_Num = count,
-                        Sales_Amount = amount
-                    };
-                    offlineDB.Store_Sales_Month_Details.Add(detail);
-                }
-            }
-            else if (form["sqz130_count"] == null || form["sqz130_amount"] == null)
-            {
-                // 表单内不存在产品
-                var item = offlineDB.Store_Sales_Month_Details.SingleOrDefault(m => m.Store_Sales_Month_Id == data.Id && m.Product_Id == 9);
-                if (item != null)
-                {
-                    // 商品已存在，需要删除
-                    offlineDB.Store_Sales_Month_Details.Remove(item);
-                }
-            }
-            offlineDB.SaveChanges();
-        }
-        #endregion 
-
         public ActionResult Off_Store_main()
         {
             return View();
         }
         public PartialViewResult Off_Store_ajaxlist(int? page, string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
             if (query == null || query == "")
             {
 
                 var list = (from m in offlineDB.Off_Store
+                            where m.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
@@ -1855,7 +88,8 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in offlineDB.Off_Store
-                            where m.StoreName.Contains(query) || m.Address.Contains(query)
+                            where (m.StoreName.Contains(query) || m.Address.Contains(query))
+                            && m.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
                             select m).ToPagedList(_page, 100);
                 return PartialView(list);
@@ -1868,10 +102,12 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Off_DailySalesInfo_ajaxlist(int? page, string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (query == null || query == "")
             {
                 int _page = page ?? 1;
                 var list = (from m in offlineDB.Off_SalesInfo_Daily
+                            where m.Off_Store.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
@@ -1880,7 +116,7 @@ namespace PeriodAid.Controllers
             {
                 int _page = page ?? 1;
                 var list = (from m in offlineDB.Off_SalesInfo_Daily
-                            where m.Off_Store.StoreName.Contains(query)
+                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
@@ -1892,10 +128,12 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Off_MonthSalesInfo_ajaxlist(int? page, string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (query == null || query == "")
             {
                 int _page = page ?? 1;
                 var list = (from m in offlineDB.Off_SalesInfo_Month
+                            where m.Off_Store.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
@@ -1904,47 +142,26 @@ namespace PeriodAid.Controllers
             {
                 int _page = page ?? 1;
                 var list = (from m in offlineDB.Off_SalesInfo_Month
-                            where m.Off_Store.StoreName.Contains(query)
+                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_System_Id== user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
             }
         }
 
-        public ActionResult Off_Costs_main()
-        {
-            return View();
-        }
-        public ActionResult Off_Costs_ajaxlist(int? page, string query)
-        {
-            if (query == null || query == "")
-            {
-                int _page = page ?? 1;
-                var list = (from m in offlineDB.Off_Costs
-                            orderby m.ApplicationDate descending
-                            select m).ToPagedList(_page, 50);
-                return PartialView(list);
-            }
-            else
-            {
-                int _page = page ?? 1;
-                var list = (from m in offlineDB.Off_Costs
-                            where m.Off_Store.StoreName.Contains(query) || m.Off_Store.Distributor.Contains(query)
-                            orderby m.ApplicationDate descending
-                            select m).ToPagedList(_page, 50);
-                return PartialView(list);
-            }
-        }
+        
         public ActionResult Off_Seller_main()
         {
             return View();
         }
         public ActionResult Off_Seller_ajaxlist(int? page, string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (query == null || query == "")
             {
                 int _page = page ?? 1;
                 var list = (from m in offlineDB.Off_Seller
+                            where m.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
@@ -1953,36 +170,13 @@ namespace PeriodAid.Controllers
             {
                 int _page = page ?? 1;
                 var list = (from m in offlineDB.Off_Seller
-                            where m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query)
+                            where (m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query)) && m.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
             }
         }
-        public ActionResult Off_Costs_StoreSystem()
-        {
-            return View();
-        }
-        public ActionResult Off_StoreSystemCosts_ajaxlist(int? page, string query)
-        {
-            if (query == null || query == "")
-            {
-                int _page = page ?? 1;
-                var list = (from m in offlineDB.Off_StoreSystem_Costs
-                            orderby m.ApplicationDate descending
-                            select m).ToPagedList(_page, 50);
-                return PartialView(list);
-            }
-            else
-            {
-                int _page = page ?? 1;
-                var list = (from m in offlineDB.Off_StoreSystem_Costs
-                            where m.Distributor.Contains(query) || m.StoreSystem.Contains(query)
-                            orderby m.ApplicationDate descending
-                            select m).ToPagedList(_page, 50);
-                return PartialView(list);
-            }
-        }
+        
 
         #region 上传店铺信息
         public ActionResult UploadStore()
@@ -2024,6 +218,7 @@ namespace PeriodAid.Controllers
         {
             try
             {
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
                 string strConn = "Provider=Microsoft.Ace.OleDb.12.0;" + "data source=" + folder + filename + ";Extended Properties='Excel 12.0; HDR=1; IMEX=1'"; //此连接可以操作.xls与.xlsx文件
                 OleDbConnection conn = new OleDbConnection(strConn);
@@ -2042,7 +237,7 @@ namespace PeriodAid.Controllers
                     {
                         // 判断是否含有数据
                         string storename = dr["店铺名称"].ToString();
-                        var exist_item = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename);
+                        var exist_item = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_System_Id == user.DefaultSystemId);
                         if (exist_item != null)
                         {
                             // 更新数据
@@ -2070,7 +265,8 @@ namespace PeriodAid.Controllers
                                 Longitude = dr["经度"].ToString(),
                                 Latitude = dr["纬度"].ToString(),
                                 UploadTime = DateTime.Now,
-                                UploadUser = User.Identity.Name
+                                UploadUser = User.Identity.Name,
+                                Off_System_Id = user.DefaultSystemId
                             };
                             offlineDB.Off_Store.Add(store);
                             messageList.Add(new Excel_DataMessage(i, "数据添加成功", false));
@@ -2179,6 +375,7 @@ namespace PeriodAid.Controllers
         {
             try
             {
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
                 string strConn = "Provider=Microsoft.Ace.OleDb.12.0;" + "data source=" + folder + filename + ";Extended Properties='Excel 12.0; HDR=1; IMEX=1'"; //此连接可以操作.xls与.xlsx文件
                 OleDbConnection conn = new OleDbConnection(strConn);
@@ -2197,7 +394,7 @@ namespace PeriodAid.Controllers
                     {
                         // 判断是否存在店铺
                         string storename = dr["店铺名称"].ToString();
-                        var exist_store = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename);
+                        var exist_store = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_System_Id == user.DefaultSystemId);
                         if (exist_store == null)
                         {
                             messageList.Add(new Excel_DataMessage(i, "店铺不存在", true));
@@ -2387,6 +584,7 @@ namespace PeriodAid.Controllers
         {
             try
             {
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
                 string strConn = "Provider=Microsoft.Ace.OleDb.12.0;" + "data source=" + folder + filename + ";Extended Properties='Excel 12.0; HDR=1; IMEX=1'"; //此连接可以操作.xls与.xlsx文件
                 OleDbConnection conn = new OleDbConnection(strConn);
@@ -2405,7 +603,7 @@ namespace PeriodAid.Controllers
                     {
                         // 判断是否存在店铺
                         string storename = dr["店铺名称"].ToString();
-                        var exist_store = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename);
+                        var exist_store = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_System_Id == user.DefaultSystemId);
                         if (exist_store == null)
                         {
                             messageList.Add(new Excel_DataMessage(i, "店铺不存在", true));
@@ -2538,6 +736,7 @@ namespace PeriodAid.Controllers
         {
             try
             {
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
                 string strConn = "Provider=Microsoft.Ace.OleDb.12.0;" + "data source=" + folder + filename + ";Extended Properties='Excel 12.0; HDR=1; IMEX=1'"; //此连接可以操作.xls与.xlsx文件
                 OleDbConnection conn = new OleDbConnection(strConn);
@@ -2556,7 +755,7 @@ namespace PeriodAid.Controllers
                     {
                         // 判断是否存在店铺
                         string storename = dr["店铺名称"].ToString();
-                        var exist_store = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename);
+                        var exist_store = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_System_Id == user.DefaultSystemId);
                         if (exist_store == null)
                         {
                             messageList.Add(new Excel_DataMessage(i, "店铺不存在", true));
@@ -2584,7 +783,8 @@ namespace PeriodAid.Controllers
                                 CardName = dr["开户行"].ToString(),
                                 CardNo = dr["银行卡号"].ToString(),
                                 UploadTime = DateTime.Now,
-                                UploadUser = User.Identity.Name
+                                UploadUser = user.UserName,
+                                Off_System_Id = user.DefaultSystemId
                             };
                             offlineDB.Off_Seller.Add(seller);
                         }
@@ -2644,9 +844,11 @@ namespace PeriodAid.Controllers
         }
         public PartialViewResult Ajax_AddSeller()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var storelist = offlineDB.Off_Store.OrderBy(m => m.StoreName);
             ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
             Off_Seller seller = new Off_Seller();
+            seller.Off_System_Id = user.DefaultSystemId;
             return PartialView(seller);
         }
         [HttpPost]
@@ -2670,464 +872,7 @@ namespace PeriodAid.Controllers
             }
         }
         #endregion
-
-        #region 上传进场费用信息
-        public ActionResult UploadStoreSystemCosts()
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult UploadStoreSystemCosts(FormCollection form)
-        {
-            var file = Request.Files[0];
-            List<Excel_DataMessage> messageList = new List<Excel_DataMessage>();
-            string time_ticks = DateTime.Now.Ticks.ToString();
-            if (file != null)
-            {
-                //文件不得大于500K
-                if (file.ContentLength > 1024 * 500)
-                {
-                    messageList.Add(new Excel_DataMessage(0, "文件大于500K", true));
-                }
-                else if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                {
-                    messageList.Add(new Excel_DataMessage(0, "文件类型错误", true));
-                }
-                else
-                {
-                    string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
-                    string filename = time_ticks + file.FileName.Substring(file.FileName.LastIndexOf('.'));
-                    file.SaveAs(folder + filename);
-                    List<Excel_DataMessage> result = analyseExcel_StoreSystemCostsTable(filename, messageList);
-                }
-            }
-            else
-            {
-                messageList.Add(new Excel_DataMessage(0, "文件上传错误", true));
-            }
-            return View("UploadResult", messageList);
-        }
-        public List<Excel_DataMessage> analyseExcel_StoreSystemCostsTable(string filename, List<Excel_DataMessage> messageList)
-        {
-            try
-            {
-                string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
-                string strConn = "Provider=Microsoft.Ace.OleDb.12.0;" + "data source=" + folder + filename + ";Extended Properties='Excel 12.0; HDR=1; IMEX=1'"; //此连接可以操作.xls与.xlsx文件
-                OleDbConnection conn = new OleDbConnection(strConn);
-                conn.Open();
-                DataSet ds = new DataSet();
-                OleDbDataAdapter odda = new OleDbDataAdapter(string.Format("SELECT * FROM [{0}]", "Sheet1$"), conn);                    //("select * from [Sheet1$]", conn);
-                odda.Fill(ds, "[Sheet1$]");
-                conn.Close();
-                DataTable dt = ds.Tables[0];
-                int i = 0;
-                bool result_flag = true;
-                foreach (DataRow dr in dt.Rows)
-                {
-                    i++;
-                    try
-                    {
-                        decimal _totalfee = ExcelOperation.ConvertDecimal(dr, "总费用") == null ? 0 : Convert.ToDecimal(ExcelOperation.ConvertDecimal(dr, "总费用"));
-                        decimal _cash = ExcelOperation.ConvertDecimal(dr, "已付现金") == null ? 0 : Convert.ToDecimal(ExcelOperation.ConvertDecimal(dr, "已付现金"));
-                        decimal _mortagegegoods = ExcelOperation.ConvertDecimal(dr, "已货抵") == null ? 0 : Convert.ToDecimal(ExcelOperation.ConvertDecimal(dr, "已货抵"));
-                        if (_totalfee == 0)
-                        {
-                            result_flag = false;
-                            messageList.Add(new Excel_DataMessage(i, "总费用不能为空", true));
-                            continue;
-                        }
-                        if (_totalfee < _cash + _mortagegegoods)
-                        {
-                            result_flag = false;
-                            messageList.Add(new Excel_DataMessage(i, "总费用不得小于现金+货抵", true));
-                            continue;
-                        }
-
-                        Off_StoreSystem_Costs cost = new Off_StoreSystem_Costs()
-                        {
-                            Distributor = dr["经销商"].ToString(),
-                            ApplicationDate = ExcelOperation.ConvertDateTime(dr, "申请日期") ?? DateTime.Now,
-                            StoreSystem = dr["渠道"].ToString(),
-                            TotalFee = _totalfee,
-                            Cash = _cash,
-                            MortgageGoods = _mortagegegoods,
-                            Warrant = dr["收款人"].ToString(),
-                            Checked = ExcelOperation.ConvertBoolean(dr, "审核"),
-                            Completed = ExcelOperation.ConvertBoolean(dr, "完成"),
-                            Canceled = ExcelOperation.ConvertBoolean(dr, "作废"),
-                            UploadTime = DateTime.Now,
-                            UploadUser = User.Identity.Name
-                        };
-                        offlineDB.Off_StoreSystem_Costs.Add(cost);
-                        messageList.Add(new Excel_DataMessage(i, "数据类型验证成功", false));
-                    }
-                    catch (Exception e)
-                    {
-                        messageList.Add(new Excel_DataMessage(i, "表格格式错误," + e.ToString(), true));
-                        result_flag = false;
-                    }
-                }
-                if (result_flag)
-                {
-                    offlineDB.SaveChanges();
-                    messageList.Add(new Excel_DataMessage(0, "保存成功", false));
-                }
-                else
-                {
-                    messageList.Add(new Excel_DataMessage(0, "数据行发生错误，未保存", true));
-                }
-            }
-            catch (Exception e)
-            {
-                messageList.Add(new Excel_DataMessage(-1, "表格格式错误" + e.ToString(), true));
-            }
-            return messageList;
-        }
-        public PartialViewResult Ajax_EditStoreSystemCosts(int id)
-        {
-            var item = offlineDB.Off_StoreSystem_Costs.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                List<Object> warrant = new List<Object>();
-                warrant.Add(new { Key = "经销商", Value = "经销商" });
-                warrant.Add(new { Key = "门店", Value = "门店" });
-                ViewBag.Warrantlist = new SelectList(warrant, "Key", "Value", item.Warrant);
-                return PartialView(item);
-            }
-            else
-            {
-                return PartialView("Error");
-            }
-        }
-        [HttpPost]
-        public ActionResult Ajax_EditStoreSystemCosts(int id, FormCollection form)
-        {
-            var item = new Off_StoreSystem_Costs();
-            if (TryUpdateModel(item))
-            {
-                item.UploadTime = DateTime.Now;
-                item.UploadUser = User.Identity.Name;
-                offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                offlineDB.SaveChanges();
-                return Content("SUCCESS");
-            }
-            else
-            {
-                List<Object> warrantlist = new List<Object>();
-                warrantlist.Add(new { Key = "经销商", Value = "经销商" });
-                warrantlist.Add(new { Key = "门店", Value = "门店" });
-                ViewBag.Warrant = new SelectList(warrantlist, "Key", "Value", item.Warrant);
-                return PartialView(item);
-            }
-        }
-        [HttpPost]
-        public JsonResult Ajax_CheckStoreSystemCosts(int id)
-        {
-            try
-            {
-                var item = offlineDB.Off_StoreSystem_Costs.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    if (item.Checked)
-                        item.Checked = false;
-                    else
-                        item.Checked = true;
-                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            catch
-            {
-                return Json(new { result = "FAIL" });
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        public JsonResult Ajax_CompletedStoreSystemCosts(int id)
-        {
-            try
-            {
-                var item = offlineDB.Off_StoreSystem_Costs.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    if (item.Completed)
-                        item.Completed = false;
-                    else
-                        item.Completed = true;
-                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            catch
-            {
-                return Json(new { result = "FAIL" });
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        public JsonResult Ajax_CancelStoreSystemCosts(int id)
-        {
-            try
-            {
-                var item = offlineDB.Off_StoreSystem_Costs.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    if (item.Canceled)
-                        item.Canceled = false;
-                    else
-                        item.Canceled = true;
-                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            catch
-            {
-                return Json(new { result = "FAIL" });
-            }
-            return Json(new { result = "FAIL" });
-        }
-        #endregion
-
-        #region 上传活动费用信息
-        public ActionResult UploadEventCosts()
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult UploadEventCosts(FormCollection form)
-        {
-            var file = Request.Files[0];
-            List<Excel_DataMessage> messageList = new List<Excel_DataMessage>();
-            string time_ticks = DateTime.Now.Ticks.ToString();
-            if (file != null)
-            {
-                //文件不得大于500K
-                if (file.ContentLength > 1024 * 500)
-                {
-                    messageList.Add(new Excel_DataMessage(0, "文件大于500K", true));
-                }
-                else if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                {
-                    messageList.Add(new Excel_DataMessage(0, "文件类型错误", true));
-                }
-                else
-                {
-                    string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
-                    string filename = time_ticks + file.FileName.Substring(file.FileName.LastIndexOf('.'));
-                    file.SaveAs(folder + filename);
-                    List<Excel_DataMessage> result = analyseExcel_EventCostsTable(filename, messageList);
-                }
-            }
-            else
-            {
-                messageList.Add(new Excel_DataMessage(0, "文件上传错误", true));
-            }
-            return View("UploadResult", messageList);
-        }
-        public List<Excel_DataMessage> analyseExcel_EventCostsTable(string filename, List<Excel_DataMessage> messageList)
-        {
-            try
-            {
-                string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
-                string strConn = "Provider=Microsoft.Ace.OleDb.12.0;" + "data source=" + folder + filename + ";Extended Properties='Excel 12.0; HDR=1; IMEX=1'"; //此连接可以操作.xls与.xlsx文件
-                OleDbConnection conn = new OleDbConnection(strConn);
-                conn.Open();
-                DataSet ds = new DataSet();
-                OleDbDataAdapter odda = new OleDbDataAdapter(string.Format("SELECT * FROM [{0}]", "Sheet1$"), conn);                    //("select * from [Sheet1$]", conn);
-                odda.Fill(ds, "[Sheet1$]");
-                conn.Close();
-                DataTable dt = ds.Tables[0];
-                int i = 0;
-                bool result_flag = true;
-                foreach (DataRow dr in dt.Rows)
-                {
-                    i++;
-                    try
-                    {
-                        // 判断是否存在店铺
-                        string storename = dr["店铺名称"].ToString();
-                        var exist_store = offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename);
-                        if (exist_store == null)
-                        {
-                            messageList.Add(new Excel_DataMessage(i, "店铺不存在", true));
-                            result_flag = false;
-                            continue;
-                        }
-                        decimal _totalfee = ExcelOperation.ConvertDecimal(dr, "总费用") == null ? 0 : Convert.ToDecimal(ExcelOperation.ConvertDecimal(dr, "总费用"));
-                        decimal _cash = ExcelOperation.ConvertDecimal(dr, "已付现金") == null ? 0 : Convert.ToDecimal(ExcelOperation.ConvertDecimal(dr, "已付现金"));
-                        decimal _mortagegegoods = ExcelOperation.ConvertDecimal(dr, "已货抵") == null ? 0 : Convert.ToDecimal(ExcelOperation.ConvertDecimal(dr, "已货抵"));
-                        if (_totalfee == 0)
-                        {
-                            result_flag = false;
-                            messageList.Add(new Excel_DataMessage(i, "总费用不能为空", true));
-                            continue;
-                        }
-                        if (_totalfee < _cash + _mortagegegoods)
-                        {
-                            result_flag = false;
-                            messageList.Add(new Excel_DataMessage(i, "总费用不得小于现金+货抵", true));
-                            continue;
-                        }
-                        Off_Costs costs = new Off_Costs()
-                        {
-                            ApplicationDate = ExcelOperation.ConvertDateTime(dr, "申请日期") ?? DateTime.Now,
-                            StoreId = exist_store.Id,
-                            StartDate = ExcelOperation.ConvertDateTime(dr, "开始时间"),
-                            EndDate = ExcelOperation.ConvertDateTime(dr, "结束时间"),
-                            Event_HB = ExcelOperation.ConvertBoolean(dr, "海报"),
-                            Event_DT = ExcelOperation.ConvertBoolean(dr, "堆头"),
-                            Event_TG = ExcelOperation.ConvertBoolean(dr, "TG"),
-                            Event_DJ = ExcelOperation.ConvertBoolean(dr, "端架"),
-                            Event_DL = ExcelOperation.ConvertBoolean(dr, "叠篮"),
-                            Event_SY = ExcelOperation.ConvertBoolean(dr, "试饮"),
-                            Event_TJ = ExcelOperation.ConvertBoolean(dr, "特价"),
-                            Event_Other = ExcelOperation.ConvertBoolean(dr, "其他"),
-                            TotalFee = _totalfee,
-                            Cash = _cash,
-                            MortgageGoods = _mortagegegoods,
-                            Warrant = dr["收款方"].ToString(),
-                            Checked = ExcelOperation.ConvertBoolean(dr, "审核"),
-                            Completed = ExcelOperation.ConvertBoolean(dr, "完成"),
-                            Canceled = ExcelOperation.ConvertBoolean(dr, "作废"),
-                            UploadTime = DateTime.Now,
-                            UploadUser = User.Identity.Name
-                        };
-                        offlineDB.Off_Costs.Add(costs);
-                        messageList.Add(new Excel_DataMessage(i, "数据类型验证成功", false));
-                    }
-                    catch (Exception e)
-                    {
-                        messageList.Add(new Excel_DataMessage(i, "表格格式错误," + e.ToString(), true));
-                        result_flag = false;
-                    }
-                }
-                if (result_flag)
-                {
-                    offlineDB.SaveChanges();
-                    messageList.Add(new Excel_DataMessage(0, "保存成功", false));
-                }
-                else
-                {
-                    messageList.Add(new Excel_DataMessage(0, "数据行发生错误，未保存", true));
-                }
-            }
-            catch (Exception e)
-            {
-                messageList.Add(new Excel_DataMessage(-1, "表格格式错误" + e.ToString(), true));
-            }
-            return messageList;
-        }
-        public PartialViewResult Ajax_EditCosts(int id)
-        {
-            var item = offlineDB.Off_Costs.SingleOrDefault(m => m.Id == id);
-            if (item != null)
-            {
-                List<Object> warrant = new List<Object>();
-                warrant.Add(new { Key = "经销商", Value = "经销商" });
-                warrant.Add(new { Key = "门店", Value = "门店" });
-                ViewBag.Warrant = new SelectList(warrant, "Key", "Value", item.Warrant);
-                return PartialView(item);
-            }
-            else
-            {
-                return PartialView("Error");
-            }
-        }
-        [HttpPost]
-        public ActionResult Ajax_EditCosts(int id, FormCollection form)
-        {
-            var item = new Off_Costs();
-            if (TryUpdateModel(item))
-            {
-                item.UploadTime = DateTime.Now;
-                item.UploadUser = User.Identity.Name;
-                offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                offlineDB.SaveChanges();
-                return Content("SUCCESS");
-            }
-            else
-            {
-                List<Object> warrant = new List<Object>();
-                warrant.Add(new { Key = "经销商", Value = "经销商" });
-                warrant.Add(new { Key = "门店", Value = "门店" });
-                ViewBag.Warrantlist = new SelectList(warrant, "Key", "Value", item.Warrant);
-                return PartialView(item);
-            }
-        }
-        [HttpPost]
-        public JsonResult Ajax_CheckCosts(int id)
-        {
-            try
-            {
-                var item = offlineDB.Off_Costs.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    if (item.Checked)
-                        item.Checked = false;
-                    else
-                        item.Checked = true;
-                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            catch
-            {
-                return Json(new { result = "FAIL" });
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        public JsonResult Ajax_CompletedCosts(int id)
-        {
-            try
-            {
-                var item = offlineDB.Off_Costs.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    if (item.Completed)
-                        item.Completed = false;
-                    else
-                        item.Completed = true;
-                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            catch
-            {
-                return Json(new { result = "FAIL" });
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        public JsonResult Ajax_CancelCosts(int id)
-        {
-            try
-            {
-                var item = offlineDB.Off_Costs.SingleOrDefault(m => m.Id == id);
-                if (item != null)
-                {
-                    if (item.Canceled)
-                        item.Canceled = false;
-                    else
-                        item.Canceled = true;
-                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            catch
-            {
-                return Json(new { result = "FAIL" });
-            }
-            return Json(new { result = "FAIL" });
-        }
-        #endregion
-
+        
         /* -----费用表----- */
         public ActionResult Off_Expenses_List()
         {
@@ -3144,12 +889,14 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Expenses_Add(FormCollection form)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var item = new Off_Expenses();
             if (TryUpdateModel(item))
             {
                 item.Status = 0;
                 item.UploadTime = DateTime.Now;
                 item.UploadUser = User.Identity.Name;
+                item.Off_System_Id = user.DefaultSystemId;
                 offlineDB.Off_Expenses.Add(item);
                 offlineDB.SaveChanges();
             }
@@ -3412,8 +1159,9 @@ namespace PeriodAid.Controllers
         {
             int _type = type ?? 0;
             int _page = page ?? 1;
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_Expenses
-                        where m.Status >= 0 && m.PaymentType==_type
+                        where m.Status >= 0 && m.PaymentType==_type && m.Off_System_Id == user.DefaultSystemId
                         orderby m.Id descending
                         select m).ToPagedList(_page, 50);
             return PartialView(list);
@@ -3477,17 +1225,20 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult ajax_StoreSystem()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var storesystem = from m in offlineDB.Off_Store
+                              where m.Off_System_Id == user.DefaultSystemId
                               group m by m.StoreSystem into g
                               select g.Key;
             return Json(new { storesystem = storesystem });
         }
         public JsonResult JsonStoreList(string storesystem)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (storesystem == null || storesystem == "")
             {
                 var list = from m in offlineDB.Off_Store
-                           where m.Latitude != "" && m.Longitude != ""
+                           where m.Latitude != "" && m.Longitude != "" && m.Off_System_Id == user.DefaultSystemId
                            orderby m.Id descending
                            select new { StoreName = m.StoreName, StoreSystem = m.StoreSystem, Address = m.Address, Longitude = m.Longitude, Latitude = m.Latitude };
                 return Json(new { result = "SUCCESS", list = list }, JsonRequestBehavior.AllowGet);
@@ -3496,7 +1247,7 @@ namespace PeriodAid.Controllers
             {
                 string[] systems = storesystem.Split(',');
                 var list = from m in offlineDB.Off_Store
-                           where systems.Contains(m.StoreSystem)
+                           where systems.Contains(m.StoreSystem) && m.Off_System_Id == user.DefaultSystemId
                            orderby m.Id descending
                            select new { StoreName = m.StoreName, StoreSystem = m.StoreSystem, Address = m.Address, Longitude = m.Longitude, Latitude = m.Latitude };
                 return Json(new { result = "SUCCESS", list = list }, JsonRequestBehavior.AllowGet);
@@ -3504,8 +1255,9 @@ namespace PeriodAid.Controllers
         }
         public FileResult Ajax_downloadSalary(DateTime start, DateTime end)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_SalesInfo_Daily
-                       where m.Date >= start && m.Date <= end
+                       where m.Date >= start && m.Date <= end && m.Off_Seller.Off_System_Id == user.DefaultSystemId
                        group m by m.Off_Seller into g
                        select new
                        {
@@ -3572,15 +1324,16 @@ namespace PeriodAid.Controllers
         #region 绑定促销员
         public ActionResult Off_BindSeller_List(string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (query == null)
             {
-                var list = offlineDB.Off_Membership_Bind.OrderByDescending(m => m.ApplicationDate);
+                var list = offlineDB.Off_Membership_Bind.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderByDescending(m => m.ApplicationDate);
                 return View(list);
             }
             else
             {
                 var list = from m in offlineDB.Off_Membership_Bind
-                           where (m.NickName.Contains(query) || m.Off_Seller.Off_Store.StoreName.Contains(query))
+                           where (m.NickName.Contains(query) || m.Off_Seller.Off_Store.StoreName.Contains(query)) && m.Off_System_Id == user.DefaultSystemId
                            select m;
                 return View(list);
             }
@@ -3611,12 +1364,13 @@ namespace PeriodAid.Controllers
         #region 绑定促销门店
         public ActionResult Off_ScheduleList(bool? history)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             bool _history = history ?? true;
             var currentTime = Convert.ToDateTime(DateTime.Now.ToShortDateString());
             if (_history)
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
-                           where m.Subscribe <= currentTime
+                           where m.Subscribe <= currentTime && m.Off_System_Id == user.DefaultSystemId
                            group m by m.Subscribe into g
                            orderby g.Key descending
                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
@@ -3625,7 +1379,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
-                           where m.Subscribe > currentTime
+                           where m.Subscribe > currentTime && m.Off_System_Id == user.DefaultSystemId
                            group m by m.Subscribe into g
                            orderby g.Key
                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) };
@@ -3635,12 +1389,13 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Off_ScheduleDetails(string date, string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime day = DateTime.Parse(date);
             ViewBag.CurrentDate = date;
             if (query!=null)
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
-                           where m.Subscribe == day && m.Off_Store.StoreName.Contains(query)
+                           where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
                            orderby m.Off_Store.StoreName
                            select m;
                 return View(list);
@@ -3648,7 +1403,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
-                           where m.Subscribe == day
+                           where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
                            orderby m.Off_Store.StoreName
                            select m;
                 return View(list);
@@ -3730,7 +1485,7 @@ namespace PeriodAid.Controllers
                     // 每天循环
                     for (int i = 0; i <= datelength; i++)
                     {
-
+                        var user = UserManager.FindById(User.Identity.GetUserId());
                         string[] storelist = form["StoreList"].ToString().Split(',');
                         for (int j = 0; j < storelist.Length; j++)
                         {
@@ -3750,7 +1505,8 @@ namespace PeriodAid.Controllers
                                     Subscribe = subscribe,
                                     Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
                                     Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
-                                    Standard_Salary = model.Salary
+                                    Standard_Salary = model.Salary,
+                                    Off_System_Id = user.DefaultSystemId
                                 };
                                 offlineDB.Off_Checkin_Schedule.Add(schedule);
                             }
@@ -3781,8 +1537,9 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult Off_Add_Schedule_StoreList(string storesystem)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Store
-                       where m.StoreSystem == storesystem
+                       where m.StoreSystem == storesystem && m.Off_System_Id == user.DefaultSystemId
                        select new { ID = m.Id, StoreName = m.StoreName };
             return Json(new { StoreList = list });
         }
@@ -4036,11 +1793,12 @@ namespace PeriodAid.Controllers
         {
             int _page = page ?? 1;
             int _status = status ?? 4;
+            var user = UserManager.FindById(User.Identity.GetUserId());
             // 按照活动日期排序
             if (query == null)
             {
                 var list = (from m in offlineDB.Off_Checkin
-                            where m.Status == _status
+                            where m.Status == _status && m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
                             orderby m.Off_Checkin_Schedule.Subscribe descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
@@ -4048,7 +1806,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in offlineDB.Off_Checkin
-                            where m.Status == _status
+                            where m.Status == _status && m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
                             && (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
                             orderby m.Off_Checkin_Schedule.Subscribe descending
                             select m).ToPagedList(_page, 50);
@@ -4062,7 +1820,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindByName(item.UserName);
             UserManager.RemoveFromRole(user.Id, "Seller");
             UserManager.AddToRole(user.Id, "Manager");
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             if (manager == null)
             {
                 manager = new Off_StoreManager()
@@ -4070,7 +1828,8 @@ namespace PeriodAid.Controllers
                     UserName = user.UserName,
                     NickName = user.NickName,
                     Mobile = user.UserName,
-                    Status = 1
+                    Status = 1,
+                    Off_System_Id = user.DefaultSystemId
                 };
                 offlineDB.Off_StoreManager.Add(manager);
             }
@@ -4092,6 +1851,7 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_CreateStore(Off_Store model)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (ModelState.IsValid)
             {
                 Off_Store item = new Off_Store();
@@ -4099,6 +1859,7 @@ namespace PeriodAid.Controllers
                 {
                     item.UploadTime = DateTime.Now;
                     item.UploadUser = User.Identity.Name;
+                    item.Off_System_Id = user.DefaultSystemId;
                     offlineDB.Off_Store.Add(item);
                     offlineDB.SaveChanges();
                     return Content("SUCCESS");
@@ -4133,9 +1894,11 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Off_CreateSalesDaily()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var item = new Off_SalesInfo_Daily();
             var storelist = from m in offlineDB.Off_Store
-                            orderby m.StoreName
+                            where m.Off_System_Id == user.DefaultSystemId
+                            orderby m.StoreName 
                             select new { Key = m.Id, Value = m.StoreName };
             ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
             return PartialView(item);
@@ -4198,8 +1961,10 @@ namespace PeriodAid.Controllers
 
         public ActionResult Off_CreateSalesMonth()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var item = new Off_SalesInfo_Month();
             var storelist = from m in offlineDB.Off_Store
+                            where m.Off_System_Id == user.DefaultSystemId
                             orderby m.StoreName
                             select new { Key = m.Id, Value = m.StoreName };
             ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
@@ -4277,8 +2042,10 @@ namespace PeriodAid.Controllers
         {
             DateTime _end = end ?? Convert.ToDateTime(DateTime.Now.ToShortDateString());
             DateTime _start = start ?? _end.AddDays(-1);
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Checkin
-                       where m.Off_Checkin_Schedule.Subscribe >= _start &&
+                       where m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                       && m.Off_Checkin_Schedule.Subscribe >= _start &&
                        m.Off_Checkin_Schedule.Subscribe <= _end &&
                        (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
                        select m;
@@ -4288,7 +2055,9 @@ namespace PeriodAid.Controllers
         // 0310 管理员列表
         public ActionResult Off_Manager_List()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_StoreManager
+                       where m.Off_System_Id == user.DefaultSystemId
                        select m;
             return View(list);
         }
@@ -4309,10 +2078,12 @@ namespace PeriodAid.Controllers
         {
             //var item = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id);
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (manager != null)
             {
                 ViewBag.StoreList = manager.Off_Store.OrderBy(m => m.StoreName);
                 var storesystem = from m in offlineDB.Off_Store
+                                  where m.Off_System_Id == user.DefaultSystemId
                                   group m by m.StoreSystem into g
                                   orderby g.Key
                                   select new { Key = g.Key, Value = g.Key };
@@ -4380,10 +2151,11 @@ namespace PeriodAid.Controllers
         {
             int _status = status ?? 0;
             int _page = page ?? 1;
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (query == null)
             {
                 var list = (from m in offlineDB.Off_Manager_Task
-                            where m.Status == _status
+                            where m.Status == _status && m.Off_System_Id == user.DefaultSystemId
                             orderby m.TaskDate descending
                             select m).ToPagedList(_page, 30);
                 return PartialView(list);
@@ -4391,7 +2163,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in offlineDB.Off_Manager_Task
-                            where m.Status == _status
+                            where m.Status == _status && m.Off_System_Id == user.DefaultSystemId
                             && m.NickName.Contains(query)
                             orderby m.TaskDate descending
                             select m).ToPagedList(_page, 30);
@@ -4457,8 +2229,10 @@ namespace PeriodAid.Controllers
 
         public ActionResult Off_Manager_Announcement_List_Ajax(int? page)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
             var list = (from m in offlineDB.Off_Manager_Announcement
+                        where m.Off_System_Id == user.DefaultSystemId
                         orderby m.Priority descending, m.FinishTime descending
                         select m).ToPagedList(_page, 30);
             return PartialView(list);
@@ -4474,11 +2248,13 @@ namespace PeriodAid.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 Off_Manager_Announcement item = new Off_Manager_Announcement();
                 if (TryUpdateModel(item))
                 {
                     item.SubmitTime = DateTime.Now;
                     item.SubmitUser = User.Identity.Name;
+                    item.Off_System_Id = user.DefaultSystemId;
                     offlineDB.Off_Manager_Announcement.Add(item);
                     offlineDB.SaveChanges();
                     return RedirectToAction("Off_Manager_Announcement_List");
@@ -4542,7 +2318,9 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult Off_Manager_List_Ajax()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_StoreManager
+                       where m.Off_System_Id == user.DefaultSystemId
                        select new { UserName = m.UserName, NickName = m.NickName };
             return Json(new { result = "SUCCESS", managerlist = list });
         }
@@ -4554,11 +2332,11 @@ namespace PeriodAid.Controllers
         }
 
         public ActionResult Off_Manager_Request_List_Ajax(int? page)
-            
         {
             var _page = page ?? 1;
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_Manager_Request
-                        where m.Status >= 0
+                        where m.Status >= 0 && m.Off_Store.Off_System_Id== user.DefaultSystemId
                         orderby m.Status, m.Id descending
                         select m).ToPagedList(_page, 20);
             return PartialView(list);
@@ -4624,9 +2402,10 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult Off_Schedule_Statistic_Ajax(string datetime)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime targetDate = Convert.ToDateTime(datetime);
             var schedulelist = from m in offlineDB.Off_Checkin_Schedule
-                               where m.Subscribe == targetDate
+                               where m.Subscribe == targetDate && m.Off_System_Id == user.DefaultSystemId
                                select m;
             int self = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && !m.Proxy));
             int proxy = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && m.Proxy));
@@ -4636,7 +2415,9 @@ namespace PeriodAid.Controllers
         // 0413 统计数据-渠道数据
         public ActionResult Off_Statistic_StoreSystem()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var storesystem = from m in offlineDB.Off_Store
+                              where m.Off_System_Id == user.DefaultSystemId
                               group m by m.StoreSystem into g
                               orderby g.Key
                               select new { Key = g.Key, Value = g.Key };
@@ -4645,10 +2426,11 @@ namespace PeriodAid.Controllers
         }
         public JsonResult Off_Statistic_StoreSystem_Ajax(string startdate, string enddate, string storesystem)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime st = Convert.ToDateTime(startdate);
             DateTime et = Convert.ToDateTime(enddate);
             var data = from m in offlineDB.Off_SalesInfo_Daily
-                       where m.Date >= st && m.Date <= et && m.Off_Store.StoreSystem.Contains(storesystem)
+                       where m.Date >= st && m.Date <= et && m.Off_Store.StoreSystem.Contains(storesystem) && m.Off_Store.Off_System_Id == user.DefaultSystemId
                        group m by m.Date into g
                        select new { date = g.Key, count = g.Count(), brown = g.Sum(m => m.Item_Brown), black = g.Sum(m => m.Item_Black), lemon = g.Sum(m => m.Item_Lemon), honey = g.Sum(m => m.Item_Honey), dates = g.Sum(m => m.Item_Dates) };
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
@@ -4657,7 +2439,9 @@ namespace PeriodAid.Controllers
         // 0413 统计数据-门店数据
         public ActionResult Off_Statistic_Store()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var storesystem = from m in offlineDB.Off_Store
+                              where m.Off_System_Id == user.DefaultSystemId
                               group m by m.StoreSystem into g
                               orderby g.Key
                               select new { Key = g.Key, Value = g.Key };
@@ -4668,8 +2452,9 @@ namespace PeriodAid.Controllers
         {
             DateTime st = Convert.ToDateTime(startdate);
             DateTime et = Convert.ToDateTime(enddate);
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var data = from m in offlineDB.Off_SalesInfo_Daily
-                       where m.Date >= st && m.Date <= et && m.StoreId == storeid
+                       where m.Date >= st && m.Date <= et && m.StoreId == storeid && m.Off_Store.Off_System_Id == user.DefaultSystemId
                        group m by m.Date into g
                        select new { date = g.Key, count = g.Count(), brown = g.Sum(m => m.Item_Brown), black = g.Sum(m => m.Item_Black), lemon = g.Sum(m => m.Item_Lemon), honey = g.Sum(m => m.Item_Honey), dates = g.Sum(m => m.Item_Dates) };
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
@@ -4677,7 +2462,9 @@ namespace PeriodAid.Controllers
         // 0413 统计数据-促销员数据
         public ActionResult Off_Statistic_Seller()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var storesystem = from m in offlineDB.Off_Store
+                              where m.Off_System_Id == user.DefaultSystemId
                               group m by m.StoreSystem into g
                               orderby g.Key
                               select new { Key = g.Key, Value = g.Key };
@@ -4701,11 +2488,235 @@ namespace PeriodAid.Controllers
 
         public JsonResult Off_Statistic_QuerySeller_Ajax(string query)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_Seller
-                        where m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query)
+                        where (m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query)) && m.Off_System_Id == user.DefaultSystemId
                         select new { value = m.Id, label = m.Name, desc = m.Off_Store.StoreName}).Take(5);
             return Json(new { result = "SUCCESS", data = list }, JsonRequestBehavior.AllowGet);
         }
+
+
+        // 数据库更新辅助程序 更新完成后删除
+        #region v1.3 辅助程序
+        // 01-添加商品
+        public ContentResult AddProduct()
+        {
+            var product_brown = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz122");
+            if (product_brown == null)
+            {
+                product_brown = new Off_Product()
+                {
+                    ItemCode = "sqz122",
+                    ItemName = "寿全斋红糖姜茶120g纸盒装",
+                    Off_System_Id = 1,
+                    SalesPrice = Convert.ToDecimal(19.8),
+                    status = 0
+                };
+                offlineDB.Off_Product.Add(product_brown);
+            }
+            var product_black = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz123");
+            if (product_black == null)
+            {
+                product_black = new Off_Product()
+                {
+                    ItemCode = "sqz123",
+                    ItemName = "寿全斋黑糖姜茶120g纸盒装",
+                    Off_System_Id = 1,
+                    SalesPrice = Convert.ToDecimal(19.8),
+                    status = 0
+                };
+                offlineDB.Off_Product.Add(product_black);
+            }
+            var product_lemon = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz125");
+            if (product_lemon == null)
+            {
+                product_lemon = new Off_Product()
+                {
+                    ItemCode = "sqz125",
+                    ItemName = "寿全斋柠檬姜茶120g纸盒装",
+                    Off_System_Id = 1,
+                    SalesPrice = Convert.ToDecimal(19.8),
+                    status = 0
+                };
+                offlineDB.Off_Product.Add(product_lemon);
+            }
+            var product_honey = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz124");
+            if (product_honey == null)
+            {
+                product_honey = new Off_Product()
+                {
+                    ItemCode = "sqz124",
+                    ItemName = "寿全斋蜂蜜姜茶120g纸盒装",
+                    Off_System_Id = 1,
+                    SalesPrice = Convert.ToDecimal(19.8),
+                    status = 0
+                };
+                offlineDB.Off_Product.Add(product_honey);
+            }
+            var product_dates = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz126");
+            if (product_dates == null)
+            {
+                product_dates = new Off_Product()
+                {
+                    ItemCode = "sqz126",
+                    ItemName = "寿全斋红枣姜茶120g纸盒装",
+                    Off_System_Id = 1,
+                    SalesPrice = Convert.ToDecimal(19.8),
+                    status = 0
+                };
+                offlineDB.Off_Product.Add(product_dates);
+            }
+            offlineDB.SaveChanges();
+            return Content("SUCCESS");
+        }
+        // 02-签到数据
+        public ContentResult migrate_checkin()
+        {
+            var list = from m in offlineDB.Off_Checkin
+                       where m.Off_Checkin_Schedule.Off_System_Id == 1
+                       select m;
+            foreach(var item in list)
+            {
+                if (item.Rep_Brown != null&& item.Rep_Brown>0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz122");
+                    var itemBrown = new Off_Checkin_Product()
+                    {
+                        Off_Checkin = item,
+                        ItemCode = "sqz122",
+                        Off_Product = product,
+                        SalesCount = item.Rep_Brown
+                    };
+                    offlineDB.Off_Checkin_Product.Add(itemBrown);
+                }
+                if (item.Rep_Black != null && item.Rep_Black>0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz123");
+                    var itemBlack = new Off_Checkin_Product()
+                    {
+                        Off_Checkin = item,
+                        ItemCode = "sqz123",
+                        Off_Product = product,
+                        SalesCount = item.Rep_Black
+                    };
+                    offlineDB.Off_Checkin_Product.Add(itemBlack);
+                }
+                if (item.Rep_Lemon != null && item.Rep_Lemon>0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz125");
+                    var itemLemon = new Off_Checkin_Product()
+                    {
+                        Off_Checkin = item,
+                        ItemCode = "sqz125",
+                        Off_Product = product,
+                        SalesCount = item.Rep_Lemon
+                    };
+                    offlineDB.Off_Checkin_Product.Add(itemLemon);
+                }
+                if (item.Rep_Honey != null && item.Rep_Honey >0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz124");
+                    var itemHoney = new Off_Checkin_Product()
+                    {
+                        Off_Checkin = item,
+                        ItemCode = "sqz124",
+                        Off_Product = product,
+                        SalesCount = item.Rep_Honey
+                    };
+                    offlineDB.Off_Checkin_Product.Add(itemHoney);
+                }
+                if (item.Rep_Dates != null && item.Rep_Dates>0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz126");
+                    var itemDates = new Off_Checkin_Product()
+                    {
+                        Off_Checkin = item,
+                        ItemCode = "sqz126",
+                        Off_Product = product,
+                        SalesCount = item.Rep_Dates
+                    };
+                    offlineDB.Off_Checkin_Product.Add(itemDates);
+                }
+                //offlineDB.SaveChanges();
+            }
+            offlineDB.SaveChanges();
+            return Content("SUCCESS");
+        }
+        // 03-每日数据
+        public ContentResult migrate_daily()
+        {
+            var list = from m in offlineDB.Off_SalesInfo_Daily
+                       where m.Off_Store.Off_System_Id == 1
+                       select m;
+            foreach (var item in list)
+            {
+                if (item.Item_Brown != null && item.Item_Brown > 0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz122");
+                    var itemBrown = new Off_Daily_Product()
+                    {
+                        Off_SalesInfo_Daily = item,
+                        ItemCode = "sqz122",
+                        Off_Product = product,
+                        SalesCount = item.Item_Brown
+                    };
+                    offlineDB.Off_Daily_Product.Add(itemBrown);
+                }
+                if (item.Item_Black != null && item.Item_Black > 0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz123");
+                    var itemBlack = new Off_Daily_Product()
+                    {
+                        Off_SalesInfo_Daily = item,
+                        ItemCode = "sqz123",
+                        Off_Product = product,
+                        SalesCount = item.Item_Black
+                    };
+                    offlineDB.Off_Daily_Product.Add(itemBlack);
+                }
+                if (item.Item_Lemon != null && item.Item_Lemon > 0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz125");
+                    var itemLemon = new Off_Daily_Product()
+                    {
+                        Off_SalesInfo_Daily = item,
+                        ItemCode = "sqz125",
+                        Off_Product = product,
+                        SalesCount = item.Item_Lemon
+                    };
+                    offlineDB.Off_Daily_Product.Add(itemLemon);
+                }
+                if (item.Item_Honey != null && item.Item_Honey > 0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz124");
+                    var itemHoney = new Off_Daily_Product()
+                    {
+                        Off_SalesInfo_Daily = item,
+                        ItemCode = "sqz124",
+                        Off_Product = product,
+                        SalesCount = item.Item_Honey
+                    };
+                    offlineDB.Off_Daily_Product.Add(itemHoney);
+                }
+                if (item.Item_Dates != null && item.Item_Dates > 0)
+                {
+                    var product = offlineDB.Off_Product.SingleOrDefault(m => m.ItemCode == "sqz126");
+                    var itemDates = new Off_Daily_Product()
+                    {
+                        Off_SalesInfo_Daily = item,
+                        ItemCode = "sqz126",
+                        Off_Product = product,
+                        SalesCount = item.Item_Dates
+                    };
+                    offlineDB.Off_Daily_Product.Add(itemDates);
+                }
+                //offlineDB.SaveChanges();
+            }
+            offlineDB.SaveChanges();
+            return Content("SUCCESS");
+        }
+        #endregion
+
 
 
         public static string getManagerNickName(string username)

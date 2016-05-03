@@ -22,6 +22,7 @@ namespace PeriodAid.Models
 
         [Display(AutoGenerateField = false)]
         public string AccessToken { get; set; }
+        
 
     }
 
@@ -48,6 +49,8 @@ namespace PeriodAid.Models
 
         [Display(AutoGenerateField = false)]
         public string AccessToken { get; set; }
+
+        public int SystemId { get; set; }
     }
 
     public class Wx_SellerRegisterViewModel

@@ -79,6 +79,11 @@
                         </text>
                     }
                 }*@
+            @foreach (var item in ViewBag.SystemList)
+            {
+                //@Html.ActionLink("设置管理员", "Off_UpdateManager", new { id = item.Id }, new { @class = "btn btn-sm btn-danger manager-button" })
+                @Html.ActionLink((string)item.SystemName, "updateSystem", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button", style="margin:5px 0" })<br />
+                }
         </dd>
     </dl>
 </div>

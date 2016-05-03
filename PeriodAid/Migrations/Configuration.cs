@@ -5,14 +5,14 @@ namespace PeriodAid.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.ERPOrderDataContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.OfflineSales>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(PeriodAid.Models.ERPOrderDataContext context)
+        protected override void Seed(PeriodAid.Models.OfflineSales context)
         {
             //  This method will be called after migrating to the latest version.
 

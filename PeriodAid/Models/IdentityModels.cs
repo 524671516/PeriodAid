@@ -30,6 +30,10 @@ namespace PeriodAid.Models
         [StringLength(256)]
         public string AccessToken { get; set; }
 
+        [StringLength(64)]
+        public string OffSalesSystem { get; set; }
+
+        public int DefaultSystemId { get; set; }
         
         public int Credits { get; set; }
 
