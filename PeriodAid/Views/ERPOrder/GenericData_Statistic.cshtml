@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "GenericData_Statistic";
     Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
-    ViewBag.page = 2;
+    ViewBag.page = 3;
 }
 
 <div class="row">
@@ -147,105 +147,95 @@
                                 },
                                 yAxis: [{
                                     title: {
-                                        text: '销售额',
-                                        style: {
-                                            color: '#e63398'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#e63398' },
-                                    opposite:true
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: '访客数',
-                                        style: {
-                                            color: '#db33e6', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#db33e6' },
-                                    opposite: false
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: '订单数',
-                                        style: {
-                                            color: '#e63333', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#e63333' },
-                                    opposite: false
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: '浏览量',
-                                        style: {
-                                            color: '#336ae6', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#336ae6' },
-                                    opposite: false
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: '转化率',
-                                        style: {
-                                            color: '#33e687', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#33e687' },
-                                    opposite: false
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: '客单价',
-                                        style: {
-                                            color: '#90e633', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#90e633' },
-                                    opposite: true
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: '运费',
-                                        style: {
-                                            color: '#d7e633', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#d7e633' },
-                                    opposite: true
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: '推广费',
-                                        style: {
-                                            color: '#e6be33', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#e6be33' },
-                                    opposite: true
+                                    labels: {
+                                        enabled: false
+                                    },
                                 }, {
                                     title: {
-                                        text: 'ROI',
-                                        style: {
-                                            color: '#e68c33', display: 'none'
-                                        },
+                                        text: '',
                                     },
-                                    style: { color: '#e68c33' },
-                                    opposite: true
-                                } ],
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, ],
                                 tooltip: {
                                     shared: true,
+                                    enabled: false
                                 },
                                 legend: {
-                                        itemMarginTop: 3,
-                                        itemMarginBottom: 10
+                                    itemMarginTop: 3,
+                                    itemMarginBottom: 10
                                 },
                                 plotOptions: {
                                     column: {
                                         pointPadding: 0.2,
-                                        borderWidth: 0
+                                        borderWidth: 0,
                                     },
+                                    spline: {
+                                        dataLabels: {
+                                            enabled: true
+                                        },
+                                        enableMouseTracking: false
+                                    },
+                                
                                     series: {
                                         showCheckbox: true,
                                         events: {
                                             checkboxClick: function (event) {
                                                 if (event.checked == true) {
                                                     this.show();
-                                                    alert(this.name)                                                    
+                                                    //alert(this.name)                                                    
                                                 }
                                                 else {
                                                     this.hide();

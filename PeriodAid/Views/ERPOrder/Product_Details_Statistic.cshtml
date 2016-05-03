@@ -2,7 +2,187 @@
 @{
     ViewBag.Title = "Product_Details_Statistic";
     Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
+    ViewBag.page = 3;
 }
 
-<h2>Product_Details_Statistic</h2>
+<div class="row">
+    <div class="col-md-3">
+        <input class="form-control input-sm" id="start-date" name="start-date" placeholder="开始时间" />
+        <span id="danger" class="text-danger h6"></span>
+    </div>
+    <div class="col-md-3"> <input class="form-control input-sm" id="end-date" name="end-date" placeholder="结束时间" /></div>
+    <div class="col-md-3"> <input type="number" class="form-control input-sm" id="itemcode" name="itemcode" placeholder="商品编码" /></div>
+    <div class="col-md-3">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div><br /><br />
+<div id="container" style="min-width:700px;height:400px"></div>
+<script src="~/Scripts/highcharts.js"></script>
+<script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
+<script>
+    $(function () {
+        Date.prototype.Format = function (fmt) { //author: meizz   
+            var o = {
+                "M+": this.getMonth() + 1,                 //月份   
+                "d+": this.getDate(),                    //日   
+                "h+": this.getHours(),                   //小时   
+                "m+": this.getMinutes(),                 //分   
+                "s+": this.getSeconds(),                 //秒   
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度   
+                "S": this.getMilliseconds()             //毫秒   
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        //start------搜索
+        var start = {
+            dateCell: '#start-date',
+            format: 'YYYY-MM',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                end.minDate = datas; //开始日选好后，重置结束日的最小日期
+            }
+        };
+        var end = {
+            dateCell: '#end-date',
+            format: 'YYYY-MM',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
+            }
+        };
+        jeDate(start);
+        jeDate(end);
+        $("#search-btn").click(function () {
+            var start = $("#start-date").val();
+            var end = $("#end-date").val();
+            var itemcode = $("#itemcode").val();
+            var query = $("#search-query").val();
+            var link_url = "/ERPOrder/Product_Details_Statistic_Ajax";
+            if (start > end) {
+                $("#danger").text("开始时间不能大于结束时间")
+            } else if (start == "" || end == "") {
+                $("#danger").text("时间不能为空")
+            } else {
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    data: {
+                        startdate: start,
+                        enddate: end,
+                        itemcode: itemcode,
+                        storename: query
+                    },
+                    success: function (data) {
+                        if (data.data.length == 0) {
+                            $("#danger").addClass("hidden")
+                            alert("该门店在此时间内无数据");
+                        } else {
+                            $("#danger").addClass("hidden")
+                            var resulttotal = data.data;
+                            var datearray = new Array();//时间
+                            var count = new Array();//销售数量
+                            var amount = new Array();//销售金额
+                            for (var i = 0; i < resulttotal.length; i++) {
+                                var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
+                                var newdate = new Date(date)
+                                datearray.push(newdate.Format("MM-dd"));//时间
+                                var num_count = resulttotal[i].sales_count
+                                count.push(num_count)//销售数量
+                                var num_amount = resulttotal[i].sales_amount
+                                amount.push(num_amount)//销售金额
+                            }
+                                //绘制图表（两个Y轴混合图表）
+                                $('#container').highcharts({
+                                    chart: {
+                                        zoomType: 'xy'
+                                    },
+                                    title: {
+                                        text: '产品销售明细分布数据图'
+                                    },
+                                    xAxis: [{
+                                        categories:datearray
+                                    }],
+                                    yAxis: [{ // Primary yAxis
+                                        labels: {
+                                            //format: '{value}元',
+                                            style: {
+                                                color: '#89A54E'
+                                            }
+                                        },
+                                        title: {
+                                            text: '销售金额',
+                                            style: {
+                                                color: '#89A54E'
+                                            }
+                                        }
+                                    }, { // Secondary yAxis
+                                        title: {
+                                            text: '销售数量',
+                                            style: {
+                                                color: '#4572A7'
+                                            }
+                                        },
+                                        labels: {
+                                            //format: '{value} 个',
+                                            style: {
+                                                color: '#4572A7'
+                                            }
+                                        },
+                                        opposite: true
+                                    }],
+                                    tooltip: {
+                                        shared: true
+                                    },
+                                    //legend: {
+                                    //    layout: 'vertical',
+                                    //    align: 'left',
+                                    //    x: 120,
+                                    //    verticalAlign: 'top',
+                                    //    y: 100,
+                                    //    floating: true,
+                                    //    backgroundColor: '#FFFFFF'
+                                    //},
+                                    series: [{
+                                        name: '销售数量',
+                                        color: '#4572A7',
+                                        type: 'column',
+                                        yAxis: 1,
+                                        data: amount,
+                                        tooltip: {
+                                            valueSuffix: ' 个'
+                                        }
+
+                                    }, {
+                                        name: '销售金额',
+                                        color: '#89A54E',
+                                        type: 'spline',
+                                        data: count,
+                                        tooltip: {
+                                            valueSuffix: '元'
+                                        }
+                                    }]
+                                });                            
+                        }
+                    }
+                })
+            }
+        })
+    })
+</script>
 
