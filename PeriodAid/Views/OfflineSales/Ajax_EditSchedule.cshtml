@@ -1,5 +1,5 @@
 ﻿@model PeriodAid.Models.Off_Checkin_Schedule
-
+    
 @using (Html.BeginForm("Ajax_EditSchedule", "OfflineSales", FormMethod.Post, new { id = "ajaxForm" }))
 {
     @Html.AntiForgeryToken()
@@ -9,6 +9,7 @@
         @Html.HiddenFor(model => model.Id)
         @Html.HiddenFor(model => model.Off_Store_Id)
         @Html.HiddenFor(model => model.Off_System_Id)
+        @Html.HiddenFor(m=>m.TemplateId)
         <div class="form-group">
             <label class="control-label col-md-3">店铺名称</label>
             <div class="col-md-9">
