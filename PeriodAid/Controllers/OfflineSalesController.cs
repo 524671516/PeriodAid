@@ -1446,7 +1446,9 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Off_Add_Schedule()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var storesystem = from m in offlineDB.Off_Store
+                              where m.Off_System_Id == user.DefaultSystemId
                               group m by m.StoreSystem into g
                               orderby g.Key
                               select new { Key = g.Key, Value = g.Key };
@@ -1506,6 +1508,7 @@ namespace PeriodAid.Controllers
                                     Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
                                     Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
                                     Standard_Salary = model.Salary,
+                                    TemplateId =1,
                                     Off_System_Id = user.DefaultSystemId
                                 };
                                 offlineDB.Off_Checkin_Schedule.Add(schedule);
@@ -1515,6 +1518,7 @@ namespace PeriodAid.Controllers
                                 schedule.Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0);
                                 schedule.Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0);
                                 schedule.Standard_Salary = model.Salary;
+                                schedule.TemplateId = 1;
                                 offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
                             }
                         }
@@ -2187,11 +2191,14 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Manager_EditTask(Off_Manager_Task model)
         {
+
             if (ModelState.IsValid)
             {
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 var item = new Off_Manager_Task();
                 if (TryUpdateModel(item))
                 {
+                    item.Off_System_Id = user.DefaultSystemId;
                     item.Eval_User = User.Identity.Name;
                     item.Eval_Time = DateTime.Now;
                     item.Status = (int)ManagerTaskStatus.Confirmed;
@@ -2235,6 +2242,7 @@ namespace PeriodAid.Controllers
                         where m.Off_System_Id == user.DefaultSystemId
                         orderby m.Priority descending, m.FinishTime descending
                         select m).ToPagedList(_page, 30);
+            ViewBag.SystemId = user.DefaultSystemId;
             return PartialView(list);
         }
         // 0325 添加公告
@@ -2719,14 +2727,16 @@ namespace PeriodAid.Controllers
 
 
 
-        public static string getManagerNickName(string username)
+        public static string getManagerNickName(string username, int systemId)
         {
+            //
             if (username == null)
             {
                 return "";
             }
+            //var user = UserManager.FindById(User.Identity.GetUserId());
             OfflineSales offlineDB = new OfflineSales();
-            var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == username);
+            var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == username && m.Off_System_Id == systemId);
             if (item !=null)
             return item.NickName;
             else
@@ -2734,13 +2744,13 @@ namespace PeriodAid.Controllers
                 return username;
             }
         }
-        public static string getManagerNickNameCollection(string usernames)
+        public static string getManagerNickNameCollection(string usernames, int systemId)
         {
             string[] names = usernames.Split(',');
             string[] nicknames = new string[names.Length];
             for(int i = 0; i < names.Length; i++)
             {
-                nicknames[i] = getManagerNickName(names[i]);
+                nicknames[i] = getManagerNickName(names[i], systemId);
             }
             return string.Join(",", nicknames);
         }
