@@ -613,9 +613,9 @@
 
         public int? pv { get; set; }
 
-        public int order_count { get; set; }
+        public int? order_count { get; set; }
 
-        public int order_amount { get; set; }
+        public decimal? order_amount { get; set; }
 
         public int? product_unit { get; set; }
 
