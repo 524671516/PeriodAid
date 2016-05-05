@@ -3,10 +3,14 @@
 @{
     ViewBag.Title = "GenericData_Statistic";
     Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
+    ViewBag.page = 3;
 }
 
 <div class="row">
-    <div class="col-md-3"> <input class="form-control input-sm" id="start-date" name="start-date" placeholder="开始时间" /></div>
+    <div class="col-md-3"> 
+        <input class="form-control input-sm" id="start-date" name="start-date" placeholder="开始时间" />
+        <span id="danger" class="text-danger h6"></span>
+    </div>
     <div class="col-md-3"> <input class="form-control input-sm" id="end-date" name="end-date" placeholder="结束时间" /></div>
     <div class="col-md-4">
         <div class="input-group">
@@ -19,6 +23,7 @@
 </div><br /><br />
 <div id="container" style="min-width:700px;height:400px"></div>
 <script src="~/Scripts/highcharts.js"></script>
+<script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
 <script>
     $(function () {
         Date.prototype.Format = function (fmt) { //author: meizz   
@@ -39,139 +44,276 @@
             return fmt;
         }
         //start--搜索
-        $.datepicker.regional["zh-CN"] = { closeText: "关闭", prevText: "&#x3c;上月", nextText: "下月&#x3e;", currentText: "今天", monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], monthNamesShort: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"], dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"], weekHeader: "周", dateFormat: "yy-mm-dd", firstDay: 1, isRTL: !1, showMonthAfterYear: !0, yearSuffix: "年" }
-        $.datepicker.setDefaults($.datepicker.regional["zh-CN"]);
-        $("#start-date").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            dateFomat: 'yy-MM',
-            showButtonPanel: false,
-            onClose: function (dateText, inst) {
-                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                $(this).datepicker('setDate', new Date(year, month, 1));
+        var start = {
+            dateCell: '#start-date',
+            format: 'YYYY-MM',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                end.minDate = datas; //开始日选好后，重置结束日的最小日期
             }
-        });
-        $("#end-date").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            dateFomat: 'yy-MM',
-            showButtonPanel: false,
-            onClose: function (dateText, inst) {
-                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                $(this).datepicker('setDate', new Date(year, month, 1));
+        };
+        var end = {
+            dateCell: '#end-date',
+            format: 'YYYY-MM',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
             }
-        });
+        };
+        jeDate(start);
+        jeDate(end);
         $("#search-btn").click(function () {
             var start = $("#start-date").val();
             var end = $("#end-date").val();
             var query = $("#search-query").val();
-            var link_url = "/ERPOrder/GenericData_Satistic_Ajax"
-            $.ajax({
-                url: link_url,
-                type: "post",
-                data: {
-                    startdate: start,
-                    enddate: end,
-                    storename: query
-                },
-                success: function (data) {
-                    var resulttotal = data.data;
-                    var datearray = new Array();
-                    var order_count = new Array();
-                    var delivery_amount = new Array();
-                    var advertisement_fee = new Array();
-                    var roi = new Array();
-                    for (var i = 0; i < resulttotal.length; i++) {
-                        var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
-                        var newdate = new Date(date)
-                        datearray.push(newdate.Format("MM-dd"));
-                        var order = resulttotal[i].order_count
-                        order_count.push(order);
-                        var delivery = resulttotal[i].delivery_amount
-                        delivery_amount.push(delivery);
-                        var advertisement = resulttotal[i].advertisement_fee;
-                        advertisement_fee.push(advertisement);
-                        var ro = resulttotal[i].roi
-                        roi.push(ro);
-                    }
-                    //start--店铺月度销售额图表
-                    Highcharts.setOptions({
-                        lang: {
-                            numericSymbols: null
-                        }
-                    });//Y轴数值单位限制，默认值[k,M,G,T,P,E]
-                    $('#container').highcharts({
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: '店铺月度销售额图表'
-                        },
-                        //subtitle: {
-                        //    text: 'Source: WorldClimate.com'
-                        //},
-                        xAxis: {
-                            categories: datearray
-                        },
-                        yAxis: [{
-                            min: 0,
-                            title: {
-                                text: '费用（元）'
+            var link_url = "/ERPOrder/GenericData_Satistic_Ajax";
+            if (start > end) {
+                $("#danger").text("开始时间不能大于结束时间")
+            } else if (start == "" || end == "") {
+                $("#danger").text("时间不能为空")
+            } else {
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    data: {
+                        startdate: start,
+                        enddate: end,
+                        storename: query
+                    },
+                    success: function (data) {
+                        if (data.data.length == 0) {
+                            $("#danger").addClass("hidden")
+                            alert("该门店在此时间内无数据");
+                        } else {
+                            $("#danger").addClass("hidden")
+                            var resulttotal = data.data;
+                            var datearray = new Array();
+                            var order_count = new Array();//订单数
+                            var delivery_amount = new Array();//运费
+                            var advertisement_fee = new Array();//广告费
+                            var roi = new Array();//ROI
+                            var sales_amount = new Array();//销售额
+                            var uv = new Array();//访客数
+                            var convertion = new Array()//转化率
+                            var guest_avg_price = new Array()//客单价
+                            var pv = new Array()//浏览量
+                            for (var i = 0; i < resulttotal.length; i++) {
+                                var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
+                                var newdate = new Date(date)
+                                datearray.push(newdate.Format("MM-dd"));//时间
+                                var order = resulttotal[i].order_count
+                                order_count.push(order);//订单数
+                                var delivery = resulttotal[i].delivery_amount
+                                delivery_amount.push(delivery);//运费
+                                var advertisement = resulttotal[i].advertisement_fee;
+                                advertisement_fee.push(advertisement);//广告费
+                                var ro = resulttotal[i].roi
+                                roi.push(ro);//ROI
+                                var sales = resulttotal[i].sales_amount
+                                sales_amount.push(sales)//销售额
+                                var u = resulttotal[i].uv
+                                uv.push(u)//访客数
+                                var conver = resulttotal[i].convertion
+                                convertion.push(conver)//转化率
+                                var price = resulttotal[i].guest_avg_price
+                                guest_avg_price.push(price)//客单价
+                                var p = resulttotal[i].pv
+                                pv.push(p)//浏览量
                             }
-                        }, { // Primary yAxis
-                            //labels: {
-                            //    format: '{value}°C',
-                            //    style: {
-                            //        color: '#89A54E'
+                            //start--店铺月度销售额图表
+                            //Highcharts.setOptions({
+                            //    lang: {
+                            //        numericSymbols: null
                             //    }
-                            //},
-                            labels: {
-                                style: { color: '#89A54E' }
-                            },
-                            title: {
-                                text: '数量（个）',
-                                style: {
-                                    color: '#89A54E'
-                                }
-                            },
-                            opposite: true
-                        }],
-                        tooltip: {
-                            shared: true,
-                        },
-                        plotOptions: {
-                            column: {
-                                pointPadding: 0.2,
-                                borderWidth: 0
-                            }
-                        },
-                        series: [{
-                            name: '运费',
-                            data: delivery_amount
-
-                        }, {
-                            name: '推广费',
-                            data: advertisement_fee
-
-                        }, {
-                            name: 'ROI',
-                            data: roi
-
-                        }, {
-                            name: '订单数',
-                            color: '#89A54E',
-                            type: 'spline',
-                            yAxis: 1,
-                            data: order_count,
-                            //tooltip: {
-                            //    valueSuffix: '°C'
-                            //}
-                        }]
-                    });//end
-                }
-            })
+                            //});//Y轴数值单位限制，默认值[k,M,G,T,P,E]
+                            $('#container').highcharts({
+                                chart: {
+                                    type: 'spline'
+                                },
+                                title: {
+                                    text: '店铺月度销售额图表'
+                                },
+                                //subtitle: {
+                                //    text: 'Source: WorldClimate.com'
+                                //},
+                                xAxis: {
+                                    categories: datearray
+                                },
+                                yAxis: [{
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, ],
+                                tooltip: {
+                                    shared: true,
+                                    enabled: false
+                                },
+                                legend: {
+                                    itemMarginTop: 3,
+                                    itemMarginBottom: 10,
+                                    layout: 'vertical',
+                                    align: 'right',
+                                    verticalAlign: 'middle',
+                                    borderWidth: 0,
+                                    itemWidth: 100
+                                },
+                                plotOptions: {
+                                    column: {
+                                        pointPadding: 0.2,
+                                        borderWidth: 0,
+                                    },
+                                    spline: {
+                                        dataLabels: {
+                                            enabled: true
+                                        },
+                                        enableMouseTracking: false
+                                    },
+                                
+                                    series: {
+                                        showCheckbox: true,
+                                        events: {
+                                            checkboxClick: function (event) {
+                                                if (event.checked == true) {
+                                                    this.show();
+                                                    //alert(this.name)                                                    
+                                                }
+                                                else {
+                                                    this.hide();
+                                                }
+                                            },
+                                            legendItemClick: function (event) {//return false 即可禁用LegendIteml，防止通过点击item显示隐藏系列
+                                                return false;
+                                            }
+                                        }
+                                    },
+                                },
+                                series: [{
+                                    name: '运费',
+                                    color: '#d7e633',
+                                    yAxis:6,
+                                    data: delivery_amount,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '推广费',
+                                    color: '#e6be33',
+                                    yAxis:7,
+                                    data: advertisement_fee,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: 'ROI',
+                                    color: '#e68c33',
+                                    yAxis:8,
+                                    data: roi,
+                                    visible: false//默认不显示
+                                    
+                                }, {
+                                    name: '订单数',
+                                    color:'#e63333',
+                                    yAxis: 2,
+                                    data: order_count,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '销售额',
+                                    color: '#e63398',
+                                    yAxis: 0,
+                                    data: sales_amount,
+                                    selected: true//默认checkbox勾选
+                                    
+                                }, {
+                                    name: '访客数',
+                                    color: '#db33e6',
+                                    yAxis: 1,
+                                    data: uv,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '转化率',
+                                    color: '#33e687',
+                                    yAxis: 4,
+                                    data: convertion,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '客单价',
+                                    color: '#90e633',
+                                    yAxis: 5,
+                                    data: guest_avg_price,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '浏览量',
+                                    color: '#336ae6',
+                                    yAxis: 3,
+                                    data: pv,
+                                    visible: false//默认不显示
+                                }]
+                            });//end
+                        }
+                    }
+                })
+            }
         })//end
        
     });

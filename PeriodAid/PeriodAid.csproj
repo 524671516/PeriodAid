@@ -344,11 +344,23 @@
     <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\jeDate-gh-pages\params.json" />
+    <Content Include="Scripts\jeDate-gh-pages\README.md" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\JavaScript.js" />
     <Content Include="Scripts\Jcrop.min.js" />
+    <Content Include="Scripts\jeDate-gh-pages\css\jedate.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\jedate.js" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\jedate.min.js" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\gray.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\green.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\jedate.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\red.css" />
+    <Content Include="Scripts\jeDate-gh-pages\stylesheets\github-light.css" />
+    <Content Include="Scripts\jeDate-gh-pages\stylesheets\normalize.css" />
+    <Content Include="Scripts\jeDate-gh-pages\stylesheets\stylesheet.css" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery.form.js" />
@@ -624,6 +636,7 @@
     <Content Include="Views\ERPOrder\Product_Generic_Data_Create.cshtml" />
     <Content Include="Views\ERPOrder\Product_Generic_Data_Edit.cshtml" />
     <Content Include="Views\ERPOrder\Product_Generic_Data_Statistic.cshtml" />
+    <Content Include="Views\ERPOrder\ERP_StoreList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

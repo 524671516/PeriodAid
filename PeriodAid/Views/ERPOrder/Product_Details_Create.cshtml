@@ -3,22 +3,23 @@
 @{
     ViewBag.Title = "Product_Details_Create";
     Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
+    ViewBag.page = 2;
 }
 
-<h2>Product_Details_Create</h2>
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>product_details</h4>
+        <h2><strong>创建产品数据明细表</strong></h2>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
             <label class="control-label col-md-2">日期</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })
+                <input class="form-control" type="text" id="date" name="date">
+                @*@Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })*@
                 @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -26,7 +27,12 @@
         <div class="form-group">
             <label class="control-label col-md-2">店铺名称</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.storename, new { htmlAttributes = new { @class = "form-control" } })
+                <select class="form-control" id="storename" name="storename">
+                    @{
+                        Html.RenderPartial("ERP_StoreList");
+
+                    }
+                </select>
                 @Html.ValidationMessageFor(model => model.storename, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -65,12 +71,19 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="完成" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
+<script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
+<script>
+    $(function () {
+        jeDate({
+            dateCell: '#date',
+            isinitVal: false,
+            format: 'YYYY-MM' // 分隔符可以任意定义，该例子表示只显示年月
+        });
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+    })
+</script>
