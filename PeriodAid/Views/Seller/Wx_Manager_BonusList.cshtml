@@ -113,6 +113,8 @@
             $(".weui_dialog_confirm").hide();
         }
         function dismissBonus() {
+            $("#dismiss_bonus").attr("disabled", "disabled").addClass("weui_btn_disabled");
+            $("#dismiss_dialog").hide();
             var id_Array = new Array();
             $(".weui_check:checked").each(function () {
                 id_Array.push($(this).attr("id"));
@@ -138,9 +140,10 @@
                     }
                 }
             });
-            $("#dismiss_dialog").hide();
         }
         function confirmBonus() {
+            $("#confirm_bonus").attr("disabled", "disabled").addClass("weui_btn_disabled");
+            $("#confirm_dialog").hide();
             var id_Array = new Array();
             $(".weui_check:checked").each(function () {
                 id_Array.push($(this).attr("id"));
@@ -168,8 +171,8 @@
                     }
                 }
             });
-            $("#confirm_dialog").hide();
         }
+
         function start_query() {
             $("#loadingToast").show();
             $.ajax({
