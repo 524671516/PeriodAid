@@ -637,6 +637,9 @@
     <Content Include="Views\ERPOrder\Product_Generic_Data_Edit.cshtml" />
     <Content Include="Views\ERPOrder\Product_Generic_Data_Statistic.cshtml" />
     <Content Include="Views\ERPOrder\ERP_StoreList.cshtml" />
+    <Content Include="Views\ERPOrder\UploadProductDetails.cshtml" />
+    <Content Include="Views\ERPOrder\UploadResult.cshtml" />
+    <Content Include="Views\ERPOrder\UploadProductGenericData.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
