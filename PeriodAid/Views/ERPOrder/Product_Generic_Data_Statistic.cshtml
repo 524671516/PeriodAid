@@ -14,7 +14,13 @@
     <div class="col-md-3"> <input type="number" class="form-control input-sm" id="itemcode" name="itemcode" placeholder="商品编码" /></div>
     <div class="col-md-3">
         <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <select class="form-control input-sm" id="search-query" name="search-query">
+                @{
+                    Html.RenderPartial("ERP_StoreList");
+
+                }
+            </select>
+            @*<input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">*@
             <span class="input-group-btn">
                 <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
             </span>
