@@ -147,33 +147,37 @@
             $("#confirm_bonus").attr("disabled", "disabled").addClass("weui_btn_disabled");
             $("#confirm_dialog").hide();
             var id_Array = new Array();
-            $(".weui_check:checked").each(function () {
-                id_Array.push($(this).attr("id"));
-            });
-            alert(id_Array.toString());
-            $("#loadingToast").show();
-            $.ajax({
-                url: "/Seller/Wx_Manager_BonusList_Confirm",
-                data: {
-                    bonuslist: id_Array.toString()
-                },
-                type: "post",
-                success: function (data) {
-                    $("#loadingToast").hide();
-                    if (data.result == "SUCCESS") {
-                        $("#toast_success").show();
-                        setTimeout(function () {
-                            $("#toast_success").hide();
-                        }, 1000);
-                        $.ajax({
-                            url: "/Seller/Wx_Manager_BonusList_Ajax",
-                            success: function (data) {
-                                $("#bonuslist").html(data);
-                            }
-                        });
+            if ($(".weui_check:checked").length == 1) {
+                $(".weui_check:checked").each(function () {
+                    id_Array.push($(this).attr("id"));
+                });
+                $("#loadingToast").show();
+                $.ajax({
+                    url: "/Seller/Wx_Manager_BonusList_Confirm",
+                    data: {
+                        bonuslist: id_Array.toString()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#loadingToast").hide();
+                        if (data.result == "SUCCESS") {
+                            $("#toast_success").show();
+                            setTimeout(function () {
+                                $("#toast_success").hide();
+                            }, 1000);
+                            $.ajax({
+                                url: "/Seller/Wx_Manager_BonusList_Ajax",
+                                success: function (data) {
+                                    $("#bonuslist").html(data);
+                                }
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }
+            else {
+                alert("每次只能选择一个红包发送");
+            }
         });
         function start_query() {
             $("#loadingToast").show();
