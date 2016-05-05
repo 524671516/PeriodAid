@@ -2181,11 +2181,12 @@ namespace PeriodAid.Controllers
         }
         [Authorize(Roles = "Senior")]
         [HttpPost]
-        public async Task<ActionResult> Wx_Manager_BonusList_Confirm(string bonuslist)
+        public ActionResult Wx_Manager_BonusList_Confirm(string bonuslist)
         {
             string[] orderlist = bonuslist.Split(',');
             AppPayUtilities apppay = new AppPayUtilities();
             Random random = new Random();
+            CommonUtilities.writeLog(DateTime.Now.ToShortTimeString() + "红包");
             foreach (var orderid in orderlist)
             {
                 try
@@ -2196,7 +2197,8 @@ namespace PeriodAid.Controllers
                     {
                         string mch_billno = "SELLERRP" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
                         string remark = item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd") + "促销红包";
-                        string result = await apppay.WxRedPackCreate(item.ReceiveOpenId, item.ReceiveAmount, mch_billno, "促销员红包", "寿全斋", remark, remark);
+                        CommonUtilities.writeLog(DateTime.Now.ToShortTimeString() + "发放准备");
+                        string result = apppay.WxRedPackCreate(item.ReceiveOpenId, item.ReceiveAmount, mch_billno, "促销员红包", "寿全斋", remark, remark);
                         if (result == "SUCCESS")
                         {
                             item.Mch_BillNo = mch_billno;
@@ -2204,9 +2206,9 @@ namespace PeriodAid.Controllers
                             item.CommitUserName = User.Identity.Name;
                             item.CommitTime = DateTime.Now;
                             offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-
                         }
-                        await Task.Delay(10000);
+                        CommonUtilities.writeLog(DateTime.Now.ToShortTimeString() + "发放成功");
+                        Task.Delay(10000);
                     }
                     //offlineDB.SaveChanges();
                 }
@@ -2215,7 +2217,7 @@ namespace PeriodAid.Controllers
 
                 }
             }
-            await offlineDB.SaveChangesAsync();
+            offlineDB.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
         [Authorize(Roles = "Senior")]

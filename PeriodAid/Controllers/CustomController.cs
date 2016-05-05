@@ -620,7 +620,7 @@ namespace PeriodAid.Controllers
                         // 创建红包
                         int amount = r.Next(100, 500);
                         AppPayUtilities pay = new AppPayUtilities();
-                        string result = await pay.WxRedPackCreate(entry.openId, amount, entry.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
+                        string result = await pay.WxRedPackCreateAsync(entry.openId, amount, entry.mch_billno, "糖酒会红包", "寿全斋", "糖酒会红包", "感谢您的关注");
                         //
                         entry.mch_result = result;
                         promotionDB.Entry(entry).State = System.Data.Entity.EntityState.Modified;

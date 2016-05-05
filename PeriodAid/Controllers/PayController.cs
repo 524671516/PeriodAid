@@ -32,7 +32,7 @@ namespace PeriodAid.Controllers
         {
 
             AppPayUtilities appPay = new AppPayUtilities();
-            var result = await appPay.WxRedPackCreate(openid, 100);
+            var result = await appPay.WxRedPackCreateAsync(openid, 100);
             return Content(result);
         }
         #region 微信支付通知接口

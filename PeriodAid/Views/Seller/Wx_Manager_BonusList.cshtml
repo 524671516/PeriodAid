@@ -30,7 +30,7 @@
         <div class="weui_dialog_bd">是否要驳回选中的红包申请</div>
         <div class="weui_dialog_ft">
             <a href="javascript:cancel_dialog();" class="weui_btn_dialog default">取消</a>
-            <a href="javascript:dismissBonus();" class="weui_btn_dialog primary">确定</a>
+            <a href="javascript:;" id="bonus_dismiss_btn" class="weui_btn_dialog primary">确定</a>
         </div>
     </div>
 </div>
@@ -41,7 +41,7 @@
         <div class="weui_dialog_bd">是否确认红包并发放红包申请</div>
         <div class="weui_dialog_ft">
             <a href="javascript:cancel_dialog();" class="weui_btn_dialog default">取消</a>
-            <a href="javascript:confirmBonus();" class="weui_btn_dialog primary">确定</a>
+            <a href="javascript:;" id="bonus_submit_btn" class="weui_btn_dialog primary">确定</a>
         </div>
     </div>
 </div>
@@ -103,16 +103,19 @@
                 }
             })
         });
-        function open_dismiss() {
-            $("#dismiss_dialog").show();
-        }
-        function open_confirm() {
+        
+        $(document).delegate("#confirm_bonus", "click", function () {
             $("#confirm_dialog").show();
-        }
+        });
+        $(document).delegate("#dismiss_bonus", "click", function () {
+            $("#dismiss_dialog").show();
+        });
         function cancel_dialog() {
             $(".weui_dialog_confirm").hide();
         }
-        function dismissBonus() {
+        $("#bonus_dismiss_btn").click(function () {
+            $("#dismiss_bonus").attr("disabled", "disabled").addClass("weui_btn_disabled");
+            $("#dismiss_dialog").hide();
             var id_Array = new Array();
             $(".weui_check:checked").each(function () {
                 id_Array.push($(this).attr("id"));
@@ -138,38 +141,44 @@
                     }
                 }
             });
-            $("#dismiss_dialog").hide();
-        }
-        function confirmBonus() {
-            var id_Array = new Array();
-            $(".weui_check:checked").each(function () {
-                id_Array.push($(this).attr("id"));
-            });
-            $("#loadingToast").show();
-            $.ajax({
-                url: "/Seller/Wx_Manager_BonusList_Confirm",
-                data: {
-                    bonuslist: id_Array.toString()
-                },
-                type: "post",
-                success: function (data) {
-                    $("#loadingToast").hide();
-                    if (data.result == "SUCCESS") {
-                        $("#toast_success").show();
-                        setTimeout(function () {
-                            $("#toast_success").hide();
-                        }, 1000);
-                        $.ajax({
-                            url: "/Seller/Wx_Manager_BonusList_Ajax",
-                            success: function (data) {
-                                $("#bonuslist").html(data);
-                            }
-                        });
-                    }
-                }
-            });
+        });
+        $("#bonus_submit_btn").click(function () {
+            $(this).attr("disabled", "disabled").addClass("weui_btn_disabled");
+            $("#confirm_bonus").attr("disabled", "disabled").addClass("weui_btn_disabled");
             $("#confirm_dialog").hide();
-        }
+            var id_Array = new Array();
+            if ($(".weui_check:checked").length ==1) {
+                $(".weui_check:checked").each(function () {
+                    id_Array.push($(this).attr("id"));
+                });
+                $("#loadingToast").show();
+                $.ajax({
+                    url: "/Seller/Wx_Manager_BonusList_Confirm",
+                    data: {
+                        bonuslist: id_Array.toString()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#loadingToast").hide();
+                        if (data.result == "SUCCESS") {
+                            $("#toast_success").show();
+                            setTimeout(function () {
+                                $("#toast_success").hide();
+                            }, 1000);
+                            $.ajax({
+                                url: "/Seller/Wx_Manager_BonusList_Ajax",
+                                success: function (data) {
+                                    $("#bonuslist").html(data);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else {
+                alert("每次只能选择一个红包发放");
+            }
+        });
         function start_query() {
             $("#loadingToast").show();
             $.ajax({
