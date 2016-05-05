@@ -1,0 +1,17 @@
+﻿@model PeriodAid.Models.Wx_ReportItemsViewModel
+
+<div class="container">
+    @foreach (var item in Model.TemplateList)
+    {
+        <div class="row offsales_item">
+            <div class="col-xs-4 offsales_title">@Html.Encode(item.SimpleName)</div>
+            <input class="col-xs-2 offsales_input" type="text" placeholder="销量" pattern="[0-9]*" />
+            <input class="col-xs-3 offsales_input" type="text" placeholder="库存" />
+            <input class="col-xs-3 offsales_input" type="text" placeholder="销售额" />
+        </div>
+    }
+</div>
+@foreach(var item in Model.SalesInfo)
+{
+    <li>@item.SalesCount</li>
+}

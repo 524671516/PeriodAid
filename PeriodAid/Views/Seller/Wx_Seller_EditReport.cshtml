@@ -12,9 +12,12 @@
     @Html.HiddenFor(m => m.CheckinTime)
     @Html.HiddenFor(m => m.CheckoutLocation)
     @Html.HiddenFor(m => m.CheckoutTime)
-    @Html.HiddenFor(m=>m.CheckoutPhoto)
-    @Html.HiddenFor(m=>m.Proxy)
+    @Html.HiddenFor(m => m.CheckoutPhoto)
+    @Html.HiddenFor(m => m.Proxy)
     @Html.HiddenFor(m => m.Report_Time)
+    {
+        Html.RenderAction("Wx_Seller_EditReport_Item", new { CheckId = Model.Id });
+    }
     <div class="weui_cells_title">提报信息</div>
     <div class="weui_cells weui_cells_form">
         <div class="weui_cell">

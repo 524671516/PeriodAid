@@ -631,8 +631,16 @@ namespace PeriodAid.Models
         [StringLength(64)]
         public string ItemCode { get; set; }
 
+        [Required]
         [StringLength(128)]
         public string ItemName { get; set; }
+
+        [Required]
+        [StringLength(8)]
+        public string SimpleName { get; set; }
+
+        [StringLength(32)]
+        public string Spec { get; set; }
 
         public decimal? SalesPrice { get; set; }
 

@@ -782,7 +782,25 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
-
+        public PartialViewResult Wx_Seller_EditReport_Item(int CheckId)
+        {
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == CheckId);
+            string[] plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
+            List<int> plist = new List<int>();
+            foreach(var i in plist_tmp)
+            {
+                plist.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in offlineDB.Off_Product
+                              where plist.Contains(m.Id)
+                              select m;
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                SalesInfo = item.Off_Checkin_Product,
+                TemplateList = productlist.ToList()
+            };
+            return PartialView(model);
+        }
         public ActionResult Wx_Seller_ScheduleList(int SellerId)
         {
             if (!Wx_Seller_ConfirmSellerId(SellerId))
@@ -1214,7 +1232,7 @@ namespace PeriodAid.Controllers
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             ViewBag.NickName = user.NickName;
             ViewBag.Mobile = user.PhoneNumber;
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id==user.DefaultSystemId);
             return View(manager.Off_Store);
         }
         [Authorize(Roles = "Manager")]
@@ -1529,10 +1547,12 @@ namespace PeriodAid.Controllers
         {
             var schedule = new Wx_ManagerCreateScheduleViewModel();
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
             ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
             var today_org = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+            var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId).Select(m => new { Key = m.Id, Value = m.TemplateName });
+            ViewBag.TemplateList = new SelectList(templateList, "Key", "Value");
             schedule.Subscribe = today_org;
             schedule.Standard_CheckIn = "10:00";
             schedule.Standard_CheckOut = "21:00";
@@ -1560,7 +1580,8 @@ namespace PeriodAid.Controllers
                             Standard_Salary = model.Standard_Salary,
                             Standard_CheckIn = Convert.ToDateTime(model.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckIn),
                             Standard_CheckOut = Convert.ToDateTime(model.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckOut),
-                            Off_System_Id = user.DefaultSystemId
+                            Off_System_Id = user.DefaultSystemId,
+                            TemplateId = model.Off_Template_Id
                         };
                         offlineDB.Off_Checkin_Schedule.Add(item);
                         offlineDB.SaveChanges();

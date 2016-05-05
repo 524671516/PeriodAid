@@ -24,6 +24,14 @@
                 </div>
             </div>
             <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">模板</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.DropDownListFor(m => m.Off_Template_Id, ViewBag.TemplateList as SelectList, "- 请选择 -", new { @class = "weui_input" })
+                </div>
+                <div class="weui_cell_ft">
+                </div>
+            </div>
+            <div class="weui_cell">
                 <div class="weui_cell_hd"><label for="" class="weui_label">时间</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <input class="weui_input text-box single-line" data-val="true" data-val-date="字段 Subscribe 必须是日期。" data-val-required="Subscribe 字段是必需的。" id="Subscribe" name="Subscribe" placeholder="请输入数量" type="date" value="@Html.Encode(Model.Subscribe.ToString("yyyy-MM-dd"))" />

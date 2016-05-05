@@ -1582,6 +1582,8 @@ namespace PeriodAid.Controllers
             attendance_list.Add(new { Key = 2, Value = "早退" });
             attendance_list.Add(new { Key = 3, Value = "旷工" });
             ViewBag.Attendancelist = new SelectList(attendance_list, "Key", "Value", attendance);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            ViewBag.SystemId = user.DefaultSystemId;
             ConfirmCheckIn_ViewModel model = new ConfirmCheckIn_ViewModel()
             {
                 CheckIn_Id = CheckinId,
@@ -2336,6 +2338,7 @@ namespace PeriodAid.Controllers
         // 0329 获取需求列表
         public ActionResult Off_Manager_Request_List()
         {
+            
             return View();
         }
 
@@ -2347,6 +2350,7 @@ namespace PeriodAid.Controllers
                         where m.Status >= 0 && m.Off_Store.Off_System_Id== user.DefaultSystemId
                         orderby m.Status, m.Id descending
                         select m).ToPagedList(_page, 20);
+            ViewBag.SystemId = user.DefaultSystemId;
             return PartialView(list);
         }
 

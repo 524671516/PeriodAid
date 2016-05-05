@@ -42,7 +42,7 @@
             @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
         </td>
         <td>
-            @Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickName(item.ManagerUserName))
+            @Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickName(item.ManagerUserName, ViewBag.SystemId))
         </td>
         <td>
             @Html.Encode(ParseStatus.getManagerRequestStatus(item.Status))
@@ -58,7 +58,7 @@
         </td>
         
         <td>
-            @Html.ActionLink("查看", "Off_Manager_Request_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn", target = "_blank" })
+            @Html.ActionLink("查看", "Off_Manager_Request_Edit", new { id = item.Id }, new { @class = "btn btn-info btn-xs edit-btn"})
             @if (item.Status == 0)
             {
             <a class="btn btn-danger btn-xs cancel-btn btn-del" href="/OfflineSales/Off_Manager_Request_Dismiss_Ajax?id=@item.Id">驳回</a>
