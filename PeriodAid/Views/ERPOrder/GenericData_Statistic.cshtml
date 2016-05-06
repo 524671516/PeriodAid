@@ -14,7 +14,13 @@
     <div class="col-md-3"> <input class="form-control input-sm" id="end-date" name="end-date" placeholder="结束时间" /></div>
     <div class="col-md-4">
         <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <select class="form-control input-sm" id="search-query" name="search-query">
+                @{
+                    Html.RenderPartial("ERP_StoreList");
+
+                }
+            </select>
+            @*<input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">*@
             <span class="input-group-btn">
                 <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
             </span>
@@ -106,7 +112,7 @@
                             for (var i = 0; i < resulttotal.length; i++) {
                                 var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
                                 var newdate = new Date(date)
-                                datearray.push(newdate.Format("MM-dd"));//时间
+                                datearray.push(newdate.Format("MM月"));//时间
                                 var order = resulttotal[i].order_count
                                 order_count.push(order);//订单数
                                 var delivery = resulttotal[i].delivery_amount

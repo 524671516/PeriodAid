@@ -346,6 +346,8 @@
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
     <Content Include="Scripts\jeDate-gh-pages\params.json" />
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
+    <Content Include="Content\xlsx\产品销售明细表-Template.xlsx" />
+    <Content Include="Content\xlsx\产品运营数据表-Template.xlsx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />

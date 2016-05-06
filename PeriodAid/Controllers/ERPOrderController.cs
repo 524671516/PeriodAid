@@ -588,7 +588,7 @@ namespace PeriodAid.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult UploadStoreProductDetails(FormCollection form)
+        public ActionResult UploadProductDetails(FormCollection form)
         {
             var file = Request.Files[0];
             List<Excel_DataMessage> messageList = new List<Excel_DataMessage>();
