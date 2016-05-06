@@ -642,6 +642,7 @@
     <Content Include="Views\ERPOrder\UploadProductDetails.cshtml" />
     <Content Include="Views\ERPOrder\UploadResult.cshtml" />
     <Content Include="Views\ERPOrder\UploadProductGenericData.cshtml" />
+    <Content Include="Views\Custom\ColdTutorial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
