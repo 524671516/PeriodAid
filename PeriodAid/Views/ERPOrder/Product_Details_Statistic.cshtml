@@ -107,7 +107,7 @@
                             for (var i = 0; i < resulttotal.length; i++) {
                                 var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
                                 var newdate = new Date(date)
-                                datearray.push(newdate.Format("MM-dd"));//时间
+                                datearray.push(newdate.Format("MM月"));//时间
                                 var num_count = resulttotal[i].sales_count
                                 count.push(num_count)//销售数量
                                 var num_amount = resulttotal[i].sales_amount

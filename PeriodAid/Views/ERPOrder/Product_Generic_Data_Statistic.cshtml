@@ -111,7 +111,7 @@
                             for (var i = 0; i < resulttotal.length; i++) {
                                 var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
                                 var newdate = new Date(date)
-                                datearray.push(newdate.Format("MM-dd"));//时间
+                                datearray.push(newdate.Format("MM月"));//时间
                                 var num_uv = resulttotal[i].uv
                                 uv.push(num_uv)//访客数
                                 var num_pv = resulttotal[i].pv
