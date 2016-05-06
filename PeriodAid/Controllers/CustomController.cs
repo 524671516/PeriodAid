@@ -762,5 +762,10 @@ namespace PeriodAid.Controllers
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View();
         }
+
+        public ActionResult ColdTutorial()
+        {
+            return View();
+        }
     }
 }
