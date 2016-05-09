@@ -2750,7 +2750,7 @@ namespace PeriodAid.Controllers
         public ActionResult Off_Product_Create()
         {
             Off_Product model = new Off_Product();
-            return View(model);
+            return PartialView(model);
         }
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Product_Create(Off_Product model)
@@ -2766,12 +2766,12 @@ namespace PeriodAid.Controllers
                     offlineDB.SaveChanges();
                     return RedirectToAction("Off_Product_List");
                 }
-                return View("Error");
+                return PartialView("Error");
             }
             else
             {
                 ModelState.AddModelError("", "发生错误");
-                return View(model);
+                return PartialView(model);
             }
         }
 
@@ -2780,9 +2780,9 @@ namespace PeriodAid.Controllers
         {
             Off_Product model = offlineDB.Off_Product.SingleOrDefault(m => m.Id == id);
             if (model != null)
-                return View(model);
+                return PartialView(model);
             else
-                return View("Error");
+                return PartialView("Error");
         }
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Product_Edit(Off_Manager_Announcement model)
@@ -2796,12 +2796,12 @@ namespace PeriodAid.Controllers
                     offlineDB.SaveChanges();
                     return RedirectToAction("Off_Product_List");
                 }
-                return View("Error");
+                return PartialView("Error");
             }
             else
             {
                 ModelState.AddModelError("", "发生错误");
-                return View(model);
+                return PartialView(model);
             }
         }
 
