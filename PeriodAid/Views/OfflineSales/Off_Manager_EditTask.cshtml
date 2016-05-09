@@ -25,7 +25,9 @@
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m=>m.Id)
     @Html.HiddenFor(m=>m.Off_System_Id)
+    @Html.HiddenFor(m=>m.Status)
     <h5><b>基本信息</b></h5>
     <div class="container">
         <div class="row">
@@ -38,20 +40,20 @@
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>用户名</small></div>
-                    <input type="text" class="input-sm form-control" value="@Model.UserName" readonly />
+                    <input id="UserName" name="UserName" type="text" class="input-sm form-control" value="@Model.UserName" readonly />
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>时间</small></div>
-                    <input type="text" class="input-sm form-control" value="@Model.TaskDate.ToString("yyyy-MM-dd")" readonly />
+                    <input id="TaskDate" name="TaskDate" type="text" class="input-sm form-control" value="@Model.TaskDate.ToString("yyyy-MM-dd")" readonly />
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>昵称</small></div>
-                    <input type="text" class="input-sm form-control" value="@Model.NickName" readonly />
+                    <input id="NickName" name="NickName" type="text" class="input-sm form-control" value="@Model.NickName" readonly />
                 </div>
             </div>
         </div>
@@ -61,18 +63,18 @@
     <div class="container">
         <div class="input-group">
             <div class="input-group-addon"><small>未完成内容</small></div>
-            <input type="text" class="input-sm form-control" value="@Model.Event_UnComplete" title="@Model.Event_UnComplete" readonly />
+            <input id="Event_UnComplete" name="Event_UnComplete" type="text" class="input-sm form-control" value="@Model.Event_UnComplete" title="@Model.Event_UnComplete" readonly />
         </div><br />
 
         <div class="input-group">
             <div class="input-group-addon"><small>已完成内容</small></div>
-            <input type="text" class="input-sm form-control" value="@Model.Event_Complete" title="@Model.Event_Complete" readonly />
+            <input id="Event_Complete" name="Event_Complete" type="text" class="input-sm form-control" value="@Model.Event_Complete" title="@Model.Event_Complete" readonly />
         </div><br />
 
 
         <div class="input-group">
             <div class="input-group-addon"><small>需协调工作</small></div>
-            <input type="text" class="input-sm form-control" value="@Model.Event_Assistance" title="@Model.Event_Assistance" readonly />
+            <input id="Event_Assistance" name="Event_Assistance" type="text" class="input-sm form-control" value="@Model.Event_Assistance" title="@Model.Event_Assistance" readonly />
         </div>
     </div>
     <br />
@@ -101,7 +103,7 @@
                 <div class="col-md-3">
                     <div class="input-group">
                         <div class="input-group-addon"><small>时间</small></div>
-                        <input type="text" class="input-sm form-control" value="@item.CheckIn_Time.ToString("HH:mm")" readonly />
+                        <input id="CheckIn_Time" name="CheckIn_Time" type="text" class="input-sm form-control" value="@item.CheckIn_Time.ToString("HH:mm")" readonly />
                         <span class="input-group-btn">
                             <a class="btn btn-default btn-sm check-photo" data-target="@item.Photo"><i class="fa fa-search"></i></a>
                         </span>
@@ -110,7 +112,7 @@
                 <div class="col-md-5">
                     <div class="input-group">
                         <div class="input-group-addon"><small>位置</small></div>
-                        <input type="text" class="input-sm form-control" value="@item.Location_Desc" readonly />
+                        <input id="Location_Desc" name="Location_Desc" type="text" class="input-sm form-control" value="@item.Location_Desc" readonly />
                         <span class="input-group-btn">
                             <a class="btn btn-default btn-sm" href="/OfflineSales/Off_ConfirmCheckIn_Map?trans=true&lbs=@item.Location" target="_blank"><i class="fa fa-search"></i></a>
                         </span>
@@ -120,7 +122,7 @@
                 <div class="col-md-4">
                     <div class="input-group">
                         <div class="input-group-addon"><small>备注</small></div>
-                        <input type="text" class="input-sm form-control" value="@item.Remark" readonly />
+                        <input id="Remark" name="Remark" type="text" class="input-sm form-control" value="@item.Remark" readonly />
                     </div>
                 </div>
 
@@ -134,13 +136,13 @@
             <div class="col-md-4">
                 <div class="input-group">
                     <div class="input-group-addon"><small>评分</small></div>
-                    <input type="text" class="input-sm form-control" value="@Model.Eval_Value" />
+                    <input id="Eval_Value" name="Eval_Value" type="text" class="input-sm form-control" value="@Model.Eval_Value" />
                 </div>
             </div>
             <div class="col-md-8">
                 <div class="input-group">
                     <div class="input-group-addon"><small>评分备注</small></div>
-                    <input type="text" class="input-sm form-control" value="@Model.Eval_Remark" />
+                    <input id="Eval_Remark" name="Eval_Remark" type="text" class="input-sm form-control" value="@Model.Eval_Remark" />
                 </div>
             </div>
         </div>

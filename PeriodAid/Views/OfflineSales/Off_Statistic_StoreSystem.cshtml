@@ -14,31 +14,7 @@
             <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
         </div>
         <div class="col-md-3">
-            <select class="form-control" id="StoreSystem" name="StoreSystem">
-                <option value="-区域-">-区域-</option>
-                <option value="北国系统">北国系统</option>
-                <option value="卜蜂莲花">卜蜂莲花</option>
-                <option value="承德宽广">承德宽广</option>
-                <option value="大润发">大润发</option>
-                <option value="贵阳北京华联">贵阳北京华联</option>
-                <option value="国泰">国泰</option>
-                <option value="邯郸美食林">邯郸美食林</option>
-                <option value="河南南阳">河南南阳</option>
-                <option value="华联">华联</option>
-                <option value="华润">华润</option>
-                <option value="家乐福">家乐福</option>
-                <option value="乐购">乐购</option>
-                <option value="农工商">农工商</option>
-                <option value="欧尚">欧尚</option>
-                <option value="三江购物">三江购物</option>
-                <option value="山西金威">山西金威</option>
-                <option value="世纪联华">世纪联华</option>
-                <option value="苏果">苏果</option>
-                <option value="苏州精品超市">苏州精品超市</option>
-                <option value="天津华润">天津华润</option>
-                <option value="沃尔玛">沃尔玛</option>
-                <option value="郑州丹尼斯">郑州丹尼斯</option>
-            </select>
+            @Html.DropDownList("StoreSystem",ViewBag.SystemList as SelectList, new { @class="form-control"})
         </div>
         <div class="col-md-2">
             <button id="data-btn" class="btn btn-info">查看</button>
