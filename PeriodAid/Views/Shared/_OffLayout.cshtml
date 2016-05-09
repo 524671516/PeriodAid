@@ -196,6 +196,23 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingEight">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                    产品系列 <span id="ani_08" class="caret res"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "Off_Product_List", "OfflineSales")</li>
+                                   
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-10">
@@ -290,6 +307,11 @@
             $(".panel-collapse").removeClass("in");
             $("#ani_07").removeClass("res")
             $("div[aria-labelledby='headingSeven']").addClass("in");
+        }
+        if ($("#pagenumber").text().trim() == "8") {
+            $(".panel-collapse").removeClass("in");
+            $("#ani_08").removeClass("res")
+            $("div[aria-labelledby='headingEight']").addClass("in");
         }
         $(document).scroll(function () {
             if (window.pageYOffset > 0) {

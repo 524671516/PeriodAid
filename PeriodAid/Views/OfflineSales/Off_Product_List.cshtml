@@ -3,6 +3,50 @@
     ViewBag.Title = "Off_Product_List";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
+@section page{
+    8
+    }
+<div class="row">
+    <div class="col-xs-8">
+        <a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增产品</a>
+    </div>  
+</div><br />
+<div id="contentList">
 
-<h2>Off_Product_List</h2>
+</div>
+<div class="modal fade" id="add_product">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">新增产品</h4>
+            </div>
+            <div class="modal-body" id="addcontent">
 
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script>
+    $(function () {
+        var link_url = "/OfflineSales/Off_Product_List_Ajax"
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#contentList").html(data)
+            }
+        })
+    });
+    $("#add-btn").click(function () {
+        var link_url = "/OfflineSales/Off_Product_Create"
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#addcontent").html(data)
+                $("#add_product").modal()
+            }
+
+        })
+    });
+</script>

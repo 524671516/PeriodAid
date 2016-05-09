@@ -1,45 +1,34 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Product>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+
+<table class="table table-striped">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Off_System_Id)
+            @*@Html.DisplayNameFor(model => model.ItemName)*@
+            产品名称
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.status)
+            @*@Html.DisplayNameFor(model => model.SimpleName)*@
+            产品简称
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ItemCode)
+            @*@Html.DisplayNameFor(model => model.Spec)*@
+            产品规格
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ItemName)
+            @*@Html.DisplayNameFor(model => model.ItemCode)*@
+            产品数量
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SimpleName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Spec)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SalesPrice)
+            @*@Html.DisplayNameFor(model => model.SalesPrice)*@
+            销售单价
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Off_System_Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ItemCode)
-        </td>
+        
         <td>
             @Html.DisplayFor(modelItem => item.ItemName)
         </td>
@@ -50,14 +39,65 @@
             @Html.DisplayFor(modelItem => item.Spec)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.ItemCode)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.SalesPrice)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("修改", "Off_Product_Edit", new { id=item.Id }, new { @class="btn btn-info btn-edit"})
+            @Html.ActionLink("删除", "Off_Product_Delete_Ajax", new { id=item.Id }, new { @class = "btn btn-danger btn-del" })
         </td>
     </tr>
 }
 
 </table>
+<div class="modal fade" id="edit_product">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改产品</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script>
+    $(".btn-edit").click(function () {
+        var url = $(this).attr("href")
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $("#editcontent").html(data);
+                $("#edit_product").modal()
+            }
+        })
+        return false
+    });
+    $("#btn-del").click(function () {
+        var result = confirm("确定要删除该产品信息吗？")
+        if(result){
+            var link_url = $(this).attr("href")
+            $.ajax({
+                url: link_url,
+                type: "post",
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        var link_url = "/OfflineSales/Off_Product_List_Ajax"
+                        $.ajax({
+                            url: link_url,
+                            success: function (data) {
+                                $("#contentList").html(data)
+                            }
+                        })
+                    }
+                }
+            })
+        }
+        return false
+    })
+</script>
