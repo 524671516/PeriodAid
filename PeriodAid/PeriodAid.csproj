@@ -212,6 +212,7 @@
     <Compile Include="DAL\CommonUtilities.cs" />
     <Compile Include="DAL\ERPOrderUtilities.cs" />
     <Compile Include="DAL\GPRSPrinter.cs" />
+    <Compile Include="DAL\KDTUtilites.cs" />
     <Compile Include="DAL\PeriodAidUtilities.cs" />
     <Compile Include="DAL\ValidateCode.cs" />
     <Compile Include="DAL\WeChatClasses.cs" />
@@ -643,6 +644,7 @@
     <Content Include="Views\ERPOrder\UploadResult.cshtml" />
     <Content Include="Views\ERPOrder\UploadProductGenericData.cshtml" />
     <Content Include="Views\Custom\ColdTutorial.cshtml" />
+    <Content Include="Views\Custom\TestRegion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

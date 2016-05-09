@@ -767,5 +767,17 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        // 三级联动地址
+        public ActionResult TestRegion()
+        {
+            return View();
+        }
+        public ActionResult GetRegion(int level, int? parentid)
+        {
+            KDTUtilites util = new KDTUtilites();
+            string result = util.KDT_GetRegion(level, parentid);
+            return Content(result);
+        }
     }
 }
