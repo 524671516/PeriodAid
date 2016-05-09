@@ -2729,7 +2729,95 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
+        // 产品 查增改删
+        // 0509 产品列表
+        public ActionResult Off_Product_List()
+        {
+            return View();
+        }
 
+        public ActionResult Off_Product_List_Ajax(int? page)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            int _page = page ?? 1;
+            var list = (from m in offlineDB.Off_Product
+                        where m.Off_System_Id == user.DefaultSystemId
+                        orderby m.ItemCode
+                        select m).ToPagedList(_page, 30);
+            return PartialView(list);
+        }
+        // 0509 添加产品
+        public ActionResult Off_Product_Create()
+        {
+            Off_Product model = new Off_Product();
+            return View(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Product_Create(Off_Product model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                Off_Product item = new Off_Product();
+                if (TryUpdateModel(item))
+                {
+                    item.Off_System_Id = user.DefaultSystemId;
+                    offlineDB.Off_Product.Add(item);
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Product_List");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+
+        // 0509 修改产品
+        public ActionResult Off_Product_Edit(int id)
+        {
+            Off_Product model = offlineDB.Off_Product.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+                return View(model);
+            else
+                return View("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Product_Edit(Off_Manager_Announcement model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Product item = new Off_Product();
+                if (TryUpdateModel(item))
+                {
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Product_List");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+
+        // 0509 删除产品
+        [HttpPost]
+        public ActionResult Off_Product_Delete_Ajax(int id)
+        {
+            Off_Product model = offlineDB.Off_Product.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+            {
+                offlineDB.Off_Product.Remove(model);
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FAIL" });
+        }
 
         public static string getManagerNickName(string username, int systemId)
         {
@@ -2738,7 +2826,6 @@ namespace PeriodAid.Controllers
             {
                 return "";
             }
-            //var user = UserManager.FindById(User.Identity.GetUserId());
             OfflineSales offlineDB = new OfflineSales();
             var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == username && m.Off_System_Id == systemId);
             if (item !=null)

@@ -625,6 +625,10 @@
     <Content Include="Views\ERPOrder\Product_Generic_Data_Edit.cshtml" />
     <Content Include="Views\ERPOrder\Product_Generic_Data_Statistic.cshtml" />
     <Content Include="Views\Seller\Wx_Seller_EditReport_Item.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_Create.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
