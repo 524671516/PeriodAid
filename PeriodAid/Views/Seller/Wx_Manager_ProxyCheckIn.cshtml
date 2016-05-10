@@ -86,38 +86,9 @@
                 </div>
             </div>
         </div>
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><label for="" class="weui_label">红糖</label></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-            </div>
-            <div class="weui_cell_ft">
-            </div>
-        </div>
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><label for="" class="weui_label">黑糖</label></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-            </div>
-        </div>
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><label for="" class="weui_label">柠檬</label></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-            </div>
-        </div>
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><label for="" class="weui_label">蜂蜜</label></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-            </div>
-        </div>
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><label for="" class="weui_label">红枣</label></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "weui_input", type = "tel", placeholder = "请输入数量" } })
-            </div>
-        </div>
+        @{
+        Html.RenderAction("Wx_Seller_EditReport_Item", new { CheckId = Model.Id });
+        }
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 @Html.TextAreaFor(m => m.Confirm_Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入代签到备注" })

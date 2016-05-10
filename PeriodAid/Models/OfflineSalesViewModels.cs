@@ -253,18 +253,6 @@ namespace PeriodAid.Models
 
         public string SellerName { get; set; }
 
-        public int? Rep_Brown { get; set; }
-
-        public int? Rep_Black { get; set; }
-
-        public int? Rep_Lemon { get; set; }
-
-        public int? Rep_Honey { get; set; }
-
-        public int? Rep_Dates { get; set; }
-
-        public int? Rep_Other { get; set; }
-
         public int? Rep_Total { get; set; }
 
         public decimal? AVG_Total { get; set; }
@@ -335,9 +323,25 @@ namespace PeriodAid.Models
     }
     public class Wx_ReportItemsViewModel
     {
-        public ICollection<Off_Product> TemplateList { get; set; }
-        
-        public ICollection<Off_Checkin_Product> SalesInfo { get; set; } 
+        public bool Storage_Required { get; set; }
+
+        public bool Amount_Requried { get; set; }
+
+        public ICollection<Wx_TemplateProduct> ProductList { get; set; }
+    }
+    public class Wx_TemplateProduct
+    {
+        public int ProductId { get; set; }
+
+        public string SimpleName { get; set; }
+
+        public string ItemCode { get; set; }
+
+        public int? SalesCount { get; set; }
+
+        public int? Storage { get; set; }
+
+        public decimal? SalesAmount { get; set; }
     }
     public class ExcelOperation
     {

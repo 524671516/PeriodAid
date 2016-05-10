@@ -59,7 +59,7 @@ label, p, span {
 }
 .offsales_item{
     background:#fff;
-    border-bottom:solid 1px #efefef;
+    border-top:solid 1px #efefef;
     padding:5px 0 4px 0;
 }
 .offsales_title{

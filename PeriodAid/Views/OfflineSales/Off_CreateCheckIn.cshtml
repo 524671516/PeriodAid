@@ -84,45 +84,9 @@
             <div class="col-md-6" id="checkout-img-list"></div>
         </div>
         <br />
-        <div class="row">
-            <div class="col-md-2">
-                <div class="input-group">
-                    <div class="input-group-addon"><small>红糖</small></div>
-                    @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="input-group">
-                    <div class="input-group-addon"><small>黑糖</small></div>
-                    @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="input-group">
-                    <div class="input-group-addon"><small>柠檬</small></div>
-                    @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="input-group">
-                    <div class="input-group-addon"><small>蜂蜜</small></div>
-                    @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="input-group">
-                    <div class="input-group-addon"><small>红枣</small></div>
-                    @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="input-group">
-                    <div class="input-group-addon"><small>其他</small></div>
-                    @Html.EditorFor(m => m.Rep_Other, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                </div>
-            </div>
-        </div>
-        <br />
+        @{ 
+            Html.RenderAction("Off_ConfirmPrductListBySchedule", new { ScheduleId = Model.Off_Schedule_Id });
+        }
         <div class="row">
             <div class="col-md-3">
                 <div class="input-group">

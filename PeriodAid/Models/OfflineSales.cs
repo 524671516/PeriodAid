@@ -985,6 +985,10 @@ namespace PeriodAid.Models
 
         public int Status { get; set; }
 
+        public bool RequiredStorage { get; set; }
+
+        public bool RequiredAmount { get; set; }
+
         [Required]
         public string ProductList { get; set; }
 

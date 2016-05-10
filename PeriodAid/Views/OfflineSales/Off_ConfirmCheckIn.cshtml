@@ -121,91 +121,15 @@
 </div>
 <br />
 <h5><b>销量数据</b></h5>
-@using (Html.BeginForm("Off_ConfirmCheckIn","OfflineSales", FormMethod.Post, new { @id= "confirm-form" }))
+@using (Html.BeginForm("Off_ConfirmCheckIn","OfflineSales", FormMethod.Post, new { @id= "confirm-form", @class= "form-inline" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.CheckIn_Id)
+    {
+        Html.RenderAction("Off_ConfirmProductList", new { CheckId = Model.CheckIn_Id });
+    }
     <div class="container">
         <div class="row">
-            @if (ViewBag.CheckItem.Status <= 3 && ViewBag.CheckItem.Status>=0)
-            {
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>红糖</small></div>
-                        @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>黑糖</small></div>
-                        @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>柠檬</small></div>
-                        @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>蜂蜜</small></div>
-                        @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>红枣</small></div>
-                        @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>其他</small></div>
-                        @Html.EditorFor(m => m.Rep_Other, new { htmlAttributes = new { @class = "form-control input-sm" } })
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>红糖</small></div>
-                        @Html.EditorFor(m => m.Rep_Brown, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>黑糖</small></div>
-                        @Html.EditorFor(m => m.Rep_Black, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>柠檬</small></div>
-                        @Html.EditorFor(m => m.Rep_Lemon, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>蜂蜜</small></div>
-                        @Html.EditorFor(m => m.Rep_Honey, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>红枣</small></div>
-                        @Html.EditorFor(m => m.Rep_Dates, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <div class="input-group-addon"><small>其他</small></div>
-                        @Html.EditorFor(m => m.Rep_Other, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
-                    </div>
-                </div>
-            }
-            <br /><br />
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>提报时间</small></div>

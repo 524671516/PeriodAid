@@ -1549,6 +1549,46 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
+
+        public PartialViewResult Off_ConfirmProductList(int CheckId)
+        {
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == CheckId);
+            string[] plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
+            List<int> plist = new List<int>();
+            foreach (var i in plist_tmp)
+            {
+                plist.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in offlineDB.Off_Product
+                              where plist.Contains(m.Id)
+                              select m;
+            List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
+            foreach (var i in productlist)
+            {
+                Wx_TemplateProduct p = new Wx_TemplateProduct()
+                {
+                    ProductId = i.Id,
+                    ItemCode = i.ItemCode,
+                    SimpleName = i.SimpleName
+                };
+                templatelist.Add(p);
+            }
+            foreach (var i in item.Off_Checkin_Product)
+            {
+                var e = templatelist.SingleOrDefault(m => m.ProductId == i.ProductId);
+                e.SalesCount = i.SalesCount;
+                e.SalesAmount = i.SalesAmount;
+                e.Storage = i.StorageCount;
+            }
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                Amount_Requried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
+                Storage_Required = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
+                ProductList = templatelist
+            };
+            return PartialView(model);
+        }
+
         #region 确认销售金额
         public ActionResult Off_ConfirmCheckIn(int CheckinId)
         {
@@ -1591,12 +1631,6 @@ namespace PeriodAid.Controllers
                 Salary = item.Off_Checkin_Schedule.Standard_Salary,
                 Bonus = item.Bonus,
                 Debits = debits,
-                Rep_Brown = item.Rep_Brown,
-                Rep_Black = item.Rep_Black,
-                Rep_Dates = item.Rep_Dates,
-                Rep_Honey = item.Rep_Honey,
-                Rep_Lemon = item.Rep_Lemon,
-                Rep_Other = item.Rep_Other,
                 Remark = item.Remark,
                 Proxy = item.Proxy,
                 Bonus_Remark = item.Bonus_Remark,
@@ -1621,11 +1655,6 @@ namespace PeriodAid.Controllers
                         Bonus = model.Bonus,
                         Debit = model.Debits,
                         isMultiple = false,
-                        Item_Black = item.Rep_Black,
-                        Item_Brown = item.Rep_Brown,
-                        Item_Dates = item.Rep_Dates,
-                        Item_Honey = item.Rep_Honey,
-                        Item_Lemon = item.Rep_Lemon,
                         remarks = model.Remark,
                         SellerId = item.Off_Seller_Id,
                         Salary = model.Salary,
@@ -1634,24 +1663,157 @@ namespace PeriodAid.Controllers
                         UploadUser = User.Identity.Name
                     };
                     offlineDB.Off_SalesInfo_Daily.Add(info);
+                    // 获取模板产品列表
+                    List<int> plist = new List<int>();
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                        // 判断是否已有数据
+                        var checkinproductlist = offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == item.Id);
+                        var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                        if (existdata != null)
+                        {
+
+                            if (sales == null && storage == null && amount == null)
+                            {
+                                // 无数据则删除
+                                offlineDB.Off_Checkin_Product.Remove(existdata);
+                            }
+                            else
+                            {
+                                // 修改数据
+                                existdata.SalesAmount = amount;
+                                existdata.SalesCount = sales;
+                                existdata.StorageCount = storage;
+                            }
+                        }
+                        else
+                        {
+                            // 添加数据
+                            // 如果三项数据不为空，则添加
+                            if (sales == null && storage == null && amount == null)
+                            { }
+                            else
+                            {
+                                existdata = new Off_Checkin_Product()
+                                {
+                                    CheckinId = item.Id,
+                                    ItemCode = product.ItemCode,
+                                    ProductId = product.Id,
+                                    SalesAmount = amount,
+                                    SalesCount = sales,
+                                    StorageCount = storage
+                                };
+                                offlineDB.Off_Checkin_Product.Add(existdata);
+                                //offlineDB.SaveChanges();
+                            }
+                        }
+                    }
                     item.Status = 5;
                     item.Bonus = model.Bonus;
                     item.Bonus_Remark = model.Bonus_Remark;
                     item.SubmitTime = DateTime.Now;
                     item.SubmitUser = User.Identity.Name;
                     offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    foreach(var i in item.Off_Checkin_Product)
+                    {
+                        Off_Daily_Product product = new Off_Daily_Product()
+                        {
+                            Off_SalesInfo_Daily = info,
+                            ItemCode = i.ItemCode,
+                            ProductId = i.ProductId,
+                            SalesAmount = i.SalesAmount,
+                            SalesCount = i.SalesCount,
+                            StorageCount = i.StorageCount
+                        };
+                        offlineDB.Off_Daily_Product.Add(product);
+                    }
                     offlineDB.SaveChanges();
                     return RedirectToAction("Off_CheckIn_List");
                 }
                 else if (item.Status >= 0 && item.Status <= 3)
                 {
+                    List<int> plist = new List<int>();
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                        // 判断是否已有数据
+                        var checkinproductlist = offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == item.Id);
+                        var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                        if (existdata != null)
+                        {
+                            if (sales == null && storage == null && amount == null)
+                            {
+                                // 无数据则删除
+                                offlineDB.Off_Checkin_Product.Remove(existdata);
+                            }
+                            else
+                            {
+                                // 修改数据
+                                existdata.SalesAmount = amount;
+                                existdata.SalesCount = sales;
+                                existdata.StorageCount = storage;
+                            }
+                        }
+                        else
+                        {
+                            // 添加数据
+                            // 如果三项数据不为空，则添加
+                            if (sales == null && storage == null && amount == null)
+                            { }
+                            else
+                            {
+                                existdata = new Off_Checkin_Product()
+                                {
+                                    CheckinId = item.Id,
+                                    ItemCode = product.ItemCode,
+                                    ProductId = product.Id,
+                                    SalesAmount = amount,
+                                    SalesCount = sales,
+                                    StorageCount = storage
+                                };
+                                offlineDB.Off_Checkin_Product.Add(existdata);
+                                //offlineDB.SaveChanges();
+                            }
+                        }
+                    }
                     item.Status = 4;
-                    item.Rep_Lemon = model.Rep_Lemon;
-                    item.Rep_Brown = model.Rep_Brown;
-                    item.Rep_Black = model.Rep_Black;
-                    item.Rep_Honey = model.Rep_Honey;
-                    item.Rep_Dates = model.Rep_Dates;
-                    item.Rep_Other = model.Rep_Other;
                     item.Proxy = model.Proxy;
                     item.CheckinLocation = item.CheckinLocation ?? "N/A";
                     item.CheckoutLocation = item.CheckoutLocation ?? "N/A";
@@ -1669,6 +1831,37 @@ namespace PeriodAid.Controllers
             {
                 return View("Error");
             }
+        }
+        public PartialViewResult Off_ConfirmPrductListBySchedule(int ScheduleId)
+        {
+            var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == ScheduleId);
+            string[] plist_tmp = item.Off_Sales_Template.ProductList.Split(',');
+            List<int> plist = new List<int>();
+            foreach (var i in plist_tmp)
+            {
+                plist.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in offlineDB.Off_Product
+                              where plist.Contains(m.Id)
+                              select m;
+            List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
+            foreach (var i in productlist)
+            {
+                Wx_TemplateProduct p = new Wx_TemplateProduct()
+                {
+                    ProductId = i.Id,
+                    ItemCode = i.ItemCode,
+                    SimpleName = i.SimpleName
+                };
+                templatelist.Add(p);
+            }
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                Amount_Requried = item.Off_Sales_Template.RequiredAmount,
+                Storage_Required = item.Off_Sales_Template.RequiredStorage,
+                ProductList = templatelist
+            };
+            return PartialView(model);
         }
         public ActionResult Off_CreateCheckIn(int scheduleId)
         {
@@ -1688,7 +1881,7 @@ namespace PeriodAid.Controllers
             return View(item);
         }
         [ValidateAntiForgeryToken, HttpPost]
-        public ActionResult Off_CreateCheckIn(Off_Checkin model)
+        public ActionResult Off_CreateCheckIn(Off_Checkin model, FormCollection form)
         {
             if (ModelState.IsValid)
             {
@@ -1707,6 +1900,47 @@ namespace PeriodAid.Controllers
                     offlineDB.Off_Checkin.Add(item);
                     //offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.SaveChanges();
+                    List<int> plist = new List<int>();
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+
+                        if (sales == null && storage == null && amount == null)
+                        { }
+                        else
+                        {
+                            Off_Checkin_Product existdata = new Off_Checkin_Product()
+                            {
+                                Off_Checkin = item,
+                                ItemCode = product.ItemCode,
+                                ProductId = product.Id,
+                                SalesAmount = amount,
+                                SalesCount = sales,
+                                StorageCount = storage
+                            };
+                            offlineDB.Off_Checkin_Product.Add(existdata);
+                            
+                        }
+                    }
+                    offlineDB.SaveChanges();
                     return RedirectToAction("Off_CheckIn_List");
                 }
             }
@@ -1718,13 +1952,75 @@ namespace PeriodAid.Controllers
             return View(item);
         }
         [ValidateAntiForgeryToken, HttpPost]
-        public ActionResult Off_ProxyCheckIn(Off_Checkin model)
+        public ActionResult Off_ProxyCheckIn(Off_Checkin model, FormCollection form)
         {
             if (ModelState.IsValid)
             {
                 Off_Checkin item = new Off_Checkin();
                 if (TryUpdateModel(item))
                 {
+                    List<int> plist = new List<int>();
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                        // 判断是否已有数据
+                        var checkinproductlist = offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == item.Id);
+                        var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                        if (existdata != null)
+                        {
+                            if (sales == null && storage == null && amount == null)
+                            {
+                                // 无数据则删除
+                                offlineDB.Off_Checkin_Product.Remove(existdata);
+                            }
+                            else
+                            {
+                                // 修改数据
+                                existdata.SalesAmount = amount;
+                                existdata.SalesCount = sales;
+                                existdata.StorageCount = storage;
+                            }
+                        }
+                        else
+                        {
+                            // 添加数据
+                            // 如果三项数据不为空，则添加
+                            if (sales == null && storage == null && amount == null)
+                            { }
+                            else
+                            {
+                                existdata = new Off_Checkin_Product()
+                                {
+                                    CheckinId = item.Id,
+                                    ItemCode = product.ItemCode,
+                                    ProductId = product.Id,
+                                    SalesAmount = amount,
+                                    SalesCount = sales,
+                                    StorageCount = storage
+                                };
+                                offlineDB.Off_Checkin_Product.Add(existdata);
+                                //offlineDB.SaveChanges();
+                            }
+                        }
+                    }
                     //var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id);
                     item.CheckinLocation = "N/A";
                     item.CheckoutLocation = "N/A";
