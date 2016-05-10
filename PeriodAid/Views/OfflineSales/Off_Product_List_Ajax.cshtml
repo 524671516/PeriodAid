@@ -1,26 +1,21 @@
-﻿@model IEnumerable<PeriodAid.Models.Off_Product>
-
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Product>
+@using PagedList.Mvc;
 
 <table class="table table-striped">
     <tr>
         <th>
-            @*@Html.DisplayNameFor(model => model.ItemName)*@
             产品名称
         </th>
-        <th>
-            @*@Html.DisplayNameFor(model => model.SimpleName)*@
+        <th>           
             产品简称
         </th>
-        <th>
-            @*@Html.DisplayNameFor(model => model.Spec)*@
+        <th>            
             产品规格
         </th>
-        <th>
-            @*@Html.DisplayNameFor(model => model.ItemCode)*@
+        <th>            
             产品数量
         </th>
-        <th>
-            @*@Html.DisplayNameFor(model => model.SalesPrice)*@
+        <th>           
             销售单价
         </th>
         <th></th>
@@ -65,39 +60,47 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Product_List_Ajax", new { page }))</div>
 <script src="~/Scripts/bootstrap.min.js"></script>
 <script>
-    $(".btn-edit").click(function () {
-        var url = $(this).attr("href")
-        $.ajax({
-            url: url,
-            success: function (data) {
-                $("#editcontent").html(data);
-                $("#edit_product").modal()
-            }
-        })
-        return false
-    });
-    $("#btn-del").click(function () {
-        var result = confirm("确定要删除该产品信息吗？")
-        if(result){
-            var link_url = $(this).attr("href")
+    $(function () {
+        $(".btn-edit").click(function () {
+            var url = $(this).attr("href")
             $.ajax({
-                url: link_url,
-                type: "post",
+                url: url,
                 success: function (data) {
-                    if (data == "SUCCESS") {
-                        var link_url = "/OfflineSales/Off_Product_List_Ajax"
-                        $.ajax({
-                            url: link_url,
-                            success: function (data) {
-                                $("#contentList").html(data)
-                            }
-                        })
-                    }
+                    $("#editcontent").html(data);
+                    $("#edit_product").modal()
                 }
             })
-        }
-        return false
-    })
+            return false
+        });
+        $(".btn-del").click(function () {
+            var result = confirm("确定要删除该产品信息吗？")
+            if (result) {
+                var link_url = $(this).attr("href")
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            //window.location.reload();
+                            var link_url = "/OfflineSales/Off_Product_List_Ajax"
+                            $.ajax({
+                                url: link_url,
+                                success: function (data) {
+                                    $("#contentList").html(data)
+                                }
+                            })
+                        }
+                        else if (data.result == "FAIL") {
+                            alert("无法删除")
+                        }
+                    }
+                })
+
+            }
+            return false
+        })
+    });
 </script>

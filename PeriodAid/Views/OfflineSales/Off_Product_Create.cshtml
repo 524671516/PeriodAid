@@ -1,6 +1,6 @@
 ﻿@model PeriodAid.Models.Off_Product
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Off_Product_Create", "OfflineSales", FormMethod.Post, new { @id = "addform" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.Off_System_Id)
@@ -13,6 +13,7 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.ItemName, "", new { @class = "text-danger" })
+                @*<sapn class="text-danger" id="itemName_danger"></sapn>*@
             </div>
         </div>
 
@@ -22,6 +23,7 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.SimpleName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.SimpleName, "", new { @class = "text-danger" })
+                @*<sapn class="text-danger" id="simpleName_danger"></sapn>*@
             </div>
         </div>
 
@@ -53,8 +55,26 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="保存" class="btn btn-default" />
+                <input type="submit" value="保存" class="btn btn-default btn-save" />
             </div>
         </div>
     </div>
 }
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script>
+    $('#addform').ajaxForm(function (data) {
+        if (data == "SUCCESS") {
+            alert("添加成功");
+            $('#add_product').modal('hide');
+            $.ajax({
+                url: "/OfflineSales/Off_Product_List_Ajax",
+                success: function (data) {
+                    $("#contentList").html(data);
+                }
+            });
+        }
+        else {
+            $("#addcontent").html(data)
+        }
+    });
+</script>

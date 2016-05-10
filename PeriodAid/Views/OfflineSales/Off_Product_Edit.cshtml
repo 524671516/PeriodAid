@@ -11,7 +11,7 @@
             @*@Html.LabelFor(model => model.ItemName, htmlAttributes: new { @class = "control-label col-md-2" })*@
             <label class="control-label col-md-2" id="ItemName" name="ItemName">产品名称</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly"  } })
                 @Html.ValidationMessageFor(model => model.ItemName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -20,7 +20,7 @@
             @*@Html.LabelFor(model => model.SimpleName, htmlAttributes: new { @class = "control-label col-md-2" })*@
             <label class="control-label col-md-2" id="SimpleName" name="SimpleName">产品简称</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.SimpleName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.SimpleName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.SimpleName, "", new { @class = "text-danger" })
             </div>
         </div>
