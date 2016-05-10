@@ -3081,7 +3081,7 @@ namespace PeriodAid.Controllers
                 return PartialView("Error");
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult Off_Product_Edit(Off_Manager_Announcement model)
+        public ActionResult Off_Product_Edit(Off_Product model)
         {
             if (ModelState.IsValid)
             {
