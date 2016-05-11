@@ -3037,7 +3037,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
             var list = (from m in offlineDB.Off_Product
-                        where m.Off_System_Id == user.DefaultSystemId
+                        where m.Off_System_Id == user.DefaultSystemId && m.status>=0
                         orderby m.ItemCode
                         select m).ToPagedList(_page, 30);
             return PartialView(list);
@@ -3108,7 +3108,108 @@ namespace PeriodAid.Controllers
             Off_Product model = offlineDB.Off_Product.SingleOrDefault(m => m.Id == id);
             if (model != null)
             {
-                offlineDB.Off_Product.Remove(model);
+                model.status = -1;
+                offlineDB.Entry(model).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        // 模板 查增改删
+        // 0511 产品列表
+        public ActionResult Off_Template_List()
+        {
+            return View();
+        }
+
+        public ActionResult Off_Template_List_Ajax(int? page)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            int _page = page ?? 1;
+            var list = (from m in offlineDB.Off_Sales_Template
+                        where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
+                        orderby m.TemplateName
+                        select m).ToPagedList(_page, 30);
+            return PartialView(list);
+        }
+        // 0511 添加模板
+        public ActionResult Off_Template_Create()
+        {
+            Off_Product model = new Off_Product();
+            return PartialView(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Template_Create(Off_Sales_Template model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                Off_Sales_Template item = new Off_Sales_Template();
+                if (TryUpdateModel(item))
+                {
+                    item.Off_System_Id = user.DefaultSystemId;
+                    offlineDB.Off_Sales_Template.Add(item);
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Template_List");
+                }
+                return PartialView("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return PartialView(model);
+            }
+        }
+        // 0511 获取产品列表
+        [HttpPost]
+        public ActionResult Off_Template_ProductList_Ajax()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var productlist = from m in offlineDB.Off_Product
+                              where m.Off_System_Id == user.DefaultSystemId && m.status >= 0
+                              select new { Id = m.Id, ItemCode = m.ItemCode, ItemName = m.ItemName, SimpleName = m.SimpleName, SalesPrice = m.SalesPrice, Spec = m.Spec };
+            return Json(new { result = "SUCCESS", list = productlist });
+        }
+        // 0511 修改模板
+        public ActionResult Off_Template_Edit(int id)
+        {
+            Off_Sales_Template model = offlineDB.Off_Sales_Template.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+                return PartialView(model);
+            else
+                return PartialView("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Off_Template_Edit(Off_Sales_Template model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Sales_Template item = new Off_Sales_Template();
+                if (TryUpdateModel(item))
+                {
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return RedirectToAction("Off_Template_List");
+                }
+                return PartialView("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return PartialView(model);
+            }
+        }
+
+        // 0511 删除模板
+        [HttpPost]
+        public ActionResult Off_Template_Delete_Ajax(int id)
+        {
+            Off_Sales_Template model = offlineDB.Off_Sales_Template.SingleOrDefault(m => m.Id == id);
+            if (model != null)
+            {
+                model.Status = -1;
+                offlineDB.Entry(model).State = System.Data.Entity.EntityState.Modified;
                 offlineDB.SaveChanges();
                 return Json(new { result = "SUCCESS" });
             }
@@ -3151,8 +3252,6 @@ namespace PeriodAid.Controllers
             Array.Copy(array, 0, outBuffer, 3, array.Length);
             return outBuffer;
         }
-
-
     }
 
     public class Form_Product_Details
