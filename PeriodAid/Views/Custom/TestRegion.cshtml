@@ -7,11 +7,195 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>TestRegion</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <style>
+        .weui_label {
+        width:6em;
+        }
+        input.error,select.error { border: 1px solid red;color:red}
+        label.error {
+        display:none
+        }
+    </style>
 </head>
 <body>
-    <div> 
-    </div>
+    <form class="cmxform" id="signupForm" method="get" action="">
+        <fieldset>
+            <div class="weui_cells weui_cells_form">
+                @*收货人*@
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">收货人：</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input type="text" class="weui_input" id="SellerId" name="SellerId" placeholder="名字">
+                    </div>
+                </div>
+                @*联系电话*@
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">联系电话：</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input type="text" class="weui_input" id="PhoneId" name="PhoneId" placeholder="手机">
+                    </div>
+                </div>
+                @*选择地址*@
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">选择地址：</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <select class="weui_input" id="ProvenceId" name="ProvenceId" data-placeholder="省份">
+                            @*<option value="-1">-请选择省份-</option>*@
+                        </select>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <select class="weui_input" id="CityId" name="CityId" data-placeholder="城市">
+                            <option value="">选择城市</option>
+                        </select>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+
+                        <select class="weui_input" id="AreaId" name="AreaId" data-placeholder="市/区">
+                            <option value="">选择市/区</option>
+                        </select>
+                    </div>
+                </div>
+                @*详细地址*@
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">详细地址：</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input type="text" class="weui_input" id="StreetId" name="StreetId" placeholder="街道门牌信息">
+                    </div>
+                </div>
+                @*邮政编码*@
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">邮政编码：</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input type="text" class="weui_input" id="MailId" name="MailId" placeholder="邮政编码（选填）" maxlength="6">
+                    </div>
+                </div>
+            </div>
+            <div class="weui_btn_area"><input class="weui_btn weui_btn_primary" type="submit" value="保存" id="btn-save"></div>
+        </fieldset>
+    </form>
+    
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script>
+        $(function () {
+            //选择地区
+            $.ajax({
+                url: "/Custom/GetRegion",
+                data: {
+                    level: 1
+                },
+                success: function (data) {
+                    data = JSON.parse(data);
+                    //alert(data.response.regions.length)
+                    if (data.response.regions) {
+                        var result = "<option value=''>" + "选择省份" + "</option>";;
+                        var resultArry = data.response.regions
+                        //alert(resultArry.length);
+                        for (var i = 0; i < resultArry.length; i++) {
+                            result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
+                        }
+                    }
+                    //alert(result);
+                    $("#ProvenceId").html('');
+                    $("#ProvenceId").append(result);
+                }
+            })
+            $("#ProvenceId").change(function () {
+                var link_url = "/Custom/GetRegion"
+                var provence_id = $("#ProvenceId").val()
+                $.ajax({
+                    url: link_url,
+                    data: {
+                        level: 2,
+                        parentid:provence_id
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        //alert(data)
+                        if (data.response.regions) {
+                            var result = "<option value=''>" + "选择城市" + "</option>";;
+                            var resultArry = data.response.regions
+                            for (var i = 0; i < resultArry.length; i++) {
+                                result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
+                            }
+                        }
+                        $("#CityId").html('');
+                        $("#CityId").append(result);
+                    }
+                })
+            });
+            $("#CityId").change(function () {
+                var link_url = "/Custom/GetRegion"
+                var City_id = $("#CityId").val()
+                $.ajax({
+                    url: link_url,
+                    data: {
+                        level: 3,
+                        parentid: City_id
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        //alert(data)
+                        if (data.response.regions) {
+                            var result = "<option value=''>" + "选择市/区" + "</option>";
+                            var resultArry = data.response.regions
+                            for (var i = 0; i < resultArry.length; i++) {
+                                result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
+                            }
+                        }
+                        $("#AreaId").html('');
+                        $("#AreaId").append(result);
+                    }
+                })
+            });//end
+            //验证
+            $.validator.setDefaults({
+                submitHandler: function () {
+                    alert("提交事件!");
+                }
+            });
+            $.validator.addMethod("phone", function (value, element) {
+                var tel = /^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\d{8}$/;
+                return this.optional(element) || (tel.test(value));
+            }, "请正确填写您的手机号码");
+            $().ready(function () {
+                $("#signupForm").validate({
+                    rules: {
+                        SellerId: "required",
+                        StreetId: "required",
+                        ProvenceId: "required",
+                        CityId: "required",
+                        AreaId: "required",
+                        PhoneId: {
+                            required: true,
+                            phone: true
+                        }
+                    },
+                    messages: {
+                        SellerId: "请填写姓名",
+                        StreetId: "请填写详细的地址",
+                        ProvenceId: "选择省份",
+                        CityId: "选择城市",
+                        AreaId: "选择市/区",
+                        PhoneId: {
+                            required: "请填写手机号",
+                            //digits: "只能输入数字",
+                            phone: "请正确填写您的手机号码"
+                        }
+                    },
+                    debug: true,
+                    errorPlacement: function (error, element) {
+                        element.attr("placeholder", error.text());
+                    }
+                });
+            });  
+        });
+    </script>
 </body>
 </html>
