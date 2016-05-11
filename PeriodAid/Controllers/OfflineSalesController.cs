@@ -1411,8 +1411,14 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Ajax_EditSchedule(int id)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
             ViewBag.StoreName = item.Off_Store.StoreName;
+            var TemplateList = from m in offlineDB.Off_Sales_Template
+                               where m.Off_System_Id == user.DefaultSystemId
+                               orderby m.TemplateName
+                               select new { Key = m.Id, Value = m.TemplateName };
+            ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
             return PartialView(item);
         }
         [ValidateAntiForgeryToken, HttpPost]
@@ -1432,7 +1438,13 @@ namespace PeriodAid.Controllers
             else
             {
                 ModelState.AddModelError("", "请重试");
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 ViewBag.StoreName = offlineDB.Off_Store.SingleOrDefault(m => m.Id == model.Off_Store_Id).StoreName;
+                var TemplateList = from m in offlineDB.Off_Sales_Template
+                                   where m.Off_System_Id == user.DefaultSystemId
+                                   orderby m.TemplateName
+                                   select new { Key = m.Id, Value = m.TemplateName };
+                ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
                 return PartialView(model);
             }
         }
@@ -1452,7 +1464,14 @@ namespace PeriodAid.Controllers
                               group m by m.StoreSystem into g
                               orderby g.Key
                               select new { Key = g.Key, Value = g.Key };
+            var TemplateList = from m in offlineDB.Off_Sales_Template
+                               where m.Off_System_Id == user.DefaultSystemId
+                               orderby m.TemplateName
+                               select new { Key = m.Id , Value = m.TemplateName };
+            ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
+
             ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+
             return View();
         }
         [HttpPost]
@@ -1508,7 +1527,7 @@ namespace PeriodAid.Controllers
                                     Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
                                     Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
                                     Standard_Salary = model.Salary,
-                                    TemplateId =1,
+                                    TemplateId =model.TemplateId,
                                     Off_System_Id = user.DefaultSystemId
                                 };
                                 offlineDB.Off_Checkin_Schedule.Add(schedule);
@@ -1518,7 +1537,7 @@ namespace PeriodAid.Controllers
                                 schedule.Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0);
                                 schedule.Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0);
                                 schedule.Standard_Salary = model.Salary;
-                                schedule.TemplateId = 1;
+                                schedule.TemplateId = model.TemplateId;
                                 offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
                             }
                         }

@@ -210,6 +210,8 @@ namespace PeriodAid.Models
 
         [Required(ErrorMessage ="标准薪资不能为空")]
         public decimal Salary { get; set; }
+        [Required(ErrorMessage = "模板不能为空")]
+        public int TemplateId { get; set; }
     }
     public class ConfirmCheckIn_ViewModel
     {
