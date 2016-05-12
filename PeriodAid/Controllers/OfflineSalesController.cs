@@ -3155,7 +3155,7 @@ namespace PeriodAid.Controllers
         // 0511 添加模板
         public ActionResult Off_Template_Create()
         {
-            Off_Product model = new Off_Product();
+            Off_Sales_Template model = new Off_Sales_Template();
             return PartialView(model);
         }
         [HttpPost, ValidateAntiForgeryToken]

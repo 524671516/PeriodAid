@@ -636,6 +636,10 @@
     <Content Include="Views\Seller\Wx_Manager_EditReport_Item.cshtml" />
     <Content Include="Views\OfflineSales\Off_ConfirmProductList.cshtml" />
     <Content Include="Views\OfflineSales\Off_ConfirmPrductListBySchedule.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_Create.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
