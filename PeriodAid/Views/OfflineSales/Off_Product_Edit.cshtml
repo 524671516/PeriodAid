@@ -1,6 +1,6 @@
 ﻿@model PeriodAid.Models.Off_Product
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Off_Product_Edit", "OfflineSales", FormMethod.Post, new { id = "editProductForm" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.Off_System_Id)
@@ -58,3 +58,23 @@
         </div>
     </div>
 }
+<script>
+    $(function () {
+        $('#editProductForm').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("修改成功");
+                $('#edit_product').modal('hide');
+                $.ajax({
+                    url: "/OfflineSales/Off_Product_List_Ajax",
+                    success: function (data) {
+                        $("#contentList").html(data);
+                    }
+                });
+            }
+            else {
+                $("#editcontent").html(data);
+            }
+
+        });
+    });
+</script>

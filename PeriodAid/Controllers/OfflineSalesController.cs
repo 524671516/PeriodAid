@@ -3186,8 +3186,8 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var productlist = from m in offlineDB.Off_Product
-                              where m.Off_System_Id == user.DefaultSystemId && m.status >= 0
-                              select new { Id = m.Id, ItemCode = m.ItemCode, ItemName = m.ItemName, SimpleName = m.SimpleName, SalesPrice = m.SalesPrice, Spec = m.Spec };
+                              where m.Off_System_Id == user.DefaultSystemId
+                              select new { Id = m.Id, ItemCode = m.ItemCode, ItemName = m.ItemName, SimpleName = m.SimpleName, SalesPrice = m.SalesPrice, Spec = m.Spec, Status = m.status };
             return Json(new { result = "SUCCESS", list = productlist });
         }
         // 0511 修改模板
