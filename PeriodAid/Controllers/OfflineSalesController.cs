@@ -1563,6 +1563,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             var list = from m in offlineDB.Off_Store
                        where m.StoreSystem == storesystem && m.Off_System_Id == user.DefaultSystemId
+                       orderby m.StoreName
                        select new { ID = m.Id, StoreName = m.StoreName };
             return Json(new { StoreList = list });
         }

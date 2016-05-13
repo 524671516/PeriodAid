@@ -1816,7 +1816,7 @@ namespace PeriodAid.Controllers
             var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
             ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
             var today_org = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
-            var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId).Select(m => new { Key = m.Id, Value = m.TemplateName });
+            var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status>=0).Select(m => new { Key = m.Id, Value = m.TemplateName });
             ViewBag.TemplateList = new SelectList(templateList, "Key", "Value");
             schedule.Subscribe = today_org;
             schedule.Standard_CheckIn = "10:00";
@@ -1859,6 +1859,8 @@ namespace PeriodAid.Controllers
                         var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
                         var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
                         ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                        var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status >= 0).Select(m => new { Key = m.Id, Value = m.TemplateName });
+                        ViewBag.TemplateList = new SelectList(templateList, "Key", "Value");
                         return View(model);
                     }
                 }
@@ -1871,6 +1873,8 @@ namespace PeriodAid.Controllers
                 var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
                 var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
                 ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status >= 0).Select(m => new { Key = m.Id, Value = m.TemplateName });
+                ViewBag.TemplateList = new SelectList(templateList, "Key", "Value");
                 return View(model);
             }
 
