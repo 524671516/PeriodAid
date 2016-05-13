@@ -49,5 +49,37 @@ namespace PeriodAid.Models
         public DateTime? submit_time { get; set; }
     }
 
-    
+    // ÀÕπÎ√€±Ì
+    public partial class P_Presents
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(32)]
+        public string openId { get; set; }
+
+        public int status { get; set; }
+
+        public string source_ReceiverName { get; set; }
+
+        public string source_ReceiverMobile { get; set; }
+
+        public string source_ReceiverAddress { get; set; }
+
+        public string target_ReceiverName { get; set; }
+
+        public string target_ReceiverMobile { get; set; }
+
+        public string target_ReceiverState { get; set; }
+
+        public string target_ReceiverCity { get; set; }
+
+        public string target_ReceiverDistrict { get; set; }
+
+        public string target_ReceiverAddress { get; set; }
+
+        public string express_name { get; set; }
+
+        public string mail_no { get; set; }
+    }
 }

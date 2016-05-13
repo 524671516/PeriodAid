@@ -779,5 +779,24 @@ namespace PeriodAid.Controllers
             string result = util.KDT_GetRegion(level, parentid);
             return Content(result);
         }
+        public ActionResult GetTrade(string keywords)
+        {
+            KDTUtilites util = new KDTUtilites();
+            DateTime st = new DateTime(2016, 4, 1);
+            DateTime et = new DateTime(2016, 5, 1);
+            string result = util.KDT_GetTrade(st, et, keywords);
+            return Content(result);
+        }
+
+        public ActionResult GirlFriend_Start()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult GirlFriend_Start(FormCollection form)
+        {
+            string mobile = form["mobile"].ToString();
+            return View();
+        }
     }
 }
