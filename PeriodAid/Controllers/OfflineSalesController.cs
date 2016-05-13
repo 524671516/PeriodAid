@@ -3079,7 +3079,7 @@ namespace PeriodAid.Controllers
                     item.Off_System_Id = user.DefaultSystemId;
                     offlineDB.Off_Product.Add(item);
                     offlineDB.SaveChanges();
-                    return RedirectToAction("Off_Product_List");
+                    return Content("SUCCESS");
                 }
                 return PartialView("Error");
             }
@@ -3109,7 +3109,7 @@ namespace PeriodAid.Controllers
                 {
                     offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     offlineDB.SaveChanges();
-                    return RedirectToAction("Off_Product_List");
+                    return Content("SUCCESS");
                 }
                 return PartialView("Error");
             }

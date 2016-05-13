@@ -60,8 +60,21 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" id="add_product">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">新增产品</h4>
+            </div>
+            <div class="modal-body" id="addcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Product_List_Ajax", new { page }))</div>
-<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     $(function () {
         $(".btn-edit").click(function () {
@@ -72,6 +85,18 @@
                     $("#editcontent").html(data);
                     $("#edit_product").modal()
                 }
+            })
+            return false
+        });
+        $("#add-btn").click(function () {
+            var link_url = "/OfflineSales/Off_Product_Create"
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#addcontent").html(data)
+                    $("#add_product").modal()
+                }
+
             })
             return false
         });
