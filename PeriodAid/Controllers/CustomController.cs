@@ -771,6 +771,12 @@ namespace PeriodAid.Controllers
         // 三级联动地址
         public ActionResult TestRegion()
         {
+            P_Presents model = new P_Presents();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult TestRegion(P_Presents model)
+        {
             return View();
         }
         public ActionResult GetRegion(int level, int? parentid)
@@ -795,7 +801,19 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult GirlFriend_Start(FormCollection form)
         {
+            ERPOrderDataContext erpdb = new ERPOrderDataContext();
+            DateTime st = new DateTime(2016, 4, 1);
+            DateTime et = new DateTime(2016, 5, 2);
             string mobile = form["mobile"].ToString();
+            int order_count = (from m in erpdb.orders
+                       where m.receiver_mobile == mobile &&
+                        m.createtime >= st && m.createtime <= et
+                        && m.shop_code == "微信商城"
+                       select m).Count();
+            if (order_count > 0)
+            {
+                return RedirectToAction("TestRegion");
+            }
             return View();
         }
     }
