@@ -11,8 +11,10 @@
     <title>GirlFriend_Start</title>
 </head>
 <body>
-    <div>@using (Html.BeginForm())
+    <div>
+    @using (Html.BeginForm())
     {
+        <input type="hidden" value="@ViewBag.OpenId" id="openid" name="openid" />
         <input type="text" id="mobile" name="mobile"/>
         <button>提交</button>
     }
