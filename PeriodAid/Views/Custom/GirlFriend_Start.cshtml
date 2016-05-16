@@ -1,0 +1,23 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>GirlFriend_Start</title>
+</head>
+<body>
+    <div>
+    @using (Html.BeginForm())
+    {
+        <input type="hidden" value="@ViewBag.OpenId" id="openid" name="openid" />
+        <input type="text" id="mobile" name="mobile"/>
+        <button>提交</button>
+    }
+    </div>
+</body>
+</html>

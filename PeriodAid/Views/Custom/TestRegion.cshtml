@@ -1,4 +1,4 @@
-﻿
+﻿@model PeriodAid.Models.P_Presents
 @{
     Layout = null;
 }
@@ -24,39 +24,47 @@
     </style>
 </head>
 <body>
-    <form class="cmxform" id="signupForm" method="get" action="">
+    @using (Html.BeginForm("TestRegion", "Custom",FormMethod.Post, new { @id="regionForm"}))
+    {
+        @Html.HiddenFor(m=>m.Id)
+        @Html.HiddenFor(m=>m.plattform_code)
+        @Html.HiddenFor(m=>m.source_ReceiverAddress)
+        @Html.HiddenFor(m=>m.source_ReceiverMobile)
+        @Html.HiddenFor(m=>m.source_ReceiverName)
+        @Html.HiddenFor(m=>m.status)
+        @Html.HiddenFor(m=>m.openId)
+        @Html.HiddenFor(m=>m.create_time)
         <fieldset>
             <div class="weui_cells weui_cells_form">
                 @*收货人*@
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">收货人：</label></div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <input type="text" class="weui_input" id="SellerId" name="SellerId" placeholder="名字">
+                        @Html.TextBoxFor(m=>m.target_ReceiverName, new { placeholder = "姓名", @class="weui_input" })
                     </div>
                 </div>
                 @*联系电话*@
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">联系电话：</label></div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <input type="text" class="weui_input" id="PhoneId" name="PhoneId" placeholder="手机">
+                        @Html.TextBoxFor(m => m.target_ReceiverMobile, new { placeholder = "手机号码", @class = "weui_input" })
                     </div>
                 </div>
                 @*选择地址*@
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">选择地址：</label></div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <select class="weui_input" id="ProvenceId" name="ProvenceId" data-placeholder="省份" target-provence="">
-                            @*<option value="-1">-请选择省份-</option>*@
+                        <select class="weui_input" id="target_ReceiverState" name="target_ReceiverState" data-placeholder="省份">
+                            <option value="">-请选择省份-</option>
                         </select>
                     </div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <select class="weui_input" id="CityId" name="CityId" data-placeholder="城市" target-city="">
+                        <select class="weui_input" id="target_ReceiverCity" name="target_ReceiverCity" data-placeholder="城市">
                             <option value="">选择城市</option>
                         </select>
                     </div>
                     <div class="weui_cell_bd weui_cell_primary">
-
-                        <select class="weui_input" id="AreaId" name="AreaId" data-placeholder="市/区" target-area="">
+                        <select class="weui_input" id="target_ReceiverDistrict" name="target_ReceiverDistrict" data-placeholder="市/区">
                             <option value="">选择市/区</option>
                         </select>
                     </div>
@@ -65,20 +73,20 @@
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">详细地址：</label></div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <input type="text" class="weui_input" id="StreetId" name="StreetId" placeholder="街道门牌信息">
+                        <input type="text" class="weui_input" id="target_ReceiverAddress" name="target_ReceiverAddress" placeholder="街道门牌信息">
                     </div>
                 </div>
                 @*邮政编码*@
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">邮政编码：</label></div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <input type="text" class="weui_input" id="MailId" name="MailId" placeholder="邮政编码（选填）" maxlength="6">
+                        <input type="text" class="weui_input" id="target_ReceiverZip" name="target_ReceiverZip" placeholder="邮政编码（选填）" maxlength="6">
                     </div>
                 </div>
             </div>
             <div class="weui_btn_area"><input class="weui_btn weui_btn_primary" type="submit" value="保存" id="btn-save"></div>
         </fieldset>
-    </form>
+    }
     
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -94,7 +102,7 @@
                     data = JSON.parse(data);
                     //alert(data.response.regions.length)
                     if (data.response.regions) {
-                        var result = "<option value=''>" + "选择省份" + "</option>";;
+                        var result = "<option value=''>" + "选择省份" + "</option>";
                         var resultArry = data.response.regions
                         //alert(resultArry.length);
                         for (var i = 0; i < resultArry.length; i++) {
@@ -102,13 +110,13 @@
                         }
                     }
                     //alert(result);
-                    $("#ProvenceId").html('');
-                    $("#ProvenceId").append(result);
+                    $("#target_ReceiverState").html("");
+                    $("#target_ReceiverState").append(result);
                 }
             })
-            $("#ProvenceId").change(function () {
+            $("#target_ReceiverState").change(function () {
                 var link_url = "/Custom/GetRegion"
-                var provence_id = $("#ProvenceId").val()
+                var provence_id = $("#target_ReceiverState").val()
                 $.ajax({
                     url: link_url,
                     data: {
@@ -125,14 +133,14 @@
                                 result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
                             }
                         }
-                        $("#CityId").html('');
-                        $("#CityId").append(result);
+                        $("#target_ReceiverCity").html('');
+                        $("#target_ReceiverCity").append(result);
                     }
                 })
             });
-            $("#CityId").change(function () {
+            $("#target_ReceiverCity").change(function () {
                 var link_url = "/Custom/GetRegion"
-                var City_id = $("#CityId").val()
+                var City_id = $("#target_ReceiverCity").val()
                 $.ajax({
                     url: link_url,
                     data: {
@@ -149,15 +157,15 @@
                                 result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
                             }
                         }
-                        $("#AreaId").html('');
-                        $("#AreaId").append(result);
+                        $("#target_ReceiverDistrict").html('');
+                        $("#target_ReceiverDistrict").append(result);
                     }
                 })
             });//end
             //验证
             $.validator.setDefaults({
-                submitHandler: function () {
-                    alert("提交事件!");
+                submitHandler: function (form) {
+                    form.submit();
                 }
             });
             $.validator.addMethod("phone", function (value, element) {
@@ -165,25 +173,25 @@
                 return this.optional(element) || (tel.test(value));
             }, "请正确填写您的手机号码");
             $().ready(function () {
-                $("#signupForm").validate({
+                $("#regionForm").validate({
                     rules: {
-                        SellerId: "required",
-                        StreetId: "required",
-                        ProvenceId: "required",
-                        CityId: "required",
-                        AreaId: "required",
-                        PhoneId: {
+                        target_ReceiverName: "required",
+                        target_ReceiverAddress: "required",
+                        target_ReceiverState: "required",
+                        target_ReceiverCity: "required",
+                        target_ReceiverDistrict: "required",
+                        target_ReceiverMobile: {
                             required: true,
                             phone: true
                         }
                     },
                     messages: {
-                        SellerId: "请填写姓名",
-                        StreetId: "请填写详细的地址",
-                        ProvenceId: "选择省份",
-                        CityId: "选择城市",
-                        AreaId: "选择市/区",
-                        PhoneId: {
+                        target_ReceiverName: "请填写姓名",
+                        target_ReceiverAddress: "请填写详细的地址",
+                        target_ReceiverState: "选择省份",
+                        target_ReceiverCity: "选择城市",
+                        target_ReceiverDistrict: "选择市/区",
+                        target_ReceiverMobile: {
                             required: "请填写手机号",
                             //digits: "只能输入数字",
                             phone: "请正确填写您的手机号码"

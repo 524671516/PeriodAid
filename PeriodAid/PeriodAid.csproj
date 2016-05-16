@@ -220,6 +220,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605160324393_05161124.cs" />
+    <Compile Include="Migrations\201605160324393_05161124.Designer.cs">
+      <DependentUpon>201605160324393_05161124.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -645,6 +649,9 @@
     <Content Include="Views\ERPOrder\UploadProductGenericData.cshtml" />
     <Content Include="Views\Custom\ColdTutorial.cshtml" />
     <Content Include="Views\Custom\TestRegion.cshtml" />
+    <Content Include="Views\Custom\GirlFriend_Start.cshtml" />
+    <Content Include="Views\Custom\GirlFriend_Result.cshtml" />
+    <Content Include="Views\Custom\GirlFriend_None.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -658,6 +665,11 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201605160324393_05161124.resx">
+      <DependentUpon>201605160324393_05161124.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
