@@ -42,7 +42,7 @@
                 <div class="col-md-10">
                     <div class="row" id="list-pt">
                         <div class="col-md-10">
-                            <select class="form-control" id="list_pro"></select>
+                            <select class="form-control" id="list_pro"><option value="">请选择</option></select>
                         </div>
                         <div class="col-md-2"><a class="btn btn-info btn-sm" id="add-product"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加</a></div>
                     </div>
@@ -87,7 +87,13 @@
                         var sP_arry = list[i].SalesPrice
                         var sC_arry = list[i].Spec
                         var sN_arry = list[i].SimpleName
-                        $("#list_pro").append("<option target-id=" + iD_arry + " target-ic=" + iC_arry + " target-sp=" + sP_arry + " target-sc=" + sC_arry + " target-sn=" + sN_arry + ">" + iN_arry + "</option>");
+                        if (list[i].Status >= 0) {
+                            $("#list_pro").append("<option target-id='" + iD_arry + "' target-ic='" + iC_arry + "' target-sp='" + sP_arry + "' target-sc='" + sC_arry + "' target-sn='" + sN_arry + "'>" + iN_arry + "</option>");
+                        }
+                        else {
+                            $("#list_pro").append("<option class='hidden' target-id='" + iD_arry + "' target-ic='" + iC_arry + "' target-sp='" + sP_arry + "' target-sc='" + sC_arry + "' target-sn='" + sN_arry + "'>" + iN_arry + "</option>");
+
+                        }
                     }
                     if ($("#ProductList").val().trim() != "") {
                         var L = $("#ProductList").val().split(",");
@@ -108,7 +114,7 @@
         var proList_sC = $("#list_pro").find("option:selected").attr("target-sc");
         var proList_sN = $("#list_pro").find("option:selected").attr("target-sn");
         var id = $("#list_pro").find("option:selected").attr("target-id");
-        if (proList_iN == null) {
+        if (proList_iN == '') {
             alert("不存在产品")
         } else {
             $("#list_pro").find("option:selected").remove();
