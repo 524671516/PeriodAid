@@ -1856,7 +1856,7 @@ namespace PeriodAid.Controllers
                     {
                         ModelState.AddModelError("", "店铺当天活动已存在，无法添加");
                         var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                        var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName);
+                        var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
                         var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
                         ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
                         var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status >= 0).Select(m => new { Key = m.Id, Value = m.TemplateName });

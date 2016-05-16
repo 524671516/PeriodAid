@@ -845,7 +845,7 @@ namespace PeriodAid.Controllers
         public PartialViewResult Ajax_AddSeller()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storelist = offlineDB.Off_Store.OrderBy(m => m.StoreName);
+            var storelist = offlineDB.Off_Store.Where(m=>m.Off_System_Id==user.DefaultSystemId).OrderBy(m => m.StoreName);
             ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
             Off_Seller seller = new Off_Seller();
             seller.Off_System_Id = user.DefaultSystemId;
@@ -865,8 +865,9 @@ namespace PeriodAid.Controllers
             }
             else
             {
+                var user = UserManager.FindById(User.Identity.GetUserId());
                 ModelState.AddModelError("", "错误");
-                var storelist = offlineDB.Off_Store.OrderBy(m => m.StoreName);
+                var storelist = offlineDB.Off_Store.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
                 ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
                 return PartialView(item);
             }
@@ -1415,7 +1416,7 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
             ViewBag.StoreName = item.Off_Store.StoreName;
             var TemplateList = from m in offlineDB.Off_Sales_Template
-                               where m.Off_System_Id == user.DefaultSystemId
+                               where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
                                orderby m.TemplateName
                                select new { Key = m.Id, Value = m.TemplateName };
             ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
@@ -1441,7 +1442,7 @@ namespace PeriodAid.Controllers
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 ViewBag.StoreName = offlineDB.Off_Store.SingleOrDefault(m => m.Id == model.Off_Store_Id).StoreName;
                 var TemplateList = from m in offlineDB.Off_Sales_Template
-                                   where m.Off_System_Id == user.DefaultSystemId
+                                   where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
                                    orderby m.TemplateName
                                    select new { Key = m.Id, Value = m.TemplateName };
                 ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
@@ -1465,7 +1466,7 @@ namespace PeriodAid.Controllers
                               orderby g.Key
                               select new { Key = g.Key, Value = g.Key };
             var TemplateList = from m in offlineDB.Off_Sales_Template
-                               where m.Off_System_Id == user.DefaultSystemId
+                               where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
                                orderby m.TemplateName
                                select new { Key = m.Id , Value = m.TemplateName };
             ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
@@ -1547,11 +1548,17 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
+                    var user = UserManager.FindById(User.Identity.GetUserId());
                     var storesystem = from m in offlineDB.Off_Store
                                       group m by m.StoreSystem into g
                                       orderby g.Key
                                       select new { Key = g.Key, Value = g.Key };
                     ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                    var TemplateList = from m in offlineDB.Off_Sales_Template
+                                       where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
+                                       orderby m.TemplateName
+                                       select new { Key = m.Id, Value = m.TemplateName };
+                    ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
                     return View(model);
                 }
             }
