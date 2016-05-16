@@ -106,7 +106,7 @@
                         var resultArry = data.response.regions
                         //alert(resultArry.length);
                         for (var i = 0; i < resultArry.length; i++) {
-                            result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
+                            result += "<option value='" + unescape(resultArry[i].name) + "' target-id='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
                         }
                     }
                     //alert(result);
@@ -116,7 +116,7 @@
             })
             $("#target_ReceiverState").change(function () {
                 var link_url = "/Custom/GetRegion"
-                var provence_id = $("#target_ReceiverState").val()
+                var provence_id = $("#target_ReceiverState").find("option:selected").attr("target-id");
                 $.ajax({
                     url: link_url,
                     data: {
@@ -130,7 +130,7 @@
                             var result = "<option value=''>" + "选择城市" + "</option>";;
                             var resultArry = data.response.regions
                             for (var i = 0; i < resultArry.length; i++) {
-                                result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
+                                result += "<option value='" + unescape(resultArry[i].name) + "' target-id='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
                             }
                         }
                         $("#target_ReceiverCity").html('');
@@ -140,7 +140,7 @@
             });
             $("#target_ReceiverCity").change(function () {
                 var link_url = "/Custom/GetRegion"
-                var City_id = $("#target_ReceiverCity").val()
+                var City_id = $("#target_ReceiverCity").find("option:selected").attr("target-id");
                 $.ajax({
                     url: link_url,
                     data: {
@@ -154,7 +154,7 @@
                             var result = "<option value=''>" + "选择市/区" + "</option>";
                             var resultArry = data.response.regions
                             for (var i = 0; i < resultArry.length; i++) {
-                                result += "<option value='" + resultArry[i].id + "'>" + unescape(resultArry[i].name) + "</option>";
+                                result += "<option value='" + unescape(resultArry[i].name) + "'>" + unescape(resultArry[i].name) + "</option>";
                             }
                         }
                         $("#target_ReceiverDistrict").html('');

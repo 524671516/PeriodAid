@@ -259,6 +259,7 @@
     <Content Include="Content\images\benefits_flow_02.png" />
     <Content Include="Content\images\benefits_flow_03.png" />
     <Content Include="Content\images\benefits_intro.jpg" />
+    <Content Include="Content\images\bg.png" />
     <Content Include="Content\images\defqr_dd81ccc.png" />
     <Content Include="Content\images\guide-01-1.jpg" />
     <Content Include="Content\images\guide-01-2.jpg" />
@@ -279,6 +280,7 @@
     <Content Include="Content\images\guide-ex-07.jpg" />
     <Content Include="Content\images\guide-ex-08.jpg" />
     <Content Include="Content\images\hand.png" />
+    <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\mark_0.png" />
     <Content Include="Content\images\mark_1.png" />
     <Content Include="Content\images\mark_2.png" />

@@ -7,17 +7,59 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet"/>
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <title>GirlFriend_Start</title>
+    <style>
+        .bg {
+            background-image: url('../../Content/images/bg.png');
+            background-size: 100% auto;
+        }
+
+        .input-group .form-control:last-child {
+            border-bottom-left-radius: 5px;
+            border-top-left-radius: 5px;
+        }
+
+        .input-group .form-control:first-child {
+            border-bottom-right-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+    </style>
 </head>
-<body>
+<body class="bg">
     <div>
     @using (Html.BeginForm())
     {
-        <input type="hidden" value="@ViewBag.OpenId" id="openid" name="openid" />
-        <input type="text" id="mobile" name="mobile"/>
-        <button>提交</button>
+        <div class="container" style="padding-top:15%">
+            <div class="col-md-4"></div>
+            <div class="col-md-4"><img class="img-responsive" src="~/Content/images/logo.png" style="display: block;margin-left: auto;margin-right: auto;" /></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="verify_01">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background-color:#ececec">
+                    <div class="modal-header" style="background-color: #ebe3cd;border-radius: 6px 6px 0 0">
+                        <h4 class="modal-title text-center" style="color:#99826b"><strong>寿全斋-订单查询</strong></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group input-group-lg" style="display:block">
+                            <input type="hidden" value="@ViewBag.OpenId" id="openid" name="openid" />
+                            <input type="text" class="form-control" id="mobile" name="mobile" />
+                        </div><br />
+                        <button class="btn btn-lg btn-primary btn-block" style="color:#fff2d9">提交</button>
+                    </div>
+                    @*<div class="modal-body"></div>*@
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     }
     </div>
 </body>
 </html>
+    

@@ -7,12 +7,30 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <title>GirlFriend_None</title>
 </head>
 <body>
-    <div>
-        <h2>没有找到订单！</h2>
+    <div class="msg">
+        <div class="weui_msg">
+            <div class="weui_icon_area">
+                <i class="weui_icon_msg weui_icon_warn"></i>
+            </div>
+            <div class="weui_text_area">
+                <h2 class="weui_msg_title">没有找到订单！</h2>
+            </div>
+        </div>
+        <div class="weui_opr_area">
+            <p class="weui_btn_area">
+                <a href="/Custom/GirlFriend_Start" class="weui_btn weui_btn_default">返回查询</a>
+            </p>
+        </div>
     </div>
 </body>
 </html>
