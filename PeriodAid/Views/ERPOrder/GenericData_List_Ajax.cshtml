@@ -107,7 +107,12 @@
                     type: "post",
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            window.location.reload();
+                            $.ajax({
+                                url: "/ERPOrder/GenericData_List",
+                                success: function (data) {
+                                    $("#generric_list").html(data);
+                                }
+                            })
                         }
                     }
                 })

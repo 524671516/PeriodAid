@@ -762,5 +762,152 @@ namespace PeriodAid.Controllers
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View();
         }
+
+        public ActionResult ColdTutorial()
+        {
+            return View();
+        }
+
+        // 三级联动地址
+        public ActionResult TestRegion(P_Presents model)
+        {
+            //P_Presents model = new P_Presents();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult TestRegion(P_Presents model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                P_Presents present = new P_Presents();
+                if(TryUpdateModel(present))
+                {
+                    present.status = 1;
+                    promotionDB.Entry(present).State = System.Data.Entity.EntityState.Modified;
+                    promotionDB.SaveChanges();
+                    return RedirectToAction("GirlFriend_Result", new { open_id = present.openId });
+                }
+                else
+                {
+                    return View("GirlFriend_None");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "格式错误");
+                return View(model);
+            }
+        }
+        public ActionResult GetRegion(int level, int? parentid)
+        {
+            KDTUtilites util = new KDTUtilites();
+            string result = util.KDT_GetRegion(level, parentid);
+            return Content(result);
+        }
+        public ActionResult GetTrade(string keywords)
+        {
+            KDTUtilites util = new KDTUtilites();
+            DateTime st = new DateTime(2016, 4, 1);
+            DateTime et = new DateTime(2016, 5, 1);
+            string result = util.KDT_GetTrade(st, et, keywords);
+            return Content(result);
+        }
+        public ActionResult Wx_Redirect_Girlfriend()
+        {
+            string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Custom/Wx_Girlfriend_Authorization");
+            string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + "0" + "#wechat_redirect";
+            return Redirect(url);
+        }
+        public ActionResult Wx_Girlfriend_Authorization(string code, string state)
+        {
+            WeChatUtilities wechat = new WeChatUtilities();
+            var jat = wechat.getWebOauthAccessToken(code);
+            //var userinfo = wechat.getWebOauthUserInfo(jat.access_token, jat.openid);
+            return RedirectToAction("GirlFriend_Start", new { open_id = jat.openid });
+        }
+        public ActionResult GirlFriend_Start(string open_id)
+        {
+            ViewBag.OpenId = open_id;
+            var item = promotionDB.P_Presents.SingleOrDefault(m => m.openId == open_id);
+            if (item != null)
+            {
+                if (item.status == 0)
+                {
+
+                    return View("TestRegion", item);
+                }
+                else
+                {
+                    return RedirectToAction("GirlFriend_Result", new { open_id = item.openId });
+                }
+            }
+            return View();
+        }
+        [HttpPost]
+        public ActionResult GirlFriend_Start(FormCollection form)
+        {
+
+            string openid = form["openid"].ToString();
+            var item = promotionDB.P_Presents.SingleOrDefault(m => m.openId == openid);
+            if (item != null)
+            {
+                if (item.status == 0)
+                {
+
+                    return View("TestRegion", item);
+                }
+                else
+                {
+                    return RedirectToAction("GirlFriend_Result", new { open_id = item.openId });
+                }
+            }
+            else
+            {
+                ERPOrderDataContext erpdb = new ERPOrderDataContext();
+                DateTime st = new DateTime(2016, 4, 1);
+                DateTime et = new DateTime(2016, 5, 2);
+                string mobile = form["mobile"].ToString();
+                var orderlist = from m in erpdb.orders
+                                where m.receiver_mobile == mobile &&
+                                m.createtime >= st && m.createtime <= et
+                                && m.shop_code == "微信商城"
+                                select m;
+                if (orderlist.Count() > 0)
+                {
+                    var order = orderlist.FirstOrDefault();
+                    P_Presents p = new P_Presents()
+                    {
+                        source_ReceiverName = order.receiver_name,
+                        source_ReceiverMobile = order.receiver_mobile,
+                        source_ReceiverAddress = order.receiver_address,
+                        status = 0,
+                        openId = form["openid"].ToString(),
+                        create_time = DateTime.Now,
+                        plattform_code = "P_" + form["openid"].ToString()
+                    };
+                    promotionDB.P_Presents.Add(p);
+                    promotionDB.SaveChanges();
+                    return View("TestRegion", p);
+                }
+                return View("GirlFriend_None");
+            }
+        }
+        // 订单结果
+        public ActionResult GirlFriend_Result(string open_id)
+        {
+            // 获取订单
+            var order = promotionDB.P_Presents.SingleOrDefault(m => m.openId == open_id);
+            if (order != null)
+            {
+                
+                return View(order);
+            }
+            else
+            {
+                // 无订单,显示没有找到订单
+                return View("GirlFriend_None");
+            }
+        }
     }
 }

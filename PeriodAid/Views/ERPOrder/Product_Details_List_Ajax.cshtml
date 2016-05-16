@@ -1,8 +1,5 @@
 ﻿@model IEnumerable<PeriodAid.Models.product_details>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -47,11 +44,30 @@
             @Html.DisplayFor(modelItem => item.sales_amount)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+            @Html.ActionLink("修改", "Product_Details_Edit", new { id=item.id },new { @class = "btn btn-info" })
+            @Html.ActionLink("删除", "Product_Details_Delete", new { id=item.id }, new { @class = "btn btn-danger del-btn" })
         </td>
     </tr>
 }
 
 </table>
+<script>
+    $(function () {
+        $(".del-btn").click(function () {
+            var result = confirm("确定删除吗？");
+            if (result) {
+                var url = $(this).attr("href");
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+            return false
+        });
+    })
+</script>

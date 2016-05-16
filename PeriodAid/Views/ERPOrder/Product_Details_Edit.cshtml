@@ -3,16 +3,16 @@
 @{
     ViewBag.Title = "Product_Details_Edit";
     Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
+    ViewBag.page = 2;
 }
 
-<h2>Product_Details_Edit</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>product_details</h4>
+        <h2><strong>修改产品数据明细表</strong></h2>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.id)
@@ -20,7 +20,7 @@
         <div class="form-group">
             <label class="control-label col-md-2">日期</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -28,7 +28,7 @@
         <div class="form-group">
             <label class="control-label col-md-2">店铺名称</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.storename, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.storename, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.storename, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -67,12 +67,10 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="修改" class="btn btn-success" />
+                <a href="/ERPOrder/Product_Details_List" class="btn btn-danger">返回</a>
             </div>
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>

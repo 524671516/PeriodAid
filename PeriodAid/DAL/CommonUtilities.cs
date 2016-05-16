@@ -195,6 +195,16 @@ namespace PeriodAid.DAL
             }
             return sb.ToString();
         }
+        public static string NormalizeKDTParameters(IList<QueryParameter> parameters)
+        {
+            var list = parameters.OrderBy(m => m.Name).ToList();
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in list)
+            {
+                sb.AppendFormat("{0}{1}", item.Name, item.Value);
+            }
+            return sb.ToString();
+        }
     }
     public class QueryParameterComparer : IComparer<QueryParameter>
     {

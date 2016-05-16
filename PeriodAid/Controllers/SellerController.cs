@@ -2466,7 +2466,6 @@ namespace PeriodAid.Controllers
                     {
                         string mch_billno = "SELLERRP" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
                         string remark = item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd") + "促销红包";
-                        CommonUtilities.writeLog(DateTime.Now.ToShortTimeString() + "发放准备");
                         string result = apppay.WxRedPackCreate(item.ReceiveOpenId, item.ReceiveAmount, mch_billno, "促销员红包", "寿全斋", remark, remark);
                         if (result == "SUCCESS")
                         {
@@ -2476,8 +2475,6 @@ namespace PeriodAid.Controllers
                             item.CommitTime = DateTime.Now;
                             offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                         }
-                        CommonUtilities.writeLog(DateTime.Now.ToShortTimeString() + "发放成功");
-                        Task.Delay(10000);
                     }
                     //offlineDB.SaveChanges();
                 }
