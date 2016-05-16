@@ -1595,9 +1595,12 @@ namespace PeriodAid.Controllers
             foreach (var i in item.Off_Checkin_Product)
             {
                 var e = templatelist.SingleOrDefault(m => m.ProductId == i.ProductId);
-                e.SalesCount = i.SalesCount;
-                e.SalesAmount = i.SalesAmount;
-                e.Storage = i.StorageCount;
+                if (e != null)
+                {
+                    e.SalesCount = i.SalesCount;
+                    e.SalesAmount = i.SalesAmount;
+                    e.Storage = i.StorageCount;
+                }
             }
             Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
             {
