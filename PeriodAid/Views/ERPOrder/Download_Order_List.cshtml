@@ -21,7 +21,7 @@
 <div id="table-content">
 
 </div>
-@section scripts{
+<script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
     <script>
         $(function () {
             $.ajax({
@@ -31,12 +31,31 @@
                 }
             })
         });
-        $(".start-date").datepicker({
-            dateFormat: 'yy-mm-dd'
-        });
-        $(".end-date").datepicker({
-            dateFormat: 'yy-mm-dd'
-        })
+        var start = {
+            dateCell: '.start-date',
+            format: 'YYYY-MM-DD',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                end.minDate = datas; //开始日选好后，重置结束日的最小日期
+            }
+        };
+        var end = {
+            dateCell: '.end-date',
+            format: 'YYYY-MM-DD',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
+            }
+        };
+        jeDate.skin("jedate")  //调用不同风格的样式  分别有 默认("jedate")、红色("red")、绿色("green")、灰色("gray")、
+        jeDate(start);
+        jeDate(end);
         $("#query").click(function () {
             var start = $('.start-date').val();
             var end = $('.end-date').val();
@@ -77,6 +96,6 @@
             });
         })
     </script>
-    }
+
 
 

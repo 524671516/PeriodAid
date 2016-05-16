@@ -226,7 +226,7 @@ namespace PeriodAid.DAL
                 await PaymentDb.SaveChangesAsync();
                 return "FAIL";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return ex.Message;
             }
@@ -291,7 +291,7 @@ namespace PeriodAid.DAL
                                 order.send_time = Convert.ToDateTime(info.send_time);
                             order.total_amount = info.total_amount;
                             order.total_num = info.total_num;
-                            if (info.hblist!=null)
+                            if (info.hblist != null)
                             {
                                 var hbinfo = info.hblist.hbinfo.FirstOrDefault();
                                 if (hbinfo.rcv_time == null)
@@ -318,7 +318,7 @@ namespace PeriodAid.DAL
             var list = from m in PaymentDb.WxRedPackOrder
                        where m.status == "SENT"
                        select m;
-            foreach(var item in list)
+            foreach (var item in list)
             {
                 await WxRedPackQuery(item.mch_billno);
             }
@@ -368,12 +368,12 @@ namespace PeriodAid.DAL
         public string wishing { get; set; }
         public string remark { get; set; }
         public string act_name { get; set; }
-        [XmlElement(ElementName ="hblist")]
+        [XmlElement(ElementName = "hblist")]
         public hblist hblist { get; set; }
     }
     public class hblist
     {
-        [XmlElement(ElementName ="hbinfo")]
+        [XmlElement(ElementName = "hbinfo")]
         public List<hbinfo> hbinfo { get; set; }
     }
     public class hbinfo

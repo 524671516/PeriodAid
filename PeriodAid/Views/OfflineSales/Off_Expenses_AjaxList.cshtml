@@ -122,6 +122,7 @@
     }
 
 </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Expenses_AjaxList", new { page }))</div>
 <input type="hidden" id="status-val" />
 <script>
     $(".btn-filter").click(function () {
@@ -137,5 +138,16 @@
                 $("#expenseslist").html(data);
             }
         });
+    });
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        
+        $.ajax({
+            url: l,
+            success: function (data) {
+                $("#expenseslist").html(data);
+            }
+        });
+        return false;
     });
 </script>
