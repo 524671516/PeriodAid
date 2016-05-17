@@ -900,6 +900,11 @@ namespace PeriodAid.DAL
             return vipids;
         }
 
+        public bool createOrder()
+        {
+
+        }
+
         private string addTags(string originaltags, string tagname)
         {
             if (originaltags.Contains(tagname))
