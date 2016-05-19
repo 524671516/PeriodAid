@@ -307,69 +307,6 @@ namespace PeriodAid.Controllers
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return Content("Success");
         }
-
-        /*public ActionResult TestImageUpload()
-        {
-            WeChatUtilities utilities = new WeChatUtilities();
-            string _url = ViewBag.Url = Request.Url.ToString();
-            ViewBag.AppId = utilities.getAppId();
-            string _nonce = CommonUtilities.generateNonce();
-            ViewBag.Nonce = _nonce;
-            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
-            ViewBag.TimeStamp = _timeStamp;
-            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
-            return View();
-        }
-
-        public JsonResult SaveOrignalImage(string serverId)
-        {
-            try
-            {
-                WeChatUtilities utilities = new WeChatUtilities();
-                string url = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=" + utilities.getAccessToken() + "&media_id=" + serverId;
-                System.Uri httpUrl = new System.Uri(url);
-                HttpWebRequest req = (HttpWebRequest)(WebRequest.Create(httpUrl));
-                //req.Timeout = 180000; //设置超时值10秒
-                //req.UserAgent = "XXXXX";
-                //req.Accept = "XXXXXX";
-                req.Method = "GET";
-                HttpWebResponse res = (HttpWebResponse)(req.GetResponse());
-                Bitmap img = new Bitmap(res.GetResponseStream());//获取图片流
-                string folder = HttpContext.Server.MapPath("~/Content/downloads/");
-                string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
-                img.Save(folder + filename);//随机名
-                //ViewBag.filename = filename;
-                return Json(new { result = "SUCCESS", filename = filename }, JsonRequestBehavior.AllowGet);
-            }
-
-            catch (Exception ex)
-            {
-                string aa = ex.Message;
-            }
-
-            return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult CutImage(string url, int beginX, int beginY, int getX, int getY, string fileName)
-        {
-            
-                string folder = HttpContext.Server.MapPath("~/Content/downloads/");
-                Bitmap bitmap = new Bitmap(folder + url);//原图
-                if (((beginX + getX) <= bitmap.Width) && ((beginY + getY) <= bitmap.Height))
-                {
-                    Bitmap destBitmap = new Bitmap(getX, getY);//目标图
-                    Rectangle destRect = new Rectangle(0, 0, getX, getY);//矩形容器
-                    Rectangle srcRect = new Rectangle(beginX, beginY, getX, getY);
-
-                    Graphics g = Graphics.FromImage(destBitmap);
-                    g.DrawImage(bitmap, destRect, srcRect, GraphicsUnit.Pixel);
-                    ImageFormat format = ImageFormat.Jpeg;
-                    
-                    destBitmap.Save(folder + fileName, format);
-                    return Json(new { result = "SUCCESS", filename = fileName }, JsonRequestBehavior.AllowGet);
-                }
-            return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
-        }*/
         public ActionResult TestAudio()
         {
             return View();
