@@ -900,10 +900,10 @@ namespace PeriodAid.DAL
             return vipids;
         }
 
-        public bool createOrder()
+        /*public bool createOrder()
         {
 
-        }
+        }*/
 
         private string addTags(string originaltags, string tagname)
         {

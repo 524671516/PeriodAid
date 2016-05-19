@@ -166,9 +166,7 @@
         $("#start-date").val(getUrlParam("start"));
         $("#end-date").val(getUrlParam("end"));
         $("#dta").val(decodeURIComponent($("#dta").val()));
-        $("#start-date").datepicker({
-            dateFormat: 'yy-mm-dd'
-        });
+        $("#start-date").datepicker("hide");
         $("#end-date").datepicker({
             dateFormat: 'yy-mm-dd'
         });
