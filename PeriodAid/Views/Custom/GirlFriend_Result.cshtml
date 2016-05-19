@@ -15,7 +15,7 @@
     <link href="~/Content/weui.min.css" rel="stylesheet" />
     <link href="~/Content/example.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-    <title>GirlFriend_Result</title>
+    <title>订单状态</title>
 </head>
 <body>
     <div class="msg">
@@ -25,12 +25,8 @@
             </div>
             <div class="weui_text_area">
                 <h2 class="weui_msg_title">订单状态</h2>
+                <h3>@Html.Encode(Model.plattform_code)</h3>
             </div>
-        </div>
-        <div class="weui_opr_area">
-            <p class="weui_btn_area">
-                <a href="/Custom/GirlFriend_Start" class="weui_btn weui_btn_default">返回查询</a>
-            </p>
         </div>
     </div>
 </body>

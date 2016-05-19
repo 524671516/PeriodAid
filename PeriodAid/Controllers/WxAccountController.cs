@@ -297,11 +297,12 @@ namespace PeriodAid.Controllers
                 return Content("Failure");
         }
 
-        public async Task<ActionResult> TestLogin(string username, int systemid)
+        public async Task<ActionResult> TestLogin(string username, int? systemid)
         {
             string _username = username ?? "13636314852";
-            var user = UserManager.FindByName("13636314852");
-            user.DefaultSystemId = systemid;
+            int _systemid = systemid ?? 1;
+            var user = UserManager.FindByName(_username);
+            user.DefaultSystemId = _systemid;
             UserManager.Update(user);
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return Content("Success");

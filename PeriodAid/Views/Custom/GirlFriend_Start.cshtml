@@ -14,10 +14,11 @@
     <link href="~/Content/weui.min.css" rel="stylesheet" />
     <link href="~/Content/example.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-    <title>GirlFriend_Start</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <title>闺蜜礼</title>
     <style>
         .bg {
-            background-image: url('../../Content/images/bg.png');
+            background-image: url('/Content/images/bg.png');
             background-size: 100% auto;
         }
 
@@ -30,11 +31,15 @@
             border-bottom-right-radius: 5px;
             border-top-right-radius: 5px;
         }
+        input.error{ border: 1px solid red;color:red}
+        label.error {
+        display:none
+        }
     </style>
 </head>
 <body class="bg">
     <div>
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("GirlFriend_Start", "Custom", FormMethod.Post, new { @id = "regionForm" }))
     {
         <div class="container" style="padding-top:15%">
             <div class="col-md-4"></div>
@@ -49,17 +54,52 @@
                     </div>
                     <div class="modal-body">
                         <div class="input-group input-group-lg" style="display:block">
-                            <input type="hidden" value="@ViewBag.OpenId" id="openid" name="openid" />
-                            <input type="text" class="form-control" id="mobile" name="mobile" />
+                            <input type="hidden" value="@ViewBag.OpenId" id="openid" name="openid"/>
+                            <input type="text" class="form-control" id="mobile" name="mobile" placeholder="手机号码" />
                         </div><br />
                         <button class="btn btn-lg btn-primary btn-block" style="color:#fff2d9">提交</button>
                     </div>
-                    @*<div class="modal-body"></div>*@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
     }
     </div>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script>
+        $(function () {
+            //验证
+            $.validator.setDefaults({
+                submitHandler: function (form) {
+                    form.submit();
+                }
+            });
+            $.validator.addMethod("phone", function (value, element) {
+                var tel = /^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\d{8}$/;
+                return this.optional(element) || (tel.test(value));
+            }, "请正确填写您的手机号码");
+            $().ready(function () {
+                $("#regionForm").validate({
+                    rules: {
+                        mobile: {
+                            required: true,
+                            phone: true
+                        }
+                    },
+                    messages: {
+                        mobile: {
+                            required: "请填写手机号",
+                            phone: "请正确填写您的手机号码"
+                        }
+                    },
+                    debug: true,
+                    errorPlacement: function (error, element) {
+                        element.attr("placeholder", error.text());
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
     

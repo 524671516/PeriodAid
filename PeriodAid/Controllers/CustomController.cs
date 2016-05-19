@@ -782,6 +782,28 @@ namespace PeriodAid.Controllers
                 P_Presents present = new P_Presents();
                 if(TryUpdateModel(present))
                 {
+                    ERPCustomOrder_details d1 = new ERPCustomOrder_details()
+                    {
+                        qty = 1,
+                        price = 0,
+                        item_code = "sqz122"
+                    };
+                    ERPCustomOrder order = new ERPCustomOrder()
+                    {
+                        platform_code = model.plattform_code,
+                        event_name = "闺蜜礼",
+                        receiver_name = model.target_ReceiverName,
+                        receiver_address = model.target_ReceiverState + " " + model.target_ReceiverCity + " " + model.target_ReceiverDistrict + " " + model.target_ReceiverAddress,
+                        receiver_mobile = model.target_ReceiverMobile,
+                        receiver_province = model.target_ReceiverState,
+                        receiver_city = model.target_ReceiverCity,
+                        receiver_district = model.target_ReceiverDistrict,
+                        receiver_zip = model.target_ReceiverZip,
+                        details = new List<ERPCustomOrder_details>()
+                    };
+                    order.details.Add(d1);
+                    ERPOrderUtilities util = new ERPOrderUtilities();
+                    util.createOrder(order);
                     present.status = 1;
                     promotionDB.Entry(present).State = System.Data.Entity.EntityState.Modified;
                     promotionDB.SaveChanges();
@@ -804,14 +826,14 @@ namespace PeriodAid.Controllers
             string result = util.KDT_GetRegion(level, parentid);
             return Content(result);
         }
-        public ActionResult GetTrade(string keywords)
+        /*public ActionResult GetTrade(string keywords)
         {
             KDTUtilites util = new KDTUtilites();
             DateTime st = new DateTime(2016, 4, 1);
             DateTime et = new DateTime(2016, 5, 1);
             string result = util.KDT_GetTrade(st, et, keywords);
             return Content(result);
-        }
+        }*/
         public ActionResult Wx_Redirect_Girlfriend()
         {
             string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Custom/Wx_Girlfriend_Authorization");
@@ -884,7 +906,7 @@ namespace PeriodAid.Controllers
                         status = 0,
                         openId = form["openid"].ToString(),
                         create_time = DateTime.Now,
-                        plattform_code = "P_" + form["openid"].ToString()
+                        plattform_code = "P" + DateTime.Now.ToString("yyyyMMddHHmmss") + form["openid"].ToString()
                     };
                     promotionDB.P_Presents.Add(p);
                     promotionDB.SaveChanges();
@@ -898,9 +920,26 @@ namespace PeriodAid.Controllers
         {
             // 获取订单
             var order = promotionDB.P_Presents.SingleOrDefault(m => m.openId == open_id);
-            if (order != null)
+            if (order != null && order.status == 1)
             {
-                
+                ERPOrderUtilities util = new ERPOrderUtilities();
+                Orders_Result result = util.getERPORDERS(order.plattform_code, "线上其他渠道");
+                if (result.orders != null)
+                {
+                    var o = result.orders.FirstOrDefault();
+                    var delivery = o.deliverys.FirstOrDefault();
+                    if (delivery != null)
+                    {
+                        if (delivery.mail_no != null && delivery.delivery == true)
+                        {
+                            order.mail_no = delivery.mail_no;
+                            order.express_name = delivery.express_name;
+                            order.status = 2;
+                            promotionDB.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                            promotionDB.SaveChanges();
+                        }
+                    }
+                }
                 return View(order);
             }
             else

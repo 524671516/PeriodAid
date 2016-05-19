@@ -169,7 +169,54 @@ namespace PeriodAid.DAL
                 return -1;
             }
         }
-
+        public Orders_Result getERPORDERS(string platform_code, string shop_code)
+        {
+            string json = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                   "\"method\":\"gy.erp.trade.get\"," +
+                   "\"sessionkey\":\"" + SessionKey + "\"," +
+                   "\"shop_code\":\"" +shop_code+"\","+
+                   "\"platform_code\":\"" + platform_code + "\"" +
+                   "}";
+            string signature = sign(json, AppSecret);
+            string info = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                   "\"method\":\"gy.erp.trade.get\"," +
+                   "\"sessionkey\":\"" + SessionKey + "\"," +
+                   "\"shop_code\":\"" + shop_code + "\"," +
+                   "\"platform_code\":\"" + platform_code + "\"," +
+                    "\"sign\":\"" + signature + "\"" +
+                    "}";
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            request.ContentType = "text/json";
+            request.Method = "post";
+            string result = "";
+            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+            try
+            {
+                streamWriter.Write(info);
+                streamWriter.Flush();
+                streamWriter.Close();
+                var response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = reader.ReadToEnd();
+                    StringBuilder sb = new StringBuilder(result);
+                    sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                    sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(sb.ToString());
+                    return r;
+                }
+            }
+            catch (Exception)
+            {
+                streamWriter.Close();
+                //CommonUtilities.writeLog("page: " + page + ", Exception: " + ex.Message);
+                return null;
+            }
+            //return null;
+        }
         private async Task<string> getERPORDERS(int page, DateTime st, DateTime et, int id)
         {
             string json = "{" +
@@ -900,9 +947,93 @@ namespace PeriodAid.DAL
             return vipids;
         }
 
-        public bool createOrder()
+        public string createOrder(ERPCustomOrder order)
         {
+            StringBuilder details = new StringBuilder();
+            if (order.details != null)
+            {
+                foreach (var item in order.details)
+                {
+                    details.Append("{");
+                    details.Append("\"qty\":" + item.qty + ",");
+                    details.Append("\"price\":\"" + item.price + "\",");
+                    details.Append("\"note\":null,");
+                    details.Append("\"refund\":0,");
+                    details.Append("\"oid\":0,");
+                    details.Append("\"item_code\":\"" + item.item_code + "\",");
+                    details.Append("\"sku_code\":null");
+                    details.Append("}");
+                }
+                if(order.details.Count>1)
+                    details.Remove(details.Length - 1, 1);
+            }
+            StringBuilder json = new StringBuilder();
+            json.Append("{" +
+                    "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.add\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"order_type_code\":\"销售订单\"," +
+                    "\"platform_code\":\"" + order.platform_code + "\"," +
+                    "\"shop_code\":\"线上其他渠道\"," +
+                    //"\"qty\": 1," +
+                    "\"vip_code\":\"" + order.event_name + "\"," +
+                    //"\"vip_name\":\"" + order.event_name + "\"," +
+                    "\"warehouse_code\":\"107\"," +
+                    "\"express_code\":\"STO\"," +
+                    "\"receiver_name\":\"" + order.receiver_name + "\"," +
+                    "\"receiver_province\":\"" + order.receiver_province + "\"," +
+                    "\"receiver_city\":\"" + order.receiver_city + "\"," +
+                    "\"receiver_district\":\"" + order.receiver_district + "\"," +
+                    "\"receiver_mobile\":\"" + order.receiver_mobile + "\"," +
+                    "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
+                    "\"receiver_address\":\"" + order.receiver_address + "\"," +
+                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\","
+                    +"\"details\":[");
+            json.Append(details);
+            json.Append("]}");
+            //json.Append("\"payments\":[{");
+            //json.Append("\"payment\":0,\"paytime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
+            //json.Append("\"account\":null,\"pay_type_code\":\"支付宝\",\"pay_code\":null");
+            //json.Append("}],");
+            //json.Append("\"invoices\":null}");
+            //json.Append("\"invoices\":[{\"invoice_type\":1,\"invoice_title\":null,\"invoice_content\":null,\"invoice_amount\":null,\"bill_amount\":null}]}");
+            //return json.ToString();
+            string signature = sign(json.ToString(), AppSecret);
+            string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
+            var request = WebRequest.Create(post_url) as HttpWebRequest;
+            StringBuilder info = new StringBuilder();
+            info.Append(json.ToString());
+            info.Remove(info.Length - 1, 1);
+            info.Append(", \"sign\":\"" + signature + "\"}");
+            //return json.ToString() + "<br /><br />"+info.ToString();
+            string result = "";
+            try
+            {
+                request.ContentType = "text/json";
+                request.Method = "post";
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = request.GetResponse();
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = reader.ReadToEnd();
+                        return result;
+                    }
+                }
 
+            }
+            catch (UriFormatException)
+            {
+                return null;
+                //return Content(uex.Message);// 出错处理
+            }
+            catch (WebException)
+            {
+                return null;//return Content(ex.Message);// 出错处理
+            }
         }
 
         private string addTags(string originaltags, string tagname)
@@ -920,9 +1051,6 @@ namespace PeriodAid.DAL
                 return originaltags + "," + tagname;
             }
         }
-
-
-
         private string sign(string json, string secret)
         {
             StringBuilder enValue = new StringBuilder();
@@ -934,7 +1062,25 @@ namespace PeriodAid.DAL
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
     }
-
+    public class ERPCustomOrder
+    {
+        public string platform_code { get; set; }
+        public string event_name { get; set; }
+        public string receiver_name { get; set; }
+        public string receiver_province { get; set; }
+        public string receiver_city { get; set; }
+        public string receiver_district { get; set; }
+        public string receiver_mobile { get; set; }
+        public string receiver_zip { get; set; }
+        public string receiver_address { get; set; }
+        public List<ERPCustomOrder_details> details { get; set; }
+    }
+    public class ERPCustomOrder_details
+    {
+        public int qty { get; set; }
+        public decimal price { get; set; }
+        public string item_code { get; set; }
+    }
     public class Orders_Result
     {
         public bool success { get; set; }//响应成功/响应失败

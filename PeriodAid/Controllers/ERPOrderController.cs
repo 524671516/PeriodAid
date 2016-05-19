@@ -581,6 +581,34 @@ namespace PeriodAid.Controllers
                 }
 
             }
+
+            
+        }
+        public ActionResult createorder()
+        {
+            ERPCustomOrder_details d1 = new ERPCustomOrder_details()
+            {
+                qty = 1,
+                price = 0,
+                item_code = "sqz122"
+            };
+            ERPCustomOrder order = new ERPCustomOrder()
+            {
+                platform_code = "VIP201605181514120124",
+                event_name = "闺蜜礼",
+                receiver_name = "许亦安",
+                receiver_address = "宝安路160弄42号",
+                receiver_mobile = "13636314852",
+                receiver_province = "上海",
+                receiver_city = "上海市",
+                receiver_district = "虹口区",
+                receiver_zip="200081",
+                details = new List<ERPCustomOrder_details>()
+            };
+            order.details.Add(d1);
+            ERPOrderUtilities util =new  ERPOrderUtilities();
+            //ERPCustomOrder o = new ERPCustomOrder();
+            return Content(util.createOrder(order));
         }
         #region 上传商品基本信息
         public ActionResult UploadProductDetails()
@@ -815,4 +843,6 @@ namespace PeriodAid.Controllers
         }
     }
     #endregion
+
+
 }
