@@ -12,7 +12,7 @@
         <div class="weui_cell">
             <div class="weui_cell_hd"><label for="" class="weui_label">日期</label></div>
             <div class="weui_cell_bd weui_cell_primary">
-                <input class="weui_input" type="date" value="@ViewBag.today.ToString("yyyy-MM-dd")" name="list_date" id="list_date">
+                <input class="weui_input" type="text" value="@ViewBag.today.ToString("yyyy-MM-dd")" name="list_date" id="list_date">
             </div>
         </div>
     </div>
@@ -75,6 +75,7 @@
         </div>
     </div>
     <br /><br />
+<script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
 @section scripts{
     <script>
         var mask = $('#mask');
@@ -94,17 +95,23 @@
                 }
             });
         });
-        $("#list_date").change(function (data) {
-            $.ajax({
-                url: "/Seller/Wx_Manager_EventList_Partial",
-                data: {
-                    date: $("#list_date").val()
-                },
-                type: "post",
-                success: function (data) {
-                    $("#list-content").html(data);
-                }
-            });
+        jeDate({
+            dateCell: '#list_date',
+            format: 'YYYY-MM-DD',
+            isTime: true,// 分隔符可以任意定义，该例子表示只显示年月
+            choosefun: function (date) {
+                $.ajax({
+                    url: "/Seller/Wx_Manager_ReportList_Partial",
+                    data: {
+                        date: $("#list_date").val(),
+                        storesystem: $("#storesystem").val()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#list-content").html(data);
+                    }
+                });
+            }
         });
         function openactionsheet(schedule, text) {
             $("#currentid").val(schedule);

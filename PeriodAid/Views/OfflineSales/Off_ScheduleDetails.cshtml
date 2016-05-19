@@ -18,10 +18,17 @@
             </span>
         </div>
     </div>
-</div><br /><br />
+</div><br />
+<ul class="list-inline list-unstyled">
+    <li><a class="btn btn-default btn-sm" id="EditSel">批量选择</a></li>
+    <li><a class="btn btn-default btn-sm" id="DelSel">删除信息</a></li>
+</ul>
 <input type="hidden" value="@ViewBag.CurrentDate" id="current_date"/>
 <table class="table table-condensed table-striped" style="table-layout:fixed; width:100%;" id="tableList">
     <tr>
+        <th style="width:4%;" class="check-show">
+            <input type="checkbox" id="allChk" />
+        </th>
         <th style="width:10%">
             时间
         </th>
@@ -37,14 +44,17 @@
         <th style="width:10%">
             标准工资
         </th>
-        <th style="width:8%">签到数</th>
-        <th style="width:8%">提报数</th>
+        <th style="width:6%">签到数</th>
+        <th style="width:6%">提报数</th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
+            <td class="check-show">
+                <input type="checkbox" name="subChk" value="@item.Id" />
+            </td>
             <td>
                 @Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))
             </td>
@@ -134,4 +144,48 @@
             if (r != null) return unescape(r[2]); return null;
         }
     })(jQuery);
+    $(".check-show").hide();
+    $("#EditSel").click(function () {
+        $(".check-show").toggle()
+    })
+    //全选
+    $("#allChk").click(function () {
+        $("input[name='subChk']").prop("checked", this.checked);
+    });
+    // 单选 
+    var subChk = $("input[name='subChk']")
+    subChk.click(function () {
+        $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    });
+    // 批量删除
+    $("#DelSel").click(function () {
+        // 判断是否至少选择一项 
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        }
+        // 批量选择 
+        if (confirm("确定要删除所选项目？")) {
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            //alert(checkedList)
+            $.ajax({
+                type: "post",
+                url: "/OfflineSales/Ajax_DeleteSchedule",
+                data: {
+                    id: checkedList
+                },
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        $("[name ='subChk']:checkbox").attr("checked", false);
+                        window.location.reload();
+                        $(".check-show").addClass("hidden")
+                    }
+                }
+            });
+        }
+    });
 </script>
