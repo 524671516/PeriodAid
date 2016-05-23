@@ -20,12 +20,12 @@
     </div>
 </div><br />
 <ul class="list-inline list-unstyled">
-    <li><a class="btn btn-default btn-sm" id="EditSel">批量选择</a></li>
-    <li><a class="btn btn-default btn-sm" id="DelSel">删除信息</a></li>
+    <li><a class="btn btn-danger btn-xs" id="DelSel">删除信息</a></li>
+    <li><a class="btn btn-primary btn-xs" id="ModchechTime">修改时间及工资</a></li>
 </ul>
 <input type="hidden" value="@ViewBag.CurrentDate" id="current_date"/>
-<table class="table table-condensed table-striped" style="table-layout:fixed; width:100%;" id="tableList">
-    <tr>
+<table class="table table-condensed table-hover" style="table-layout:fixed; width:100%;" id="tableList">
+    <tr style="background-color:#f9f9f9">
         <th style="width:4%;" class="check-show">
             <input type="checkbox" id="allChk" />
         </th>
@@ -53,7 +53,7 @@
     {
         <tr>
             <td class="check-show">
-                <input type="checkbox" name="subChk" value="@item.Id" />
+                <input type="checkbox" name="subChk" value="@item.Id" data-timeIn="@item.Standard_CheckIn.ToString("HH:mm")" data-timeOut="@item.Standard_CheckOut.ToString("HH:mm")" data-salary="@item.Standard_Salary" />
             </td>
             <td>
                 @Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))
@@ -101,11 +101,39 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" id="Mod">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改活动时间</h4>
+            </div>
+            <div class="modal-body" id="Modcontent">
+                <div class="row">
+                    <div class="col-md-6"><input class="form-control checkTimeIn" type="text" placeholder="签到时间" value="" /></div>
+                    <div class="col-md-6"><input class="form-control editTimeIn" type="text" placeholder="修改" value="" /></div>
+                </div><br />
+                <div class="row">
+                    <div class="col-md-6"><input class="form-control checkTimeOut" type="text" placeholder="签退时间" value="" /></div>
+                    <div class="col-md-6"><input class="form-control editTimeOut" type="text" placeholder="修改" value="" /></div>
+                </div><br />
+                <div class="row">
+                    <div class="col-md-6"><input class="form-control checkSalary" type="text" placeholder="工资" value="" /></div>
+                    <div class="col-md-6"><input class="form-control editSalary" type="text" placeholder="修改" value="" /></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top:-5px;">
+                <button type="button" class="btn btn-default check-sure">确定<span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>
+                <button type="button" class="btn btn-primary check-fail">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     $("#search-btn").click(function () {
         var query = $("#search").val();
-        var url = "/OfflineSales/Off_ScheduleDetails?date=" + $("#current_date").val() + "&query=" + $("#search").val();
+        var url = "/OfflineSales/Off_ScheduleDetails?date=" + $("#current_date").val() + "&query=" + query;
         $("#search").val(query);
         window.location.href = url;
     })
@@ -144,10 +172,6 @@
             if (r != null) return unescape(r[2]); return null;
         }
     })(jQuery);
-    $(".check-show").hide();
-    $("#EditSel").click(function () {
-        $(".check-show").toggle()
-    })
     //全选
     $("#allChk").click(function () {
         $("input[name='subChk']").prop("checked", this.checked);
@@ -174,7 +198,7 @@
             //alert(checkedList)
             $.ajax({
                 type: "post",
-                url: "/OfflineSales/Ajax_DeleteSchedule",
+                url: "/OfflineSales/",
                 data: {
                     id: checkedList
                 },
@@ -187,5 +211,40 @@
                 }
             });
         }
+    });
+    //批量修改时间及工资
+    $("#ModchechTime").click(function () {
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        } else {
+            var checkedList = new Array();
+            var checkedIn = new Array();
+            var checkedOut = new Array();
+            var checkedSalary = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+                checkedIn.push($(this).attr("data-timeIn"));
+                checkedOut.push($(this).attr("data-timeOut"));
+                checkedSalary.push($(this).attr("data-salary"))
+            });
+            for (var i = 0; i < checkedIn.length; i++) {
+                $(".checkTimeIn").val(checkedIn[0]);
+            }
+            for (var i = 0; i < checkedOut.length; i++) {
+                $(".checkTimeOut").val(checkedOut[0]);
+            }
+            for (var i = 0; i < checkedSalary.length; i++) {
+                $(".checkSalary").val(checkedSalary[0]);
+            }
+            $("#Mod").modal('show');
+        }
+    });
+    $(".check-sure").click(function () {
+
+    });
+    $(".check-fail").click(function () {
+        $("#Mod").modal('hide')
     });
 </script>

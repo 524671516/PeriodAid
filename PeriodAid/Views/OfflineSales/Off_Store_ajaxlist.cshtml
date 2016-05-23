@@ -1,12 +1,11 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
 @using PagedList.Mvc;
-
 <ul class="list-inline list-unstyled">
-    <li><a class="btn btn-default btn-sm" id="EditSel">批量选择</a></li>
-    <li><a class="btn btn-default btn-sm" id="DelSel">删除信息</a></li>
+    <li><a class="btn btn-danger btn-xs" id="DelSel">删除信息</a></li>
+    <li><a class="btn btn-primary btn-xs" id="Modregion">修改区域</a></li>
 </ul>
-    <table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
-        <tr>
+    <table class="table table-hover table-condensed" style="width:100%;table-layout:fixed">
+        <tr style="background-color:#f9f9f9">
             <th style="width:5%" class="check-show">
                 <input type="checkbox" id="allChk" />
             </th>
@@ -19,7 +18,7 @@
             <th style="width:10%">
                 经销商
             </th>
-            <th style="width:30%">
+            <th style="width:25%">
                 地址
             </th>
             <th style="width:10%">
@@ -28,36 +27,36 @@
             <th style="width:10%">
                 纬度
             </th>
-            <th style="width:15%"></th>
+            <th style="width:20%"></th>
         </tr>
 
         @foreach (var item in Model)
         {
             <tr>
-                <td class="check-show">
-                    <input type="checkbox" name="subChk" value="@item.Id" />
+                <td class="check-show ">
+                    <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Region" />
                 </td>
-                <td class="ellipsis">
+                <td class="ellipsis ">
                     @Html.DisplayFor(modelItem => item.StoreName)
                 </td>
                 <td class="ellipsis">
                     @Html.DisplayFor(modelItem => item.Region)
                 </td>
-                <td class="ellipsis">
+                <td class="ellipsis ">
                     @Html.DisplayFor(modelItem => item.Distributor)
                 </td>
-                <td class="ellipsis">
+                <td class="ellipsis ">
                     @Html.DisplayFor(modelItem => item.Address)
                 </td>
-                <td class="ellipsis">
+                <td class="ellipsis ">
                     @Html.DisplayFor(modelItem => item.Longitude)
                 </td>
-                <td class="ellipsis">
+                <td class="ellipsis ">
                     @Html.DisplayFor(modelItem => item.Latitude)
                 </td>
                 <td>
                     @Html.ActionLink("修改", "Ajax_EditStore", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
-                    <a class="btn btn-sm btn-danger btn-lg del-btn" href="/OfflineSales/Off_DeleteStore?id=@item.Id">删除</a>
+                    <a class="btn btn-sm btn-danger del-btn" href="/OfflineSales/Off_DeleteStore?id=@item.Id">删除</a>
                     @*@Html.ActionLink("删除", "", new { id = off }, new { @class = "btn btn-sm btn-danger edit-button" })*@
                 </td>
 
@@ -87,29 +86,31 @@
                 <h4 class="modal-title">门店信息</h4>
             </div>
             <div class="modal-body" id="addcontent">
-                
+
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<!-- Button trigger modal -->
-@*<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-    Launch demo modal
-</button>*@
-<!-- Modal -->
-<div class="modal fade" id="myModa2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="Mod">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <h4 class="modal-body">
-                是否删除该门店信息？
-            </h4>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default">是</button>
-                <button type="button" class="btn btn-primary">否</button>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改区域</h4>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="modal-body" id="Modcontent">
+                <div class='row'>
+                    <div class='col-md-6'><input class='form-control' id="check-region" type='text' /></div>
+                    <div class='col-md-6'><input class='form-control' id='change-content' type='text' placeholder='替换' /></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top:-5px;">
+                <button type="button" class="btn btn-default check-sure">确定</button>
+                <button type="button" class="btn btn-primary check-fail">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     $(function () {
@@ -157,10 +158,6 @@
         })
        
     });
-    $(".check-show").hide();
-    $("#EditSel").click(function () {
-        $(".check-show").toggle()
-    })
     //全选
     $("#allChk").click(function () {
         $("input[name='subChk']").prop("checked", this.checked);
@@ -169,17 +166,17 @@
     var subChk = $("input[name='subChk']")
     subChk.click(function () {
         $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
-    });
+    }); 
     // 批量删除
-    $("#DelSel").click(function() { 
-        // 判断是否至少选择一项 
-        var checkedNum = $("input[name='subChk']:checked").length; 
-        if(checkedNum == 0) { 
-            alert("请选择至少一项！"); 
-            return; 
-        } 
+    $("#DelSel").click(function () {
+        // 判断是否至少选择一项
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        }
         // 批量选择 
-        if(confirm("确定要删除所选项目？")) { 
+        else if(confirm("确定要删除所选项目？")) { 
             var checkedList = new Array(); 
             $("input[name='subChk']:checked").each(function() { 
                 checkedList.push($(this).val()); 
@@ -187,7 +184,7 @@
             //alert(checkedList)
             $.ajax({
                 type: "post",
-                url: "/OfflineSales/Off_DeleteStore",
+                url: "/OfflineSales/",
                 data: {
                     id:checkedList
                 },
@@ -200,5 +197,29 @@
                 }
             });
         } 
-    }); 
+    });
+    $("#Modregion").click(function () {
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        } else {
+            var checkedList = new Array();
+            var checkedRegion = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+                checkedRegion.push($(this).attr("data-region"));
+            });
+            for (var i = 0; i < checkedRegion.length; i++) {
+                $("#check-region").val(checkedRegion[0])
+            }
+            $("#Mod").modal('show');
+        }
+    });
+    $(".check-sure").click(function () {
+
+    });
+    $(".check-fail").click(function () {
+        $("#Mod").modal('hide')
+    })
 </script>

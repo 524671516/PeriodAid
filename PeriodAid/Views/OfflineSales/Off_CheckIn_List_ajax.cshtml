@@ -1,8 +1,14 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Checkin>
 @using PagedList.Mvc;
 @using PeriodAid.Models;
-<table class="table table-condensed table-striped h6" style="table-layout: fixed;width:100%;">
-    <tr>
+<ul class="list-inline list-unstyled btn-sure">
+    <li><a class="btn btn-danger btn-xs" id="DelSel">确认信息</a></li>
+</ul>
+<table class="table table-condensed table-hover h6" style="table-layout: fixed;width:100%;">
+    <tr style="background-color:#f9f9f9">
+        <th style="width:5%" class="check-show">
+            <input type="checkbox" id="allChk" />
+        </th>
         <th style="width:15%">
             活动时间
         </th>
@@ -12,7 +18,7 @@
         <th style="width:20%">
             店铺名称
         </th>
-        <th style="width:15%">
+        <th style="width:10%">
             促销员姓名
         </th>
         <th style="width:10%">
@@ -27,6 +33,9 @@
     @foreach (var item in Model)
     {
         <tr>
+            <td class="check-show">
+                <input type="checkbox" name="subChk" value="@item.Id" />
+            </td>
             <td class="ellipsis">
                 @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
             </td>
@@ -69,7 +78,46 @@
         });
         return false;
     });
-  
+    //全选
+    $("#allChk").click(function () {
+        $("input[name='subChk']").prop("checked", this.checked);
+    });
+    // 单选 
+    var subChk = $("input[name='subChk']")
+    subChk.click(function () {
+        $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    });
+    // 批量确定
+    $("#DelSel").click(function () {
+        // 判断是否至少选择一项 
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        }
+        // 批量选择 
+        if (confirm("是否识别为确认信息？")) {
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            //alert(checkedList)
+            $.ajax({
+                type: "post",
+                url: "/OfflineSales/Off_DeleteStore",
+                data: {
+                    id: checkedList
+                },
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        $("[name ='subChk']:checkbox").attr("checked", false);
+                        window.location.reload();
+                        $(".check-show").addClass("hidden")
+                    }
+                }
+            });
+        }
+    });
 </script>
 
 

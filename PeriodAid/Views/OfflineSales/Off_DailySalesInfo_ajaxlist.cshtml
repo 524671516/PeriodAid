@@ -1,12 +1,17 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
 @using PagedList.Mvc;
-
-<table class="table table-condensed table-striped" style="table-layout: fixed;width:100%;">
-    <tr>
+<ul class="list-inline list-unstyled">
+    <li><a class="btn btn-danger btn-xs" id="DelSel">删除信息</a></li>
+</ul>
+<table class="table table-condensed table-hover" style="table-layout: fixed;width:100%;">
+    <tr style="background-color:#f9f9f9">
+        <th style="width:5%" class="check-show">
+            <input type="checkbox" id="allChk" />
+        </th>
         <th style="width:10%">
             日期
         </th>
-        <th style="width:15%" title="门店名称">
+        <th style="width:10%" title="门店名称">
             门店名称
         </th>
         <th style="width:7%">
@@ -35,6 +40,9 @@
 
 @foreach (var item in Model) {
     <tr>
+        <td class="check-show ">
+            <input type="checkbox" name="subChk" value="@item.Id" data-sellename="@item.Off_Seller.Name" data-salary="@item.Salary" data-storename="@item.Off_Store.StoreName"/>
+        </td>
         <td class="ellipsis">
             @Html.DisplayFor(modelItem => item.Date)
         </td>
@@ -150,5 +158,45 @@
             }
             return false;
         })
+    });
+    //全选
+    $("#allChk").click(function () {
+        $("input[name='subChk']").prop("checked", this.checked);
+    });
+    // 单选 
+    var subChk = $("input[name='subChk']")
+    subChk.click(function () {
+        $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    });
+    // 批量删除
+    $("#DelSel").click(function () {
+        // 判断是否至少选择一项 
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        }
+        // 批量选择 
+        if (confirm("确定要删除所选项目？")) {
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            //alert(checkedList)
+            $.ajax({
+                type: "post",
+                url: "/OfflineSales/Off_DeleteStore",
+                data: {
+                    id: checkedList
+                },
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        $("[name ='subChk']:checkbox").attr("checked", false);
+                        window.location.reload();
+                        $(".check-show").addClass("hidden")
+                    }
+                }
+            });
+        }
     });
 </script>
