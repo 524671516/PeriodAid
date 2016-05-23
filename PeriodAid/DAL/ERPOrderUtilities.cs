@@ -20,6 +20,9 @@ namespace PeriodAid.DAL
         private static string SessionKey = "8a503b3d9d0d4119be2868cc69a8ef5a";
         private static string API_Url = "http://v2.api.guanyierp.com/rest/erp_open";
         private ERPOrderDataContext erpdb;
+        public static int SEARCH_MOBILE = 1;
+        public static int SEARCH_PLATFORMCODE = 2;
+        public static int SEARCH_RECEIVERNAME = 3;
 
         public ERPOrderUtilities()
         {
@@ -167,6 +170,72 @@ namespace PeriodAid.DAL
             catch (WebException)
             {
                 return -1;
+            }
+        }
+        /// <summary>
+        /// 查看近7天是否有订单，有的话返回单号，没有的话，返回NULL
+        /// </summary>
+
+        public string existERPOrders(int searchType, string searchcontent, string shop_code)
+        {
+            StringBuilder json = new StringBuilder();
+            json.Append("{");
+            json.Append("\"appkey\":\"" + AppId + "\"," +
+                   "\"method\":\"gy.erp.trade.get\"," +
+                   "\"sessionkey\":\"" + SessionKey + "\"," +
+                   "\"shop_code\":\"" + shop_code + "\",");
+            switch (searchType)
+            {
+                case 1:
+                    json.Append("\"receiver_mobile\":\"" + searchcontent + "\"");
+                    break;
+                case 2:
+                    json.Append("\"platform_code\":\"" + searchcontent + "\"");
+                    break;
+                case 3:
+                    json.Append("\"vip_name\":\"" + searchcontent + "\"");
+                    break;
+                default:
+                    break;
+            }
+            json.Append("}");
+            string signature = sign(json.ToString(), AppSecret);
+            StringBuilder info = new StringBuilder();
+            info.Append(json.ToString());
+            info.Remove(info.Length - 1, 1);
+            info.Append(",\"sign\":\"" + signature + "\"}");
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            request.ContentType = "text/json";
+            request.Method = "post";
+            string result = "";
+            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+            try
+            {
+                streamWriter.Write(info.ToString());
+                streamWriter.Flush();
+                streamWriter.Close();
+                var response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = reader.ReadToEnd();
+                    StringBuilder sb = new StringBuilder(result);
+                    sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                    sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(sb.ToString());
+                    if (r.total > 0)
+                    {
+                        return r.orders.LastOrDefault().platform_code;
+                    }
+                    else
+                        return null;
+                }
+            }
+            catch (Exception)
+            {
+                streamWriter.Close();
+                //CommonUtilities.writeLog("page: " + page + ", Exception: " + ex.Message);
+                return null;
             }
         }
         public Orders_Result getERPORDERS(string platform_code, string shop_code)

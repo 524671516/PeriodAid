@@ -4,8 +4,6 @@
     ViewBag.Current = 2;
     Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
 }
-
-
     <input type="hidden" value="0" name="currentid" id="currentid" />
     <div class="weui_cells_title">选择日期</div>
     <div class="weui_cells weui_cells_form">
@@ -104,7 +102,7 @@
                     url: "/Seller/Wx_Manager_EventList_Partial",
                     data: {
                         date: $("#list_date").val(),
-                        storesystem: $("#storesystem").val()
+                        //storesystem: $("#storesystem").val()
                     },
                     type: "post",
                     success: function (data) {

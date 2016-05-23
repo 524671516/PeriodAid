@@ -236,81 +236,87 @@ namespace PeriodAid.DAL
         public async Task<string> WxRedPackQuery(string orderId)
         {
             var order = PaymentDb.WxRedPackOrder.SingleOrDefault(m => m.mch_billno == orderId);
-            if (order.status == "SENDING" || order.status == "SENT")
+            if (order != null)
             {
-                string query_url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo";
-                List<QueryParameter> parameters = new List<QueryParameter>();
-                parameters.Add(new QueryParameter("mch_billno", order.mch_billno));
-                parameters.Add(new QueryParameter("nonce_str", CommonUtilities.generateNonce()));
-                parameters.Add(new QueryParameter("mch_id", WeUtil.getMchId()));
-                parameters.Add(new QueryParameter("bill_type", "MCHT"));
-                parameters.Add(new QueryParameter("appid", WeUtil.getAppId()));
-                string sign = WeChatUtilities.createPaySign(parameters);
-                string request_xml = parseXml(parameters, sign);
-                var request = WebRequest.Create(query_url) as HttpWebRequest;
-                string certpath = @"D:\apiclient_cert.p12";
-                string password = "1224974002";
-                X509Certificate2 cert = new X509Certificate2(certpath, password);
-                request.ClientCertificates.Add(cert);
-                request.Method = "post";
-
-                StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
-                streamWriter.Write(request_xml);
-                streamWriter.Flush();
-                streamWriter.Close();
-                var response = await request.GetResponseAsync();
-                StreamReader reader = new StreamReader(response.GetResponseStream());
-                XmlSerializer xmldes = new XmlSerializer(typeof(WxHBInfo_List));
-                WxHBInfo_List info = xmldes.Deserialize(reader) as WxHBInfo_List;
-                //判断是否读取成功
-                if (info.return_code == "SUCCESS")
+                if (order.status == "SENDING" || order.status == "SENT")
                 {
-                    if (info.result_code == "SUCCESS")
+                    string query_url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo";
+                    List<QueryParameter> parameters = new List<QueryParameter>();
+                    parameters.Add(new QueryParameter("mch_billno", order.mch_billno));
+                    parameters.Add(new QueryParameter("nonce_str", CommonUtilities.generateNonce()));
+                    parameters.Add(new QueryParameter("mch_id", WeUtil.getMchId()));
+                    parameters.Add(new QueryParameter("bill_type", "MCHT"));
+                    parameters.Add(new QueryParameter("appid", WeUtil.getAppId()));
+                    string sign = WeChatUtilities.createPaySign(parameters);
+                    string request_xml = parseXml(parameters, sign);
+                    var request = WebRequest.Create(query_url) as HttpWebRequest;
+                    string certpath = @"D:\apiclient_cert.p12";
+                    string password = "1224974002";
+                    X509Certificate2 cert = new X509Certificate2(certpath, password);
+                    request.ClientCertificates.Add(cert);
+                    request.Method = "post";
+
+                    StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+                    streamWriter.Write(request_xml);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = await request.GetResponseAsync();
+                    StreamReader reader = new StreamReader(response.GetResponseStream());
+                    XmlSerializer xmldes = new XmlSerializer(typeof(WxHBInfo_List));
+                    WxHBInfo_List info = xmldes.Deserialize(reader) as WxHBInfo_List;
+                    //判断是否读取成功
+                    if (info.return_code == "SUCCESS")
                     {
-                        //return info.hblist.hbinfo.FirstOrDefault().rcv_time;
-                        // 状态一致，返回当前状态
-                        if (order.status == info.status)
+                        if (info.result_code == "SUCCESS")
                         {
-                            return order.status;
+                            //return info.hblist.hbinfo.FirstOrDefault().rcv_time;
+                            // 状态一致，返回当前状态
+                            if (order.status == info.status)
+                            {
+                                return order.status;
+                            }
+                            else
+                            {
+                                order.status = info.status;
+                                order.reason = info.reason;
+                                order.hb_type = info.hb_type;
+                                if (info.refund_time == null)
+                                    order.refund_time = null;
+                                else
+                                    order.refund_time = Convert.ToDateTime(info.refund_time);
+                                order.refund_amount = info.refund_amount;
+                                order.send_type = info.send_type;
+                                order.detail_id = info.detail_id;
+                                if (info.send_time == null)
+                                    order.send_time = null;
+                                else
+                                    order.send_time = Convert.ToDateTime(info.send_time);
+                                order.total_amount = info.total_amount;
+                                order.total_num = info.total_num;
+                                if (info.hblist != null)
+                                {
+                                    var hbinfo = info.hblist.hbinfo.FirstOrDefault();
+                                    if (hbinfo.rcv_time == null)
+                                        order.rcv_time = null;
+                                    else
+                                        order.rcv_time = Convert.ToDateTime(hbinfo.rcv_time);
+                                }
+                                PaymentDb.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                                await PaymentDb.SaveChangesAsync();
+                                return order.status;
+                            }
                         }
                         else
                         {
-                            order.status = info.status;
-                            order.reason = info.reason;
-                            order.hb_type = info.hb_type;
-                            if (info.refund_time == null)
-                                order.refund_time = null;
-                            else
-                                order.refund_time = Convert.ToDateTime(info.refund_time);
-                            order.refund_amount = info.refund_amount;
-                            order.send_type = info.send_type;
-                            order.detail_id = info.detail_id;
-                            if (info.send_time == null)
-                                order.send_time = null;
-                            else
-                                order.send_time = Convert.ToDateTime(info.send_time);
-                            order.total_amount = info.total_amount;
-                            order.total_num = info.total_num;
-                            if (info.hblist != null)
-                            {
-                                var hbinfo = info.hblist.hbinfo.FirstOrDefault();
-                                if (hbinfo.rcv_time == null)
-                                    order.rcv_time = null;
-                                else
-                                    order.rcv_time = Convert.ToDateTime(hbinfo.rcv_time);
-                            }
-                            PaymentDb.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                            await PaymentDb.SaveChangesAsync();
-                            return order.status;
+                            return info.err_code_des;
                         }
                     }
-                    else
-                    {
-                        return info.err_code_des;
-                    }
                 }
+                return order.status;
+            }else
+            {
+                return "NOTFOUND";
             }
-            return order.status;
         }
 
         public async Task<string> WxRedPackQueryAll()

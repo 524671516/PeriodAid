@@ -662,6 +662,10 @@
     <Content Include="Views\OfflineSales\Off_Template_List_Ajax.cshtml" />
     <Content Include="Views\OfflineSales\Off_Template_Create.cshtml" />
     <Content Include="Views\OfflineSales\Off_Template_Edit.cshtml" />
+    <Content Include="Views\Custom\UNI_SubmitInfo.cshtml" />
+    <Content Include="Views\Custom\UNI_NoneOrder.cshtml" />
+    <Content Include="Views\Custom\UNI_Result.cshtml" />
+    <Content Include="Views\Custom\UNI_Admin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

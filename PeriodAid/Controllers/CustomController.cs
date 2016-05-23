@@ -948,5 +948,340 @@ namespace PeriodAid.Controllers
                 return View("GirlFriend_None");
             }
         }
+
+        public ActionResult ExistOrder(int type, string search)
+        {
+            ERPOrderUtilities erp = new ERPOrderUtilities();
+            return Content(erp.existERPOrders(type, search, "寿全斋旗舰店").ToString());
+        }
+
+        public ActionResult Wx_Redirect_UNIEvent(string groupcode)
+        {
+            string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Custom/Wx_UNIEvent_Authorization");
+            string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_userinfo&state=" + groupcode + "#wechat_redirect";
+            return Redirect(url);
+        }
+        public ActionResult Wx_UNIEvent_Authorization(string code, string state)
+        {
+            try
+            {
+                return RedirectToAction("UNI_SubmitInfo", new { code = code, state=state });
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+        public ActionResult UNI_SubmitInfo(string code, string state)
+        {
+            WeChatUtilities wechat = new WeChatUtilities();
+            //CommonUtilities.writeLog(code + "," + state);
+            var jat = wechat.getWebOauthAccessToken(code);
+            
+            var userinfo = wechat.getWebOauthUserInfo(jat.access_token, jat.openid);
+            //if(userinfo.nickname=="")
+            if (userinfo.nickname == null && userinfo.headimgurl == null)
+            {
+                return RedirectToAction("Wx_Redirect_UNIEvent", new { groupcode = state });
+            }
+            int groupid = Convert.ToInt32(state);
+            var exist_list = promotionDB.UNI_MchBill.SingleOrDefault(m => m.OpenId == userinfo.openid);
+            if (exist_list == null)
+            {
+                UNI_MchBill bill = new UNI_MchBill()
+                {
+                    ImgUrl = userinfo.headimgurl,
+                    NickName = userinfo.nickname,
+                    OpenId = userinfo.openid,
+                    Sex = userinfo.sex == "1" ? true : false,
+                    Status = 0,
+                    GroupId = groupid,
+                    City = userinfo.city,
+                    Province = userinfo.province
+                };
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                return View(bill);
+            }
+            else
+            {
+                return RedirectToAction("UNI_Result", new { openid = userinfo.openid });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UNI_SubmitInfo(UNI_MchBill model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                // 判断是否存在
+                var exist_list = promotionDB.UNI_MchBill.SingleOrDefault(m => m.OpenId == model.OpenId);
+                if (exist_list==null)
+                {
+                    // 判断电话号码是否使用
+                    var exist_mobile = promotionDB.UNI_MchBill.SingleOrDefault(m => m.Mobile == model.Mobile);
+                    if (exist_mobile!=null)
+                    {
+                        try
+                        {
+                            ModelState.AddModelError("", "电话号码已使用，同一个电话号码只能使用一次");
+                            WeChatUtilities utilities = new WeChatUtilities();
+                            string _url = ViewBag.Url = Request.Url.ToString();
+                            ViewBag.AppId = utilities.getAppId();
+                            string _nonce = CommonUtilities.generateNonce();
+                            ViewBag.Nonce = _nonce;
+                            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                            ViewBag.TimeStamp = _timeStamp;
+                            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+
+                            return View(model);
+                        }
+                        catch(Exception ex)
+                        {
+                            return Content(ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        UNI_MchBill bill = new UNI_MchBill();
+                        if (TryUpdateModel(bill))
+                        {
+                            ERPOrderUtilities erp_util = new ERPOrderUtilities();
+                            string platform_code = erp_util.existERPOrders(1, model.Mobile, "寿全斋旗舰店");
+                            if (platform_code != null)
+                            {
+                                // 存在订单
+                                // 生成订单号
+                                //CommonUtilities.writeLog("存在订单");
+                                string mch_billno = "UNI" + DateTime.Now.Ticks.ToString();
+                                try
+                                {
+                                    int amount = 100;
+                                    bill.platform_code = platform_code;
+                                    bill.SendTime = DateTime.Now;
+                                    bill.Status = 1;
+                                    bill.MchBillNo = mch_billno;
+                                    bill.Mch_Amount = amount;
+                                    AppPayUtilities pay = new AppPayUtilities();
+
+                                    string result = pay.WxRedPackCreate(bill.OpenId, amount, mch_billno, "寿全斋校园行动", "寿全斋", "校园行动", "感谢您支持并关注寿全斋");
+                                    //string result = "SUCCESS";
+                                    if (result == "SUCCESS")
+                                    {
+                                        bill.StatusCode = "SENDING";
+                                    }
+                                    else
+                                    {
+                                        bill.StatusCode = "FAIL";
+                                    }
+                                    promotionDB.UNI_MchBill.Add(bill);
+                                    promotionDB.SaveChanges();
+                                    //bill.
+                                    return RedirectToAction("UNI_Result", new { openid = model.OpenId });
+                                }
+                                catch (Exception ex)
+                                {
+                                    return Content(ex.Message);
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "没有查到订单，请等待1分钟后重试！");
+                                WeChatUtilities utilities = new WeChatUtilities();
+                                string _url = ViewBag.Url = Request.Url.ToString();
+                                ViewBag.AppId = utilities.getAppId();
+                                string _nonce = CommonUtilities.generateNonce();
+                                ViewBag.Nonce = _nonce;
+                                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                                ViewBag.TimeStamp = _timeStamp;
+                                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                                return View(model);
+                            }
+                        }
+                        else
+                        {
+                            return View("UNI_Error");
+                        }
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("UNI_Result", new { openid = model.OpenId });
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                return View(model);
+            }
+        }
+        public async Task<ActionResult> UNI_Result(string openid)
+        {
+            
+                var bill = promotionDB.UNI_MchBill.SingleOrDefault(m => m.OpenId == openid);
+                if (bill != null)
+                {
+                    if (bill.Status == 1 && bill.StatusCode == "SENDING")
+                    {
+                        // 更新红包状态
+                        AppPayUtilities pay = new AppPayUtilities();
+                        string result = await pay.WxRedPackQuery(bill.MchBillNo);
+                        switch (result)
+                        {
+                            case "SENT":
+                                bill.Status = 1;
+                                break;
+                            case "RECEIVED":
+                                bill.Status = 2;
+                                break;
+                            case "FAIL":
+                                bill.Status = 3;
+                                break;
+                            case "REFUND":
+                                bill.Status = 4;
+                                break;
+                            default:
+                                break;
+                        }
+                        bill.StatusCode = result;
+                        promotionDB.Entry(bill).State = System.Data.Entity.EntityState.Modified;
+                        promotionDB.SaveChanges();
+                        return View(bill);
+                    }
+                    else
+                        return View(bill);
+                }
+                else
+                {
+                    return View("UNI_Error");
+                }
+        }
+        public ActionResult UNI_Admin(string groupcode)
+        {
+            var list = from m in promotionDB.UNI_MchBill
+                       where m.UNI_Group.GroupCode == groupcode
+                       orderby m.SendTime descending
+                       select m;
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            return View(list);
+        }
+        [HttpPost]
+        public JsonResult SaveOrignalImage(string serverId)
+        {
+            try
+            {
+                WeChatUtilities utilities = new WeChatUtilities();
+                string url = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=" + utilities.getAccessToken() + "&media_id=" + serverId;
+                System.Uri httpUrl = new System.Uri(url);
+                HttpWebRequest req = (HttpWebRequest)(WebRequest.Create(httpUrl));
+                req.Method = "GET";
+                HttpWebResponse res = (HttpWebResponse)(req.GetResponse());
+                //Bitmap img = new Bitmap(res.GetResponseStream());//获取图片流
+                //string folder = HttpContext.Server.MapPath("~/Content/checkin-img/");
+                string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                //img.Save(folder + filename);//随机名
+                AliOSSUtilities util = new AliOSSUtilities();
+                Stream inStream = res.GetResponseStream();
+                MemoryStream ms = new MemoryStream();
+                byte[] buffer = new byte[1024];
+                while (true)
+                {
+                    int sz = inStream.Read(buffer, 0, 1024);
+                    if (sz == 0)
+                        break;
+                    ms.Write(buffer, 0, sz);
+                }
+                ms.Position = 0;
+
+                util.PutObject(ms.ToArray(), "promotion/" + filename);
+                return Json(new { result = "SUCCESS", filename = filename });
+            }
+            catch (Exception ex)
+            {
+                string aa = ex.Message;
+                CommonUtilities.writeLog(aa);
+            }
+            return Json(new { result = "FAIL" });
+        }
+        public FileResult ThumbnailImage(string filename)
+        {
+            AliOSSUtilities util = new AliOSSUtilities();
+            Bitmap originalImage = new Bitmap(util.GetObject("promotion/" + filename));
+            int towidth = 100;
+            int toheight = 100;
+
+            int x = 0;
+            int y = 0;
+            int ow = originalImage.Width;
+            int oh = originalImage.Height;
+            if (originalImage.Width >= originalImage.Height)
+            {
+                towidth = originalImage.Width * 100 / originalImage.Height;
+            }
+            else
+            {
+                toheight = originalImage.Height * 100 / originalImage.Width;
+            }
+            System.Drawing.Image bitmap = new System.Drawing.Bitmap(towidth, toheight);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap);
+
+            //设置高质量插值法
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+
+            //设置高质量,低速度呈现平滑程度
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+            //清空画布并以透明背景色填充
+            g.Clear(System.Drawing.Color.White);
+
+            //在指定位置并且按指定大小绘制原图片的指定部分
+            g.DrawImage(originalImage, new System.Drawing.Rectangle(0, 0, towidth, toheight),
+                    new System.Drawing.Rectangle(x, y, ow, oh),
+                    System.Drawing.GraphicsUnit.Pixel);
+            try
+            {
+                //以jpg格式保存缩略图
+                MemoryStream s = new MemoryStream();
+
+                bitmap.Save(s, ImageFormat.Jpeg);
+                byte[] imgdata = s.ToArray();
+                //s.Read(imgdata, 0, imgdata.Length);
+                //s.Seek(0, SeekOrigin.Begin);
+                return File(imgdata, "image/jpeg");
+            }
+            catch (System.Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                originalImage.Dispose();
+                bitmap.Dispose();
+                g.Dispose();
+            }
+            //return File(null);
+        }
     }
 }

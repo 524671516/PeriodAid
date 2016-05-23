@@ -302,41 +302,6 @@ namespace PeriodAid.Controllers
                 return RedirectToAction("Wx_Seller_Register");
             }
         }
-        /* -- 暂时删除
-        public ActionResult Wx_Seller_Register()
-        {
-            Wx_SellerRegisterViewModel model = new Wx_SellerRegisterViewModel();
-            return View(model);
-        }
-        [ValidateAntiForgeryToken, HttpPost]
-        public async Task<ActionResult> Wx_Seller_Register(FormCollection form, Wx_SellerRegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = UserManager.FindByName(User.Identity.Name);
-                user.NickName = model.NickName;
-                UserManager.Update(user);
-                await UserManager.AddToRoleAsync(user.Id, "Seller");
-                //Roles.AddUserToRole(user.UserName, "Seller");
-                Off_Membership_Bind ofb = new Off_Membership_Bind()
-                {
-                    ApplicationDate = DateTime.Now,
-                    Bind = false,
-                    Mobile = user.UserName,
-                    NickName = model.NickName,
-                    UserName = user.UserName
-                };
-                offlineDB.Off_Membership_Bind.Add(ofb);
-                await offlineDB.SaveChangesAsync();
-                return RedirectToAction("Wx_Seller_Home");
-            }
-            else
-            {
-                ModelState.AddModelError("", "注册失败");
-                return View(model);
-            }
-        }*/
-
 
         // 促销员首页
         public async Task<ActionResult> Wx_Seller_Home()

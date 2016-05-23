@@ -1,0 +1,154 @@
+﻿@model PeriodAid.Models.UNI_MchBill
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>UNI_NoneOrder</title>
+</head>
+<body>
+    <div>
+        <h4>UNI_MchBill</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.GroupId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.GroupId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.NickName)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.NickName)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Mobile)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Mobile)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.UploadImg)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.UploadImg)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Province)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Province)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.City)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.City)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Sex)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Sex)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ImgUrl)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ImgUrl)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.OpenId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.OpenId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Status)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Status)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.StatusCode)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.StatusCode)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Mch_Amount)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Mch_Amount)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.platform_code)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.platform_code)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.MchBillNo)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.MchBillNo)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.SendTime)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.SendTime)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ReceiveTime)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ReceiveTime)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>
