@@ -95,6 +95,7 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
+        
 
         public ActionResult Off_Sales_main()
         {
@@ -3122,6 +3123,72 @@ namespace PeriodAid.Controllers
                 nicknames[i] = getManagerNickName(names[i], systemId);
             }
             return string.Join(",", nicknames);
+        }
+        // 0524 批量作业
+        [HttpPost]
+        public ContentResult Off_Store_AreaChange_batch(string ids, string modify_area)
+        {
+            try
+            {
+                //string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
+                string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+
+        }
+        [HttpPost]
+        public ContentResult Off_Daily_Delete_batch(string ids)
+        {
+            try
+            {
+                string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
+                //string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+        }
+        [HttpPost]
+        public ContentResult Off_EventDetails_Delete_batch(string ids)
+        {
+            try
+            {
+                string sql = "DELETE FROM Off_Checkin_Schedule Where Id in (" + ids + ")";
+                //string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+        }
+        [HttpPost]
+        public ContentResult Off_EventDetails_ModifyInfo_batch(string ids, string starttime, string finishtime, decimal salary)
+        {
+            try
+            {
+                //string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
+                string sql = "UPDATE Off_Checkin_Schedule SET (Standard_CheckIn = '" + starttime + "', Standard_CheckOut='" + finishtime + "', salary=" + salary + ") where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
         }
 
         private byte[] convertCSV(byte[] array)
