@@ -115,6 +115,35 @@ namespace PeriodAid.Controllers
             }
         }
         [AllowAnonymous]
+        public async Task<ActionResult> ForceAuthorization(string openid, string state)
+        {
+            try
+            {
+                WeChatUtilities wechat = new WeChatUtilities();
+                var user = UserManager.FindByEmail(openid);
+                int systemid = Convert.ToInt32(state);
+                if (user != null)
+                {
+                    //var user = UserManager.FindByName("13636314852");
+                    string[] systemArray = user.OffSalesSystem.Split(',');
+                    if (systemArray.Contains(state))
+                    {
+                        user.DefaultSystemId = systemid;
+                        UserManager.Update(user);
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        return RedirectToAction("Wx_Seller_Redirect");
+                    }
+                }
+                //return Content(jat.openid + "," + jat.access_token);
+                //return RedirectToAction("Wx_Register", "Seller", new { open_id = openid, accessToken = jat.access_token, systemid = systemid });
+                return View("Error");
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+        [AllowAnonymous]
         public ActionResult Wx_Register(string open_id, string accessToken, int systemid)
         {
             var model = new Wx_OffRegisterViewModel();

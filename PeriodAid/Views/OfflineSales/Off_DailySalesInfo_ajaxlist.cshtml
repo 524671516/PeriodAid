@@ -11,30 +11,18 @@
         <th style="width:10%">
             日期
         </th>
-        <th style="width:10%" title="门店名称">
+        <th style="width:20%" title="门店名称">
             门店名称
         </th>
-        <th style="width:7%">
-            红糖
+        <th style="width:10%">
+            累计销量
         </th>
-        <th style="width:7%">
-            黑糖
-        </th>
-        <th style="width:7%">
-            柠檬
-        </th>
-        <th style="width:7%">
-            蜂蜜
-        </th>
-        <th style="width:7%">
-            红枣
-        </th>
-        <th style="width:9%">
+        <th style="width:10%">
             销售员姓名
         </th>
-        <th style="width:7%">工资</th>
-        <th style="width:6%">奖金</th>
-        <th style="width:6%">扣款</th>
+        <th style="width:10%">工资</th>
+        <th style="width:10%">奖金</th>
+        <th style="width:10%">扣款</th>
         <th></th>
     </tr>
 
@@ -52,19 +40,7 @@
             </span>
         </td>
         <td class="ellipsis">
-            @Html.DisplayFor(modelItem => item.Item_Brown)
-        </td>
-        <td class="ellipsis">
-            @Html.DisplayFor(modelItem => item.Item_Black)
-        </td>
-        <td class="ellipsis">
-            @Html.DisplayFor(modelItem => item.Item_Lemon)
-        </td>
-        <td class="ellipsis">
-            @Html.DisplayFor(modelItem => item.Item_Honey)
-        </td>
-        <td class="ellipsis">
-            @Html.DisplayFor(modelItem => item.Item_Dates)
+            @item.Off_Daily_Product.Sum(m => m.SalesCount)
         </td>
         <td class="ellipsis">
             @Html.DisplayFor(modelItem => item.Off_Seller.Name)

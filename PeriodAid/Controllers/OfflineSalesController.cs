@@ -95,6 +95,7 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
+        
 
         public ActionResult Off_Sales_main()
         {
@@ -518,8 +519,75 @@ namespace PeriodAid.Controllers
         public ActionResult Ajax_EditDailyInfo(int id, FormCollection form)
         {
             var item = new Off_SalesInfo_Daily();
+            var user = UserManager.FindById(User.Identity.GetUserId());
             if (TryUpdateModel(item))
             {
+                List<int> plist = new List<int>();
+                var productlist = from m in offlineDB.Off_Product
+                                  where m.Off_System_Id == user.DefaultSystemId
+                                  && m.status >= 0
+                                  select m;
+                // 添加或修改销售列表
+                foreach (var product in productlist)
+                {
+                    // 获取单品数据
+                    int? sales = null;
+                    if (form["sales_" + product.Id] != "")
+                        sales = Convert.ToInt32(form["sales_" + product.Id]);
+                    int? storage = null;
+                    if (form["storage_" + product.Id] != "")
+                        storage = Convert.ToInt32(form["storage_" + product.Id]);
+                    decimal? amount = null;
+                    if (form["amount_" + product.Id] != "")
+                        amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                    // 判断是否已有数据
+                    var checkinproductlist = offlineDB.Off_Daily_Product.Where(m => m.DailyId == id);
+                    var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                    if (existdata != null)
+                    {
+                        if (sales == null && storage == null && amount == null)
+                        {
+                            // 无数据则删除
+                            offlineDB.Off_Daily_Product.Remove(existdata);
+                        }
+                        else if(sales==0 && storage==0&& amount == 0)
+                        {
+                            offlineDB.Off_Daily_Product.Remove(existdata);
+                        }
+                        else
+                        {
+                            // 修改数据
+                            existdata.SalesAmount = amount;
+                            existdata.SalesCount = sales;
+                            existdata.StorageCount = storage;
+                        }
+                    }
+                    else
+                    {
+                        // 添加数据
+                        // 如果三项数据不为空，则添加
+                        if (sales == null && storage == null && amount == null)
+                        { }
+                        else if(sales == 0 && storage==0 && amount == 0)
+                        {
+
+                        }
+                        else
+                        {
+                            existdata = new Off_Daily_Product()
+                            {
+                                DailyId = id,
+                                ItemCode = product.ItemCode,
+                                ProductId = product.Id,
+                                SalesAmount = amount,
+                                SalesCount = sales,
+                                StorageCount = storage
+                            };
+                            offlineDB.Off_Daily_Product.Add(existdata);
+                            //offlineDB.SaveChanges();
+                        }
+                    }
+                }
                 item.UploadTime = DateTime.Now;
                 item.UploadUser = User.Identity.Name;
                 offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
@@ -541,6 +609,12 @@ namespace PeriodAid.Controllers
                 ViewBag.Attendance = new SelectList(attendance, "Key", "Value", item.Attendance);
                 return PartialView(item);
             }
+        }
+        public PartialViewResult Off_DailyProductList(int DailyId)
+        {
+            var item = offlineDB.Off_SalesInfo_Daily.SingleOrDefault(m => m.Id == DailyId);
+            var model = item.Off_Daily_Product;
+            return PartialView(model);
         }
         #endregion
 
@@ -3049,6 +3123,72 @@ namespace PeriodAid.Controllers
                 nicknames[i] = getManagerNickName(names[i], systemId);
             }
             return string.Join(",", nicknames);
+        }
+        // 0524 批量作业
+        [HttpPost]
+        public ContentResult Off_Store_AreaChange_batch(string ids, string modify_area)
+        {
+            try
+            {
+                //string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
+                string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+
+        }
+        [HttpPost]
+        public ContentResult Off_Daily_Delete_batch(string ids)
+        {
+            try
+            {
+                string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
+                //string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+        }
+        [HttpPost]
+        public ContentResult Off_EventDetails_Delete_batch(string ids)
+        {
+            try
+            {
+                string sql = "DELETE FROM Off_Checkin_Schedule Where Id in (" + ids + ")";
+                //string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+        }
+        [HttpPost]
+        public ContentResult Off_EventDetails_ModifyInfo_batch(string ids, string starttime, string finishtime, decimal salary)
+        {
+            try
+            {
+                //string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
+                string sql = "UPDATE Off_Checkin_Schedule SET (Standard_CheckIn = '" + starttime + "', Standard_CheckOut='" + finishtime + "', salary=" + salary + ") where Id in (" + ids + ")";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
         }
 
         private byte[] convertCSV(byte[] array)
