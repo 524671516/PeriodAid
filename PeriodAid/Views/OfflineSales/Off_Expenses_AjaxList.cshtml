@@ -1,18 +1,5 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Expenses>
 @using PagedList.Mvc;
-<div class="row">
-    <div class="col-md-8">
-        <div role="presentation" class="dropdown">
-            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="drop-btn" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                <span id="drop-name">查询菜单</span>&nbsp;<span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="drop-btn">
-                <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_Expenses_AjaxList?type=0" data-rel="0">进场费</a></li>
-                <li><a class="btn-filter" href="javascript:;" data-target="/OfflineSales/Off_Expenses_AjaxList?type=1" data-rel="1">活动费</a></li>
-            </ul>
-        </div>
-    </div>
-</div><br />
 <table class="table table-condensed table-striped h6" style="table-layout: fixed;width:100%;" id="expenseslist">
     <tr>
         <th  style="width:10%">
@@ -125,23 +112,8 @@
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Expenses_AjaxList", new { page }))</div>
 <input type="hidden" id="status-val" />
 <script>
-    $(".btn-filter").click(function () {
-        var button = $(this);
-        var url = $(button).attr("data-target");
-        //alert(url)
-        var name = $(button).text();
-        $("#drop-name").text(name);
-        $("#status-val").val($(button).attr("data-rel"));
-        $.ajax({
-            url: url,
-            success: function (data) {
-                $("#expenseslist").html(data);
-            }
-        });
-    });
     $(".pagination > li > a").click(function () {
         var l = $(this).attr("href");
-        
         $.ajax({
             url: l,
             success: function (data) {

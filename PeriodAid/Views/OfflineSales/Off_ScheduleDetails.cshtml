@@ -123,7 +123,7 @@
                 </div>
             </div>
             <div class="modal-footer" style="margin-top:-5px;">
-                <button type="button" class="btn btn-default check-sure">确定<span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>
+                <button type="button" class="btn btn-default check-sure">确定</button>
                 <button type="button" class="btn btn-primary check-fail">取消</button>
             </div>
         </div><!-- /.modal-content -->
@@ -198,9 +198,9 @@
             //alert(checkedList)
             $.ajax({
                 type: "post",
-                url: "/OfflineSales/",
+                url: "/OfflineSales/Off_eventdetails_delete_batch",
                 data: {
-                    id: checkedList
+                    ids: checkedList
                 },
                 success: function (data) {
                     if (data == "SUCCESS") {
@@ -242,7 +242,30 @@
         }
     });
     $(".check-sure").click(function () {
-
+        if (confirm("确认要修改所选门店的相关信息吗？")) {
+            var link_url = "/OfflineSales/Off_eventdetails_modifyinfo_batch";
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            var starttime = $(".editTimeIn").val();
+            var finishtime = $(".editTimeOut").val();
+            var salary = $(".editSalary").val();
+            $.ajax({
+                type: "post",
+                url: link_url,
+                data: {
+                    ids: checkedList,
+                    starttime: starttime,
+                    finishtime: finishtime,
+                    salary:salary
+                },
+                success: function (data) {
+                    $("#Mod").modal('hide');
+                    $("#tableList").html(data)
+                }
+            })
+        }
     });
     $(".check-fail").click(function () {
         $("#Mod").modal('hide')

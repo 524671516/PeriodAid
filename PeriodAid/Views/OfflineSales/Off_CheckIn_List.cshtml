@@ -9,17 +9,8 @@
 @model PagedList.IPagedList<PeriodAid.Models.Off_Checkin>
 @using PagedList.Mvc;
 @using PeriodAid.Models
-<div class="row">
+@*<div class="row">
     <div class="col-md-8">
-        <ul class="nav nav-tabs">
-            <li role="presentation"><a class="btn-filter btn" data-rel="0">未签到</a></li>
-            <li role="presentation"><a class="btn-filter btn" data-rel="1">已签到</a></li>
-            <li role="presentation"><a class="btn-filter btn" data-rel="2">已签退</a></li>
-            <li role="presentation"><a class="btn-filter btn" data-rel="3">已提报</a></li>
-            <li role="presentation" class="active"><a class="btn-filter btn" data-rel="4">已确认</a></li>
-            <li role="presentation"><a class="btn-filter btn" data-rel="5">已结算</a></li>
-            <li role="presentation"><a class="btn-filter btn" data-rel="-1">作废</a></li>
-        </ul>
     </div>
     <div class="col-md-4">
         <div class="input-group">
@@ -29,7 +20,25 @@
             </span>
         </div>
     </div>
-</div><br />
+</div><br />*@
+<div class="row">
+    <ul class="nav nav-tabs">
+        <li role="presentation"><a class="btn-filter btn" data-rel="0">无数据（未签到）</a></li>
+        <li role="presentation"><a class="btn-filter btn" data-rel="1">已签到（未签退）</a></li>
+        <li role="presentation"><a class="btn-filter btn" data-rel="2">已签退（未提报）</a></li>
+        <li role="presentation"><a class="btn-filter btn" data-rel="3">已提报（未确认）</a></li>
+        <li role="presentation" class="active"><a class="btn-filter btn" data-rel="4">已确认（未提报）</a></li>
+        <li role="presentation"><a class="btn-filter btn" data-rel="5">已结算</a></li>
+        <li role="presentation"><a class="btn-filter btn" data-rel="-1">作废</a></li>
+        <div class="input-group" style="margin-top:8px;">
+            <input type="text" class="form-control input-sm" placeholder="销售查询" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </ul>
+</div>
+<br />
 <div class="container-fluid" id="expenseslist">
     
 </div>
@@ -75,25 +84,25 @@
         $(".btn-filter").click(function () {
             $("#status-val").val($(this).attr("data-rel"));
             $(this).parent("li").addClass("active").siblings().removeClass("active");           
-            if ($("#status-val").val() == 4) {
-                $.ajax({
-                    url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + 4,
-                    success: function (data) {
-                        $("#expenseslist").html(data);
-                        $(".btn-sure").show();
-                        $(".check-show").show();
-                    }
-                });
-            } else if ($("#status-val").val() == 5) {
-                $.ajax({
-                    url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + 5,
-                    success: function (data) {
-                        $("#expenseslist").html(data);
-                        $(".btn-sure").show();
-                        $(".check-show").show();
-                    }
-                });
-            } else {
+            //if ($("#status-val").val() == 3) {
+            //    $.ajax({
+            //        url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + 3,
+            //        success: function (data) {
+            //            $("#expenseslist").html(data);
+            //            $(".btn-sure").show();
+            //            $(".check-show").show();
+            //        }
+            //    });
+            //} else if ($("#status-val").val() == 4) {
+            //    $.ajax({
+            //        url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + 4,
+            //        success: function (data) {
+            //            $("#expenseslist").html(data);
+            //            $(".btn-sure").show();
+            //            $(".check-show").show();
+            //        }
+            //    });
+            //} else {
                 $.ajax({
                     url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + $("#status-val").val(),
                     success: function (data) {
@@ -102,7 +111,7 @@
                         $(".check-show").hide();
                     }
                 });
-            }
+            //}
             return false;
         });
         $("#search-btn").click(function () {           
