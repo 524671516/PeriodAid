@@ -1,14 +1,14 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Checkin>
 @using PagedList.Mvc;
 @using PeriodAid.Models;
-<ul class="list-inline list-unstyled btn-sure">
+@*<ul class="list-inline list-unstyled btn-sure">
     <li><a class="btn btn-danger btn-xs" id="DelSel">确认信息</a></li>
-</ul>
+</ul>*@
 <table class="table table-condensed table-hover h6" style="table-layout: fixed;width:100%;">
     <tr style="background-color:#f9f9f9">
-        <th style="width:5%" class="check-show">
+        @*<th style="width:5%" class="check-show">
             <input type="checkbox" id="allChk" />
-        </th>
+        </th>*@
         <th style="width:15%">
             活动时间
         </th>
@@ -21,7 +21,7 @@
         <th style="width:10%">
             促销员姓名
         </th>
-        <th style="width:10%">
+        <th style="width:20%">
             确认人
         </th>
         <th style="width:15%">
@@ -33,9 +33,9 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td class="check-show">
+            @*<td class="check-show">
                 <input type="checkbox" name="subChk" value="@item.Id" />
-            </td>
+            </td>*@
             <td class="ellipsis">
                 @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
             </td>

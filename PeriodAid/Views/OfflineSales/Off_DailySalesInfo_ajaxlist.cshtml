@@ -185,9 +185,9 @@
             //alert(checkedList)
             $.ajax({
                 type: "post",
-                url: "/OfflineSales/Off_DeleteStore",
+                url: "/OfflineSales/Off_daily_delete_batch",
                 data: {
-                    id: checkedList
+                    ids: checkedList
                 },
                 success: function (data) {
                     if (data == "SUCCESS") {

@@ -184,9 +184,9 @@
             //alert(checkedList)
             $.ajax({
                 type: "post",
-                url: "/OfflineSales/",
+                url: "/OfflineSales/Off_store_delete_bactch",
                 data: {
-                    id:checkedList
+                    ids:checkedList
                 },
                 success: function (data) {
                     if (data == "SUCCESS") {
@@ -217,7 +217,26 @@
         }
     });
     $(".check-sure").click(function () {
-
+        if (confirm("确定要修改所选门店区域？")) {
+            var link_url = "/OfflineSales/Off_areachange_delete_bactch";
+            var modsfy_area = $("#change-content").val();
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            $.ajax({
+                url: link_url,
+                type:"post",
+                data: {
+                    ids: checkedList,
+                    modsfy_area: modsfy_area
+                },
+                success: function (data) {
+                    $("#Mod").modal('hide');
+                    $("#list-container").html(data);
+                }
+            })
+        }
     });
     $(".check-fail").click(function () {
         $("#Mod").modal('hide')
