@@ -1,0 +1,29 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Daily_Product>
+
+
+<table class="table-striped table">
+    <tr>
+        <th class="col-md-3">商品名称</th>
+        <th class="col-md-3">销量</th>
+        <th class="col-md-3">库存</th>
+        <th class="col-md-3">销售金额</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.Encode(item.Off_Product.SimpleName)
+            </td>
+            <td>
+
+                <input class="form-control input-sm" type="number" placeholder="销量" name="sales_@item.ProductId" id="sales_@item.ProductId" value="@item.SalesCount" />
+            </td>
+            <td>
+                <input class="form-control input-sm" type="number" placeholder="库存" name="storage_@item.ProductId" id="storage_@item.ProductId" value="@item.StorageCount" />
+            </td>
+            <td>
+                <input class="form-control input-sm" type="number" placeholder="销售额" name="amount_@item.ProductId" id="amount_@item.ProductId" value="@item.SalesAmount" />
+            </td>
+        </tr>
+    }
+</table>

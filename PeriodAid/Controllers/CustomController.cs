@@ -978,41 +978,47 @@ namespace PeriodAid.Controllers
             WeChatUtilities wechat = new WeChatUtilities();
             //CommonUtilities.writeLog(code + "," + state);
             var jat = wechat.getWebOauthAccessToken(code);
-            
             var userinfo = wechat.getWebOauthUserInfo(jat.access_token, jat.openid);
             //if(userinfo.nickname=="")
             if (userinfo.nickname == null && userinfo.headimgurl == null)
             {
                 return RedirectToAction("Wx_Redirect_UNIEvent", new { groupcode = state });
             }
-            int groupid = Convert.ToInt32(state);
-            var exist_list = promotionDB.UNI_MchBill.SingleOrDefault(m => m.OpenId == userinfo.openid);
-            if (exist_list == null)
+            var group = promotionDB.UNI_Group.SingleOrDefault(m => m.GroupCode == state);
+            if (group != null)
             {
-                UNI_MchBill bill = new UNI_MchBill()
+                var exist_list = promotionDB.UNI_MchBill.SingleOrDefault(m => m.OpenId == userinfo.openid);
+                if (exist_list == null)
                 {
-                    ImgUrl = userinfo.headimgurl,
-                    NickName = userinfo.nickname,
-                    OpenId = userinfo.openid,
-                    Sex = userinfo.sex == "1" ? true : false,
-                    Status = 0,
-                    GroupId = groupid,
-                    City = userinfo.city,
-                    Province = userinfo.province
-                };
-                WeChatUtilities utilities = new WeChatUtilities();
-                string _url = ViewBag.Url = Request.Url.ToString();
-                ViewBag.AppId = utilities.getAppId();
-                string _nonce = CommonUtilities.generateNonce();
-                ViewBag.Nonce = _nonce;
-                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
-                ViewBag.TimeStamp = _timeStamp;
-                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
-                return View(bill);
+                    UNI_MchBill bill = new UNI_MchBill()
+                    {
+                        ImgUrl = userinfo.headimgurl,
+                        NickName = userinfo.nickname,
+                        OpenId = userinfo.openid,
+                        Sex = userinfo.sex == "1" ? true : false,
+                        Status = 0,
+                        GroupId = group.Id,
+                        City = userinfo.city,
+                        Province = userinfo.province
+                    };
+                    WeChatUtilities utilities = new WeChatUtilities();
+                    string _url = ViewBag.Url = Request.Url.ToString();
+                    ViewBag.AppId = utilities.getAppId();
+                    string _nonce = CommonUtilities.generateNonce();
+                    ViewBag.Nonce = _nonce;
+                    string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                    ViewBag.TimeStamp = _timeStamp;
+                    ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                    return View(bill);
+                }
+                else
+                {
+                    return RedirectToAction("UNI_Result", new { openid = userinfo.openid });
+                }
             }
             else
             {
-                return RedirectToAction("UNI_Result", new { openid = userinfo.openid });
+                return View("UNI_Error");
             }
         }
         [HttpPost]

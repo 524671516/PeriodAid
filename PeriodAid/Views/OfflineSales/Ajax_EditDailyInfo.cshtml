@@ -23,47 +23,11 @@
                     @Html.DisplayFor(model => model.Off_Store.StoreName)
                     </label>
                 @Html.HiddenFor(model => model.StoreId)
-</div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-md-3">红糖姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Brown, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Brown, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">黑糖姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Black, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Black, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">柠檬姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Lemon, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Lemon, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">蜂蜜姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Honey, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Honey, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">红枣姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Dates, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Dates, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        @{
+        Html.RenderAction("Off_DailyProductList", new { DailyId = Model.Id });
+        }
 
         <div class="form-group">
             <label class="control-label col-md-3">促销员</label>
@@ -117,7 +81,7 @@
         <div class="form-group">
             <label class="control-label col-md-3">备注</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => Model.remarks, new { @class = "form-control" })
+                @Html.EditorFor(model => Model.remarks, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Debit, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -132,7 +96,7 @@
 <script src="~/Scripts/bootstrap-switch.min.js"></script>
 <script>
     $(function () {
-        $.fn.bootstrapSwitch.defaults.size = 'mini';
+        $.fn.bootstrapSwitch.defaults.size = 'small';
         $.fn.bootstrapSwitch.defaults.onColor = 'success';
         $.fn.bootstrapSwitch.defaults.onText = "&nbsp;是&nbsp;";
         $.fn.bootstrapSwitch.defaults.offText = "&nbsp;否&nbsp;";
