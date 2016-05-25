@@ -205,11 +205,11 @@
                 },
                 success: function (data) {
                     if (data == "SUCCESS") {
-                        $("[name ='subChk']:checkbox").attr("checked", false);
+                        //$("[name ='subChk']:checkbox").attr("checked", false);
                         var attr = $.getUrlParam("date");
                         window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
                         //$("#tableList").html(data)
-                        $(".check-show").addClass("hidden")
+                        //$(".check-show").addClass("hidden")
                     }
                 }
             });
