@@ -2,40 +2,51 @@
 @{
     ViewBag.Title = "管理";
 }
+@section header{
+    <style>
+        .bg {
+            background-color: rgba(128, 128, 128,0.8);
+            height: 500px;
+        }
 
+        .bg_01 {
+            background-color: white;
+            opacity: 0.9;
+        }
+    </style>
+}
 <br />
 <p class="text-success">@ViewBag.StatusMessage</p>
-<div class="row">
-    <div class="col-md-4">
+<div class="row bg">
+    <br /><br />
+    <div class="col-md-4 col-md-offset-1 bg_01">
         <form class="form-horizontal">
-            <div class="form-group">
-                <h4>个人账户设置</h4>
-                <hr />
+            <div class="modal-header container" style="border-bottom:none">
+                <h3 class="modal-title col-md-8"><strong>个人账户设置</strong></h3>
             </div>
             <div class="form-group">
-                <label class="col-sm-5 control-label">密码</label>
-                <div class="col-sm-7">
-                    [
+                <label class="col-md-5 control-label" style="padding-top:0">密码:</label>
+                <div class="col-md-7">                    
                     @if (Model.HasPassword)
             {
-                        @Html.ActionLink("更改密码", "ChangePassword")
+                        @Html.ActionLink("更改密码", "ChangePassword", new { @class= "btnPassword" })
                     }
                     else
                     {
                         @Html.ActionLink("创建", "SetPassword")
                     }
-                    ]
+                    
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-5 control-label">外部登录名</label>
+                <label class="col-sm-5 control-label" style="padding-top:0">外部登录名:</label>
                 <div class="col-sm-7">
                     @Model.Logins.Count [
                     @Html.ActionLink("管理", "ManageLogins") ]
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-5 control-label">双因素身份验证</label>
+                <label class="col-sm-5 control-label" style="padding-top:0">系统切换:</label>
                 <div class="col-sm-7">
                     @foreach (var item in ViewBag.SystemList)
                     {
@@ -45,7 +56,23 @@
                 </div>
             </div>
         </form>
+    </div> 
+    <div class="col-md-6" id="editPassword">
+
     </div>
-    
-    
 </div>
+@section scripts{
+<script>
+    $("#btnPassword").click(function () {
+        var link_url = $(this).attr("href")
+        alert("22");
+        $.ajax({
+            type:"post",
+            url: link_url,
+            success: function (data) {
+                $("#editPassword").html(data)
+            }
+        })
+    })
+</script>
+}
