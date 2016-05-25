@@ -3175,12 +3175,12 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost]
-        public ContentResult Off_EventDetails_ModifyInfo_batch(string ids, string starttime, string finishtime, decimal salary)
+        public ContentResult Off_EventDetails_ModifyInfo_batch(string ids, string starttime, string finishtime, decimal salary, string date)
         {
             try
             {
                 //string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
-                string sql = "UPDATE Off_Checkin_Schedule SET (Standard_CheckIn = '" + starttime + "', Standard_CheckOut='" + finishtime + "', salary=" + salary + ") where Id in (" + ids + ")";
+                string sql = "UPDATE Off_Checkin_Schedule SET Standard_CheckIn = '" + date + " " + starttime + "', Standard_CheckOut='" + date + " " + finishtime + "', salary=" + salary + " where Id in (" + ids + ")";
                 offlineDB.Database.ExecuteSqlCommand(sql);
                 offlineDB.SaveChanges();
                 return Content("SUCCESS");
