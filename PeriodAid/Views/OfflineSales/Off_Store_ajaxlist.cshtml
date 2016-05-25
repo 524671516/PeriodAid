@@ -1,7 +1,6 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
 @using PagedList.Mvc;
 <ul class="list-inline list-unstyled">
-    <li><a class="btn btn-danger btn-xs" id="DelSel">删除信息</a></li>
     <li><a class="btn btn-primary btn-xs" id="Modregion">修改区域</a></li>
 </ul>
     <table class="table table-hover table-condensed" style="width:100%;table-layout:fixed">
@@ -166,38 +165,8 @@
     var subChk = $("input[name='subChk']")
     subChk.click(function () {
         $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
-    }); 
-    // 批量删除
-    $("#DelSel").click(function () {
-        // 判断是否至少选择一项
-        var checkedNum = $("input[name='subChk']:checked").length;
-        if (checkedNum == 0) {
-            alert("请选择至少一项！");
-            return;
-        }
-        // 批量选择 
-        else if(confirm("确定要删除所选项目？")) { 
-            var checkedList = new Array(); 
-            $("input[name='subChk']:checked").each(function() { 
-                checkedList.push($(this).val()); 
-            });
-            //alert(checkedList)
-            $.ajax({
-                type: "post",
-                url: "/OfflineSales/Off_store_delete_bactch",
-                data: {
-                    ids:checkedList
-                },
-                success: function (data) {
-                    if (data == "SUCCESS") {
-                        $("[name ='subChk']:checkbox").attr("checked", false);
-                        window.location.reload();
-                        $(".check-show").addClass("hidden")
-                    }
-                }
-            });
-        } 
     });
+    //批量修改区域
     $("#Modregion").click(function () {
         var checkedNum = $("input[name='subChk']:checked").length;
         if (checkedNum == 0) {
@@ -218,22 +187,29 @@
     });
     $(".check-sure").click(function () {
         if (confirm("确定要修改所选门店区域？")) {
-            var link_url = "/OfflineSales/Off_areachange_delete_bactch";
-            var modsfy_area = $("#change-content").val();
+            var link_url = "/OfflineSales/Off_Store_AreaChange_batch";
+            var modify_area = $("#change-content").val();
             var checkedList = new Array();
             $("input[name='subChk']:checked").each(function () {
                 checkedList.push($(this).val());
             });
             $.ajax({
                 url: link_url,
-                type:"post",
+                type: "post",
                 data: {
-                    ids: checkedList,
-                    modsfy_area: modsfy_area
+                    ids: checkedList.toString(),
+                    modify_area: modify_area
                 },
                 success: function (data) {
-                    $("#Mod").modal('hide');
-                    $("#list-container").html(data);
+                    if (data == "SUCCESS") {
+                        $("#Mod").modal('hide');
+                        $.ajax({
+                            url: "/OfflineSales/Off_Store_ajaxlist",
+                            success: function (data) {
+                                $("#list-container").html(data);
+                            }
+                        })
+                    }
                 }
             })
         }

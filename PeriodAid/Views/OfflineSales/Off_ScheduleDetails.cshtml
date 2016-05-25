@@ -53,7 +53,7 @@
     {
         <tr>
             <td class="check-show">
-                <input type="checkbox" name="subChk" value="@item.Id" data-timeIn="@item.Standard_CheckIn.ToString("HH:mm")" data-timeOut="@item.Standard_CheckOut.ToString("HH:mm")" data-salary="@item.Standard_Salary" />
+                <input type="checkbox" name="subChk" value="@item.Id" data-time="@item.Subscribe.ToString("yyyy-MM-dd")" data-timeIn="@item.Standard_CheckIn.ToString("HH:mm")" data-timeOut="@item.Standard_CheckOut.ToString("HH:mm")" data-salary="@item.Standard_Salary" />
             </td>
             <td>
                 @Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))
@@ -122,10 +122,11 @@
                     <div class="col-md-6"><input class="form-control editSalary" type="text" placeholder="修改" value="" /></div>
                 </div>
             </div>
-            <div class="modal-footer" style="margin-top:-5px;">
+            <div class="modal-footer" style="margin-top:0;">
                 <button type="button" class="btn btn-default check-sure">确定</button>
                 <button type="button" class="btn btn-primary check-fail">取消</button>
             </div>
+            <input class="dataTime hidden" />
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -200,12 +201,14 @@
                 type: "post",
                 url: "/OfflineSales/Off_eventdetails_delete_batch",
                 data: {
-                    ids: checkedList
+                    ids: checkedList.toString()
                 },
                 success: function (data) {
                     if (data == "SUCCESS") {
                         $("[name ='subChk']:checkbox").attr("checked", false);
-                        window.location.reload();
+                        var attr = $.getUrlParam("date");
+                        window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
+                        //$("#tableList").html(data)
                         $(".check-show").addClass("hidden")
                     }
                 }
@@ -223,12 +226,17 @@
             var checkedIn = new Array();
             var checkedOut = new Array();
             var checkedSalary = new Array();
+            var chechedTime = new Array();
             $("input[name='subChk']:checked").each(function () {
                 checkedList.push($(this).val());
                 checkedIn.push($(this).attr("data-timeIn"));
                 checkedOut.push($(this).attr("data-timeOut"));
-                checkedSalary.push($(this).attr("data-salary"))
+                checkedSalary.push($(this).attr("data-salary"));
+                chechedTime.push($(this).attr("data-time"));
             });
+            for (var i = 0; i < chechedTime.length; i++) {
+                $(".dataTime").val(chechedTime[0]);
+            }
             for (var i = 0; i < checkedIn.length; i++) {
                 $(".checkTimeIn").val(checkedIn[0]);
             }
@@ -243,7 +251,7 @@
     });
     $(".check-sure").click(function () {
         if (confirm("确认要修改所选门店的相关信息吗？")) {
-            var link_url = "/OfflineSales/Off_eventdetails_modifyinfo_batch";
+            var link_url = "/OfflineSales/Off_EventDetails_ModifyInfo_batch";
             var checkedList = new Array();
             $("input[name='subChk']:checked").each(function () {
                 checkedList.push($(this).val());
@@ -251,11 +259,13 @@
             var starttime = $(".editTimeIn").val();
             var finishtime = $(".editTimeOut").val();
             var salary = $(".editSalary").val();
+            var time = $(".dataTime").val();
             $.ajax({
                 type: "post",
                 url: link_url,
                 data: {
                     ids: checkedList,
+                    time:time,
                     starttime: starttime,
                     finishtime: finishtime,
                     salary:salary

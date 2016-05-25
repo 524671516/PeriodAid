@@ -13,76 +13,39 @@
                 <hr />
             </div>
             <div class="form-group">
-                <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
-                <div class="col-sm-10">
-                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+                <label class="col-sm-5 control-label">密码</label>
+                <div class="col-sm-7">
+                    [
+                    @if (Model.HasPassword)
+            {
+                        @Html.ActionLink("更改密码", "ChangePassword")
+                    }
+                    else
+                    {
+                        @Html.ActionLink("创建", "SetPassword")
+                    }
+                    ]
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-                <div class="col-sm-10">
-                    <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+                <label class="col-sm-5 control-label">外部登录名</label>
+                <div class="col-sm-7">
+                    @Model.Logins.Count [
+                    @Html.ActionLink("管理", "ManageLogins") ]
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default">Sign in</button>
+                <label class="col-sm-5 control-label">双因素身份验证</label>
+                <div class="col-sm-7">
+                    @foreach (var item in ViewBag.SystemList)
+                    {
+                        //@Html.ActionLink("设置管理员", "Off_UpdateManager", new { id = item.Id }, new { @class = "btn btn-sm btn-danger manager-button" })
+                        @Html.ActionLink((string)item.SystemName, "updateSystem", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button", style = "margin:5px 0" })<br />
+                    }
                 </div>
             </div>
         </form>
     </div>
     
-    <dl class="dl-horizontal">
-        <dt>密码:</dt>
-        <dd>
-            [
-            @if (Model.HasPassword)
-            {
-                @Html.ActionLink("更改密码", "ChangePassword")
-            }
-            else
-            {
-                @Html.ActionLink("创建", "SetPassword")
-            }
-            ]
-        </dd>
-        <dt>外部登录名:</dt>
-        <dd>
-            @Model.Logins.Count [
-            @Html.ActionLink("管理", "ManageLogins") ]
-        </dd>
-        @*
-            电话号码可以在双因素身份验证系统中用作第二个验证因素。
-             
-             请参阅<a href="http://go.microsoft.com/fwlink/?LinkId=403804">此文</a>
-                了解有关设置此 ASP.NET 应用程序以支持使用 SMS 进行双因素身份验证的详细信息。
-             
-             在设置了双因素身份验证后，请取消注释以下块
-        *@
-        @*  
-            <dt>电话号码:</dt>
-            <dd>
-                @(Model.PhoneNumber ?? "无") [
-                @if (Model.PhoneNumber != null)
-                {
-                    @Html.ActionLink("更改", "AddPhoneNumber")
-                    @: &nbsp;|&nbsp;
-                    @Html.ActionLink("删除", "RemovePhoneNumber")
-                }
-                else
-                {
-                    @Html.ActionLink("添加", "AddPhoneNumber")
-                }
-                ]
-            </dd>
-        *@
-        <dt>双因素身份验证:</dt>
-        <dd>
-            @foreach (var item in ViewBag.SystemList)
-            {
-                //@Html.ActionLink("设置管理员", "Off_UpdateManager", new { id = item.Id }, new { @class = "btn btn-sm btn-danger manager-button" })
-                @Html.ActionLink((string)item.SystemName, "updateSystem", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button", style="margin:5px 0" })<br />
-                }
-        </dd>
-    </dl>
+    
 </div>

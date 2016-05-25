@@ -3131,7 +3131,7 @@ namespace PeriodAid.Controllers
             try
             {
                 //string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
-                string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                string sql = "UPDATE Off_Store SET Region = '" + modify_area + "' where Id in (" + ids + ")";
                 offlineDB.Database.ExecuteSqlCommand(sql);
                 offlineDB.SaveChanges();
                 return Content("SUCCESS");
