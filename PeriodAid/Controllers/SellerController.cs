@@ -103,7 +103,7 @@ namespace PeriodAid.Controllers
                         user.DefaultSystemId = systemid;
                         UserManager.Update(user);
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToAction("Wx_Seller_Redirect");
+                        return RedirectToAction("Wx_Seller_Redirect", new { systemid = systemid });
                     }
                 }
                 //return Content(jat.openid + "," + jat.access_token);
@@ -316,7 +316,7 @@ namespace PeriodAid.Controllers
             return result;
         }
         // 判断跳转页面
-        public ActionResult Wx_Seller_Redirect()
+        public ActionResult Wx_Seller_Redirect(int systemid)
         {
             if (User.IsInRole("Seller"))
             {
@@ -328,7 +328,45 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return RedirectToAction("Wx_Seller_Register");
+                return RedirectToAction("Wx_Seller_Register", new { systemid = systemid });
+            }
+        }
+        public ActionResult Wx_Seller_Register(int systemid)
+        {
+            Wx_SellerRegisterViewModel model = new Wx_SellerRegisterViewModel();
+            model.Systemid = systemid;
+            return View(model);
+        }
+        [ValidateAntiForgeryToken, HttpPost]
+        public async Task<ActionResult> Wx_Seller_Register(FormCollection form, Wx_SellerRegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = UserManager.FindByName(User.Identity.Name);
+                user.DefaultSystemId = model.Systemid;
+                user.OffSalesSystem = model.Systemid.ToString();
+                UserManager.Update(user);
+                user.NickName = model.NickName;
+                UserManager.Update(user);
+                await UserManager.AddToRoleAsync(user.Id, "Seller");
+                //Roles.AddUserToRole(user.UserName, "Seller");
+                Off_Membership_Bind ofb = new Off_Membership_Bind()
+                {
+                    ApplicationDate = DateTime.Now,
+                    Bind = false,
+                    Mobile = user.UserName,
+                    NickName = model.NickName,
+                    UserName = user.UserName,
+                    Off_System_Id = model.Systemid
+                };
+                offlineDB.Off_Membership_Bind.Add(ofb);
+                await offlineDB.SaveChangesAsync();
+                return RedirectToAction("Wx_Seller_Home");
+            }
+            else
+            {
+                ModelState.AddModelError("", "注册失败");
+                return View(model);
             }
         }
 

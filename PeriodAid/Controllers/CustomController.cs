@@ -1069,7 +1069,7 @@ namespace PeriodAid.Controllers
                                 string mch_billno = "UNI" + DateTime.Now.Ticks.ToString();
                                 try
                                 {
-                                    int amount = 100;
+                                    int amount = 3960;
                                     bill.platform_code = platform_code;
                                     bill.SendTime = DateTime.Now;
                                     bill.Status = 1;
@@ -1089,7 +1089,6 @@ namespace PeriodAid.Controllers
                                     }
                                     promotionDB.UNI_MchBill.Add(bill);
                                     promotionDB.SaveChanges();
-                                    //bill.
                                     return RedirectToAction("UNI_Result", new { openid = model.OpenId });
                                 }
                                 catch (Exception ex)

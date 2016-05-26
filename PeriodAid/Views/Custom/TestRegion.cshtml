@@ -21,9 +21,26 @@
         label.error {
         display:none
         }
+        body{
+            background-color:#fe8594;
+        }
+        .white-text{
+            color:#fff;
+        }
+        .small-text, .small-text label{
+            font-size:12px;
+        }
+        .weui_cell{
+            padding:8px 15px;
+        }
     </style>
 </head>
 <body>
+    <div class="container text-center" style="padding:15% 0;">
+        <img class="img-responsive" src="~/Content/images/logo.png" style="margin-left: auto;margin-right: auto; width:50px;" />
+        <h3 class="white-text">订单验证成功</h3>
+    </div>
+    
     @using (Html.BeginForm("TestRegion", "Custom",FormMethod.Post, new { @id="regionForm"}))
     {
         @Html.HiddenFor(m=>m.Id)
@@ -35,7 +52,8 @@
         @Html.HiddenFor(m=>m.openId)
         @Html.HiddenFor(m=>m.create_time)
         <fieldset>
-            <div class="weui_cells weui_cells_form">
+            <div class="weui_cells_title white-text">请输入您闺蜜的详细收件地址：</div>
+            <div class="weui_cells weui_cells_form small-text">
                 @*收货人*@
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">收货人：</label></div>
@@ -84,10 +102,10 @@
                     </div>
                 </div>
             </div>
-            <div class="weui_btn_area"><input class="weui_btn weui_btn_primary" type="submit" value="保存" id="btn-save"></div>
+            <div class="weui_btn_area"><input class="weui_btn weui_btn_primary" type="submit" value="提交" id="btn-save"></div>
         </fieldset>
     }
-    
+    <br />
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script>
