@@ -84,25 +84,6 @@
         $(".btn-filter").click(function () {
             $("#status-val").val($(this).attr("data-rel"));
             $(this).parent("li").addClass("active").siblings().removeClass("active");           
-            //if ($("#status-val").val() == 3) {
-            //    $.ajax({
-            //        url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + 3,
-            //        success: function (data) {
-            //            $("#expenseslist").html(data);
-            //            $(".btn-sure").show();
-            //            $(".check-show").show();
-            //        }
-            //    });
-            //} else if ($("#status-val").val() == 4) {
-            //    $.ajax({
-            //        url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + 4,
-            //        success: function (data) {
-            //            $("#expenseslist").html(data);
-            //            $(".btn-sure").show();
-            //            $(".check-show").show();
-            //        }
-            //    });
-            //} else {
                 $.ajax({
                     url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + $("#status-val").val(),
                     success: function (data) {
@@ -111,7 +92,6 @@
                         $(".check-show").hide();
                     }
                 });
-            //}
             return false;
         });
         $("#search-btn").click(function () {           

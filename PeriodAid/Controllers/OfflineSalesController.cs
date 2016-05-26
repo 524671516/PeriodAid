@@ -1397,20 +1397,33 @@ namespace PeriodAid.Controllers
             return File(convertCSV(stream.ToArray()), "@text/csv", "工资信息" + start.ToShortDateString() + "-" + end.ToShortDateString() + ".csv");
         }
         #region 绑定促销员
-        public ActionResult Off_BindSeller_List(string query)
+        public ActionResult Off_BindSeller_List(string query, int? page, bool? bind)
         {
+            return View();
+        }
+        public PartialViewResult Off_BindSeller_List_Ajax(string query, int? page, bool? bind)
+        {
+            int _page = page ?? 1;
+            bool _bind = bind ?? false;
             var user = UserManager.FindById(User.Identity.GetUserId());
             if (query == null)
             {
-                var list = offlineDB.Off_Membership_Bind.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderByDescending(m => m.ApplicationDate);
-                return View(list);
+                var list = (from m in offlineDB.Off_Membership_Bind
+                            where m.Off_System_Id == user.DefaultSystemId
+                            && m.Bind == _bind
+                            orderby m.ApplicationDate descending
+                            select m).ToPagedList(_page, 30);
+                return PartialView(list);
             }
             else
             {
-                var list = from m in offlineDB.Off_Membership_Bind
-                           where (m.NickName.Contains(query) || m.Off_Seller.Off_Store.StoreName.Contains(query)) && m.Off_System_Id == user.DefaultSystemId
-                           select m;
-                return View(list);
+                var list = (from m in offlineDB.Off_Membership_Bind
+                            where (m.NickName.Contains(query) || m.Off_Seller.Off_Store.StoreName.Contains(query))
+                            && m.Off_System_Id == user.DefaultSystemId
+                            && m.Bind == _bind
+                            orderby m.ApplicationDate descending
+                            select m).ToPagedList(_page, 30);
+                return PartialView(list);
             }
         }
         public ActionResult Off_BindSeller(int id)

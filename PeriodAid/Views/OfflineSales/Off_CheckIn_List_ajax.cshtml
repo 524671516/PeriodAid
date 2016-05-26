@@ -59,14 +59,19 @@
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_CheckIn_List_ajax", new { page }))</div>
 <script>
     $(".pagination > li > a").click(function () {
-        var l = $(this).attr("href");
-        l = l + "&status=" + $("#status-val").val();
-        $.ajax({
-            url: l,
-            success: function (data) {
-                $("#expenseslist").html(data);
-            }
-        });
+            var l = $(this).attr("href");
+            l = l + "&status=" + $("#status-val").val() + "&query=" + $("#search-query").val();
+            //alert(l);
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    if ($("#search-query").val() == "") {
+                        $("#expenseslist").html(data);
+                    }else{
+                        $("#expenseslist").html(data);
+                    }
+                }
+            })
         return false;
     });
 </script>

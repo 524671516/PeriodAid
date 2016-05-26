@@ -667,6 +667,7 @@
     <Content Include="Views\Custom\UNI_Result.cshtml" />
     <Content Include="Views\Custom\UNI_Admin.cshtml" />
     <Content Include="Views\OfflineSales\Off_DailyProductList.cshtml" />
+    <Content Include="Views\OfflineSales\Off_BindSeller_List_Ajax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
