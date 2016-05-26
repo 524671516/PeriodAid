@@ -1,5 +1,4 @@
-﻿@model IEnumerable<PeriodAid.Models.Off_Membership_Bind>
-
+﻿
 @{
     ViewBag.Title = "人员绑定";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
@@ -16,10 +15,10 @@
     4
     }
 <div class="row">
-    <div class="col-xs-3">
+    <div class="col-xs-4">
         <ul class="nav nav-tabs">
-            <li class="active"><a class="btn-filter" data-rel="0">未绑定促销员</a></li>
-            <li><a class="btn-filter" data-rel="1">绑定促销员</a></li>
+            <li role="presentation" class="active"><a class="btn-filter" data-rel="false">未绑定促销员</a></li>
+            <li role="presentation"><a class="btn-filter" data-rel="true">已绑定促销员</a></li>
         </ul>
     </div>
     <div class="col-xs-4 col-md-offset-4">
@@ -33,108 +32,44 @@
 </div>
 
 <br />
-<table class="table table-condensed table-striped" style="width:100%">
-    <tr>
-        <th style="width:10%">
-            姓名
-        </th>
-        <th style="width:15%">
-            联系方式
-        </th>
-        <th style="width:15%">
-            注册时间
-        </th>
-        <th style="width:15%">
-            绑定促销员姓名
-        </th>
-        <th style="width:20%">绑定促销员所属门店</th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NickName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mobile)
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.ApplicationDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
-            </td>
-            <td>
-
-                @Html.Encode(item.Off_Seller == null ? "" : item.Off_Seller.Off_Store.StoreName)
-            </td>
-            <td>
-                @Html.ActionLink("修改", "Off_BindSeller", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
-                @if (!item.Bind)
-                {
-                    @Html.ActionLink("设置管理员", "Off_UpdateManager", new { id = item.Id }, new { @class = "btn btn-sm btn-danger manager-button" })
-                    @Html.Encode(" ")
-                    @Html.ActionLink("设置区域", "Off_Manager_AddStore", new { id=item.Id}, new { @class="btn btn-sm btn-primary"})
-                }
-            </td>
-        </tr>
-    }
-
-</table>
-@*<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_BindSeller_List", new { page }))</div>*@
-<div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">修改促销员绑定</h4>
-            </div>
-            <div class="modal-body" id="editcontent">
-
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
+<div id="sellerList"></div>
+<input class="hidden" id="selBool" />
+@section scripts{
 <script>
-    $(".edit-button").click(function () {
-        var link_url = $(this).attr("href");
+    $(function () {
         $.ajax({
-            url: link_url,
+            url: "/OfflineSales/Off_BindSeller_List_Ajax",
             success: function (data) {
-                $("#editcontent").html(data);
-                $('#myModal').modal()
+                $("#sellerList").html(data)
             }
         });
-        return false;
-    });
-    $(".manager-button").click(function () {
-        var link_url = $(this).attr("href");
-        var result = confirm("是否设置为管理员");
-        if (result) {
+        $(".btn-filter").click(function () {
+            $(this).parent("li").addClass("active").siblings().removeClass("active");
+            $("#selBool").val($(this).attr("data-rel"));
             $.ajax({
-                url: link_url,
+                url: "/OfflineSales/Off_BindSeller_List_Ajax?bind=" + $("#selBool").val(),
                 success: function (data) {
-                    if (data == "SUCCESS");
-                    window.location.reload();
+                    $("#sellerList").html(data);
                 }
             });
-        }
-        return false;
-    });
-    $(function () {
+            return false;
+        });
         $("#search-query").val(decodeURIComponent($("#search-query").val()));
         $("#search-btn").click(function () {
+            var url = "/OfflineSales/Off_BindSeller_List_Ajax";
             var cuxa = $("#search-query").val();
-            var query = "/OfflineSales/Off_BindSeller_List?query=" + cuxa;
-            window.location.href = query;
-        });
-    })
-    function getUrlParam(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-        if (r != null) return unescape(r[2]); return null; //返回参数值
-    }
+            var bool = $("#selBool").val();
+            $.ajax({
+                url: url,
+                data: {
+                    query: cuxa,
+                    bind:bool
+                },
+                success: function (data) {
+                    $("#sellerList").html(data);
+                }
+            })
+        })
+    });
 </script>
+}
