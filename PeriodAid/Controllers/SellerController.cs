@@ -90,6 +90,7 @@ namespace PeriodAid.Controllers
             //string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
             try
             {
+                
                 WeChatUtilities wechat = new WeChatUtilities();
                 var jat = wechat.getWebOauthAccessToken(code);
                 var user = UserManager.FindByEmail(jat.openid);
@@ -97,11 +98,19 @@ namespace PeriodAid.Controllers
                 if (user != null)
                 {
                     //var user = UserManager.FindByName("13636314852");
-                    string[] systemArray = user.OffSalesSystem.Split(',');
-                    if (systemArray.Contains(state))
+                    if (user.OffSalesSystem != null)
                     {
-                        user.DefaultSystemId = systemid;
-                        UserManager.Update(user);
+                        string[] systemArray = user.OffSalesSystem.Split(',');
+                        if (systemArray.Contains(state))
+                        {
+                            user.DefaultSystemId = systemid;
+                            UserManager.Update(user);
+                            await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                            return RedirectToAction("Wx_Seller_Redirect", new { systemid = systemid });
+                        }
+                    }
+                    else
+                    {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToAction("Wx_Seller_Redirect", new { systemid = systemid });
                     }
@@ -109,8 +118,9 @@ namespace PeriodAid.Controllers
                 //return Content(jat.openid + "," + jat.access_token);
                 return RedirectToAction("Wx_Register", "Seller", new { open_id = jat.openid, accessToken = jat.access_token, systemid = systemid });
             }
-            catch
+            catch(Exception ex)
             {
+                CommonUtilities.writeLog(ex.Message);
                 return View("Error");
             }
         }
@@ -119,9 +129,14 @@ namespace PeriodAid.Controllers
         {
             try
             {
+                string _state = "1";
+                if (state==null)
+                {
+                    _state = state;
+                }
                 WeChatUtilities wechat = new WeChatUtilities();
                 var user = UserManager.FindByEmail(openid);
-                int systemid = Convert.ToInt32(state);
+                int systemid = Convert.ToInt32(_state);
                 if (user != null)
                 {
                     //var user = UserManager.FindByName("13636314852");

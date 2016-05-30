@@ -102,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            <div class="weui_btn_area"><input class="weui_btn weui_btn_primary" type="submit" value="提交" id="btn-save"></div>
+            <div class="weui_btn_area"><input class="weui_btn weui_btn_default" type="submit" value="提交" id="btn-save"></div>
         </fieldset>
     }
     <br />
@@ -183,6 +183,7 @@
             //验证
             $.validator.setDefaults({
                 submitHandler: function (form) {
+                    $("#btn-save").addClass("hidden");
                     form.submit();
                 }
             });
