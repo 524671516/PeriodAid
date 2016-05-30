@@ -3,48 +3,56 @@
     ViewBag.Title = "注册";
 }
 <br />
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    <form class="form-horizontal">
-        <div class="modal-header container" style="border-bottom:none">
-            <h3 class="modal-title col-md-6"><strong>用户注册</strong></h3>
+<div class="container" style="overflow:hidden">
+    <div class="row">
+        <div class="col-md-3" style="background-color:grey;opacity:0.9;position:absolute;left:37.5%;top:32.5%;">
+            <section id="loginForm">
+                @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                    @Html.AntiForgeryToken()
+                    <form class="form-horizontal">
+                        <div class="modal-header container">
+                            <h3 class="modal-title col-md-6"><strong>用户注册</strong></h3>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Email, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Password, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        @*<p class="col-md-offset-2 text-center elseContent" style="width:400px;height:auto;margin-top:-20px;">
+                                没有配置外部身份验证服务。有关设置此 ASP.NET 应用程序
+                                以支持通过外部服务登录的详细信息，请参阅<a href="http://go.microsoft.com/fwlink/?LinkId=403804">此文</a>。
+                            </p>*@
+                        <div class="form-group container">
+                            <div class="col-md-4 col-md-offset-4"><button type="submit" value="注册" class="btn btn-success btn-block">注册</button></div>
+                        </div>
+                        @* 在为密码重置功能启用帐户确认后启用此项
+                            <p>
+                                @Html.ActionLink("忘记了密码?", "ForgotPassword")
+                            </p>*@
+                    </form>
+                }
+            </section>
         </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        @*<p class="col-md-offset-2 text-center elseContent" style="width:400px;height:auto;margin-top:-20px;">
-                没有配置外部身份验证服务。有关设置此 ASP.NET 应用程序
-                以支持通过外部服务登录的详细信息，请参阅<a href="http://go.microsoft.com/fwlink/?LinkId=403804">此文</a>。
-            </p>*@
-        <div class="form-group container">
-            <button type="submit" value="登录" class="btn btn-success col-md-offset-11">注册</button>
-        </div>
-        @* 在为密码重置功能启用帐户确认后启用此项
-            <p>
-                @Html.ActionLink("忘记了密码?", "ForgotPassword")
-            </p>*@
-    </form>
-}
-
+    </div>
+</div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

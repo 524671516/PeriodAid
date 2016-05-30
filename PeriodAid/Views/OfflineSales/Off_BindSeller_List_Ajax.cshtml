@@ -52,7 +52,7 @@
     }
 
 </table>
-<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_BindSeller_List", new { page }))</div>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_BindSeller_List_Ajax", new { page }))</div>
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -67,6 +67,22 @@
     </div><!-- /.modal-dialog -->
 </div>
 <script>
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        var bool = $("#selBool").val();
+        var query = $("#search-query").val();
+        $.ajax({
+            url: l,
+            data: {
+                query: query,
+                bind: bool
+            },
+            success: function (data) {
+                $("#sellerList").html(data);
+            }
+        });
+        return false;
+    });
     $(".edit-button").click(function () {
         var link_url = $(this).attr("href");
         $.ajax({
