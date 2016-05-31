@@ -940,6 +940,11 @@ namespace PeriodAid.Controllers
                         }
                     }
                 }
+                
+                return View(order);
+            }
+            else if (order.status == 2)
+            {
                 return View(order);
             }
             else
@@ -1060,8 +1065,8 @@ namespace PeriodAid.Controllers
                         if (TryUpdateModel(bill))
                         {
                             ERPOrderUtilities erp_util = new ERPOrderUtilities();
-                            string platform_code = erp_util.existERPOrders(1, model.Mobile, "寿全斋旗舰店");
-                            if (platform_code != null)
+                            var order = erp_util.existERPOrders(1, model.Mobile, "寿全斋旗舰店");
+                            if (order != null)
                             {
                                 // 存在订单
                                 // 生成订单号
@@ -1069,8 +1074,8 @@ namespace PeriodAid.Controllers
                                 string mch_billno = "UNI" + DateTime.Now.Ticks.ToString();
                                 try
                                 {
-                                    int amount = 100;
-                                    bill.platform_code = platform_code;
+                                    int amount = Convert.ToInt32(order.payment_amount * 100);
+                                    bill.platform_code = order.platform_code;
                                     bill.SendTime = DateTime.Now;
                                     bill.Status = 1;
                                     bill.MchBillNo = mch_billno;
@@ -1089,7 +1094,6 @@ namespace PeriodAid.Controllers
                                     }
                                     promotionDB.UNI_MchBill.Add(bill);
                                     promotionDB.SaveChanges();
-                                    //bill.
                                     return RedirectToAction("UNI_Result", new { openid = model.OpenId });
                                 }
                                 catch (Exception ex)
@@ -1288,6 +1292,13 @@ namespace PeriodAid.Controllers
                 g.Dispose();
             }
             //return File(null);
+            
         }
+        /*public ActionResult TestOrder(string mobile)
+        {
+            ERPOrderUtilities erp_util = new ERPOrderUtilities();
+            string platform_code = erp_util.existERPOrders(1,mobile, "寿全斋旗舰店");
+            return Content(platform_code);
+        }*/
     }
 }

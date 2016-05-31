@@ -59,6 +59,8 @@ namespace PeriodAid.Models
         [StringLength(6, ErrorMessage = ("姓名长度不得超过6个字符"))]
         [Display(Name = "姓名")]
         public string NickName { get; set; }
+
+        public int Systemid { get; set; }
     }
 
     public class Promotion_TJH_ViewModel

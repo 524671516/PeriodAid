@@ -176,7 +176,7 @@ namespace PeriodAid.DAL
         /// 查看近7天是否有订单，有的话返回单号，没有的话，返回NULL
         /// </summary>
 
-        public string existERPOrders(int searchType, string searchcontent, string shop_code)
+        public orders existERPOrders(int searchType, string searchcontent, string shop_code)
         {
             StringBuilder json = new StringBuilder();
             json.Append("{");
@@ -225,7 +225,7 @@ namespace PeriodAid.DAL
                     Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(sb.ToString());
                     if (r.total > 0)
                     {
-                        return r.orders.LastOrDefault().platform_code;
+                        return r.orders.LastOrDefault();
                     }
                     else
                         return null;
