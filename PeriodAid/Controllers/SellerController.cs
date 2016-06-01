@@ -2587,5 +2587,61 @@ namespace PeriodAid.Controllers
             offlineDB.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
+        public ActionResult Wx_Manager_CreditInfo(int sellerid)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == sellerid && m.Off_System_Id == user.DefaultSystemId);
+            if (Seller != null)
+            {
+                List<Object> banklist = new List<object>();
+                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
+                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                {
+                    CardName = Seller.CardName,
+                    CardNo = Seller.CardNo,
+                    Id = Seller.Id,
+                    IdNumber = Seller.IdNumber,
+                    Name = Seller.Name,
+                    Mobile = Seller.Mobile,
+                    AccountName = Seller.AccountName
+                };
+                return View(model);
+            }
+            return View("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Wx_Manager_CreditInfo(Wx_SellerCreditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var item = new Wx_SellerCreditViewModel();
+                if (TryUpdateModel(item))
+                {
+                    var seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == item.Id);
+                    if (seller != null)
+                    {
+                        seller.IdNumber = item.IdNumber;
+                        seller.CardName = item.CardName;
+                        seller.CardNo = item.CardNo;
+                        seller.UploadUser = User.Identity.Name;
+                        seller.UploadTime = DateTime.Now;
+                        seller.AccountName = item.AccountName;
+                        offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                        offlineDB.SaveChanges();
+                        return RedirectToAction("Wx_Manager_QuerySeller");
+                    }
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                List<Object> banklist = new List<object>();
+                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
+                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                return View(model);
+            }
+        }
     }
 }
