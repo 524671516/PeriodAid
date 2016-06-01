@@ -56,25 +56,32 @@
             <div class="weui_cell_bd weui_cell_primary">
                 <p>开户人姓名</p>
             </div>
-            <span class="weui_cell_ft" id="accountName" style="display:inline-block"></span>
+            <input id="accountName" class="weui_cell_ft" style="display:inline-block" />
         </div>
         <div class="weui_cell">
             <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card"></i></div>
             <div class="weui_cell_bd weui_cell_primary">
                 <p>开户行</p>
             </div>
-            <span class="weui_cell_ft" id="cardName" style="display:inline-block"></span>
+            <select>
+                <option id="cardName"></option>
+                <option>中国工商银行</option>
+            </select>
         </div>
         <div class="weui_cell">
             <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card-alt"></i></div>
             <div class="weui_cell_bd weui_cell_primary">
                 <p>银行账号</p>
             </div>
-            <span class="weui_cell_ft" id="carNd" style="display:inline-block"></span>
+            <input id="carNd" name="carNd" type="text" placeholder="请输入银行卡号">
+        </div>
+        <div style="padding:10px 15px;border-top: 1px solid #d9d9d9;">
+            <input class="weui_btn weui_btn_primary" type="submit" value="确定" id="btn-save" />
         </div>
     </div>
 </div>
 @section scripts{
+<script src="~/Scripts/zepto.min.js"></script>
     <script>
         $("#weui_con").hide();
         $(function () {
@@ -89,10 +96,10 @@
                     success: function (data) {
                         $("#name").text(data.data.Name);
                         $("#mobile").text(data.data.Mobile);
-                        $("#carNd").text(data.data.CardNo);
+                        $("#carNd").val(data.data.CardNo);
                         $("#cardName").text(data.data.CardName);
                         $("#storeName").text(data.data.StoreName);
-                        $("#accountName").text(data.data.AccountName);
+                        $("#accountName").val(data.data.AccountName);
                         $("#idNumber").text(data.data.IdNumber);
                         $("#search_show").hide();
                         $("#search_input").val('');
@@ -103,7 +110,7 @@
                     }
                 })
             });
-        })
+        });
         $("#search_input").focus(function () {
             var $weuiSearchBar = $('#search_bar');
             $weuiSearchBar.addClass("weui_search_focusing")
@@ -149,6 +156,6 @@
             } else {
                 $searchShow.hide();
             }
-        })
+        });
     </script>
 }
