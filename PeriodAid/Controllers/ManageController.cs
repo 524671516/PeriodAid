@@ -87,12 +87,12 @@ namespace PeriodAid.Controllers
             ViewBag.SystemList = systemlist;
             return View(model);
         }
-        public ContentResult updateSystem(int id)
+        public ActionResult updateSystem(int id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             user.DefaultSystemId = id;
             UserManager.Update(user);
-            return Content("SUCCESS");
+            return RedirectToAction("Index", "OfflineSales");
         }
 
         //

@@ -29,7 +29,7 @@
                     <label class="col-md-5 control-label" style="padding-top:0">密码:</label>
                     <div class="col-md-7">
                         @if (Model.HasPassword)
-            {
+                        {
                             @Html.ActionLink("更改密码", "ChangePassword")
                         }
                         else
@@ -64,17 +64,17 @@
     <br />
 </div>
 @section scripts{
-<script>
-    $("#btnPassword").click(function () {
-        var link_url = $(this).attr("href")
-        alert("22");
-        $.ajax({
-            type:"post",
-            url: link_url,
-            success: function (data) {
-                $("#editPassword").html(data)
-            }
+    <script>
+        $("#btnPassword").click(function () {
+            var link_url = $(this).attr("href")
+            alert("22");
+            $.ajax({
+                type: "post",
+                url: link_url,
+                success: function (data) {
+                    $("#editPassword").html(data)
+                }
+            })
         })
-    })
-</script>
+    </script>
 }

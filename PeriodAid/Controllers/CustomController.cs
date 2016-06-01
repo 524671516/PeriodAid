@@ -1183,19 +1183,29 @@ namespace PeriodAid.Controllers
         }
         public ActionResult UNI_Admin(string groupcode)
         {
-            var list = from m in promotionDB.UNI_MchBill
-                       where m.UNI_Group.GroupCode == groupcode
-                       orderby m.SendTime descending
-                       select m;
-            WeChatUtilities utilities = new WeChatUtilities();
-            string _url = ViewBag.Url = Request.Url.ToString();
-            ViewBag.AppId = utilities.getAppId();
-            string _nonce = CommonUtilities.generateNonce();
-            ViewBag.Nonce = _nonce;
-            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
-            ViewBag.TimeStamp = _timeStamp;
-            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
-            return View(list);
+            var group = promotionDB.UNI_Group.SingleOrDefault(m => m.GroupCode == groupcode);
+            if (group != null)
+            {
+                var list = from m in promotionDB.UNI_MchBill
+                           where m.UNI_Group.GroupCode == groupcode
+                           orderby m.SendTime descending
+                           select m;
+                ViewBag.GroupCode = groupcode;
+                ViewBag.GroupName = group.GroupName;
+                WeChatUtilities utilities = new WeChatUtilities();
+                string _url = ViewBag.Url = Request.Url.ToString();
+                ViewBag.AppId = utilities.getAppId();
+                string _nonce = CommonUtilities.generateNonce();
+                ViewBag.Nonce = _nonce;
+                string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+                ViewBag.TimeStamp = _timeStamp;
+                ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+                return View(list);
+            }
+            else
+            {
+                return View("UNI_Error");
+            }
         }
         [HttpPost]
         public JsonResult SaveOrignalImage(string serverId)

@@ -64,6 +64,9 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Index()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var system = offlineDB.Off_System.SingleOrDefault(m => m.Id == user.DefaultSystemId);
+            ViewBag.SystemName = system.SystemName;
             return View();
         }
 

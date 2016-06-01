@@ -669,6 +669,7 @@
     <Content Include="Views\Custom\UNI_Admin.cshtml" />
     <Content Include="Views\OfflineSales\Off_DailyProductList.cshtml" />
     <Content Include="Views\OfflineSales\Off_BindSeller_List_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CreditInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
