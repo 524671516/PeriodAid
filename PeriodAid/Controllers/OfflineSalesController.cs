@@ -2894,10 +2894,23 @@ namespace PeriodAid.Controllers
             DateTime st = Convert.ToDateTime(startdate);
             DateTime et = Convert.ToDateTime(enddate);
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var data = from m in offlineDB.Off_SalesInfo_Daily
-                       where m.Date >= st && m.Date <= et && m.StoreId == storeid && m.Off_Store.Off_System_Id == user.DefaultSystemId
-                       group m by m.Date into g
-                       select new { date = g.Key, count = g.Count(), brown = g.Sum(m => m.Item_Brown), black = g.Sum(m => m.Item_Black), lemon = g.Sum(m => m.Item_Lemon), honey = g.Sum(m => m.Item_Honey), dates = g.Sum(m => m.Item_Dates) };
+            string sql = "SELECT T2.StoreName,[Date], count([Date]) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
+                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join OFFLINESALES.dbo.Off_Store as T2 on T1.StoreId = T2.Id left join OffLINESALES.dbo.Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
+                "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date < '" + et.ToString("yyyy-MM-dd") + "' and T1.StoreId =" + storeid + " " +
+                "and T2.Off_System_Id = " + user.DefaultSystemId + " group by T1.Date, T2.StoreName order by T1.Date";
+            var data = offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);
+            return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Off_Statistic_Store_Product_Ajax(string startdate, string enddate, int storeid)
+        {
+            DateTime st = Convert.ToDateTime(startdate);
+            DateTime et = Convert.ToDateTime(enddate);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            string sql = "SELECT T3.ProductId, T4.SimpleName, sum(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
+                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join OFFLINESALES.dbo.Off_Store as T2 on T1.StoreId = T2.Id left join OffLINESALES.dbo.Off_Daily_Product as T3 on T1.Id = T3.DailyId left join OFFLINESALES.dbo.Off_Product as T4 on T4.Id = T3.ProductId " +
+                "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T1.StoreId like '" + storeid + "'" +
+                "and T2.Off_System_Id = " + user.DefaultSystemId + " and ProductId is not NULL group by T3.ProductId,T4.SimpleName order by T4.SimpleName";
+            var data = offlineDB.Database.SqlQuery<StoreSystem_Product_Statistic>(sql);
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
         }
         // 0413 统计数据-促销员数据
