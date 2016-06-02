@@ -108,6 +108,10 @@
                         </div>
                         <span id="carNd" name="carNd" type="text" placeholder="请输入银行卡号"></span>
                     </div>
+                    <div style="padding:10px 15px;border-top:1px solid #f7f7f7">
+                        <a class="weui_btn weui_btn_primary" id="btn-edit">修改</a>
+                    </div>
+                    <input class="hidden" id="sellerid" />
                 </div>
             </div>
         </div>
@@ -143,7 +147,7 @@
                                 $("#search_show").html("");
                                 for (var i = 0; i < data.data.length; i++) {
                                     var text = "<div class='weui_cell search_item' data-target='" + data.data[i].Id + "'><div class='weui_cell_bd weui_cell_primary'><p>" + data.data[i].Name + "</p></div><div class='weui_cell_ft'>" + data.data[i].Store + "</div></div>";
-                                    $("#search_show").append(text)
+                                    $("#search_show").append(text);
                                 }
                                 $searchShow.show();
                             }
@@ -161,6 +165,7 @@
             });
             $("#search_show").delegate(".search_item", "click", function () {
                 var id = $(this).attr("data-target");
+                $("#sellerid").val(id)
                 $.ajax({
                     url: "/Seller/Wx_Manager_AjaxSellerDetails",
                     data: {
@@ -175,7 +180,7 @@
                         $("#cardName").text(data.data.CardName);
                         $("#storeName").text(data.data.StoreName);
                         $("#accountName").text(data.data.AccountName);
-                        $("#idNumber").text(data.data.IdNumber);
+                        $("#idNumber").text(data.data.IDNumber);
                         $("#search_show").hide();
                         $("#search_input").val('');
                         $("#weui_con").show();
@@ -185,6 +190,11 @@
                     }
                 })
             });
+            $("#btn-edit").click(function () {
+                var link_url = "/Seller/Wx_Manager_CreditInfo?sellerid=";
+                var sellerid = $("#sellerid").val();
+                window.location.href = link_url + sellerid;
+            })
         });
     </script>
     <div class="navbar navbar-fixed-bottom periodaid-navbar-bottom">
