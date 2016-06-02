@@ -21,25 +21,26 @@
             </div>
         </div>
         <span id="danger" class="text-danger h5"></span><br />
-        <div id="map" class="row" style="display:none;">
-            <div class="col-md-12">
-                <div id="myChart_Bar" style="min-width:500px;height:500px"></div>
-            </div><br />
-            <div class="col-md-12">
-                <div id="myChart_Pie" style="min-width:400px;height:400px"></div>
-            </div>
-        </div>
     </div>
     <div class="col-md-4">
         <div class="row">
             <div class="col-md-7">
-                <input id="storeName" name="storeName" class="form-control" placeholder="门店名称" /><br />
-                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px; font-size:1em;display:none"></select>
+                <select class="form-control" id="StoreList" name="StoreList"></select>
+                <input id="storeName" name="storeName" class="form-control hidden" placeholder="门店名称" />
             </div>
             <div class="col-md-4">
                 <button id="data-btn" class="btn btn-info">查看</button>
             </div>
         </div>
+    </div>
+</div>
+<div id="map" class="row" style="display:none">
+    <div class="col-md-6">
+        <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <div id="myChart_Pie" style="min-width:500px;height:400px"></div>
     </div>
 </div>
 <script src="~/Scripts/highcharts.js"></script>
@@ -58,7 +59,6 @@
                 storesystem: $("#StoreSystem").val()
             },
             success: function (data) {
-                $("#StoreList").show();
                 $("#StoreList").html("");
                 for (var i = 0; i < data.StoreList.length; i++) {
                     $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
