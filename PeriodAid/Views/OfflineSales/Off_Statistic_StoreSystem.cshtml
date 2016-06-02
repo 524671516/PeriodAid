@@ -63,28 +63,18 @@
                 success: function (data) {
                     if (data.data.length == 0) {
                         alert("该区域在此时间内无数据");
-                    }else {
+                    } else {
                         $("#map").show();
                         //区域销售折线图
                         var resultdata = data.data;
                         var totalarray = new Array();
                         var datearray = new Array();
-                        var total_brown = 0;
-                        var total_black = 0;
-                        var total_lemon = 0;
-                        var total_honey = 0;
-                        var total_dates = 0;
                         for (var i = 0; i < resultdata.length; i++) {
-                            var deeint = parseInt(data.data[i].date.replace(/\D/igm, ""));
+                            var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
                             var dee = new Date(deeint)
                             datearray.push(dee.Format("MM-dd"));
-                            var totaltemp = resultdata[i].brown + resultdata[i].black + resultdata[i].dates + resultdata[i].honey + resultdata[i].lemon;
+                            var totaltemp = resultdata[i].SalesCount
                             totalarray.push(totaltemp);
-                            total_brown += resultdata[i].brown;
-                            total_black += resultdata[i].black;
-                            total_lemon += resultdata[i].lemon;
-                            total_dates += resultdata[i].dates;
-                            total_honey += resultdata[i].honey;
                         }
                         $("#myChart_Bar").highcharts({
                             chart: {
@@ -95,11 +85,6 @@
                             xAxis: {
                                 categories: datearray
                             },
-                            //series: [{
-                            //    type: 'column',
-                            //    name: '柱状图',
-                            //    data: totalarray
-                            //}, 
                             series: [{
                                 type: 'spline',
                                 name: '销售额度',
@@ -111,63 +96,56 @@
                                 }
                             }]
                         });
-                        $('#myChart_Pie').highcharts({
-                            chart: {
-                                plotBackgroundColor: null,
-                                plotBorderWidth: null,
-                                plotShadow: false
-                            },
-                            title: {
-                                text: storesystem + '每天各个种类销售总额饼状图(单位：盒/天)'
-                            },
-                            tooltip: {
-                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                            },
-                            plotOptions: {
-                                pie: {
-                                    allowPointSelect: true,
-                                    cursor: 'pointer',
-                                    dataLabels: {
-                                        enabled: false
-                                    },
-                                    showInLegend: true
+
+                    };
+                    $.ajax({
+                        url: "/OfflineSales/Off_Statistic_StoreSystem_Product_Ajax",
+                        data: {
+                            startdate: start,
+                            enddate: end,
+                            storesystem: storesystem
+                        },
+                        success: function (data) {
+                            //alert(data.data[0].ProductId)
+                            var productarry = new Array();
+                            for (var i = 0; i < data.data.length; i++) {
+                                var productlist = {
+                                    name: data.data[i].SimpleName,
+                                    y: data.data[i].SalesCount
                                 }
-                            },
-                            series: [{
-                                type: 'pie',
-                                name: '销售额度',
-                                data: [
-                                    {
-                                        name: '黑糖姜茶',
-                                        y: total_black,
-                                        color: "#201510"
-                                    },
-                                    {
-                                        name: '红糖姜茶',
-                                        y: total_brown,
-                                        sliced: true,
-                                        selected: true,
-                                        color: "#b11c36"
-                                    },
-                                    {
-                                        name: '柠檬姜茶',
-                                        y: total_lemon,
-                                        color: "#fdf796"
-                                    },
-                                    {
-                                        name: '红枣姜茶',
-                                        y: total_dates,
-                                        color: "#e94f30"
-                                    },
-                                    {
-                                        name: '蜂蜜姜茶',
-                                        y: total_honey,
-                                        color: "#ecb268"
-                                    },
-                                ]
-                            }]
-                        });
-                    }
+                                productarry.push(productlist)
+                            }
+                            //console.log(productarry)
+                            $('#myChart_Pie').highcharts({
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false
+                                },
+                                title: {
+                                    text: storesystem + '每天各个种类销售总额饼状图(单位：盒/天)'
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: false
+                                        },
+                                        showInLegend: true
+                                    }
+                                },
+                                series: [{
+                                    type: 'pie',
+                                    name: '销售额度',
+                                    data: productarry
+                                }]
+                            });
+                        }
+                    })
                 }
             });
             return false
