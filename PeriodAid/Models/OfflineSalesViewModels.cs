@@ -322,6 +322,10 @@ namespace PeriodAid.Models
         [Required]
         [StringLength(50)]
         public string CardNo { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string AccountSource { get; set; }
     }
     public class Wx_ReportItemsViewModel
     {

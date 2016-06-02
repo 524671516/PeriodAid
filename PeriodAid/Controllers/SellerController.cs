@@ -1003,11 +1003,7 @@ namespace PeriodAid.Controllers
             if (Seller != null)
             {
                 List<Object> banklist = new List<object>();
-                banklist.Add(new { Key = "中国银行", Value = "中国银行" });
                 banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
-                banklist.Add(new { Key = "中国农业银行", Value = "中国农业银行" });
-                banklist.Add(new { Key = "中国建设银行", Value = "中国建设银行" });
-                banklist.Add(new { Key = "交通银行", Value = "交通银行" });
                 ViewBag.BankList = new SelectList(banklist, "Key", "Value");
                 Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
                 {
@@ -1017,7 +1013,8 @@ namespace PeriodAid.Controllers
                     IdNumber = Seller.IdNumber,
                     Name = Seller.Name,
                     Mobile = Seller.Mobile,
-                    AccountName = Seller.AccountName
+                    AccountName = Seller.AccountName,
+                    AccountSource = Seller.AccountSource
                 };
                 return View(model);
             }
@@ -1040,6 +1037,7 @@ namespace PeriodAid.Controllers
                         seller.UploadUser = User.Identity.Name;
                         seller.UploadTime = DateTime.Now;
                         seller.AccountName = item.AccountName;
+                        seller.AccountSource = item.AccountSource;
                         offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
                         offlineDB.SaveChanges();
                         return RedirectToAction("Wx_Seller_Home");
@@ -1051,11 +1049,7 @@ namespace PeriodAid.Controllers
             {
                 ModelState.AddModelError("", "错误");
                 List<Object> banklist = new List<object>();
-                banklist.Add(new { Key = "中国银行", Value = "中国银行" });
                 banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
-                banklist.Add(new { Key = "中国农业银行", Value = "中国农业银行" });
-                banklist.Add(new { Key = "中国建设银行", Value = "中国建设银行" });
-                banklist.Add(new { Key = "交通银行", Value = "交通银行" });
                 ViewBag.BankList = new SelectList(banklist, "Key", "Value");
                 return View(model);
             }
@@ -2512,7 +2506,7 @@ namespace PeriodAid.Controllers
                     if (item.Status == 0)
                     {
                         string mch_billno = "SELLERRP" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
-                        string remark = item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd") + "促销红包";
+                        string remark = item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd") + " " + item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName + " " + "促销红包";
                         string result = apppay.WxRedPackCreate(item.ReceiveOpenId, item.ReceiveAmount, mch_billno, "促销员红包", "寿全斋", remark, remark);
                         if (result == "SUCCESS")
                         {
@@ -2523,7 +2517,6 @@ namespace PeriodAid.Controllers
                             offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
-                    //offlineDB.SaveChanges();
                 }
                 catch
                 {
@@ -2604,7 +2597,8 @@ namespace PeriodAid.Controllers
                     IdNumber = Seller.IdNumber,
                     Name = Seller.Name,
                     Mobile = Seller.Mobile,
-                    AccountName = Seller.AccountName
+                    AccountName = Seller.AccountName,
+                    AccountSource = Seller.AccountSource
                 };
                 return View(model);
             }
@@ -2627,6 +2621,7 @@ namespace PeriodAid.Controllers
                         seller.UploadUser = User.Identity.Name;
                         seller.UploadTime = DateTime.Now;
                         seller.AccountName = item.AccountName;
+                        seller.AccountSource = item.AccountSource;
                         offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
                         offlineDB.SaveChanges();
                         return RedirectToAction("Wx_Manager_QuerySeller");

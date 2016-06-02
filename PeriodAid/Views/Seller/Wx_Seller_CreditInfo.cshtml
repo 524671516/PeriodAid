@@ -36,15 +36,14 @@
             </div>
         </div>
         <div class="weui_cells weui_cells_form">
-            
             <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">证件</label></div>
+                <div class="weui_cell_hd"><label for="" class="weui_label" style="width:5em;">证件</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.EditorFor(m => m.IdNumber, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入身份证号码" } })
                 </div>
             </div>
             <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">银行</label></div>
+                <div class="weui_cell_hd"><label for="" class="weui_label" style="width:5em;">银行</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.DropDownListFor(m => m.CardName, ViewBag.BankList as SelectList, "- 请选择 -", new { @class = "weui_input" })
                 </div>
@@ -52,13 +51,19 @@
                 </div>
             </div>
             <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">户名</label></div>
+                <div class="weui_cell_hd"><label class="weui_label" style="width:5em;">开户行</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.AccountSource, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入开户行名称" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label" style="width:5em;">户名</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.EditorFor(m => m.AccountName, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入开户人姓名" } })
                 </div>
             </div>
             <div class="weui_cell">
-                <div class="weui_cell_hd"><label for="" class="weui_label">卡号</label></div>
+                <div class="weui_cell_hd"><label for="" class="weui_label" style="width:5em;">卡号</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     @Html.EditorFor(m => m.CardNo, new { htmlAttributes = new { @class = "weui_input", placeholder = "请输入银行卡号" } })
                 </div>
