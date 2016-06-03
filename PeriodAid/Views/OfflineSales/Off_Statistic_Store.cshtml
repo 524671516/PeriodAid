@@ -99,22 +99,12 @@
                         var resultdata = data.data;
                         var totalarray = new Array();//销售总额
                         var datearray = new Array();//显示时间
-                        var total_brown = 0;
-                        var total_black = 0;
-                        var total_lemon = 0;
-                        var total_honey = 0;
-                        var total_dates = 0;
                         for (var i = 0; i < data.data.length; i++) {
-                            var deeint = parseInt(data.data[i].date.replace(/\D/igm, ""));
+                            var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
                             var dee = new Date(deeint)
                             datearray.push(dee.Format("MM-dd"));
-                            var totaltemp = resultdata[i].brown + resultdata[i].black + resultdata[i].dates + resultdata[i].honey + resultdata[i].lemon;//每天销售总额
+                            var totaltemp = resultdata[i].SalesCount//每天销售总额
                             totalarray.push(totaltemp);
-                            total_brown += resultdata[i].brown;
-                            total_black += resultdata[i].black;
-                            total_dates += resultdata[i].dates;
-                            total_honey += resultdata[i].honey;
-                            total_lemon += resultdata[i].lemon;
                         };
                         $("#myChart_Bar").highcharts({
                             chart: {
@@ -131,69 +121,54 @@
                                 data: totalarray
                             }] 
                         });
-                        $("#myChart_Pie").highcharts({
-                            chart: {
-                                plotBackgroundColor: null,
-                                plotBorderWidth: null,
-                                plotShadow: false
+                        $.ajax({
+                            url: "/OfflineSales/Off_Statistic_Store_Product_Ajax",
+                            data: {
+                                startdate: start,
+                                enddate: end,
+                                storeid: storeid
                             },
-                            title: {
-                                text: optionitem + '每天销售总额饼状图(单位：盒/天)'
-                            },
-                            tooltip: {
-                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                            },
-                            plotOptions: {
-                                pie: {
-                                    allowPointSelect: true,
-                                    cursor: 'pointer',
-                                    dataLabels: {
-                                        enabled: false
-                                    },
-                                    showInLegend: true
+                            success: function (data) {
+                                //alert(data.data[0].ProductId)
+                                var productarry = new Array();
+                                for (var i = 0; i < data.data.length; i++) {
+                                    var productlist = {
+                                        name: data.data[i].SimpleName,
+                                        y: data.data[i].SalesCount
+                                    }
+                                    productarry.push(productlist)
                                 }
-                            },
-                            series: [{
-                                type: 'pie',
-                                name: '销售额度',
-                                data: [
-                                    {
-                                        name: '黑糖姜茶',
-                                        y: total_black,
-                                        //sliced: true,
-                                        //selected: true,
-                                        color: "#201510"
+                                //console.log(productarry)
+                                $('#myChart_Pie').highcharts({
+                                    chart: {
+                                        plotBackgroundColor: null,
+                                        plotBorderWidth: null,
+                                        plotShadow: false
                                     },
-                                    {
-                                        name: '红糖姜茶',
-                                        y: total_brown,
-                                        //sliced: true,
-                                        //selected: true,
-                                        color: "#b11c36"
+                                    title: {
+                                        text: optionitem + '每天各个种类销售总额饼状图(单位：盒/天)'
                                     },
-                                    {
-                                        name: '柠檬姜茶',
-                                        y: total_lemon,
-                                        //sliced: true,
-                                        //selected: true,
-                                        color: "#fdf796"
+                                    tooltip: {
+                                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                                     },
-                                    {
-                                        name: '红枣姜茶',
-                                        y: total_dates,
-                                        //sliced: true,
-                                        //selected: true,
-                                        color: "#e94f30"
+                                    plotOptions: {
+                                        pie: {
+                                            allowPointSelect: true,
+                                            cursor: 'pointer',
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            showInLegend: true
+                                        }
                                     },
-                                    {
-                                        name: '蜂蜜姜茶',
-                                        y: total_honey,
-                                        //sliced: true,
-                                        //selected: true,
-                                        color: "#ecb268"
+                                    series: [{
+                                        type: 'pie',
+                                        name: '销售额度',
+                                        data: productarry
                                     }]
-                            }]
-                        });
+                                });
+                            }
+                        })
                     }
                 }
             })
