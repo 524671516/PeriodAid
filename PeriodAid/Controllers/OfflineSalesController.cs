@@ -2895,6 +2895,7 @@ namespace PeriodAid.Controllers
                 }
                 else if (type == "day")
                 {
+                    
                     string sql = "SELECT T1.Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
                         "where Date>= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "' and T2.Off_System_Id = " + user.DefaultSystemId + " " +
                         "group by T2.StoreSystem, T1.Date";
@@ -2953,8 +2954,8 @@ namespace PeriodAid.Controllers
                 if (type == "month")
                 {
                     DateTime et = st.AddMonths(1);
-                    string sql = "SELECT CONVERT(char(7), T1.Date, 120) as Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
-                        "where Date>= '" + st.ToString("yyyy-MM-01") + "' and Date< '" + et.ToString("yyyy-MM-01") + "' and T1.StoreId " + storeid + " and T2.Off_System_Id = " + user.DefaultSystemId + " " +
+                    string sql = "SELECT  CONVERT(datetime, CONVERT(char(7), T1.Date, 120)+'-01') as Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
+                        "where Date>= '" + st.ToString("yyyy-MM-01") + "' and Date< '" + et.ToString("yyyy-MM-01") + "' and T1.StoreId = " + storeid + " and T2.Off_System_Id = " + user.DefaultSystemId + " " +
                         "group by T2.StoreSystem, CONVERT(char(7), T1.Date, 120)";
                     var data = offlineDB.Database.SqlQuery<StoreSystem_Salary_Statistic>(sql);
                     return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
@@ -2963,7 +2964,7 @@ namespace PeriodAid.Controllers
                 {
                     DateTime et = Convert.ToDateTime(enddate);
                     string sql = "SELECT T1.Date, T1.StoreId, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
-                        "where Date>= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T1.StoreId " + storeid + " and T2.Off_System_Id = " + user.DefaultSystemId + " " +
+                        "where Date>= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T1.StoreId =" + storeid + " and T2.Off_System_Id = " + user.DefaultSystemId + " " +
                         "group by T1.StoreId, T1.Date";
                     var data = offlineDB.Database.SqlQuery<StoreSystem_Salary_Statistic>(sql);
                     return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);

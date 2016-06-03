@@ -7,27 +7,26 @@
     7
     }
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
         <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control" })
     </div>
     <div class="col-md-3">
         <select class="form-control" id="StoreList" name="StoreList"></select>
         <input id="storeName" name="storeName" class="form-control hidden" placeholder="门店名称" />
     </div>
-    <div class="col-md-12"><span id="danger" class="text-danger h5"></span></div>
-</div><br />
-<div class="row">
-    <ul class="col-md-5 list-inline list-unstyled">
-        <li><button id="data-btn" class="btn btn-info">查看销量</button></li>
-        <li><button id="datedata-btn" class="btn btn-info datedata-btn" data-salary="day">查看日工资</button></li>
-        <li><button id="mounthdata-btn" class="btn btn-info datedata-btn" data-salary="month">查看月工资</button></li>
-    </ul>
+    <div class="col-md-3">
+        <ul class="list-inline list-unstyled">
+            <li><button id="data-btn" class="btn btn-info data-btn" data-salary="day">查看日数据</button></li>
+            <li><button id="mounthdata-btn" class="btn btn-info data-btn" data-salary="month">查看月工资</button></li>
+        </ul>
+    </div>
+    <span id="danger" class="text-danger h5" style="margin-left:20px;"></span>
 </div>
 <br />
 <div id="map" class="row" style="display:none">
@@ -39,6 +38,7 @@
         <div id="myChart_Pie" style="min-width:500px;height:400px"></div>
     </div>
 </div>
+<div id="myChart_Column" style="min-width:500px;height:400px"></div>
 <script src="~/Scripts/highcharts.js"></script>
 <script>
     $("#data-startTime").datepicker({
@@ -63,17 +63,17 @@
             }
         });
     });
-    $("#data-btn").click(function () {
+    $(".data-btn").click(function () {
         var start = $("#data-startTime").val();
         var end = $("#data-endTime").val();
         var storeid = encodeURI(encodeURI($("#StoreList").val()));
+        var type = $(this).attr("data-salary");
         var selectvalue = $("#StoreList").val() + "";
         var managerArray = selectvalue.split(',');
         for (var i = 0; i < managerArray.length; i++) {
             var optionitem = $("option[value='" + managerArray[i] + "']").text();
             $("#storeName").val(optionitem);
         }
-        var link_url = "/OfflineSales/Off_Statistic_Store_Ajax";
         if (start > end) {
             $("#danger").text("开始时间不能大于结束时间")
         } else if (start == "" || end == "") {
@@ -81,7 +81,7 @@
         } else {
             $("#danger").addClass("hidden")
             $.ajax({
-                url: link_url,
+                url: "/OfflineSales/Off_Statistic_Store_Ajax",
                 data: {
                     startdate: start,
                     enddate: end,
@@ -165,17 +165,11 @@
                                 });
                             }
                         })
+                        statistic_store_salary(start, end, storeid, type)
                     }
                 }
             })
         }
-    });
-    $(".datedata-btn").click(function () {
-        var start = $("#data-startTime").val();
-        var end = $("#data-endTime").val();
-        var storesystem = $("#StoreSystem").val();
-        var type = $(this).attr("data-salary");
-        salary_statistic(start, end, storesystem, type)
     });
     Date.prototype.Format = function (fmt) { //author: meizz   
         var o = {
@@ -194,25 +188,24 @@
                 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
     };
-    function salary_statistic(start, end, storesystem, type) {
-        var link_url = "/OfflineSales/Off_Statistic_Store_Salary_Ajax";
-        if (start > end) {
-            $("#danger").text("开始时间不能大于结束时间")
-        } else if (start == "" || end == "") {
-            $("#danger").text("时间不能为空")
-        } else {
-            $("#danger").addClass("hidden");
+    function statistic_store_salary(start, end, storeid, type) {
+        var selectvalue = $("#StoreList").val() + "";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = $("option[value='" + managerArray[i] + "']").text();
+            $("#storeName").val(optionitem);
+        }
             $.ajax({
-                url: link_url,
+                url: "/OfflineSales/Off_Statistic_Store_Salary_Ajax",
                 data: {
                     startdate: start,
                     enddate: end,
-                    storesystem: storesystem,
+                    storeid: storeid,
                     type: type
                 },
                 success: function (data) {
                     if (data.data.length == 0) {
-                        alert("该区域在此时间内无数据");
+                        alert("该区域门店下的这段时间内没有销售数据");
                     } else {
                         var datearray = new Array();
                         var salaryarry = new Array();
@@ -234,7 +227,7 @@
                                 zoomType: 'xy'
                             },
                             title: {
-                                text: storesystem + '每月工资'
+                                text: optionitem + '工资表'
                             },
                             //subtitle: {
                             //    text: 'Source: WorldClimate.com'
@@ -244,45 +237,25 @@
                             }],
                             yAxis: [{ // Primary yAxis
                                 labels: {
-                                    //format: '{value}°C',
-                                    style: {
-                                        color: '#4572A7'
-                                    }
+                                    enabled: false
                                 },
                                 title: {
-                                    text: '工资',
-                                    style: {
-                                        color: '#4572A7'
-                                    }
+                                    text: '',
                                 }
                             }, { // Secondary yAxis
                                 title: {
-                                    text: '奖金',
-                                    style: {
-                                        color: '#f10000'
-                                    }
+                                    text: ''
                                 },
                                 labels: {
-                                    //format: '{value} mm',
-                                    style: {
-                                        color: '#f10000'
-                                    }
+                                    enabled: false
                                 },
-                                opposite: true
                             }, { // Secondary yAxis
                                 title: {
-                                    text: '扣款',
-                                    style: {
-                                        color: '#89A54E'
-                                    }
+                                    text: '',
                                 },
                                 labels: {
-                                    //format: '{value} mm',
-                                    style: {
-                                        color: '#89A54E'
-                                    }
+                                    enabled: false
                                 },
-                                opposite: true
                             }],
                             tooltip: {
                                 shared: true
@@ -319,8 +292,7 @@
                         });
                     }
                 }
-            });
-        }
+            })
     }
 </script>
 
