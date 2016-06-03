@@ -2992,13 +2992,10 @@ namespace PeriodAid.Controllers
         {
             string st = Convert.ToDateTime(startdate).ToString("yyyy-MM-dd");
             string et = Convert.ToDateTime(enddate).ToString("yyyy-MM-dd");
-            string sql = "SET DATEFIRST 1;" + "Select Date, isnull(Item_Brown, 0) as Item_Brown, isnull(Item_Black, 0) as Item_Black, isnull(Item_Lemon,0) as Item_Lemon, isnull(Item_Honey,0) as Item_Honey, isnull(Item_Dates,0) as Item_Dates," +
-                " AVG_BROWN, AVG_BLACK, AVG_LEMON, AVG_HONEY, AVG_DATES" +
-                " from (SELECT Date, DATEPART(DW, T1.Date) as DW, T1.StoreId, Item_Brown, Item_Black, Item_Lemon, Item_Honey, Item_Dates" +
-                " FROM Off_SalesInfo_Daily as T1" +
-                " where Date >= '" + st + "' and Date <= '" + et + "' and SellerId = " + sellerid + ") as T3 left join Off_AVG_SalesData as T4" +
-                " on T3.DW = T4.DayOfWeek and T4.StoreId = T3.StoreId" +
-                " order by T3.Date";
+            string sql = "Select T3.Date, T3.SalesCount, T3.SalesAmount, T3.StorageCount, T4.AVG_SalesData, T4.AVG_AmountData from (select T1.Date,T1.StoreId, SUM(T2.SalesCount) as SalesCount, SUM(T2.SalesAmount) as SalesAmount, SUM(T2.StorageCount) as StorageCount from Off_SalesInfo_Daily as T1 left join " +
+                "[Off_Daily_Product] as T2 on T1.Id = T2.DailyId" +
+                " where T1.SellerId = " + sellerid + " and Date>= '" + startdate + "' and Date<='" + enddate + "' " +
+                "group by T1.Date, T1.StoreId) as T3 left join Off_AVG_Info as T4 on DatePart(DW, T3.Date) = T4.DayOfWeek and T3.StoreId = T4.StoreId order by T3.Date";
             var data = offlineDB.Database.SqlQuery<Seller_Statistic>(sql);
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
         }
@@ -3362,16 +3359,11 @@ namespace PeriodAid.Controllers
     public class Seller_Statistic
     {
         public DateTime Date { get; set; }
-        public int? Item_Brown { get; set; }
-        public int? Item_Black { get; set; }
-        public int? Item_Lemon { get; set; }
-        public int? Item_Honey { get; set; }
-        public int? Item_Dates { get; set; }
-        public decimal? AVG_BROWN { get; set; }
-        public decimal? AVG_BLACK { get; set; }
-        public decimal? AVG_LEMON { get; set; }
-        public decimal? AVG_HONEY { get; set; }
-        public decimal? AVG_DATES { get; set; }
+        public int? SalesCount { get; set; }
+        public decimal? SalesAmount { get; set; }
+        public int? StorageCount { get; set; }
+        public decimal? AVG_SalesData { get; set; }
+        public decimal? AVG_AmountData { get; set; }
     }
     public class StoreSystem_Statistic
     {
