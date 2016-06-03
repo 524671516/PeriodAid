@@ -50,6 +50,7 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_Product> Off_Product { get; set; }
         public virtual DbSet<Off_Daily_Product> Off_Daily_Product { get; set; }
         public virtual DbSet<Off_Sales_Template> Off_Sales_Template { get; set; }
+        public virtual DbSet<Off_AVG_Info> Off_AVG_Info { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -155,6 +156,12 @@ namespace PeriodAid.Models
 
             modelBuilder.Entity<Off_Store>()
                 .HasMany(e => e.Off_Manager_Request)
+                .WithRequired(e => e.Off_Store)
+                .HasForeignKey(e => e.StoreId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Off_Store>()
+                .HasMany(e => e.Off_AVG_Info)
                 .WithRequired(e => e.Off_Store)
                 .HasForeignKey(e => e.StoreId)
                 .WillCascadeOnDelete(true);
@@ -709,6 +716,9 @@ namespace PeriodAid.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Manager_Request> Off_Manager_Request { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_AVG_Info> Off_AVG_Info { get; set; }
+
         public int Off_System_Id { get; set; }
 
         public virtual Off_System Off_System { get; set; }
@@ -1243,6 +1253,21 @@ namespace PeriodAid.Models
         public int Off_System_Id { get; set; }
 
         public virtual Off_System Off_System { get; set; }
+    }
+
+    public partial class Off_AVG_Info
+    {
+        public int Id { get; set; }
+
+        public int StoreId { get; set; }
+
+        public int DayOfWeek { get; set; }
+
+        public decimal? AVG_SalesData { get; set; }
+
+        public decimal? AVG_AmountData { get; set; }
+
+        public virtual Off_Store Off_Store { get; set; }
     }
 
     public partial class Off_Manager_Announcement

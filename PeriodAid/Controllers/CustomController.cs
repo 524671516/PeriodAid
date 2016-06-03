@@ -1075,6 +1075,10 @@ namespace PeriodAid.Controllers
                                 try
                                 {
                                     int amount = Convert.ToInt32(order.payment_amount * 100);
+                                    if (amount >= 4000)
+                                    {
+                                        amount = 4000;
+                                    }
                                     bill.platform_code = order.platform_code;
                                     bill.SendTime = DateTime.Now;
                                     bill.Status = 1;
