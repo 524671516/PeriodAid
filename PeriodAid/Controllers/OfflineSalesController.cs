@@ -2895,7 +2895,6 @@ namespace PeriodAid.Controllers
                 }
                 else if (type == "day")
                 {
-                    DateTime et = Convert.ToDateTime(enddate);
                     string sql = "SELECT T1.Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
                         "where Date>= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "' and T2.Off_System_Id = " + user.DefaultSystemId + " " +
                         "group by T2.StoreSystem, T1.Date";

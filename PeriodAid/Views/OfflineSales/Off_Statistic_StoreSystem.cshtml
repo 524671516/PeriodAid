@@ -18,8 +18,8 @@
         </div>
         <ul class="col-md-5 list-inline list-unstyled">
             <li><button id="data-btn" class="btn btn-info">查看销量</button></li>
-            <li><button id="datedata-btn" class="btn btn-info">查看日销量工资</button></li>
-            <li><button id="mounthdata-btn" class="btn btn-info">查看月销量工资</button></li>
+            <li><button id="datedata-btn" class="btn btn-info datedata-btn" data-salary="day">查看日工资</button></li>
+            <li><button id="mounthdata-btn" class="btn btn-info datedata-btn" data-salary="month">查看月工资</button></li>
         </ul>
     </div>
 <span id="danger" class="text-danger h5"></span>    
@@ -151,6 +151,13 @@
             return false
         }
     });
+    $(".datedata-btn").click(function () {
+        var start = $("#data-startTime").val();
+        var end = $("#data-endTime").val();
+        var storesystem = $("#StoreSystem").val();
+        var type = $(this).attr("data-salary");
+        salary_statistic(start, end, storesystem, type)
+    });
     Date.prototype.Format = function (fmt) { //author: meizz   
         var o = {
             "M+": this.getMonth() + 1,                 //月份   
@@ -168,5 +175,134 @@
                 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
     }
+    function salary_statistic(start, end, storesystem, type) {
+        var link_url = "/OfflineSales/Off_Statistic_StoreSystem_Salary_Ajax";
+        if (start > end) {
+            $("#danger").text("开始时间不能大于结束时间")
+        } else if (start == "" || end == "") {
+            $("#danger").text("时间不能为空")
+        } else {
+            $("#danger").addClass("hidden");
+            $.ajax({
+                url: link_url,
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    storesystem: storesystem,
+                    type: type
+                },
+                success: function (data) {
+                    if (data.data.length == 0) {
+                        alert("该区域在此时间内无数据");
+                    } else {
+                        var datearray = new Array();
+                        var salaryarry = new Array();
+                        var debitarry = new Array();
+                        var bonusarry = new Array();
+                        for (var i = 0; i < data.data.length; i++) {
+                            var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
+                            var dee = new Date(deeint)
+                            datearray.push(dee.Format("MM-dd"));
+                            var totalsalary = data.data[i].Salary
+                            salaryarry.push(totalsalary);
+                            var totaldebit = Math.abs(data.data[i].Debit)
+                            debitarry.push(totaldebit);
+                            var totalbonus = data.data[i].Bonus
+                            bonusarry.push(totalbonus);
+                        }
+                        $('#myChart_Column').highcharts({
+                            chart: {
+                                zoomType: 'xy'
+                            },
+                            title: {
+                                text: storesystem + '每月工资'
+                            },
+                            //subtitle: {
+                            //    text: 'Source: WorldClimate.com'
+                            //},
+                            xAxis: [{
+                                categories: datearray
+                            }],
+                            yAxis: [{ // Primary yAxis
+                                labels: {
+                                    //format: '{value}°C',
+                                    style: {
+                                        color: '#4572A7'
+                                    }
+                                },
+                                title: {
+                                    text: '工资',
+                                    style: {
+                                        color: '#4572A7'
+                                    }
+                                }
+                            }, { // Secondary yAxis
+                                title: {
+                                    text: '奖金',
+                                    style: {
+                                        color: '#f10000'
+                                    }
+                                },
+                                labels: {
+                                    //format: '{value} mm',
+                                    style: {
+                                        color: '#f10000'
+                                    }
+                                },
+                                opposite: true
+                            }, { // Secondary yAxis
+                                title: {
+                                    text: '扣款',
+                                    style: {
+                                        color: '#89A54E'
+                                    }
+                                },
+                                labels: {
+                                    //format: '{value} mm',
+                                    style: {
+                                        color: '#89A54E'
+                                    }
+                                },
+                                opposite: true
+                            }],
+                            tooltip: {
+                                shared: true
+                            },
+
+                            series: [{
+                                name: '扣款',
+                                color: '#89A54E',
+                                type: 'column',
+                                yAxis: 2,
+                                data: debitarry,
+                                //tooltip: {
+                                //    valueSuffix: ' mm'
+                                //}
+
+                            }, {
+                                name: '工资',
+                                color: '#4572A7',
+                                type: 'column',
+                                data: salaryarry,
+                                //tooltip: {
+                                //    valueSuffix: '°C'
+                                //}
+                            }, {
+                                name: '奖金',
+                                color: '#f10000',
+                                type: 'column',
+                                yAxis: 1,
+                                data: bonusarry,
+                                //tooltip: {
+                                //    valueSuffix: '°C'
+                                //}
+                            }]
+                        });
+                    }
+                }
+            });
+        }
+    }
+   
 </script>
 
