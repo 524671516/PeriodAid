@@ -96,147 +96,60 @@
                                 }
                             }]
                         });
-
-                    };
-                    $.ajax({
-                        url: "/OfflineSales/Off_Statistic_StoreSystem_Product_Ajax",
-                        data: {
-                            startdate: start,
-                            enddate: end,
-                            storesystem: storesystem
-                        },
-                        success: function (data) {
-                            //alert(data.data[0].ProductId)
-                            var productarry = new Array();
-                            for (var i = 0; i < data.data.length; i++) {
-                                var productlist = {
-                                    name: data.data[i].SimpleName,
-                                    y: data.data[i].SalesCount
-                                }
-                                productarry.push(productlist)
-                            }
-                            //console.log(productarry)
-                            $('#myChart_Pie').highcharts({
-                                chart: {
-                                    plotBackgroundColor: null,
-                                    plotBorderWidth: null,
-                                    plotShadow: false
-                                },
-                                title: {
-                                    text: storesystem + '每天各个种类销售总额饼状图(单位：盒/天)'
-                                },
-                                tooltip: {
-                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                                },
-                                plotOptions: {
-                                    pie: {
-                                        allowPointSelect: true,
-                                        cursor: 'pointer',
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        showInLegend: true
+                        $.ajax({
+                            url: "/OfflineSales/Off_Statistic_StoreSystem_Product_Ajax",
+                            data: {
+                                startdate: start,
+                                enddate: end,
+                                storesystem: storesystem
+                            },
+                            success: function (data) {
+                                //alert(data.data[0].ProductId)
+                                var productarry = new Array();
+                                for (var i = 0; i < data.data.length; i++) {
+                                    var productlist = {
+                                        name: data.data[i].SimpleName,
+                                        y: data.data[i].SalesCount
                                     }
-                                },
-                                series: [{
-                                    type: 'pie',
-                                    name: '销售额度',
-                                    data: productarry
-                                }]
-                            });
-                        }
-                    })
+                                    productarry.push(productlist)
+                                }
+                                //console.log(productarry)
+                                $('#myChart_Pie').highcharts({
+                                    chart: {
+                                        plotBackgroundColor: null,
+                                        plotBorderWidth: null,
+                                        plotShadow: false
+                                    },
+                                    title: {
+                                        text: storesystem + '每天各个种类销售总额饼状图(单位：盒/天)'
+                                    },
+                                    tooltip: {
+                                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                    },
+                                    plotOptions: {
+                                        pie: {
+                                            allowPointSelect: true,
+                                            cursor: 'pointer',
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            showInLegend: true
+                                        }
+                                    },
+                                    series: [{
+                                        type: 'pie',
+                                        name: '销售额度',
+                                        data: productarry
+                                    }]
+                                });
+                            }
+                        })
+                    };
+                    
                 }
             });
             return false
         }
-    });
-    $("#myChart_Column").highcharts({
-        chart: {
-            zoomType: 'xy'
-        },
-        title: {
-            text: '每日销量工资柱状图'
-        },
-        xAxis: [{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        }],
-        yAxis: [{ // Primary yAxis
-            labels: {
-                //format: '元',
-                style: {
-                    color: '#89A54E'
-                }
-            },
-            title: {
-                text: '工资（元）',
-                style: {
-                    color: '#89A54E'
-                }
-            }
-        }, { // Secondary yAxis
-            title: {
-                text: '奖金（元）',
-                style: {
-                    color: '#4572A7'
-                }
-            },
-            labels: {
-                //format: '元',
-                style: {
-                    color: '#4572A7'
-                }
-            },
-            opposite: true
-        },
-        { // Secondary yAxis
-            title: {
-                text: '扣款（元）',
-                style: {
-                    color: '#5672b7'
-                }
-            },
-            labels: {
-                //format: '元',
-                style: {
-                    color: '#5672b7'
-                }
-            },
-            opposite: true
-        }],
-        tooltip: {
-            shared: true
-        },
-
-        series: [{
-            name: '奖金',
-            color: '#4572A7',
-            type: 'column',
-            yAxis: 1,
-            data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-            tooltip: {
-                valueSuffix: ' 元'
-            }
-
-        }, {
-            name: '工资',
-            color: '#89A54E',
-            type: 'column',
-            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
-            tooltip: {
-                valueSuffix: '元'
-            }
-        }, {
-            name: '扣款',
-            color: '#f10000',
-            type: 'column',
-            yAxis:2,
-            data: [8.5, 6.9, 9.5, 10.5, 18.2, 15.5, 25.2, 46.5, 23.3, 8.3, 13.9, 9.6],
-            tooltip: {
-                valueSuffix: '元'
-            }
-        }]
     });
     Date.prototype.Format = function (fmt) { //author: meizz   
         var o = {
