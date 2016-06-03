@@ -2883,9 +2883,10 @@ namespace PeriodAid.Controllers
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 DateTime st = Convert.ToDateTime(startdate);
+                DateTime et = Convert.ToDateTime(enddate);
                 if (type == "month")
                 {
-                    DateTime et = st.AddMonths(1);
+                    et = et.AddMonths(1);
                     string sql = "SELECT CONVERT(datetime, CONVERT(char(7), T1.Date, 120)+'-01') as Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
                         "where Date>= '" + st.ToString("yyyy-MM-01") + "' and Date< '" + et.ToString("yyyy-MM-01") + "' and T2.StoreSystem like '" + storesystem + "' and T2.Off_System_Id = " + user.DefaultSystemId + " " +
                         "group by T2.StoreSystem, CONVERT(char(7), T1.Date, 120) order by CONVERT(char(7), T1.Date, 120)";
