@@ -431,19 +431,15 @@ namespace PeriodAid.Controllers
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
             int dow = (int)today.DayOfWeek;
             //int dow = (int)new DateTime(2016, 04, 03).DayOfWeek;
-            if (dow == 0)
-            {
-                dow = 7;
-            }
-            var dowinfo = from m in offlineDB.Off_AVG_SalesData
-                          where m.DayOfWeek == dow && m.StoreId == storeId
-                          select new { BR = m.AVG_BROWN, BL = m.AVG_BLACK, DT = m.AVG_DATES, HN = m.AVG_HONEY, LM = m.AVG_LEMON };
+            var dowinfo = from m in offlineDB.Off_AVG_Info
+                          where m.DayOfWeek == dow+1 && m.StoreId == storeId
+                          select new { AVG_Count = m.AVG_SalesData, AVG_Amount = m.AVG_AmountData };
             if (dowinfo.Count() == 0)
                 ViewBag.AVG_Info = 0;
             else
             {
                 var l = dowinfo.FirstOrDefault();
-                ViewBag.AVG_Info = (l.BL ?? 0) + (l.LM ?? 0) + (l.HN ?? 0) + (l.BR ?? 0) + (l.DT ?? 0);
+                ViewBag.AVG_Info = l.AVG_Count;
             }
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == storeId && m.Off_System_Id == user.DefaultSystemId);
             ViewBag.ReportCount = offlineDB.Off_Checkin.Where(m => m.Off_Seller_Id == SellerId && m.Status == 2).Count();
@@ -1676,10 +1672,6 @@ namespace PeriodAid.Controllers
             DateTime today = Convert.ToDateTime(date);
             ViewBag.Today = today;
             int dow = (int)today.DayOfWeek;
-            if (dow == 0)
-            {
-                dow = 7;
-            }
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Where(m => m.StoreSystem == storesystem).Select(m => m.Id);
             var listview = from m in offlineDB.Off_Checkin
@@ -1697,10 +1689,10 @@ namespace PeriodAid.Controllers
                                Bonus = m.Bonus
                            };
             //var storelist = list.Select(m => m.StoreId);
-            var avglist = from m in offlineDB.Off_AVG_SalesData
-                          where m.DayOfWeek == dow && m.Off_System_Id == user.DefaultSystemId &&
+            var avglist = from m in offlineDB.Off_AVG_Info
+                          where m.DayOfWeek == dow + 1 && m.Off_Store.Off_System_Id == user.DefaultSystemId &&
                           storelist.Contains(m.StoreId)
-                          select new { StoreId = m.StoreId, AVG_Total = ((m.AVG_LEMON ?? 0) + (m.AVG_HONEY ?? 0) + (m.AVG_DATES ?? 0) + (m.AVG_BROWN ?? 0) + (m.AVG_BLACK ?? 0)) };
+                          select new { StoreId = m.StoreId, AVG_Total = m.AVG_SalesData, AVG_Amount = m.AVG_AmountData };
 
             var finallist = from m1 in listview
                             join m2 in avglist on m1.StoreId equals m2.StoreId into lists
