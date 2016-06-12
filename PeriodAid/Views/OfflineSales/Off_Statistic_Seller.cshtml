@@ -119,9 +119,9 @@
                                 var deeint = parseInt(resultdata[i].Date.replace(/\D/igm, ""));
                                 var dee = new Date(deeint)
                                 datearray.push(dee.Format("MM-dd"));
-                                var totaltemp = resultdata[i].Item_Brown + resultdata[i].Item_Black + resultdata[i].Item_Lemon + resultdata[i].Item_Honey + resultdata[i].Item_Dates;
+                                var totaltemp = resultdata[i].SalesCount;
                                 totalarray.push(totaltemp);
-                                var avgtotaltemp = resultdata[i].AVG_BROWN + resultdata[i].AVG_BLACK + resultdata[i].AVG_LEMON + resultdata[i].AVG_HONEY + resultdata[i].AVG_DATES;
+                                var avgtotaltemp = resultdata[i].AVG_SalesData;
                                 evatotalarry.push(avgtotaltemp)
                             }
                             $("#myChart_Bar").highcharts({
