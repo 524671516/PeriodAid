@@ -51,6 +51,7 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_Daily_Product> Off_Daily_Product { get; set; }
         public virtual DbSet<Off_Sales_Template> Off_Sales_Template { get; set; }
         public virtual DbSet<Off_AVG_Info> Off_AVG_Info { get; set; }
+        public virtual DbSet<Off_System_Setting> Off_System_Setting { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -228,6 +229,12 @@ namespace PeriodAid.Models
 
             modelBuilder.Entity<Off_System>()
                 .HasMany(e => e.Off_Sales_Template)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_System_Setting)
                 .WithRequired(e => e.Off_System)
                 .HasForeignKey(e => e.Off_System_Id)
                 .WillCascadeOnDelete(false);
@@ -624,6 +631,18 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Sales_Template> Off_Sales_Template { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_System_Setting> Off_System_Setting { get; set; }
+    }
+    public partial class Off_System_Setting
+    {
+        public int Id { get; set; }
+        public int Off_System_Id { get; set; }
+        public virtual Off_System Off_System { get; set; }
+        public string SettingName { get; set; }
+        public bool SettingResult  { get; set; }
+        public string SettingValue { get; set; }
     }
     public partial class Off_Product
     {

@@ -28,11 +28,19 @@
         @{
         Html.RenderAction("Off_DailyProductList", new { DailyId = Model.Id });
         }
-
+        <div class="form-group">
+            <label class="control-label col-md-3">添加产品</label>
+            <div class="col-md-7">
+                <select id="productlist" class="form-control"></select>
+            </div>
+            <div class="col-md-2">
+                <a href="javascript:;" class="btn btn-default" id="add-p"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        
         <div class="form-group">
             <label class="control-label col-md-3">促销员</label>
             <div class="col-md-9">
-               
                 @Html.DropDownListFor(model=>model.SellerId, ViewBag.Sellerlist as SelectList, "- 请选择 -", new { @class="form-control"})
                 @Html.ValidationMessageFor(model => model.SellerId, "", new { @class = "text-danger" })
             </div>
@@ -95,6 +103,15 @@
 }
 <script src="~/Scripts/bootstrap-switch.min.js"></script>
 <script>
+    $("#add-p").click(function () {
+        var select_item = $("#productlist").find("option:selected");
+        if (select_item.length != 0) {
+            $("#productdetails").append("<tr><td>" + select_item.text() + "</td><td><input class='form-control input-sm' type='number' placeholder='销量' name='sales_" + select_item.attr("value") + "' id='sales_" + select_item.attr("value") + "'/></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='库存' name='storage_" + select_item.attr("value") + "' id='storage_" + select_item.attr("value") + "' /></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='销售额' name='amount_" + select_item.attr("value") + "' id='amount_" + select_item.attr("value") + "' /></td></tr>");
+            select_item.remove();
+        }
+    })
     $(function () {
         $.fn.bootstrapSwitch.defaults.size = 'small';
         $.fn.bootstrapSwitch.defaults.onColor = 'success';
@@ -117,5 +134,20 @@
 
         });
         $("[name='isMultiple'][type='checkbox']").bootstrapSwitch();
+        $.ajax({
+            url: "/OfflineSales/Off_DailyInfo_Add_ProductList",
+            type: "post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    for (var i = 0; i < data.data.length; i++) {
+                        var item = $("#sales_"+data.data[i].Id);
+                        if (item.length == 0) {
+                            $("#productlist").append("<option value='" + data.data[i].Id + "' data-target='" + data.data[i].ItemCode + "'>" + data.data[i].SimpleName + "</option>");
+                        }
+                    }
+                }
+            }
+        });
+
     });
 </script>

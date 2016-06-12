@@ -36,8 +36,12 @@
         });
         $("#add-btn").click(function () {
             var link_url = "/OfflineSales/Off_CreateSalesDaily"
+            
             $.ajax({
                 url: link_url,
+                data:{
+                    random:Date.now()
+                },
                 success: function (data) {
                     $("#addcontent").html(data);
                     $("#addModal").modal()

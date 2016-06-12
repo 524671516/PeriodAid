@@ -2203,7 +2203,7 @@ namespace PeriodAid.Controllers
         public JsonResult Wx_Manager_AjaxSellerDetails(int id)
         {
             var item = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
-            return Json(new { result = "SUCCESS", data = new { Name = item.Name, Mobile = item.Mobile, CardNo = item.CardNo, CardName = item.CardName, StoreName = item.Off_Store.StoreName, AccountName = item.AccountName, IDNumber = item.IdNumber } });
+            return Json(new { result = "SUCCESS", data = new { Name = item.Name, Mobile = item.Mobile, CardNo = item.CardNo, CardName = item.CardName, StoreName = item.Off_Store.StoreName, AccountName = item.AccountName, IDNumber = item.IdNumber, BankName = item.AccountSource } });
         }
 
         // 0325 当日重点工作列表

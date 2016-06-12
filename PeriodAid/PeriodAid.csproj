@@ -224,6 +224,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
     <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\CustomFilter.cs" />
     <Compile Include="Models\ERPOrderDataContext.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />

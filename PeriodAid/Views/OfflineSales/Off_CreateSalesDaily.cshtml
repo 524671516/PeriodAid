@@ -1,17 +1,17 @@
 ﻿@model PeriodAid.Models.Off_SalesInfo_Daily
 
-@using (Html.BeginForm("Off_CreateSalesDaily","OfflineSales", FormMethod.Post, new { id = "ajaxaddForm" }))
+@using (Html.BeginForm("Off_CreateSalesDaily", "OfflineSales", FormMethod.Post, new { id = "ajaxaddForm" }))
 {
-                @Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
 
-                <div class="form-horizontal">
+    <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
 
         <div class="form-group">
             <label class="control-label col-md-3">门店名称</label>
             <div class="col-md-9">
-                @Html.DropDownListFor(model => model.StoreId, ViewBag.StoreDropDown as SelectList,"- 请选择 -", new { @class = "form-control"  })
+                @Html.DropDownListFor(model => model.StoreId, ViewBag.StoreDropDown as SelectList, "- 请选择 -", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -21,50 +21,26 @@
             <div class="col-md-9">
                 <input type="text" id="Date" name="Date" class="form-control input-sm" placeholder="时间" />
                 @*@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger time" })*@
+                    @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger time" })*@
             </div>
         </div>
-
+        <table class="table-striped table" id="productdetails">
+            <tr>
+                <th class="col-md-3">商品名称</th>
+                <th class="col-md-3">销量</th>
+                <th class="col-md-3">库存</th>
+                <th class="col-md-3">销售金额</th>
+            </tr>
+        </table>
         <div class="form-group">
-            <label class="control-label col-md-3">红糖姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Brown, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Brown, "", new { @class = "text-danger" })
+            <label class="control-label col-md-3">添加产品</label>
+            <div class="col-md-7">
+                <select id="productlist" class="form-control"></select>
+            </div>
+            <div class="col-md-2">
+                <a href="javascript:;" class="btn btn-default" id="add-p"><i class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
         </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">黑糖姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Black, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Black, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">柠檬姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Lemon, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Lemon, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">蜂蜜姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Honey, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Honey, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">红枣姜茶</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Item_Dates, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Dates, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
         <div class="form-group">
             <label class="control-label col-md-3">销售员姓名</label>
             <div class="col-md-9">
@@ -72,8 +48,8 @@
                     <option value="">- 请选择 -</option>
                 </select>
                 @*@Html.DropDownListFor(model=>model.SellerId, ViewBag.Sellerlist as SelectList, "- 请选择 -", new { @class="form-control"})
-                @Html.ValidationMessageFor(model => model.SellerId, "", new { @class = "text-danger" })*@
-                
+                    @Html.ValidationMessageFor(model => model.SellerId, "", new { @class = "text-danger" })*@
+
             </div>
         </div>
 
@@ -123,34 +99,56 @@
     </div>
 }
 <script>
-    $(function(){
-        
+    $(function () {
+        $("#Date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $("#submit-btn").click(function () {
+            $(this).attr("disabled", "disabled").val("添加中...");
+            setTimeout(formsubmit, 1000);
+            return false;
+        });
+        $("#StoreId").bind("change", function () {
+            $.ajax({
+                url: "/OfflineSales/Off_Ajax_GetStoreSeller",
+                data: {
+                    id: $("#StoreId").val()
+                },
+                type: "post",
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#SellerId").html("").append("<option value=''>- 请选择 -</option>");
+                        for (var i = 0; i < data.data.length; i++) {
+                            $("#SellerId").append("<option value='" + data.data[i].Id + "'>" + data.data[i].Name + "</option>");
+                        }
+                    }
+                }
+            })
+        });
     });
-    $("#Date").datepicker({
-        dateFormat: 'yy-mm-dd'
-    });
-    $("#submit-btn").click(function () {
-        $(this).attr("disabled", "disabled").val("添加中...");
-        setTimeout(formsubmit, 1000);
-
-        return false;
-    });
-    $("#StoreId").bind("change", function () {
-        $.ajax({
-            url: "/OfflineSales/Off_Ajax_GetStoreSeller",
-            data: {
-                id: $("#StoreId").val()
-            },
-            type: "post",
-            success: function (data) {
-                if(data.result=="SUCCESS"){
-                    $("#SellerId").html("").append("<option value=''>- 请选择 -</option>");
-                    for (var i = 0; i < data.data.length; i++) {
-                        $("#SellerId").append("<option value='" + data.data[i].Id + "'>" + data.data[i].Name + "</option>");
+    $("#add-p").click(function () {
+        var select_item = $("#productlist").find("option:selected");
+        if (select_item.length != 0) {
+            $("#productdetails").append("<tr><td>" + select_item.text() + "</td><td><input class='form-control input-sm' type='number' placeholder='销量' name='sales_" + select_item.attr("value") + "' id='sales_" + select_item.attr("value") + "'/></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='库存' name='storage_" + select_item.attr("value") + "' id='storage_" + select_item.attr("value") + "' /></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='销售额' name='amount_" + select_item.attr("value") + "' id='amount_" + select_item.attr("value") + "' /></td></tr>");
+            select_item.remove();
+        }
+    })
+    
+    $.ajax({
+        url: "/OfflineSales/Off_DailyInfo_Add_ProductList",
+        type: "post",
+        success: function (data) {
+            if (data.result == "SUCCESS") {
+                for (var i = 0; i < data.data.length; i++) {
+                    var item = $("#sales_" + data.data[i].Id);
+                    if (item.length == 0) {
+                        $("#productlist").append("<option value='" + data.data[i].Id + "' data-target='" + data.data[i].ItemCode + "'>" + data.data[i].SimpleName + "</option>");
                     }
                 }
             }
-        })
+        }
     });
     function formsubmit() {
         $('#ajaxaddForm').ajaxSubmit(function (data) {
@@ -170,6 +168,6 @@
             }
         });
     }
-    
+
 </script>
 
