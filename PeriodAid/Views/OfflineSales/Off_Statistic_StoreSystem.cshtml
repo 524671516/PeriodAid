@@ -17,9 +17,8 @@
             @Html.DropDownList("StoreSystem",ViewBag.SystemList as SelectList, new { @class="form-control"})
         </div>
         <ul class="col-md-5 list-inline list-unstyled">
-            <li><button id="data-btn" class="btn btn-info">查看销量</button></li>
-            <li><button id="datedata-btn" class="btn btn-info">查看日销量工资</button></li>
-            <li><button id="mounthdata-btn" class="btn btn-info">查看月销量工资</button></li>
+            <li><button id="data-btn" class="btn btn-info data-btn"data-salary="day">查看日数据</button></li>
+            <li><button id="mounthdata-btn" class="btn btn-info data-btn" data-salary="month">查看月数据</button></li>
         </ul>
     </div>
 <span id="danger" class="text-danger h5"></span>    
@@ -42,11 +41,11 @@
     $("#data-endTime").datepicker({
         dateFormat: 'yy-mm-dd'
     });
-    $("#data-btn").click(function () {
+    $(".data-btn").click(function () {
         var start = $("#data-startTime").val();
         var end = $("#data-endTime").val();
         var storesystem = $("#StoreSystem").val();
-        var link_url = "/OfflineSales/Off_Statistic_StoreSystem_Ajax";
+        var type = $(this).attr("data-salary");
         if (start > end) {
             $("#danger").text("开始时间不能大于结束时间")
         } else if (start == "" || end == "") {
@@ -54,7 +53,7 @@
         }else {
             $("#danger").addClass("hidden")
             $.ajax({
-                url: link_url,
+                url: "/OfflineSales/Off_Statistic_StoreSystem_Ajax",
                 data: {
                     startdate: start,
                     enddate: end,
@@ -144,6 +143,7 @@
                                 });
                             }
                         })
+                        salary_statistic(start, end, storesystem, type)
                     };
                     
                 }
@@ -168,5 +168,106 @@
                 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
     }
+    function salary_statistic(start, end, storesystem, type) {
+            $.ajax({
+                url: "/OfflineSales/Off_Statistic_StoreSystem_Salary_Ajax",
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    storesystem: storesystem,
+                    type: type
+                },
+                success: function (data) {
+                    if (data.data.length == 0) {
+                        alert("该区域在此时间内无数据");
+                    } else {
+                        var datearray = new Array();
+                        var salaryarry = new Array();
+                        var debitarry = new Array();
+                        var bonusarry = new Array();
+                        for (var i = 0; i < data.data.length; i++) {
+                            var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
+                            var dee = new Date(deeint)
+                            datearray.push(dee.Format("MM-dd"));
+                            var totalsalary = data.data[i].Salary
+                            salaryarry.push(totalsalary);
+                            var totaldebit = Math.abs(data.data[i].Debit)
+                            debitarry.push(totaldebit);
+                            var totalbonus = data.data[i].Bonus
+                            bonusarry.push(totalbonus);
+                        }
+                        $('#myChart_Column').highcharts({
+                            chart: {
+                                zoomType: 'xy'
+                            },
+                            title: {
+                                text: storesystem + '工资表'
+                            },
+                            //subtitle: {
+                            //    text: 'Source: WorldClimate.com'
+                            //},
+                            xAxis: [{
+                                categories: datearray
+                            }],
+                            yAxis: [{ // Primary yAxis
+                                labels: {
+                                    enabled: false
+                                },
+                                title: {
+                                    text: ''
+                                }
+                            }, { // Primary yAxis
+                                labels: {
+                                    enabled: false
+                                },
+                                title: {
+                                    text: ''
+                                }
+                            }, { // Primary yAxis
+                                labels: {
+                                    enabled: false
+                                },
+                                title: {
+                                    text: ''
+                                }
+                            }],
+                            tooltip: {
+                                shared: true
+                            },
+
+                            series: [{
+                                name: '扣款',
+                                color: '#89A54E',
+                                type: 'column',
+                                yAxis: 2,
+                                data: debitarry,
+                                //tooltip: {
+                                //    valueSuffix: ' mm'
+                                //}
+
+                            }, {
+                                name: '工资',
+                                color: '#4572A7',
+                                type: 'column',
+                                data: salaryarry,
+                                //tooltip: {
+                                //    valueSuffix: '°C'
+                                //}
+                            }, {
+                                name: '奖金',
+                                color: '#f10000',
+                                type: 'column',
+                                yAxis: 1,
+                                data: bonusarry,
+                                //tooltip: {
+                                //    valueSuffix: '°C'
+                                //}
+                            }]
+                        });
+                    }
+                }
+            });       
+    }
+   
 </script>
 
