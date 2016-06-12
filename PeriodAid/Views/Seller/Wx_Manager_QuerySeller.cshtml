@@ -97,18 +97,25 @@
                     <div class="weui_cell">
                         <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card"></i></div>
                         <div class="weui_cell_bd weui_cell_primary">
-                            <p>开户行</p>
+                            <p>银行名称</p>
                         </div>
                         <span id="cardName" class="weui_cell_ft" style="display:inline-block"></span>
+                    </div>
+                    <div class="weui_cell">
+                        <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card"></i></div>
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>开户行</p>
+                        </div>
+                        <span id="bankName" class="weui_cell_ft" style="display:inline-block"></span>
                     </div>
                     <div class="weui_cell">
                         <div class="weui_cell_hd text-muted" style="width:30px;"><i class="fa fa-credit-card-alt"></i></div>
                         <div class="weui_cell_bd weui_cell_primary">
                             <p>银行账号</p>
                         </div>
-                        <span id="carNd" name="carNd" type="text" placeholder="请输入银行卡号"></span>
+                        <span id="carNd" name="carNd" type="text" class="weui_cell_ft" placeholder="请输入银行卡号"></span>
                     </div>
-                    <div style="padding:10px 15px;border-top:1px solid #f7f7f7">
+                    <div class="container">
                         <a class="weui_btn weui_btn_primary" id="btn-edit">修改</a>
                     </div>
                     <input class="hidden" id="sellerid" />
@@ -116,6 +123,7 @@
             </div>
         </div>
     </div>
+    <br /><br />
     <script src="~/Scripts/zepto.min.js"></script>
     <script>
         // searchbar
@@ -180,13 +188,11 @@
                         $("#cardName").text(data.data.CardName);
                         $("#storeName").text(data.data.StoreName);
                         $("#accountName").text(data.data.AccountName);
+                        $("#bankName").text(data.data.BankName);
                         $("#idNumber").text(data.data.IDNumber);
                         $("#search_show").hide();
                         $("#search_input").val('');
                         $("#weui_con").show();
-                        if ($("#accountName").text('')) {
-                            $("#accountName").text('')
-                        }
                     }
                 })
             });

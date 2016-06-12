@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Daily_Product>
 
 
-<table class="table-striped table">
+<table class="table-striped table" id="productdetails">
     <tr>
         <th class="col-md-3">商品名称</th>
         <th class="col-md-3">销量</th>
@@ -15,7 +15,6 @@
                 @Html.Encode(item.Off_Product.SimpleName)
             </td>
             <td>
-
                 <input class="form-control input-sm" type="number" placeholder="销量" name="sales_@item.ProductId" id="sales_@item.ProductId" value="@item.SalesCount" />
             </td>
             <td>

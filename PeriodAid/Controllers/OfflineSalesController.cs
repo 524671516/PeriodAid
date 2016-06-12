@@ -595,6 +595,7 @@ namespace PeriodAid.Controllers
                 item.UploadUser = User.Identity.Name;
                 offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                 offlineDB.SaveChanges();
+                update_Sales_AVGINfo(item.StoreId, (int)item.Date.DayOfWeek + 1);
                 return Content("SUCCESS");
             }
             else
@@ -618,6 +619,15 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_SalesInfo_Daily.SingleOrDefault(m => m.Id == DailyId);
             var model = item.Off_Daily_Product;
             return PartialView(model);
+        }
+        
+        public JsonResult Off_DailyInfo_Add_ProductList()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var product = from m in offlineDB.Off_Product
+                          where m.Off_System_Id == user.DefaultSystemId && m.status >= 0
+                          select new { Id = m.Id, ItemCode = m.ItemCode, SimpleName = m.SimpleName };
+            return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
@@ -1867,6 +1877,8 @@ namespace PeriodAid.Controllers
                         offlineDB.Off_Daily_Product.Add(product);
                     }
                     offlineDB.SaveChanges();
+                    // 计算平均值
+                    update_Sales_AVGINfo(item.Off_Checkin_Schedule.Off_Store_Id, (int)item.Off_Checkin_Schedule.Subscribe.DayOfWeek + 1);
                     return RedirectToAction("Off_CheckIn_List");
                 }
                 else if (item.Status >= 0 && item.Status <= 3)
@@ -1950,6 +1962,35 @@ namespace PeriodAid.Controllers
             else
             {
                 return View("Error");
+            }
+        }
+        public void update_Sales_AVGINfo(int storeid, int dow)
+        {
+            var item = offlineDB.Off_AVG_Info.SingleOrDefault(m => m.DayOfWeek == dow && m.StoreId == storeid);
+            if (item != null)
+            {
+                //修改
+                string sql = "update Off_AVG_Info set AVG_SalesData = (Select cast(cast(T5.SalesCount as decimal(18, 2)) / T2.Count as decimal(18, 2)) as AVG_SalesData from(SELECT StoreId, DATEPART(DW, T1.[Date]) as DayOfWeek, COUNT(T1.Id) as Count FROM Off_SalesInfo_Daily as T1" +
+                    " where T1.StoreId = " + storeid + " and DATEPART(DW, T1.[Date]) = " + dow + " group by T1.StoreId, DATEPART(DW, T1.[Date])) as T2  left join (select T3.StoreId, DATEPART(DW, T3.Date) as DayOfWeek, SUM(T4.SalesCount) as SalesCount, SUM(T4.SalesAmount) as SalesAmount, SUM(T4.StorageCount) as StorageCount" +
+                    " FROM Off_SalesInfo_Daily as T3 left join Off_Daily_Product as T4 on T3.Id = T4.DailyId  where T3.StoreId = " + storeid + " and DATEPART(DW, T3.[Date]) = " + dow + " group by T3.StoreId, DATEPART(DW, T3.Date) ) as T5 on T2.StoreId = T5.StoreId and T2.DayOfWeek = T5.DayOfWeek), " +
+                    " AVG_AmountData = ( Select cast(cast(T5.SalesAmount as decimal(18, 2)) / T2.Count as decimal(18,2)) as AVG_AmountData from(SELECT StoreId, DATEPART(DW, T1.[Date]) as DayOfWeek, COUNT(T1.Id) as Count FROM Off_SalesInfo_Daily as T1 where T1.StoreId = " + storeid + " and DATEPART(DW, T1.[Date]) = " + dow +
+                    " group by T1.StoreId, DATEPART(DW, T1.[Date])) as T2  left join (select T3.StoreId, DATEPART(DW, T3.Date) as DayOfWeek, SUM(T4.SalesCount) as SalesCount, SUM(T4.SalesAmount) as SalesAmount, SUM(T4.StorageCount) as StorageCount" +
+                    " FROM Off_SalesInfo_Daily as T3 left join Off_Daily_Product as T4 on T3.Id = T4.DailyId where T3.StoreId = " + storeid + " and DATEPART(DW, T3.[Date]) = " + dow + " group by T3.StoreId, DATEPART(DW, T3.Date) ) as T5 on T2.StoreId = T5.StoreId and T2.DayOfWeek = T5.DayOfWeek)" +
+                    " where StoreId = " + storeid + " and DayOfWeek = " + dow;
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
+            }
+            else
+            {
+                //新增
+                string sql = "INSERT INTO dbo.Off_AVG_Info ([StoreId] ,[DayOfWeek] ,[AVG_SalesData],[AVG_AmountData])"+ 
+                    " Select T2.StoreId, T2.DayOfWeek, cast(cast(T5.SalesCount as decimal(18,2))/T2.Count as decimal(18,2)) as AVG_SalesData, cast(cast(T5.SalesAmount as decimal(18, 2)) / T2.Count as decimal(18,2)) as AVG_AmountData from(SELECT StoreId, DATEPART(DW, T1.[Date]) as DayOfWeek, COUNT(T1.Id) as Count" +
+                    " FROM Off_SalesInfo_Daily as T1 where T1.StoreId = " + storeid + " and DATEPART(DW, T1.[Date]) = " + dow +
+                    " group by T1.StoreId, DATEPART(DW, T1.[Date])) as T2  left join (select T3.StoreId, DATEPART(DW, T3.Date) as DayOfWeek, SUM(T4.SalesCount) as SalesCount, SUM(T4.SalesAmount) as SalesAmount, SUM(T4.StorageCount) as StorageCount" +
+                    " FROM Off_SalesInfo_Daily as T3 left join Off_Daily_Product as T4 on T3.Id = T4.DailyId" +
+                    " where T3.StoreId = " + storeid + " and DATEPART(DW, T3.[Date]) = " + dow + " group by T3.StoreId, DATEPART(DW, T3.Date) ) as T5 on T2.StoreId = T5.StoreId and T2.DayOfWeek = T5.DayOfWeek";
+                offlineDB.Database.ExecuteSqlCommand(sql);
+                offlineDB.SaveChanges();
             }
         }
         public PartialViewResult Off_ConfirmPrductListBySchedule(int ScheduleId)
@@ -2326,17 +2367,62 @@ namespace PeriodAid.Controllers
             return PartialView(item);
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult Off_CreateSalesDaily(Off_SalesInfo_Daily model)
+        public ActionResult Off_CreateSalesDaily(Off_SalesInfo_Daily model, FormCollection form)
         {
             if (ModelState.IsValid)
             {
                 Off_SalesInfo_Daily item = new Off_SalesInfo_Daily();
                 if (TryUpdateModel(item))
                 {
+                    List<int> plist = new List<int>();
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    var productlist = from m in offlineDB.Off_Product
+                                      where m.Off_System_Id == user.DefaultSystemId
+                                      && m.status >= 0
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                        // 判断是否已有数据
+
+                        // 添加数据
+                        // 如果三项数据不为空，则添加
+                        if (sales == null && storage == null && amount == null)
+                        { }
+                        else if (sales == 0 && storage == 0 && amount == 0)
+                        {
+
+                        }
+                        else
+                        {
+                            Off_Daily_Product existdata = new Off_Daily_Product()
+                            {
+                                Off_SalesInfo_Daily = item,
+                                ItemCode = product.ItemCode,
+                                ProductId = product.Id,
+                                SalesAmount = amount,
+                                SalesCount = sales,
+                                StorageCount = storage
+                            };
+                            offlineDB.Off_Daily_Product.Add(existdata);
+                            //offlineDB.SaveChanges();
+                        }
+                    }
                     item.UploadTime = DateTime.Now;
                     item.UploadUser = User.Identity.Name;
                     offlineDB.Off_SalesInfo_Daily.Add(item);
                     offlineDB.SaveChanges();
+                    update_Sales_AVGINfo(item.StoreId, (int)item.Date.DayOfWeek + 1);
                     return Content("SUCCESS");
                 }
                 return Content("FAIL");
@@ -2371,6 +2457,7 @@ namespace PeriodAid.Controllers
                 {
                     offlineDB.Off_SalesInfo_Daily.Remove(item);
                     offlineDB.SaveChanges();
+                    update_Sales_AVGINfo(item.StoreId, (int)(item.Date.DayOfWeek) + 1);
                     return Content("SUCCESS");
                 }
                 catch
@@ -2858,7 +2945,7 @@ namespace PeriodAid.Controllers
             DateTime st = Convert.ToDateTime(startdate);
             DateTime et = Convert.ToDateTime(enddate);
             string sql = "SELECT T2.StoreSystem,[Date], count([Date]) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
-                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join OFFLINESALES.dbo.Off_Store as T2 on T1.StoreId = T2.Id left join OffLINESALES.dbo.Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
+                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
                 "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date < '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "'" +
                 "and T2.Off_System_Id = " + user.DefaultSystemId + " group by T1.Date, T2.StoreSystem order by T1.Date";
             var data = offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);     
@@ -2871,7 +2958,7 @@ namespace PeriodAid.Controllers
             DateTime st = Convert.ToDateTime(startdate);
             DateTime et = Convert.ToDateTime(enddate);
             string sql = "SELECT T3.ProductId, T4.SimpleName, sum(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
-                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join OFFLINESALES.dbo.Off_Store as T2 on T1.StoreId = T2.Id left join OffLINESALES.dbo.Off_Daily_Product as T3 on T1.Id = T3.DailyId left join OFFLINESALES.dbo.Off_Product as T4 on T4.Id = T3.ProductId " +
+                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId left join Off_Product as T4 on T4.Id = T3.ProductId " +
                 "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "'" +
                 "and T2.Off_System_Id = " + user.DefaultSystemId + " and ProductId is not NULL group by T3.ProductId,T4.SimpleName order by T4.SimpleName";
             var data = offlineDB.Database.SqlQuery<StoreSystem_Product_Statistic>(sql);
@@ -2927,7 +3014,7 @@ namespace PeriodAid.Controllers
             DateTime et = Convert.ToDateTime(enddate);
             var user = UserManager.FindById(User.Identity.GetUserId());
             string sql = "SELECT T2.StoreName,[Date], count([Date]) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
-                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join OFFLINESALES.dbo.Off_Store as T2 on T1.StoreId = T2.Id left join OffLINESALES.dbo.Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
+                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
                 "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date < '" + et.ToString("yyyy-MM-dd") + "' and T1.StoreId =" + storeid + " " +
                 "and T2.Off_System_Id = " + user.DefaultSystemId + " group by T1.Date, T2.StoreName order by T1.Date";
             var data = offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);
@@ -2939,7 +3026,7 @@ namespace PeriodAid.Controllers
             DateTime et = Convert.ToDateTime(enddate);
             var user = UserManager.FindById(User.Identity.GetUserId());
             string sql = "SELECT T3.ProductId, T4.SimpleName, sum(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
-                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join OFFLINESALES.dbo.Off_Store as T2 on T1.StoreId = T2.Id left join OffLINESALES.dbo.Off_Daily_Product as T3 on T1.Id = T3.DailyId left join OFFLINESALES.dbo.Off_Product as T4 on T4.Id = T3.ProductId " +
+                "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId left join Off_Product as T4 on T4.Id = T3.ProductId " +
                 "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T1.StoreId like '" + storeid + "'" +
                 "and T2.Off_System_Id = " + user.DefaultSystemId + " and ProductId is not NULL group by T3.ProductId,T4.SimpleName order by T4.SimpleName";
             var data = offlineDB.Database.SqlQuery<StoreSystem_Product_Statistic>(sql);
@@ -3284,7 +3371,11 @@ namespace PeriodAid.Controllers
             offlineDB.SaveChanges();
             return Content("SUCCESS");
         }
-
+        [SettingFilter(SettingName ="TEST")]
+        public ContentResult TestCustomSetting()
+        {
+            return Content("通过");
+        }
         private byte[] convertCSV(byte[] array)
         {
             byte[] outBuffer = new byte[array.Length + 3];
