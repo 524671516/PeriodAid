@@ -671,6 +671,7 @@
     <Content Include="Views\OfflineSales\Off_DailyProductList.cshtml" />
     <Content Include="Views\OfflineSales\Off_BindSeller_List_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_CreditInfo.cshtml" />
+    <Content Include="Views\Pay\StartPayAmount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

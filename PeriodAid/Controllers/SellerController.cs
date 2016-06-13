@@ -1918,7 +1918,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_Task()
         {
@@ -1938,7 +1938,7 @@ namespace PeriodAid.Controllers
                 ViewBag.CheckInCount = task.Off_Manager_CheckIn.Count(m => m.Canceled == false);
             return View();
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_AddCheckIn()
         {
@@ -1976,7 +1976,7 @@ namespace PeriodAid.Controllers
                 return View(checkin);
             }
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Wx_Manager_AddCheckIn(Off_Manager_CheckIn model)
@@ -2015,7 +2015,7 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_CheckInView()
         {
@@ -2034,7 +2034,7 @@ namespace PeriodAid.Controllers
                 ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Id);
             return View();
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_CheckInList_Ajax(int id)
         {
@@ -2045,7 +2045,7 @@ namespace PeriodAid.Controllers
             ViewBag.TaskId = id;
             return PartialView(list);
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_TaskReport(int? id)
         {
@@ -2074,7 +2074,7 @@ namespace PeriodAid.Controllers
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View();
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_TaskReport_Ajax(int id)
         {
@@ -2082,7 +2082,7 @@ namespace PeriodAid.Controllers
 
             return PartialView(item);
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Wx_Manager_TaskReport_Ajax(Off_Manager_Task model)
@@ -2104,7 +2104,7 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         [HttpPost]
         public JsonResult Wx_Manager_CancelCheckIn_Ajax(int id)
@@ -2128,8 +2128,8 @@ namespace PeriodAid.Controllers
             ViewBag.Mobile = manager.Mobile;
             return View();
         }
-
         // 0317 查看所有人签到列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Senior")]
         public ActionResult Wx_Senior_AllCheckInList()
         {
@@ -2151,6 +2151,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0317 查看所有人签到列表-AJAX
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Wx_Senior_AllCheckInList_Ajax(string date)
         {
             var _date = Convert.ToDateTime(date);
@@ -2164,6 +2165,7 @@ namespace PeriodAid.Controllers
 
 
         // 0317 查看签到详情信息
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Senior")]
         public ActionResult Wx_Senior_CheckInDetails(int id)
         {
@@ -2207,6 +2209,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0325 当日重点工作列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_AnnouncementList()
         {
@@ -2221,6 +2224,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0325 督导需求提交
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_Request_Create()
         {
@@ -2246,7 +2250,7 @@ namespace PeriodAid.Controllers
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View(request);
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Wx_Manager_Request_Create(Off_Manager_Request model)
@@ -2288,6 +2292,7 @@ namespace PeriodAid.Controllers
             }
         }
         // 0328 督导需求变更
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_Request_Edit(int id)
         {
@@ -2307,6 +2312,7 @@ namespace PeriodAid.Controllers
             }
             return View("Error");
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Wx_Manager_Request_Edit(Off_Manager_Request model)
@@ -2340,6 +2346,7 @@ namespace PeriodAid.Controllers
             }
         }
         // 0328 督导需求列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Wx_Manager_Request_List()
         {
@@ -2363,6 +2370,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0328 作废督导需求列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
         [HttpPost]
         public ActionResult Wx_Manager_Request_Cancel_Ajax(int id)
@@ -2376,6 +2384,7 @@ namespace PeriodAid.Controllers
 
         // 0328 审核督导列表
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Wx_Manager_Request_Check(int id)
         {
             var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
@@ -2390,6 +2399,7 @@ namespace PeriodAid.Controllers
             return View(item);
         }
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Wx_Manager_Request_Check(Off_Manager_Request model)
         {
@@ -2422,6 +2432,7 @@ namespace PeriodAid.Controllers
             }
         }
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Wx_Manager_Request_Dismiss(Off_Manager_Request model)
         {
@@ -2446,11 +2457,13 @@ namespace PeriodAid.Controllers
             }
         }
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         public ActionResult Wx_Manager_BonusList()
         {
             return View();
         }
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         public ActionResult Wx_Manager_BonusList_Ajax()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2461,7 +2474,9 @@ namespace PeriodAid.Controllers
                        select m;
             return PartialView(list);
         }
+
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         [HttpPost]
         public ActionResult Wx_Manager_BonusList_Dismiss(string bonuslist)
         {
@@ -2482,6 +2497,7 @@ namespace PeriodAid.Controllers
             }
         }
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         [HttpPost]
         public ActionResult Wx_Manager_BonusList_Confirm(string bonuslist)
         {
@@ -2519,6 +2535,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
         [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         public ActionResult Wx_Manager_BonusHistory_Ajax()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2530,6 +2547,7 @@ namespace PeriodAid.Controllers
             return PartialView(list);
         }
         [Authorize(Roles ="Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         [HttpPost]
         public async Task<ActionResult> Wx_Manager_BonusQuery_Ajax()
         {

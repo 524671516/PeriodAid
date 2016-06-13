@@ -75,6 +75,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
         public PartialViewResult Off_Store_ajaxlist(int? page, string query)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -126,10 +127,12 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult Off_Sales_Month()
         {
             return View();
         }
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult Off_MonthSalesInfo_ajaxlist(int? page, string query)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -180,14 +183,15 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
-        
 
+        [SettingFilter(SettingName = "GENERAL")]
         #region 上传店铺信息
         public ActionResult UploadStore()
         {
             return View();
         }
         [HttpPost]
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadStore(FormCollection form)
         {
             var file = Request.Files[0];
@@ -340,11 +344,13 @@ namespace PeriodAid.Controllers
         #endregion
 
         #region 上传店铺日报信息
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadDailyInfo()
         {
             return View();
         }
         [HttpPost]
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadDailyInfo(FormCollection form)
         {
             var file = Request.Files[0];
@@ -632,11 +638,13 @@ namespace PeriodAid.Controllers
         #endregion
 
         #region 上传月度门店销售表
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadMonthInfo()
         {
             return View();
         }
         [HttpPost]
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadMonthInfo(FormCollection form)
         {
             var file = Request.Files[0];
@@ -784,11 +792,13 @@ namespace PeriodAid.Controllers
 
         #region 上传促销人员信息
         /*---------- 上传促销人员信息 ----------*/
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadSeller()
         {
             return View();
         }
         [HttpPost]
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadSeller(FormCollection form)
         {
             var file = Request.Files[0];
@@ -960,12 +970,14 @@ namespace PeriodAid.Controllers
             }
         }
         #endregion
-        
+
         /* -----费用表----- */
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_List()
         {
             return View();
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Add()
         {
             List<Object> attendance = new List<Object>();
@@ -974,6 +986,7 @@ namespace PeriodAid.Controllers
             ViewBag.PayType = new SelectList(attendance, "Key", "Value");
             return View();
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Expenses_Add(FormCollection form)
         {
@@ -990,6 +1003,7 @@ namespace PeriodAid.Controllers
             }
             return RedirectToAction("Off_Expenses_List");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Edit(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1004,6 +1018,7 @@ namespace PeriodAid.Controllers
             else
                 return View("Error");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Expenses_Edit(int id, FormCollection form)
         {
@@ -1046,6 +1061,7 @@ namespace PeriodAid.Controllers
             }
             return RedirectToAction("Off_Expenses_List");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Balance(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1060,6 +1076,7 @@ namespace PeriodAid.Controllers
             else
                 return View("Error");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Expenses_Balance(int id, FormCollection form)
         {
@@ -1103,6 +1120,7 @@ namespace PeriodAid.Controllers
             }
             return View("Error");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_VerifyCost(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1117,6 +1135,7 @@ namespace PeriodAid.Controllers
             else
                 return View("Error");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_Expenses_VerifyCost(FormCollection form)
         {
@@ -1161,6 +1180,7 @@ namespace PeriodAid.Controllers
             }
             return View("Error");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost]
         public JsonResult Off_Expenses_Details_Del(int id)
         {
@@ -1180,6 +1200,7 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost]
         public JsonResult Off_Expenses_Payment_Del(int id)
         {
@@ -1199,6 +1220,7 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Check(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1210,6 +1232,7 @@ namespace PeriodAid.Controllers
             }
             return RedirectToAction("Off_Expenses_List");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Verify_Submit(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1221,6 +1244,7 @@ namespace PeriodAid.Controllers
             }
             return RedirectToAction("Off_Expenses_List");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Details(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1243,6 +1267,7 @@ namespace PeriodAid.Controllers
                 return View("Error");
 
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_AjaxList(int? page, int? type)
         {
             int _type = type ?? 0;
@@ -1254,6 +1279,7 @@ namespace PeriodAid.Controllers
                         select m).ToPagedList(_page, 50);
             return PartialView(list);
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Balance_Submit(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1265,6 +1291,7 @@ namespace PeriodAid.Controllers
             }
             return RedirectToAction("Off_Expenses_List");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Cancel(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1277,6 +1304,7 @@ namespace PeriodAid.Controllers
             }
             return RedirectToAction("Off_Expenses_List");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         public ActionResult Off_Expenses_Details_Edit(int id)
         {
             var item = offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
@@ -1285,6 +1313,7 @@ namespace PeriodAid.Controllers
             else
                 return View("Error");
         }
+        [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost]
         public ActionResult Off_Expenses_Details_Edit(FormCollection form)
         {
@@ -1298,7 +1327,7 @@ namespace PeriodAid.Controllers
             return Content(form["ExpensesId"].ToString() + "," + i + "<BR />" + listcontent);
         }
 
-
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadResult()
         {
             return View();
@@ -2467,7 +2496,7 @@ namespace PeriodAid.Controllers
             }
             return Content("FAIL");
         }
-
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult Off_CreateSalesMonth()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2479,6 +2508,7 @@ namespace PeriodAid.Controllers
             ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
             return PartialView(item);
         }
+        [SettingFilter(SettingName = "GENERAL")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Off_CreateSalesMonth(Off_SalesInfo_Month model)
         {
@@ -2507,6 +2537,7 @@ namespace PeriodAid.Controllers
         }
         // 0308
         [HttpPost]
+        [SettingFilter(SettingName = "GENERAL")]
         public ActionResult Off_DeleteSalesMonth(int id)
         {
             var item = offlineDB.Off_SalesInfo_Month.SingleOrDefault(m => m.Id == id);
@@ -2652,10 +2683,12 @@ namespace PeriodAid.Controllers
             return Content("SUCCESS");
         }
         // 0314 督导工作汇报列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_TaskList()
         {
             return View();
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public PartialViewResult Off_Manager_TaskList_Ajax(string query, int? status, int? page)
         {
             int _status = status ?? 0;
@@ -2681,6 +2714,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0314 审核督导工作
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_EditTask(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
@@ -2694,6 +2728,7 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost, ValidateAntiForgeryToken]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_EditTask(Off_Manager_Task model)
         {
 
@@ -2721,6 +2756,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0314 作废当日工作内容
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_CancelTask(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
@@ -2734,11 +2770,12 @@ namespace PeriodAid.Controllers
             return Content("FAIL");
         }
         // 0325 公告列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Announcement_List()
         {
             return View();
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Announcement_List_Ajax(int? page)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2751,12 +2788,14 @@ namespace PeriodAid.Controllers
             return PartialView(list);
         }
         // 0325 添加公告
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Announcement_Create()
         {
             Off_Manager_Announcement model = new Off_Manager_Announcement();
             return View(model);
         }
         [HttpPost, ValidateAntiForgeryToken]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Announcement_Create(Off_Manager_Announcement model)
         {
             if (ModelState.IsValid)
@@ -2782,6 +2821,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0325 修改公告
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Announcement_Edit(int id)
         {
             Off_Manager_Announcement model = offlineDB.Off_Manager_Announcement.SingleOrDefault(m => m.Id == id);
@@ -2791,6 +2831,7 @@ namespace PeriodAid.Controllers
                 return View("Error");
         }
         [HttpPost, ValidateAntiForgeryToken]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Announcement_Edit(Off_Manager_Announcement model)
         {
             if (ModelState.IsValid)
@@ -2815,6 +2856,7 @@ namespace PeriodAid.Controllers
 
         // 0325 删除公告
         [HttpPost]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Announcement_Delete_Ajax(int id)
         {
             Off_Manager_Announcement model = offlineDB.Off_Manager_Announcement.SingleOrDefault(m => m.Id == id);
@@ -2839,12 +2881,13 @@ namespace PeriodAid.Controllers
         }
 
         // 0329 获取需求列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Request_List()
         {
             
             return View();
         }
-
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Request_List_Ajax(int? page)
         {
             var _page = page ?? 1;
@@ -2858,6 +2901,7 @@ namespace PeriodAid.Controllers
         }
 
         // 0329 修改需求详情
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Request_Edit(int id)
         {
             Off_Manager_Request model = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
@@ -2867,6 +2911,7 @@ namespace PeriodAid.Controllers
                 return View("Error");
         }
         [HttpPost, ValidateAntiForgeryToken]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Request_Edit(Off_Manager_Request model)
         {
             if (ModelState.IsValid)
@@ -2892,6 +2937,7 @@ namespace PeriodAid.Controllers
 
         // 0329 驳回需求
         [HttpPost]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Request_Dismiss_Ajax(int id)
         {
             Off_Manager_Request model = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
