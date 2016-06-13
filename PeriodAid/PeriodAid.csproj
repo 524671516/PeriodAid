@@ -278,6 +278,7 @@
     <Content Include="Content\images\guide-ex-08.jpg" />
     <Content Include="Content\images\hand.png" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\logo_new.png" />
     <Content Include="Content\images\mark_0.png" />
     <Content Include="Content\images\mark_1.png" />
     <Content Include="Content\images\mark_2.png" />
