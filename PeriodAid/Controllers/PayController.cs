@@ -520,7 +520,10 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
+        public ActionResult StartPayAmount()
+        {
+            return View();
+        }
 
 
         public string parseXml(List<QueryParameter> parameters, string sign)
