@@ -100,7 +100,7 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
-        
+
 
         public ActionResult Off_Sales_main()
         {
@@ -150,14 +150,14 @@ namespace PeriodAid.Controllers
             {
                 int _page = page ?? 1;
                 var list = (from m in offlineDB.Off_SalesInfo_Month
-                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_System_Id== user.DefaultSystemId
+                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 50);
                 return PartialView(list);
             }
         }
 
-        
+
         public ActionResult Off_Seller_main()
         {
             return View();
@@ -560,7 +560,7 @@ namespace PeriodAid.Controllers
                             // 无数据则删除
                             offlineDB.Off_Daily_Product.Remove(existdata);
                         }
-                        else if(sales==0 && storage==0&& amount == 0)
+                        else if (sales == 0 && storage == 0 && amount == 0)
                         {
                             offlineDB.Off_Daily_Product.Remove(existdata);
                         }
@@ -578,7 +578,7 @@ namespace PeriodAid.Controllers
                         // 如果三项数据不为空，则添加
                         if (sales == null && storage == null && amount == null)
                         { }
-                        else if(sales == 0 && storage==0 && amount == 0)
+                        else if (sales == 0 && storage == 0 && amount == 0)
                         {
 
                         }
@@ -627,7 +627,7 @@ namespace PeriodAid.Controllers
             var model = item.Off_Daily_Product;
             return PartialView(model);
         }
-        
+
         public JsonResult Off_DailyInfo_Add_ProductList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -943,7 +943,7 @@ namespace PeriodAid.Controllers
         public PartialViewResult Ajax_AddSeller()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storelist = offlineDB.Off_Store.Where(m=>m.Off_System_Id==user.DefaultSystemId).OrderBy(m => m.StoreName);
+            var storelist = offlineDB.Off_Store.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
             ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
             Off_Seller seller = new Off_Seller();
             seller.Off_System_Id = user.DefaultSystemId;
@@ -1275,7 +1275,7 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_Expenses
-                        where m.Status >= 0 && m.PaymentType==_type && m.Off_System_Id == user.DefaultSystemId
+                        where m.Status >= 0 && m.PaymentType == _type && m.Off_System_Id == user.DefaultSystemId
                         orderby m.Id descending
                         select m).ToPagedList(_page, 50);
             return PartialView(list);
@@ -1523,7 +1523,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime day = DateTime.Parse(date);
             ViewBag.CurrentDate = date;
-            if (query!=null)
+            if (query != null)
             {
                 var list = from m in offlineDB.Off_Checkin_Schedule
                            where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
@@ -1546,7 +1546,7 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
             ViewBag.StoreName = item.Off_Store.StoreName;
             var TemplateList = from m in offlineDB.Off_Sales_Template
-                               where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
+                               where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
                                orderby m.TemplateName
                                select new { Key = m.Id, Value = m.TemplateName };
             ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
@@ -1572,7 +1572,7 @@ namespace PeriodAid.Controllers
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 ViewBag.StoreName = offlineDB.Off_Store.SingleOrDefault(m => m.Id == model.Off_Store_Id).StoreName;
                 var TemplateList = from m in offlineDB.Off_Sales_Template
-                                   where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
+                                   where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
                                    orderby m.TemplateName
                                    select new { Key = m.Id, Value = m.TemplateName };
                 ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
@@ -1596,9 +1596,9 @@ namespace PeriodAid.Controllers
                               orderby g.Key
                               select new { Key = g.Key, Value = g.Key };
             var TemplateList = from m in offlineDB.Off_Sales_Template
-                               where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
+                               where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
                                orderby m.TemplateName
-                               select new { Key = m.Id , Value = m.TemplateName };
+                               select new { Key = m.Id, Value = m.TemplateName };
             ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
 
             ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
@@ -1653,12 +1653,12 @@ namespace PeriodAid.Controllers
                             {
                                 schedule = new Off_Checkin_Schedule()
                                 {
-                                    Off_Store_Id =storeid,
+                                    Off_Store_Id = storeid,
                                     Subscribe = subscribe,
                                     Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
                                     Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
                                     Standard_Salary = model.Salary,
-                                    TemplateId =model.TemplateId,
+                                    TemplateId = model.TemplateId,
                                     Off_System_Id = user.DefaultSystemId
                                 };
                                 offlineDB.Off_Checkin_Schedule.Add(schedule);
@@ -1893,7 +1893,7 @@ namespace PeriodAid.Controllers
                     item.SubmitTime = DateTime.Now;
                     item.SubmitUser = User.Identity.Name;
                     offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    foreach(var i in item.Off_Checkin_Product)
+                    foreach (var i in item.Off_Checkin_Product)
                     {
                         Off_Daily_Product product = new Off_Daily_Product()
                         {
@@ -2014,7 +2014,7 @@ namespace PeriodAid.Controllers
             else
             {
                 //新增
-                string sql = "INSERT INTO dbo.Off_AVG_Info ([StoreId] ,[DayOfWeek] ,[AVG_SalesData],[AVG_AmountData])"+ 
+                string sql = "INSERT INTO dbo.Off_AVG_Info ([StoreId] ,[DayOfWeek] ,[AVG_SalesData],[AVG_AmountData])" +
                     " Select T2.StoreId, T2.DayOfWeek, cast(cast(T5.SalesCount as decimal(18,2))/T2.Count as decimal(18,2)) as AVG_SalesData, cast(cast(T5.SalesAmount as decimal(18, 2)) / T2.Count as decimal(18,2)) as AVG_AmountData from(SELECT StoreId, DATEPART(DW, T1.[Date]) as DayOfWeek, COUNT(T1.Id) as Count" +
                     " FROM Off_SalesInfo_Daily as T1 where T1.StoreId = " + storeid + " and DATEPART(DW, T1.[Date]) = " + dow +
                     " group by T1.StoreId, DATEPART(DW, T1.[Date])) as T2  left join (select T3.StoreId, DATEPART(DW, T3.Date) as DayOfWeek, SUM(T4.SalesCount) as SalesCount, SUM(T4.SalesAmount) as SalesAmount, SUM(T4.StorageCount) as StorageCount" +
@@ -2129,7 +2129,7 @@ namespace PeriodAid.Controllers
                                 StorageCount = storage
                             };
                             offlineDB.Off_Checkin_Product.Add(existdata);
-                            
+
                         }
                     }
                     offlineDB.SaveChanges();
@@ -2250,7 +2250,7 @@ namespace PeriodAid.Controllers
                     return Content(res);
                 }
                 else {
-                    error = "文件错误"; 
+                    error = "文件错误";
                 }
             }
             string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
@@ -2392,7 +2392,7 @@ namespace PeriodAid.Controllers
             var item = new Off_SalesInfo_Daily();
             var storelist = from m in offlineDB.Off_Store
                             where m.Off_System_Id == user.DefaultSystemId
-                            orderby m.StoreName 
+                            orderby m.StoreName
                             select new { Key = m.Id, Value = m.StoreName };
             ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
             return PartialView(item);
@@ -2659,12 +2659,12 @@ namespace PeriodAid.Controllers
                                select m).Select(m => m.Id);
             var storelist = (from m in manager.Off_Store
                              select m.Id).ToList();
-            foreach(var item in storelist)
+            foreach (var item in storelist)
             {
                 var temp = offlineDB.Off_Store.SingleOrDefault(m => m.Id == item);
                 manager.Off_Store.Remove(temp);
             }
-            
+
             foreach (var item2 in select_list)
             {
                 manager.Off_Store.Add(offlineDB.Off_Store.SingleOrDefault(m => m.Id == item2));
@@ -2886,7 +2886,7 @@ namespace PeriodAid.Controllers
         [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult Off_Manager_Request_List()
         {
-            
+
             return View();
         }
         [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
@@ -2895,7 +2895,7 @@ namespace PeriodAid.Controllers
             var _page = page ?? 1;
             var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_Manager_Request
-                        where m.Status >= 0 && m.Off_Store.Off_System_Id== user.DefaultSystemId
+                        where m.Status >= 0 && m.Off_Store.Off_System_Id == user.DefaultSystemId
                         orderby m.Status, m.Id descending
                         select m).ToPagedList(_page, 20);
             ViewBag.SystemId = user.DefaultSystemId;
@@ -2996,7 +2996,7 @@ namespace PeriodAid.Controllers
                 "FROM[OFFLINESALES].[dbo].[Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
                 "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date < '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "'" +
                 "and T2.Off_System_Id = " + user.DefaultSystemId + " group by T1.Date, T2.StoreSystem order by T1.Date";
-            var data = offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);     
+            var data = offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);
             return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
 
         }
@@ -3030,7 +3030,7 @@ namespace PeriodAid.Controllers
                 }
                 else if (type == "day")
                 {
-                    
+
                     string sql = "SELECT T1.Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
                         "where Date>= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "' and T2.Off_System_Id = " + user.DefaultSystemId + " " +
                         "group by T2.StoreSystem, T1.Date";
@@ -3140,7 +3140,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_Seller
                         where (m.Name.Contains(query) || m.Off_Store.StoreName.Contains(query)) && m.Off_System_Id == user.DefaultSystemId
-                        select new { value = m.Id, label = m.Name, desc = m.Off_Store.StoreName}).Take(5);
+                        select new { value = m.Id, label = m.Name, desc = m.Off_Store.StoreName }).Take(5);
             return Json(new { result = "SUCCESS", data = list }, JsonRequestBehavior.AllowGet);
         }
 
@@ -3156,7 +3156,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
             var list = (from m in offlineDB.Off_Product
-                        where m.Off_System_Id == user.DefaultSystemId && m.status>=0
+                        where m.Off_System_Id == user.DefaultSystemId && m.status >= 0
                         orderby m.ItemCode
                         select m).ToPagedList(_page, 30);
             return PartialView(list);
@@ -3344,8 +3344,8 @@ namespace PeriodAid.Controllers
             }
             OfflineSales offlineDB = new OfflineSales();
             var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == username && m.Off_System_Id == systemId);
-            if (item !=null)
-            return item.NickName;
+            if (item != null)
+                return item.NickName;
             else
             {
                 return username;
@@ -3355,7 +3355,7 @@ namespace PeriodAid.Controllers
         {
             string[] names = usernames.Split(',');
             string[] nicknames = new string[names.Length];
-            for(int i = 0; i < names.Length; i++)
+            for (int i = 0; i < names.Length; i++)
             {
                 nicknames[i] = getManagerNickName(names[i], systemId);
             }
@@ -3420,7 +3420,7 @@ namespace PeriodAid.Controllers
             return Content("SUCCESS");
         }
         //0614
-        [SettingFilter(SettingName ="BONUS")]
+        [SettingFilter(SettingName = "BONUS")]
         public ActionResult Off_RedPack_List()
         {
             return View();
@@ -3431,7 +3431,7 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
-            if (query == "")
+            if (query == null||query=="")
             {
                 var list = (from m in offlineDB.Off_BonusRequest
                             where m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId && m.Status > 0
