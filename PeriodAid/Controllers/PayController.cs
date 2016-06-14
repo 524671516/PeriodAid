@@ -519,12 +519,67 @@ namespace PeriodAid.Controllers
             }
         }
         #endregion
-
-        public ActionResult StartPayAmount()
+        public ActionResult Error()
         {
             return View();
         }
-
+        public ActionResult StartPayAmount(string code, string state)
+        {
+            try
+            {
+                WeChatUtilities utilites = new WeChatUtilities();
+                Wx_WebOauthAccessToken webToken = utilites.getWebOauthAccessToken(code);
+                int amount = 1980;
+                ViewBag.openId = webToken.openid;
+                if (state == "AC69IPVD")
+                    amount = 100;
+                else if (state == "BGAER9CB")
+                    amount = 300;
+                ViewBag.amount = amount;
+                return View();
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+        [HttpPost,ValidateAntiForgeryToken]
+        public JsonResult SetFixMoney(string _openId, string body, int amount)
+        {
+            //随机数字，并且生成Prepay
+            string appid = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string mch_id = WeChatUtilities.getConfigValue(WeChatUtilities.MCH_ID);
+            //先确认，之后做随机数
+            string nonce_str = CommonUtilities.generateNonce();
+            string out_trade_no = "WXJSAPI_" + DateTime.Now.Ticks;
+            try
+            {
+                Wx_OrderResult result = createUnifiedOrder(_openId, body, out_trade_no, amount, WeChatUtilities.TRADE_TYPE_JSAPI, "");
+                if (result.Result == "SUCCESS")
+                {
+                    WxPayOrder order = new WxPayOrder()
+                    {
+                        Body = body,
+                        Time_Start = DateTime.Now,
+                        Mch_Id = mch_id,
+                        Open_Id = _openId,
+                        Trade_No = out_trade_no,
+                        Total_Fee = amount,
+                        Prepay_Id = result.PrepayId,
+                        Trade_Status = WeChatUtilities.TRADE_STATUS_CREATE,
+                        Trade_Type = WeChatUtilities.TRADE_TYPE_JSAPI
+                    };
+                    offlineDB.WxPayOrder.Add(order);
+                    offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS", prepay_id = result.PrepayId, amount }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { result = "FAIL", msg = result.Message }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { result = "FAIL", msg = e.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
         public string parseXml(List<QueryParameter> parameters, string sign)
         {

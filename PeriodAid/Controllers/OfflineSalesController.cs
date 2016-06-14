@@ -14,6 +14,7 @@ using System.Data;
 using System.Text;
 using System.IO;
 using CsvHelper;
+using System.Threading;
 using System.Globalization;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -1799,7 +1800,7 @@ namespace PeriodAid.Controllers
             return View(model);
         }
         [ValidateAntiForgeryToken, HttpPost]
-        public ActionResult Off_ConfirmCheckIn(FormCollection form)
+        public async Task<ActionResult> Off_ConfirmCheckIn(FormCollection form)
         {
             ConfirmCheckIn_ViewModel model = new ConfirmCheckIn_ViewModel();
             if (TryUpdateModel(model))
@@ -1905,8 +1906,9 @@ namespace PeriodAid.Controllers
                         };
                         offlineDB.Off_Daily_Product.Add(product);
                     }
-                    offlineDB.SaveChanges();
+                    await offlineDB.SaveChangesAsync();
                     // 计算平均值
+
                     update_Sales_AVGINfo(item.Off_Checkin_Schedule.Off_Store_Id, (int)item.Off_Checkin_Schedule.Subscribe.DayOfWeek + 1);
                     return RedirectToAction("Off_CheckIn_List");
                 }
@@ -3417,11 +3419,74 @@ namespace PeriodAid.Controllers
             offlineDB.SaveChanges();
             return Content("SUCCESS");
         }
-        [SettingFilter(SettingName ="TEST")]
-        public ContentResult TestCustomSetting()
+        //0614
+        [SettingFilter(SettingName ="BONUS")]
+        public ActionResult Off_RedPack_List()
         {
-            return Content("通过");
+            return View();
         }
+
+        [SettingFilter(SettingName = "BONUS")]
+        public PartialViewResult Off_RedPack_List_Ajax(string query, int? page)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            int _page = page ?? 1;
+            if (query == "")
+            {
+                var list = (from m in offlineDB.Off_BonusRequest
+                            where m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId && m.Status > 0
+                            orderby m.RequestTime
+                            select m).ToPagedList(_page, 30);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in offlineDB.Off_BonusRequest
+                            where m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId && m.Status > 0
+                            && (m.Off_Checkin.Off_Seller.Name.Contains(query) || m.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query))
+                            orderby m.RequestTime
+                            select m).ToPagedList(_page, 30);
+                return PartialView(list);
+            }
+        }
+
+        [SettingFilter(SettingName = "BONUS")]
+        public async Task<JsonResult> Off_RedPack_Refresh_Status(int id)
+        {
+            var request = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.Id == id && m.Status==1);
+            if (request != null)
+            {
+                AppPayUtilities pay = new AppPayUtilities();
+                string result = await pay.WxRedPackQuery(request.Mch_BillNo);
+                switch (result)
+                {
+                    case "SENT":
+                        request.Status = 1;
+                        break;
+                    case "RECEIVED":
+                        request.Status = 2;
+                        break;
+                    case "FAIL":
+                        request.Status = 3;
+                        break;
+                    case "REFUND":
+                        request.Status = 4;
+                        break;
+                    default:
+                        request.Status = 1;
+                        break;
+                }
+                offlineDB.Entry(request).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
+            
+        }
+
         private byte[] convertCSV(byte[] array)
         {
             byte[] outBuffer = new byte[array.Length + 3];
@@ -3431,6 +3496,7 @@ namespace PeriodAid.Controllers
             Array.Copy(array, 0, outBuffer, 3, array.Length);
             return outBuffer;
         }
+
     }
 
     public class Form_Product_Details

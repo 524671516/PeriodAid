@@ -673,6 +673,9 @@
     <Content Include="Views\OfflineSales\Off_BindSeller_List_Ajax.cshtml" />
     <Content Include="Views\Seller\Wx_Manager_CreditInfo.cshtml" />
     <Content Include="Views\Pay\StartPayAmount.cshtml" />
+    <Content Include="Views\Pay\Error.cshtml" />
+    <Content Include="Views\OfflineSales\Off_RedPack_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_RedPack_List_Ajax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
