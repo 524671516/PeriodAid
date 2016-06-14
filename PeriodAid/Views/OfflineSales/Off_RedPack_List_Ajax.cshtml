@@ -2,8 +2,8 @@
 @using PagedList.Mvc;
 @using PeriodAid.Models;
 
-<table class="table table-striped">
-    <tr>
+<table class="table">
+    <tr class="active">
         <th>
             状态
         </th>
@@ -25,30 +25,112 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Seller.Name)
-        </td>
-        <td>
-            @Html.Encode((double)item.ReceiveAmount/100)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RequestTime)
-        </td>
-        <td>
-            <a href="javascript:;">更新状态</a>
-        </td>
-    </tr>
+@foreach (var item in Model)
+{
+    if (item.Status == 1)
+    {
+        <tr class="text-primary">
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Seller.Name)
+            </td>
+            <td>
+                @Html.Encode((double)item.ReceiveAmount / 100)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestTime)
+            </td>
+            <td>
+                <button class="btn btn-info btn-sm" id="redpack-edit">更新状态</button>
+            </td>
+        </tr>
+    }
+    else if (item.Status == 2)
+    {
+        <tr class="text-success">
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Seller.Name)
+            </td>
+            <td>
+                @Html.Encode((double)item.ReceiveAmount / 100)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestTime)
+            </td>
+            <td>
+                
+            </td>
+        </tr>
+    }
+    else {
+            <tr class="text-danger">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Seller.Name)
+                </td>
+                <td>
+                    @Html.Encode((double)item.ReceiveAmount / 100)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestTime)
+                </td>
+                <td></td>
+            </tr>
+    }
 }
 
 </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_RedPack_List_ajax", new { page }))</div>
+<script>
+    $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            l = l + "&query=" + $("#redpack-query").val();
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    if ($("#redpack-query").val() == "") {
+                        $("#redpack-list").html(data);
+                    }else{
+                        $("#redpack-list").html(data);
+                    }
+                }
+            })
+        return false;
+    });
+    $("#redpack-edit").click(function () {
+        var link_url = "/OfflineSales/Off_RedPack_Refresh_Status";
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    $("#redpack-list").html(data);
+                }
+            }
+        })
+    })
+</script>

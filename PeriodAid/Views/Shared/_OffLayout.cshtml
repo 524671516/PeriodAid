@@ -75,6 +75,7 @@
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     门店信息 <span id="ani_01" class="caret res"></span>
                                 </a>
+                                
                             </h4>
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
@@ -173,7 +174,6 @@
                                     <li><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "Off_Manager_TaskList", "OfflineSales")</li>
                                     <li><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "Off_Manager_Announcement_List", "OfflineSales")</li>
                                     <li><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "Off_Manager_Request_List", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包管理", "/", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
@@ -209,6 +209,22 @@
                                 <ul class="nav-left">
                                     <li><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "Off_Product_List", "OfflineSales")</li>
                                     <li><a><i class="fa fa-server"></i>&nbsp;&nbsp;</a>@Html.ActionLink("模板列表", "Off_Template_List", "OfflineSales")</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingNine">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                                    红包管理 <span id="ani_09" class="caret res"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseNine" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNine">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包列表", "Off_RedPack_List", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
@@ -312,6 +328,11 @@
             $(".panel-collapse").removeClass("in");
             $("#ani_08").removeClass("res")
             $("div[aria-labelledby='headingEight']").addClass("in");
+        }
+        if ($("#pagenumber").text().trim() == "9") {
+            $(".panel-collapse").removeClass("in");
+            $("#ani_09").removeClass("res")
+            $("div[aria-labelledby='headingNine']").addClass("in");
         }
         $(document).scroll(function () {
             if (window.pageYOffset > 0) {
