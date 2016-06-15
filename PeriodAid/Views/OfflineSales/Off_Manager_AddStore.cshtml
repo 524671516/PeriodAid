@@ -6,8 +6,6 @@
 @section page{
     6
     }
-@Html.Partial("Off_Seller_Controller")
-<br />
 <h4>修改管辖范围</h4>
 @if (ViewBag.Name != null)
 {
@@ -88,7 +86,6 @@ else
         selectlist.each(function () {
             arr_list.push($(this).attr("value"));
         });
-        //alert(arr_list);
     });
     $("#submit-btn").click(function () {
         var selectlist = $("#selectList").children("option");
@@ -96,7 +93,6 @@ else
         selectlist.each(function () {
             arr_list.push($(this).attr("value"));
         });
-        //alert(arr_list);
         $.ajax({
             url: "/OfflineSales/Off_Manager_AjaxAddStore",
             data: {
