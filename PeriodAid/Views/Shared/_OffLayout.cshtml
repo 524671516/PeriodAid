@@ -16,21 +16,25 @@
     <script src="~/Scripts/jquery-ui.min.js"></script>
     @RenderSection("header", required:false)
     <style>
+        body{
+            font-size:1em;
+        }
         .nav-left {
         list-style:none;padding:0;
         }
         .nav-left > li{
         padding-top:5px;
         }
-        .box * {
-           font-size:12px;        
-        }
-        .box a {
-        text-decoration:none;
-        }
+        
         .res {
         -webkit-transform: rotate(-90deg);
         -moz-transform: rotate(-90deg);
+        }
+        .panel-title{
+            font-size:1em;
+        }
+        .panel-title a{
+            text-decoration:none;
         }
     </style>
 </head>
@@ -65,7 +69,7 @@
             </div>
         </div>
     </div>
-    <div class="container box" style="margin-top:40px;">
+    <div class="container" style="margin-top:40px;">
         <div class="row">
             <div class="col-md-2">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -83,6 +87,23 @@
                                 <ul class="nav-left">
                                     <li><a href="/OfflineSales/Off_Store_main"><i class="fa fa-search"></i>&nbsp;&nbsp;门店列表</a></li>
                                     <li><a href="/OfflineSales/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingEight">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                    产品系列 <span id="ani_08" class="caret res"></span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
+                            <div class="panel-body">
+                                <ul class="nav-left">
+                                    <li><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "Off_Product_List", "OfflineSales")</li>
+                                    <li><a><i class="fa fa-server"></i>&nbsp;&nbsp;</a>@Html.ActionLink("模板列表", "Off_Template_List", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
@@ -196,23 +217,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingEight">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-                                    产品系列 <span id="ani_08" class="caret res"></span>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
-                            <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "Off_Product_List", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-server"></i>&nbsp;&nbsp;</a>@Html.ActionLink("模板列表", "Off_Template_List", "OfflineSales")</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingNine">
                             <h4 class="panel-title">
@@ -340,7 +345,6 @@
             }
             else
                 $("#to-top").addClass("hidden");
-
         })
     });
     $("#to-top").click(function () {

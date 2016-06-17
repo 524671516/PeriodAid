@@ -196,7 +196,11 @@
                 type: "post",
                 url: link_url,
                 success: function (data) {
-                    alert("无法作废")
+                    alert("作废成功");
+                    var start = $("#start-date").val();
+                    var end = $("#end-date").val();
+                    var query = $("#dta").val();
+                    window.location.href = "/OfflineSales/Off_QueryCheckIn?start=" + start + "&end=" + end + "&query=" + query;
                 }
             })
         }

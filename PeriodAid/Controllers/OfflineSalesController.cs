@@ -3435,7 +3435,7 @@ namespace PeriodAid.Controllers
             {
                 var list = (from m in offlineDB.Off_BonusRequest
                             where m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId && m.Status > 0
-                            orderby m.RequestTime
+                            orderby m.RequestTime descending
                             select m).ToPagedList(_page, 30);
                 return PartialView(list);
             }
@@ -3444,7 +3444,7 @@ namespace PeriodAid.Controllers
                 var list = (from m in offlineDB.Off_BonusRequest
                             where m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId && m.Status > 0
                             && (m.Off_Checkin.Off_Seller.Name.Contains(query) || m.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query))
-                            orderby m.RequestTime
+                            orderby m.RequestTime descending
                             select m).ToPagedList(_page, 30);
                 return PartialView(list);
             }

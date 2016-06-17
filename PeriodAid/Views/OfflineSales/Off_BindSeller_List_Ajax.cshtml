@@ -44,8 +44,6 @@
                 @if (!item.Bind)
                 {
                     @Html.ActionLink("设置管理员", "Off_UpdateManager", new { id = item.Id }, new { @class = "btn btn-sm btn-danger manager-button" })
-                    @Html.Encode(" ")
-                    @Html.ActionLink("设置区域", "Off_Manager_AddStore", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
                 }
             </td>
         </tr>
@@ -102,7 +100,19 @@
                 url: link_url,
                 success: function (data) {
                     if (data == "SUCCESS");
-                    window.location.href()
+                    var url = "/OfflineSales/Off_BindSeller_List_Ajax";
+                    var cuxa = $("#search-query").val();
+                    var bool = $("#selBool").val();
+                    $.ajax({
+                        url: url,
+                        data: {
+                            query: cuxa,
+                            bind: bool
+                        },
+                        success: function (data) {
+                            $("#sellerList").html(data);
+                        }
+                    });
                 }
             });
         }
