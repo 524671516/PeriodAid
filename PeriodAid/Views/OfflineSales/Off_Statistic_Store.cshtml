@@ -85,9 +85,11 @@
                 data: {
                     startdate: start,
                     enddate: end,
-                    storeid: storeid
+                    storeid: storeid,
+                    type:type
                 },
                 success: function (data) {
+
                     if (data.data.length == 0) {
                         alert("该区域门店下的这段时间内没有销售数据");
                     } else {
