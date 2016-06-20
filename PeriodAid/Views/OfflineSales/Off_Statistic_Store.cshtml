@@ -89,7 +89,6 @@
                     type:type
                 },
                 success: function (data) {
-
                     if (data.data.length == 0) {
                         alert("该区域门店下的这段时间内没有销售数据");
                     } else {
@@ -119,54 +118,7 @@
                                 data: totalarray
                             }] 
                         });
-                        $.ajax({
-                            url: "/OfflineSales/Off_Statistic_Store_Product_Ajax",
-                            data: {
-                                startdate: start,
-                                enddate: end,
-                                storeid: storeid
-                            },
-                            success: function (data) {
-                                //alert(data.data[0].ProductId)
-                                var productarry = new Array();
-                                for (var i = 0; i < data.data.length; i++) {
-                                    var productlist = {
-                                        name: data.data[i].SimpleName,
-                                        y: data.data[i].SalesCount
-                                    }
-                                    productarry.push(productlist)
-                                }
-                                //console.log(productarry)
-                                $('#myChart_Pie').highcharts({
-                                    chart: {
-                                        plotBackgroundColor: null,
-                                        plotBorderWidth: null,
-                                        plotShadow: false
-                                    },
-                                    title: {
-                                        text: optionitem + '每天各个种类销售总额饼状图(单位：盒/天)'
-                                    },
-                                    tooltip: {
-                                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                                    },
-                                    plotOptions: {
-                                        pie: {
-                                            allowPointSelect: true,
-                                            cursor: 'pointer',
-                                            dataLabels: {
-                                                enabled: false
-                                            },
-                                            showInLegend: true
-                                        }
-                                    },
-                                    series: [{
-                                        type: 'pie',
-                                        name: '销售额度',
-                                        data: productarry
-                                    }]
-                                });
-                            }
-                        })
+                        statistic_store_products(start, end, storeid, type)
                         statistic_store_salary(start, end, storeid, type)
                     }
                 }
@@ -190,6 +142,63 @@
                 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
     };
+    function statistic_store_products(start, end, storeid, type) {
+        var selectvalue = $("#StoreList").val() + "";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = $("option[value='" + managerArray[i] + "']").text();
+            $("#storeName").val(optionitem);
+        }
+        $.ajax({
+            url: "/OfflineSales/Off_Statistic_Store_Product_Ajax",
+            data: {
+                startdate: start,
+                enddate: end,
+                storeid: storeid,
+                type: type
+            },
+            success: function (data) {
+                //alert(data.data[0].ProductId)
+                var productarry = new Array();
+                for (var i = 0; i < data.data.length; i++) {
+                    var productlist = {
+                        name: data.data[i].SimpleName,
+                        y: data.data[i].SalesCount
+                    }
+                    productarry.push(productlist)
+                }
+                //console.log(productarry)
+                $('#myChart_Pie').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: optionitem + '每天各个种类销售总额饼状图(单位：盒/天)'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: '销售额度',
+                        data: productarry
+                    }]
+                });
+            }
+        })
+    }
     function statistic_store_salary(start, end, storeid, type) {
         var selectvalue = $("#StoreList").val() + "";
         var managerArray = selectvalue.split(',');
