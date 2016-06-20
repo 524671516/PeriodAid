@@ -3088,7 +3088,7 @@ namespace PeriodAid.Controllers
                 string sql = "SELECT T2.StoreName,CONVERT(datetime, CONVERT(char(7), T1.Date, 120)+'-01') as Date, count(CONVERT(char(7), T1.Date, 120)) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
                     "FROM [Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
                     "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date < '" + et.ToString("yyyy-MM-dd") + "' and T1.StoreId =" + storeid + " " +
-                    "and T2.Off_System_Id = " + user.DefaultSystemId + " group by CONVERT(char(7), T1.Date, 120), T2.StoreSystem order by CONVERT(char(7), T1.Date, 120)";
+                    "and T2.Off_System_Id = " + user.DefaultSystemId + " group by CONVERT(char(7), T1.Date, 120), T2.StoreName order by CONVERT(char(7), T1.Date, 120)";
                 var data = offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);
                 return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);
             }
