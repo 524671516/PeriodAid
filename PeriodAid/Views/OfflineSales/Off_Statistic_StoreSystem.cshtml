@@ -57,7 +57,8 @@
                 data: {
                     startdate: start,
                     enddate: end,
-                    storesystem: storesystem
+                    storesystem: storesystem,
+                    type:type
                 },
                 success: function (data) {
                     if (data.data.length == 0) {
@@ -95,54 +96,7 @@
                                 }
                             }]
                         });
-                        $.ajax({
-                            url: "/OfflineSales/Off_Statistic_StoreSystem_Product_Ajax",
-                            data: {
-                                startdate: start,
-                                enddate: end,
-                                storesystem: storesystem
-                            },
-                            success: function (data) {
-                                //alert(data.data[0].ProductId)
-                                var productarry = new Array();
-                                for (var i = 0; i < data.data.length; i++) {
-                                    var productlist = {
-                                        name: data.data[i].SimpleName,
-                                        y: data.data[i].SalesCount
-                                    }
-                                    productarry.push(productlist)
-                                }
-                                //console.log(productarry)
-                                $('#myChart_Pie').highcharts({
-                                    chart: {
-                                        plotBackgroundColor: null,
-                                        plotBorderWidth: null,
-                                        plotShadow: false
-                                    },
-                                    title: {
-                                        text: storesystem + '每天各个种类销售总额饼状图(单位：盒/天)'
-                                    },
-                                    tooltip: {
-                                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                                    },
-                                    plotOptions: {
-                                        pie: {
-                                            allowPointSelect: true,
-                                            cursor: 'pointer',
-                                            dataLabels: {
-                                                enabled: false
-                                            },
-                                            showInLegend: true
-                                        }
-                                    },
-                                    series: [{
-                                        type: 'pie',
-                                        name: '销售额度',
-                                        data: productarry
-                                    }]
-                                });
-                            }
-                        })
+                        products_statistic(start, end, storesystem, type)
                         salary_statistic(start, end, storesystem, type)
                     };
                     
@@ -167,6 +121,57 @@
             if (new RegExp("(" + k + ")").test(fmt))
                 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
+    };
+    function products_statistic(start, end, storesystem, type) {
+        $.ajax({
+            url: "/OfflineSales/Off_Statistic_StoreSystem_Product_Ajax",
+            data: {
+                startdate: start,
+                enddate: end,
+                storesystem: storesystem,
+                type: type
+            },
+            success: function (data) {
+                //alert(data.data[0].ProductId)
+                var productarry = new Array();
+                for (var i = 0; i < data.data.length; i++) {
+                    var productlist = {
+                        name: data.data[i].SimpleName,
+                        y: data.data[i].SalesCount
+                    }
+                    productarry.push(productlist)
+                }
+                //console.log(productarry)
+                $('#myChart_Pie').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: storesystem + '每天各个种类销售总额饼状图(单位：盒/天)'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: '销售额度',
+                        data: productarry
+                    }]
+                });
+            }
+        })
     }
     function salary_statistic(start, end, storesystem, type) {
             $.ajax({
@@ -203,27 +208,24 @@
                             title: {
                                 text: storesystem + '工资表'
                             },
-                            //subtitle: {
-                            //    text: 'Source: WorldClimate.com'
-                            //},
                             xAxis: [{
                                 categories: datearray
                             }],
-                            yAxis: [{ // Primary yAxis
+                            yAxis: [{ 
                                 labels: {
                                     enabled: false
                                 },
                                 title: {
                                     text: ''
                                 }
-                            }, { // Primary yAxis
+                            }, { 
                                 labels: {
                                     enabled: false
                                 },
                                 title: {
                                     text: ''
                                 }
-                            }, { // Primary yAxis
+                            }, { 
                                 labels: {
                                     enabled: false
                                 },
@@ -241,27 +243,17 @@
                                 type: 'column',
                                 yAxis: 2,
                                 data: debitarry,
-                                //tooltip: {
-                                //    valueSuffix: ' mm'
-                                //}
-
                             }, {
                                 name: '工资',
                                 color: '#4572A7',
                                 type: 'column',
                                 data: salaryarry,
-                                //tooltip: {
-                                //    valueSuffix: '°C'
-                                //}
                             }, {
                                 name: '奖金',
                                 color: '#f10000',
                                 type: 'column',
                                 yAxis: 1,
                                 data: bonusarry,
-                                //tooltip: {
-                                //    valueSuffix: '°C'
-                                //}
                             }]
                         });
                     }

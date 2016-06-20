@@ -16,11 +16,11 @@
     <div class="col-md-2">
         @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control" })
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select class="form-control" id="StoreList" name="StoreList"></select>
         <input id="storeName" name="storeName" class="form-control hidden" placeholder="门店名称" />
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <ul class="list-inline list-unstyled">
             <li><button id="data-btn" class="btn btn-info data-btn" data-salary="day">查看日数据</button></li>
             <li><button id="mounthdata-btn" class="btn btn-info data-btn" data-salary="month">查看月工资</button></li>
