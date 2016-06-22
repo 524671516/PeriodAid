@@ -2,9 +2,7 @@
 @{
     ViewBag.Title = "月销售信息";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
-}
-@section page{
-    2
+    ViewBag.Current = "headingTwo";
 }
 <div class="row">
     <div class="col-xs-8">
@@ -23,27 +21,25 @@
 <div id="list-container">
 
 </div>
-@section scripts{
-    <script>
-        $(function () {
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_MonthSalesInfo_ajaxlist",
+            success: function (data) {
+                $("#list-container").html(data);
+            }
+        });
+        $("#search-btn").click(function () {
             $.ajax({
                 url: "/OfflineSales/Off_MonthSalesInfo_ajaxlist",
+                data: {
+                    query: $("#search-query").val()
+                },
                 success: function (data) {
                     $("#list-container").html(data);
                 }
             });
-            $("#search-btn").click(function () {
-                $.ajax({
-                    url: "/OfflineSales/Off_MonthSalesInfo_ajaxlist",
-                    data: {
-                        query: $("#search-query").val()
-                    },
-                    success: function (data) {
-                        $("#list-container").html(data);
-                    }
-                });
-            });
         });
-    </script>
-}
+    });
+</script>
 

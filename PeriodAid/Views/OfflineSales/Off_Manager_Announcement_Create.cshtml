@@ -3,11 +3,8 @@
 @{
     ViewBag.Title = "Off_Manager_Announcement_Create";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSix";
 }
-@section page{
-    6
-}
-
 @using (Html.BeginForm("Off_Manager_Announcement_Create", "OfflineSales", FormMethod.Post, new { @id = "addAjax" }))
 {
     @Html.AntiForgeryToken()

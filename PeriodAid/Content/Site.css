@@ -1,6 +1,7 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    font-size:1em;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -34,6 +35,29 @@ textarea {
     margin: 0;
 }
 
+.panel-title{
+            font-size:1em;
+        }
+.panel-title a{
+            text-decoration:none;
+        }
+.left-navbar {
+    text-indent: 0.5em;
+}
+.fa.pull-right {
+    margin-top: 1px;
+}
+.panel-animate{
+    -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        margin-right:3px;
+}
+/*fixed scroll*/
+.scroll-fixed {
+    position: fixed;
+    bottom: 20px;
+    right: 10%;
+}
 .offline-navbar-bottom {
     background-color: #0094ff;
     opacity: 0.8;
@@ -122,3 +146,19 @@ li {
         top: 6px;
         width: 12px;
     }
+/*-----搜索块-------*/
+.offline-search-inline {
+    width:50%;
+    display:inline-block
+}
+.offline-search-box {
+    width: 100%;
+    margin-bottom: 20px
+}
+.offline-search-btn {
+    margin: auto;
+}
+/*-----表格块--------*/
+.offline-table-background {
+    background-color: #f9f9f9;
+}

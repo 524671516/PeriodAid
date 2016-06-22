@@ -2,33 +2,38 @@
 @{
     ViewBag.Title = "Off_Statistic_Store";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSeven";
 }
-@section page{
-    7
-    }
-<div class="row">
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
-    </div>
-    <div class="col-md-2">
-        <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
-    </div>
-    <div class="col-md-2">
-        @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control" })
-    </div>
-    <div class="col-md-2">
-        <select class="form-control" id="StoreList" name="StoreList"></select>
-        <input id="storeName" name="storeName" class="form-control hidden" placeholder="门店名称" />
-    </div>
-    <div class="col-md-4">
-        <ul class="list-inline list-unstyled">
-            <li><button id="data-btn" class="btn btn-info data-btn" data-salary="day">查看日数据</button></li>
-            <li><button id="mounthdata-btn" class="btn btn-info data-btn" data-salary="month">查看月工资</button></li>
-        </ul>
-    </div>
-    <span id="danger" class="text-danger h5" style="margin-left:20px;"></span>
-</div>
-<br />
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>开始时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="开始时间" id="data-startTime">
+        </td>
+        <td>
+            <label>结束时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="结束时间" id="data-endTime">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>销售系统：</label>
+            @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control input-sm offline-search-inline" })
+        </td>
+        <td>
+            <label>系统门店：</label>
+            <select class="form-control input-sm offline-search-inline" id="StoreList" name="StoreList"></select>
+            <input id="storeName" name="storeName" class="form-control hidden input-sm offline-search-inline" placeholder="门店名称" />
+        </td>
+        <td>
+            <ul class="list-inline list-unstyled offline-search-btn">
+                <li><button id="data-btn" class="btn btn-info btn-sm data-btn" data-salary="day"><i class="fa fa-search"></i>&nbsp;&nbsp;日数据</button></li>
+                <li><button id="mounthdata-btn" class="btn btn-info btn-sm data-btn" data-salary="month"><i class="fa fa-search"></i>&nbsp;&nbsp;月工资</button></li>
+            </ul>
+        </td>
+    </tr>
+    <tr><td id="danger" class="text-danger h5"></td></tr>
+</table>
 <div id="map" class="row" style="display:none">
     <div class="col-md-6">
         <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
@@ -306,4 +311,3 @@
             })
     }
 </script>
-

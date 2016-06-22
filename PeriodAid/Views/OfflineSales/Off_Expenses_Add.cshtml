@@ -2,10 +2,8 @@
 @{
     ViewBag.Title = "添加费用";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingThree";
 }
-@section page{
-    3
-    }
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()

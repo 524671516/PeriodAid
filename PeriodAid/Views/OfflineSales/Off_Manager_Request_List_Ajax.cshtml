@@ -1,36 +1,28 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Request>
 @using PagedList.Mvc;
 @using PeriodAid.Models;
-
-@section page{
-    6
-    }
-
+@{ 
+    ViewBag.Current = "headingSix";
+}
 <table class="table" style="width:100%;">
     <tr>
         <th style="width:15%;">
             店铺
-            @*@Html.DisplayNameFor(model => model.ManagerUserName)*@
         </th>
         <th style="width:10%;">
             操作人
-            @*@Html.DisplayNameFor(model => model.ManagerUserName)*@
         </th>
         <th style="width:10%;">
             状态
-            @*@Html.DisplayNameFor(model => model.StoreId)*@
         </th>
         <th style="width:10%;">
             提报类型
-            @*@Html.DisplayNameFor(model => model.Status)*@
         </th>
         <th style="width:20%;">
             内容
-            @*@Html.DisplayNameFor(model => model.RequestType)*@
         </th>
         <th style="width:20%;">
             备注
-            @*@Html.DisplayNameFor(model => model.RequestContent)*@
         </th>
 
         <th></th>

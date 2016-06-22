@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "人员绑定";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingFour";
     var query = Request.Url.Query;
     string result = "";
     if (query.IndexOf("query=") != -1)
@@ -11,9 +12,6 @@
         result = end.Substring(6, end.Length - 6);
     }
 }
-@section page{
-    4
-    }
 <div class="row">
     <div class="col-xs-4">
         <ul class="nav nav-tabs">

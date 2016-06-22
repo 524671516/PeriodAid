@@ -1,17 +1,17 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Daily_Product>
 
 
-<table class="table-striped table" id="productdetails">
+<table class="table-striped table-bordered table" id="productdetails">
     <tr>
-        <th class="col-md-3">商品名称</th>
-        <th class="col-md-3">销量</th>
-        <th class="col-md-3">库存</th>
-        <th class="col-md-3">销售金额</th>
+        <th class="col-md-3 text-center">商品名称</th>
+        <th class="col-md-3 text-center">销量</th>
+        <th class="col-md-3 text-center">库存</th>
+        <th class="col-md-3 text-center">销售金额</th>
     </tr>
     @foreach (var item in Model)
     {
         <tr>
-            <td>
+            <td class="text-center">
                 @Html.Encode(item.Off_Product.SimpleName)
             </td>
             <td>

@@ -1,11 +1,8 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
 @using PagedList.Mvc;
-<ul class="list-inline list-unstyled">
-    <li><a class="btn btn-primary btn-xs" id="Modregion">修改区域</a></li>
-</ul>
-    <table class="table table-hover table-condensed" style="width:100%;table-layout:fixed">
-        <tr style="background-color:#f9f9f9">
-            <th style="width:5%" class="check-show">
+    <table class="table table-hover table-condensed table-list" style="width:100%;table-layout:fixed">
+        <tr class="offline-table-background">
+            <th class="check-show" style="width:2%">
                 <input type="checkbox" id="allChk" />
             </th>
             <th style="width:15%">
@@ -14,19 +11,19 @@
             <th style="width:5%">
                 区域
             </th>
-            <th style="width:10%">
+            <th style="width:12%">
                 经销商
             </th>
-            <th style="width:25%">
+            <th style="width:30%">
                 地址
             </th>
-            <th style="width:10%">
+            <th style="width:12%">
                 经度
             </th>
-            <th style="width:10%">
+            <th style="width:12%">
                 纬度
             </th>
-            <th style="width:20%"></th>
+            <th style="width:12%"></th>
         </tr>
 
         @foreach (var item in Model)
@@ -54,9 +51,8 @@
                     @Html.DisplayFor(modelItem => item.Latitude)
                 </td>
                 <td>
-                    @Html.ActionLink("修改", "Ajax_EditStore", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
-                    <a class="btn btn-sm btn-danger del-btn" href="/OfflineSales/Off_DeleteStore?id=@item.Id">删除</a>
-                    @*@Html.ActionLink("删除", "", new { id = off }, new { @class = "btn btn-sm btn-danger edit-button" })*@
+                    @Html.ActionLink("修改", "Ajax_EditStore", new { id = item.Id }, new { @class = "btn btn-xs btn-info edit-button" })
+                    <a class="btn btn-xs btn-danger del-btn" href="/OfflineSales/Off_DeleteStore?id=@item.Id">删除</a>
                 </td>
 
             </tr>
@@ -161,11 +157,26 @@
     $("#allChk").click(function () {
         $("input[name='subChk']").prop("checked", this.checked);
     });
-    // 单选 
-    var subChk = $("input[name='subChk']")
-    subChk.click(function () {
-        $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    //单选
+    $(".table-list tr").slice(1).each(function () {
+        var p = this;
+        $(this).children().slice(1).click(function () {
+            $($(p).children()[0]).children().each(function () {
+                if (this.type == "checkbox") {
+                    if (!this.checked) {
+                        this.checked = true;
+                    } else {
+                        this.checked = false;
+                    }
+                }
+            });
+        });
     });
+    // 单选 
+    //var subChk = $("input[name='subChk']")
+    //subChk.click(function () {
+    //    $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    //});
     //批量修改区域
     $("#Modregion").click(function () {
         var checkedNum = $("input[name='subChk']:checked").length;

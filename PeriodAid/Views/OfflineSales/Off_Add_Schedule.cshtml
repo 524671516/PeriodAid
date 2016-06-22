@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Off_Add_Schedule";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
 }
 @section header{
     <style>
@@ -11,10 +12,6 @@
         }
     </style>    
 }
-@section page{
-    2
-    }
-
 @using (Html.BeginForm("Off_Add_Schedule", "OfflineSales", FormMethod.Post, new { @id = "ajaxAdd_Schedule" }))
 {
     @Html.AntiForgeryToken()

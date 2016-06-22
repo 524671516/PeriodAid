@@ -4,11 +4,7 @@
 @{
     ViewBag.Title = "Off_QueryCheckIn";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
-}
-@section page{
-    5
-}
-@{ 
+    ViewBag.Current = "headingFive";
     var query = Request.Url.Query;
     string result = "";
     if (query.IndexOf("query=") != -1)
@@ -18,36 +14,48 @@
         result = end.Substring(6, end.Length - 6);
     }
 }
-<div class="row">
-    <div class="col-xs-2">
-        <input type="text" class="form-control" placeholder="开始时间" id="start-date">
-    </div>
-    <div class="col-xs-2">
-        <input type="text" class="form-control" placeholder="结束时间" id="end-date">
-    </div>
-    <div class="col-xs-4">
-        <input type="text" class="form-control" placeholder="关键词" id="dta" value="@Html.Encode(result)">
-    </div>
-    <div class="col-xs-2">
-        <button class="btn btn-info" id="query">搜索</button>
-    </div>
+<div class="container">
+    <ul class="list-unstyled row">
+        <li class="row">
+            <div class="col-md-4">
+                <label>开始时间：</label>
+                <input type="text" class="form-control input-sm offline-search-inline start-date" placeholder="开始时间" />
+            </div>
+            <div class="col-md-4 col-md-offset-1">
+                <label>结束时间：</label>
+                <input type="text" class="form-control input-sm offline-search-inline end-date" placeholder="结束时间" />
+            </div>
+        </li>
+        <li class="row">
+            <div class="col-md-4">
+                <label>门店名称：</label>
+                <input type="text" class="form-control input-sm offline-search-inline" id="dta" value="@Html.Encode(result)" placeholder="门店名称" />
+            </div>
+            <div class="col-md-4 col-md-offset-1">
+                <label>促销姓名：</label>
+                <input type="text" class="form-control input-sm offline-search-inline" placeholder="促销姓名" />
+            </div>
+            <div class="col-md-2 text-right">
+                <a class="btn btn-info btn-sm" id="query"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+            </div>
+        </li>
+    </ul>
 </div>
-<br />
-<table class="table table-condensed table-striped h6" style="table-layout: fixed;width:100%;">
-    <tr>
+<table class="table table-condensed table-hover" style="table-layout: fixed;width:100%;">
+    <tr class="offline-table-background">
         <th style="width:15%">
             活动时间
         </th>
         <th style="width:10%">
             状态
         </th>
-        <th style="width:20%">
+        <th style="width:15%">
             店铺名称
         </th>
         <th style="width:15%">
             促销员姓名
         </th>
-        <th style="width:10%">
+        <th style="width:15%">
             确认人
         </th>
         <th style="width:15%">
@@ -162,19 +170,19 @@
 
 <script>
     $(function () {
-        $("#start-date").val(getUrlParam("start"));
-        $("#end-date").val(getUrlParam("end"));
+        $(".start-date").val(getUrlParam("start"));
+        $(".end-date").val(getUrlParam("end"));
         $("#dta").val(decodeURIComponent($("#dta").val()));
-        $("#start-date").datepicker({
+        $(".start-date").datepicker({
             dateFormat: 'yy-mm-dd'
         });
-        $("#end-date").datepicker({
+        $(".end-date").datepicker({
             dateFormat: 'yy-mm-dd'
         });
         $("#query").click(function () {
             //alert("搜索页面")
-            var start = $("#start-date").val();
-            var end = $("#end-date").val();
+            var start = $(".start-date").val();
+            var end = $(".end-date").val();
             var query = $("#dta").val();
             window.location.href = "/OfflineSales/Off_QueryCheckIn?start=" + start + "&end=" + end + "&query=" + query;
         })

@@ -2,25 +2,40 @@
 @{
     ViewBag.Title = "线下门店信息";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingOne";
 }
-@section page{
-    1
-    }
-<div class="row">
-    <div class="col-xs-8">
-        <a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a>
-        <a class="btn btn-info btn-sm" href="/OfflineSales/UploadStore" style="margin-left:5px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a>
-    </div>
-    <div class="col-xs-4">
-        <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
-            <span class="input-group-btn">
-                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
-            </span>
-        </div>
-    </div>
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>门店名称：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="search-query" placeholder="门店名称" />
+        </td>
+        <td>
+            <label>区域：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="区域" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>详细地址：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="详细地址" />
+        </td>
+        <td>
+            <label>渠道：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="渠道" />
+        </td>
+        <td>
+            <a class="btn btn-info btn-sm" id="search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<div class="container">
+    <ul class="list-inline list-unstyled row">
+        <li><a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a></li>
+        <li><a class="btn btn-info btn-sm" href="/OfflineSales/UploadStore"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a></li>
+        <li><a class="btn btn-warning btn-sm" id="Modregion">修改区域</a></li>
+    </ul>
 </div>
-<br />
 <div id="list-container">
 
 </div>
@@ -31,39 +46,37 @@
         </div>
     </div>
 </div>
-@section scripts{
-    <script>
-        $(function () {
-            $.ajax({
-                url: "/OfflineSales/Off_Store_ajaxlist",
-                success: function (data) {
-                    $("#list-container").html(data);
-                }
-            });
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_Store_ajaxlist",
+            success: function (data) {
+                $("#list-container").html(data);
+            }
+        });
 
+    });
+    $("#search-btn").click(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_Store_ajaxlist",
+            data: {
+                query: $("#search-query").val()
+            },
+            success: function (data) {
+                $("#list-container").html(data);
+            }
         });
-        $("#search-btn").click(function () {
-            $.ajax({
-                url: "/OfflineSales/Off_Store_ajaxlist",
-                data:{
-                    query: $("#search-query").val()
-                },
-                success: function (data) {
-                    $("#list-container").html(data);
-                }
-            });
+    });
+    $("#add-btn").click(function () {
+        var link_url = "/OfflineSales/Off_CreateStore";
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#addcontent").html(data);
+                $('#addModal').modal()
+            }
         });
-        $("#add-btn").click(function () {
-            var link_url = "/OfflineSales/Off_CreateStore";
-            $.ajax({
-                url: link_url,
-                success: function (data) {
-                    $("#addcontent").html(data);
-                    $('#addModal').modal()
-                }
-            });
-            return false;
-        });
-    </script>
-    }
+        return false;
+    });
+ </script>
 

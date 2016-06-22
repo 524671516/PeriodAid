@@ -2,34 +2,34 @@
 @{
     ViewBag.Title = "Off_Statistic_Seller";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSeven";
 }
-@section page{
-    7
-    }
-<div class="row">
-    <div class="row">
-        <div class="col-md-2">
-            <input type="text" class="form-control" placeholder="开始时间" id="data-startTime">
-        </div>
-        <div class="col-md-2">
-            <input type="text" class="form-control" placeholder="结束时间" id="data-endTime">
-        </div>
-        <div class="col-md-3">
-            <input id="seller" class="form-control" placeholder="促销员" />
-            <input id="project-id" class="form-control hidden" />
-            <p id="project-description"></p>
-        </div>
-        <div class="col-md-2">
-            <button id="data-btn" class="btn btn-info">查看</button>
-        </div>
-    </div>
-    <span id="danger" class="text-danger h5"></span>
-    <div id="seller-box" class="row hidden">
-        <div class="col-md-4">
-            <input id="seller-item" name="seller-item" class="form-control" disabled />
-        </div>
-    </div>
-</div><br />
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>开始时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="开始时间" id="data-startTime">
+        </td>
+        <td>
+            <label>结束时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="结束时间" id="data-endTime">
+        </td>
+        <td>
+            <label>促销姓名：</label>
+            <input id="seller" class="form-control input-sm offline-search-inline" placeholder="促销员" />
+            <input id="project-id" class="form-control input-sm offline-search-inline hidden" />
+        </td>
+        <td>
+            <a class="btn btn-info btn-sm" id="data-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;查看</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input id="seller-item" name="seller-item" class="form-control input-sm hidden" disabled />
+        </td>
+    </tr>
+    <tr><td id="danger" class="text-danger h5"></td></tr>
+</table>
 <div id="map" class="row" style="display:none;">
     <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
 </div>
@@ -71,7 +71,6 @@
                 })
             },
             search: function () {
-                // custom minLength
                 var term = extractLast(this.value);
                 if (term.length < 1) {
                     return false;
@@ -81,7 +80,7 @@
                 return false;
             },
             select: function (event, ui) {
-                $("#seller-box").removeClass("hidden");
+                $("#seller-item").removeClass("hidden");
                 $("#seller-item").val(ui.item.label + " ———— " + ui.item.desc);
                 $("#seller").val(ui.item.label);
                 $("#project-id").val(ui.item.value);

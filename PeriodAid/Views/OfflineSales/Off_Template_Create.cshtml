@@ -2,9 +2,7 @@
 @{
     ViewBag.Title = "Off_Template_List";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
-}
-@section page{
-    8
+    ViewBag.Current = "headingEight";
 }
 @using (Html.BeginForm()) 
 {
@@ -33,8 +31,6 @@
                     <label class="checkbox-inline">
                         @Html.EditorFor(model => model.RequiredAmount) 销售金额
                     </label>
-                            @*@Html.ValidationMessageFor(model => model.RequiredStorage, "", new { @class = "text-danger" })
-                            @Html.ValidationMessageFor(model => model.RequiredAmount, "", new { @class = "text-danger" })*@
                 </div>
             </div><br />
             <div class="row">
@@ -79,7 +75,6 @@
             type: "post",
             success: function (data) {
                 if (data.result == "SUCCESS") {
-                    //console.log(data.list[0])
                     var list = data.list;
                     for (var i = 0; i < list.length; i++) {
                         var iN_arry = list[i].ItemName
@@ -121,7 +116,6 @@
         var pl_iC = $("#ptr_" + id).find(".iC").text();
         var pl_sP = $("#ptr_" + id).find(".sP").text();
         var pl_sC = $("#ptr_" + id).find(".sC").text();
-        //alert(pl_iN)
         $("#ptr_" + id).remove();
         $("#list_pro").append("<option target-id=" + id + " target-ic=" + pl_iC + " target-sp=" + pl_sP + " target-sc=" + pl_sC + " target-sn=" + pl_sN + ">" + pl_iN + "</option>")
         test();
@@ -131,7 +125,6 @@
         $(".item-del").each(function () {
             l.push($(this).attr("target-id"));
         });
-        //alert(l);
         $("#ProductList").val(l);
     }
     

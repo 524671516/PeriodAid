@@ -1,10 +1,9 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Task>
 @using PagedList.Mvc;
 @using PeriodAid.Models;
-
-@section page{
-    6
-    }
+@{ 
+    ViewBag.Current = "headingSix";
+}
 <br />
 <table class="table table-condensed table-striped h6" style="table-layout:fixed;width:100%;">
     <tr>

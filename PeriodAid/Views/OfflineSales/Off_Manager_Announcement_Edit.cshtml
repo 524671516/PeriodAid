@@ -3,9 +3,7 @@
 @{
     ViewBag.Title = "Off_Manager_Announcement_Edit";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
-}
-@section page{
-    6
+    ViewBag.Current = "headingSix";
 }
 @using (Html.BeginForm("Off_Manager_Announcement_Edit", "OfflineSales", FormMethod.Post, new { @id = "editajax" }))
 {

@@ -2,10 +2,8 @@
 @{
     ViewBag.Title = "Off_Schedule_Statistic";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
 }
-@section page{
-    2
-    }
 @section header{
     <style>
         .count{
@@ -33,44 +31,26 @@
                 <li class="row">
                     <div class="col-md-4 h5"><strong>门店总数：</strong></div>
                     <div class="col-md-8">
-                        
-                            <div id="totalcount" class="progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;text-align:center;">
-                                60%
-                            </div>
-       
+                        <div id="totalcount" class="progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;text-align:center;">
+                            60%
+                        </div>
                     </div>
-                    @*<div class="input-group">
-                        <div class="input-group-addon"><small>门店总数</small></div>
-                        <input type="text" id="totalcount" class="input-sm form-control" value="" disabled/>
-                    </div>*@
                 </li>
                 <li class="row">
                     <div class="col-md-4 h5"><strong>已签到：</strong></div>
                     <div class="col-md-8">
-                        
-                            <div id="selfcount" class="progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;text-align:center;">
-                                60%
-                            </div>
-                       
+                        <div id="selfcount" class="progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;text-align:center;">
+                            60%
+                        </div>
                     </div>
-                    @*<div class="input-group">
-                        <div class="input-group-addon"><small>已签到</small></div>
-                        <input type="text" id="selfcount" class="input-sm form-control" value="" disabled/>
-                    </div>*@
                 </li>
                 <li class="row">
                     <div class="col-md-4 h5"><strong>代签到：</strong></div>
                     <div class="col-md-8">
-                       
-                            <div id="proxycount" class="progress-bar-warning" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="text-align:center;">
-                                60%
-                            </div>
-                        
+                        <div id="proxycount" class="progress-bar-warning" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="text-align:center;">
+                            60%
+                        </div>
                     </div>
-                    @*<div class="input-group">
-                        <div class="input-group-addon"><small>代签</small></div>
-                        <input type="text" id="proxycount" class="input-sm form-control" value="" disabled/>
-                    </div>*@
                 </li>
                 <li class="row">
                     <div class="col-md-4 h5"><strong>其他：</strong></div>
@@ -93,6 +73,7 @@
                 <div id="myChart_Pie" style="min-width:300px;height:300px"></div>
             </div>
         </div>
+</div>
 </div>
 <script src="~/Scripts/highcharts.js"></script>
 <script>
@@ -135,8 +116,6 @@
                         "aria-valuemax": data.totalcount
                     });
                     $("#rate").text(((data.selfcount / data.totalcount) * 100).toFixed(2) + "%");
-                    //$("#countList").html(data);
-                    //制作饼状图
                     $("#myChart_Pie").highcharts({
                         chart: {
                             plotBackgroundColor: null,
@@ -193,7 +172,6 @@
         $("#search-btn").click(function () {
             var url = "/OfflineSales/Off_Schedule_Statistic_Ajax";
             var datetime = $("#date-time").val();
-            //alert(datetime)
             $.ajax({
                 url: url,
                 type: "post",
@@ -227,8 +205,6 @@
                             "aria-valuemax": data.totalcount
                         });
                         $("#rate").val(((data.selfcount / data.totalcount) * 100).toFixed(2) + "%");
-                        //$("#countList").html(data);
-                        //制作饼状图
                         $("#myChart_Pie").highcharts({
                             chart: {
                                 plotBackgroundColor: null,
@@ -258,22 +234,16 @@
                                     {
                                         name: '签到',
                                         y: data.selfcount,
-                                        //sliced: true,
-                                        //selected: true,
                                         color: "#d9534f"
                                     },
                                     {
                                         name: '代签到',
                                         y: data.proxycount,
-                                        //sliced: true,
-                                        //selected: true,
                                         color: "#f0ad4e"
                                     },
                                     {
                                         name: '其他',
                                         y: data.restcount,
-                                        //sliced: true,
-                                        //selected: true,
                                         color: "#5bc0de"
                                     }]
                             }]

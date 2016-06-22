@@ -349,6 +349,7 @@
     <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\off-JavaScript.js" />
     <Content Include="Scripts\jeDate-gh-pages\params.json" />
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
     <Content Include="Content\xlsx\产品销售明细表-Template.xlsx" />
@@ -384,7 +385,6 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\zepto.min.js" />
-    <Content Include="Scripts\_references.js" />
     <Content Include="Views\favicon.ico" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
