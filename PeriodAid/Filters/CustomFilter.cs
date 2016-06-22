@@ -8,7 +8,7 @@ using Microsoft.AspNet.Identity.Owin;
 using PeriodAid.Models;
 using PeriodAid.Controllers;
 
-namespace PeriodAid.Models
+namespace PeriodAid.Filters
 {
     public class SettingFilter : AuthorizeAttribute
     {
@@ -24,12 +24,12 @@ namespace PeriodAid.Models
             {
                 if (item.SettingResult == false)
                 {
-                    filterContext.Result = new HttpStatusCodeResult(403);
+                    filterContext.Result = new RedirectResult("/OffCommon/AuthorizationError");
                 }
             }
             else
             {
-                filterContext.Result = new HttpStatusCodeResult(403);
+                filterContext.Result = new RedirectResult("/OffCommon/AuthorizationError");
             }
         }
     }
