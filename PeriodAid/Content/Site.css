@@ -162,3 +162,8 @@ li {
 .offline-table-background {
     background-color: #f9f9f9;
 }
+/*--------内容块---------*/
+.offline-table-margin-01 {
+    margin: 10px 0;
+    width:100%
+}

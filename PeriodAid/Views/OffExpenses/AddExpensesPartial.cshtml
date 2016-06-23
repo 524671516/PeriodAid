@@ -1,0 +1,93 @@
+﻿@model PeriodAid.Models.Off_Expenses
+@using (Html.BeginForm("AddExpensesPartial", "OffExpenses", FormMethod.Post, new { id = "ajaxForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="control-label col-md-2">申请日期</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.ApplicationDate, new { htmlAttributes = new { @class = "form-control time-date"} })
+                @Html.ValidationMessageFor(model => model.ApplicationDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <input type="hidden" id="Status" name="Status" value="0" />
+        <div class="form-group">
+            <label class="control-label col-md-2">渠道</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.StoreSystem, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StoreSystem, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">经销商</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Distributor, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">费用类别</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.PaymentType, ViewBag.PayType as SelectList, "- 请选择费用类别 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PaymentType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">备注信息</label>
+            <div class="col-md-9">
+                @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control", rows = 3 })
+                @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-9">
+                <input type="submit" value="添加" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script src="~/Scripts/jedate.min.js"></script>
+<script>
+    $(function () {
+        var start = {
+            dateCell: '.time-date',
+            format: 'YYYY-MM-DD',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                end.minDate = datas; //开始日选好后，重置结束日的最小日期
+            }
+        };
+        jeDate(start);
+        $('#ajaxForm').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("修改成功");
+                $('#modal').modal('hide');
+                $.ajax({
+                    url: "/OffExpenses/ExpensesListPartial",
+                    success: function (data) {
+                        $("#offexpenses-list").html(data);
+                    }
+                });
+            }
+            else {
+                $("#modal-body").html(data)
+            }
+            
+        });
+    });
+</script>
+
+
+
+

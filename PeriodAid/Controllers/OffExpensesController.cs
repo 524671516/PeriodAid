@@ -11,6 +11,7 @@ using PeriodAid.Models;
 using PeriodAid.Filters;
 namespace PeriodAid.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class OffExpensesController : Controller
     {
         OfflineSales _offlineDB = new OfflineSales();
@@ -73,23 +74,23 @@ namespace PeriodAid.Controllers
             var list = (from m in _offlineDB.Off_Expenses
                         where m.Status >= 0 && m.PaymentType == _type && m.Off_System_Id == user.DefaultSystemId
                         orderby m.Id descending
-                        select m).ToPagedList(_page, 50);
+                        select m).ToPagedList(_page, 20);
             return PartialView(list);
         }
 
         // Origin: Off_Expenses_Add
         [SettingFilter(SettingName = "EXPENSES")]
-        public ActionResult AddExpenses()
+        public ActionResult AddExpensesPartial()
         {
             List<Object> attendance = new List<Object>();
             attendance.Add(new { Key = 0, Value = "进场费" });
             attendance.Add(new { Key = 1, Value = "活动费" });
             ViewBag.PayType = new SelectList(attendance, "Key", "Value");
-            return View();
+            return PartialView();
         }
         [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult AddExpenses(FormCollection form)
+        public ActionResult AddExpensesPartial(FormCollection form)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var item = new Off_Expenses();
@@ -101,8 +102,9 @@ namespace PeriodAid.Controllers
                 item.Off_System_Id = user.DefaultSystemId;
                 _offlineDB.Off_Expenses.Add(item);
                 _offlineDB.SaveChanges();
+                return Content("SUCCESS");
             }
-            return RedirectToAction("ExpensesIndex");
+            return Content("FAIL");
         }
 
         // Origin: Off_Expenses_Edit
@@ -133,7 +135,7 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult EditExpenses(int id, FormCollection form)
         {
-            var expenses = _offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
+            var expenses = _offlineDB.Off_Expenses.AsNoTracking().SingleOrDefault(m => m.Id == id);
             if (expenses != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
@@ -217,7 +219,7 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult BalanceExpenses(int id, FormCollection form)
         {
-            var expenses = _offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
+            var expenses = _offlineDB.Off_Expenses.AsNoTracking().SingleOrDefault(m => m.Id == id);
             if (expenses != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
@@ -300,7 +302,7 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult VerifyExpenses(int id, FormCollection form)
         {
-            var expenses = _offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
+            var expenses = _offlineDB.Off_Expenses.AsNoTracking().SingleOrDefault(m => m.Id == id);
             if (expenses != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
@@ -476,7 +478,7 @@ namespace PeriodAid.Controllers
         }
         // Origin: Off_Expenses_Cancel(ActionResult)
         [SettingFilter(SettingName = "EXPENSES"), HttpPost]
-        public JsonResult CancelExpenses(int id)
+        public JsonResult CancelExpensesAjax(int id)
         {
             var item = _offlineDB.Off_Expenses.SingleOrDefault(m => m.Id == id);
             if (item != null)

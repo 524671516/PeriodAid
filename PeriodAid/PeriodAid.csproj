@@ -328,6 +328,7 @@
     <Content Include="Content\images\benefits_done.png" />
     <Content Include="Content\Jcrop.gif" />
     <Content Include="Content\Jcrop.min.css" />
+    <Content Include="Content\jedate.css" />
     <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\jquery.fullPage.css" />
     <Content Include="Content\PA-Site.css" />
@@ -354,6 +355,7 @@
     <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\off-JavaScript.js" />
     <Content Include="Scripts\jeDate-gh-pages\params.json" />
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
@@ -390,6 +392,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\zepto.min.js" />
+    <None Include="Scripts\_references.js" />
     <Content Include="Views\favicon.ico" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -687,13 +690,19 @@
     <Content Include="Views\OffSales\MonthSalesList.cshtml" />
     <Content Include="Views\OffSeller\SellerIndex.cshtml" />
     <Content Include="Views\OffSeller\SellerListPartial.cshtml" />
+    <Content Include="Views\OffExpenses\ExpensesIndex.cshtml" />
+    <Content Include="Views\OffExpenses\ExpensesListPartial.cshtml" />
+    <Content Include="Views\OffExpenses\AddExpensesPartial.cshtml" />
+    <Content Include="Views\OffExpenses\EditExpenses.cshtml" />
+    <Content Include="Views\OffExpenses\BalanceExpenses.cshtml" />
+    <Content Include="Views\OffExpenses\VerifyExpenses.cshtml" />
+    <Content Include="Views\OffExpenses\ViewExpenses.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Common\" />
-    <Folder Include="Views\OffExpenses\" />
     <Folder Include="Views\OffStore\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
