@@ -57,18 +57,7 @@
 <script src="~/Scripts/jedate.min.js"></script>
 <script>
     $(function () {
-        var start = {
-            dateCell: '.time-date',
-            format: 'YYYY-MM-DD',
-            //minDate: jeDate.now(0), //设定最小日期为当前日期
-            festival: false,
-            //maxDate: '2099-06-16 23:59:59', //最大日期
-            isTime: true,
-            choosefun: function (datas) {
-                end.minDate = datas; //开始日选好后，重置结束日的最小日期
-            }
-        };
-        jeDate(start);
+        $(".time-date").datepicker()
         $('#ajaxForm').ajaxForm(function (data) {
             if (data == "SUCCESS") {
                 alert("修改成功");
