@@ -15,28 +15,6 @@
     <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
     <script src="~/Scripts/jquery-ui.min.js"></script>
     @RenderSection("header", required:false)
-    <style>
-        body{
-            font-size:1em;
-        }
-        .nav-left {
-        list-style:none;padding:0;
-        }
-        .nav-left > li{
-        padding-top:5px;
-        }
-        
-        .res {
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-        }
-        .panel-title{
-            font-size:1em;
-        }
-        .panel-title a{
-            text-decoration:none;
-        }
-    </style>
 </head>
 <body class="reset">
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -69,24 +47,25 @@
             </div>
         </div>
     </div>
-    <div class="container" style="margin-top:40px;">
+    <br /><br />
+    <div></div>
+    <div class="container">
         <div class="row">
             <div class="col-md-2">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title ani">
+                            <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    门店信息 <span id="ani_01" class="caret res"></span>
+                                    门店信息 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
                                 </a>
-                                
                             </h4>
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a href="/OfflineSales/Off_Store_main"><i class="fa fa-search"></i>&nbsp;&nbsp;门店列表</a></li>
-                                    <li><a href="/OfflineSales/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a></li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a href="/OfflineSales/Off_Store_main"><i class="fa fa-search"></i>&nbsp;&nbsp;门店列表</a></li>
+                                    <li class="left-navbar"><a href="/OfflineSales/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -95,15 +74,15 @@
                         <div class="panel-heading" role="tab" id="headingEight">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-                                    产品系列 <span id="ani_08" class="caret res"></span>
+                                    产品系列 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingEight"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "Off_Product_List", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-server"></i>&nbsp;&nbsp;</a>@Html.ActionLink("模板列表", "Off_Template_List", "OfflineSales")</li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "Off_Product_List", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-server"></i>&nbsp;&nbsp;</a>@Html.ActionLink("模板列表", "Off_Template_List", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
@@ -112,16 +91,16 @@
                         <div class="panel-heading" role="tab" id="headingTwo">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    销售数据 <span id="ani_02" class="caret res"></span>
+                                    销售数据 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
                                 </a> 
                             </h4>
                         </div>
                         <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a href="/OfflineSales/Off_Sales_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看日报表</a></li>
-                                    <li><a href="/OfflineSales/Off_Sales_Month"><i class="fa fa-search"></i>&nbsp;&nbsp;查看月报表</a></li>
-                                    <li><a href="/OfflineSales/Off_ScheduleList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看活动记录</a></li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a href="/OfflineSales/Off_Sales_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看日报表</a></li>
+                                    <li class="left-navbar"><a href="/OfflineSales/Off_Sales_Month"><i class="fa fa-search"></i>&nbsp;&nbsp;查看月报表</a></li>
+                                    <li class="left-navbar"><a href="/OfflineSales/Off_ScheduleList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看活动记录</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -130,15 +109,14 @@
                         <div class="panel-heading" role="tab" id="headingThree">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    费用数据 <span id="ani_03" class="caret res"></span>
+                                    费用数据 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingThree"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a href="/OfflineSales/Off_Expenses_List"><i class="fa fa-money"></i>&nbsp;&nbsp;费用列表</a></li>
-                                    <li><a href="/OfflineSales/Off_Expenses_Add"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增费用</a></li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a href="/OffExpenses/ExpensesIndex"><i class="fa fa-money"></i>&nbsp;&nbsp;费用列表</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -147,17 +125,16 @@
                         <div class="panel-heading" role="tab" id="headingFour">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    人员信息 <span id="ani_04" class="caret res"></span>
+                                    人员信息 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingFour"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a href="/OfflineSales/Off_Seller_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看促销员</a></li>
-                                    @*<li><button style="border:none;background-color:white;color:#428bca;padding:0;"><i class="fa fa-download"></i>&nbsp;&nbsp;下载考勤数据</button></li>*@
-                                    <li><button style="border:none;background-color:white;color:#428bca;padding:0;" id="download-salary"><i class="fa fa-download"></i>&nbsp;&nbsp;下载工资数据</button></li>
-                                    <li><a href="/OfflineSales/Off_BindSeller_List"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定促销员</a></li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a href="/OfflineSales/Off_Seller_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看促销员</a></li>
+                                    <li class="left-navbar"><a href="javascript:;" id="download-salary"><i class="fa fa-download"></i>&nbsp;&nbsp;下载工资数据</a></li>
+                                    <li class="left-navbar"><a href="/OfflineSales/Off_BindSeller_List"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定促销员</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -166,15 +143,15 @@
                         <div class="panel-heading" role="tab" id="headingFive">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                    销售确认 <span id="ani_05" class="caret res"></span>
+                                    销售确认 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingFive"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a><i class="fa fa-search"></i>&nbsp;&nbsp;</a>@Html.ActionLink("查询促销记录", "Off_QueryCheckIn", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-check"></i>&nbsp;&nbsp;</a>@Html.ActionLink("确认促销", "Off_CheckIn_List", "OfflineSales")</li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-search"></i>&nbsp;&nbsp;</a>@Html.ActionLink("查询促销记录", "Off_QueryCheckIn", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-check"></i>&nbsp;&nbsp;</a>@Html.ActionLink("确认促销", "Off_CheckIn_List", "OfflineSales")</li>
                                     
                                 </ul>
                             </div>
@@ -184,17 +161,17 @@
                         <div class="panel-heading" role="tab" id="headingSix">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                                    督导管理 <span id="ani_06" class="caret res"></span>
+                                    督导管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingSix"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseSix" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSix">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a><i class="fa fa-user-secret"></i>&nbsp;&nbsp;</a>@Html.ActionLink("管理员", "Off_Manager_list", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "Off_Manager_TaskList", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "Off_Manager_Announcement_List", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "Off_Manager_Request_List", "OfflineSales")</li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-user-secret"></i>&nbsp;&nbsp;</a>@Html.ActionLink("管理员", "Off_Manager_list", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "Off_Manager_TaskList", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "Off_Manager_Announcement_List", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "Off_Manager_Request_List", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
@@ -203,33 +180,32 @@
                         <div class="panel-heading" role="tab" id="headingSeven">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
-                                    数据图表 <span id="ani_07" class="caret res"></span>
+                                    数据图表 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingSeven"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseSeven" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSeven">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a><i class="fa fa-line-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域数据图表", "Off_Statistic_StoreSystem", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域门店数据图表", "Off_Statistic_Store", "OfflineSales")</li>
-                                    <li><a><i class="fa fa-area-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("促销员销售数据图表", "Off_Statistic_Seller", "OfflineSales")</li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-line-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域数据图表", "Off_Statistic_StoreSystem", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域门店数据图表", "Off_Statistic_Store", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-area-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("促销员销售数据图", "Off_Statistic_Seller", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingNine">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
-                                    红包管理 <span id="ani_09" class="caret res"></span>
+                                    红包管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingNine"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseNine" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNine">
                             <div class="panel-body">
-                                <ul class="nav-left">
-                                    <li><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包列表", "Off_RedPack_List", "OfflineSales")</li>
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包列表", "Off_RedPack_List", "OfflineSales")</li>
                                 </ul>
                             </div>
                         </div>
@@ -243,12 +219,9 @@
             </div>
         </div>
     </div>
-    <div class="hidden" id="pagenumber">
-        @RenderSection("page", required: true)
-    </div>
-    
-    <a class="btn btn-default hidden" id="to-top" aria-label="Left Align" style="position:fixed;bottom:20px;right:10%;">
-        <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+    <input type="hidden" value="@ViewBag.Current" id="current_page" />
+    <a class="btn btn-default hidden scroll-fixed" id="to-top" aria-label="Left Align">
+        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
     </a>
     <div class="modal fade" id="downloadModal">
         <div class="modal-dialog">
@@ -278,84 +251,8 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/off-JavaScript.js"></script>
+    <script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
     @RenderSection("scripts", required: false)
-    <script>
-        $(function () {
-        $("#start-date").datepicker();
-        $("#end-date").datepicker();
-        $("#download-salary").click(function () {
-            $("#downloadModal").modal();
-        });
-        $("#download-submit").click(function () {
-            var start = $("#start-date").val();
-            var end = $("#end-date").val();
-            //$("#start-date").val("");
-            //$("#end-date").val("");
-            window.location.href = "/OfflineSales/Ajax_DownloadSalary?start=" + start + "&end=" + end;
-            return false;
-        });
-        if ($("#pagenumber").text().trim() == "1") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_01").removeClass("res")
-            $("div[aria-labelledby='headingOne']").addClass("in");
-        }
-        if ($("#pagenumber").text().trim() == "2") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_02").removeClass("res")
-            $("div[aria-labelledby='headingTwo']").addClass("in");
-        } 
-        if ($("#pagenumber").text().trim() == "3") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_03").removeClass("res")
-           $("div[aria-labelledby='headingThree']").addClass("in");
-        }
-        if ($("#pagenumber").text().trim() == "4") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_04").removeClass("res")
-            $("div[aria-labelledby='headingFour']").addClass("in");
-        }
-        if ($("#pagenumber").text().trim() == "5") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_05").removeClass("res")
-            $("div[aria-labelledby='headingFive']").addClass("in");
-        }
-        if ($("#pagenumber").text().trim() == "6") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_06").removeClass("res")
-            $("div[aria-labelledby='headingSix']").addClass("in");
-        }
-        if ($("#pagenumber").text().trim() == "7") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_07").removeClass("res")
-            $("div[aria-labelledby='headingSeven']").addClass("in");
-        }
-        if ($("#pagenumber").text().trim() == "8") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_08").removeClass("res")
-            $("div[aria-labelledby='headingEight']").addClass("in");
-        }
-        if ($("#pagenumber").text().trim() == "9") {
-            $(".panel-collapse").removeClass("in");
-            $("#ani_09").removeClass("res")
-            $("div[aria-labelledby='headingNine']").addClass("in");
-        }
-        $(document).scroll(function () {
-            if (window.pageYOffset > 0) {
-                $("#to-top").removeClass("hidden");
-            }
-            else
-                $("#to-top").addClass("hidden");
-        })
-    });
-    $("#to-top").click(function () {
-        scoll_ani();
-    })
-    function scoll_ani() {
-        if (window.pageYOffset > 0) {
-            $(document).scrollTop(window.pageYOffset - 50);
-            setTimeout(scoll_ani, 50);
-        }
-    }    
-    </script>
 </body>
 </html>
