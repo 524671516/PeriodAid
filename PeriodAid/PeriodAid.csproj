@@ -196,6 +196,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\OffCheckinController.cs" />
     <Compile Include="Controllers\OffCommonController.cs" />
     <Compile Include="Controllers\CustomController.cs" />
     <Compile Include="Controllers\ERPOrderController.cs" />
@@ -703,6 +704,7 @@
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Common\" />
+    <Folder Include="Views\OffCheckin\" />
     <Folder Include="Views\OffStore\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
