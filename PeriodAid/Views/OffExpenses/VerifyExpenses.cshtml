@@ -185,10 +185,7 @@
 }
 <script>
     $(function () {
-        var time = {
-            dateCell: '.time-date',
-            format: 'YYYY-MM-DD', // 分隔符可以任意定义，该例子表示只显示年月
-        }
+        $(".time-date").datepicker();
         $("#offexpenses-add-costdetail").click(function () {
             $html = "<tr><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm time-date\" name=\"apdate\"></div>" +
                 "</td><td class=\"col-md-3\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>核销类型</small></div>" +
@@ -198,11 +195,11 @@
                 "</div></td><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
                 "</div></td><td class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></td></tr>";
             $("#offexpenses-list-table").append($html);
+            $(".time-date").datepicker();
         });
         $(document).on("change", "input[name=detailfee]", function () {
             cal_amount();
         });
-        jeDate(time)
     });
     function getDel(k, d_id) {
         var del_confirm = confirm("确认要删除记录吗?");
