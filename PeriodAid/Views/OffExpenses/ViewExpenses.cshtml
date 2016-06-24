@@ -149,20 +149,20 @@
                 <table class="offline-table-margin-01">
                     @foreach (var item in Model.Off_Expenses_Details.Where(m => m.ExpensesType == 0))
                     {
-                        <tr>
+                        <tr class="offline-table-margin-02">
                             <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>费用名称</small></div>
                                     <input class="form-control input-sm" readonly value="@item.DetailsName">
                                 </div>
                             </td>
-                            <td class="col-md-2">
+                            <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>费用</small></div>
                                     <input class="form-control input-sm" readonly type="number" value="@item.DetailsFee">
                                 </div>
                             </td>
-                            <td class="col-md-7">
+                            <td class="col-md-6">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>备注</small></div>
                                     <input class="form-control input-sm" readonly value="@item.Remarks">
@@ -176,20 +176,20 @@
                 <table class="offline-table-margin-01">
                     @foreach (var item in Model.Off_Expenses_Details.Where(m => m.ExpensesType == 1))
                     {
-                        <tr>
+                        <tr class="offline-table-margin-02">
                             <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>费用名称</small></div>
                                     <input class="form-control input-sm" readonly value="@item.DetailsName">
                                 </div>
                             </td>
-                            <td class="col-md-2">
+                            <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>费用</small></div>
                                     <input class="form-control input-sm" readonly type="number" value="@item.DetailsFee">
                                 </div>
                             </td>
-                            <td class="col-md-7">
+                            <td class="col-md-6">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>备注</small></div>
                                     <input class="form-control input-sm" readonly value="@item.Remarks">
@@ -203,14 +203,14 @@
                 <table class="offline-table-margin-01">
                     @foreach (var item in Model.Off_Expenses_Payment)
                     {
-                        <tr>
+                        <tr class="offline-table-margin-02">
                             <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>申请日期</small></div>
                                     <input class="form-control input-sm" readonly value="@Convert.ToDateTime(item.ApplicationDate).ToString("yyyy-MM-dd")">
                                 </div>
                             </td>
-                            <td class="col-md-2">
+                            <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>费用类型</small></div>
                                     @if (item.VerifyType == 0)
@@ -223,13 +223,13 @@
                                     }
                                 </div>
                             </td>
-                            <td class="col-md-2">
+                            <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>费用</small></div>
                                     <input class="form-control input-sm" readonly type="number" value="@item.VerifyCost">
                                 </div>
                             </td>
-                            <td class="col-md-5">
+                            <td class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><small>备注</small></div>
                                     <input class="form-control input-sm" readonly value="@item.Remarks">

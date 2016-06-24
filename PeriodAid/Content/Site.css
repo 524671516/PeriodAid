@@ -146,8 +146,16 @@ li {
         top: 6px;
         width: 12px;
     }
+    .input-validation-error {
+            border-color: #a94442;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        }
 /*-----搜索块-------*/
 .offline-search-inline {
+    width:auto;
+    display:inline-block
+}
+.offline-search-inline-01 {
     width:50%;
     display:inline-block
 }
@@ -166,4 +174,8 @@ li {
 .offline-table-margin-01 {
     margin: 10px 0;
     width:100%
+}
+.offline-table-margin-02 {
+    display:block;
+    margin:10px 0
 }

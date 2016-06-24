@@ -1,8 +1,72 @@
 ﻿
 @{
-    ViewBag.Title = "DailySalesIndex";
+    ViewBag.Title = "日销售信息";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
 }
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>门店名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="offsales-search-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="offsales-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<div class="container">
+    <ul class="list-inline list-unstyled row">
+        <li><a class="btn btn-info btn-sm" id="offsales-add-daily"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a></li>
+        <li><a class="btn btn-info btn-sm" id="offsales-upload-daily" href="/OffSales/UploadDailySales"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a></li>
+        <li><a class="btn btn-danger btn-sm" id="offsale-batchdelete">删除信息</a></li>
+    </ul>
+</div><br />
+<div id="offsales-list">
 
-<h2>DailySalesIndex</h2>
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OffSales/DailySalesListPartial",
+            success: function (data) {
+                $("#offsales-list").html(data);
+            }
+        });
+    });
+    //日报表搜索
+    $("#offsales-search-btn").click(function () {
+        $.ajax({
+            url: "/OffSales/DailySalesListPartial",
+            data: {
+                query: $("#offsales-search-query").val()
+            },
+            success: function (data) {
+                $("#offsales-list").html(data);
+            }
+        });
+    });
+    //新增日报表
+    $("#offsales-add-daily").click(function () {
+        $.ajax({
+            url: "/OffSales/..",
+            data: {
+                random: Date.now()
+            },
+            success: function (data) {
+                $("#addcontent").html(data);
+                $("#addModal").modal()
+            }
+        });
+        return false
+
+    });
+    //日报表批量删除
+    $("#offsale-batchdelete").click(function () {
+        var url = "/OffSales/Off_daily_delete_batch"
+        var link_url = "/OffSales/DailySalesListPartial"
+        var $list = $("#offsales-list")
+        bactchDelete(url, link_url, $list)
+    });
+</script>
+
+
 

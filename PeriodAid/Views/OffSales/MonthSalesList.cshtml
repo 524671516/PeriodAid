@@ -1,8 +1,58 @@
 ﻿
 @{
-    ViewBag.Title = "MonthSalesList";
+    ViewBag.Title = "月销售信息";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
 }
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>门店名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="offsalesmonth-search-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="offsalesmonth-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<div class="container">
+    <ul class="list-inline list-unstyled row">
+        <li><a class="btn btn-info btn-sm" id="offsales-add-month"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a></li>
+        <li><a class="btn btn-info btn-sm" id="offsales-upload-month" href="/OffSales/UploadMonthSales"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传月报表</a></li>
+    </ul>
+</div><br />
+<div id="offsales-list-month">
 
-<h2>MonthSalesList</h2>
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OffSales/MonthSalesListPartial",
+            success: function (data) {
+                $("#offsales-list-month").html(data);
+            }
+        });
+        //搜索
+        $("#offsalesmonth-search-btn").click(function () {
+            $.ajax({
+                url: "/OffSales/MonthSalesListPartial",
+                data: {
+                    query: $("#offsalesmonth-search-query").val()
+                },
+                success: function (data) {
+                    $("#offsales-list-month").html(data);
+                }
+            });
+        });
+    });
+    //新增报表
+    $("#offsales-add-month").click(function () {
+        var link_url = "/OfflineSales/Off_CreateSalesMonth"
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#addMonthcontent").html(data)
+                $("#addModal").modal()
+            }
 
+        })
+    });
+</script>

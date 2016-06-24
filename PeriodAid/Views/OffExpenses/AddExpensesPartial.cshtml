@@ -1,5 +1,5 @@
 ﻿@model PeriodAid.Models.Off_Expenses
-@using (Html.BeginForm("AddExpensesPartial", "OffExpenses", FormMethod.Post, new { id = "ajaxForm" }))
+@using (Html.BeginForm("AddExpensesPartial", "OffExpenses", FormMethod.Post, new { id = "offexpenses-form" }))
 {
     @Html.AntiForgeryToken()
 
@@ -58,7 +58,7 @@
 <script>
     $(function () {
         $(".time-date").datepicker()
-        $('#ajaxForm').ajaxForm(function (data) {
+        $('#offexpenses-form').ajaxForm(function (data) {
             if (data == "SUCCESS") {
                 alert("修改成功");
                 $('#modal').modal('hide');

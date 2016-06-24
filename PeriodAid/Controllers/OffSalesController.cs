@@ -591,7 +591,7 @@ namespace PeriodAid.Controllers
                        select new { ID = m.Id, StoreName = m.StoreName };
             return Json(new { StoreList = list });
         }
-        */
+       
 
 
         // Origin:UploadDailyInfo

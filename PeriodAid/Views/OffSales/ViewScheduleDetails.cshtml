@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "ViewScheduleDetails";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
+}
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>门店名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="offsalesschedule-search-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="offsalesschedule-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<div class="container">
+    <ul class="list-inline list-unstyled row">
+        <li><a class="btn btn-info btn-sm" href="/OffSales/AddSchedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a></li>
+        <li><a class="btn btn-danger btn-sm" id="offsalesschedule-batchdelete">删除信息</a></li>
+        <li><a class="btn btn-warning btn-sm" id="offsalesschedule-batchedit">修改时间及工资</a></li>
+    </ul>
+</div><br />
+<div id="offsalesschedule-list">
+
+</div>
+<input type="hidden" value="@ViewBag.CurrentDate" id="offsalesschedule-current-date" />
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OffSales/ViewScheduleDetailsPartial",
+            success: function (data) {
+                $("#offsalesschedule-list").html(data)
+            }
+        })
+    })
+    $("#search-btn").click(function () {
+        var query = $("#search").val();
+        var url = "/OfflineSales/Off_ScheduleDetails?date=" + $("#current_date").val() + "&query=" + query;
+        $("#search").val(query);
+        window.location.href = url;
+    })
+    $(".edit-button").click(function () {
+        var link_url = $(this).attr("href");
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#editcontent").html(data);
+                $('#myModal').modal()
+            }
+        });
+        return false;
+    });
+    $(".del-button").click(function () {
+        var cfm = confirm("确认要删除信息吗？");
+        if (cfm) {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                type: "post",
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        var attr = $.getUrlParam("date");
+                        window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
+                    }
+                }
+            });
+        }
+        return false;
+    });
+    (function ($) {
+        $.getUrlParam = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+    })(jQuery);
+</script>

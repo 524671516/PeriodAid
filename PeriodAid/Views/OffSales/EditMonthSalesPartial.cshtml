@@ -1,0 +1,103 @@
+﻿@model PeriodAid.Models.Off_SalesInfo_Month
+
+@using (Html.BeginForm("EditMonthSalesPartial", "OffSales", FormMethod.Post, new { id = "offsales-month-form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            <label class="control-label col-md-3">店铺名称</label>
+            <div class="col-md-9">
+                @Html.DisplayFor(model => model.Off_Store.StoreName)
+                @Html.HiddenFor(model => model.StoreId)
+                @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">时间</label>
+            <div class="col-md-9">
+                @Html.DisplayFor(model => model.Date)
+                @Html.HiddenFor(model => model.Date)
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">红糖姜茶</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Item_Brown, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Brown, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">黑糖姜茶</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Item_Black, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Black, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">柠檬姜茶</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Item_Lemon, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Lemon, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">蜂蜜姜茶</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Item_Honey, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Honey, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">红枣姜茶</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Item_Dates, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Dates, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">累计金额</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.TotalFee, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TotalFee, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $('#offsales-month-form').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                $('#myModal').modal('hide');
+                alert("修改成功");
+                $.ajax({
+                    url: "/OffSales/MonthSalesListPartial",
+                    success: function (data) {
+                        $("#offsales-list-month").html(data);
+                    }
+                });
+            }
+            else {
+                $("#editcontent").html(data);
+            }
+
+        });
+    });
+</script>
