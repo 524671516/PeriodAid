@@ -179,6 +179,33 @@ namespace PeriodAid.Controllers
             }
         }
 
+        // Origin: Off_DeleteSeller
+        [HttpPost]
+        public ActionResult DeleteSellerAjax(int id)
+        {
+            var item = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_System_Id == user.DefaultSystemId)
+                {
+                    try
+                    {
+                        _offlineDB.Off_Seller.Remove(item);
+                        _offlineDB.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    catch
+                    {
+                        return Json(new { result = "UNAUTHORIZED" });
+                    }
+                }
+                else
+                    return Json(new { result = "FAIL" });
+            }
+            return Json(new { result = "FAIL" });
+        }
+
         [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadSeller()
         {
@@ -354,6 +381,59 @@ namespace PeriodAid.Controllers
             }
         }
         #endregion
+
+
+        // Origin: Off_UpdateManager
+        [HttpPost]
+        public JsonResult UpdateManagerAjax(int id)
+        {
+
+            var item = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var currentuser = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_System_Id == currentuser.DefaultSystemId)
+                {
+                    try
+                    {
+                        var user = UserManager.FindByName(item.UserName);
+                        UserManager.RemoveFromRole(user.Id, "Seller");
+                        UserManager.AddToRole(user.Id, "Manager");
+                        var manager = _offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+                        if (manager == null)
+                        {
+                            manager = new Off_StoreManager()
+                            {
+                                UserName = user.UserName,
+                                NickName = user.NickName,
+                                Mobile = user.UserName,
+                                Status = 1,
+                                Off_System_Id = user.DefaultSystemId
+                            };
+                            _offlineDB.Off_StoreManager.Add(manager);
+                        }
+                        item.Bind = false;
+                        item.Off_Seller_Id = null;
+                        _offlineDB.Off_Membership_Bind.Remove(item);
+                        _offlineDB.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    catch
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
 
         // Origin: analyseExcel_SellerTable
         public async Task<List<Excel_DataMessage>> UploadSellerByExcelAsync(string filename, List<Excel_DataMessage> messageList)

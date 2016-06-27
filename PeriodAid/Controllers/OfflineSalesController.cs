@@ -3623,33 +3623,4 @@ namespace PeriodAid.Controllers
         public decimal? SalesAmount { get; set; }
         public int? StorageCount { get; set; }
     }
-    public enum Expenses_Name
-    {
-        [Display(Name = "进场费")]
-        进场费,
-        [Display(Name = "促销员工资")]
-        促销员工资,
-        [Display(Name = "促销员奖金")]
-        促销员奖金,
-        [Display(Name = "海报费")]
-        海报费,
-        [Display(Name = "端架费用")]
-        端架费用,
-        [Display(Name = "TG费用")]
-        TG费用,
-        [Display(Name = "地堆费用")]
-        地堆费用,
-        [Display(Name = "运输费")]
-        运输费,
-        [Display(Name = "试吃物料")]
-        试吃物料,
-        [Display(Name = "其他赠品")]
-        其他赠品,
-        [Display(Name = "公司赠品")]
-        公司赠品,
-        [Display(Name = "POSM")]
-        POSM,
-        [Display(Name = "其他费用")]
-        其他费用
-    }
 }

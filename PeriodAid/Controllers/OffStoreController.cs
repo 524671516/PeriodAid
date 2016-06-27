@@ -95,6 +95,65 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
+        // Origin Off_CreateStore
+        public ActionResult CreateStorePartial()
+        {
+            var store = new Off_Store();
+            return PartialView(store);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult CreateStorePartial(Off_Store model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Store item = new Off_Store();
+                if (TryUpdateModel(item))
+                {
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    item.Off_System_Id = user.DefaultSystemId;
+                    _offlineDB.Off_Store.Add(item);
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return PartialView(model);
+            }
+        }
+
+        // Origin: Off_DeleteStore
+        [HttpPost]
+        public ActionResult Off_DeleteStoreAjax(int id)
+        {
+            var item = _offlineDB.Off_Store.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_System_Id == user.DefaultSystemId)
+                {
+                    try
+                    {
+                        _offlineDB.Off_Store.Remove(item);
+                        _offlineDB.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    catch
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "UNAUTHRIZED" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
 
 
 

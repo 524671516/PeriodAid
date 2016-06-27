@@ -329,9 +329,9 @@ namespace PeriodAid.Models
     }
     public class Wx_ReportItemsViewModel
     {
-        public bool Storage_Required { get; set; }
+        public bool StorageRequired { get; set; }
 
-        public bool Amount_Requried { get; set; }
+        public bool AmountRequried { get; set; }
 
         public ICollection<Wx_TemplateProduct> ProductList { get; set; }
     }

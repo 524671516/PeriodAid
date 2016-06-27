@@ -64,18 +64,31 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
         // Origin: Off_Expenses_AjaxList
         [SettingFilter(SettingName = "EXPENSES")]
-        public ActionResult ExpensesListPartial(int? page, int? type)
+        public ActionResult ExpensesListPartial(int? page, int? type, string query)
         {
             int _type = type ?? 0;
             int _page = page ?? 1;
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var list = (from m in _offlineDB.Off_Expenses
-                        where m.Status >= 0 && m.PaymentType == _type && m.Off_System_Id == user.DefaultSystemId
-                        orderby m.Id descending
-                        select m).ToPagedList(_page, 20);
-            return PartialView(list);
+            if (query == null || query.Trim() == "")
+            {
+                var list = (from m in _offlineDB.Off_Expenses
+                            where m.Status >= 0 && m.PaymentType == _type && m.Off_System_Id == user.DefaultSystemId
+                            orderby m.Id descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_Expenses
+                            where m.Status >= 0 && m.PaymentType == _type && m.Off_System_Id == user.DefaultSystemId
+                            && (m.Distributor.Contains(query) || m.StoreSystem.Contains(query))
+                            orderby m.Id descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
         }
 
         // Origin: Off_Expenses_Add
@@ -133,61 +146,57 @@ namespace PeriodAid.Controllers
         }
         [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult EditExpenses(int id, FormCollection form)
+        public ActionResult EditExpenses(Off_Expenses model, FormCollection form)
         {
-            var expenses = _offlineDB.Off_Expenses.AsNoTracking().SingleOrDefault(m => m.Id == id);
-            if (expenses != null)
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                if (expenses.Off_System_Id == user.DefaultSystemId)
+                Off_Expenses item = new Off_Expenses();
+                if (TryUpdateModel(item))
                 {
-                    Off_Expenses item = new Off_Expenses();
-                    if (TryUpdateModel(item))
+                    var detailitemcnt = form.GetValues("detailid") == null ? 0 : form.GetValues("detailid").Length;
+                    for (int i = 0; i < detailitemcnt; i++)
                     {
-                        var detailitemcnt = form.GetValues("detailid") == null ? 0 : form.GetValues("detailid").Length;
-                        for (int i = 0; i < detailitemcnt; i++)
+                        if (form.GetValues("detailid")[i] == "0")
                         {
-                            if (form.GetValues("detailid")[i] == "0")
+                            Off_Expenses_Details detailtemp = new Off_Expenses_Details()
                             {
-                                Off_Expenses_Details detailtemp = new Off_Expenses_Details()
-                                {
-                                    Off_Expenses = item,
-                                    DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString()),
-                                    DetailsName = form.GetValues("detaillist")[i].ToString(),
-                                    Remarks = form.GetValues("detailremarks")[i].ToString(),
-                                    UploadTime = DateTime.Now,
-                                    UploadUser = User.Identity.Name,
-                                    ExpensesType = 0
-                                };
-                                _offlineDB.Off_Expenses_Details.Add(detailtemp);
-                            }
-                            else
-                            {
-                                int d_id = Convert.ToInt32(form.GetValues("detailid")[i]);
-                                Off_Expenses_Details detailstemp = _offlineDB.Off_Expenses_Details.SingleOrDefault(m => m.Id == d_id);
-                                detailstemp.DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString());
-                                detailstemp.DetailsName = form.GetValues("detaillist")[i].ToString();
-                                detailstemp.Remarks = form.GetValues("detailremarks")[i].ToString();
-                                detailstemp.UploadTime = DateTime.Now;
-                                detailstemp.UploadUser = User.Identity.Name;
-                                _offlineDB.Entry(detailstemp).State = System.Data.Entity.EntityState.Modified;
-                            }
+                                Off_Expenses = item,
+                                DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString()),
+                                DetailsName = form.GetValues("detaillist")[i].ToString(),
+                                Remarks = form.GetValues("detailremarks")[i].ToString(),
+                                UploadTime = DateTime.Now,
+                                UploadUser = User.Identity.Name,
+                                ExpensesType = 0
+                            };
+                            _offlineDB.Off_Expenses_Details.Add(detailtemp);
                         }
-                        item.UploadTime = DateTime.Now;
-                        item.UploadUser = User.Identity.Name;
-                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _offlineDB.SaveChanges();
+                        else
+                        {
+                            int d_id = Convert.ToInt32(form.GetValues("detailid")[i]);
+                            Off_Expenses_Details detailstemp = _offlineDB.Off_Expenses_Details.SingleOrDefault(m => m.Id == d_id);
+                            detailstemp.DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString());
+                            detailstemp.DetailsName = form.GetValues("detaillist")[i].ToString();
+                            detailstemp.Remarks = form.GetValues("detailremarks")[i].ToString();
+                            detailstemp.UploadTime = DateTime.Now;
+                            detailstemp.UploadUser = User.Identity.Name;
+                            _offlineDB.Entry(detailstemp).State = System.Data.Entity.EntityState.Modified;
+                        }
                     }
-                    return RedirectToAction("ExpensesIndex");
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
                 }
-                else
-                {
-                    return View("AuthorizeError");
-                }
+                return RedirectToAction("ExpensesIndex");
             }
             else
             {
-                return View("Error");
+                ModelState.AddModelError("", "发生错误");
+                List<Object> attendance = new List<Object>();
+                attendance.Add(new { Key = 0, Value = "进场费" });
+                attendance.Add(new { Key = 1, Value = "活动费" });
+                ViewBag.PayType = new SelectList(attendance, "Key", "Value", model.Status);
+                return View(model);
             }
         }
 
@@ -201,10 +210,6 @@ namespace PeriodAid.Controllers
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 if (item.Off_System_Id == user.DefaultSystemId)
                 {
-                    List<Object> attendance = new List<Object>();
-                    attendance.Add(new { Key = 0, Value = "进场费" });
-                    attendance.Add(new { Key = 1, Value = "活动费" });
-                    ViewBag.PayType = new SelectList(attendance, "Key", "Value", item.PaymentType);
                     return View(item);
                 }
                 else
@@ -217,60 +222,58 @@ namespace PeriodAid.Controllers
         }
         [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult BalanceExpenses(int id, FormCollection form)
+        public ActionResult BalanceExpenses(Off_Expenses model, FormCollection form)
         {
-            var expenses = _offlineDB.Off_Expenses.AsNoTracking().SingleOrDefault(m => m.Id == id);
-            if (expenses != null)
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                if (expenses.Off_System_Id == user.DefaultSystemId)
+                Off_Expenses item = new Off_Expenses();
+                if (TryUpdateModel(item))
                 {
-                    Off_Expenses item = new Off_Expenses();
-                    if (TryUpdateModel(item))
+                    var detailitemcnt = form.GetValues("detailid") == null ? 0 : form.GetValues("detailid").Length;
+                    for (int i = 0; i < detailitemcnt; i++)
                     {
-                        var detailitemcnt = form.GetValues("detailid") == null ? 0 : form.GetValues("detailid").Length;
-                        for (int i = 0; i < detailitemcnt; i++)
+                        if (form.GetValues("detailid")[i] == "0")
                         {
-                            if (form.GetValues("detailid")[i] == "0")
+                            Off_Expenses_Details detailtemp = new Off_Expenses_Details()
                             {
-                                Off_Expenses_Details detailtemp = new Off_Expenses_Details()
-                                {
-                                    Off_Expenses = item,
-                                    DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString()),
-                                    DetailsName = form.GetValues("detaillist")[i].ToString(),
-                                    Remarks = form.GetValues("detailremarks")[i].ToString(),
-                                    UploadTime = DateTime.Now,
-                                    UploadUser = User.Identity.Name,
-                                    ExpensesType = 1
-                                };
-                                _offlineDB.Off_Expenses_Details.Add(detailtemp);
-                            }
-                            else
-                            {
-                                int d_id = Convert.ToInt32(form.GetValues("detailid")[i]);
-                                Off_Expenses_Details detailstemp = _offlineDB.Off_Expenses_Details.SingleOrDefault(m => m.Id == d_id);
-                                detailstemp.DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString());
-                                detailstemp.DetailsName = form.GetValues("detaillist")[i].ToString();
-                                detailstemp.Remarks = form.GetValues("detailremarks")[i].ToString();
-                                detailstemp.UploadTime = DateTime.Now;
-                                detailstemp.UploadUser = User.Identity.Name;
-                                _offlineDB.Entry(detailstemp).State = System.Data.Entity.EntityState.Modified;
-                            }
+                                Off_Expenses = item,
+                                DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString()),
+                                DetailsName = form.GetValues("detaillist")[i].ToString(),
+                                Remarks = form.GetValues("detailremarks")[i].ToString(),
+                                UploadTime = DateTime.Now,
+                                UploadUser = User.Identity.Name,
+                                ExpensesType = 1
+                            };
+                            _offlineDB.Off_Expenses_Details.Add(detailtemp);
                         }
-                        item.UploadTime = DateTime.Now;
-                        item.UploadUser = User.Identity.Name;
-                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _offlineDB.SaveChanges();
-                        return RedirectToAction("ExpensesIndex");
+                        else
+                        {
+                            int d_id = Convert.ToInt32(form.GetValues("detailid")[i]);
+                            Off_Expenses_Details detailstemp = _offlineDB.Off_Expenses_Details.SingleOrDefault(m => m.Id == d_id);
+                            detailstemp.DetailsFee = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString());
+                            detailstemp.DetailsName = form.GetValues("detaillist")[i].ToString();
+                            detailstemp.Remarks = form.GetValues("detailremarks")[i].ToString();
+                            detailstemp.UploadTime = DateTime.Now;
+                            detailstemp.UploadUser = User.Identity.Name;
+                            _offlineDB.Entry(detailstemp).State = System.Data.Entity.EntityState.Modified;
+                        }
                     }
-                    return View("Error");
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return RedirectToAction("ExpensesIndex");
                 }
                 else
-                    return View("AuthorizeError");
+                {
+                    ModelState.AddModelError("", "发生错误");
+                    return View(model);
+                }
             }
             else
             {
-                return View("Error");
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
             }
         }
 
@@ -284,10 +287,7 @@ namespace PeriodAid.Controllers
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 if (item.Off_System_Id == user.DefaultSystemId)
                 {
-                    List<Object> attendance = new List<Object>();
-                    attendance.Add(new { Key = 0, Value = "进场费" });
-                    attendance.Add(new { Key = 1, Value = "活动费" });
-                    ViewBag.PayType = new SelectList(attendance, "Key", "Value", item.PaymentType);
+                    
                     return View(item);
                 }
                 else
@@ -300,63 +300,59 @@ namespace PeriodAid.Controllers
         }
         [SettingFilter(SettingName = "EXPENSES")]
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult VerifyExpenses(int id, FormCollection form)
+        public ActionResult VerifyExpenses(Off_Expenses model, FormCollection form)
         {
-            var expenses = _offlineDB.Off_Expenses.AsNoTracking().SingleOrDefault(m => m.Id == id);
-            if (expenses != null)
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                if (expenses.Off_System_Id == user.DefaultSystemId)
+                Off_Expenses item = new Off_Expenses();
+                if (TryUpdateModel(item))
                 {
-                    Off_Expenses item = new Off_Expenses();
-                    if (TryUpdateModel(item))
+                    var detailitemcnt = form.GetValues("detailid") == null ? 0 : form.GetValues("detailid").Length;
+                    for (int i = 0; i < detailitemcnt; i++)
                     {
-                        var detailitemcnt = form.GetValues("detailid") == null ? 0 : form.GetValues("detailid").Length;
-                        for (int i = 0; i < detailitemcnt; i++)
+                        if (form.GetValues("detailid")[i] == "0")
                         {
-                            if (form.GetValues("detailid")[i] == "0")
+                            Off_Expenses_Payment detailtemp = new Off_Expenses_Payment()
                             {
-                                Off_Expenses_Payment detailtemp = new Off_Expenses_Payment()
-                                {
-                                    Off_Expenses = item,
-                                    VerifyCost = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString()),
-                                    VerifyType = Convert.ToInt32(form.GetValues("detaillist")[i].ToString()),
-                                    ApplicationDate = Convert.ToDateTime(form.GetValues("apdate")[i]),
-                                    Remarks = form.GetValues("detailremarks")[i].ToString(),
-                                    UploadTime = DateTime.Now,
-                                    UploadUser = User.Identity.Name
-                                };
-                                _offlineDB.Off_Expenses_Payment.Add(detailtemp);
-                            }
-                            else
-                            {
-                                int d_id = Convert.ToInt32(form.GetValues("detailid")[i]);
-                                Off_Expenses_Payment detailstemp = _offlineDB.Off_Expenses_Payment.SingleOrDefault(m => m.Id == d_id);
-                                detailstemp.VerifyCost = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString());
-                                detailstemp.VerifyType = Convert.ToInt32(form.GetValues("detaillist")[i].ToString());
-                                detailstemp.ApplicationDate = Convert.ToDateTime(form.GetValues("apdate")[i]);
-                                detailstemp.Remarks = form.GetValues("detailremarks")[i].ToString();
-                                detailstemp.UploadTime = DateTime.Now;
-                                detailstemp.UploadUser = User.Identity.Name;
-                                _offlineDB.Entry(detailstemp).State = System.Data.Entity.EntityState.Modified;
-                            }
+                                Off_Expenses = item,
+                                VerifyCost = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString()),
+                                VerifyType = Convert.ToInt32(form.GetValues("detaillist")[i].ToString()),
+                                ApplicationDate = Convert.ToDateTime(form.GetValues("apdate")[i]),
+                                Remarks = form.GetValues("detailremarks")[i].ToString(),
+                                UploadTime = DateTime.Now,
+                                UploadUser = User.Identity.Name
+                            };
+                            _offlineDB.Off_Expenses_Payment.Add(detailtemp);
                         }
-                        item.UploadTime = DateTime.Now;
-                        item.UploadUser = User.Identity.Name;
-                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _offlineDB.SaveChanges();
-                        return RedirectToAction("ExpensesIndex");
+                        else
+                        {
+                            int d_id = Convert.ToInt32(form.GetValues("detailid")[i]);
+                            Off_Expenses_Payment detailstemp = _offlineDB.Off_Expenses_Payment.SingleOrDefault(m => m.Id == d_id);
+                            detailstemp.VerifyCost = Convert.ToDecimal(form.GetValues("detailfee")[i].ToString());
+                            detailstemp.VerifyType = Convert.ToInt32(form.GetValues("detaillist")[i].ToString());
+                            detailstemp.ApplicationDate = Convert.ToDateTime(form.GetValues("apdate")[i]);
+                            detailstemp.Remarks = form.GetValues("detailremarks")[i].ToString();
+                            detailstemp.UploadTime = DateTime.Now;
+                            detailstemp.UploadUser = User.Identity.Name;
+                            _offlineDB.Entry(detailstemp).State = System.Data.Entity.EntityState.Modified;
+                        }
                     }
-                    return View("Error");
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return RedirectToAction("ExpensesIndex");
                 }
                 else
                 {
-                    return View("AuthorizeError");
+                    ModelState.AddModelError("", "发生错误");
+                    return View(model);
                 }
             }
             else
             {
-                return View("Error");
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
             }
         }
 
