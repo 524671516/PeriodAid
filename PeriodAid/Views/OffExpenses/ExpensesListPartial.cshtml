@@ -36,26 +36,7 @@
                 @Html.DisplayFor(modelItem => item.ApplicationDate)
             </td>
             <td class="ellipsis">
-                @if (item.Status == -1)
-                {
-                    <span class="text-danger">@Html.Encode("作废")</span>
-                }
-                else if (item.Status == 0)
-                {
-                    @Html.Encode("未审核");
-                }
-                else if (item.Status == 1)
-                {
-                    @Html.Encode("已审核");
-                }
-                else if (item.Status == 2)
-                {
-                    @Html.Encode("已结算");
-                }
-                else if (item.Status == 3)
-                {
-                    <span class="text-success">@Html.Encode("已核销")</span>
-                }
+                @Html.Raw(Html.ExpensesStatusSpan(item.Status))
             </td>
             <td class="ellipsis">
                 <span title="@Html.Encode(item.StoreSystem)">
@@ -68,14 +49,7 @@
                 </span>
             </td>
             <td class="ellipsis">
-                @if (item.PaymentType == 0)
-                {
-                    @Html.Encode("进场费")
-                }
-                else if (item.PaymentType == 1)
-                {
-                    @Html.Encode("活动费")
-                }
+                @Html.ExpensesPaymentType(item.PaymentType)
             </td>
             <td class="ellipsis">
                 @item.Off_Expenses_Details.Where(m => m.ExpensesType == 0).Sum(m => m.DetailsFee)

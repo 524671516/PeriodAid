@@ -5,13 +5,15 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
+using System.Data.OleDb;
+using System.Data;
 
 using PagedList;
 using PeriodAid.Models;
 using PeriodAid.Filters;
-using System.Threading.Tasks;
-using System.Data.OleDb;
-using System.Data;
+using PeriodAid.DAL;
+
 
 namespace PeriodAid.Controllers
 {
@@ -121,7 +123,7 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult EditDailySalesPartial(int id, FormCollection form)
+        public async Task<ActionResult> EditDailySalesPartial(int id, FormCollection form)
         {
             var dailysales = _offlineDB.Off_SalesInfo_Daily.SingleOrDefault(m => m.Id == id);
             if (dailysales != null)
@@ -201,10 +203,11 @@ namespace PeriodAid.Controllers
                         item.UploadTime = DateTime.Now;
                         item.UploadUser = User.Identity.Name;
                         _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _offlineDB.SaveChanges();
+                        var result = await _offlineDB.SaveChangesAsync();
                         // 该代码需要重写
-                        
-                        
+
+                        OfflineSalesUtilities util = new OfflineSalesUtilities();
+                        var result2 = await util.UpdateDailySalesAvg(item.StoreId, (int)item.Date.DayOfWeek + 1);
                         //update_Sales_AVGINfo(item.StoreId, (int)item.Date.DayOfWeek + 1);
                         return Content("SUCCESS");
                     }
@@ -234,6 +237,201 @@ namespace PeriodAid.Controllers
                 return PartialView("ErrorPartial");
             }
 
+        }
+        // Origin: Off_CreateSalesDaily
+        public ActionResult CreateSalesDailyPartial()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var item = new Off_SalesInfo_Daily();
+            var storelist = from m in _offlineDB.Off_Store
+                            where m.Off_System_Id == user.DefaultSystemId
+                            orderby m.StoreName
+                            select new { Key = m.Id, Value = m.StoreName };
+            ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+            return PartialView(item);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateSalesDailyPartial(Off_SalesInfo_Daily model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_SalesInfo_Daily item = new Off_SalesInfo_Daily();
+                if (TryUpdateModel(item))
+                {
+                    List<int> plist = new List<int>();
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    var productlist = from m in _offlineDB.Off_Product
+                                      where m.Off_System_Id == user.DefaultSystemId
+                                      && m.status >= 0
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                        // 判断是否已有数据
+
+                        // 添加数据
+                        // 如果三项数据不为空，则添加
+                        if ((sales == null|| sales==0) && storage == null && amount == null)
+                        { }
+                        else
+                        {
+                            Off_Daily_Product existdata = new Off_Daily_Product()
+                            {
+                                Off_SalesInfo_Daily = item,
+                                ItemCode = product.ItemCode,
+                                ProductId = product.Id,
+                                SalesAmount = amount,
+                                SalesCount = sales,
+                                StorageCount = storage
+                            };
+                            _offlineDB.Off_Daily_Product.Add(existdata);
+                            //offlineDB.SaveChanges();
+                        }
+                    }
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Off_SalesInfo_Daily.Add(item);
+                    var result = await _offlineDB.SaveChangesAsync();
+                    OfflineSalesUtilities util = new OfflineSalesUtilities();
+                    var result2 = await util.UpdateDailySalesAvg(item.StoreId, (int)item.Date.DayOfWeek + 1);
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                var storelist = from m in _offlineDB.Off_Store
+                                orderby m.StoreName
+                                select new { Key = m.Id, Value = m.StoreName };
+                ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+                return PartialView(model);
+            }
+        }
+        // Origin: Off_Ajax_GetStoreSeller
+        [HttpPost]
+        public ActionResult GetStoreSellerAjax(int id)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in _offlineDB.Off_Seller
+                       where m.StoreId == id && m.Off_System_Id == user.DefaultSystemId
+                       select new { Id = m.Id, Name = m.Name };
+            return Json(new { result = "SUCCESS", data = list });
+        }
+
+        // Origin: Off_DeleteSalesDaily
+        [HttpPost]
+        public async Task<JsonResult> DeleteSalesDailyAjax(int id)
+        {
+            var item = _offlineDB.Off_SalesInfo_Daily.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_Store.Off_System_Id == user.DefaultSystemId)
+                {
+                    try
+                    {
+                        _offlineDB.Off_SalesInfo_Daily.Remove(item);
+                        var result = await _offlineDB.SaveChangesAsync();
+                        OfflineSalesUtilities util = new OfflineSalesUtilities();
+                        var result2 = await util.UpdateDailySalesAvg(item.StoreId, (int)(item.Date.DayOfWeek) + 1);
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    catch
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
+                }
+                else
+                    return Json(new { result = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { result = "FAIL" });
+        }
+
+        // Origin: Off_CreateSalesMonth
+        [SettingFilter(SettingName = "GENERAL")]
+        public ActionResult CreateSalesMonthPartial()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var item = new Off_SalesInfo_Month();
+            var storelist = from m in _offlineDB.Off_Store
+                            where m.Off_System_Id == user.DefaultSystemId
+                            orderby m.StoreName
+                            select new { Key = m.Id, Value = m.StoreName };
+            ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+            return PartialView(item);
+        }
+        [SettingFilter(SettingName = "GENERAL")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult CreateSalesMonthPartial(Off_SalesInfo_Month model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_SalesInfo_Month item = new Off_SalesInfo_Month();
+                if (TryUpdateModel(item))
+                {
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Off_SalesInfo_Month.Add(item);
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                ModelState.AddModelError("", "发生错误");
+                var storelist = from m in _offlineDB.Off_Store
+                                orderby m.StoreName
+                                select new { Key = m.Id, Value = m.StoreName };
+                ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+                return PartialView(model);
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                var storelist = from m in _offlineDB.Off_Store
+                                orderby m.StoreName
+                                select new { Key = m.Id, Value = m.StoreName };
+                ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+                return PartialView(model);
+            }
+        }
+
+        // Origin: Off_DeleteSalesMonth
+        [HttpPost]
+        [SettingFilter(SettingName = "GENERAL")]
+        public ActionResult DeleteSalesMonthAjax(int id)
+        {
+            var item = _offlineDB.Off_SalesInfo_Month.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_Store.Off_System_Id == user.DefaultSystemId)
+                {
+                    try
+                    {
+                        _offlineDB.Off_SalesInfo_Month.Remove(item);
+                        _offlineDB.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    catch
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
+                }
+                else
+                    return Json(new { result = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { result = "FAIL" });
         }
 
         // Origin:Off_DailyProductList
@@ -591,7 +789,7 @@ namespace PeriodAid.Controllers
                        select new { ID = m.Id, StoreName = m.StoreName };
             return Json(new { StoreList = list });
         }
-        */
+        
 
 
         // Origin:UploadDailyInfo

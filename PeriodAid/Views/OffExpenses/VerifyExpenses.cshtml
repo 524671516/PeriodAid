@@ -45,8 +45,7 @@
             <td class="col-md-4">
                 <div class="input-group">
                     <div class="input-group-addon"><small>费用类别</small></div>
-                    <input class="form-control input-sm" value="进场费" readonly />
-                    @*@Html.DropDownListFor(model => model.PaymentType, ViewBag.PayType as SelectList, "- 请选择费用类别 -", new { @class = "form-control input-sm", @readonly = "readonly" })*@
+                    <input class="form-control input-sm" value="@Html.ExpensesPaymentType(Model.PaymentType)" readonly />
                 </div>
             </td>
             <td class="col-md-4">

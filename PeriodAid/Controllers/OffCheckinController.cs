@@ -3,15 +3,714 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
+
+using PagedList;
+using PeriodAid.Models;
+using PeriodAid.Filters;
+using System.Threading.Tasks;
+using PeriodAid.DAL;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class OffCheckinController : Controller
     {
+        OfflineSales _offlineDB = new OfflineSales();
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+        public OffCheckinController()
+        {
+
+        }
+
+        public OffCheckinController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
         // GET: OffCheckin
         public ActionResult Index()
         {
             return View();
+        }
+
+
+        // Origin: Off_CheckIn_List
+        public ActionResult CheckinList()
+        {
+            return View();
+        }
+
+        // Origin: Off_CheckIn_List_ajax
+        public PartialViewResult CheckinListPartial(int? status, int? page, string query)
+        {
+            int _page = page ?? 1;
+            int _status = status ?? 4;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            // 按照活动日期排序
+            if (query == null)
+            {
+                var list = (from m in _offlineDB.Off_Checkin
+                            where m.Status == _status && m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                            orderby m.Off_Checkin_Schedule.Subscribe descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_Checkin
+                            where m.Status == _status && m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                            && (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
+                            orderby m.Off_Checkin_Schedule.Subscribe descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+        }
+
+
+
+        // Origin: Off_ConfirmCheckIn
+        public ActionResult ConfirmCheckin(int id)
+        {
+            var item = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_Checkin_Schedule.Off_Store_Id == user.DefaultSystemId)
+                {
+                    bool attendance_late = false;
+                    bool attendance_early = false;
+                    // 此处时间后期可以进行调整
+                    if (item.CheckinTime >= item.Off_Checkin_Schedule.Standard_CheckIn.AddMinutes(0))
+                        attendance_late = true;
+                    if (item.CheckoutTime <= item.Off_Checkin_Schedule.Standard_CheckOut.AddMinutes(0))
+                        attendance_early = true;
+                    int attendance = 0;
+                    int debits = 0;
+                    if (attendance_early && attendance_late)
+                    {
+                        attendance = 3;
+                        debits = -40;
+                    }
+                    else if (attendance_early)
+                    {
+                        attendance = 2;
+                        debits = -20;
+                    }
+                    else if (attendance_late)
+                    {
+                        attendance = 1;
+                        debits = -20;
+                    }
+                    List<Object> attendance_list = new List<Object>();
+                    attendance_list.Add(new { Key = 0, Value = "全勤" });
+                    attendance_list.Add(new { Key = 1, Value = "迟到" });
+                    attendance_list.Add(new { Key = 2, Value = "早退" });
+                    attendance_list.Add(new { Key = 3, Value = "旷工" });
+                    ViewBag.Attendancelist = new SelectList(attendance_list, "Key", "Value", attendance);
+                    //var user = UserManager.FindById(User.Identity.GetUserId());
+                    ViewBag.SystemId = user.DefaultSystemId;
+                    ConfirmCheckIn_ViewModel model = new ConfirmCheckIn_ViewModel()
+                    {
+                        CheckIn_Id = id,
+                        AttendanceStatus = attendance,
+                        Salary = item.Off_Checkin_Schedule.Standard_Salary,
+                        Bonus = item.Bonus,
+                        Debits = debits,
+                        Remark = item.Remark,
+                        Proxy = item.Proxy,
+                        Bonus_Remark = item.Bonus_Remark,
+                        Confirm_Remark = item.Confirm_Remark
+                    };
+                    ViewBag.CheckItem = item;
+                    return View(model);
+                }
+                else
+                    return View("AuthorizeError");
+            }
+            else
+                return View("Error");
+        }
+        [ValidateAntiForgeryToken, HttpPost]
+        public async Task<ActionResult> ConfirmCheckin(FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                ConfirmCheckIn_ViewModel model = new ConfirmCheckIn_ViewModel();
+                if (TryUpdateModel(model))
+                {
+                    var item = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == model.CheckIn_Id);
+                    if (item.Status == 4)
+                    {
+                        Off_SalesInfo_Daily info = new Off_SalesInfo_Daily()
+                        {
+                            Attendance = model.AttendanceStatus,
+                            Date = item.Off_Checkin_Schedule.Subscribe,
+                            Bonus = model.Bonus,
+                            Debit = model.Debits,
+                            isMultiple = false,
+                            remarks = model.Remark,
+                            SellerId = item.Off_Seller_Id,
+                            Salary = model.Salary,
+                            StoreId = item.Off_Checkin_Schedule.Off_Store_Id,
+                            UploadTime = DateTime.Now,
+                            UploadUser = User.Identity.Name
+                        };
+                        _offlineDB.Off_SalesInfo_Daily.Add(info);
+                        // 获取模板产品列表
+                        List<int> plist = new List<int>();
+                        var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                        foreach (var i in Template.ProductList.Split(','))
+                        {
+                            plist.Add(Convert.ToInt32(i));
+                        }
+                        var productlist = from m in _offlineDB.Off_Product
+                                          where plist.Contains(m.Id)
+                                          select m;
+                        // 添加或修改销售列表
+                        foreach (var product in productlist)
+                        {
+                            // 获取单品数据
+                            int? sales = null;
+                            if (form["sales_" + product.Id] != "")
+                                sales = Convert.ToInt32(form["sales_" + product.Id]);
+                            int? storage = null;
+                            if (form["storage_" + product.Id] != "")
+                                storage = Convert.ToInt32(form["storage_" + product.Id]);
+                            decimal? amount = null;
+                            if (form["amount_" + product.Id] != "")
+                                amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                            // 判断是否已有数据
+                            var checkinproductlist = _offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == item.Id);
+                            var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                            if (existdata != null)
+                            {
+                                if ((sales == null||sales==0) && storage == null && amount == null)
+                                {
+                                    // 无数据则删除
+                                    _offlineDB.Off_Checkin_Product.Remove(existdata);
+                                }
+                                else
+                                {
+                                    // 修改数据
+                                    existdata.SalesAmount = amount;
+                                    existdata.SalesCount = sales;
+                                    existdata.StorageCount = storage;
+                                }
+                            }
+                            else
+                            {
+                                // 添加数据
+                                // 如果三项数据不为空，则添加
+                                if ((sales == null||sales==0) && storage == null && amount == null)
+                                { }
+                                else
+                                {
+                                    existdata = new Off_Checkin_Product()
+                                    {
+                                        CheckinId = item.Id,
+                                        ItemCode = product.ItemCode,
+                                        ProductId = product.Id,
+                                        SalesAmount = amount,
+                                        SalesCount = sales,
+                                        StorageCount = storage
+                                    };
+                                    _offlineDB.Off_Checkin_Product.Add(existdata);
+                                    //offlineDB.SaveChanges();
+                                }
+                            }
+                        }
+                        item.Status = 5;
+                        item.Bonus = model.Bonus;
+                        item.Bonus_Remark = model.Bonus_Remark;
+                        item.SubmitTime = DateTime.Now;
+                        item.SubmitUser = User.Identity.Name;
+                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        foreach (var i in item.Off_Checkin_Product)
+                        {
+                            Off_Daily_Product product = new Off_Daily_Product()
+                            {
+                                Off_SalesInfo_Daily = info,
+                                ItemCode = i.ItemCode,
+                                ProductId = i.ProductId,
+                                SalesAmount = i.SalesAmount,
+                                SalesCount = i.SalesCount,
+                                StorageCount = i.StorageCount
+                            };
+                            _offlineDB.Off_Daily_Product.Add(product);
+                        }
+                        var result = await _offlineDB.SaveChangesAsync();
+                        // 计算平均值
+                        OfflineSalesUtilities util = new OfflineSalesUtilities();
+                        var result2= await util.UpdateDailySalesAvg(item.Off_Checkin_Schedule.Off_Store_Id, (int)item.Off_Checkin_Schedule.Subscribe.DayOfWeek + 1);
+                        return RedirectToAction("Off_CheckIn_List");
+                    }
+                    else if (item.Status >= 0 && item.Status <= 3)
+                    {
+                        List<int> plist = new List<int>();
+                        var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                        foreach (var i in Template.ProductList.Split(','))
+                        {
+                            plist.Add(Convert.ToInt32(i));
+                        }
+                        var productlist = from m in _offlineDB.Off_Product
+                                          where plist.Contains(m.Id)
+                                          select m;
+                        // 添加或修改销售列表
+                        foreach (var product in productlist)
+                        {
+                            // 获取单品数据
+                            int? sales = null;
+                            if (form["sales_" + product.Id] != "")
+                                sales = Convert.ToInt32(form["sales_" + product.Id]);
+                            int? storage = null;
+                            if (form["storage_" + product.Id] != "")
+                                storage = Convert.ToInt32(form["storage_" + product.Id]);
+                            decimal? amount = null;
+                            if (form["amount_" + product.Id] != "")
+                                amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                            // 判断是否已有数据
+                            var checkinproductlist = _offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == item.Id);
+                            var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                            if (existdata != null)
+                            {
+                                if ((sales == null|| sales==0) && storage == null && amount == null)
+                                {
+                                    // 无数据则删除
+                                    _offlineDB.Off_Checkin_Product.Remove(existdata);
+                                }
+                                else
+                                {
+                                    // 修改数据
+                                    existdata.SalesAmount = amount;
+                                    existdata.SalesCount = sales;
+                                    existdata.StorageCount = storage;
+                                }
+                            }
+                            else
+                            {
+                                // 添加数据
+                                // 如果三项数据不为空，则添加
+                                if ((sales == null|| sales==0) && storage == null && amount == null)
+                                { }
+                                else
+                                {
+                                    existdata = new Off_Checkin_Product()
+                                    {
+                                        CheckinId = item.Id,
+                                        ItemCode = product.ItemCode,
+                                        ProductId = product.Id,
+                                        SalesAmount = amount,
+                                        SalesCount = sales,
+                                        StorageCount = storage
+                                    };
+                                    _offlineDB.Off_Checkin_Product.Add(existdata);
+                                    //offlineDB.SaveChanges();
+                                }
+                            }
+                        }
+                        item.Status = 4;
+                        item.Proxy = model.Proxy;
+                        item.CheckinLocation = item.CheckinLocation ?? "N/A";
+                        item.CheckoutLocation = item.CheckoutLocation ?? "N/A";
+                        item.Confirm_Remark = model.Confirm_Remark;
+                        item.ConfirmUser = User.Identity.Name;
+                        item.ConfirmTime = DateTime.Now;
+                        item.Proxy = true;
+                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        await _offlineDB.SaveChangesAsync();
+                        return RedirectToAction("Off_CheckIn_List");
+                    }
+                    return View("Error");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+                return View("Error");
+        }
+
+        // Origin: Off_ConfirmProductList(int CheckId)
+        // 页面内产品数据列表
+        public PartialViewResult CheckinProductListPartial(int id)
+        {
+            var item = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+
+            string[] plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
+            List<int> plist_int = new List<int>();
+            foreach (var i in plist_tmp)
+            {
+                plist_int.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in _offlineDB.Off_Product
+                              where plist_int.Contains(m.Id)
+                              select m;
+            List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
+            foreach (var i in productlist)
+            {
+                Wx_TemplateProduct p = new Wx_TemplateProduct()
+                {
+                    ProductId = i.Id,
+                    ItemCode = i.ItemCode,
+                    SimpleName = i.SimpleName
+                };
+                templatelist.Add(p);
+            }
+            foreach (var i in item.Off_Checkin_Product)
+            {
+                var e = templatelist.SingleOrDefault(m => m.ProductId == i.ProductId);
+                if (e != null)
+                {
+                    e.SalesCount = i.SalesCount;
+                    e.SalesAmount = i.SalesAmount;
+                    e.Storage = i.StorageCount;
+                }
+            }
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                AmountRequried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
+                StorageRequired = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
+                ProductList = templatelist
+            };
+            return PartialView(model);
+        }
+
+        // Origin: Off_ConfirmPrductListBySchedule
+        public PartialViewResult AddCheckinProductListPartial(int id)
+        {
+            var item = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            string[] plist_tmp = item.Off_Sales_Template.ProductList.Split(',');
+            List<int> plist = new List<int>();
+            foreach (var i in plist_tmp)
+            {
+                plist.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in _offlineDB.Off_Product
+                              where plist.Contains(m.Id)
+                              select m;
+            List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
+            foreach (var i in productlist)
+            {
+                Wx_TemplateProduct p = new Wx_TemplateProduct()
+                {
+                    ProductId = i.Id,
+                    ItemCode = i.ItemCode,
+                    SimpleName = i.SimpleName
+                };
+                templatelist.Add(p);
+            }
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                AmountRequried = item.Off_Sales_Template.RequiredAmount,
+                StorageRequired = item.Off_Sales_Template.RequiredStorage,
+                ProductList = templatelist
+            };
+            return PartialView(model);
+        }
+
+        // Origin: Off_CreateCheckIn
+        public ActionResult CreateCheckin(int id)
+        {
+
+            Off_Checkin item = new Off_Checkin();
+            item.Status = 3;
+            item.Proxy = true;
+            item.Off_Schedule_Id = id;
+            var schedule = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            ViewBag.StoreName = schedule.Off_Store.StoreName;
+            ViewBag.Subscribe = schedule.Subscribe.ToString("yyyy-MM-dd");
+            var sellerlist = from m in _offlineDB.Off_Seller
+                             where m.StoreId == schedule.Off_Store_Id
+                             select m;
+            ViewBag.Sellerlist = new SelectList(sellerlist, "Id", "Name");
+            return View(item);
+        }
+        [ValidateAntiForgeryToken, HttpPost]
+        public ActionResult CreateCheckin(Off_Checkin model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin item = new Off_Checkin();
+                if (TryUpdateModel(item))
+                {
+                    var schedule = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id);
+                    item.CheckinLocation = "N/A";
+                    item.CheckinTime = null;
+                    item.CheckoutTime = null;
+                    item.CheckoutLocation = "N/A";
+                    item.ConfirmTime = DateTime.Now;
+                    item.ConfirmUser = User.Identity.Name;
+                    item.Proxy = true;
+                    item.Status = 4;
+                    _offlineDB.Off_Checkin.Add(item);
+                    //offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    List<int> plist = new List<int>();
+                    var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in _offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+
+                        if (sales == null && storage == null && amount == null)
+                        { }
+                        else
+                        {
+                            Off_Checkin_Product existdata = new Off_Checkin_Product()
+                            {
+                                Off_Checkin = item,
+                                ItemCode = product.ItemCode,
+                                ProductId = product.Id,
+                                SalesAmount = amount,
+                                SalesCount = sales,
+                                StorageCount = storage
+                            };
+                            _offlineDB.Off_Checkin_Product.Add(existdata);
+                        }
+                    }
+                    _offlineDB.SaveChanges();
+                    return RedirectToAction("Off_CheckIn_List");
+                }
+            }
+            return View(model);
+        }
+
+        // Origin: Off_ProxyCheckIn
+        public ActionResult EditCheckin(int id)
+        {
+            Off_Checkin item = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId)
+                {
+                    return View(item);
+                }
+                else
+                    return View("AuthorizeError");
+            }
+            else
+                return View("Error");
+        }
+        [ValidateAntiForgeryToken, HttpPost]
+        public ActionResult EditCheckin(Off_Checkin model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin item = new Off_Checkin();
+                if (TryUpdateModel(item))
+                {
+                    List<int> plist = new List<int>();
+                    var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in _offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                        // 判断是否已有数据
+                        var checkinproductlist = _offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == item.Id);
+                        var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                        if (existdata != null)
+                        {
+                            if ((sales == null || sales == 0) && storage == null && amount == null)
+                            {
+                                // 无数据则删除
+                                _offlineDB.Off_Checkin_Product.Remove(existdata);
+                            }
+                            else
+                            {
+                                // 修改数据
+                                existdata.SalesAmount = amount;
+                                existdata.SalesCount = sales;
+                                existdata.StorageCount = storage;
+                            }
+                        }
+                        else
+                        {
+                            // 添加数据
+                            // 如果三项数据不为空，则添加
+                            if ((sales == null || sales == 0) && storage == null && amount == null)
+                            { }
+                            else
+                            {
+                                existdata = new Off_Checkin_Product()
+                                {
+                                    CheckinId = item.Id,
+                                    ItemCode = product.ItemCode,
+                                    ProductId = product.Id,
+                                    SalesAmount = amount,
+                                    SalesCount = sales,
+                                    StorageCount = storage
+                                };
+                                _offlineDB.Off_Checkin_Product.Add(existdata);
+                            }
+                        }
+                    }
+                    item.CheckinLocation = "N/A";
+                    item.CheckoutLocation = "N/A";
+                    item.CheckinTime = null;
+                    item.CheckoutTime = null;
+                    item.ConfirmTime = DateTime.Now;
+                    item.ConfirmUser = User.Identity.Name;
+                    item.Proxy = true;
+                    item.Status = 4;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return RedirectToAction("Off_CheckIn_List");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "发生错误");
+                    return View(model);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return View(model);
+            }
+        }
+
+        // Origin: Off_CreateCheckIn_FileUpload
+        [HttpPost]
+        public ActionResult UploadCheckinFileAjax(FormCollection form)
+        {
+            var files = Request.Files;
+            string msg = string.Empty;
+            string error = string.Empty;
+            string imgurl;
+            if (files.Count > 0)
+            {
+                if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
+                {
+                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                    //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(files[0].InputStream, "checkin-img/" + filename);
+                    msg = "成功! 文件大小为:" + files[0].ContentLength;
+                    imgurl = filename;
+                    string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
+                    return Content(res);
+                }
+                else
+                {
+                    error = "文件错误";
+                }
+            }
+            string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
+            return Content(err_res);
+        }
+
+        // Origin: Off_ConfirmCheckIn_Map
+        public ActionResult ViewCheckinLBS(bool trans, string lbs)
+        {
+            ViewBag.LBS = lbs;
+            ViewBag.Trans = trans;
+            return PartialView();
+        }
+
+        // Origin: Off_CancelCheckIn("Content")
+        [HttpPost]
+        public JsonResult CancelCheckinAjax(int id)
+        {
+            var item = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId)
+                {
+                    if (item.Status >= 0 && item.Status < 5)
+                    {
+                        item.Status = -1;
+                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        _offlineDB.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
+                }
+                return Json(new { result = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { result = "FAIL" });
+        }
+
+        // Origin: Off_QueryCheckIn
+        public ActionResult QueryCheckin(DateTime? start, DateTime? end, string query, int? page)
+        {
+            DateTime _end = end ?? Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            DateTime _start = start ?? _end.AddDays(-1);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            int _page = page ?? 1;
+            var list = (from m in _offlineDB.Off_Checkin
+                        where m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                        && m.Off_Checkin_Schedule.Subscribe >= _start &&
+                        m.Off_Checkin_Schedule.Subscribe <= _end &&
+                        (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
+                        select m).ToPagedList(_page, 20);
+            return View(list);
         }
     }
 }

@@ -922,8 +922,8 @@ namespace PeriodAid.Controllers
             }
             Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
             {
-                Amount_Requried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
-                Storage_Required = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
+                AmountRequried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
+                StorageRequired = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
                 ProductList = templatelist
             };
             return PartialView(model);
@@ -1468,8 +1468,8 @@ namespace PeriodAid.Controllers
             }
             Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
             {
-                Amount_Requried = item.Off_Sales_Template.RequiredAmount,
-                Storage_Required = item.Off_Sales_Template.RequiredStorage,
+                AmountRequried = item.Off_Sales_Template.RequiredAmount,
+                StorageRequired = item.Off_Sales_Template.RequiredStorage,
                 ProductList = templatelist
             };
             return PartialView(model);
