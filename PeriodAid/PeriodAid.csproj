@@ -716,6 +716,9 @@
     <Content Include="Views\OffSales\UploadResult.cshtml" />
     <Content Include="Views\OffSales\ScheduleList.cshtml" />
     <Content Include="Views\OffSales\ViewScheduleDetailsPartial.cshtml" />
+    <Content Include="Views\OffSales\CreateSalesDailyPartial.cshtml" />
+    <Content Include="Views\Shared\modal.cshtml" />
+    <Content Include="Views\OffSales\CreateSalesMonthPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

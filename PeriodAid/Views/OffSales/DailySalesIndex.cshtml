@@ -23,6 +23,7 @@
 <div id="offsales-list">
 
 </div>
+@Html.Partial("modal")
 <script>
     $(function () {
         $.ajax({
@@ -46,25 +47,56 @@
     });
     //新增日报表
     $("#offsales-add-daily").click(function () {
+        var url = "/OffSales/CreateSalesDailyPartial"
+        var head="新增日报表"
         $.ajax({
-            url: "/OffSales/..",
+            url: url,
             data: {
                 random: Date.now()
             },
             success: function (data) {
-                $("#addcontent").html(data);
-                $("#addModal").modal()
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
             }
         });
         return false
-
     });
     //日报表批量删除
     $("#offsale-batchdelete").click(function () {
         var url = "/OffSales/Off_daily_delete_batch"
         var link_url = "/OffSales/DailySalesListPartial"
         var $list = $("#offsales-list")
-        bactchDelete(url, link_url, $list)
+        // 判断是否至少选择一项
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        }
+        // 批量选择
+        if (confirm("确定要删除所选项目？")) {
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            $.ajax({
+                type: "post",
+                url: url,
+                data: {
+                    ids: checkedList.toString()
+                },
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        $.ajax({
+                            url: link_url,
+                            success: function (data) {
+                                $list.html(data)
+                            }
+                        })
+                    }
+                }
+            });
+        }
     });
 </script>
 

@@ -67,7 +67,7 @@
                 {
                     @Html.ActionLink("添加预算", "EditExpenses", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
                     @Html.Encode(" ")
-                    @Html.ActionLink("作废", "CancelExpensesAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs", @id="offexpenses-del" })
+                    @Html.ActionLink("作废", "CancelExpensesAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offexpenses-del"})
                 }
                 else if (item.Status == 1)
                 {
@@ -96,7 +96,8 @@
         });
         return false;
     });
-    $("#offexpenses-del").click(function () {
+    //作废
+    $(".offexpenses-del").click(function () {
         var result = confirm("确定要删除吗？")
         if (result) {
             var url = $(this).attr("href")

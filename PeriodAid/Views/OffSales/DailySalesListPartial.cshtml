@@ -27,7 +27,7 @@
     {
         <tr>
             <td>
-                <input type="checkbox" name="subChk" value="@item.Id" data-sellename="@item.Off_Seller.Name" data-salary="@item.Salary" data-storename="@item.Off_Store.StoreName" />
+                <input type="checkbox" name="subChk" value="@item.Id" />
             </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Date)
@@ -53,41 +53,14 @@
                 @Html.DisplayFor(modelItem => item.Debit)
             </td>
             <td class="ellipsis">
-                @Html.ActionLink("修改", "EditDailySalesPartial", new { id = item.Id }, new { @class = "btn btn-info btn-xs",@id="offsales-edit-daily" })
-                <a class="btn btn-danger btn-xs" id="offsales-del-daily" href="/OfflineSales/Off_DeleteSalesDaily?id=@item.Id">删除</a>
+                @Html.ActionLink("修改", "EditDailySalesPartial", new { id = item.Id }, new { @class = "btn btn-info btn-xs offsales-edit-daily" })
+                @Html.ActionLink("删除", "DeleteSalesDailyAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offsales-del-daily" })
             </td>
         </tr>
     }
 
 </table>
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("DailySalesListPartial", new { page }))</div>
-<div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">修改报表</h4>
-            </div>
-            <div class="modal-body" id="editcontent">
-
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<div class="modal fade" id="addModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">新增报表</h4>
-            </div>
-            <div class="modal-body" id="addcontent">
-
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     $(function () {
         //页码切换
@@ -105,20 +78,22 @@
             });
             return false;
         });
-        //查看
-        $("#offsales-edit-daily").click(function () {
-            var link_url = $(this).attr("href");
+        //修改
+        $(".offsales-edit-daily").click(function () {
+            var url = $(this).attr("href");
+            var head = "修改日报表";
             $.ajax({
-                url: link_url,
+                url: url,
                 success: function (data) {
-                    $("#editcontent").html(data);
-                    $('#myModal').modal()
+                    $(".modal-con").html(data);
+                    $(".modal-box").modal();
+                    $(".modal-head").text(head)
                 }
             });
             return false;
         });
         //删除
-        $("#offsales-del-daily").click(function () {
+        $(".offsales-del-daily").click(function () {
             var result = confirm("确定删除吗？")
             if (result) {
                 var url = $(this).attr("href")
@@ -126,7 +101,7 @@
                     url: url,
                     type: "post",
                     success: function (data) {
-                        if (data == "SUCCESS") {
+                        if (data.result == "SUCCESS") {
                             $.ajax({
                                 url: "/OffSales/DailySalesListPartial",
                                 success: function (data) {

@@ -19,19 +19,7 @@
 <div class="col-md-12" id="offexpenses-list">
 
 </div>
-<div class="modal fade" id="modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="modal-header"></h4>
-            </div>
-            <div class="modal-body" id="modal-body">
-
-            </div>
-        </div>
-    </div>
-</div>
+@Html.Partial("modal")
 <script>
     $(function () {
         $.ajax({
@@ -41,6 +29,7 @@
             }
         });
     });
+    //进场费，活动费标签页
     $(".offexpenses-label").click(function () {
         var button = $(this);
         $(this).parent("li").addClass("active").siblings().removeClass("active");
@@ -52,15 +41,16 @@
             }
         });
     });
+    //新增费用
     $("#offexpenses-add").click(function () {
         var url = "/OffExpenses/AddExpensesPartial"
-        var header = "新增费用"
+        var head = "新增费用"
         $.ajax({
             url: url,
             success: function (data) {
-                $("#modal-header").text(header)
-                $("#modal-body").html(data)
-                $('#modal').modal()
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
             }
         });
         return false

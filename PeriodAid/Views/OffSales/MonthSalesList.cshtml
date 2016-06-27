@@ -45,14 +45,16 @@
     });
     //新增报表
     $("#offsales-add-month").click(function () {
-        var link_url = "/OfflineSales/Off_CreateSalesMonth"
+        var url = "/OffSales/CreateSalesMonthPartial"
+        var head = "新增月报表";
         $.ajax({
-            url: link_url,
+            url: url,
             success: function (data) {
-                $("#addMonthcontent").html(data)
-                $("#addModal").modal()
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
             }
-
-        })
+        });
+        return false;
     });
 </script>

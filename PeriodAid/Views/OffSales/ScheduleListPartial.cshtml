@@ -34,4 +34,17 @@
 </table>
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ScheduleListPartial", new { page }))</div>
 <input type="hidden" id="offsales-label-status" />
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            success: function (data) {
+                $("#offsales-list-schedule").html(data);
+            }
+        });
+        return false;
+    });
+</script>
 
