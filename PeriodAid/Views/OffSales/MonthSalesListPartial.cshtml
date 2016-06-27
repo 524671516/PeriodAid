@@ -1,66 +1,87 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Month>
 @using PagedList.Mvc;
-<table class="table table-condensed table-hover table-list" style="table-layout: fixed;width:100%;">
+<br />
+<table class="table table-condensed table-hover" style="table-layout:fixed;width:100%">
     <tr class="offline-table-background">
-        <th style="width:5%">
-            <input type="checkbox" class="allChk" />
+        <th style="width:8%">月份</th>
+        <th style="width:15%">
+            店铺名称
+        </th>
+        <th style="width:6%">
+            系统
+        </th>
+        <th style="width:8%">
+            经销商
+        </th>
+        <th style="width:7%">
+            红糖姜茶
+        </th>
+        <th style="width:7%">
+            黑糖姜茶
+        </th>
+        <th style="width:7%">
+            柠檬姜茶
+        </th>
+        <th style="width:7%">
+            蜂蜜姜茶
+        </th>
+        <th style="width:7%">
+            红枣姜茶
+        </th>
+        <th style="width:8%">
+            累计数量
         </th>
         <th style="width:10%">
-            日期
+            累计金额
         </th>
-        <th style="width:20%" title="门店名称">
-            门店名称
-        </th>
-        <th style="width:10%">
-            累计销量
-        </th>
-        <th style="width:10%">
-            销售员姓名
-        </th>
-        <th style="width:10%">工资</th>
-        <th style="width:10%">奖金</th>
-        <th style="width:10%">扣款</th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
-            <td>
-                <input type="checkbox" name="subChk" value="@item.Id" data-sellename="@item.Off_Seller.Name" data-salary="@item.Salary" data-storename="@item.Off_Store.StoreName" />
-            </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td class="ellipsis">
-                <span title="@Html.Encode(item.Off_Store.StoreName)">
-                    @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
-                </span>
+                @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
             </td>
             <td class="ellipsis">
-                @item.Off_Daily_Product.Sum(m => m.SalesCount)
+                @Html.DisplayFor(modelItem => item.Off_Store.StoreSystem)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+                @Html.DisplayFor(modelItem => item.Off_Store.Distributor)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Salary)
+                @Html.DisplayFor(modelItem => item.Item_Brown)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Bonus)
+                @Html.DisplayFor(modelItem => item.Item_Black)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Debit)
+                @Html.DisplayFor(modelItem => item.Item_Lemon)
             </td>
             <td class="ellipsis">
-                @Html.ActionLink("修改", "EditDailySalesPartial", new { id = item.Id }, new { @class = "btn btn-info btn-xs",@id="offsales-edit-daily" })
-                <a class="btn btn-danger btn-xs" id="offsales-del-daily" href="/OfflineSales/Off_DeleteSalesDaily?id=@item.Id">删除</a>
+                @Html.DisplayFor(modelItem => item.Item_Honey)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Item_Dates)
+            </td>
+            <td class="ellipsis">
+                @(item.Item_Brown + item.Item_Black + item.Item_Honey + item.Item_Lemon + item.Item_Dates)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.TotalFee)
+            </td>
+            <td class="ellipsis">
+                @Html.ActionLink("修改", "EditMonthSalesPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info",@id="offsales-edit-month" })
+                <a class="btn btn-danger btn-xs" id="offsales-del-month" href="/OfflineSales/Off_DeleteSalesMonth?id=@item.Id">删除</a>
             </td>
         </tr>
     }
 
 </table>
-<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("DailySalesListPartial", new { page }))</div>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("MonthSalesListPartial", new { page, query = "" }))</div>
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -79,9 +100,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">新增报表</h4>
+                <h4 class="modal-title">增加报表</h4>
             </div>
-            <div class="modal-body" id="addcontent">
+            <div class="modal-body" id="addMonthcontent">
 
             </div>
         </div><!-- /.modal-content -->
@@ -90,23 +111,21 @@
 <script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     $(function () {
-        //页码切换
+        //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
-            var query = $("#offsales-search-query").val();
-            if (query.trim() != "") {
-                l = l + "&query=" + query;
-            }
+            var query = $("#offsalesmonth-search-query").val();
+            l = l + "&query=" + query;
             $.ajax({
                 url: l,
                 success: function (data) {
-                    $("#offsales-list").html(data);
+                    $("#offsales-list-month").html(data);
                 }
             });
             return false;
         });
-        //查看
-        $("#offsales-edit-daily").click(function () {
+        //修改
+        $("#offsales-edit-month").click(function () {
             var link_url = $(this).attr("href");
             $.ajax({
                 url: link_url,
@@ -118,28 +137,27 @@
             return false;
         });
         //删除
-        $("#offsales-del-daily").click(function () {
+        $("#offsales-del-month").click(function () {
             var result = confirm("确定删除吗？")
             if (result) {
-                var url = $(this).attr("href")
+                var url = $(this).attr("href");
                 $.ajax({
                     url: url,
                     type: "post",
-                    success: function (data) {
+                    success:function(data){
                         if (data == "SUCCESS") {
                             $.ajax({
-                                url: "/OffSales/DailySalesListPartial",
+                                url: "/OffSales/MonthSalesListPartial",
                                 success: function (data) {
-                                    $("#offsales-list").html(data);
+                                    $("#offsales-list-month").html(data);
                                 }
                             });
                         }
                     }
-                });
-
+                })
             }
             return false;
         })
+
     });
 </script>
-

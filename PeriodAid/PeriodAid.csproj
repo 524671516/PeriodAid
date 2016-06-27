@@ -701,6 +701,19 @@
     <Content Include="Views\OffExpenses\BalanceExpenses.cshtml" />
     <Content Include="Views\OffExpenses\VerifyExpenses.cshtml" />
     <Content Include="Views\OffExpenses\ViewExpenses.cshtml" />
+    <Content Include="Views\OffSales\EditDailySalesPartial.cshtml" />
+    <Content Include="Views\OffSales\DailySalesProductListPartial.cshtml" />
+    <Content Include="Views\OffSales\MonthSalesListPartial.cshtml" />
+    <Content Include="Views\OffSales\EditMonthSalesPartial.cshtml" />
+    <Content Include="Views\OffSales\ScheduleListPartial.cshtml" />
+    <Content Include="Views\OffSales\ViewScheduleDetails.cshtml" />
+    <Content Include="Views\OffSales\EditSchedulePartial.cshtml" />
+    <Content Include="Views\OffSales\AddSchedule.cshtml" />
+    <Content Include="Views\OffSales\UploadDailySales.cshtml" />
+    <Content Include="Views\OffSales\UploadMonthSales.cshtml" />
+    <Content Include="Views\OffSales\UploadResult.cshtml" />
+    <Content Include="Views\OffSales\ScheduleList.cshtml" />
+    <Content Include="Views\OffSales\ViewScheduleDetailsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

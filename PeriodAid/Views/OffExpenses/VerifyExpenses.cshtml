@@ -179,14 +179,13 @@
                 </td>
             </tr>
         }
-
     </table>
 }
 <script>
     $(function () {
         $(".time-date").datepicker();
         $("#offexpenses-add-costdetail").click(function () {
-            $html = "<tr><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm time-date\" name=\"apdate\"></div>" +
+            $html = "<tr class='offline-table-margin-02'><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm time-date\" name=\"apdate\"></div>" +
                 "</td><td class=\"col-md-3\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>核销类型</small></div>" +
                 "<select class=\"form-control input-sm valid\" name=\"detaillist\"><option value=\"0\">现金</option>" +
                 "<option value=\"1\">货抵</option></select>" +

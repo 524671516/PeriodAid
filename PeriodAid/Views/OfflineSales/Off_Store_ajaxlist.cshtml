@@ -2,8 +2,8 @@
 @using PagedList.Mvc;
     <table class="table table-hover table-condensed table-list" style="width:100%;table-layout:fixed">
         <tr class="offline-table-background">
-            <th class="check-show" style="width:2%">
-                <input type="checkbox" id="allChk" />
+            <th style="width:2%">
+                <input type="checkbox" class="allChk" />
             </th>
             <th style="width:15%">
                 门店名称
@@ -29,7 +29,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td class="check-show ">
+                <td>
                     <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Region" />
                 </td>
                 <td class="ellipsis ">
@@ -154,30 +154,30 @@
        
     });
     //全选
-    $("#allChk").click(function () {
-        $("input[name='subChk']").prop("checked", this.checked);
-    });
-    //单选
-    $(".table-list tr").slice(1).each(function () {
-        var p = this;
-        $(this).children().slice(1).click(function () {
-            $($(p).children()[0]).children().each(function () {
-                if (this.type == "checkbox") {
-                    if (!this.checked) {
-                        this.checked = true;
-                    } else {
-                        this.checked = false;
-                    }
-                }
-            });
-        });
-    });
-    // 单选 
-    //var subChk = $("input[name='subChk']")
-    //subChk.click(function () {
-    //    $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    //$("#allChk").click(function () {
+    //    $("input[name='subChk']").prop("checked", this.checked);
     //});
-    //批量修改区域
+    ////单选
+    //$(".table-list tr").slice(1).each(function () {
+    //    var p = this;
+    //    $(this).children().slice(1).click(function () {
+    //        $($(p).children()[0]).children().each(function () {
+    //            if (this.type == "checkbox") {
+    //                if (!this.checked) {
+    //                    this.checked = true;
+    //                } else {
+    //                    this.checked = false;
+    //                }
+    //            }
+    //        });
+    //    });
+    //});
+    //// 单选 
+    ////var subChk = $("input[name='subChk']")
+    ////subChk.click(function () {
+    ////    $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    ////});
+    ////批量修改区域
     $("#Modregion").click(function () {
         var checkedNum = $("input[name='subChk']:checked").length;
         if (checkedNum == 0) {
