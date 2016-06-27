@@ -225,34 +225,25 @@ namespace PeriodAid.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditStorePartial(int id, FormCollection form)
         {
-            var store = _offlineDB.Off_Store.SingleOrDefault(m => m.Id == id);
-            if (store != null)
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                if (store.Off_System_Id == user.DefaultSystemId)
+                var item = new Off_Store();
+                if (TryUpdateModel(item))
                 {
-                    var item = new Off_Store();
-                    if (TryUpdateModel(item))
-                    {
-                        item.UploadTime = DateTime.Now;
-                        item.UploadUser = User.Identity.Name;
-                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _offlineDB.SaveChanges();
-                        return Content("SUCCESS");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "错误");
-                        List<Object> attendance = new List<Object>();
-                        attendance.Add(new { Key = "华东", Value = "华东" });
-                        attendance.Add(new { Key = "外区", Value = "外区" });
-                        ViewBag.Regionlist = new SelectList(attendance, "Key", "Value", item.Region);
-                        return PartialView(item);
-                    }
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
                 }
                 else
                 {
-                    return PartialView("AuthorizeErrorPartial");
+                    ModelState.AddModelError("", "错误");
+                    List<Object> attendance = new List<Object>();
+                    attendance.Add(new { Key = "华东", Value = "华东" });
+                    attendance.Add(new { Key = "外区", Value = "外区" });
+                    ViewBag.Regionlist = new SelectList(attendance, "Key", "Value", item.Region);
+                    return PartialView(item);
                 }
             }
             else

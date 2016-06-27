@@ -719,6 +719,19 @@
     <Content Include="Views\OffSales\CreateSalesDailyPartial.cshtml" />
     <Content Include="Views\Shared\modal.cshtml" />
     <Content Include="Views\OffSales\CreateSalesMonthPartial.cshtml" />
+    <Content Include="Views\OffStore\StoreIndex.cshtml" />
+    <Content Include="Views\OffStore\StoreListPartial.cshtml" />
+    <Content Include="Views\OffStore\CreateStorePartial.cshtml" />
+    <Content Include="Views\OffStore\StoreMap.cshtml" />
+    <Content Include="Views\OffStore\UploadStore.cshtml" />
+    <Content Include="Views\OffStore\UploadResult.cshtml" />
+    <Content Include="Views\OffStore\EditStorePartial.cshtml" />
+    <Content Include="Views\OffProduct\Index.cshtml" />
+    <Content Include="Views\OffProduct\ProductList.cshtml" />
+    <Content Include="Views\OffProduct\ProductListPartial.cshtml" />
+    <Content Include="Views\OffProduct\TemplateList.cshtml" />
+    <Content Include="Views\OffProduct\TemplateListPartial.cshtml" />
+    <Content Include="Views\OffProduct\CreateTemplate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -727,9 +740,7 @@
     <Folder Include="Views\Common\" />
     <Folder Include="Views\OffCheckin\" />
     <Folder Include="Views\OffManager\" />
-    <Folder Include="Views\OffProduct\" />
     <Folder Include="Views\OffStatistic\" />
-    <Folder Include="Views\OffStore\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
