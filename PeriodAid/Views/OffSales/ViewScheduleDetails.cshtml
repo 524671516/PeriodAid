@@ -22,55 +22,137 @@
 <div id="offsalesschedule-list">
 
 </div>
-<input type="hidden" value="@ViewBag.CurrentDate" id="offsalesschedule-current-date" />
+<div class="modal fade" id="offsalesschedule-modal-batchedit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改活动时间</h4>
+            </div>
+            <div class="modal-body" id="Modcontent">
+                <div class="row">
+                    <div class="col-md-6"><input class="form-control checkTimeIn" type="text" placeholder="签到时间" value="" disabled /></div>
+                    <div class="col-md-6"><input class="form-control editTimeIn" type="text" placeholder="修改" value="" /></div>
+                </div><br />
+                <div class="row">
+                    <div class="col-md-6"><input class="form-control checkTimeOut" type="text" placeholder="签退时间" value="" disabled /></div>
+                    <div class="col-md-6"><input class="form-control editTimeOut" type="text" placeholder="修改" value="" /></div>
+                </div><br />
+                <div class="row">
+                    <div class="col-md-6"><input class="form-control checkSalary" type="text" placeholder="工资" value="" disabled /></div>
+                    <div class="col-md-6"><input class="form-control editSalary" type="text" placeholder="修改" value="" /></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top:0;">
+                <button type="button" class="btn btn-success check-sure">确定</button>
+                <button type="button" class="btn btn-danger check-fail">取消</button>
+            </div>
+            <input class="dataTime hidden" />
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<input type="hidden" value="@ViewBag.Date" id="offsalesschedule-current-date" />
 <script>
     $(function () {
         $.ajax({
             url: "/OffSales/ViewScheduleDetailsPartial",
+            data: {
+                date:$("#offsalesschedule-current-date").val()
+            },
             success: function (data) {
                 $("#offsalesschedule-list").html(data)
             }
         })
-    })
-    $("#search-btn").click(function () {
-        var query = $("#search").val();
-        var url = "/OfflineSales/Off_ScheduleDetails?date=" + $("#current_date").val() + "&query=" + query;
-        $("#search").val(query);
-        window.location.href = url;
-    })
-    $(".edit-button").click(function () {
-        var link_url = $(this).attr("href");
+    });
+    //搜索
+    $("#offsalesschedule-search-btn").click(function () {
+        var query = $("#offsalesschedule-search-query").val();
         $.ajax({
-            url: link_url,
+            url: "/OffSales/ViewScheduleDetailsPartial",
+            data: {
+                date: $("#offsalesschedule-current-date").val(),
+                query: query
+            },
             success: function (data) {
-                $("#editcontent").html(data);
-                $('#myModal').modal()
+                $("#offsalesschedule-list").html(data);
+                $("#offsalesschedule-search-query").val(query);
             }
         });
-        return false;
     });
-    $(".del-button").click(function () {
-        var cfm = confirm("确认要删除信息吗？");
-        if (cfm) {
-            var link_url = $(this).attr("href");
+    //批量删除
+    $("#offsalesschedule-batchdelete").click(function () {
+        var url = "/OffSales/..."
+        var link_url = "/OffSales/ViewScheduleDetailsPartial"
+        var $list = $("#offsalesschedule-list")
+        bactchDelete(url, link_url, $list)
+    })
+    //批量修改时间及工资
+    $("#offsalesschedule-batchedit").click(function () {
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        } else {
+            var checkedList = new Array();
+            var checkedIn = new Array();
+            var checkedOut = new Array();
+            var checkedSalary = new Array();
+            var chechedTime = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+                checkedIn.push($(this).attr("data-timeIn"));
+                checkedOut.push($(this).attr("data-timeOut"));
+                checkedSalary.push($(this).attr("data-salary"));
+                chechedTime.push($(this).attr("data-time"));
+            });
+            for (var i = 0; i < chechedTime.length; i++) {
+                $(".dataTime").val(chechedTime[0]);
+            }
+            for (var i = 0; i < checkedIn.length; i++) {
+                $(".checkTimeIn").val(checkedIn[0]);
+            }
+            for (var i = 0; i < checkedOut.length; i++) {
+                $(".checkTimeOut").val(checkedOut[0]);
+            }
+            for (var i = 0; i < checkedSalary.length; i++) {
+                $(".checkSalary").val(checkedSalary[0]);
+            }
+            $("#offsalesschedule-modal-batchedit").modal('show');
+        }
+    });
+    $(".check-sure").click(function () {
+        if (confirm("确认要修改所选门店的相关信息吗？")) {
+            var link_url = "/OfflineSales/Off_EventDetails_ModifyInfo_batch";
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            var starttime = $(".editTimeIn").val();
+            var finishtime = $(".editTimeOut").val();
+            var salary = $(".editSalary").val();
+            var time = $(".dataTime").val();
             $.ajax({
-                url: link_url,
                 type: "post",
+                url: link_url,
+                data: {
+                    ids: checkedList.toString(),
+                    date: time,
+                    starttime: starttime,
+                    finishtime: finishtime,
+                    salary: salary
+                },
                 success: function (data) {
                     if (data == "SUCCESS") {
+                        $("#Mod").modal('hide');
                         var attr = $.getUrlParam("date");
                         window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
+                        //$("#tableList").html(data)
                     }
                 }
-            });
+            })
         }
-        return false;
     });
-    (function ($) {
-        $.getUrlParam = function (name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-            var r = window.location.search.substr(1).match(reg);
-            if (r != null) return unescape(r[2]); return null;
-        }
-    })(jQuery);
+    $(".check-fail").click(function () {
+        $("#offsalesschedule-modal-batchedit").modal('hide')
+    });
 </script>

@@ -1,9 +1,9 @@
-﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
-
-<table class="table table-condensed table-hover" style="table-layout:fixed; width:100%;" id="tableList">
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Checkin_Schedule>
+@using PagedList.Mvc;
+<table class="table table-condensed table-hover" style="table-layout:fixed; width:100%;">
     <tr style="background-color:#f9f9f9">
         <th style="width:4%;" class="check-show">
-            <input type="checkbox" id="allChk" />
+            <input type="checkbox" class="allChk" />
         </th>
         <th style="width:10%">
             时间
@@ -53,17 +53,18 @@
                 @Html.Encode(item.Off_Checkin.Count(m => m.Status >= 3))
             </td>
             <td>
-                @Html.ActionLink("编辑", "Ajax_EditSchedule", new { Id = item.Id }, new { @class = "btn btn-info btn-xs edit-button" })
+                @Html.ActionLink("编辑", "EditSchedulePartial", new { Id = item.Id }, new { @class = "btn btn-info btn-xs",@id= "offsales-schedule-edit" })
                 @if (item.Off_Checkin.Count(m => m.Status >= 0) == 0)
                 {
                     @Html.ActionLink("手工数据", "Off_CreateCheckIn", new { scheduleId = item.Id }, new { @class = "btn btn-primary btn-xs" })
                 }
-                @Html.ActionLink("删除", "Ajax_DeleteSchedule", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs del-button" })
+                @Html.ActionLink("删除", "Ajax_DeleteSchedule", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs",@id="offsales-schedule-del" })
             </td>
         </tr>
     }
 
 </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ViewScheduleDetailsPartial", new { page }))</div>
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -77,147 +78,57 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<div class="modal fade" id="Mod">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">修改活动时间</h4>
-            </div>
-            <div class="modal-body" id="Modcontent">
-                <div class="row">
-                    <div class="col-md-6"><input class="form-control checkTimeIn" type="text" placeholder="签到时间" value="" disabled /></div>
-                    <div class="col-md-6"><input class="form-control editTimeIn" type="text" placeholder="修改" value="" /></div>
-                </div><br />
-                <div class="row">
-                    <div class="col-md-6"><input class="form-control checkTimeOut" type="text" placeholder="签退时间" value="" disabled /></div>
-                    <div class="col-md-6"><input class="form-control editTimeOut" type="text" placeholder="修改" value="" /></div>
-                </div><br />
-                <div class="row">
-                    <div class="col-md-6"><input class="form-control checkSalary" type="text" placeholder="工资" value="" disabled /></div>
-                    <div class="col-md-6"><input class="form-control editSalary" type="text" placeholder="修改" value="" /></div>
-                </div>
-            </div>
-            <div class="modal-footer" style="margin-top:0;">
-                <button type="button" class="btn btn-success check-sure">确定</button>
-                <button type="button" class="btn btn-danger check-fail">取消</button>
-            </div>
-            <input class="dataTime hidden" />
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script src="~/Scripts/jquery.form.min.js"></script>
 <script>
-    //全选
-    $("#allChk").click(function () {
-        $("input[name='subChk']").prop("checked", this.checked);
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data: {
+                date: $("#offsalesschedule-current-date").val()
+            },
+            success: function (data) {
+                $("#offsalesschedule-list").html(data);
+            }
+        });
+        return false;
     });
-    // 单选
-    var subChk = $("input[name='subChk']")
-    subChk.click(function () {
-        $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    //修改
+    $("#offsales-schedule-edit").click(function () {
+        var link_url = $(this).attr("href");
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#editcontent").html(data);
+                $('#myModal').modal()
+            }
+        });
+        return false;
     });
-    // 批量删除
-    $("#DelSel").click(function () {
-        // 判断是否至少选择一项
-        var checkedNum = $("input[name='subChk']:checked").length;
-        if (checkedNum == 0) {
-            alert("请选择至少一项！");
-            return;
-        }
-        // 批量选择
-        if (confirm("确定要删除所选项目？")) {
-            var checkedList = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-            });
-            //alert(checkedList)
+    //删除
+    $("#offsales-schedule-del").click(function () {
+        var result = confirm("确认要删除信息吗？");
+        if (result) {
+            var link_url = $(this).attr("href");
             $.ajax({
-                type: "post",
-                url: "/OfflineSales/Off_eventdetails_delete_batch",
-                data: {
-                    ids: checkedList.toString()
-                },
-                success: function (data) {
-                    if (data == "SUCCESS") {
-                        //$("[name ='subChk']:checkbox").attr("checked", false);
-                        var attr = $.getUrlParam("date");
-                        window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
-                        //$("#tableList").html(data)
-                        //$(".check-show").addClass("hidden")
-                    }
-                }
-            });
-        }
-    });
-    //批量修改时间及工资
-    $("#ModchechTime").click(function () {
-        var checkedNum = $("input[name='subChk']:checked").length;
-        if (checkedNum == 0) {
-            alert("请选择至少一项！");
-            return;
-        } else {
-            var checkedList = new Array();
-            var checkedIn = new Array();
-            var checkedOut = new Array();
-            var checkedSalary = new Array();
-            var chechedTime = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-                checkedIn.push($(this).attr("data-timeIn"));
-                checkedOut.push($(this).attr("data-timeOut"));
-                checkedSalary.push($(this).attr("data-salary"));
-                chechedTime.push($(this).attr("data-time"));
-            });
-            for (var i = 0; i < chechedTime.length; i++) {
-                $(".dataTime").val(chechedTime[0]);
-            }
-            for (var i = 0; i < checkedIn.length; i++) {
-                $(".checkTimeIn").val(checkedIn[0]);
-            }
-            for (var i = 0; i < checkedOut.length; i++) {
-                $(".checkTimeOut").val(checkedOut[0]);
-            }
-            for (var i = 0; i < checkedSalary.length; i++) {
-                $(".checkSalary").val(checkedSalary[0]);
-            }
-            $("#Mod").modal('show');
-        }
-    });
-    $(".check-sure").click(function () {
-        if (confirm("确认要修改所选门店的相关信息吗？")) {
-            var link_url = "/OfflineSales/Off_EventDetails_ModifyInfo_batch";
-            var checkedList = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-            });
-            var starttime = $(".editTimeIn").val();
-            var finishtime = $(".editTimeOut").val();
-            var salary = $(".editSalary").val();
-            var time = $(".dataTime").val();
-            $.ajax({
-                type: "post",
                 url: link_url,
-                data: {
-                    ids: checkedList.toString(),
-                    date: time,
-                    starttime: starttime,
-                    finishtime: finishtime,
-                    salary:salary
-                },
+                type: "post",
                 success: function (data) {
-                    if (data == "SUCCESS") {
-                    $("#Mod").modal('hide');
-                    var attr = $.getUrlParam("date");
-                    window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
-                        //$("#tableList").html(data)
+                    if (data.data == "SUCCESS") {
+                        $.ajax({
+                            url: "/OffSales/ViewScheduleDetailsPartial",
+                            data: {
+                                date: $("#offsalesschedule-current-date").val()
+                            },
+                            success: function (data) {
+                                $("#offsalesschedule-list").html(data)
+                            }
+                        });
                     }
                 }
-            })
+            });
         }
-    });
-    $(".check-fail").click(function () {
-        $("#Mod").modal('hide')
+        return false;
     });
 </script>
 

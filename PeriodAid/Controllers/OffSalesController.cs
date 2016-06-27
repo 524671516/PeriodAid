@@ -491,7 +491,7 @@ namespace PeriodAid.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Add_Schedule(FormCollection form)
+        public ActionResult AddSchedule(FormCollection form)
         {
             StoreSchedule_ViewModel model = new StoreSchedule_ViewModel();
             if (TryUpdateModel(model))
