@@ -34,7 +34,7 @@
             @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
         </td>
         <td>
-            @Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickName(item.ManagerUserName, ViewBag.SystemId))
+            @*@Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickName(item.ManagerUserName, ViewBag.SystemId))*@
         </td>
         <td>
             @Html.Encode(ParseStatus.getManagerRequestStatus(item.Status))

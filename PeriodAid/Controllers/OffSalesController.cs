@@ -1086,5 +1086,29 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        // 0407 活动统计页面
+        // Origin: Off_Schedule_Statisic
+        public ActionResult ScheduleStatistic(string datetime)
+        {
+            ViewBag.CurrentDate = datetime;
+            return View();
+        }
+
+        // Origin: Off_Schedule_Statistic_Ajax
+        // 0407 活动数据AJAX
+        [HttpPost]
+        public JsonResult ScheduleStatisticAjax(string datetime)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime targetDate = Convert.ToDateTime(datetime);
+            var schedulelist = from m in _offlineDB.Off_Checkin_Schedule
+                               where m.Subscribe == targetDate && m.Off_System_Id == user.DefaultSystemId
+                               select m;
+            int self = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && !m.Proxy));
+            int proxy = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && m.Proxy));
+            int rest = schedulelist.Count() - self - proxy;
+            return Json(new { result = "SUCCESS", totalcount = schedulelist.Count(), selfcount = self, proxycount = proxy, restcount = rest });
+        }
     }
 }
