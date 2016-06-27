@@ -1,0 +1,117 @@
+﻿
+@model PeriodAid.Models.Off_SalesInfo_Month
+
+@using (Html.BeginForm("CreateSalesMonthPartial", "OffSales", FormMethod.Post, new { id = "offsales-month-ajaxform" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            <label class="control-label col-md-2">店铺名称</label>
+
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.StoreId, ViewBag.StoreDropDown as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">时间</label>
+
+            <div class="col-md-10">
+                <input type="text" id="Date" name="Date" class="form-control input-sm" placeholder="时间" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">红糖姜茶</label>
+
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Item_Brown, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Brown, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">黑糖姜茶</label>
+
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Item_Black, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Black, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">柠檬姜茶</label>
+
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Item_Lemon, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Lemon, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">蜂蜜姜茶</label>
+
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Item_Honey, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Honey, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">红枣姜茶</label>
+
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Item_Dates, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Item_Dates, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">累计金额</label>
+
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TotalFee, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TotalFee, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" id="offsales-sure-month" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function(){
+        $("#Date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+    });
+    $("#offsales-sure-month").click(function () {
+        $(this).attr("disabled", "disabled").val("添加中...");
+        setTimeout(formsubmit, 1000);
+        return false;
+    });
+    function formsubmit() {
+        $('#offsales-month-ajaxform').ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                alert("添加成功");
+                $('#modal').modal('hide');
+                $.ajax({
+                    url: "/OffSales/MonthSalesListPartial",
+                    success: function (data) {
+                        $("#offsales-list-month").html(data);
+                    }
+                });
+            }
+            else {
+                $("#modal-content").html(data);
+            }
+        });
+    }
+</script>

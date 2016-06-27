@@ -125,107 +125,88 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> EditDailySalesPartial(int id, FormCollection form)
         {
-            var dailysales = _offlineDB.Off_SalesInfo_Daily.SingleOrDefault(m => m.Id == id);
-            if (dailysales != null)
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                if (dailysales.Off_Store.Off_System_Id == user.DefaultSystemId)
+                var item = new Off_SalesInfo_Daily();
+                if (TryUpdateModel(item))
                 {
-                    var item = new Off_SalesInfo_Daily();
-                    if (TryUpdateModel(item))
+                    List<int> plist = new List<int>();
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    var productlist = from m in _offlineDB.Off_Product
+                                      where m.Off_System_Id == user.DefaultSystemId
+                                      && m.status >= 0
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var product in productlist)
                     {
-                        List<int> plist = new List<int>();
-                        var productlist = from m in _offlineDB.Off_Product
-                                          where m.Off_System_Id == user.DefaultSystemId
-                                          && m.status >= 0
-                                          select m;
-                        // 添加或修改销售列表
-                        foreach (var product in productlist)
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + product.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + product.Id]);
+                        int? storage = null;
+                        if (form["storage_" + product.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + product.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + product.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + product.Id]);
+                        // 判断是否已有数据
+                        var checkinproductlist = _offlineDB.Off_Daily_Product.Where(m => m.DailyId == id);
+                        var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
+                        if (existdata != null)
                         {
-                            // 获取单品数据
-                            int? sales = null;
-                            if (form["sales_" + product.Id] != "")
-                                sales = Convert.ToInt32(form["sales_" + product.Id]);
-                            int? storage = null;
-                            if (form["storage_" + product.Id] != "")
-                                storage = Convert.ToInt32(form["storage_" + product.Id]);
-                            decimal? amount = null;
-                            if (form["amount_" + product.Id] != "")
-                                amount = Convert.ToDecimal(form["amount_" + product.Id]);
-                            // 判断是否已有数据
-                            var checkinproductlist = _offlineDB.Off_Daily_Product.Where(m => m.DailyId == id);
-                            var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == product.Id);
-                            if (existdata != null)
+                            if (sales == null && storage == null && amount == null)
                             {
-                                if (sales == null && storage == null && amount == null)
-                                {
-                                    // 无数据则删除
-                                    _offlineDB.Off_Daily_Product.Remove(existdata);
-                                }
-                                else if (sales == 0 && storage == 0 && amount == 0)
-                                {
-                                    _offlineDB.Off_Daily_Product.Remove(existdata);
-                                }
-                                else
-                                {
-                                    // 修改数据
-                                    existdata.SalesAmount = amount;
-                                    existdata.SalesCount = sales;
-                                    existdata.StorageCount = storage;
-                                }
+                                // 无数据则删除
+                                _offlineDB.Off_Daily_Product.Remove(existdata);
+                            }
+                            else if (sales == 0 && storage == 0 && amount == 0)
+                            {
+                                _offlineDB.Off_Daily_Product.Remove(existdata);
                             }
                             else
                             {
-                                // 添加数据
-                                // 如果三项数据不为空，则添加
-                                if (sales == null && storage == null && amount == null)
-                                { }
-                                else if (sales == 0 && storage == 0 && amount == 0)
-                                {
-
-                                }
-                                else
-                                {
-                                    existdata = new Off_Daily_Product()
-                                    {
-                                        DailyId = id,
-                                        ItemCode = product.ItemCode,
-                                        ProductId = product.Id,
-                                        SalesAmount = amount,
-                                        SalesCount = sales,
-                                        StorageCount = storage
-                                    };
-                                    _offlineDB.Off_Daily_Product.Add(existdata);
-                                    //offlineDB.SaveChanges();
-                                }
+                                // 修改数据
+                                existdata.SalesAmount = amount;
+                                existdata.SalesCount = sales;
+                                existdata.StorageCount = storage;
                             }
                         }
-                        item.UploadTime = DateTime.Now;
-                        item.UploadUser = User.Identity.Name;
-                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        var result = await _offlineDB.SaveChangesAsync();
-                        // 该代码需要重写
+                        else
+                        {
+                            // 添加数据
+                            // 如果三项数据不为空，则添加
+                            if (sales == null && storage == null && amount == null)
+                            { }
+                            else if (sales == 0 && storage == 0 && amount == 0)
+                            {
 
-                        OfflineSalesUtilities util = new OfflineSalesUtilities();
-                        var result2 = await util.UpdateDailySalesAvg(item.StoreId, (int)item.Date.DayOfWeek + 1);
-                        //update_Sales_AVGINfo(item.StoreId, (int)item.Date.DayOfWeek + 1);
-                        return Content("SUCCESS");
+                            }
+                            else
+                            {
+                                existdata = new Off_Daily_Product()
+                                {
+                                    DailyId = id,
+                                    ItemCode = product.ItemCode,
+                                    ProductId = product.Id,
+                                    SalesAmount = amount,
+                                    SalesCount = sales,
+                                    StorageCount = storage
+                                };
+                                _offlineDB.Off_Daily_Product.Add(existdata);
+                                //offlineDB.SaveChanges();
+                            }
+                        }
                     }
-                    else
-                    {
-                        ModelState.AddModelError("", "错误");
-                        var sellerlist = from m in _offlineDB.Off_Seller
-                                         where m.StoreId == item.StoreId
-                                         select m;
-                        ViewBag.Sellerlist = new SelectList(sellerlist, "Id", "Name");
-                        List<Object> attendance = new List<Object>();
-                        attendance.Add(new { Key = 0, Value = "全勤" });
-                        attendance.Add(new { Key = 1, Value = "迟到" });
-                        attendance.Add(new { Key = 2, Value = "早退" });
-                        attendance.Add(new { Key = 3, Value = "旷工" });
-                        ViewBag.Attendance = new SelectList(attendance, "Key", "Value", item.Attendance);
-                        return PartialView(item);
-                    }
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    var result = await _offlineDB.SaveChangesAsync();
+                    // 该代码需要重写
+
+                    OfflineSalesUtilities util = new OfflineSalesUtilities();
+                    var result2 = await util.UpdateDailySalesAvg(item.StoreId, (int)item.Date.DayOfWeek + 1);
+                    //update_Sales_AVGINfo(item.StoreId, (int)item.Date.DayOfWeek + 1);
+                    return Content("SUCCESS");
                 }
                 else
                 {
@@ -236,7 +217,6 @@ namespace PeriodAid.Controllers
             {
                 return PartialView("ErrorPartial");
             }
-
         }
         // Origin: Off_CreateSalesDaily
         public ActionResult CreateSalesDailyPartial()
@@ -505,31 +485,23 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditMonthSalesPartial(int id, FormCollection form)
         {
-            var monthsales = _offlineDB.Off_SalesInfo_Month.SingleOrDefault(m => m.Id == id);
-            if (monthsales != null)
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                if (monthsales.Off_Store.Off_System_Id == user.DefaultSystemId)
+                var item = new Off_SalesInfo_Month();
+                if (TryUpdateModel(item))
                 {
-                    var item = new Off_SalesInfo_Month();
-                    if (TryUpdateModel(item))
-                    {
-                        item.UploadTime = DateTime.Now;
-                        item.UploadUser = User.Identity.Name;
-                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _offlineDB.SaveChanges();
-                        return Content("SUCCESS");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "错误");
-                        return PartialView(item);
-                    }
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
                 }
                 else
                 {
-                    return PartialView("AuthorizeErrorPartial");
+                    ModelState.AddModelError("", "错误");
+                    return PartialView(item);
                 }
+
             }
             else
             {

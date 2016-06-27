@@ -125,7 +125,7 @@
         $('#offsales-daily-form').ajaxForm(function (data) {
             if (data == "SUCCESS") {
                 alert("修改成功");
-                $('#myModal').modal('hide');
+                $('.modal-box').modal('hide');
                 $.ajax({
                     url: "/OffSales/DailySalesListPartial",
                     success: function (data) {
@@ -134,7 +134,7 @@
                 });
             }
             else {
-                $("#editcontent").html(data);
+                $("#modal-con").html(data);
             }
 
         });

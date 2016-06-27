@@ -1,0 +1,173 @@
+﻿·@model PeriodAid.Models.Off_SalesInfo_Daily
+
+@using (Html.BeginForm("CreateSalesDailyPartial", "OffSales", FormMethod.Post, new { id = "offsales-daily-ajaxform" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            <label class="control-label col-md-3">门店名称</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.StoreId, ViewBag.StoreDropDown as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">日期</label>
+            <div class="col-md-9">
+                <input type="text" id="Date" name="Date" class="form-control input-sm" placeholder="时间" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">销售数据</label>
+            <div class="col-md-9">
+                <table class="table-striped table table-bordered" id="productdetails">
+                    <tr>
+                        <th class="col-md-3 text-center">商品名称</th>
+                        <th class="col-md-3 text-center">销量</th>
+                        <th class="col-md-3 text-center">库存</th>
+                        <th class="col-md-3 text-center">销售金额</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">添加产品</label>
+            <div class="col-md-7">
+                <select id="productlist" class="form-control"></select>
+            </div>
+            <div class="col-md-2">
+                <a href="javascript:;" class="btn btn-default" id="add-p"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">销售员姓名</label>
+            <div class="col-md-9">
+                <select id="SellerId" name="SellerId" class="form-control">
+                    <option value="">- 请选择 -</option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">考勤</label>
+            <div class="col-md-9">
+                <select class="form-control" data-val="true" data-val-length="字段 Region 必须是最大长度为 20 的字符串。" data-val-length-max="20" id="Attendance" name="Attendance">
+                    <option value="">- 请选择 -</option>
+                    <option value="0">全勤</option>
+                    <option value="1">迟到</option>
+                    <option value="2">早退</option>
+                    <option value="3">旷工</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">工资</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">奖金</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Debit, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Debit, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">扣款</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Bonus, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Bonus, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" id="offsale-sure-daily" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $("#Date").datepicker({
+            dateFormat:'yy-mm-dd'
+        })
+        $("#offsale-sure-daily").click(function () {
+            $(this).attr("disabled", "disabled").val("添加中...");
+            setTimeout(formsubmit, 1000);
+            return false;
+        });
+        $("#StoreId").bind("change", function () {
+            $.ajax({
+                url: "/OffSales/GetStoreSellerAjax",
+                data: {
+                    id: $("#StoreId").val()
+                },
+                type: "post",
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#SellerId").html("").append("<option value=''>- 请选择 -</option>");
+                        for (var i = 0; i < data.data.length; i++) {
+                            $("#SellerId").append("<option value='" + data.data[i].Id + "'>" + data.data[i].Name + "</option>");
+                        }
+                    }
+                }
+            })
+        });
+    });
+    $("#add-p").click(function () {
+        var select_item = $("#productlist").find("option:selected");
+        if (select_item.length != 0) {
+            $("#productdetails").append("<tr><td class='text-center'>" + select_item.text() + "</td><td><input class='form-control input-sm' type='number' placeholder='销量' name='sales_" + select_item.attr("value") + "' id='sales_" + select_item.attr("value") + "'/></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='库存' name='storage_" + select_item.attr("value") + "' id='storage_" + select_item.attr("value") + "' /></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='销售额' name='amount_" + select_item.attr("value") + "' id='amount_" + select_item.attr("value") + "' /></td></tr>");
+            select_item.remove();
+        }
+    });
+    $.ajax({
+        url: "/OffSales/DailySalesAllProductAjax",
+        type: "post",
+        success: function (data) {
+            if (data.result == "SUCCESS") {
+                for (var i = 0; i < data.data.length; i++) {
+                    var item = $("#sales_" + data.data[i].Id);
+                    if (item.length == 0) {
+                        $("#productlist").append("<option value='" + data.data[i].Id + "' data-target='" + data.data[i].ItemCode + "'>" + data.data[i].SimpleName + "</option>");
+                    }
+                }
+            }
+        }
+    });
+    function formsubmit() {
+        $('#offsales-daily-ajaxform').ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                alert("添加成功");
+                $('#modal').modal('hide');
+                $.ajax({
+                    url: "/OffSales/DailySalesListPartial",
+                    success: function (data) {
+                        $("#offsales-list").html(data);
+                    }
+                });
+            }
+            else {
+                $("#modal-content").html(data);
+            }
+        });
+    }
+
+</script>
+
+

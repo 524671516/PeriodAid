@@ -53,31 +53,18 @@
                 @Html.Encode(item.Off_Checkin.Count(m => m.Status >= 3))
             </td>
             <td>
-                @Html.ActionLink("编辑", "EditSchedulePartial", new { Id = item.Id }, new { @class = "btn btn-info btn-xs",@id= "offsales-schedule-edit" })
+                @Html.ActionLink("编辑", "EditSchedulePartial", new { Id = item.Id }, new { @class = "btn btn-info btn-xs offsales-schedule-edit" })
                 @if (item.Off_Checkin.Count(m => m.Status >= 0) == 0)
                 {
                     @Html.ActionLink("手工数据", "Off_CreateCheckIn", new { scheduleId = item.Id }, new { @class = "btn btn-primary btn-xs" })
                 }
-                @Html.ActionLink("删除", "Ajax_DeleteSchedule", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs",@id="offsales-schedule-del" })
+                @Html.ActionLink("删除", "Ajax_DeleteSchedule", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs offsales-schedule-del"})
             </td>
         </tr>
     }
 
 </table>
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ViewScheduleDetailsPartial", new { page }))</div>
-<div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">修改活动内容</h4>
-            </div>
-            <div class="modal-body" id="editcontent">
-
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 <script>
     //页码
     $(".pagination > li > a").click(function () {
@@ -94,19 +81,21 @@
         return false;
     });
     //修改
-    $("#offsales-schedule-edit").click(function () {
-        var link_url = $(this).attr("href");
+    $(".offsales-schedule-edit").click(function () {
+        var url = $(this).attr("href");
+        var head = "修改活动数据";
         $.ajax({
-            url: link_url,
+            url: url,
             success: function (data) {
-                $("#editcontent").html(data);
-                $('#myModal').modal()
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
             }
         });
         return false;
     });
     //删除
-    $("#offsales-schedule-del").click(function () {
+    $(".offsales-schedule-del").click(function () {
         var result = confirm("确认要删除信息吗？");
         if (result) {
             var link_url = $(this).attr("href");
