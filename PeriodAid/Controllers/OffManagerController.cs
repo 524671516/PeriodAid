@@ -72,6 +72,7 @@ namespace PeriodAid.Controllers
             {
                 var list = (from m in _offlineDB.Off_StoreManager
                            where m.Off_System_Id == user.DefaultSystemId
+                           orderby m.Id descending
                            select m).ToPagedList(_page, 20);
                 return PartialView(list);
             }
@@ -79,6 +80,7 @@ namespace PeriodAid.Controllers
             {
                 var list = (from m in _offlineDB.Off_StoreManager
                            where m.Off_System_Id == user.DefaultSystemId && m.NickName.Contains(query)
+                           orderby m.Id descending
                            select m).ToPagedList(_page, 20);
                 return PartialView(list);
             }
@@ -210,7 +212,7 @@ namespace PeriodAid.Controllers
             var manager = _offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
             if (manager != null)
             {
-                var currentuser = UserManager.FindById(User.Identity.Name);
+                var currentuser = UserManager.FindById(User.Identity.GetUserId());
                 if (manager.Off_System_Id == currentuser.DefaultSystemId)
                 {
                     var user = UserManager.FindByName(manager.UserName);
@@ -293,7 +295,7 @@ namespace PeriodAid.Controllers
                     item.Status = (int)ManagerTaskStatus.Confirmed;
                     _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
-                    return RedirectToAction("Off_Manager_TaskList");
+                    return RedirectToAction("TaskList");
                 }
                 return View("Error");
             }
@@ -487,13 +489,13 @@ namespace PeriodAid.Controllers
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 if (request.Off_Store.Off_System_Id == user.DefaultSystemId)
                 {
-                    return View(request);
+                    return PartialView(request);
                 }
                 else
-                    return View("AuthorizeError");
+                    return PartialView("AuthorizeErrorPartial");
             }
             else
-                return View("Error");
+                return PartialView("ErrorPartial");
         }
         [HttpPost, ValidateAntiForgeryToken]
         [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]

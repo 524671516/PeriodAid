@@ -1,6 +1,7 @@
-﻿@model PeriodAid.Models.Off_Store
+﻿@model PeriodAid.Models.Off_Seller
+
 <div class="row">
-    @using (Html.BeginForm("UploadStore", "OffStore", FormMethod.Post, new { enctype = "multipart/form-data",id = "file-from" }))
+    @using (Html.BeginForm("UploadSeller", "OffSeller", FormMethod.Post, new { enctype = "multipart/form-data",id = "file-from"}))
     {
         <div class="col-md-8">
             <div class="input-group">
@@ -11,7 +12,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <a class="btn btn-info btn-sm" href="~/Content/xlsx/门店信息表-Template.xlsx">下载模板</a>
+            <a class="btn btn-info btn-sm" href="~/Content/xlsx/联系人信息表-Template.xlsx">下载模板</a>
         </div>
     }
 </div>

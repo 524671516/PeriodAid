@@ -204,7 +204,7 @@ namespace PeriodAid.Controllers
                     item.Off_System_Id = user.DefaultSystemId;
                     _offlineDB.Off_Sales_Template.Add(item);
                     _offlineDB.SaveChanges();
-                    return RedirectToAction("Off_Template_List");
+                    return RedirectToAction("TemplateList");
                 }
                 return PartialView("Error");
             }

@@ -16,7 +16,7 @@
 <div class="container">
     <ul class="list-inline list-unstyled row">
         <li><a class="btn btn-info btn-sm" id="offstore-store-create"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a></li>
-        <li><a class="btn btn-info btn-sm" href="/OffStore/UploadStore"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a></li>
+        <li><a class="btn btn-info btn-sm" id="offstore-store-upstore" href="/OffStore/UploadStore"><i class="fa fa-upload"></i>&nbsp;&nbsp;上传数据</a></li>
         <li><a class="btn btn-warning btn-sm" id="Modregion">修改区域</a></li>
     </ul>
 </div>
@@ -50,6 +50,20 @@
     $("#offstore-store-create").click(function () {
         var link_url = "/OffStore/CreateStorePartial"
         var head = "新增门店"
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
+            }
+        })
+        return false
+    });
+    //上传门店
+    $("#offstore-store-upstore").click(function () {
+        var link_url = "/OffStore/UploadStore"
+        var head = "上传门店"
         $.ajax({
             url: link_url,
             success: function (data) {

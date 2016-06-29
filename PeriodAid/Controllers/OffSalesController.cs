@@ -768,7 +768,7 @@ namespace PeriodAid.Controllers
         [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadDailySales()
         {
-            return View();
+            return PartialView();
         }
         [HttpPost]
         [SettingFilter(SettingName = "GENERAL")]
@@ -811,7 +811,7 @@ namespace PeriodAid.Controllers
         [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadMonthSales()
         {
-            return View();
+            return PartialView();
         }
         [HttpPost]
         [SettingFilter(SettingName = "GENERAL")]

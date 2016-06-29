@@ -16,7 +16,7 @@
 <div class="container">
     <ul class="list-inline list-unstyled row">
         <li><a class="btn btn-info btn-sm" id="offsales-add-daily"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a></li>
-        <li><a class="btn btn-info btn-sm" id="offsales-upload-daily" href="/OffSales/UploadDailySales"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a></li>
+        <li><a class="btn btn-info btn-sm" id="offsales-upload-daily"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a></li>
         <li><a class="btn btn-danger btn-sm" id="offsale-batchdelete">删除信息</a></li>
     </ul>
 </div><br />
@@ -49,6 +49,23 @@
     $("#offsales-add-daily").click(function () {
         var url = "/OffSales/CreateSalesDailyPartial"
         var head="新增日报表"
+        $.ajax({
+            url: url,
+            data: {
+                random: Date.now()
+            },
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
+            }
+        });
+        return false
+    });
+    //上传日报表
+    $("#offsales-upload-daily").click(function () {
+        var url = "/OffSales/UploadDailySales"
+        var head = "上传日报表"
         $.ajax({
             url: url,
             data: {

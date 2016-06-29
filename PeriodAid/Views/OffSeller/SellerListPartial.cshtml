@@ -1,1 +1,104 @@
-﻿
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Seller>
+@using PagedList.Mvc;
+<br />
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:15%">
+            ID
+        </th>
+        <th style="width:15%">
+            姓名
+        </th>
+        <th style="width:15%">
+            联系电话
+        </th>
+        <th style="width:20%">
+            所属店铺
+        </th>
+        <th style="width:20%">
+            开户行
+        </th>
+        <th style="width:15%">操作</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.Encode(item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mobile)
+            </td>
+            <td>
+                @item.Off_Store.StoreName
+            </td>
+            <td>@Html.DisplayFor(modelItem => item.CardName)</td>
+            <td>
+                @Html.ActionLink("修改", "EditSellerPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offseller-seller-edit" })
+                @Html.ActionLink("删除", "DeleteSellerAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-danger offseller-seller-del" })
+            </td>
+        </tr>
+    }
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("SellerListPartial", new { page, query = "" }))</div>
+<script>
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#offseller-seller-query").val();
+            l = l + "&query=" + query;
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#offseller-seller-list").html(data);
+                }
+            });
+            return false;
+        });
+        //修改
+        $(".offseller-seller-edit").click(function () {
+            var link_url = $(this).attr("href");
+            var head = "修改促销员信息"
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $(".modal-con").html(data);
+                    $(".modal-box").modal();
+                    $(".modal-head").text(head)
+                }
+            })
+            return false
+        });
+        //删除
+        $(".offseller-seller-del").click(function () {
+            var result = confirm("确定删除促销员信息吗？")
+            if (result) {
+                var url = $(this).attr("href")
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/OffSeller/SellerListPartial",
+                                success: function (data) {
+                                    $("#offseller-seller-list").html(data);
+                                }
+                            })
+                        } else if (data.result == "FAIL") {
+                            alert("删除错误");
+                        }
+                    }
+                })
+            }
+            return false;
+        })
+
+    });
+</script>

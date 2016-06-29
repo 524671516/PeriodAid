@@ -16,7 +16,7 @@
 <div class="container">
     <ul class="list-inline list-unstyled row">
         <li><a class="btn btn-info btn-sm" id="offsales-add-month"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a></li>
-        <li><a class="btn btn-info btn-sm" id="offsales-upload-month" href="/OffSales/UploadMonthSales"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传月报表</a></li>
+        <li><a class="btn btn-info btn-sm" id="offsales-upload-month"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传月报表</a></li>
     </ul>
 </div><br />
 <div id="offsales-list-month">
@@ -47,6 +47,20 @@
     $("#offsales-add-month").click(function () {
         var url = "/OffSales/CreateSalesMonthPartial"
         var head = "新增月报表";
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
+            }
+        });
+        return false;
+    });
+    //上传月报表
+    $("#offsales-upload-month").click(function () {
+        var url = "/OffSales/UploadMonthSales"
+        var head = "上传月报表";
         $.ajax({
             url: url,
             success: function (data) {

@@ -161,7 +161,7 @@ namespace PeriodAid.Controllers
         #region 上传店铺信息
         public ActionResult UploadStore()
         {
-            return View();
+            return PartialView();
         }
         [HttpPost]
         [SettingFilter(SettingName = "GENERAL")]

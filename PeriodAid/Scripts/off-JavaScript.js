@@ -4,7 +4,7 @@
     $.datepicker.setDefaults($.datepicker.regional["zh-CN"]);
     /*------end--------*/
     $("#start-date").datepicker({dateFormat:'yy-mm-dd'});
-    $("#end-date").datepicker({dateFormat:'yy-mm-dd'});
+    $("#end-date").datepicker({ dateFormat: 'yy-mm-dd' });
     $(".date-time").datepicker();
     /*start downloadsalary*/
     $("#download-salary").click(function () {
@@ -61,4 +61,589 @@
         }
     })(jQuery);
     /*---end------*/
+    /*------时间转换----------*/
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份
+            "d+": this.getDate(),                    //日
+            "h+": this.getHours(),                   //小时
+            "m+": this.getMinutes(),                 //分
+            "s+": this.getSeconds(),                 //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+    /*----end------*/
+    /*--------------门店列表----------------*/
+    //门店列表
+    $.ajax({
+        url: "/OffSales/ScheduleStoreListAjax",
+        type: "post",
+        data: {
+            storesystem: $("#StoreSystem").val()
+        },
+        success: function (data) {
+            $("#StoreList").html("");
+            for (var i = 0; i < data.StoreList.length; i++) {
+                $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+            }
+        }
+    });
+    $("#StoreSystem").change(function () {
+        $.ajax({
+            url: "/OffSales/ScheduleStoreListAjax",
+            type: "post",
+            data: {
+                storesystem: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                }
+            }
+        })
+    });
+    /*----end------*/
+    /*-----------区域销售图表-------------*/
+    $(".offstatistic-storesystem-btn").click(function () {
+        var start = $("#start-date").val();
+        var end = $("#end-date").val();
+        var storesystem = $("#StoreSystem").val();
+        var type = $(this).attr("data-salary");
+        if (start > end) {
+            $("#danger").text("开始时间不能大于结束时间")
+        } else if (start == "" || end == "") {
+            $("#danger").text("时间不能为空")
+        } else {
+            $("#danger").addClass("hidden")
+            $.ajax({
+                url: "/OffStatistic/StoreSystemStatisticAjax",
+                type: "post",
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    storesystem: storesystem,
+                    type: type
+                },
+                success: function (data) {
+                    if (data.data.length == 0) {
+                        alert("该区域在此时间内无数据");
+                    } else {
+                        $("#map").show();
+                        //区域销售折线图
+                        var resultdata = data.data;
+                        var totalarray = new Array();
+                        var datearray = new Array();
+                        for (var i = 0; i < resultdata.length; i++) {
+                            var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
+                            var dee = new Date(deeint)
+                            datearray.push(dee.Format("MM-dd"));
+                            var totaltemp = resultdata[i].SalesCount
+                            totalarray.push(totaltemp);
+                        }
+                        $("#myChart_Bar").highcharts({
+                            chart: {
+                            },
+                            title: {
+                                text: storesystem + '每天销售总额折线图(单位：盒/天)'
+                            },
+                            xAxis: {
+                                categories: datearray
+                            },
+                            series: [{
+                                type: 'spline',
+                                name: '销售额度',
+                                data: totalarray,
+                                marker: {
+                                    lineWidth: 2,
+                                    lineColor: Highcharts.getOptions().colors[3],
+                                    fillColor: 'white'
+                                }
+                            }]
+                        });
+                        products_statisticsystem(start, end, storesystem, type)
+                        salary_statisticsystem(start, end, storesystem, type)
+                    };
+
+                }
+            });
+            return false
+        }
+    });
+    function products_statisticsystem(start, end, storesystem, type) {
+        $.ajax({
+            url: "/OffStatistic/StoreSystemProductStatisticAjax",
+            type: "post",
+            data: {
+                startdate: start,
+                enddate: end,
+                storesystem: storesystem,
+                type: type
+            },
+            success: function (data) {
+                var productarry = new Array();
+                for (var i = 0; i < data.data.length; i++) {
+                    var productlist = {
+                        name: data.data[i].SimpleName,
+                        y: data.data[i].SalesCount
+                    }
+                    productarry.push(productlist)
+                }
+                $('#myChart_Pie').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: storesystem + '每天各个种类销售总额饼状图(单位：盒/天)'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: '销售额度',
+                        data: productarry
+                    }]
+                });
+            }
+        })
+    }
+    function salary_statisticsystem(start, end, storesystem, type) {
+        $.ajax({
+            url: "/OffStatistic/StoreSystemSalaryStatisticAjax",
+            type: "post",
+            data: {
+                startdate: start,
+                enddate: end,
+                storesystem: storesystem,
+                type: type
+            },
+            success: function (data) {
+                if (data.data.length == 0) {
+                    alert("该区域在此时间内无数据");
+                } else {
+                    var datearray = new Array();
+                    var salaryarry = new Array();
+                    var debitarry = new Array();
+                    var bonusarry = new Array();
+                    for (var i = 0; i < data.data.length; i++) {
+                        var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
+                        var dee = new Date(deeint)
+                        datearray.push(dee.Format("MM-dd"));
+                        var totalsalary = data.data[i].Salary
+                        salaryarry.push(totalsalary);
+                        var totaldebit = Math.abs(data.data[i].Debit)
+                        debitarry.push(totaldebit);
+                        var totalbonus = data.data[i].Bonus
+                        bonusarry.push(totalbonus);
+                    }
+                    $('#myChart_Column').highcharts({
+                        chart: {
+                            zoomType: 'xy'
+                        },
+                        title: {
+                            text: storesystem + '工资表'
+                        },
+                        xAxis: [{
+                            categories: datearray
+                        }],
+                        yAxis: [{
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: ''
+                            }
+                        }, {
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: ''
+                            }
+                        }, {
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: ''
+                            }
+                        }],
+                        tooltip: {
+                            shared: true
+                        },
+
+                        series: [{
+                            name: '扣款',
+                            color: '#89A54E',
+                            type: 'column',
+                            yAxis: 2,
+                            data: debitarry,
+                        }, {
+                            name: '工资',
+                            color: '#4572A7',
+                            type: 'column',
+                            data: salaryarry,
+                        }, {
+                            name: '奖金',
+                            color: '#f10000',
+                            type: 'column',
+                            yAxis: 1,
+                            data: bonusarry,
+                        }]
+                    });
+                }
+            }
+        });
+    }
+    /*----end-----*/
+    /*--------促销员销售数据图表----------------------*/
+    function split(val) {
+        return val.split(/,\s*/);
+    };
+    function extractLast(term) {
+        return split(term).pop();
+    };
+    $(function () {
+        $("#offstatistic-seller").autocomplete({
+            minLength: 0,
+            max: 5,//列表里的条目数
+            minChars: 0,//自动完成激活之前填入的最小字符
+            width: 200,//提示的宽度，溢出隐藏
+            scrollHeight: 180,//提示的高度，溢出显示滚动条
+            matchContains: true,//包含匹配，就是data参数里的数据，是否只要包含文本框里的数据就显示
+            autoFill: false,//自动填充
+            source: function (request, response) {
+                $.ajax({
+                    url: "/OffStatistic/Off_Statistic_QuerySeller_Ajax",
+                    type: "post",
+                    data: {
+                        query: request.term
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        response(data.data);
+                    }
+
+                })
+            },
+            search: function () {
+                var term = extractLast(this.value);
+                if (term.length < 1) {
+                    return false;
+                }
+            },
+            focus: function () {
+                return false;
+            },
+            select: function (event, ui) {
+                $("#offstatisric-seller-item").removeClass("hidden");
+                $("#offstatisric-seller-item").val(ui.item.label + " ———— " + ui.item.desc);
+                $("#offstatistic-seller").val(ui.item.label);
+                $("#offstatistic-project").val(ui.item.value);
+                return false;
+            }
+        });
+        $(".offstatistic-seller-btn").click(function () {
+            var start = $("#start-date").val();
+            var end = $("#end-date").val();
+            var sellerid = $("#offstatistic-project").val();
+            var link_url = "/OffStatistic/SellerStatisticAjax";
+            if (start > end) {
+                $("#danger").text("开始时间不能大于结束时间")
+            } else if (start == "" || end == "") {
+                $("#danger").text("时间不能为空")
+            } else {
+                $("#danger").addClass("hidden")
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    data: {
+                        startdate: start,
+                        enddate: end,
+                        sellerid: sellerid
+                    },
+                    success: function (data) {
+                        if (data.data.length == 0) {
+                            alert("该促销员在此时间内无数据")
+                        } else {
+                            $("#map").show();
+                            var resultdata = data.data;
+                            var totalarray = new Array();
+                            var datearray = new Array();
+                            var evatotalarry = new Array();
+                            for (var i = 0; i < resultdata.length; i++) {
+                                var deeint = parseInt(resultdata[i].Date.replace(/\D/igm, ""));
+                                var dee = new Date(deeint)
+                                datearray.push(dee.Format("MM-dd"));
+                                var totaltemp = resultdata[i].SalesCount;
+                                totalarray.push(totaltemp);
+                                var avgtotaltemp = resultdata[i].AVG_SalesData;
+                                evatotalarry.push(avgtotaltemp)
+                            }
+                            $("#myChart_Bar").highcharts({
+                                chart: {
+                                },
+                                title: {
+                                    text: '促销员每天销售总额折线图(单位：盒/天)'
+                                },
+                                xAxis: {
+                                    categories: datearray
+                                },
+                                series: [{
+                                    type: 'column',
+                                    name: '每日销量',
+                                    data: totalarray
+                                }, {
+                                    type: 'spline',
+                                    name: '历史平均销量',
+                                    data: evatotalarry,
+                                    marker: {
+                                        lineWidth: 2,
+                                        lineColor: Highcharts.getOptions().colors[3],
+                                        fillColor: 'white'
+                                    }
+                                }]
+                            });
+                        }
+                    }
+                })
+            }
+        })
+    });
+    /*----end-----*/
+    /*---------------区域门店销售数据----------------------*/
+    $(".offstatistic-store-btn").click(function () {
+        var start = $("#start-date").val();
+        var end = $("#end-date").val();
+        var storeid = encodeURI(encodeURI($("#StoreList").val()));
+        var type = $(this).attr("data-salary");
+        var selectvalue = $("#StoreList").val() + "";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = $("option[value='" + managerArray[i] + "']").text();
+            $("#storeName").val(optionitem);
+        }
+        if (start > end) {
+            $("#danger").text("开始时间不能大于结束时间")
+        } else if (start == "" || end == "") {
+            $("#danger").text("时间不能为空")
+        } else {
+            $("#danger").addClass("hidden")
+            $.ajax({
+                url: "/OffStatistic/StoreStatisticAjax",
+                type: "post",
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    storeid: storeid,
+                    type: type
+                },
+                success: function (data) {
+                    if (data.data.length == 0) {
+                        alert("该区域门店下的这段时间内没有销售数据");
+                    } else {
+                        $("#map").show();
+                        var resultdata = data.data;
+                        var totalarray = new Array();//销售总额
+                        var datearray = new Array();//显示时间
+                        for (var i = 0; i < data.data.length; i++) {
+                            var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
+                            var dee = new Date(deeint)
+                            datearray.push(dee.Format("MM-dd"));
+                            var totaltemp = resultdata[i].SalesCount//每天销售总额
+                            totalarray.push(totaltemp);
+                        };
+                        $("#myChart_Bar").highcharts({
+                            chart: {
+                            },
+                            title: {
+                                text: optionitem + '每天销售总额柱状图(单位：盒/天)'
+                            },
+                            xAxis: {
+                                categories: datearray
+                            },
+                            series: [{
+                                type: 'column',
+                                name: '销售额度',
+                                data: totalarray
+                            }]
+                        });
+                        statistic_store_products(start, end, storeid, type)
+                        statistic_store_salary(start, end, storeid, type)
+                    }
+                }
+            })
+        }
+    });
+    function statistic_store_products(start, end, storeid, type) {
+        var selectvalue = $("#StoreList").val() + "";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = $("option[value='" + managerArray[i] + "']").text();
+            $("#storeName").val(optionitem);
+        }
+        $.ajax({
+            url: "/OffStatistic/StoreProductStatisticAjax",
+            type: "post",
+            data: {
+                startdate: start,
+                enddate: end,
+                storeid: storeid,
+                type: type
+            },
+            success: function (data) {
+                var productarry = new Array();
+                for (var i = 0; i < data.data.length; i++) {
+                    var productlist = {
+                        name: data.data[i].SimpleName,
+                        y: data.data[i].SalesCount
+                    }
+                    productarry.push(productlist)
+                }
+                $('#myChart_Pie').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: optionitem + '每天各个种类销售总额饼状图(单位：盒/天)'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: '销售额度',
+                        data: productarry
+                    }]
+                });
+            }
+        })
+    }
+    function statistic_store_salary(start, end, storeid, type) {
+        var selectvalue = $("#StoreList").val() + "";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = $("option[value='" + managerArray[i] + "']").text();
+            $("#storeName").val(optionitem);
+        }
+        $.ajax({
+            url: "/OffStatistic/StoreSalaryStatisticAjax",
+            type: "post",
+            data: {
+                startdate: start,
+                enddate: end,
+                storeid: storeid,
+                type: type
+            },
+            success: function (data) {
+                if (data.data.length == 0) {
+                    alert("该区域门店下的这段时间内没有销售数据");
+                } else {
+                    var datearray = new Array();
+                    var salaryarry = new Array();
+                    var debitarry = new Array();
+                    var bonusarry = new Array();
+                    for (var i = 0; i < data.data.length; i++) {
+                        var deeint = parseInt(data.data[i].Date.replace(/\D/igm, ""));
+                        var dee = new Date(deeint)
+                        datearray.push(dee.Format("MM-dd"));
+                        var totalsalary = data.data[i].Salary
+                        salaryarry.push(totalsalary);
+                        var totaldebit = Math.abs(data.data[i].Debit)
+                        debitarry.push(totaldebit);
+                        var totalbonus = data.data[i].Bonus
+                        bonusarry.push(totalbonus);
+                    }
+                    $('#myChart_Column').highcharts({
+                        chart: {
+                            zoomType: 'xy'
+                        },
+                        title: {
+                            text: optionitem + '工资表'
+                        },
+                        xAxis: [{
+                            categories: datearray
+                        }],
+                        yAxis: [{ // Primary yAxis
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: '',
+                            }
+                        }, { // Secondary yAxis
+                            title: {
+                                text: ''
+                            },
+                            labels: {
+                                enabled: false
+                            },
+                        }, { // Secondary yAxis
+                            title: {
+                                text: '',
+                            },
+                            labels: {
+                                enabled: false
+                            },
+                        }],
+                        tooltip: {
+                            shared: true
+                        },
+
+                        series: [{
+                            name: '扣款',
+                            color: '#89A54E',
+                            type: 'column',
+                            yAxis: 2,
+                            data: debitarry,
+                        }, {
+                            name: '工资',
+                            color: '#4572A7',
+                            type: 'column',
+                            data: salaryarry,
+                        }, {
+                            name: '奖金',
+                            color: '#f10000',
+                            type: 'column',
+                            yAxis: 1,
+                            data: bonusarry,
+                        }]
+                    });
+                }
+            }
+        })
+    }
+    /*----end-----*/
 });

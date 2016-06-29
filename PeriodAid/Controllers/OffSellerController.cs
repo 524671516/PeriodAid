@@ -147,31 +147,23 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditSellerPartial(int id, FormCollection form)
         {
-            var seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
-            if (seller != null)
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                if (seller.Off_System_Id == user.DefaultSystemId)
+                var item = new Off_Seller();
+                if (TryUpdateModel(item))
                 {
-                    var item = new Off_Seller();
-                    if (TryUpdateModel(item))
-                    {
-                        item.UploadTime = DateTime.Now;
-                        item.UploadUser = User.Identity.Name;
-                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _offlineDB.SaveChanges();
-                        return Content("SUCCESS");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "错误");
-                        return PartialView(item);
-                    }
+                    item.UploadTime = DateTime.Now;
+                    item.UploadUser = User.Identity.Name;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
                 }
                 else
                 {
-                    return PartialView("AuthorizeErrorPartial");
+                    ModelState.AddModelError("", "错误");
+                    return PartialView(item);
                 }
+
             }
             else
             {
@@ -209,7 +201,7 @@ namespace PeriodAid.Controllers
         [SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadSeller()
         {
-            return View();
+            return PartialView();
         }
         [HttpPost]
         [SettingFilter(SettingName = "GENERAL")]

@@ -132,9 +132,8 @@
                         <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/OfflineSales/Off_Seller_main"><i class="fa fa-search"></i>&nbsp;&nbsp;查看促销员</a></li>
-                                    <li class="left-navbar"><a href="javascript:;" id="download-salary"><i class="fa fa-download"></i>&nbsp;&nbsp;下载工资数据</a></li>
-                                    <li class="left-navbar"><a href="/OfflineSales/Off_BindSeller_List"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定促销员</a></li>
+                                    <li class="left-navbar"><a href="/OffSeller/SellerIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;查看促销员</a></li>
+                                    <li class="left-navbar"><a href="/OffSeller/BindSellerIndex"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定促销员</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -168,10 +167,10 @@
                         <div id="collapseSix" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSix">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-user-secret"></i>&nbsp;&nbsp;</a>@Html.ActionLink("管理员", "Off_Manager_list", "OfflineSales")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "Off_Manager_TaskList", "OfflineSales")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "Off_Manager_Announcement_List", "OfflineSales")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "Off_Manager_Request_List", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-user-secret"></i>&nbsp;&nbsp;</a>@Html.ActionLink("管理员", "ManagerList", "OffManager")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "TaskList", "OffManager")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "AnnouncementList", "OffManager")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "RequestList", "OffManager")</li>
                                 </ul>
                             </div>
                         </div>
@@ -187,9 +186,9 @@
                         <div id="collapseSeven" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSeven">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-line-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域数据图表", "Off_Statistic_StoreSystem", "OfflineSales")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域门店数据图表", "Off_Statistic_Store", "OfflineSales")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-area-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("促销员销售数据图", "Off_Statistic_Seller", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-line-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域数据图表", "StoreSystemStatistic", "OffStatistic")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域门店数据图表", "StoreStatistic", "OffStatistic")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-area-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("促销员销售数据图", "SellerStatistic", "OffStatistic")</li>
                                 </ul>
                             </div>
                         </div>
@@ -223,36 +222,12 @@
     <a class="btn btn-default hidden scroll-fixed" id="to-top" aria-label="Left Align">
         <i class="fa fa-angle-double-up" aria-hidden="true"></i>
     </a>
-    <div class="modal fade" id="downloadModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">下载工资数据表</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <label for="start-date" class="sr-only">开始时间</label>
-                                <input type="text" id="start-date" class="form-control input-sm" placeholder="开始时间" />
-                            </div>
-                            <div class="form-group">
-                                <label for="end-date" class="sr-only">开始时间</label>
-                                <input type="text" id="end-date" class="form-control input-sm" placeholder="结束时间" />
-                            </div>
-                            <button type="submit" class="btn btn-default btn-sm" id="download-submit"><i class="fa fa-download"></i>&nbsp;&nbsp;下载</button>
-                        </form><br />
-                    </div>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery.form.min.js"></script>
     <script src="~/Scripts/off-JavaScript.js"></script>
     <script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
+    <script src="~/Scripts/highcharts.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

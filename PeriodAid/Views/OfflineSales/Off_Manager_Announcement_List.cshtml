@@ -10,21 +10,16 @@
 <div id="list">
 
 </div>
-@section scripts{
-    <script>
-        $(function () {
-            var url = "/OfflineSales/Off_Manager_Announcement_List_Ajax"
-            $.ajax({
-                url: url,
-                success: function (list) {
-                    $("#list").html(list);
-                }
-            });
+<script>
+    $(function () {
+        var url = "/OfflineSales/Off_Manager_Announcement_List_Ajax"
+        $.ajax({
+            url: url,
+            success: function (list) {
+                $("#list").html(list);
+            }
         });
-
-
-    </script>
-}
-
+    });
+</script>
 
 

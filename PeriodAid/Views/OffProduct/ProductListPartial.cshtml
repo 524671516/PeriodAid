@@ -1,1 +1,95 @@
-﻿
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Product>
+@using PagedList.Mvc;
+
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:30%">
+            产品名称
+        </th>
+        <th style="width:15%">
+            产品简称
+        </th>
+        <th style="width:15%">
+            产品规格
+        </th>
+        <th style="width:15%">
+            产品编码
+        </th>
+        <th style="width:15%">
+            销售单价
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SimpleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Spec)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalesPrice)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "EditProduct", new { id = item.Id }, new { @class = "btn btn-info btn-xs offproduct-product-edit" })
+                @Html.ActionLink("删除", "CancelProductAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offproduct-product-del" })
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))</div>
+<script>
+    $(function () {
+        //修改产品
+        $(".offproduct-product-edit").click(function () {
+            var url = $(this).attr("href")
+            var head = "修改产品"
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".modal-con").html(data);
+                    $(".modal-box").modal();
+                    $(".modal-head").text(head)
+                }
+            })
+            return false
+        });
+        //删除产品
+        $(".offproduct-product-del").click(function () {
+            var result = confirm("确定要删除该产品信息吗？")
+            if (result) {
+                var link_url = $(this).attr("href")
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/OffProduct/ProductListPartial",
+                                success: function (data) {
+                                    $("#offproduct-product-list").html(data)
+                                }
+                            })
+                        }
+                        else if (data.result == "FAIL") {
+                            alert("无法删除")
+                        }
+                    }
+                })
+
+            }
+            return false
+        })
+    });
+</script>
+

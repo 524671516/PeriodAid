@@ -732,6 +732,31 @@
     <Content Include="Views\OffProduct\TemplateList.cshtml" />
     <Content Include="Views\OffProduct\TemplateListPartial.cshtml" />
     <Content Include="Views\OffProduct\CreateTemplate.cshtml" />
+    <Content Include="Views\OffProduct\CreateProduct.cshtml" />
+    <Content Include="Views\OffProduct\EditProduct.cshtml" />
+    <Content Include="Views\OffProduct\EditTemplate.cshtml" />
+    <Content Include="Views\OffSeller\BindSellerIndex.cshtml" />
+    <Content Include="Views\OffSeller\AddSellerPartial.cshtml" />
+    <Content Include="Views\OffSeller\UploadSeller.cshtml" />
+    <Content Include="Views\OffSeller\UploadResult.cshtml" />
+    <Content Include="Views\OffSeller\EditSellerPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindSellerListPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindSellerPartial.cshtml" />
+    <Content Include="Views\OffManager\ManagerList.cshtml" />
+    <Content Include="Views\OffManager\ManagerListPartial.cshtml" />
+    <Content Include="Views\OffManager\TaskList.cshtml" />
+    <Content Include="Views\OffManager\TaskListPartial.cshtml" />
+    <Content Include="Views\OffManager\AnnouncementList.cshtml" />
+    <Content Include="Views\OffManager\AnnouncementListPartial.cshtml" />
+    <Content Include="Views\OffManager\RequestList.cshtml" />
+    <Content Include="Views\OffManager\RequestListPartial.cshtml" />
+    <Content Include="Views\OffManager\EditTask.cshtml" />
+    <Content Include="Views\OffManager\CreateAnnouncement.cshtml" />
+    <Content Include="Views\OffManager\EditAnnouncement.cshtml" />
+    <Content Include="Views\OffManager\EditRequest.cshtml" />
+    <Content Include="Views\OffStatistic\StoreSystemStatistic.cshtml" />
+    <Content Include="Views\OffStatistic\StoreStatistic.cshtml" />
+    <Content Include="Views\OffStatistic\SellerStatistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -739,8 +764,6 @@
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Common\" />
     <Folder Include="Views\OffCheckin\" />
-    <Folder Include="Views\OffManager\" />
-    <Folder Include="Views\OffStatistic\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
