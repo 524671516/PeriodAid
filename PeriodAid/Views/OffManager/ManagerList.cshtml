@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "ManagerList";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSix";
+}
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>管理员：</label>
+            <input class="form-control input-sm offline-search-inline" id="offmanager-manager-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="offmanager-manager-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<br />
+<div id="offmanager-manager-list">
+
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OffManager/ManagerListPartial",
+            success: function (data) {
+                $("#offmanager-manager-list").html(data)
+            }
+        });
+        //搜索
+        $("#offmanager-manager-search").click(function () {
+            var query = $("#offmanager-manager-query").val();
+            var url = "/OffManager/ManagerListPartial"
+            $.ajax({
+                url: url,
+                data: {
+                    query: query
+                },
+                success: function (data) {
+                    $("#offmanager-manager-list").html(data)
+                }
+            })
+        });
+    })
+</script>

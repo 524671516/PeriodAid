@@ -758,6 +758,14 @@
     <Content Include="Views\OffStatistic\StoreSystemStatistic.cshtml" />
     <Content Include="Views\OffStatistic\StoreStatistic.cshtml" />
     <Content Include="Views\OffStatistic\SellerStatistic.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinList.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinProductListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ConfirmCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\QueryCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\QueryCheckinPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ViewCheckinLBS.cshtml" />
+    <Content Include="Views\Shared\AuthorizeError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

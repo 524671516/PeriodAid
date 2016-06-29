@@ -1,0 +1,112 @@
+﻿
+@model PagedList.IPagedList<PeriodAid.Models.Off_Membership_Bind>
+@using PagedList.Mvc;
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:10%">
+            姓名
+        </th>
+        <th style="width:15%">
+            联系方式
+        </th>
+        <th style="width:20%">
+            注册时间
+        </th>
+        <th style="width:15%">
+            绑定促销员姓名
+        </th>
+        <th style="width:25%">绑定促销员所属门店</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mobile)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.ApplicationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+            </td>
+            <td>
+
+                @Html.Encode(item.Off_Seller == null ? "" : item.Off_Seller.Off_Store.StoreName)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "BindSellerPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offseller-bindseller-edit" })
+                @if (!item.Bind)
+                {
+                    @Html.ActionLink("设置管理员", "UpdateManagerAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-danger offseller-bindseller-updatemanager" })
+                }
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("BindSellerListPartial", new { page }))</div>
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        var bool = $("#offseller-bindseller-bool").val();
+        var query = $("#offseller-bindseller-query").val();
+        $.ajax({
+            url: l,
+            data: {
+                query: query,
+                bind: bool
+            },
+            success: function (data) {
+                $("#offseller-bindseller-list").html(data);
+            }
+        });
+        return false;
+    });
+    //修改
+    $(".offseller-bindseller-edit").click(function () {
+        var link_url = $(this).attr("href");
+        var head = "修改绑定信息"
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
+            }
+        });
+        return false;
+    });
+    //设置管理员
+    $(".offseller-bindseller-updatemanager").click(function () {
+        var link_url = $(this).attr("href");
+        var result = confirm("是否设置为管理员");
+        if (result) {
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    if (data == "SUCCESS");
+                    var url = "/OffSeller/BindSellerListPartial";
+                    var cuxa = $("#offseller-bindseller-query").val();
+                    var bool = $("#offseller-bindseller-bool").val();
+                    $.ajax({
+                        url: url,
+                        data: {
+                            query: cuxa,
+                            bind: bool
+                        },
+                        success: function (data) {
+                            $("#offseller-bindseller-list").html(data);
+                        }
+                    })
+                }
+            });
+        }
+        return false;
+    });
+</script>

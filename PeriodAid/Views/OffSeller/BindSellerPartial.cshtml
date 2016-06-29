@@ -1,0 +1,67 @@
+﻿@model PeriodAid.Models.Off_Membership_Bind
+
+@using (Html.BeginForm("BindSellerPartial", "OffSeller", FormMethod.Post, new { @id = "offseller-bindseller-editform" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.UserName)
+        @Html.HiddenFor(model => model.Bind)
+        @Html.HiddenFor(model => model.Off_System_Id)
+        <div class="form-group">
+            <label class="control-label col-md-3">姓名</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.NickName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.NickName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">联系方式</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <label class="control-label col-md-3">注册时间</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.ApplicationDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.ApplicationDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">促销员ID</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Off_Seller_Id, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Off_Seller_Id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $('#offseller-bindseller-editform').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("修改成功");
+                $('.modal-box').modal('hide');
+                window.location.href = '/OffSeller/BindSellerIndex';
+            }
+            else {
+                $(".modal-con").html(data);
+            }
+        });
+    });
+</script>
+
