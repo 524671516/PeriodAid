@@ -424,9 +424,10 @@ namespace PeriodAid.Controllers
             }
         }
 
-        // Origin: Off_Manager_Announcement_Delete_Ajax
         // 0325 删除公告
-        [SettingFilter(SettingName = "MANAGER_ATTENDANCE"), HttpPost]
+        // Origin:Off_Manager_Announcement_Delete_Ajax
+        [HttpPost]
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         public ActionResult DeleteAnnouncementAjax(int id)
         {
             Off_Manager_Announcement model = _offlineDB.Off_Manager_Announcement.SingleOrDefault(m => m.Id == id);

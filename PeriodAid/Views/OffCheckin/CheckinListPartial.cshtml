@@ -1,0 +1,77 @@
+﻿
+@model PagedList.IPagedList<PeriodAid.Models.Off_Checkin>
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+<br />
+<table class="table table-condensed table-hover h6" style="table-layout: fixed;width:100%;">
+    <tr style="background-color:#f9f9f9">
+        <th style="width:15%">
+            活动时间
+        </th>
+        <th style="width:10%">
+            状态
+        </th>
+        <th style="width:20%">
+            店铺名称
+        </th>
+        <th style="width:10%">
+            促销员姓名
+        </th>
+        <th style="width:20%">
+            确认人
+        </th>
+        <th style="width:15%">
+            确认时间
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="ellipsis">
+                @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td class="ellipsis">
+                @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ConfirmUser)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ConfirmTime)
+            </td>
+            <td class="ellipsis">
+                @Html.ActionLink("查看", "ConfirmCheckin", new { id = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                @if (item.Status == 0)
+                {
+                    @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @Html.ActionLink("作废", "CancelCheckinAjax", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs offcheckin-cancel-checkin" })
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("CheckinListPartial", new { page }))</div>
+<script>
+    $(".pagination > li > a").click(function () {
+        var link = $(this).attr("href");
+        $.ajax({
+            url: link,
+            data: {
+                status: $("#offcheckin-status-val").val(),
+                query: $("#offcheckin-query-val").val()
+            },
+            success: function (data) {
+                $("#checkinlist").html(data);
+            }
+        })
+        return false;
+    });
+</script>

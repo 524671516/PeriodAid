@@ -128,7 +128,7 @@ namespace PeriodAid.Controllers
 
         // Origin: Off_DeleteStore
         [HttpPost]
-        public ActionResult Off_DeleteStoreAjax(int id)
+        public ActionResult DeleteStoreAjax(int id)
         {
             var item = _offlineDB.Off_Store.SingleOrDefault(m => m.Id == id);
             if (item != null)
@@ -155,8 +155,23 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
 
-
-
+        // Origin: Off_Store_AreaChange_batch
+        [HttpPost]
+        public JsonResult ChangeStoreAreaBatchAjax(string ids, string modify_area)
+        {
+            try
+            {
+                string sql = "UPDATE Off_Store SET Region = '" + modify_area + "' where Id in (" + ids + ")";
+                _offlineDB.Database.ExecuteSqlCommand(sql);
+                _offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+        
         [SettingFilter(SettingName = "GENERAL")]
         #region 上传店铺信息
         public ActionResult UploadStore()

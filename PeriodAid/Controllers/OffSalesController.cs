@@ -1082,5 +1082,58 @@ namespace PeriodAid.Controllers
             int rest = schedulelist.Count() - self - proxy;
             return Json(new { result = "SUCCESS", totalcount = schedulelist.Count(), selfcount = self, proxycount = proxy, restcount = rest });
         }
+
+
+        // Origin: Off_Daily_Delete_batch
+        [HttpPost]
+        public JsonResult DeleteDailySalesBatchAjax(string ids)
+        {
+            try
+            {
+                string sql = "DELETE FROM Off_SalesInfo_Daily Where Id in (" + ids + ")";
+                _offlineDB.Database.ExecuteSqlCommand(sql);
+                _offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        // Origin: Off_EventDetails_Delete_batch
+        [HttpPost]
+        public JsonResult DeleteScheduleBatchAjax(string ids)
+        {
+            try
+            {
+                string sql = "DELETE FROM Off_Checkin_Schedule Where Id in (" + ids + ")";
+                //string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                _offlineDB.Database.ExecuteSqlCommand(sql);
+                _offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        // Origin: Off_EventDetails_ModifyInfo_batch
+        [HttpPost]
+        public JsonResult EditScheduleBatchAjax(string ids, string starttime, string finishtime, decimal salary, string date)
+        {
+            try
+            {
+                string sql = "UPDATE Off_Checkin_Schedule SET Standard_CheckIn = '" + date + " " + starttime + "', Standard_CheckOut='" + date + " " + finishtime + "', Standard_Salary=" + salary + " where Id in (" + ids + ")";
+                _offlineDB.Database.ExecuteSqlCommand(sql);
+                _offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
     }
 }
