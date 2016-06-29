@@ -79,6 +79,74 @@ namespace System.Web.Mvc
                     return "位置状态";
             }
         }
+        public static string BonusStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "作废";
+                case 0:
+                    return "待审核";
+                case 1:
+                    return "已发送";
+                case 2:
+                    return "已收款";
+                case 3:
+                    return "发送失败";
+                case 4:
+                    return "已退款";
+                default:
+                    return "未知";
+            }
+        }
+        public static string ManagerRequestStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "作废";
+                case 0:
+                    return "已提交";
+                case 1:
+                    return "已审核";
+                case 2:
+                    return "已完成";
+                case 3:
+                    return "已驳回";
+                default:
+                    return "未知";
+            }
+        }
+        public static string AttendanceStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "全勤";
+                case 1:
+                    return "迟到";
+                case 2:
+                    return "早退";
+                case 3:
+                    return "旷工";
+                default:
+                    return "未确认";
+            }
+        }
+        public static string ManagerTaskStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "已作废";
+                case 0:
+                    return "已提交";
+                case 1:
+                    return "已确认";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
