@@ -1,0 +1,119 @@
+﻿@model  PagedList.IPagedList<PeriodAid.Models.Off_StoreManager>
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:15%;">
+            Id
+        </th>
+        <th style="width:15%;">
+            状态
+        </th>
+        <th style="width:20%;">
+            姓名
+        </th>
+        <th style="width:20%;">
+            电话
+        </th>
+        <th style="width:30%;"></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @if (item.Status == 1)
+                {
+                    <span>管理员</span>
+
+                }
+                else {
+                    <span>超级管理员</span>
+                }
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mobile)
+            </td>
+            <td>
+                @if (item.Status == 1)
+                {
+                    @Html.ActionLink("设置超级管理员", "UpdateManagerToSeniorAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-danger offmanager-manager-setup" })
+                }
+                else {
+                    @Html.ActionLink("撤销", "ReduceManagerAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-warning offmanager-manager-backout" })
+                }
+                @Html.ActionLink("设置区域", "AddManagerArea", new { id = item.Id }, new { @class = "btn btn-xs btn-primary" })
+
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ManagerListPartial", new { page }))</div>
+<script>
+    //页码切换
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        var query = $("#offmanager-manager-query").val();
+        $.ajax({
+            url: l,
+            data:{
+                query:query
+            },
+            success: function (data) {
+                $("#offmanager-manager-list").html(data)
+            }
+        });
+        return false;
+    });
+    //设置超级管理员
+    $(".offmanager-manager-setup").click(function () {
+        var link = $(this).attr("href");
+        $.ajax({
+            url: link,
+            type:"post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    $.ajax({
+                        url: "/OffManager/ManagerListPartial",
+                        success: function (data) {
+                            $("#offmanager-manager-list").html(data)
+                            alert("提升成功");
+                        }
+                    })
+                }
+            }
+        });
+        return false;
+    });
+    //撤销
+    $(".offmanager-manager-backout").click(function () {
+        var result = confirm("确定要撤销吗？")
+        if (result) {
+            var url = $(this).attr("href")
+            $.ajax({
+                url: url,
+                type: "post",
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $.ajax({
+                            url: "/OffManager/ManagerListPartial",
+                            success: function (data) {
+                                $("#offmanager-manager-list").html(data)
+                            }
+                        })
+                    }
+                }
+            })
+        }
+        return false;
+    });
+</script>
+
+

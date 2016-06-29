@@ -6,17 +6,6 @@
     $("#start-date").datepicker({dateFormat:'yy-mm-dd'});
     $("#end-date").datepicker({ dateFormat: 'yy-mm-dd' });
     $(".date-time").datepicker();
-    /*start downloadsalary*/
-    $("#download-salary").click(function () {
-        $("#downloadModal").modal();
-    });
-    $("#download-submit").click(function () {
-        var start = $("#start-date").val();
-        var end = $("#end-date").val();
-        window.location.href = "/OfflineSales/Ajax_DownloadSalary?start=" + start + "&end=" + end;
-        return false;
-    });
-    /*-------end--------*/
     /*start left navbar*/
     var left_nav = $("#current_page").val();
     $(".panel-collapse").removeClass("in");
