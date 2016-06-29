@@ -61,4 +61,21 @@
         }
     })(jQuery);
     /*---end------*/
+
+    
 });
+/*---删除按钮---*/
+function getDeleteResult(data) {
+    if (data.result == "SUCCESS") {
+        alert("删除成功");
+        return true;
+    }
+    else if (data.result == "FAIL") {
+        alert("错误，无法删除");
+    }
+    else if (data.result = "UNAUTHORIZED") {
+        alert("没有权限，无法删除");
+    }
+    return false;
+}
+/*---end---*/

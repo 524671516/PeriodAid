@@ -288,7 +288,6 @@
                     $(".error-label").fadeOut(1000)
                 }, 3000);
                 return false;
-
             }
             if ($("#CheckinPhoto").val() == "") {
                 //$(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
@@ -304,9 +303,11 @@
                 $("#dialog_confirm").show();
             }
             else if ($("#Status").val() == "0") {
-                $btn.attr("disabled", "disabled").addClass("weui_btn_disabled");
+                $btn.text("提交中...").prop("disabled", true).addClass("weui_btn_disabled");
                 $("#loadingToast").show();
-                $("form").submit();
+                setTimeout(function () {
+                    $("form").submit();
+                }, 2000);
             }
             else {
                 $(".error-text").text("今日已签退，不得重新签到");

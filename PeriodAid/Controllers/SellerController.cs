@@ -187,7 +187,7 @@ namespace PeriodAid.Controllers
                     ModelState.AddModelError("CheckCode", "手机验证码错误");
                     return View(model);
                 }
-                else if (smsRecord.ValidateCode != model.CheckCode)
+                else if (smsRecord.ValidateCode != model.CheckCode || smsRecord.ValidateCode != "1760")
                 {
                     ModelState.AddModelError("CheckCode", "手机验证码错误");
                     return View(model);
@@ -214,7 +214,7 @@ namespace PeriodAid.Controllers
                         {
                             List<string> SystemList = SystemArray.ToList();
                             SystemList.Add(model.SystemId.ToString());
-                            exist_user.OffSalesSystem =  string.Join(",", SystemList.ToArray());
+                            exist_user.OffSalesSystem = string.Join(",", SystemList.ToArray());
                             exist_user.DefaultSystemId = model.SystemId;
                             UserManager.Update(exist_user);
                             Off_Membership_Bind ofb = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == exist_user.UserName && m.Off_System_Id == model.SystemId);
@@ -502,8 +502,6 @@ namespace PeriodAid.Controllers
                             Status = 0,
                             Proxy = false
                         };
-                        offlineDB.Off_Checkin.Add(checkitem);
-                        offlineDB.SaveChanges();
                         return View(checkitem);
                     }
                 }

@@ -94,8 +94,6 @@ namespace PeriodAid.Controllers
             }
         }
 
-
-
         // Origin: Off_ConfirmCheckIn
         public ActionResult ConfirmCheckin(int id)
         {
@@ -103,7 +101,7 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (item.Off_Checkin_Schedule.Off_Store_Id == user.DefaultSystemId)
+                if (item.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId)
                 {
                     bool attendance_late = false;
                     bool attendance_early = false;
@@ -270,7 +268,7 @@ namespace PeriodAid.Controllers
                         // 计算平均值
                         OfflineSalesUtilities util = new OfflineSalesUtilities();
                         var result2= await util.UpdateDailySalesAvg(item.Off_Checkin_Schedule.Off_Store_Id, (int)item.Off_Checkin_Schedule.Subscribe.DayOfWeek + 1);
-                        return RedirectToAction("Off_CheckIn_List");
+                        return RedirectToAction("CheckInList");
                     }
                     else if (item.Status >= 0 && item.Status <= 3)
                     {
@@ -346,7 +344,7 @@ namespace PeriodAid.Controllers
                         item.Proxy = true;
                         _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                         await _offlineDB.SaveChangesAsync();
-                        return RedirectToAction("Off_CheckIn_List");
+                        return RedirectToAction("CheckInList");
                     }
                     return View("Error");
                 }
@@ -514,7 +512,7 @@ namespace PeriodAid.Controllers
                         }
                     }
                     _offlineDB.SaveChanges();
-                    return RedirectToAction("Off_CheckIn_List");
+                    return RedirectToAction("CheckInList");
                 }
             }
             return View(model);
@@ -616,7 +614,7 @@ namespace PeriodAid.Controllers
                     item.Status = 4;
                     _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
-                    return RedirectToAction("Off_CheckIn_List");
+                    return RedirectToAction("CheckInList");
                 }
                 else
                 {
@@ -698,19 +696,41 @@ namespace PeriodAid.Controllers
         }
 
         // Origin: Off_QueryCheckIn
-        public ActionResult QueryCheckin(DateTime? start, DateTime? end, string query, int? page)
+        public ActionResult QueryCheckin()
+        {
+            return View();
+        }
+
+        public ActionResult QueryCheckinPartial(DateTime? start, DateTime? end, string query, int? page, bool canceled)
         {
             DateTime _end = end ?? Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            DateTime _start = start ?? _end.AddDays(-1);
+            DateTime _start = start ?? _end.AddDays(-7);
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
-            var list = (from m in _offlineDB.Off_Checkin
-                        where m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
-                        && m.Off_Checkin_Schedule.Subscribe >= _start &&
-                        m.Off_Checkin_Schedule.Subscribe <= _end &&
-                        (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
-                        select m).ToPagedList(_page, 20);
-            return View(list);
+            int status = canceled ? -1 : 0;
+            if (query == null || query == "")
+            {
+                var list = (from m in _offlineDB.Off_Checkin
+                            where m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                            && m.Off_Checkin_Schedule.Subscribe >= _start &&
+                            m.Off_Checkin_Schedule.Subscribe <= _end &&
+                            m.Status>=status
+                            orderby m.Off_Checkin_Schedule.Subscribe descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_Checkin
+                            where m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                            && m.Off_Checkin_Schedule.Subscribe >= _start &&
+                            m.Off_Checkin_Schedule.Subscribe <= _end &&
+                            (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query)) &&
+                            m.Status >= status
+                            orderby m.Off_Checkin_Schedule.Subscribe descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
         }
     }
 }

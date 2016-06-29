@@ -196,6 +196,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BonusController.cs" />
     <Compile Include="Controllers\OffCheckinController.cs" />
     <Compile Include="Controllers\OffCommonController.cs" />
     <Compile Include="Controllers\CustomController.cs" />
@@ -719,13 +720,20 @@
     <Content Include="Views\OffSales\CreateSalesDailyPartial.cshtml" />
     <Content Include="Views\Shared\modal.cshtml" />
     <Content Include="Views\OffSales\CreateSalesMonthPartial.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinList.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ConfirmCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinProductListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ViewCheckinLBS.cshtml" />
+    <Content Include="Views\OffCheckin\QueryCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\QueryCheckinPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
+    <Folder Include="Views\Bonus\" />
     <Folder Include="Views\Common\" />
-    <Folder Include="Views\OffCheckin\" />
     <Folder Include="Views\OffManager\" />
     <Folder Include="Views\OffProduct\" />
     <Folder Include="Views\OffStatistic\" />

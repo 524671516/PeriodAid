@@ -1,10 +1,10 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Web;
-//using System.Web.Mvc;
-//using Microsoft.AspNet.Identity.Owin;
-//using Microsoft.AspNet.Identity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 using PeriodAid.Models;
 using PeriodAid.Filters;
@@ -21,42 +21,42 @@ namespace PeriodAid.Controllers
         public OffManagerController()
         {
 
-//        }
+        }
 
-//        public OffManagerController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
-//        {
-//            UserManager = userManager;
-//            SignInManager = signInManager;
-//        }
+        public OffManagerController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
 
-//        public ApplicationSignInManager SignInManager
-//        {
-//            get
-//            {
-//                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-//            }
-//            private set
-//            {
-//                _signInManager = value;
-//            }
-//        }
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
 
-//        public ApplicationUserManager UserManager
-//        {
-//            get
-//            {
-//                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-//            }
-//            private set
-//            {
-//                _userManager = value;
-//            }
-//        }
-//        // GET: OffManager
-//        public ActionResult Index()
-//        {
-//            return View();
-//        }
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+        // GET: OffManager
+        public ActionResult Index()
+        {
+            return View();
+        }
 
         // Origin: Off_Manager_List(拆分Normal+Ajax),添加查询功能
         // 0310 管理员列表
@@ -423,16 +423,23 @@ namespace PeriodAid.Controllers
         }
 
         // 0325 删除公告
+        // Origin:Off_Manager_Announcement_Delete_Ajax
         [HttpPost]
         [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
-        public ActionResult Off_Manager_Announcement_Delete_Ajax(int id)
+        public ActionResult DeleteAnnouncementAjax(int id)
         {
-            Off_Manager_Announcement model = offlineDB.Off_Manager_Announcement.SingleOrDefault(m => m.Id == id);
+            Off_Manager_Announcement model = _offlineDB.Off_Manager_Announcement.SingleOrDefault(m => m.Id == id);
             if (model != null)
             {
-                offlineDB.Off_Manager_Announcement.Remove(model);
-                offlineDB.SaveChanges();
-                return Json(new { result = "SUCCESS" });
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (model.Off_System_Id == user.DefaultSystemId)
+                {
+                    _offlineDB.Off_Manager_Announcement.Remove(model);
+                    _offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "UNAUTHORIZED" });
             }
             return Json(new { result = "FAIL" });
         }
