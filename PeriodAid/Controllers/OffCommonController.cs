@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using PeriodAid.Models;
 using PeriodAid.Filters;
 using PeriodAid.DAL;
+using System.Reflection;
 
 namespace PeriodAid.Controllers
 {
@@ -56,6 +57,69 @@ namespace PeriodAid.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+        [Authorize(Roles = "Admin")]
+        public ActionResult AccountSetting()
+        {
+            AccountSetting_ViewModel model = new AccountSetting_ViewModel();
+            Type t = model.GetType();
+            var props = t.GetProperties();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            for (int i = 0; i < props.Length; i++)
+            {
+                string settingName = props[i].Name;
+                var settingitem = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == settingName && m.Off_System_Id == user.DefaultSystemId);
+                if (settingitem != null)
+                {
+                    props[i].SetValue(model, settingitem.SettingValue);
+                }
+            }
+            return View(model);
+        }
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken,HttpPost]
+        public ActionResult AccountSettingAjax(FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                //form.AllKeys;
+                AccountSetting_ViewModel model = new AccountSetting_ViewModel();
+                if (TryUpdateModel(model))
+                {
+                    Type t = model.GetType();
+                    var s = t.GetProperties();
+                    //var result = "";
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    for (int i = 0; i < s.Length; i++)
+                    {
+                        string settingName = s[i].Name;
+                        var settingitem = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == settingName && m.Off_System_Id == user.DefaultSystemId);
+                        if (settingitem != null)
+                        {
+                            settingitem.SettingValue = (string)s[i].GetValue(model);
+                            _offlineDB.Entry(settingitem).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        else
+                        {
+                            var setting = new Off_System_Setting()
+                            {
+                                Off_System_Id = user.DefaultSystemId,
+                                SettingName = settingName,
+                                SettingResult = true,
+                                SettingValue = (string)s[i].GetValue(model)
+                            };
+                            _offlineDB.Off_System_Setting.Add(setting);
+                        }
+                    }
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                return Content("FAIL");
+            }
         }
         
         // Origin: ajax_StoreSystem

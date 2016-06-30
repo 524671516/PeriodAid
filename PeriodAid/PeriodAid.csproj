@@ -767,6 +767,8 @@
     <Content Include="Views\OffCheckin\ViewCheckinLBS.cshtml" />
     <Content Include="Views\Shared\AuthorizeError.cshtml" />
     <Content Include="Views\OffSales\ScheduleStatistic.cshtml" />
+    <Content Include="Views\OffCommon\Index.cshtml" />
+    <Content Include="Views\OffCommon\AccountSetting.cshtml" />
     <Content Include="Views\OffBonus\BonusList.cshtml" />
     <Content Include="Views\OffBonus\BonusListPartial.cshtml" />
     <Content Include="Views\OffManager\AddManagerArea.cshtml" />

@@ -172,6 +172,23 @@ namespace PeriodAid.Models
         [Required(ErrorMessage = "模板不能为空")]
         public int TemplateId { get; set; }
     }
+    public class AccountSetting_ViewModel
+    {
+        [Display(Name = "银行列表")]
+        public string BankList { get; set; }
+
+        [Display(Name = "上下班时间浮动")]
+        public string AttendanceAllow { get; set; }
+
+        [Display(Name = "区域列表")]
+        public string AreaList { get; set; }
+
+        [Display(Name = "公司名称")]
+        public string CompanyName { get; set; }
+
+        [Display(Name ="公司图标")]
+        public string CompanyAvatar { get; set; }
+    }
     public class ConfirmCheckIn_ViewModel
     {
         public int? Rep_Brown { get; set; }
@@ -347,35 +364,6 @@ namespace PeriodAid.Models
             }
         }
     }
-    public enum ManagerTaskStatus
-    {
-        Canceled = -1,
-        Reported = 0,
-        Confirmed = 1
-    }
-    
-    public class ParseStatus
-    {
-        
-        public static string getManagerTaskStatus(ManagerTaskStatus status)
-        {
-            string result = String.Empty;
-            switch (status)
-            {
-                case ManagerTaskStatus.Canceled:
-                    result = "已作废";
-                    break;
-                case ManagerTaskStatus.Reported:
-                    result = "已提交";
-                    break;
-                case ManagerTaskStatus.Confirmed:
-                    result = "已确认";
-                    break;
-                default:
-                    result = "未知";
-                    break;
-            }
-            return result;
-        }
-    }
+
+
 }

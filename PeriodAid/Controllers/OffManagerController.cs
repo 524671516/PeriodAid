@@ -293,7 +293,7 @@ namespace PeriodAid.Controllers
                     item.Off_System_Id = user.DefaultSystemId;
                     item.Eval_User = User.Identity.Name;
                     item.Eval_Time = DateTime.Now;
-                    item.Status = (int)ManagerTaskStatus.Confirmed;
+                    item.Status = 1;
                     _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
                     return RedirectToAction("TaskList");
@@ -318,7 +318,7 @@ namespace PeriodAid.Controllers
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 if (item.Off_System_Id == user.DefaultSystemId)
                 {
-                    item.Status = (int)ManagerTaskStatus.Canceled;
+                    item.Status = -1;
                     _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
                     return Json(new { result = "SUCCESS" });
