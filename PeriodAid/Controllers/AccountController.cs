@@ -81,13 +81,12 @@ namespace PeriodAid.Controllers
                 case SignInStatus.Success:
                     if (returnUrl == null)
                     {
-                        return RedirectToAction("Index", "OfflineSales");
+                        return RedirectToAction("Index", "OffCommon");
                     }
                     else
                     {
                         return RedirectToLocal(returnUrl);
                     }
-
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:

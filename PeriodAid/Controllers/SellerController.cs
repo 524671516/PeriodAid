@@ -1964,7 +1964,7 @@ namespace PeriodAid.Controllers
                 Off_Manager_Task item = new Off_Manager_Task()
                 {
                     TaskDate = today,
-                    Status = (int)ManagerTaskStatus.Reported,
+                    Status = 0,
                     UserName = User.Identity.Name,
                     NickName = manager.NickName,
                     Off_System_Id = user.DefaultSystemId

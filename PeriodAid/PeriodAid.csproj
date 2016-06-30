@@ -769,13 +769,14 @@
     <Content Include="Views\OffSales\ScheduleStatistic.cshtml" />
     <Content Include="Views\Bonus\BonusList.cshtml" />
     <Content Include="Views\Bonus\BonusListPartial.cshtml" />
+    <Content Include="Views\OffCommon\Index.cshtml" />
+    <Content Include="Views\OffCommon\AccountSetting.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Common\" />
-    <Folder Include="Views\OffCheckin\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
