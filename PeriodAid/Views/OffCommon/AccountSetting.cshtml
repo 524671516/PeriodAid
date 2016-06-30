@@ -14,95 +14,67 @@
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.BankList, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-9">
+        <table class="offline-search-box">
+            <tr>
+                <td>
+                    <label>公司名称：</label>
+                    @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control offline-search-inline" } })
+                </td>
+                <td>
+                    <label>公司图标：</label>
+                    @Html.EditorFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control offline-search-inline" } })
+                    <a class="btn btn-info"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;下载</a>
+                </td>
+                <td>
+                    <label>修改密码：</label>
+                </td>
+            </tr>
+            <tr>
+                <td><br />
+                    <label>上下班时间：</label>
+                    @Html.EditorFor(model => model.AttendanceAllow, new { htmlAttributes = new { @class = "form-control offline-search-inline", @type = "number" } })
+                </td>
+                <td><br />
+                    <label>系统切换：</label>
+                    @Html.EditorFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control offline-search-inline" } })
+                </td>
+            </tr>
+        </table>
+        <hr />
+        @*银行列表*@
+        <h5><b>@Html.LabelFor(model => model.BankList, htmlAttributes: new { @class = "control-label" })</b></h5><br />
+        <div class="container bank-con">
+            <div class="col-md-3">
                 @Html.EditorFor(model => model.BankList, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.BankList, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-1">
-                <a class="btn btn-info btn-sm" id="offcommon-add-bank"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                <a class="btn btn-info" id="offcommon-add-bank"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;添加</a>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.AttendanceAllow, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.AttendanceAllow, new { htmlAttributes = new { @class = "form-control",@type= "number" } })
-                @Html.ValidationMessageFor(model => model.AttendanceAllow, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.AreaList, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-9">
+        @*区域列表*@
+        <hr />
+        <h5><b>@Html.LabelFor(model => model.AreaList, htmlAttributes: new { @class = "control-label" })</b></h5><br />
+        <div class="container">
+            <div class="col-md-3">
                 @Html.EditorFor(model => model.AreaList, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.AreaList, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-1">
-                <a class="btn btn-info btn-sm" id="offcommon-add-area"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                <a class="btn btn-info" id="offcommon-add-area"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;添加</a>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CompanyAvatar, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CompanyAvatar, "", new { @class = "text-danger" })
-            </div>
-            <div class="col-md-1">
-                <a class="btn btn-info btn-sm" id="offcommon-download-icon">下载</a>
-            </div>
-        </div>
-
-        <div class="form-group">
+        @*<div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="保存" class="btn btn-success" />
             </div>
-        </div>
+        </div>*@
     </div>
 }
-<div class="modal fade modal-box">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title modal-head">新增报表</h4>
-            </div>
-            <div class="modal-body modal-con">
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success modal-create">新增</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<input class="hidden" id="offcommon-con-bank" />
-<input class="hidden" id="offcommon-con-area" />
+@*<div class="container"><div class="col-md-3"><input class="form-control" /></div><i class="fa fa-times-circle" aria-hidden="true"></i></div>*@
 <script>
-    $(function () {
-        $("#offcommon-add-bank").click(function () {
-            var head = "银行列表";
-            var bank_list="<div class='form-group'><div class='col-md-10'><input class='form-control input-sm modal-text' placeholder='填写银行信息' /></div><div class='col-md-2'><a class='btn btn-sm btn-danger modal-del'>删除</a></div></div>"
-            var bank_con = $("#BankList").val();
-            var bank_con_arry = bank_con.split(",");
-            $(".modal-box").modal();
-            $(".modal-head").text(head);
-            $(".modal-con").append(bank_list)
-            for (var i = 0; i < bank_con_arry.length; i++) {
-                $(".modal-text").val(bank_con_arry[i])
-            }
-            
-        })
-
+    $("#offcommon-add-bank").click(function () {
+        var txt = "<div class='col-md-3'><input class='form-control' type='text'></div>"
+        $(".bank-con").append(txt)
     })
 </script>
