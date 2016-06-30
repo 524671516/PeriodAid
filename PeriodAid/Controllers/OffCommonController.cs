@@ -5,8 +5,11 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
 
 using PeriodAid.Models;
+using PeriodAid.Filters;
+using PeriodAid.DAL;
 
 namespace PeriodAid.Controllers
 {
@@ -54,28 +57,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
-        public ContentResult AuthorizationError()
-        {
-            return Content("权限不够");
-        }
-
-        public PartialViewResult AuthorizationErrorPartial()
-        {
-            return PartialView();
-        }
-
-        public ViewResult Error()
-        {
-            return View();
-        }
-
-        public PartialViewResult ErrorPartial()
-        {
-            return PartialView();
-        }
-
-
+        
         // Origin: ajax_StoreSystem
         [HttpPost]
         public JsonResult StoreSystemListAjax()
@@ -87,6 +69,5 @@ namespace PeriodAid.Controllers
                               select g.Key;
             return Json(new { storesystem = storesystem });
         }
-        
     }
 }

@@ -19,7 +19,7 @@
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>状态</small></div>
-                    <input type="text" class="input-sm form-control" value="@Html.Encode(ParseStatus.getManagerTaskStatus((ManagerTaskStatus)Model.Status))" readonly />
+                    <input type="text" class="input-sm form-control" value="@Html.Encode(Html.ManagerTaskStatus(Model.Status))" readonly />
                 </div>
             </div>
             <div class="col-md-3">

@@ -8,121 +8,7 @@ using System.Data;
 
 namespace PeriodAid.Models
 {
-    public class OfflineSalesViewModels
-    {
-    }
-
-    public class Store_System_ViewModel
-    {
-        [Required]
-        [StringLength(50, ErrorMessage = "系统名称不能大于50字符")]
-        [Display(Name = "系统名称")]
-        public string System_Name { get; set; }
-    }
-
-    public class Store_ViewModel
-    {
-        [Display(Name = "门店系统")]
-        [Required(ErrorMessage ="门店系统不能为空")]
-        public int Store_System_Id { get; set; }
-
-        [Required(ErrorMessage = "门店名称不能为空")]
-        [StringLength(50, ErrorMessage = "门店名称不能大于50字符")]
-        [Display(Name = "门店名称")]
-        public string Store_Name { get; set; }
-
-        [StringLength(128, ErrorMessage = "门店地址不能大于128字符")]
-        [Display(Name = "门店地址")]
-        public string Address { get; set; }
-
-        [StringLength(32, ErrorMessage = "联系方式不能大于32个字符")]
-        [Display(Name = "联系方式")]
-        public string Contact { get; set; }
-    }
-
-    public class Seller_ViewModel
-    {
-        [Required]
-        [StringLength(16, ErrorMessage = "姓名不得大于16个字符")]
-        [Display(Name = "姓名")]
-        public string Name { get; set; }
-
-        [StringLength(32, ErrorMessage = "联系方式不得大于32个字符")]
-        [Display(Name = "联系方式")]
-        public string Contact { get; set; }
-
-        [Display(Name = "性别")]
-        [Required(ErrorMessage ="性别不能为空")]
-        public bool? Sex { get; set; }
-    }
-
-    public class Sales_Data_ViewModel
-    {
-        [DataType(DataType.Date, ErrorMessage = "日期格式错误")]
-        [Required(ErrorMessage = "销售日期不能为空")]
-        [Display(Name = "销售日期")]
-        public DateTime Sales_Date { get; set; }
-
-        [Display(Name = "门店系统")]
-        [Required(ErrorMessage = "门店系统不能为空")]
-        public int Store_System_Id { get; set; }
-
-        [Display(Name ="门店")]
-        [Required(ErrorMessage ="门店不能为空")]
-        public int Store_Id { get; set; }
-        
-
-        [Required(ErrorMessage = "试饮数不能为空")]
-        [Display(Name ="试饮数")]
-        public int? Trial_Count { get; set; }
-
-        [Display(Name = "促销员")]
-        [Required(ErrorMessage = "促销员不能为空")]
-        public int Seller_Id { get; set; }
-
-        [Display(Name = "最高销量")]
-        [Required(ErrorMessage = "最高销量不能为空")]
-        public int? Max_Sale { get; set; }
-
-        [Display(Name = "客户反馈")]
-        [Required(ErrorMessage = "客户反馈不能为空")]
-        public int? Feedback { get; set; }
-
-        [StringLength(32, ErrorMessage ="消费年龄不能大于32字符")]
-        [Display(Name = "消费年龄")]
-        [Required(ErrorMessage = "消费年龄不能为空")]
-        public string Comsumption_Age { get; set; }
-
-        [StringLength(256, ErrorMessage ="总结内容不能大于256个字符")]
-        [DataType(DataType.MultilineText)]
-        [Display(Name ="意见及建议")]
-        public string Summary { get; set; }
-
-        [Display(Name = "参加活动")]
-        public bool Event { get; set; }
-
-        [Display(Name = "活动类型")]
-        [StringLength(32, ErrorMessage = "活动类型不能大于32字符")]
-        public string EventType { get; set; }
-    }
-
-    public class Store_Sales_Month_ViewModel
-    {
-        [Display(Name = "年份")]
-        [Required(ErrorMessage = "年份不能为空")]
-        [Range(2014, 2018, ErrorMessage = "月份值不规范")]
-        public int Sales_Year { get; set; }
-
-        [Display(Name = "月份")]
-        [Required(ErrorMessage = "月份不能为空")]
-        [Range(1, 12, ErrorMessage = "月份值不规范")]
-        public int Sales_Month { get; set; }
-
-        [Required(ErrorMessage = "门店名称不能为空")]
-        [Display(Name = "门店名称")]
-        public int Store_Id { get; set; }
-    }
-
+    
     public class CustomImage_ViewModel
     {
         [Required(ErrorMessage = "X坐标不能为空")]
@@ -189,6 +75,79 @@ namespace PeriodAid.Models
         [StringLength(128,ErrorMessage ="地址不能超过128个字符")]
         public string Address { get; set; }
     }
+
+    public class StoreView
+    {
+        public string StoreName { get; set; }
+        public string StoreSystem
+        {
+            get; set;
+        }
+        public string Address
+        {
+            get; set;
+        }
+        public string Longitude
+        {
+            get; set;
+        }
+        public string Latitude
+        {
+            get; set;
+        }
+    }
+    public class ScheduleList
+    {
+        public DateTime Subscribe { get; set; }
+        public int Count { get; set; }
+        public int Unfinished { get; set; }
+    }
+    public class Excel_DataMessage
+    {
+        public int line;
+        public string message;
+        public bool error;
+        public Excel_DataMessage(int line, string message, bool error)
+        {
+            this.line = line;
+            this.message = message;
+            this.error = error;
+        }
+    }
+    public class Seller_Statistic
+    {
+        public DateTime Date { get; set; }
+        public int? SalesCount { get; set; }
+        public decimal? SalesAmount { get; set; }
+        public int? StorageCount { get; set; }
+        public decimal? AVG_SalesData { get; set; }
+        public decimal? AVG_AmountData { get; set; }
+    }
+    public class StoreSystem_Statistic
+    {
+        public DateTime Date { get; set; }
+        public int Count { get; set; }
+        public int? SalesCount { get; set; }
+        public decimal? SalesAmount { get; set; }
+        public int? StorageCount { get; set; }
+    }
+    public class StoreSystem_Salary_Statistic
+    {
+        public DateTime Date { get; set; }
+        public string StoreSystem { get; set; }
+        public decimal? Salary { get; set; }
+        public decimal? Debit { get; set; }
+        public decimal? Bonus { get; set; }
+    }
+    public class StoreSystem_Product_Statistic
+    {
+        public int ProductId { get; set; }
+        public string SimpleName { get; set; }
+        public int? SalesCount { get; set; }
+        public decimal? SalesAmount { get; set; }
+        public int? StorageCount { get; set; }
+    }
+
     public class StoreSchedule_ViewModel
     {
         [Required(ErrorMessage ="至少选择一个门店")]
@@ -397,48 +356,7 @@ namespace PeriodAid.Models
     
     public class ParseStatus
     {
-        public static string AttendanceStatus(int? code)
-        {
-            switch(code){
-                case null:
-                    return "未确认";
-                case 0:
-                    return "全勤";
-                case 1:
-                    return "迟到";
-                case 2:
-                    return "早退";
-                case 3:
-                    return "旷工";
-                default:
-                    return "未确认";
-            }
-        }
-
-        public static string CheckInStatus(int? code)
-        {
-            switch (code)
-            {
-                case null:
-                    return "未知状态";
-                case 0:
-                    return "未签到";
-                case 1:
-                    return "已签到";
-                case 2:
-                    return "已签退";
-                case 3:
-                    return "已提报";
-                case 4:
-                    return "已确认";
-                case 5:
-                    return "已结算";
-                case -1:
-                    return "作废";
-                default:
-                    return "其他";
-            }
-        }
+        
         public static string getManagerTaskStatus(ManagerTaskStatus status)
         {
             string result = String.Empty;
@@ -459,48 +377,5 @@ namespace PeriodAid.Models
             }
             return result;
         }
-
-        public static string getManagerRequestStatus(int? code)
-        {
-            string result = String.Empty;
-            switch (code)
-            {
-                case -1:
-                    return "作废";
-                case 0:
-                    return "已提交";
-                case 1:
-                    return "已审核";
-                case 2:
-                    return "已完成";
-                case 3:
-                    return "已驳回";
-                default:
-                    return "未知";
-            }
-        }
-        public static string getBonusRequestStatus(int? code)
-        {
-            string result = String.Empty;
-            switch (code)
-            {
-                case -1:
-                    return "作废";
-                case 0:
-                    return "待审核";
-                case 1:
-                    return "已发送";
-                case 2:
-                    return "已收款";
-                case 3:
-                    return "发送失败";
-                case 4:
-                    return "已退款";
-                default:
-                    return "未知";
-            }
-        }
-
-
     }
 }

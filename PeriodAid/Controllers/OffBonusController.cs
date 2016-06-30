@@ -16,17 +16,17 @@ namespace PeriodAid.Controllers
 {
 
     [Authorize(Roles ="Admin")]
-    public class BonusController : Controller
+    public class OffBonusController : Controller
     {
         OfflineSales _offlineDB = new OfflineSales();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        public BonusController()
+        public OffBonusController()
         {
 
         }
 
-        public BonusController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public OffBonusController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
