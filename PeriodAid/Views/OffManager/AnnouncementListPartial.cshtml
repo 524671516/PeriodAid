@@ -28,7 +28,7 @@
     {
         <tr>
             <td>
-                @Html.Encode(PeriodAid.Controllers.OfflineSalesController.getManagerNickNameCollection(item.ManagerUserName, ViewBag.SystemId))
+                @Html.Encode(Html.ManagerNickNameCollection(item.ManagerUserName, (int)ViewBag.SystemId))
             </td>
             <td>
                 @Html.Encode(item.StartTime.ToString("yyyy-MM-dd"))

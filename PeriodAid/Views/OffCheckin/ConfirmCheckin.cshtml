@@ -1,22 +1,8 @@
 ﻿@model PeriodAid.Models.ConfirmCheckIn_ViewModel
 @{
-    ViewBag.Title = "Off_ConfirmCheckIn";
+    ViewBag.Title = "ConfirmCheckIn";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
     ViewBag.Current = "headingFive";
-}
-@section header{
-    <style>
-        .img-list {
-            width: 120px;
-            height: 120px;
-            margin: 10px;
-            border: 1px solid #eee;
-            float: left;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-    </style>
 }
 <h5><b>基本信息</b></h5>
 <br />
@@ -178,7 +164,7 @@
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>确认人</small></div>
-                    <input type="text" class="input-sm form-control" value="@PeriodAid.Controllers.OfflineSalesController.getManagerNickName(ViewBag.CheckItem.ConfirmUser, ViewBag.SystemId)" readonly />
+                    <input type="text" class="input-sm form-control" value="@Html.ManagerNickName((string)ViewBag.CheckItem.ConfirmxUser, (int)ViewBag.SystemId)" readonly />
                 </div>
             </div>
             <div class="col-md-4">

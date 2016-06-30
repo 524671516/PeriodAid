@@ -75,7 +75,7 @@
             </td>
             <td class="ellipsis">
                 @Html.ActionLink("修改", "EditMonthSalesPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offsales-edit-month"})
-                <a class="btn btn-danger btn-xs offsales-del-month" href="/OfflineSales/Off_DeleteSalesMonth?id=@item.Id">删除</a>
+                <a class="btn btn-danger btn-xs offsales-del-month" href="/OffSales/DeleteSalesMonthAjax?id=@item.Id">删除</a>
             </td>
         </tr>
     }
@@ -120,7 +120,7 @@
                     url: url,
                     type: "post",
                     success:function(data){
-                        if (data == "SUCCESS") {
+                        if (data.result == "SUCCESS") {
                             $.ajax({
                                 url: "/OffSales/MonthSalesListPartial",
                                 success: function (data) {

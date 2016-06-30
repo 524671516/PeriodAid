@@ -5,7 +5,7 @@
     ViewBag.Current = "headingOne";
 }
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-md-6">
     </div>
     <div class="col-xs-4">
         <div class="form-group">
@@ -14,7 +14,7 @@
             <a class="btn btn-info btn-sm" id="offstore-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </div>
     </div>
-    <div class="col-xs-2">
+    <div class="col-md-2">
         <div class="sel_container text-right"><strong id="curCity">上海市</strong> [<a id="curCityText" href="javascript:void(0)">更换城市</a>]</div>
         <div class="map_popup" id="cityList" style="display:none;">
             <div class="popup_main">
@@ -27,15 +27,15 @@
 </div>
 <br />
 <div class="row">
-    <div class="col-xs-2">
-        <select multiple id="storesystem" class="form-control input-sm" style="height:400px;">
+    <div class="col-md-2">
+        <select multiple id="storesystem-list" class="form-control input-sm" style="height:400px;">
         </select>
         <br />
         <button class="btn btn-success btn-sm" id="storesystem-btn">选择</button>&nbsp;&nbsp;<button class="btn btn-default btn-sm" id="reset-btn">重置</button>
         <br /><br />
         <div id="mark-icon"></div>
     </div>
-    <div class="col-xs-10">
+    <div class="col-md-10">
         <div id="container" style="width:100%; height:700px;"></div>
     </div>
 </div>
@@ -56,49 +56,50 @@
         enableMessage:true//设置允许信息窗发送短息
     };
     $(function () {
-        $("#search-btn").click(function () {
-            if ($("#search-val").val() != "")
-                getBoundary($("#search-val").val());
-        });
-        $("#storesystem-btn").click(function () {
-            //alert($("#storesystem").val().toString());
-            $.ajax({
-                url: "/OfflineSales/JsonStoreList",
-                data: {
-                    storesystem: $("#storesystem").val().toString()
-                },
-                success:function(data){
-                    if (data.result == "SUCCESS") {
-                        map.clearOverlays();
-                        addMarks(data.list, $("#storesystem").val().toString().split(','));
-                    }
-                }
-            })
-        });
-        $("#reset-btn").click(function () {
-            $("#storesystem>option").removeAttr("selected");
-        })
         $.ajax({
-            url: "/OfflineSales/ajax_StoreSystem",
+            url: "/OffCommon/StoreSystemListAjax",
             type: "post",
             success: function (data) {
-                for(var i=0; i<data.storesystem.length;i++){
-                    $("#storesystem").append("<option value='" + data.storesystem[i] + "'>" + data.storesystem[i] + "</option>");
+                for (var i = 0; i < data.storesystem.length; i++) {
+                    $("#storesystem-list").append("<option value='" + data.storesystem[i] + "'>" + data.storesystem[i] + "</option>");
                 }
             }
         });
         $.ajax({
-            url: "/OfflineSales/JsonStoreList",
+            url: "/OffStore/StoreMapDetailsAjax",
+            type:"post",
             data: {
                 storesystem: ""
             },
-            success: function(data) {
+            success: function (data) {
                 if (data.result == "SUCCESS") {
                     map.clearOverlays();
                     addMarks(data.list);
                 }
             }
         });
+        $("#search-btn").click(function () {
+            if ($("#search-val").val() != "")
+                getBoundary($("#search-val").val());
+        });
+        $("#storesystem-btn").click(function () {
+            $.ajax({
+                url: "/OffStore/StoreMapDetailsAjax",
+                type:"post",
+                data: {
+                    storesystem: $("#storesystem-list").val().toString()
+                },
+                success:function(data){
+                    if (data.result == "SUCCESS") {
+                        map.clearOverlays();
+                        addMarks(data.list, $("#storesystem-list").val().toString().split(','));
+                    }
+                }
+            })
+        });
+        $("#reset-btn").click(function () {
+            $("#storesystem-list>option").removeAttr("selected");
+        })
     });
     function addClickHandler(content, marker) {
         marker.addEventListener("click", function (e) {

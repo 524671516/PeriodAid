@@ -33,7 +33,7 @@
                 @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
             </td>
             <td class="ellipsis">
-                @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+                @Html.Encode(Html.CheckinStatus(item.Status))
             </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)

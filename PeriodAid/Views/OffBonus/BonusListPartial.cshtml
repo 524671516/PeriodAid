@@ -96,7 +96,7 @@
     });
     //刷新状态
     $("#redpack-edit").click(function () {
-        var link_url = "/Bonus/RefreshBonusStatus";
+        var link_url = "/OffBonus/RefreshBonusStatus";
         $.ajax({
             url: link_url,
             data:{
@@ -107,7 +107,7 @@
                 if (data.result == "SUCCESS") {
                     var query = $("#bonus-redpack-query").val();
                     $.ajax({
-                        url: "/Bonus/BonusListPartial",
+                        url: "/OffBonus/BonusListPartial",
                         data: {
                             query: query
                         },

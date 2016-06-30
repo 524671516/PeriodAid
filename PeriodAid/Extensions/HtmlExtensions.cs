@@ -163,17 +163,17 @@ namespace System.Web.Mvc
         public static string ManagerNickNameCollection(this HtmlHelper helper, string usernames, int systemid)
         {
             string[] names = usernames.Split(',');
-            string[] nicknames = new string[names.Length];
+            List<string> nicknames = new List<string>();
             OfflineSales offlineDB = new OfflineSales();
-            for (int i = 0; i < names.Length; i++)
+            foreach(var item in names)
             {
-                if (names[i] == null)
-                    nicknames[i]= "";
-                var item = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == usernames[i].ToString() && m.Off_System_Id == systemid);
+                if (item == null)
+                    nicknames.Add("");
+                var singlename = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == item && m.Off_System_Id == systemid);
                 if (item != null)
-                    nicknames[i] = item.NickName;
+                    nicknames.Add(singlename.NickName);
                 else
-                    nicknames[i] = "";
+                    nicknames.Add("");
             }
             return string.Join(",", nicknames);
         }

@@ -8,7 +8,7 @@
         <div class="form-group">
             <label class="control-label col-md-2">申请日期</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.ApplicationDate, new { htmlAttributes = new { @class = "form-control time-date"} })
+                @Html.EditorFor(model => model.ApplicationDate, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.ApplicationDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -54,14 +54,13 @@
         </div>
     </div>
 }
-<script src="~/Scripts/jedate.min.js"></script>
 <script>
     $(function () {
-        $(".time-date").datepicker()
+        $("#ApplicationDate").datepicker();
         $('#offexpenses-form').ajaxForm(function (data) {
             if (data == "SUCCESS") {
                 alert("修改成功");
-                $('#modal').modal('hide');
+                $('.modal-box').modal('hide');
                 $.ajax({
                     url: "/OffExpenses/ExpensesListPartial",
                     success: function (data) {
@@ -70,9 +69,8 @@
                 });
             }
             else {
-                $("#modal-body").html(data)
+                $(".modal-con").html(data)
             }
-            
         });
     });
 </script>

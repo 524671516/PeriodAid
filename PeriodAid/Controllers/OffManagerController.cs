@@ -135,6 +135,7 @@ namespace PeriodAid.Controllers
                                       orderby g.Key
                                       select new { Key = g.Key, Value = g.Key };
                     ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                    //ViewBag.SystemId = manager.Off_System_Id;
                     return View(manager);
                 }
                 else
@@ -156,7 +157,7 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 
-                return Json(new { result = "SUCCESS", data = new { id = id, name = item } });
+                return Json(new { result = "SUCCESS", data = new { id = item.Id, name = item.StoreName } });
             }
             else
             {

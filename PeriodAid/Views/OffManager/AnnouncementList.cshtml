@@ -15,8 +15,8 @@
     $(function () {
         $.ajax({
             url: "/OffManager/AnnouncementListPartial",
-            success: function (list) {
-                $("#offmanager-announcement-list").html(list);
+            success: function (data) {
+                $("#offmanager-announcement-list").html(data);
             }
         });
     });

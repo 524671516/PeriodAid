@@ -20,14 +20,14 @@
 <script>
     $(function () {
         $.ajax({
-            url: "/Bonus/BonusListPartial",
+            url: "/OffBonus/BonusListPartial",
             success: function (data) {
                 $("#bonus-list").html(data)
             }
         });
         $("#bonus-redpack-search").click(function () {
             var query = $("#bonus-redpack-query").val();
-            var link_url = "/Bonus/BonusListPartial"
+            var link_url = "/OffBonus/BonusListPartial"
             $.ajax({
                 url: link_url,
                 data: {
