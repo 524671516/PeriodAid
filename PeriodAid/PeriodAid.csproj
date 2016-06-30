@@ -766,12 +766,14 @@
     <Content Include="Views\OffCheckin\QueryCheckinPartial.cshtml" />
     <Content Include="Views\OffCheckin\ViewCheckinLBS.cshtml" />
     <Content Include="Views\Shared\AuthorizeError.cshtml" />
+    <Content Include="Views\OffSales\ScheduleStatistic.cshtml" />
+    <Content Include="Views\Bonus\BonusList.cshtml" />
+    <Content Include="Views\Bonus\BonusListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
-    <Folder Include="Views\Bonus\" />
     <Folder Include="Views\Common\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>

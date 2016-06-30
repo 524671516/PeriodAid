@@ -3,7 +3,7 @@
     $.datepicker.regional["zh-CN"] = { closeText: "关闭", prevText: "&#x3c;上月", nextText: "下月&#x3e;", currentText: "今天", monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], monthNamesShort: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"], dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"], weekHeader: "周", dateFormat: "yy-mm-dd", firstDay: 1, isRTL: !1, showMonthAfterYear: !0, yearSuffix: "年" }
     $.datepicker.setDefaults($.datepicker.regional["zh-CN"]);
     /*------end--------*/
-    $("#start-date").datepicker({dateFormat:'yy-mm-dd'});
+    $("#start-date").datepicker({ dateFormat: 'yy-mm-dd' });
     $("#end-date").datepicker({ dateFormat: 'yy-mm-dd' });
     $(".date-time").datepicker();
     /*start left navbar*/
@@ -70,7 +70,6 @@
     };
     /*----end------*/
     /*--------------门店列表----------------*/
-    //门店列表
     $.ajax({
         url: "/OffSales/ScheduleStoreListAjax",
         type: "post",
@@ -312,112 +311,110 @@
     function extractLast(term) {
         return split(term).pop();
     };
-    $(function () {
-        $("#offstatistic-seller").autocomplete({
-            minLength: 0,
-            max: 5,//列表里的条目数
-            minChars: 0,//自动完成激活之前填入的最小字符
-            width: 200,//提示的宽度，溢出隐藏
-            scrollHeight: 180,//提示的高度，溢出显示滚动条
-            matchContains: true,//包含匹配，就是data参数里的数据，是否只要包含文本框里的数据就显示
-            autoFill: false,//自动填充
-            source: function (request, response) {
-                $.ajax({
-                    url: "/OffStatistic/Off_Statistic_QuerySeller_Ajax",
-                    type: "post",
-                    data: {
-                        query: request.term
-                    },
-                    dataType: "json",
-                    success: function (data) {
-                        response(data.data);
-                    }
-
-                })
-            },
-            search: function () {
-                var term = extractLast(this.value);
-                if (term.length < 1) {
-                    return false;
+    $("#offstatistic-seller").autocomplete({
+        minLength: 0,
+        max: 5,//列表里的条目数
+        minChars: 0,//自动完成激活之前填入的最小字符
+        width: 200,//提示的宽度，溢出隐藏
+        scrollHeight: 180,//提示的高度，溢出显示滚动条
+        matchContains: true,//包含匹配，就是data参数里的数据，是否只要包含文本框里的数据就显示
+        autoFill: false,//自动填充
+        source: function (request, response) {
+            $.ajax({
+                url: "/OffStatistic/Off_Statistic_QuerySeller_Ajax",
+                type: "post",
+                data: {
+                    query: request.term
+                },
+                dataType: "json",
+                success: function (data) {
+                    response(data.data);
                 }
-            },
-            focus: function () {
-                return false;
-            },
-            select: function (event, ui) {
-                $("#offstatisric-seller-item").removeClass("hidden");
-                $("#offstatisric-seller-item").val(ui.item.label + " ———— " + ui.item.desc);
-                $("#offstatistic-seller").val(ui.item.label);
-                $("#offstatistic-project").val(ui.item.value);
+
+            })
+        },
+        search: function () {
+            var term = extractLast(this.value);
+            if (term.length < 1) {
                 return false;
             }
-        });
-        $(".offstatistic-seller-btn").click(function () {
-            var start = $("#start-date").val();
-            var end = $("#end-date").val();
-            var sellerid = $("#offstatistic-project").val();
-            var link_url = "/OffStatistic/SellerStatisticAjax";
-            if (start > end) {
-                $("#danger").text("开始时间不能大于结束时间")
-            } else if (start == "" || end == "") {
-                $("#danger").text("时间不能为空")
-            } else {
-                $("#danger").addClass("hidden")
-                $.ajax({
-                    url: link_url,
-                    type: "post",
-                    data: {
-                        startdate: start,
-                        enddate: end,
-                        sellerid: sellerid
-                    },
-                    success: function (data) {
-                        if (data.data.length == 0) {
-                            alert("该促销员在此时间内无数据")
-                        } else {
-                            $("#map").show();
-                            var resultdata = data.data;
-                            var totalarray = new Array();
-                            var datearray = new Array();
-                            var evatotalarry = new Array();
-                            for (var i = 0; i < resultdata.length; i++) {
-                                var deeint = parseInt(resultdata[i].Date.replace(/\D/igm, ""));
-                                var dee = new Date(deeint)
-                                datearray.push(dee.Format("MM-dd"));
-                                var totaltemp = resultdata[i].SalesCount;
-                                totalarray.push(totaltemp);
-                                var avgtotaltemp = resultdata[i].AVG_SalesData;
-                                evatotalarry.push(avgtotaltemp)
-                            }
-                            $("#myChart_Bar").highcharts({
-                                chart: {
-                                },
-                                title: {
-                                    text: '促销员每天销售总额折线图(单位：盒/天)'
-                                },
-                                xAxis: {
-                                    categories: datearray
-                                },
-                                series: [{
-                                    type: 'column',
-                                    name: '每日销量',
-                                    data: totalarray
-                                }, {
-                                    type: 'spline',
-                                    name: '历史平均销量',
-                                    data: evatotalarry,
-                                    marker: {
-                                        lineWidth: 2,
-                                        lineColor: Highcharts.getOptions().colors[3],
-                                        fillColor: 'white'
-                                    }
-                                }]
-                            });
+        },
+        focus: function () {
+            return false;
+        },
+        select: function (event, ui) {
+            $("#offstatisric-seller-item").removeClass("hidden");
+            $("#offstatisric-seller-item").val(ui.item.label + " ———— " + ui.item.desc);
+            $("#offstatistic-seller").val(ui.item.label);
+            $("#offstatistic-project").val(ui.item.value);
+            return false;
+        }
+    });
+    $(".offstatistic-seller-btn").click(function () {
+        var start = $("#start-date").val();
+        var end = $("#end-date").val();
+        var sellerid = $("#offstatistic-project").val();
+        var link_url = "/OffStatistic/SellerStatisticAjax";
+        if (start > end) {
+            $("#danger").text("开始时间不能大于结束时间")
+        } else if (start == "" || end == "") {
+            $("#danger").text("时间不能为空")
+        } else {
+            $("#danger").addClass("hidden")
+            $.ajax({
+                url: link_url,
+                type: "post",
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    sellerid: sellerid
+                },
+                success: function (data) {
+                    if (data.data.length == 0) {
+                        alert("该促销员在此时间内无数据")
+                    } else {
+                        $("#map").show();
+                        var resultdata = data.data;
+                        var totalarray = new Array();
+                        var datearray = new Array();
+                        var evatotalarry = new Array();
+                        for (var i = 0; i < resultdata.length; i++) {
+                            var deeint = parseInt(resultdata[i].Date.replace(/\D/igm, ""));
+                            var dee = new Date(deeint)
+                            datearray.push(dee.Format("MM-dd"));
+                            var totaltemp = resultdata[i].SalesCount;
+                            totalarray.push(totaltemp);
+                            var avgtotaltemp = resultdata[i].AVG_SalesData;
+                            evatotalarry.push(avgtotaltemp)
                         }
+                        $("#myChart_Bar").highcharts({
+                            chart: {
+                            },
+                            title: {
+                                text: '促销员每天销售总额折线图(单位：盒/天)'
+                            },
+                            xAxis: {
+                                categories: datearray
+                            },
+                            series: [{
+                                type: 'column',
+                                name: '每日销量',
+                                data: totalarray
+                            }, {
+                                type: 'spline',
+                                name: '历史平均销量',
+                                data: evatotalarry,
+                                marker: {
+                                    lineWidth: 2,
+                                    lineColor: Highcharts.getOptions().colors[3],
+                                    fillColor: 'white'
+                                }
+                            }]
+                        });
                     }
-                })
-            }
-        })
+                }
+            })
+        }
     });
     /*----end-----*/
     /*---------------区域门店销售数据----------------------*/
@@ -635,19 +632,105 @@
         })
     }
     /*----end-----*/
+    /*------活动记录表--------*/
+    $("#offsales-schedule-search").click(function () {
+        var url = "/OffSales/ScheduleStatisticAjax";
+        var datetime = $("#start-date").val();
+        $.ajax({
+            url: url,
+            type: "post",
+            data: {
+                datetime: datetime
+            },
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    $("#totalcount").text(data.totalcount);
+                    $("#totalcount").addClass("width", data.totalcount + "%");
+                    $("#totalcount").attr({
+                        "aria-valuenow": data.totalcount,
+                        "aria-valuemax": data.totalcount
+                    });
+                    $("#selfcount").text(data.selfcount);
+                    $("#selfcount").css("width", ((parseFloat(data.selfcount) / parseFloat(data.totalcount)) * 100 + "%"));
+                    $("#selfcount").attr({
+                        "aria-valuenow": data.selfcount,
+                        "aria-valuemax": data.totalcount
+                    });
+                    $("#proxycount").text(data.proxycount);
+                    $("#proxycount").css("width", ((parseFloat(data.proxycount) / parseFloat(data.totalcount)) * 100 + "%"));
+                    $("#proxycount").attr({
+                        "aria-valuenow": data.proxycount,
+                        "aria-valuemax": data.totalcount
+                    });
+                    $("#restcount").text(data.restcount);
+                    $("#restcount").css("width", ((parseFloat(data.restcount) / parseFloat(data.totalcount)) * 100 + "%"));
+                    $("#restcount").attr({
+                        "aria-valuenow": data.restcount,
+                        "aria-valuemax": data.totalcount
+                    });
+                    $("#rate").val(((data.selfcount / data.totalcount) * 100).toFixed(2) + "%");
+                    $("#myChart_Pie").highcharts({
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false
+                        },
+                        title: {
+                            text: '活动签到数据饼状图'
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: false
+                                },
+                                showInLegend: true
+                            }
+                        },
+                        series: [{
+                            type: 'pie',
+                            name: '活动签到',
+                            data: [
+                                {
+                                    name: '签到',
+                                    y: data.selfcount,
+                                    color: "#d9534f"
+                                },
+                                {
+                                    name: '代签到',
+                                    y: data.proxycount,
+                                    color: "#f0ad4e"
+                                },
+                                {
+                                    name: '其他',
+                                    y: data.restcount,
+                                    color: "#5bc0de"
+                                }]
+                        }]
+                    });
+                }
+            }
+        })
+        return false
+    });
+    /*----end------*/
+    /*---删除按钮---*/
+    function getDeleteResult(data) {
+        if (data.result == "SUCCESS") {
+            alert("删除成功");
+            return true;
+        }
+        else if (data.result == "FAIL") {
+            alert("错误，无法删除");
+        }
+        else if (data.result = "UNAUTHORIZED") {
+            alert("没有权限，无法删除");
+        }
+        return false;
+    }
+    /*---end---*/
 });
-/*---删除按钮---*/
-function getDeleteResult(data) {
-    if (data.result == "SUCCESS") {
-        alert("删除成功");
-        return true;
-    }
-    else if (data.result == "FAIL") {
-        alert("错误，无法删除");
-    }
-    else if (data.result = "UNAUTHORIZED") {
-        alert("没有权限，无法删除");
-    }
-    return false;
-}
-/*---end---*/

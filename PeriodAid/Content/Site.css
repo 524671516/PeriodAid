@@ -191,4 +191,8 @@ li {
 }
 .offline-list-padding {
     padding: 10px 0;
-}      
+}
+.offline-error {
+    background-color: white;
+    color: #b94a48;
+}

@@ -154,7 +154,7 @@
         $('#offsales-daily-ajaxform').ajaxSubmit(function (data) {
             if (data == "SUCCESS") {
                 alert("添加成功");
-                $('#modal').modal('hide');
+                $('.modal-box').modal('hide');
                 $.ajax({
                     url: "/OffSales/DailySalesListPartial",
                     success: function (data) {
@@ -163,7 +163,7 @@
                 });
             }
             else {
-                $("#modal-content").html(data);
+                $(".modal-con").html(data);
             }
         });
     }

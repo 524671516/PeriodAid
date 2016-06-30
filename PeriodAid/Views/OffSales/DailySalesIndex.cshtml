@@ -81,7 +81,7 @@
     });
     //日报表批量删除
     $("#offsale-batchdelete").click(function () {
-        var url = "/OffSales/Off_daily_delete_batch"
+        var url = "/OffSales/DeleteDailySalesBatchAjax"
         var link_url = "/OffSales/DailySalesListPartial"
         var $list = $("#offsales-list")
         // 判断是否至少选择一项
@@ -103,7 +103,7 @@
                     ids: checkedList.toString()
                 },
                 success: function (data) {
-                    if (data == "SUCCESS") {
+                    if (data.result == "SUCCESS") {
                         $.ajax({
                             url: link_url,
                             success: function (data) {

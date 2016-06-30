@@ -52,31 +52,11 @@
             </td>
             <td>
                 @Html.ActionLink("修改", "EditStorePartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offstore-store-edit" })
-                @Html.ActionLink("删除", "Off_DeleteStoreAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-danger offstore-store-del" })
+                @Html.ActionLink("删除", "DeleteStoreAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-danger offstore-store-del" })
             </td>
         </tr>
     }
 </table>
-<div class="modal fade" id="Mod">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">修改区域</h4>
-            </div>
-            <div class="modal-body" id="Modcontent">
-                <div class='row'>
-                    <div class='col-md-6'><input class='form-control' id="check-region" type='text' /></div>
-                    <div class='col-md-6'><input class='form-control' id='change-content' type='text' placeholder='替换' /></div>
-                </div>
-            </div>
-            <div class="modal-footer" style="margin-top:-5px;">
-                <button type="button" class="btn btn-success check-sure">确定</button>
-                <button type="button" class="btn btn-danger check-fail">取消</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("StoreListPartial", new { page }))</div>
 <script>
     $(function () {
@@ -107,7 +87,7 @@
             });
             return false;
         });
-
+        //删除门店
         $(".offstore-store-del").click(function () {
             var result = confirm("确定删除吗？");
             if (result) {
@@ -130,55 +110,4 @@
             return false;
         })
     });
-   //批量修改区域
-    $("#Modregion").click(function () {
-        var checkedNum = $("input[name='subChk']:checked").length;
-        if (checkedNum == 0) {
-            alert("请选择至少一项！");
-            return;
-        } else {
-            var checkedList = new Array();
-            var checkedRegion = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-                checkedRegion.push($(this).attr("data-region"));
-            });
-            for (var i = 0; i < checkedRegion.length; i++) {
-                $("#check-region").val(checkedRegion[0])
-            }
-            $("#Mod").modal('show');
-        }
-    });
-    $(".check-sure").click(function () {
-        if (confirm("确定要修改所选门店区域？")) {
-            var link_url = "/OfflineSales/Off_Store_AreaChange_batch";
-            var modify_area = $("#change-content").val();
-            var checkedList = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-            });
-            $.ajax({
-                url: link_url,
-                type: "post",
-                data: {
-                    ids: checkedList.toString(),
-                    modify_area: modify_area
-                },
-                success: function (data) {
-                    if (data == "SUCCESS") {
-                        $("#Mod").modal('hide');
-                        $.ajax({
-                            url: "/OfflineSales/Off_Store_ajaxlist",
-                            success: function (data) {
-                                $("#list-container").html(data);
-                            }
-                        })
-                    }
-                }
-            })
-        }
-    });
-    $(".check-fail").click(function () {
-        $("#Mod").modal('hide')
-    })
 </script>

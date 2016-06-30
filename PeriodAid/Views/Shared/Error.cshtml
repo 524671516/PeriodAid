@@ -1,10 +1,11 @@
 ﻿@model System.Web.Mvc.HandleErrorInfo
 
 @{
-    Layout = "~/Views/Shared/_OffLayout.cshtml";
     ViewBag.Title = "Error";
 }
-
-<h1 class="text-danger">错误</h1>
-<h2 class="text-danger">您请求发送的页面出错，或者该网页已删除或移动</h2>
-
+<div class="jumbotron offline-error">
+    <div class="container">
+        <h1 class="text-danger">错误</h1>
+        <h2 class="text-danger">抱歉，您访问的页面地址有误或者该页面不存在</h2>
+    </div>
+</div>

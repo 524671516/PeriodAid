@@ -30,7 +30,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
-                    <li>@Html.ActionLink("线下销售", "Off_Store_main", "OfflineSales")</li>
+                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
                             工具　<span class="caret"></span>
@@ -204,7 +204,7 @@
                         <div id="collapseNine" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNine">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包列表", "Off_RedPack_List", "OfflineSales")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包列表", "BonusList", "Bonus")</li>
                                 </ul>
                             </div>
                         </div>

@@ -82,10 +82,43 @@
     });
     //批量删除
     $("#offsalesschedule-batchdelete").click(function () {
-        var url = "/OffSales/..."
+        var url = "/OffSales/DeleteScheduleBatchAjax"
         var link_url = "/OffSales/ViewScheduleDetailsPartial"
         var $list = $("#offsalesschedule-list")
-        bactchDelete(url, link_url, $list)
+        // 判断是否至少选择一项
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        }
+        // 批量选择
+        if (confirm("确定要删除所选项目？")) {
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            $.ajax({
+                url: url,
+                type: "post",
+                data: {
+                    ids: checkedList.toString()
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $.ajax({
+                            url: link_url,
+                            data: {
+                                date: $("#offsalesschedule-current-date").val()
+                            },
+                            success: function (data) {
+                                $list.html(data)
+                            }
+                        })
+                    }
+                }
+            });
+            return false
+        }
     })
     //批量修改时间及工资
     $("#offsalesschedule-batchedit").click(function () {
@@ -123,7 +156,7 @@
     });
     $(".check-sure").click(function () {
         if (confirm("确认要修改所选门店的相关信息吗？")) {
-            var link_url = "/OfflineSales/Off_EventDetails_ModifyInfo_batch";
+            var link_url = "/OffSales/EditScheduleBatchAjax";
             var checkedList = new Array();
             $("input[name='subChk']:checked").each(function () {
                 checkedList.push($(this).val());
@@ -143,11 +176,10 @@
                     salary: salary
                 },
                 success: function (data) {
-                    if (data == "SUCCESS") {
-                        $("#Mod").modal('hide');
+                    if (data.result == "SUCCESS") {
+                        $("#offsalesschedule-modal-batchedit").modal('hide');
                         var attr = $.getUrlParam("date");
-                        window.location = "/OfflineSales/Off_ScheduleDetails?date=" + attr;
-                        //$("#tableList").html(data)
+                        window.location = "/OffSales/ViewScheduleDetails?date=" + attr;
                     }
                 }
             })

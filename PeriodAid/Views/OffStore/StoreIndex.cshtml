@@ -17,7 +17,7 @@
     <ul class="list-inline list-unstyled row">
         <li><a class="btn btn-info btn-sm" id="offstore-store-create"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a></li>
         <li><a class="btn btn-info btn-sm" id="offstore-store-upstore" href="/OffStore/UploadStore"><i class="fa fa-upload"></i>&nbsp;&nbsp;上传数据</a></li>
-        <li><a class="btn btn-warning btn-sm" id="Modregion">修改区域</a></li>
+        <li><a class="btn btn-warning btn-sm" id="offstore-store-batchedit">修改区域</a></li>
     </ul>
 </div>
 <br />
@@ -25,6 +25,26 @@
 
 </div>
 @Html.Partial("modal")
+<div class="modal fade" id="offstore-store-batchmodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改区域</h4>
+            </div>
+            <div class="modal-body">
+                <div class='row'>
+                    <div class='col-md-6'><input class='form-control' id="check-region" type='text' /></div>
+                    <div class='col-md-6'><input class='form-control' id='change-content' type='text' placeholder='替换' /></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top:-5px;">
+                <button type="button" class="btn btn-success check-sure">确定</button>
+                <button type="button" class="btn btn-danger check-fail">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <script>
     $(function () {
         $.ajax({
@@ -74,5 +94,58 @@
         })
         return false
     });
+    //批量修改区域
+    $("#offstore-store-batchedit").click(function () {
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        } else {
+            var checkedList = new Array();
+            var checkedRegion = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+                checkedRegion.push($(this).attr("data-region"));
+            });
+            for (var i = 0; i < checkedRegion.length; i++) {
+                $("#check-region").val(checkedRegion[0])
+            }
+            $("#offstore-store-batchmodal").modal('show');
+        }
+    });
+    $(".check-sure").click(function () {
+        if (confirm("确定要修改所选门店区域？")) {
+            var link_url = "/OffStore/ChangeStoreAreaBatchAjax";
+            var modify_area = $("#change-content").val();
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            $.ajax({
+                url: link_url,
+                type: "post",
+                data: {
+                    ids: checkedList.toString(),
+                    modify_area: modify_area
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        setTimeout(function () {
+                            $("#offstore-store-batchmodal").modal('hide');
+                            $.ajax({
+                                url: "/OffStore/StoreListPartial",
+                                success: function (data) {
+                                    $("#offstore-list").html(data);
+                                }
+                            })
+                        }, 1000)
+                        alert("修改成功")
+                    }
+                }
+            })
+        }
+    });
+    $(".check-fail").click(function () {
+        $("#offstore-store-batchmodal").modal('hide')
+    });
 </script>
-
