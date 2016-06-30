@@ -5,43 +5,48 @@
     Layout = "~/Views/Shared/_OffLayout.cshtml";
 }
 
-<h2>AccountSetting</h2>
+<h2>设置</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>AccountSetting_ViewModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
             @Html.LabelFor(model => model.BankList, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-9">
                 @Html.EditorFor(model => model.BankList, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.BankList, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1">
+                <a class="btn btn-info btn-sm" id="offcommon-add-bank"><i class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.AttendanceAllow, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AttendanceAllow, new { htmlAttributes = new { @class = "form-control" } })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.AttendanceAllow, new { htmlAttributes = new { @class = "form-control",@type= "number" } })
                 @Html.ValidationMessageFor(model => model.AttendanceAllow, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.AreaList, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-9">
                 @Html.EditorFor(model => model.AreaList, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.AreaList, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1">
+                <a class="btn btn-info btn-sm" id="offcommon-add-area"><i class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-9">
                 @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
             </div>
@@ -49,20 +54,55 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.CompanyAvatar, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-9">
                 @Html.EditorFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.CompanyAvatar, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1">
+                <a class="btn btn-info btn-sm" id="offcommon-download-icon">下载</a>
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="保存" class="btn btn-success" />
             </div>
         </div>
     </div>
 }
+<div class="modal fade modal-box">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-head">新增报表</h4>
+            </div>
+            <div class="modal-body modal-con">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success modal-create">新增</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<input class="hidden" id="offcommon-con-bank" />
+<input class="hidden" id="offcommon-con-area" />
+<script>
+    $(function () {
+        $("#offcommon-add-bank").click(function () {
+            var head = "银行列表";
+            var bank_list="<div class='form-group'><div class='col-md-10'><input class='form-control input-sm modal-text' placeholder='填写银行信息' /></div><div class='col-md-2'><a class='btn btn-sm btn-danger modal-del'>删除</a></div></div>"
+            var bank_con = $("#BankList").val();
+            var bank_con_arry = bank_con.split(",");
+            $(".modal-box").modal();
+            $(".modal-head").text(head);
+            $(".modal-con").append(bank_list)
+            for (var i = 0; i < bank_con_arry.length; i++) {
+                $(".modal-text").val(bank_con_arry[i])
+            }
+            
+        })
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+    })
+</script>
