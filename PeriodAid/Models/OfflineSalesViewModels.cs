@@ -8,20 +8,7 @@ using System.Data;
 
 namespace PeriodAid.Models
 {
-    public class OfflineSalesViewModels
-    {
-    }
-
-    /*public class Store_System_ViewModel
-    {
-        [Required]
-        [StringLength(50, ErrorMessage = "系统名称不能大于50字符")]
-        [Display(Name = "系统名称")]
-        public string System_Name { get; set; }
-    }*/
-
     
-
     public class CustomImage_ViewModel
     {
         [Required(ErrorMessage = "X坐标不能为空")]
