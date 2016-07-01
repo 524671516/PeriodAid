@@ -85,12 +85,15 @@
                     type: "post",
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            $.ajax({
-                                url: "/OffSeller/SellerListPartial",
-                                success: function (data) {
-                                    $("#offseller-seller-list").html(data);
-                                }
-                            })
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffSeller/SellerListPartial",
+                                    success: function (data) {
+                                        $("#offseller-seller-list").html(data);
+                                    }
+                                });
+                                alert("删除成功")
+                            }, 1000);
                         } else if (data.result == "FAIL") {
                             alert("删除错误");
                         }

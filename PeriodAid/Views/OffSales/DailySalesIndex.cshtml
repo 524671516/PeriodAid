@@ -104,12 +104,15 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $.ajax({
-                            url: link_url,
-                            success: function (data) {
-                                $list.html(data)
-                            }
-                        })
+                        setTimeout(function () {
+                            $.ajax({
+                                url: link_url,
+                                success: function (data) {
+                                    $list.html(data)
+                                }
+                            });
+                            alert("批量删除成功")
+                        }, 1000);
                     }
                 }
             });

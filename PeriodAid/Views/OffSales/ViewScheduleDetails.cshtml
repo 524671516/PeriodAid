@@ -105,15 +105,18 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $.ajax({
-                            url: link_url,
-                            data: {
-                                date: $("#offsalesschedule-current-date").val()
-                            },
-                            success: function (data) {
-                                $list.html(data)
-                            }
-                        })
+                        setTimeout(function () {
+                            $.ajax({
+                                url: link_url,
+                                data: {
+                                    date: $("#offsalesschedule-current-date").val()
+                                },
+                                success: function (data) {
+                                    $list.html(data)
+                                }
+                            })
+                            alert("删除成功")
+                        }, 1000);
                     }
                 }
             });

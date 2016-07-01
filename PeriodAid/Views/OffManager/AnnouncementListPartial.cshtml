@@ -75,12 +75,15 @@
                 type: "post",
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $.ajax({
-                            url: "/OffManager/AnnouncementListPartial",
-                            success: function (list) {
-                                $("#offmanager-announcement-list").html(list);
-                            }
-                        });
+                        setTimeout(function () {
+                            $.ajax({
+                                url: "/OffManager/AnnouncementListPartial",
+                                success: function (list) {
+                                    $("#offmanager-announcement-list").html(list);
+                                }
+                            });
+                            alert("删除成功")
+                        }, 1000);
                     } else {
                         alert("删除失败")
                     }

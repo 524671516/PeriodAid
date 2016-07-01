@@ -102,12 +102,15 @@
                 type: "post",
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $.ajax({
-                            url: "/OffManager/ManagerListPartial",
-                            success: function (data) {
-                                $("#offmanager-manager-list").html(data)
-                            }
-                        })
+                        setTimeout(function () {
+                            $.ajax({
+                                url: "/OffManager/ManagerListPartial",
+                                success: function (data) {
+                                    $("#offmanager-manager-list").html(data)
+                                }
+                            });
+                            alert("撤销成功")
+                        }, 1000)
                     }
                 }
             })

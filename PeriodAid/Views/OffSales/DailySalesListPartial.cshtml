@@ -102,12 +102,15 @@
                     type: "post",
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            $.ajax({
-                                url: "/OffSales/DailySalesListPartial",
-                                success: function (data) {
-                                    $("#offsales-list").html(data);
-                                }
-                            });
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffSales/DailySalesListPartial",
+                                    success: function (data) {
+                                        $("#offsales-list").html(data);
+                                    }
+                                });
+                                alert("删除成功");
+                            }, 1000);
                         }
                     }
                 });
