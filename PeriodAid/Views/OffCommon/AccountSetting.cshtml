@@ -7,74 +7,160 @@
 
 <h2>设置</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("AccountSettingAjax", "OffCommon", FormMethod.Post, new { @id = "offaccount-form" }))
 {
     @Html.AntiForgeryToken()
-    
+    @Html.HiddenFor(m => m.BankList)
+    @Html.HiddenFor(m => m.AreaList)
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <table class="offline-search-box">
-            <tr>
-                <td>
-                    <label>公司名称：</label>
-                    @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control offline-search-inline" } })
-                </td>
-                <td>
-                    <label>公司图标：</label>
-                    @Html.EditorFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control offline-search-inline" } })
-                    <a class="btn btn-info"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;下载</a>
-                </td>
-                <td>
-                    <label>修改密码：</label>
-                </td>
-            </tr>
-            <tr>
-                <td><br />
-                    <label>上下班时间：</label>
-                    @Html.EditorFor(model => model.AttendanceAllow, new { htmlAttributes = new { @class = "form-control offline-search-inline", @type = "number" } })
-                </td>
-                <td><br />
-                    <label>系统切换：</label>
-                    @Html.EditorFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control offline-search-inline" } })
-                </td>
-            </tr>
-        </table>
+        <div class="form-group">
+            <label class="col-md-2">公司名称：</label>
+            <div class="col-md-8">@Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })</div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">公司图标：</label>
+            <div class="col-md-8">@Html.EditorFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control" } })</div>
+            <div class="col-md-2"><a class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i>&nbsp;&nbsp;上传</a></div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">上下班时间：</label>
+            <div class="col-md-8">@Html.EditorFor(model => model.AttendanceAllow, new { htmlAttributes = new { @class = "form-control", @type = "number" } })</div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">密码：</label>
+            <div class="col-md-8"><a class="btn btn-info btn-sm" href="/Manage/ChangePassword">更改密码</a></div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">系统切换：</label>
+            <div class="col-md-8">
+                <a class="btn btn-sm btn-info" href="/Manage/updateSystem/1">上海寿全斋电子商务有限公司</a>
+                <a class="btn btn-sm btn-info" href="/Manage/updateSystem/2">测试商家</a>
+            </div>
+        </div>
         <hr />
         @*银行列表*@
         <h5><b>@Html.LabelFor(model => model.BankList, htmlAttributes: new { @class = "control-label" })</b></h5><br />
-        <div class="container bank-con">
-            <div class="col-md-3">
-                @Html.EditorFor(model => model.BankList, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.BankList, "", new { @class = "text-danger" })
-            </div>
-            <div class="col-md-1">
-                <a class="btn btn-info" id="offcommon-add-bank"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;添加</a>
-            </div>
+        <div class="container">
+            <ul class="list-inline list-unstyled">
+                <li class="offline-input offline-input-con">
+                    <ul class="list-inline list-unstyled" id="bank-box">
+                        <li>
+
+                        </li>
+                    </ul>
+                </li>
+                <li class='offline-input'>
+                    <input class='form-control offline-search-inline' id='bank-list' type='text'>&nbsp;&nbsp;<a class='btn btn-info' id='offcommon-add-bank'><i class='fa fa-plus' aria-hidden='true'></i>&nbsp;&nbsp;添加</a>
+                </li>
+            </ul>
         </div>
         @*区域列表*@
         <hr />
         <h5><b>@Html.LabelFor(model => model.AreaList, htmlAttributes: new { @class = "control-label" })</b></h5><br />
         <div class="container">
-            <div class="col-md-3">
-                @Html.EditorFor(model => model.AreaList, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AreaList, "", new { @class = "text-danger" })
-            </div>
-            <div class="col-md-1">
-                <a class="btn btn-info" id="offcommon-add-area"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;添加</a>
+            <ul class="list-inline list-unstyled">
+                <li class="offline-input offline-input-con">
+                    <ul class="list-inline list-unstyled" id="area-box">
+                        <li>
+
+                        </li>
+                    </ul>
+                </li>
+                <li class='offline-input'>
+                    <input class='form-control offline-search-inline' id='area-list' type='text'>&nbsp;&nbsp;<a class='btn btn-info' id='offcommon-add-area'><i class='fa fa-plus' aria-hidden='true'></i>&nbsp;&nbsp;添加</a>
+                </li>
+            </ul>
+        </div>
+        <hr />
+        <div class="form-group">
+            <div class="col-md-10">
+                <button class="btn btn-success" id="offaccount-submit">保存</button>
             </div>
         </div>
-        @*<div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="保存" class="btn btn-success" />
-            </div>
-        </div>*@
     </div>
 }
-@*<div class="container"><div class="col-md-3"><input class="form-control" /></div><i class="fa fa-times-circle" aria-hidden="true"></i></div>*@
 <script>
-    $("#offcommon-add-bank").click(function () {
-        var txt = "<div class='col-md-3'><input class='form-control' type='text'></div>"
-        $(".bank-con").append(txt)
-    })
+    $(function () {
+        var bankCon = $("#BankList").val();
+        var bankArry = bankCon.split(",");
+        var bankText = "";
+        for (var i = 0; i < bankArry.length; i++) {
+            bankText = bankText + "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-banklist'>" + bankArry[i] + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>"
+        };
+        $("#bank-box").html(bankText);
+        var areaCon = $("#AreaList").val();
+        var areaArry = areaCon.split(",");
+        var areaText = "";
+        for (var i = 0; i < areaArry.length; i++) {
+            areaText = areaText + "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-arealist'>" + areaArry[i] + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>"
+        };
+        $("#area-box").html(areaText);
+        input();
+        bank();
+        area();
+    });
+    $(document).delegate("#offcommon-add-bank", "click", function () {
+        var bankCon = $("#bank-list").val();
+        var bankTxt = "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-banklist'>" + bankCon + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>";
+        if (bankCon == "") {
+            alert("不能为空");
+        } else {
+            $("#bank-box").append(bankTxt);
+            $("#bank-list").val("")
+            input();
+            bank();
+        };
+    });
+    $(document).delegate("#offcommon-add-area", "click", function () {
+        var areaCon = $("#area-list").val();
+        var areaTxt = "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-arealist'>" + areaCon + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>";
+        if (areaCon == "") {
+            alert("不能为空")
+        } else {
+            $("#area-box").append(areaTxt);
+            $("#area-list").val("")
+            input();
+            area();
+        };
+    });
+    function input() {
+        $(document).delegate(".input-con", "mouseenter", function () {
+            $(this).children(".input-del").removeClass("hidden")
+        });
+        $(document).delegate(".input-con", "mouseleave", function () {
+            $(this).children(".input-del").addClass("hidden")
+        });
+        $(document).delegate(".input-del", "click", function () {
+            $(this).parent(".input-con").remove();
+            bank();
+            area();
+        });
+    };
+    function bank() {
+        var bankList = new Array();
+        $(".offaccount-banklist").each(function () {
+            bankList.push($(this).text());
+        });
+        $("#BankList").val(bankList.toString());
+    };
+    function area() {
+        var areaList = new Array();
+        $(".offaccount-arealist").each(function () {
+            areaList.push($(this).text());
+        });
+        $("#AreaList").val(areaList.toString());
+    };
+    $("#offaccount-submit").click(function () {
+        var $btn = $(this);
+        $btn.attr("disabled", "disabled").text("保存中...");
+        setTimeout(function () {
+            $('#offaccount-form').ajaxSubmit(function () {
+                alert("保存成功");
+                $btn.text("保存").removeAttr("disabled");
+            });
+        }, 1000);
+        return false;
+    });
 </script>
