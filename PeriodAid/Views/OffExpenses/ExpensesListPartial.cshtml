@@ -67,7 +67,7 @@
                 {
                     @Html.ActionLink("添加预算", "EditExpenses", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
                     @Html.Encode(" ")
-                    @Html.ActionLink("作废", "CancelExpensesAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offexpenses-del"})
+                    @Html.ActionLink("删除", "CancelExpensesAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offexpenses-del"})
                 }
                 else if (item.Status == 1)
                 {
@@ -106,12 +106,15 @@
                 type: "post",
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $.ajax({
-                            url: "/OffExpenses/ExpensesListPartial",
-                            success: function (data) {
-                                $("#offexpenses-list").html(data);
-                            }
-                        });
+                        setTimeout(function () {
+                            $.ajax({
+                                url: "/OffExpenses/ExpensesListPartial",
+                                success: function (data) {
+                                    $("#offexpenses-list").html(data);
+                                }
+                            });
+                            alert("删除成功")
+                        }, 1000);                        
                     }
                 }
             })

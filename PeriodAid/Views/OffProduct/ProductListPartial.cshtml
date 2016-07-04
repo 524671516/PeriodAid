@@ -74,12 +74,15 @@
                     type: "post",
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            $.ajax({
-                                url: "/OffProduct/ProductListPartial",
-                                success: function (data) {
-                                    $("#offproduct-product-list").html(data)
-                                }
-                            })
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffProduct/ProductListPartial",
+                                    success: function (data) {
+                                        $("#offproduct-product-list").html(data)
+                                    }
+                                });
+                                alert("删除成功")
+                            }, 1000);
                         }
                         else if (data.result == "FAIL") {
                             alert("无法删除")

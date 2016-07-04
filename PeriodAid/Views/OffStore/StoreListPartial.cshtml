@@ -97,12 +97,15 @@
                     type: "post",
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            $.ajax({
-                                url: "/OffStore/StoreListPartial",
-                                success: function (data) {
-                                    $("#offstore-list").html(data);
-                                }
-                            })
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffStore/StoreListPartial",
+                                    success: function (data) {
+                                        $("#offstore-list").html(data);
+                                    }
+                                })
+                                alert("删除成功")
+                            }, 1000);
                         }
                     }
                 })

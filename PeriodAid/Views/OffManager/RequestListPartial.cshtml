@@ -83,12 +83,15 @@
                 type: "post",
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $.ajax({
-                            url: "/OffManager/RequestListPartial",
-                            success: function (list) {
-                                $("#offmanager-request-list").html(list)
-                            }
-                        })
+                        setTimeout(function () {
+                            $.ajax({
+                                url: "/OffManager/RequestListPartial",
+                                success: function (list) {
+                                    $("#offmanager-request-list").html(list)
+                                }
+                            });
+                            alert("成功驳回")
+                        }, 1000);
                     } else {
                         alert("驳回无效")
                     }

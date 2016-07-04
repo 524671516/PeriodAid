@@ -199,3 +199,17 @@ li {
 .offline-box-margin {
     margin-top: 200px;
 }
+.offline-input {
+    font-size:16px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right:5px
+}
+.offline-input-con {
+    position: relative;
+}
+.offline-input-close {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

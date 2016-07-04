@@ -74,13 +74,16 @@
                 type: "post",
                 url: link_url,
                 success: function (data) {
-                    if (data.result == "SUCCESS") { 
-                    $.ajax({
-                        url: "/OffManager/TaskListPartial",
-                        success: function (data) {
-                            $("#offmanager-task-list").html(data)
-                        }
-                    });
+                    if (data.result == "SUCCESS") {
+                        setTimeout(function () {
+                            $.ajax({
+                                url: "/OffManager/TaskListPartial",
+                                success: function (data) {
+                                    $("#offmanager-task-list").html(data)
+                                }
+                            });
+                            alert("删除成功")
+                        }, 1000);
                     }
                 }
             })

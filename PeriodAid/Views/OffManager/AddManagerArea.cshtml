@@ -107,11 +107,14 @@ else
                 arr_list: arr_list.join(","),
             },
             success: function (data) {
+                alert("333");
                 if (data.result == "SUCCESS") {
-                    window.location.reload();
+                    alert("修改完成")
+                    window.location.href = "/OffManager/ManagerList"
                 }
             }
         })
+        return false;
     });
     function refresh_list() {
         $.ajax({

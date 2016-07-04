@@ -104,15 +104,18 @@
                 type: "post",
                 success: function (data) {
                     if (data.data == "SUCCESS") {
-                        $.ajax({
-                            url: "/OffSales/ViewScheduleDetailsPartial",
-                            data: {
-                                date: $("#offsalesschedule-current-date").val()
-                            },
-                            success: function (data) {
-                                $("#offsalesschedule-list").html(data)
-                            }
-                        });
+                        setTimeout(function () {
+                            $.ajax({
+                                url: "/OffSales/ViewScheduleDetailsPartial",
+                                data: {
+                                    date: $("#offsalesschedule-current-date").val()
+                                },
+                                success: function (data) {
+                                    $("#offsalesschedule-list").html(data)
+                                }
+                            });
+                            alert("删除成功")
+                        }, 1000);
                     }
                 }
             });
