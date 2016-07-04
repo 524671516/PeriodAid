@@ -24,12 +24,12 @@ namespace PeriodAid.Filters
             {
                 if (item.SettingResult == false)
                 {
-                    filterContext.Result = new RedirectResult("/OffCommon/AuthorizationError");
+                    filterContext.Result = new RedirectResult("/OffCommon/AuthorizeError");
                 }
             }
             else
             {
-                filterContext.Result = new RedirectResult("/OffCommon/AuthorizationError");
+                filterContext.Result = new RedirectResult("/OffCommon/AuthorizeError");
             }
         }
     }

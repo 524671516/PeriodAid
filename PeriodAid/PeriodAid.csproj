@@ -215,6 +215,7 @@
     <Compile Include="Controllers\PeriodAidController.cs" />
     <Compile Include="Controllers\OffSalesController.cs" />
     <Compile Include="Controllers\SellerController.cs" />
+    <Compile Include="Controllers\TempSellerController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
     <Compile Include="DAL\AliOSSUtilities.cs" />
@@ -778,8 +779,8 @@
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Common\" />
-    <Folder Include="Views\OffCommon\" />
     <Folder Include="Views\Sales\" />
+    <Folder Include="Views\TempSeller\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

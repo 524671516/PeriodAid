@@ -229,6 +229,41 @@ namespace PeriodAid.Controllers
             else
                 return Json(new { result = "FAIL" });
         }
+        // 删除管理员
+        [HttpPost]
+        public JsonResult CancelManagerAjax(int id)
+        {
+            var manager = _offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
+            if (manager != null)
+            {
+                var currentuser = UserManager.FindById(User.Identity.GetUserId());
+                if (manager.Off_System_Id == currentuser.DefaultSystemId)
+                {
+                    var user = UserManager.FindByName(manager.UserName);
+                    UserManager.RemoveFromRole(user.Id, "Senior");
+                    UserManager.RemoveFromRole(user.Id, "Manager");
+                    UserManager.AddToRole(user.Id, "Seller");
+                    Off_Membership_Bind omb = new Off_Membership_Bind()
+                    {
+                        NickName = manager.NickName,
+                        Mobile = manager.Mobile,
+                        UserName = manager.UserName,
+                        Off_System_Id = currentuser.DefaultSystemId,
+                        Bind = false,
+                        ApplicationDate = DateTime.Now,
+                        Recruit = true
+                    };
+                    _offlineDB.Off_StoreManager.Remove(manager);
+                    _offlineDB.Off_Membership_Bind.Add(omb);
+                    _offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { result = "FAIL" });
+        }
 
         // Origin: Off_Manager_TaskList
         // 0314 督导工作汇报列表

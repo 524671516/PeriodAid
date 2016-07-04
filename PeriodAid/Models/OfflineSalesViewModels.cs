@@ -148,6 +148,26 @@ namespace PeriodAid.Models
         public int? StorageCount { get; set; }
     }
 
+    public class SellerSalaryExcel
+    {
+        public string Name { get; set; }
+        public string StoreName { get; set; }
+        public string Mobile { get; set; }
+        public string IdNumber { get; set; }
+        public string AccountName { get; set; }
+        public string AccountSource { get; set; }
+        public string CardName { get; set; }
+        public string CardNo { get; set; }
+        public decimal? Standard_Salary { get; set; }
+        public decimal? Salary { get; set; }
+        public decimal? Bonus { get; set; }
+        public decimal? Debit { get; set; }
+        public int? Att_All { get; set; }
+        public int? Att_Delay { get; set; }
+        public int? Att_Leave { get; set; }
+        public int? Att_Absence { get; set; }
+    }
+
     public class StoreSchedule_ViewModel
     {
         [Required(ErrorMessage ="至少选择一个门店")]

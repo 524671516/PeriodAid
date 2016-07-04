@@ -240,39 +240,33 @@ namespace PeriodAid.Controllers
         public FileResult DownloadSalaryFile(DateTime start, DateTime end)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var list = from m in _offlineDB.Off_SalesInfo_Daily
-                       where m.Date >= start && m.Date <= end && m.Off_Seller.Off_System_Id == user.DefaultSystemId
-                       group m by m.Off_Seller into g
-                       select new
-                       {
-                           Name = g.Key.Name,
-                           StoreName = g.Key.Off_Store.StoreName,
-                           Distributor = g.Key.Off_Store.Distributor,
-                           Mobile = g.Key.Mobile,
-                           IdNumber = g.Key.IdNumber,
-                           CardName = g.Key.CardName,
-                           CardNo = g.Key.CardNo,
-                           Salary = g.Sum(m => m.Salary) == null ? 0 : g.Sum(m => m.Salary),
-                           Bonus = g.Sum(m => m.Bonus) == null ? 0 : g.Sum(m => m.Bonus),
-                           Debit = g.Sum(m => m.Debit) == null ? 0 : g.Sum(m => m.Debit),
-                           AccountName = g.Key.AccountName,
-                           All = g.Count(m => m.Attendance == 0),
-                           Delay = g.Count(m => m.Attendance == 1),
-                           Leave = g.Count(m => m.Attendance == 2),
-                           Absence = g.Count(m => m.Attendance == 3)
-                       };
+            var sql = "Select T4.Name, T5.StoreName, T4.Mobile, T4.IdNumber, T4.AccountName, T4.AccountSource, T4.CardName, T4.CardNo, T3.Standard_Salary," +
+                "T3.Salary, T3.Bonus, T3.Debit, T3.Att_All, T3.Att_Delay, T3.Att_Leave, T3.Att_Absence from (select T1.SellerId, SUM(T1.Salary) as Salary, SUM(T1.Bonus) as Bonus, SUM(T1.Debit) as Debit," +
+                "cast(AVG(T2.Standard_Salary) as decimal(10, 2)) as Standard_Salary, " +
+                "SUM(case when T1.Attendance = 0 then 1 else 0 end) as Att_All," +
+                "SUM(case when T1.Attendance = 1 then 1 else 0 end) as Att_Delay," +
+                "SUM(case when T1.Attendance = 2 then 1 else 0 end) as Att_Leave," +
+                "SUM(case when T1.Attendance = 3 then 1 else 0 end) as Att_Absence" +
+                " from Off_SalesInfo_Daily as T1 left join Off_Checkin_Schedule as T2 on" +
+                " T1.Date = T2.Subscribe and T1.StoreId = T2.Off_Store_Id" +
+                " where T1.Date >= '" + start.ToString("yyyy-MM-dd") + "' and T1.Date <= '" + end.ToString("yyyy-MM-dd") + "'" +
+                " group by SellerId) as T3 left join Off_Seller as T4 on T3.SellerId = T4.Id" +
+                " left join Off_Store as T5 on T4.StoreId = T5.Id" +
+                " where T4.Off_System_Id = " + user.DefaultSystemId;
+            var list = _offlineDB.Database.SqlQuery<SellerSalaryExcel>(sql);
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);
             CsvWriter csv = new CsvWriter(writer);
             //string[] columname = new string[] {"店铺名称", "经销商", "姓名", "电话号码", "身份证号码", "开户行", "银行卡号", "工资", "奖金", "全勤天数", "迟到天数" };
             csv.WriteField("店铺名称");
-            csv.WriteField("经销商");
             csv.WriteField("姓名");
             csv.WriteField("电话号码");
             csv.WriteField("身份证号码");
+            csv.WriteField("银行名称");
             csv.WriteField("开户行");
             csv.WriteField("开户人姓名");
             csv.WriteField("银行卡号");
+            csv.WriteField("工资标准");
             csv.WriteField("工资");
             csv.WriteField("奖金");
             csv.WriteField("扣款");
@@ -284,20 +278,21 @@ namespace PeriodAid.Controllers
             foreach (var item in list)
             {
                 csv.WriteField(item.StoreName);
-                csv.WriteField(item.Distributor);
                 csv.WriteField(item.Name);
                 csv.WriteField("'" + item.Mobile);
                 csv.WriteField("'" + item.IdNumber);
                 csv.WriteField(item.CardName);
                 csv.WriteField(item.AccountName);
+                csv.WriteField(item.AccountSource);
                 csv.WriteField("'" + item.CardNo);
-                csv.WriteField(item.Salary);
-                csv.WriteField(item.Bonus);
-                csv.WriteField(item.Debit);
-                csv.WriteField(item.All);
-                csv.WriteField(item.Delay);
-                csv.WriteField(item.Leave);
-                csv.WriteField(item.Absence);
+                csv.WriteField(item.Standard_Salary ?? 0);
+                csv.WriteField(item.Salary ?? 0);
+                csv.WriteField(item.Bonus ?? 0);
+                csv.WriteField(item.Debit ?? 0);
+                csv.WriteField(item.Att_All ?? 0);
+                csv.WriteField(item.Att_Delay ?? 0);
+                csv.WriteField(item.Att_Leave ?? 0);
+                csv.WriteField(item.Att_Absence ?? 0);
                 csv.NextRecord();
             }
             //csv.WriteRecords(list);
@@ -426,9 +421,32 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+        [HttpPost]
+        public JsonResult DeleteRegisterSellerAjax(int id)
+        {
+            var item = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var currentuser = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_System_Id == currentuser.DefaultSystemId)
+                {
+                    var user = UserManager.FindByName(item.UserName);
+                    UserManager.RemoveFromRole(user.Id, "Seller");
+                    UserManager.Delete(user);
+                    _offlineDB.Off_Membership_Bind.Remove(item);
+                    _offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { result = "FAIL" });
+        }
 
-        // Origin: analyseExcel_SellerTable
-        public async Task<List<Excel_DataMessage>> UploadSellerByExcelAsync(string filename, List<Excel_DataMessage> messageList)
+
+// Origin: analyseExcel_SellerTable
+public async Task<List<Excel_DataMessage>> UploadSellerByExcelAsync(string filename, List<Excel_DataMessage> messageList)
         {
             try
             {

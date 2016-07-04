@@ -58,6 +58,18 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        // Origin: updateSystem
+        public ActionResult ChangeSystem(int id)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            user.DefaultSystemId = id;
+            UserManager.Update(user);
+            return RedirectToAction("Index", "OffCommon");
+        }
+        public ActionResult AuthorizeError()
+        {
+            return View("AuthorizeError");
+        }
         [Authorize(Roles = "Admin")]
         public ActionResult AccountSetting()
         {

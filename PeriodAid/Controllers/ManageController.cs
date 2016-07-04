@@ -87,13 +87,7 @@ namespace PeriodAid.Controllers
             ViewBag.SystemList = systemlist;
             return View(model);
         }
-        public ActionResult updateSystem(int id)
-        {
-            var user = UserManager.FindById(User.Identity.GetUserId());
-            user.DefaultSystemId = id;
-            UserManager.Update(user);
-            return RedirectToAction("Index", "OfflineSales");
-        }
+        
 
         //
         // POST: /Manage/RemoveLogin

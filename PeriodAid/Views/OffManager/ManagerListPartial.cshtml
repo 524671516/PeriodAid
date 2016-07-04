@@ -44,12 +44,13 @@
             <td>
                 @if (item.Status == 1)
                 {
-                    @Html.ActionLink("设置超级管理员", "UpdateManagerToSeniorAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-danger offmanager-manager-setup" })
+                    @Html.ActionLink("设置超级管理员", "UpdateManagerToSeniorAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-success offmanager-manager-setup" })
                 }
                 else {
-                    @Html.ActionLink("撤销", "ReduceManagerAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-warning offmanager-manager-backout" })
+                    @Html.ActionLink("撤销超级管理员", "ReduceManagerAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-warning offmanager-manager-backout" })
                 }
                 @Html.ActionLink("设置区域", "AddManagerArea", new { id = item.Id }, new { @class = "btn btn-xs btn-primary" })
+                @Html.ActionLink("删除管理员", "CancelManagerAjax", new { id = item.Id },new { @class = "btn btn-xs btn-danger offmanager-manager-cancel" })
 
             </td>
         </tr>
@@ -94,14 +95,14 @@
     });
     //撤销
     $(".offmanager-manager-backout").click(function () {
-        var result = confirm("确定要撤销吗？")
+        var result = confirm("确定要撤销超级管理员吗？")
         if (result) {
             var url = $(this).attr("href")
             $.ajax({
                 url: url,
                 type: "post",
                 success: function (data) {
-                    if (data.result == "SUCCESS") {
+                    if (getDeleteResult(data)) {
                         $.ajax({
                             url: "/OffManager/ManagerListPartial",
                             success: function (data) {
@@ -111,6 +112,28 @@
                     }
                 }
             })
+        }
+        return false;
+    });
+    
+    $(".offmanager-manager-cancel").click(function () {
+        var result = confirm("确定要删除管理员吗？")
+        if (result) {
+            var url = $(this).attr("href")
+            $.ajax({
+                url: url,
+                type: "post",
+                success: function (data) {
+                    if (getDeleteResult(data)) {
+                        $.ajax({
+                            url: "/OffManager/ManagerListPartial",
+                            success: function (data) {
+                                $("#offmanager-manager-list").html(data)
+                            }
+                        })
+                    }
+                }
+            });
         }
         return false;
     });
