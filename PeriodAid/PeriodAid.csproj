@@ -363,6 +363,7 @@
     <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\html5.js" />
     <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\off-JavaScript.js" />
     <Content Include="Scripts\jeDate-gh-pages\params.json" />

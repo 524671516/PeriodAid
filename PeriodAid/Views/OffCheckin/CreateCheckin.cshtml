@@ -174,7 +174,8 @@
                             $("#Rep_Image").val(filearray);
                             $("#report-img-list").html("");
                             for (var item in filearray) {
-                                $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + filearray[item] + "')\"></div>");
+                                $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + filearray[item] + "')\">"+
+                                    "<span class=\"img-close\">\<span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");
                             }
                         }
                     }
@@ -186,11 +187,21 @@
             });
             return false;
         }
-        $(".img-list").click(function () {
+        $("#report-img-list").on("click",".img-list", function () {
             var link_url = "//cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
             $("#img-view").attr("src", link_url);
             $('#myModal').modal();
-            return false;
         });
+        $("#report-img-list").on("click", ".img-close", function (event) {
+            if (confirm("是否删除所选图片?")) {
+                $(this).parent(".img-list").remove();
+                var filearray = new Array();
+                $("#report-img-list>.img-list").each(function () {
+                    filearray.push($(this).attr("data-rel"));
+                });
+                $("#Rep_Image").val(filearray);
+            }
+            event.stopPropagation();
+        })
     </script>
 }

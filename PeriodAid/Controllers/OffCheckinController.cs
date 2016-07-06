@@ -673,6 +673,26 @@ namespace PeriodAid.Controllers
             string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
             return Content(err_res);
         }
+        [HttpPost]
+        public JsonResult UpdateCheckinFileAjax(int id, string filearray)
+        {
+            var checkin = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            if(checkin!=null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if(checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId)
+                {
+                    checkin.Rep_Image = filearray;
+                    _offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { result = "FAIL" });
+        }
 
         // Origin: Off_ConfirmCheckIn_Map
         public ActionResult ViewCheckinLBS(bool trans, string lbs)

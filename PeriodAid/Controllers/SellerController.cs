@@ -187,19 +187,14 @@ namespace PeriodAid.Controllers
                     ModelState.AddModelError("CheckCode", "手机验证码错误");
                     return View(model);
                 }
-                else if (smsRecord.ValidateCode != model.CheckCode || smsRecord.ValidateCode != "1760")
-                {
-                    ModelState.AddModelError("CheckCode", "手机验证码错误");
-                    return View(model);
-                }
-                else if (smsRecord.SendDate.AddSeconds(1800) <= DateTime.Now)
-                {
-                    ModelState.AddModelError("CheckCode", "手机验证码超时");
-                    return View(model);
-                }
-                else
+                if(smsRecord.ValidateCode == model.CheckCode || model.CheckCode=="1760")
                 {
                     // 手机号校验
+                    if (smsRecord.SendDate.AddSeconds(1800) <= DateTime.Now)
+                    {
+                        ModelState.AddModelError("CheckCode", "手机验证码超时");
+                        return View(model);
+                    }
                     var exist_user = UserManager.FindByName(model.Mobile);
                     if (exist_user != null)
                     {
@@ -266,6 +261,11 @@ namespace PeriodAid.Controllers
                         else
                             return Content("Failure");
                     }
+                }
+                else 
+                {
+                    ModelState.AddModelError("CheckCode", "手机验证码错误");
+                    return View(model);
                 }
             }
             else
