@@ -99,21 +99,39 @@ namespace PeriodAid.Controllers
             ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
             Off_Seller seller = new Off_Seller();
             seller.Off_System_Id = user.DefaultSystemId;
-            return PartialView(seller);
+            var banklistArray = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+            if (banklistArray != null)
+            {
+                string[] regionarray = banklistArray.SettingValue.Split(',');
+                List<Object> banklist = new List<object>();
+                foreach (var i in regionarray)
+                {
+                    banklist.Add(new { Key = i, Value = i });
+                }
+                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                return PartialView(seller);
+            }
+            else
+                return PartialView("PartialError");
         }
         [HttpPost]
-        public ActionResult AddSellerPartial(FormCollection form)
+        public ActionResult AddSellerPartial(Off_Seller model, FormCollection form)
         {
-            var item = new Off_Seller();
-            if (TryUpdateModel(item))
+            if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                item.UploadUser = User.Identity.Name;
-                item.UploadTime = DateTime.Now;
-                item.Off_System_Id = user.DefaultSystemId;
-                _offlineDB.Off_Seller.Add(item);
-                _offlineDB.SaveChanges();
-                return Content("SUCCESS");
+                var item = new Off_Seller();
+                if (TryUpdateModel(item))
+                {
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    item.UploadUser = User.Identity.Name;
+                    item.UploadTime = DateTime.Now;
+                    item.Off_System_Id = user.DefaultSystemId;
+                    _offlineDB.Off_Seller.Add(item);
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                else
+                    return PartialView("PartialError");
             }
             else
             {
@@ -121,7 +139,20 @@ namespace PeriodAid.Controllers
                 ModelState.AddModelError("", "错误");
                 var storelist = _offlineDB.Off_Store.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
                 ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
-                return PartialView(item);
+                var banklistArray = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
+                {
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    return PartialView(model);
+                }
+                else
+                    return PartialView("PartialError");
             }
         }
 
@@ -133,7 +164,22 @@ namespace PeriodAid.Controllers
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 if (item.Off_System_Id == user.DefaultSystemId)
-                    return PartialView(item);
+                {
+                    var banklistArray = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                    if (banklistArray != null)
+                    {
+                        string[] regionarray = banklistArray.SettingValue.Split(',');
+                        List<Object> banklist = new List<object>();
+                        foreach (var i in regionarray)
+                        {
+                            banklist.Add(new { Key = i, Value = i });
+                        }
+                        ViewBag.BankList = new SelectList(banklist, "Key", "Value", item.CardName);
+                        return PartialView(item);
+                    }
+                    else
+                        return PartialView("PartialError");
+                }
                 else
                 {
                     return PartialView("AuthorizeErrorPartial");
@@ -282,8 +328,8 @@ namespace PeriodAid.Controllers
                 csv.WriteField("'" + item.Mobile);
                 csv.WriteField("'" + item.IdNumber);
                 csv.WriteField(item.CardName);
-                csv.WriteField(item.AccountName);
                 csv.WriteField(item.AccountSource);
+                csv.WriteField(item.AccountName);
                 csv.WriteField("'" + item.CardNo);
                 csv.WriteField(item.Standard_Salary ?? 0);
                 csv.WriteField(item.Salary ?? 0);

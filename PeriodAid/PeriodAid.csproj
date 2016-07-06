@@ -378,6 +378,7 @@
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
     <Content Include="Scripts\framework7.min.js" />
+    <Content Include="Scripts\html5.js" />
     <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\my-app.js" />
     <Content Include="Scripts\off-JavaScript.js" />
@@ -725,15 +726,15 @@
     <Content Include="Views\OffSales\DailySalesProductListPartial.cshtml" />
     <Content Include="Views\OffSales\MonthSalesListPartial.cshtml" />
     <Content Include="Views\OffSales\EditMonthSalesPartial.cshtml" />
-    <Content Include="Views\OffSales\ScheduleListPartial.cshtml" />
-    <Content Include="Views\OffSales\ViewScheduleDetails.cshtml" />
-    <Content Include="Views\OffSales\EditSchedulePartial.cshtml" />
-    <Content Include="Views\OffSales\AddSchedule.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ViewScheduleDetails.cshtml" />
+    <Content Include="Views\OffCheckin\EditSchedulePartial.cshtml" />
+    <Content Include="Views\OffCheckin\AddSchedule.cshtml" />
     <Content Include="Views\OffSales\UploadDailySales.cshtml" />
     <Content Include="Views\OffSales\UploadMonthSales.cshtml" />
     <Content Include="Views\OffSales\UploadResult.cshtml" />
-    <Content Include="Views\OffSales\ScheduleList.cshtml" />
-    <Content Include="Views\OffSales\ViewScheduleDetailsPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleList.cshtml" />
+    <Content Include="Views\OffCheckin\ViewScheduleDetailsPartial.cshtml" />
     <Content Include="Views\OffSales\CreateSalesDailyPartial.cshtml" />
     <Content Include="Views\Shared\modal.cshtml" />
     <Content Include="Views\OffSales\CreateSalesMonthPartial.cshtml" />
@@ -783,7 +784,7 @@
     <Content Include="Views\OffCheckin\QueryCheckinPartial.cshtml" />
     <Content Include="Views\OffCheckin\ViewCheckinLBS.cshtml" />
     <Content Include="Views\Shared\AuthorizeError.cshtml" />
-    <Content Include="Views\OffSales\ScheduleStatistic.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleStatistic.cshtml" />
     <Content Include="Views\OffCommon\Index.cshtml" />
     <Content Include="Views\OffCommon\AccountSetting.cshtml" />
     <Content Include="Views\OffBonus\BonusList.cshtml" />
@@ -796,6 +797,8 @@
     <Content Include="Views\TempSeller\PersonalInformation.cshtml" />
     <Content Include="Views\TempSeller\Refresh.cshtml" />
     <Content Include="Views\TempSeller\InfiniteScroll.cshtml" />
+    <Content Include="Views\OffCheckin\CreateCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\AddCheckinProductListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

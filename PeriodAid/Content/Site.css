@@ -1,7 +1,7 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
-    font-size:1em;
+    font-size:12px;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -189,6 +189,24 @@ li {
     background-repeat: no-repeat;
     background-size: cover;
 }
+.img-close{
+    text-align:right;
+    left:14px;
+    top:-14px;
+    float:right;
+    position:relative;
+}
+.fileupload-btn{
+            width:120px;
+            height:120px;
+            margin:10px;
+            border:1px solid #eee;
+            float:left;
+            background-color:#fff;
+            line-height:120px;
+            color:#666;
+            font-size:4em;
+        }
 .offline-list-padding {
     padding: 10px 0;
 }

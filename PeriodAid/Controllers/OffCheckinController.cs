@@ -105,10 +105,25 @@ namespace PeriodAid.Controllers
                 {
                     bool attendance_late = false;
                     bool attendance_early = false;
+                    int dt = 0;
+                    var difftime = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AttendanceAllow");
+                    if (difftime != null)
+                    {
+                        try
+                        {
+                            dt = Convert.ToInt32(difftime.SettingValue);
+                        }
+                        catch
+                        {
+                            dt = 0;
+                        }
+                    }
+                    else
+                        dt = 0;
                     // 此处时间后期可以进行调整
-                    if (item.CheckinTime >= item.Off_Checkin_Schedule.Standard_CheckIn.AddMinutes(0))
+                    if (item.CheckinTime >= item.Off_Checkin_Schedule.Standard_CheckIn.AddMinutes(dt))
                         attendance_late = true;
-                    if (item.CheckoutTime <= item.Off_Checkin_Schedule.Standard_CheckOut.AddMinutes(0))
+                    if (item.CheckoutTime <= item.Off_Checkin_Schedule.Standard_CheckOut.AddMinutes(0-dt))
                         attendance_early = true;
                     int attendance = 0;
                     int debits = 0;
@@ -658,6 +673,26 @@ namespace PeriodAid.Controllers
             string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
             return Content(err_res);
         }
+        [HttpPost]
+        public JsonResult UpdateCheckinFileAjax(int id, string filearray)
+        {
+            var checkin = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            if(checkin!=null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if(checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId)
+                {
+                    checkin.Rep_Image = filearray;
+                    _offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                    return Json(new { result = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { result = "FAIL" });
+        }
 
         // Origin: Off_ConfirmCheckIn_Map
         public ActionResult ViewCheckinLBS(bool trans, string lbs)
@@ -731,6 +766,307 @@ namespace PeriodAid.Controllers
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
             }
+        }
+
+        // Origin: Off_ScheduleList(原本是单页面，现在做成ajax+partial的形式)
+        public ActionResult ScheduleList()
+        {
+            return View();
+        }
+        public ActionResult ScheduleListPartial(bool? history, int? page)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            bool _history = history ?? true;
+            int _page = page ?? 1;
+            var currentTime = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            if (_history)
+            {
+                var list = (from m in _offlineDB.Off_Checkin_Schedule
+                            where m.Subscribe <= currentTime && m.Off_System_Id == user.DefaultSystemId
+                            group m by m.Subscribe into g
+                            orderby g.Key descending
+                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) }).ToPagedList(_page, 20);
+                return View(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_Checkin_Schedule
+                            where m.Subscribe > currentTime && m.Off_System_Id == user.DefaultSystemId
+                            group m by m.Subscribe into g
+                            orderby g.Key
+                            select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) }).ToPagedList(_page, 20);
+                return View(list);
+            }
+        }
+        // Origin: Off_ScheduleDetails(原本是单页面，现在做成ajax+partial的形式)
+        public ActionResult ViewScheduleDetails(string date)
+        {
+            ViewBag.Date = date;
+            return View();
+        }
+        public PartialViewResult ViewScheduleDetailsPartial(string date, string query, int? page)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime day = DateTime.Parse(date);
+            int _page = page ?? 1;
+            if (query != null)
+            {
+                var list = (from m in _offlineDB.Off_Checkin_Schedule
+                            where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
+                            orderby m.Off_Store.StoreName
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_Checkin_Schedule
+                            where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
+                            orderby m.Off_Store.StoreName
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+        }
+
+        // Origin: Ajax_EditSchedule
+        public ActionResult EditSchedulePartial(int id)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var item = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                if (item.Off_System_Id == user.DefaultSystemId)
+                {
+                    ViewBag.StoreName = item.Off_Store.StoreName;
+                    var TemplateList = from m in _offlineDB.Off_Sales_Template
+                                       where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
+                                       orderby m.TemplateName
+                                       select new { Key = m.Id, Value = m.TemplateName };
+                    ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
+                    return PartialView(item);
+                }
+                else
+                {
+                    return PartialView("AuthorizeErrorPartial");
+                }
+            }
+            else
+            {
+                return PartialView("ErrorPartial");
+            }
+        }
+        [ValidateAntiForgeryToken, HttpPost]
+        public ActionResult EditSchedulePartial(Off_Checkin_Schedule model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin_Schedule item = new Off_Checkin_Schedule();
+                if (TryUpdateModel(item))
+                {
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "请重试");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                ViewBag.StoreName = _offlineDB.Off_Store.SingleOrDefault(m => m.Id == model.Off_Store_Id).StoreName;
+                var TemplateList = from m in _offlineDB.Off_Sales_Template
+                                   where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
+                                   orderby m.TemplateName
+                                   select new { Key = m.Id, Value = m.TemplateName };
+                ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
+                return PartialView(model);
+            }
+        }
+
+        // Origin: Ajax_DeleteSchedule(原来直接返回success,现在返回json)
+        [HttpPost]
+        public ActionResult Ajax_DeleteSchedule(int id)
+        {
+            var item = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_System_Id == user.DefaultSystemId)
+                {
+                    _offlineDB.Off_Checkin_Schedule.Remove(item);
+                    _offlineDB.SaveChanges();
+                    return Json(new { data = "SUCCESS" });
+                }
+                else
+                    return Json(new { data = "UNAUTHORIZED" });
+            }
+            else
+                return Json(new { data = "FAIL" });
+        }
+
+        // Origin: Off_Add_Schedule
+        public ActionResult AddSchedule()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var storesystem = from m in _offlineDB.Off_Store
+                              where m.Off_System_Id == user.DefaultSystemId
+                              group m by m.StoreSystem into g
+                              orderby g.Key
+                              select new { Key = g.Key, Value = g.Key };
+            var TemplateList = from m in _offlineDB.Off_Sales_Template
+                               where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
+                               orderby m.TemplateName
+                               select new { Key = m.Id, Value = m.TemplateName };
+            ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
+            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+            return View();
+        }
+        [HttpPost]
+        public ActionResult AddSchedule(FormCollection form)
+        {
+            StoreSchedule_ViewModel model = new StoreSchedule_ViewModel();
+            if (TryUpdateModel(model))
+            {
+                if (ModelState.IsValid)
+                {
+                    if (model.StartDate > model.EndDate)
+                    {
+                        var storesystem = from m in _offlineDB.Off_Store
+                                          group m by m.StoreSystem into g
+                                          orderby g.Key
+                                          select new { Key = g.Key, Value = g.Key };
+                        ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                        ModelState.AddModelError("", "开始日期不得大于结束日期");
+                        return View(model);
+                    }
+                    if (form["StoreList"].ToString().Trim() == "")
+                    {
+                        var storesystem = from m in _offlineDB.Off_Store
+                                          group m by m.StoreSystem into g
+                                          orderby g.Key
+                                          select new { Key = g.Key, Value = g.Key };
+                        ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                        ModelState.AddModelError("", "请至少选择一个店铺");
+                        return View(model);
+                    }
+                    var datelength = Convert.ToInt32(model.EndDate.Subtract(model.StartDate).TotalDays);
+                    // 每天循环
+                    for (int i = 0; i <= datelength; i++)
+                    {
+                        var user = UserManager.FindById(User.Identity.GetUserId());
+                        string[] storelist = form["StoreList"].ToString().Split(',');
+                        for (int j = 0; j < storelist.Length; j++)
+                        {
+                            string[] begintime = model.BeginTime.Split(':');
+                            string[] finishtime = model.FinishTime.Split(':');
+                            int year = model.StartDate.AddDays(i).Year;
+                            int month = model.StartDate.AddDays(i).Month;
+                            int day = model.StartDate.AddDays(i).Day;
+                            int storeid = Convert.ToInt32(storelist[j]);
+                            DateTime subscribe = model.StartDate.AddDays(i);
+                            var schedule = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Off_Store_Id == storeid && m.Subscribe == subscribe);
+                            if (schedule == null)
+                            {
+                                schedule = new Off_Checkin_Schedule()
+                                {
+                                    Off_Store_Id = storeid,
+                                    Subscribe = subscribe,
+                                    Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
+                                    Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
+                                    Standard_Salary = model.Salary,
+                                    TemplateId = model.TemplateId,
+                                    Off_System_Id = user.DefaultSystemId
+                                };
+                                _offlineDB.Off_Checkin_Schedule.Add(schedule);
+                            }
+                            else
+                            {
+                                schedule.Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0);
+                                schedule.Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0);
+                                schedule.Standard_Salary = model.Salary;
+                                schedule.TemplateId = model.TemplateId;
+                                _offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
+                            }
+                        }
+                    }
+                    _offlineDB.SaveChanges();
+                    return RedirectToAction("ScheduleList");
+                }
+                else
+                {
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    var storesystem = from m in _offlineDB.Off_Store
+                                      group m by m.StoreSystem into g
+                                      orderby g.Key
+                                      select new { Key = g.Key, Value = g.Key };
+                    ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                    var TemplateList = from m in _offlineDB.Off_Sales_Template
+                                       where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
+                                       orderby m.TemplateName
+                                       select new { Key = m.Id, Value = m.TemplateName };
+                    ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
+                    return View(model);
+                }
+            }
+            return RedirectToAction("ScheduleList");
+        }
+
+        // Origin: Off_Schedule_Statistic_Ajax
+        // 0407 活动数据AJAX
+        [HttpPost]
+        public JsonResult ScheduleStatisticAjax(string datetime)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime targetDate = Convert.ToDateTime(datetime);
+            var schedulelist = from m in _offlineDB.Off_Checkin_Schedule
+                               where m.Subscribe == targetDate && m.Off_System_Id == user.DefaultSystemId
+                               select m;
+            int self = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && !m.Proxy));
+            int proxy = schedulelist.Count(g => g.Off_Checkin.Any(m => m.Status >= 3 && m.Proxy));
+            int rest = schedulelist.Count() - self - proxy;
+            return Json(new { result = "SUCCESS", totalcount = schedulelist.Count(), selfcount = self, proxycount = proxy, restcount = rest });
+        }
+
+        // Origin: Off_EventDetails_Delete_batch
+        [HttpPost]
+        public JsonResult DeleteScheduleBatchAjax(string ids)
+        {
+            try
+            {
+                string sql = "DELETE FROM Off_Checkin_Schedule Where Id in (" + ids + ")";
+                //string sql = "UPDATE Off_Store SET (Region = '" + modify_area + "') where Id in (" + ids + ")";
+                _offlineDB.Database.ExecuteSqlCommand(sql);
+                _offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        // Origin: Off_EventDetails_ModifyInfo_batch
+        [HttpPost]
+        public JsonResult EditScheduleBatchAjax(string ids, string starttime, string finishtime, decimal salary, string date)
+        {
+            try
+            {
+                string sql = "UPDATE Off_Checkin_Schedule SET Standard_CheckIn = '" + date + " " + starttime + "', Standard_CheckOut='" + date + " " + finishtime + "', Standard_Salary=" + salary + " where Id in (" + ids + ")";
+                _offlineDB.Database.ExecuteSqlCommand(sql);
+                _offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        // 0407 活动统计页面
+        // Origin: Off_Schedule_Statisic
+        public ActionResult ScheduleStatistic(string datetime)
+        {
+            ViewBag.CurrentDate = datetime;
+            return View();
         }
     }
 }

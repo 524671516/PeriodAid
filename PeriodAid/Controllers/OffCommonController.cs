@@ -86,6 +86,17 @@ namespace PeriodAid.Controllers
                     props[i].SetValue(model, settingitem.SettingValue);
                 }
             }
+            OfflineSales offdb = new OfflineSales();
+            List<int> systemlistid = new List<int>();
+            string[] temp = user.OffSalesSystem.Split(',');
+            foreach (var item in temp)
+            {
+                systemlistid.Add(Convert.ToInt32(item));
+            }
+            var systemlist = from m in offdb.Off_System
+                             where systemlistid.Contains(m.Id)
+                             select m;
+            ViewBag.SystemList = systemlist;
             return View(model);
         }
         [Authorize(Roles = "Admin")]
@@ -144,6 +155,18 @@ namespace PeriodAid.Controllers
                               group m by m.StoreSystem into g
                               select g.Key;
             return Json(new { storesystem = storesystem });
+        }
+
+        // Origin: Off_Add_Schedule_StoreList
+        [HttpPost]
+        public JsonResult StoreListAjax(string storesystem)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in _offlineDB.Off_Store
+                       where m.StoreSystem == storesystem && m.Off_System_Id == user.DefaultSystemId
+                       orderby m.StoreName
+                       select new { ID = m.Id, StoreName = m.StoreName };
+            return Json(new { StoreList = list });
         }
     }
 }

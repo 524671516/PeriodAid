@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>线下销售系统</title>
+
+    <script src="~/Scripts/respond.min.js"></script>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
@@ -14,6 +16,10 @@
     @Scripts.Render("~/bundles/bootstrap")
     <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
     <script src="~/Scripts/jquery-ui.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="~/Scripts/html5.js"></script>
+    <script src="~/Scripts/respond.min.js"></script>
+    <![endif]-->
     @RenderSection("header", required:false)
 </head>
 <body class="reset">
@@ -98,9 +104,8 @@
                         <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/OffSales/DailySalesIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;查看日报表</a></li>
-                                    <li class="left-navbar"><a href="/OffSales/MonthSalesList"><i class="fa fa-search"></i>&nbsp;&nbsp;查看月报表</a></li>
-                                    <li class="left-navbar"><a href="/OffSales/ScheduleList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看活动记录</a></li>
+                                    <li class="left-navbar"><a href="/OffSales/DailySalesIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;日销售数据</a></li>
+                                    <li class="left-navbar"><a href="/OffSales/MonthSalesList"><i class="fa fa-search"></i>&nbsp;&nbsp;月销售数据</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -142,15 +147,16 @@
                         <div class="panel-heading" role="tab" id="headingFive">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                    销售确认 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingFive"></i>
+                                    促销管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingFive"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-search"></i>&nbsp;&nbsp;</a>@Html.ActionLink("查询促销记录", "QueryCheckin", "OffCheckin")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-check"></i>&nbsp;&nbsp;</a>@Html.ActionLink("确认促销", "CheckinList", "OffCheckin")</li>
+                                    <li class="left-navbar"><a href="/OffCheckin/ScheduleList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看活动记录</a></li>
+                                    <li class="left-navbar"><a href="/OffCheckin/CheckinList"><i class="fa fa-check"></i>&nbsp;&nbsp;确认促销</a></li>
+                                    <li class="left-navbar"><a href="/OffCheckin/QueryCheckin"><i class="fa fa-search"></i>&nbsp;&nbsp;查询促销记录</a></li>
                                     
                                 </ul>
                             </div>

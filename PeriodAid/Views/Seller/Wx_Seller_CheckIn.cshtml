@@ -39,7 +39,7 @@
             <div class="weui_cell_bd weui_cell_primary">
                 <p>@Html.Encode(ViewBag.NickName)</p>
             </div>
-            <div class="weui_cell_ft">@Model.Off_Checkin_Schedule.Off_Store.StoreName</div>
+            <div class="weui_cell_ft">@Html.Encode(ViewBag.StoreName)</div>
         </div>
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
@@ -319,10 +319,12 @@
             }
         });
         $("#dialog_confirm_btn").click(function () {
-            $("#submit-btn").attr("disabled", "disabled").addClass("weui_btn_disabled");
             $("#dialog_confirm").hide();
+            $("#submit-btn").text("提交中...").prop("disabled", true).addClass("weui_btn_disabled");
             $("#loadingToast").show();
-            $("form").submit();
+            setTimeout(function () {
+                $("form").submit();
+            }, 2000);
         });
 
         function cell_success(cellname, text) {

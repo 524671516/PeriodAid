@@ -140,7 +140,7 @@
         });
         $("[name='isMultiple'][type='checkbox']").bootstrapSwitch();
         $.ajax({
-            url: "/OfflineSales/Off_DailyInfo_Add_ProductList",
+            url: "/OffSales/DailySalesAllProductAjax",
             type: "post",
             success: function (data) {
                 if (data.result == "SUCCESS") {
