@@ -7,8 +7,9 @@
 
     <ul class="nav navbar-nav navbar-right">
         <li>
-            @Html.ActionLink("你好，" + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+            <a><span class="fa fa-user fa-2x"></span>&nbsp;&nbsp;@Html.Encode(User.Identity.GetUserName())</a>
         </li>
+        <li><a href="/OffCommon/AccountSetting">设置</a></li>
         <li><a href="javascript:document.getElementById('logoutForm').submit()">注销</a></li>
     </ul>
     }

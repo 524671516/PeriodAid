@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "ViewScheduleDetails";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
-    ViewBag.Current = "headingTwo";
+    ViewBag.Current = "headingFive";
 }
 <table class="offline-search-box">
     <tr>
@@ -14,7 +14,7 @@
 </table>
 <div class="container">
     <ul class="list-inline list-unstyled row">
-        <li><a class="btn btn-info btn-sm" href="/OffSales/AddSchedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a></li>
+        <li><a class="btn btn-info btn-sm" href="/OffCheckin/AddSchedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a></li>
         <li><a class="btn btn-danger btn-sm" id="offsalesschedule-batchdelete">删除信息</a></li>
         <li><a class="btn btn-warning btn-sm" id="offsalesschedule-batchedit">修改时间及工资</a></li>
     </ul>
@@ -56,7 +56,7 @@
 <script>
     $(function () {
         $.ajax({
-            url: "/OffSales/ViewScheduleDetailsPartial",
+            url: "/OffCheckin/ViewScheduleDetailsPartial",
             data: {
                 date:$("#offsalesschedule-current-date").val()
             },
@@ -69,7 +69,7 @@
     $("#offsalesschedule-search-btn").click(function () {
         var query = $("#offsalesschedule-search-query").val();
         $.ajax({
-            url: "/OffSales/ViewScheduleDetailsPartial",
+            url: "/OffCheckin/ViewScheduleDetailsPartial",
             data: {
                 date: $("#offsalesschedule-current-date").val(),
                 query: query
@@ -82,8 +82,8 @@
     });
     //批量删除
     $("#offsalesschedule-batchdelete").click(function () {
-        var url = "/OffSales/DeleteScheduleBatchAjax"
-        var link_url = "/OffSales/ViewScheduleDetailsPartial"
+        var url = "/OffCheckin/DeleteScheduleBatchAjax"
+        var link_url = "/OffCheckin/ViewScheduleDetailsPartial"
         var $list = $("#offsalesschedule-list")
         // 判断是否至少选择一项
         var checkedNum = $("input[name='subChk']:checked").length;
@@ -159,7 +159,7 @@
     });
     $(".check-sure").click(function () {
         if (confirm("确认要修改所选门店的相关信息吗？")) {
-            var link_url = "/OffSales/EditScheduleBatchAjax";
+            var link_url = "/OffCheckin/EditScheduleBatchAjax";
             var checkedList = new Array();
             $("input[name='subChk']:checked").each(function () {
                 checkedList.push($(this).val());
@@ -182,7 +182,7 @@
                     if (data.result == "SUCCESS") {
                         $("#offsalesschedule-modal-batchedit").modal('hide');
                         var attr = $.getUrlParam("date");
-                        window.location = "/OffSales/ViewScheduleDetails?date=" + attr;
+                        window.location = "/OffCheckin/ViewScheduleDetails?date=" + attr;
                     }
                 }
             })

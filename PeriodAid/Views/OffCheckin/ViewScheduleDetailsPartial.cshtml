@@ -56,7 +56,7 @@
                 @Html.ActionLink("编辑", "EditSchedulePartial", new { Id = item.Id }, new { @class = "btn btn-info btn-xs offsales-schedule-edit" })
                 @if (item.Off_Checkin.Count(m => m.Status >= 0) == 0)
                 {
-                    @Html.ActionLink("手工数据", "Off_CreateCheckIn", new { scheduleId = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                    @Html.ActionLink("补充数据", "CreateCheckin", new { id = item.Id }, new { @class = "btn btn-primary btn-xs" })
                 }
                 @Html.ActionLink("删除", "Ajax_DeleteSchedule", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs offsales-schedule-del"})
             </td>
@@ -106,7 +106,7 @@
                     if (data.data == "SUCCESS") {
                         setTimeout(function () {
                             $.ajax({
-                                url: "/OffSales/ViewScheduleDetailsPartial",
+                                url: "/OffCheckin/ViewScheduleDetailsPartial",
                                 data: {
                                     date: $("#offsalesschedule-current-date").val()
                                 },

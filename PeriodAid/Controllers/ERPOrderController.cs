@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 using PagedList;
 using System.Data.OleDb;
 using System.Data;
+using PeriodAid.Filters;
 
 namespace PeriodAid.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [SettingFilter(SettingName = "ERP")]
     public class ERPOrderController : Controller
     {
         //OfflineSales offlineDB = new OfflineSales();
@@ -180,9 +182,9 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in erpdb.generic_data
-                           where m.storename == storename
-                           orderby m.date descending
-                           select m).ToPagedList(_page, 20);
+                            where m.storename == storename
+                            orderby m.date descending
+                            select m).ToPagedList(_page, 20);
                 return PartialView(list);
             }
         }
@@ -194,7 +196,7 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Create_GenericData(generic_data model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 generic_data item = new generic_data();
                 if (TryUpdateModel(item))
@@ -434,7 +436,7 @@ namespace PeriodAid.Controllers
                     DateTime sd = Convert.ToDateTime(startdate);
                     DateTime ed = Convert.ToDateTime(enddate);
                     var list = from m in erpdb.product_details
-                               where m.storename == storename && m.date >= sd && m.date <= ed && m.item_code== itemcode
+                               where m.storename == storename && m.date >= sd && m.date <= ed && m.item_code == itemcode
                                orderby m.date
                                select m;
                     return Json(new { result = "SUCCESS", data = list });
@@ -582,7 +584,7 @@ namespace PeriodAid.Controllers
 
             }
 
-            
+
         }
         public ActionResult createorder()
         {
@@ -602,11 +604,11 @@ namespace PeriodAid.Controllers
                 receiver_province = "上海",
                 receiver_city = "上海市",
                 receiver_district = "虹口区",
-                receiver_zip="200081",
+                receiver_zip = "200081",
                 details = new List<ERPCustomOrder_details>()
             };
             order.details.Add(d1);
-            ERPOrderUtilities util =new  ERPOrderUtilities();
+            ERPOrderUtilities util = new ERPOrderUtilities();
             //ERPCustomOrder o = new ERPCustomOrder();
             return Content(util.createOrder(order));
         }
@@ -688,12 +690,12 @@ namespace PeriodAid.Controllers
                             product_details details = new product_details()
                             {
                                 storename = storename,
-                            date = date,
-                            item_code = item_code,
-                            simple_name = dr["商品简称"].ToString(),
-                            sales_count = Convert.ToInt32(ExcelOperation.ConvertInt(dr, "销售数量")),
-                            sales_amount = Convert.ToDecimal(dr["销售金额"])
-                        };
+                                date = date,
+                                item_code = item_code,
+                                simple_name = dr["商品简称"].ToString(),
+                                sales_count = Convert.ToInt32(ExcelOperation.ConvertInt(dr, "销售数量")),
+                                sales_amount = Convert.ToDecimal(dr["销售金额"])
+                            };
                             erpdb.product_details.Add(details);
                             messageList.Add(new Excel_DataMessage(i, "数据添加成功", false));
                         }

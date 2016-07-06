@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "ScheduleList";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
-    ViewBag.Current = "headingTwo";
+    ViewBag.Current = "headingFive";
 }
 <div class="container">
     <ul class="nav nav-tabs row">
@@ -12,7 +12,7 @@
 </div><br />
 <div class="container">
     <ul class="list-inline list-unstyled row">
-        <li><a class="btn btn-info btn-sm" href="/OffSales/AddSchedule" id="offsales-add-schedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a></li>
+        <li><a class="btn btn-info btn-sm" href="/OffCheckin/AddSchedule" id="offsales-add-schedule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动预约</a></li>
     </ul>
 </div>
 <div id="offsales-list-schedule">
@@ -21,7 +21,7 @@
 <script>
     $(function () {
         $.ajax({
-            url: "/OffSales/ScheduleListPartial",
+            url: "/OffCheckin/ScheduleListPartial",
             success: function (data) {
                 $("#offsales-list-schedule").html(data)
             }
@@ -32,7 +32,7 @@
         $(this).parent("li").addClass("active").siblings().removeClass("active");
         $("#offsales-label-status").val($(button).attr("data-rel"));
         $.ajax({
-            url: "/OffSales/ScheduleListPartial?history=" + $("#offsales-label-status").val(),
+            url: "/OffCheckin/ScheduleListPartial?history=" + $("#offsales-label-status").val(),
             success: function (data) {
                 $("#offsales-list-schedule").html(data);
             }

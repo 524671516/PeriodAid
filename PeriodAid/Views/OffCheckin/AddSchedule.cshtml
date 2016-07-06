@@ -3,9 +3,9 @@
 @{
     ViewBag.Title = "AddSchedule";
     Layout = "~/Views/Shared/_OffLayout.cshtml";
-    ViewBag.Current = "headingTwo";
+    ViewBag.Current = "headingFive";
 }
-@using (Html.BeginForm("AddSchedule", "OffSales", FormMethod.Post, new { @id = "offsales-schedule-form" }))
+@using (Html.BeginForm("AddSchedule", "OffCheckin", FormMethod.Post, new { @id = "offsales-schedule-form" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -43,3 +43,22 @@
         </div>
     </row>
 }
+<script>
+    $(function () {
+        $("#StoreSystem").change(function () {
+            $.ajax({
+                url: "/OffCommon/StoreListAjax",
+                type: "post",
+                data: {
+                    storesystem: $("#StoreSystem").val()
+                },
+                success: function (data) {
+                    $("#StoreList").html("");
+                    for (var i = 0; i < data.StoreList.length; i++) {
+                        $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                    }
+                }
+            })
+        });
+    });
+</script>

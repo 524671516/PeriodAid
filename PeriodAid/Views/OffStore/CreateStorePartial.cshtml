@@ -23,11 +23,8 @@
         <div class="form-group">
             <label class="control-label col-md-3">区域</label>
             <div class="col-md-9">
-                <select class="form-control" data-val="true" data-val-length="字段 Region 必须是最大长度为 20 的字符串。" data-val-length-max="20" id="Region" name="Region">
-                    <option value="">- 请选择区域 -</option>
-                    <option value="华东">华东</option>
-                    <option value="外区">外区</option>
-                </select>
+                @Html.DropDownListFor(model => model.Region, ViewBag.Regionlist as SelectList, "- 请选择区域 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Region, "", new { @class = "text-danger" })
             </div>
         </div>
 

@@ -3,7 +3,7 @@
 <div class="container">
     @foreach (var item in Model.ProductList)
     {
-        if (Model.Storage_Required && Model.Amount_Requried)
+        if (Model.StorageRequired && Model.AmountRequried)
         {
             <div class="row offsales_item">
                 <div class="col-xs-4 offsales_title">@Html.Encode(item.SimpleName)</div>
@@ -12,7 +12,7 @@
                 <input class="col-xs-3 offsales_input" type="number" placeholder="销售额" name="amount_@item.ProductId" id="amount_@item.ProductId" value="@item.SalesAmount"/>
             </div>
         }
-        else if (Model.Storage_Required)
+        else if (Model.StorageRequired)
         {
             <div class="row offsales_item">
                 <div class="col-xs-4 offsales_title">@Html.Encode(item.SimpleName)</div>
@@ -21,7 +21,7 @@
                 <input class="offsales_input hidden" type="hidden" placeholder="销售额" name="amount_@item.ProductId" id="amount_@item.ProductId" value="@item.SalesAmount" />
             </div>
         }
-        else if (Model.Amount_Requried)
+        else if (Model.AmountRequried)
         {
             <div class="row offsales_item">
                 <div class="col-xs-4 offsales_title">@Html.Encode(item.SimpleName)</div>

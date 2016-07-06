@@ -1,0 +1,196 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+@{
+    ViewBag.Title = "Off_CreateCheckIn";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m=>m.Id)
+    @Html.HiddenFor(m=>m.Off_Schedule_Id)
+    @Html.HiddenFor(m=>m.Status)
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>店铺名称</small></div>
+                    <input type="text" class="input-sm form-control" value="@Html.Encode(ViewBag.StoreName)" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>促销时间</small></div>
+                    <input type="text" class="input-sm form-control" value="@Html.Encode(ViewBag.Subscribe)" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>签到人</small></div>
+                    @Html.DropDownListFor(m => m.Off_Seller_Id, ViewBag.Sellerlist as SelectList, "- 请选择 -", new { @class = "form-control input-sm" })
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-6 h6"><b>签到图片</b></div>
+            <div class="col-md-6 h6"><b>签退图片</b></div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+                <div id="checkin-img-list"></div>
+                <a href="javascript:;" class="fileupload-btn text-center" id="checkin-btn"><i class="fa fa-plus"></i></a>
+                <input type="file" id="checkin-file" name="checkin-file" class="hidden" accept=".jpg,.png,.gif" />
+                @Html.HiddenFor(m => m.CheckinPhoto)
+            </div>
+            <div class="col-md-6">
+                <div id="checkout-img-list"></div>
+                <a href="javascript:;" class="fileupload-btn text-center" id="checkout-btn"><i class="fa fa-plus"></i></a>
+                <input type="file" id="checkout-file" name="checkout-file" class="hidden" accept=".jpg,.png,.gif" />
+                @Html.HiddenFor(m => m.CheckoutPhoto)
+            </div>
+        </div>
+        <br />
+        @{ 
+            Html.RenderAction("AddCheckinProductListPartial", new { Id = Model.Off_Schedule_Id });
+        }
+        <div class="row">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>备注</small></div>
+                    @Html.EditorFor(m => m.Confirm_Remark, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                </div>
+            </div>
+            <div class="col-md-3">
+
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12 h6">销量图片</div>
+            <div class="col-md-12">
+                <div id="report-img-list"></div>
+                <a href="javascript:;" class="fileupload-btn text-center" id="reportimg-btn"><i class="fa fa-plus"></i></a>
+                <input type="file" id="report-file" name="report-file" class="hidden" accept=".jpg,.png,.gif" />
+                @Html.HiddenFor(m => m.Rep_Image)
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="提交" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">查看图片</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+                <img id="img-view" href="#" class="img-thumbnail img-responsive" />
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+@section scripts{
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(document).delegate("#checkin-file", "change", function () {
+                ajaxFileUpload("CheckinPhoto", "checkin-img-list", "checkin-file");
+            });
+            $(document).delegate("#checkout-file", "change", function () {
+                ajaxFileUpload("CheckoutPhoto", "checkout-img-list", "checkout-file");
+            });
+            $(document).delegate("#report-file", "change", function () {
+                Report_ajaxFileUpload();
+            });
+            $("#checkin-btn").click(function () {
+                $("#checkin-file").trigger("click");
+            });
+            $("#checkout-btn").click(function () {
+                $("#checkout-file").trigger("click");
+            });
+            $("#reportimg-btn").click(function () {
+                $("#report-file").trigger("click");
+            });
+            
+        })
+        function ajaxFileUpload(targetname,imglist,fileelment) {
+            $.ajaxFileUpload({
+                url: '/OffCheckin/UploadCheckinFileAjax', //用于文件上传的服务器端请求地址
+                type: 'post',
+                secureuri: false, //是否需要安全协议，一般设置为false
+                fileElementId: fileelment, //文件上传域的ID
+                dataType: 'json', //返回值类型 一般设置为json
+                success: function (data, status)  //服务器成功响应处理函数
+                {
+                    if (typeof (data.error) != 'undefined') {
+                        if (data.error != '') {
+                            alert(data.error);
+                        } else {
+                            alert("上传成功");
+                            $("#" + targetname).val(data.imgurl);
+                            $("#" + imglist).html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
+                            //alert(document.getElementById(fileelment).value);
+                        }
+                    }
+                },
+                error: function (data, status, e)//服务器响应失败处理函数
+                {
+                    alert(e);
+                }
+            });
+            return false;
+        };
+        function Report_ajaxFileUpload() {
+            $.ajaxFileUpload({
+                url: '/OffCheckin/UploadCheckinFileAjax', //用于文件上传的服务器端请求地址
+                type: 'post',
+                secureuri: false, //是否需要安全协议，一般设置为false
+                fileElementId: 'report-file', //文件上传域的ID
+                dataType: 'json', //返回值类型 一般设置为json
+                success: function (data, status)  //服务器成功响应处理函数
+                {
+                    if (typeof (data.error) != 'undefined') {
+                        if (data.error != '') {
+                            alert(data.error);
+                        } else {
+                            alert("上传成功");
+                            var filearray = new Array();
+                            if ($("#Rep_Image").val() != "") {
+                                filearray = $("#Rep_Image").val().trim().split(',');
+                            }
+                            filearray.push(data.imgurl);
+                            $("#Rep_Image").val(filearray);
+                            $("#report-img-list").html("");
+                            for (var item in filearray) {
+                                $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + filearray[item] + "')\"></div>");
+                            }
+                        }
+                    }
+                },
+                error: function (data, status, e)//服务器响应失败处理函数
+                {
+                    alert(e);
+                }
+            });
+            return false;
+        }
+        $(".img-list").click(function () {
+            var link_url = "//cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
+            $("#img-view").attr("src", link_url);
+            $('#myModal').modal();
+            return false;
+        });
+    </script>
+}

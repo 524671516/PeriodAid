@@ -73,18 +73,6 @@ namespace PeriodAid.Controllers
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
-            OfflineSales offdb = new OfflineSales();
-            List<int> systemlistid = new List<int>();
-            var user = UserManager.FindById(User.Identity.GetUserId());
-            string[] temp = user.OffSalesSystem.Split(',');
-            foreach(var item in temp)
-            {
-                systemlistid.Add(Convert.ToInt32(item));
-            }
-            var systemlist = from m in offdb.Off_System
-                             where systemlistid.Contains(m.Id)
-                             select m;
-            ViewBag.SystemList = systemlist;
             return View(model);
         }
         

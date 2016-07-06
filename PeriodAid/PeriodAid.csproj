@@ -709,15 +709,15 @@
     <Content Include="Views\OffSales\DailySalesProductListPartial.cshtml" />
     <Content Include="Views\OffSales\MonthSalesListPartial.cshtml" />
     <Content Include="Views\OffSales\EditMonthSalesPartial.cshtml" />
-    <Content Include="Views\OffSales\ScheduleListPartial.cshtml" />
-    <Content Include="Views\OffSales\ViewScheduleDetails.cshtml" />
-    <Content Include="Views\OffSales\EditSchedulePartial.cshtml" />
-    <Content Include="Views\OffSales\AddSchedule.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ViewScheduleDetails.cshtml" />
+    <Content Include="Views\OffCheckin\EditSchedulePartial.cshtml" />
+    <Content Include="Views\OffCheckin\AddSchedule.cshtml" />
     <Content Include="Views\OffSales\UploadDailySales.cshtml" />
     <Content Include="Views\OffSales\UploadMonthSales.cshtml" />
     <Content Include="Views\OffSales\UploadResult.cshtml" />
-    <Content Include="Views\OffSales\ScheduleList.cshtml" />
-    <Content Include="Views\OffSales\ViewScheduleDetailsPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleList.cshtml" />
+    <Content Include="Views\OffCheckin\ViewScheduleDetailsPartial.cshtml" />
     <Content Include="Views\OffSales\CreateSalesDailyPartial.cshtml" />
     <Content Include="Views\Shared\modal.cshtml" />
     <Content Include="Views\OffSales\CreateSalesMonthPartial.cshtml" />
@@ -767,12 +767,14 @@
     <Content Include="Views\OffCheckin\QueryCheckinPartial.cshtml" />
     <Content Include="Views\OffCheckin\ViewCheckinLBS.cshtml" />
     <Content Include="Views\Shared\AuthorizeError.cshtml" />
-    <Content Include="Views\OffSales\ScheduleStatistic.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleStatistic.cshtml" />
     <Content Include="Views\OffCommon\Index.cshtml" />
     <Content Include="Views\OffCommon\AccountSetting.cshtml" />
     <Content Include="Views\OffBonus\BonusList.cshtml" />
     <Content Include="Views\OffBonus\BonusListPartial.cshtml" />
     <Content Include="Views\OffManager\AddManagerArea.cshtml" />
+    <Content Include="Views\OffCheckin\CreateCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\AddCheckinProductListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

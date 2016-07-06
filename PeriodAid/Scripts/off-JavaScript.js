@@ -70,7 +70,7 @@
     };
     /*----end------*/
     /*--------------门店列表----------------*/
-    $.ajax({
+    /*$.ajax({
         url: "/OffSales/ScheduleStoreListAjax",
         type: "post",
         data: {
@@ -82,22 +82,8 @@
                 $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
             }
         }
-    });
-    $("#StoreSystem").change(function () {
-        $.ajax({
-            url: "/OffSales/ScheduleStoreListAjax",
-            type: "post",
-            data: {
-                storesystem: $("#StoreSystem").val()
-            },
-            success: function (data) {
-                $("#StoreList").html("");
-                for (var i = 0; i < data.StoreList.length; i++) {
-                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
-                }
-            }
-        })
-    });
+    });*/
+    
     /*----end------*/
     /*-----------区域销售图表-------------*/
     $(".offstatistic-storesystem-btn").click(function () {
@@ -633,90 +619,7 @@
     }
     /*----end-----*/
     /*------活动记录表--------*/
-    $("#offsales-schedule-search").click(function () {
-        var url = "/OffSales/ScheduleStatisticAjax";
-        var datetime = $("#start-date").val();
-        $.ajax({
-            url: url,
-            type: "post",
-            data: {
-                datetime: datetime
-            },
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    $("#totalcount").text(data.totalcount);
-                    $("#totalcount").addClass("width", data.totalcount + "%");
-                    $("#totalcount").attr({
-                        "aria-valuenow": data.totalcount,
-                        "aria-valuemax": data.totalcount
-                    });
-                    $("#selfcount").text(data.selfcount);
-                    $("#selfcount").css("width", ((parseFloat(data.selfcount) / parseFloat(data.totalcount)) * 100 + "%"));
-                    $("#selfcount").attr({
-                        "aria-valuenow": data.selfcount,
-                        "aria-valuemax": data.totalcount
-                    });
-                    $("#proxycount").text(data.proxycount);
-                    $("#proxycount").css("width", ((parseFloat(data.proxycount) / parseFloat(data.totalcount)) * 100 + "%"));
-                    $("#proxycount").attr({
-                        "aria-valuenow": data.proxycount,
-                        "aria-valuemax": data.totalcount
-                    });
-                    $("#restcount").text(data.restcount);
-                    $("#restcount").css("width", ((parseFloat(data.restcount) / parseFloat(data.totalcount)) * 100 + "%"));
-                    $("#restcount").attr({
-                        "aria-valuenow": data.restcount,
-                        "aria-valuemax": data.totalcount
-                    });
-                    $("#rate").val(((data.selfcount / data.totalcount) * 100).toFixed(2) + "%");
-                    $("#myChart_Pie").highcharts({
-                        chart: {
-                            plotBackgroundColor: null,
-                            plotBorderWidth: null,
-                            plotShadow: false
-                        },
-                        title: {
-                            text: '活动签到数据饼状图'
-                        },
-                        tooltip: {
-                            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                        },
-                        plotOptions: {
-                            pie: {
-                                allowPointSelect: true,
-                                cursor: 'pointer',
-                                dataLabels: {
-                                    enabled: false
-                                },
-                                showInLegend: true
-                            }
-                        },
-                        series: [{
-                            type: 'pie',
-                            name: '活动签到',
-                            data: [
-                                {
-                                    name: '签到',
-                                    y: data.selfcount,
-                                    color: "#d9534f"
-                                },
-                                {
-                                    name: '代签到',
-                                    y: data.proxycount,
-                                    color: "#f0ad4e"
-                                },
-                                {
-                                    name: '其他',
-                                    y: data.restcount,
-                                    color: "#5bc0de"
-                                }]
-                        }]
-                    });
-                }
-            }
-        })
-        return false
-    });
+    
     /*----end------*/
     
 });

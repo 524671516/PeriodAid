@@ -489,6 +489,7 @@ namespace PeriodAid.Controllers
                 if (item.Subscribe == today && item.Off_Store_Id == storeId)
                 {
                     var checkitem = offlineDB.Off_Checkin.SingleOrDefault(m => m.Off_Schedule_Id == item.Id && m.Off_Seller_Id == SellerId && m.Status != -1);
+                    ViewBag.StoreName = item.Off_Store.StoreName;
                     if (checkitem != null)
                     {
                         return View(checkitem);
@@ -517,11 +518,24 @@ namespace PeriodAid.Controllers
             {
                 try
                 {
-                    checkin.CheckinTime = DateTime.Now;
-                    checkin.Status = 1;
-                    offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return RedirectToAction("Wx_Seller_Home");
+                    if (checkin.Status == 1)
+                    {
+                        checkin.CheckinTime = DateTime.Now;
+                        checkin.Status = 1;
+                        offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                        //offlineDB.Off_Checkin.Add(checkin);
+                        offlineDB.SaveChanges();
+                        return RedirectToAction("Wx_Seller_Home");
+                    }
+                    else
+                    {
+                        checkin.CheckinTime = DateTime.Now;
+                        checkin.Status = 1;
+                        //offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                        offlineDB.Off_Checkin.Add(checkin);
+                        offlineDB.SaveChanges();
+                        return RedirectToAction("Wx_Seller_Home");
+                    }
                 }
                 catch
                 {
@@ -997,21 +1011,32 @@ namespace PeriodAid.Controllers
             var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId);
             if (Seller != null)
             {
-                List<Object> banklist = new List<object>();
-                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
-                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
-                Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var banklistArray = offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
                 {
-                    CardName = Seller.CardName,
-                    CardNo = Seller.CardNo,
-                    Id = Seller.Id,
-                    IdNumber = Seller.IdNumber,
-                    Name = Seller.Name,
-                    Mobile = Seller.Mobile,
-                    AccountName = Seller.AccountName,
-                    AccountSource = Seller.AccountSource
-                };
-                return View(model);
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                    {
+                        CardName = Seller.CardName,
+                        CardNo = Seller.CardNo,
+                        Id = Seller.Id,
+                        IdNumber = Seller.IdNumber,
+                        Name = Seller.Name,
+                        Mobile = Seller.Mobile,
+                        AccountName = Seller.AccountName,
+                        AccountSource = Seller.AccountSource
+                    };
+                    return View(model);
+                }
+                else
+                    return View("Error");
             }
             return View("Error");
         }
@@ -1043,10 +1068,21 @@ namespace PeriodAid.Controllers
             else
             {
                 ModelState.AddModelError("", "错误");
-                List<Object> banklist = new List<object>();
-                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
-                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
-                return View(model);
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var banklistArray = offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
+                {
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    return View(model);
+                }
+                else
+                    return View("Error");
             }
         }
 
@@ -2595,21 +2631,31 @@ namespace PeriodAid.Controllers
             var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == sellerid && m.Off_System_Id == user.DefaultSystemId);
             if (Seller != null)
             {
-                List<Object> banklist = new List<object>();
-                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
-                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
-                Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                var banklistArray = offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
                 {
-                    CardName = Seller.CardName,
-                    CardNo = Seller.CardNo,
-                    Id = Seller.Id,
-                    IdNumber = Seller.IdNumber,
-                    Name = Seller.Name,
-                    Mobile = Seller.Mobile,
-                    AccountName = Seller.AccountName,
-                    AccountSource = Seller.AccountSource
-                };
-                return View(model);
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                    {
+                        CardName = Seller.CardName,
+                        CardNo = Seller.CardNo,
+                        Id = Seller.Id,
+                        IdNumber = Seller.IdNumber,
+                        Name = Seller.Name,
+                        Mobile = Seller.Mobile,
+                        AccountName = Seller.AccountName,
+                        AccountSource = Seller.AccountSource
+                    };
+                    return View(model);
+                }
+                else
+                    return View("Error");
             }
             return View("Error");
         }
@@ -2641,10 +2687,21 @@ namespace PeriodAid.Controllers
             else
             {
                 ModelState.AddModelError("", "错误");
-                List<Object> banklist = new List<object>();
-                banklist.Add(new { Key = "中国工商银行", Value = "中国工商银行" });
-                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
-                return View(model);
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var banklistArray = offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
+                {
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    return View(model);
+                }
+                else
+                    return View("Error");
             }
         }
     }
