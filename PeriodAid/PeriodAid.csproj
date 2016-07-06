@@ -290,6 +290,7 @@
     <Content Include="Content\images\guide-ex-07.jpg" />
     <Content Include="Content\images\guide-ex-08.jpg" />
     <Content Include="Content\images\hand.png" />
+    <Content Include="Content\images\i-f7-ios.png" />
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\logo_new.png" />
     <Content Include="Content\images\mark_0.png" />
@@ -342,10 +343,23 @@
     <Content Include="Content\PA-Site.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\weui.min.css" />
+    <Content Include="Content\framework7.ios.colors.min.css" />
+    <Content Include="Content\framework7.ios.min.css" />
+    <Content Include="Content\my-app.css" />
     <Content Include="DevelopmentPlan\201603.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\i-form-calendar-ios.svg" />
+    <Content Include="fonts\i-form-comment-ios.svg" />
+    <Content Include="fonts\i-form-email-ios.svg" />
+    <Content Include="fonts\i-form-gender-ios.svg" />
+    <Content Include="fonts\i-form-name-ios.svg" />
+    <Content Include="fonts\i-form-password-ios.svg" />
+    <Content Include="fonts\i-form-settings-ios.svg" />
+    <Content Include="fonts\i-form-tel-ios.svg" />
+    <Content Include="fonts\i-form-toggle-ios.svg" />
+    <Content Include="fonts\i-form-url-ios.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\ajaxfileupload.js" />
@@ -363,7 +377,9 @@
     <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\framework7.min.js" />
     <Content Include="Scripts\jedate.min.js" />
+    <Content Include="Scripts\my-app.js" />
     <Content Include="Scripts\off-JavaScript.js" />
     <Content Include="Scripts\jeDate-gh-pages\params.json" />
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
@@ -773,6 +789,13 @@
     <Content Include="Views\OffBonus\BonusList.cshtml" />
     <Content Include="Views\OffBonus\BonusListPartial.cshtml" />
     <Content Include="Views\OffManager\AddManagerArea.cshtml" />
+    <Content Include="Views\TempSeller\Index.cshtml" />
+    <Content Include="Views\TempSeller\About.cshtml" />
+    <Content Include="Views\TempSeller\Search.cshtml" />
+    <Content Include="Views\TempSeller\History.cshtml" />
+    <Content Include="Views\TempSeller\PersonalInformation.cshtml" />
+    <Content Include="Views\TempSeller\Refresh.cshtml" />
+    <Content Include="Views\TempSeller\InfiniteScroll.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -780,7 +803,6 @@
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Common\" />
     <Folder Include="Views\Sales\" />
-    <Folder Include="Views\TempSeller\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

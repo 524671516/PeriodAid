@@ -1,0 +1,28 @@
+.left-nav ul {
+    background-color: #111;
+    color: lightgrey;
+}
+.img-center {
+    margin: auto auto;
+    padding: 20px;
+    font-size:16px;
+    color:lightgray;
+}
+.img-sircle {
+    border-radius: 50%;
+}
+.img-box {
+    font-size: 72px;
+}
+.img-color-01 {
+    color: #0094ff;
+}
+.infinite-scroll-preloader {
+    margin-top: -20px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+    .infinite-scroll-preloader .preloader {
+        width: 34px;
+        height: 34px;
+    }  

@@ -17,5 +17,25 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public ActionResult History()
+        {
+            return View();
+        }
+        public ActionResult PersonalInformation()
+        {
+            return View();
+        }
+        public ActionResult Search()
+        {
+            return View();
+        }
+        public ActionResult Refresh()
+        {
+            return View();
+        }
+        public ActionResult InfiniteScroll()
+        {
+            return View();
+        }
     }
 }

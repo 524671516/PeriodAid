@@ -1,0 +1,153 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Index</title>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.colors.min.css" rel="stylesheet" />
+    <link href="~/Content/my-app.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="statusbar-overlay"></div>
+    <!-- Panels overlay-->
+    <div class="panel-overlay"></div>
+    <!-- Left panel with reveal effect-->
+    <div class="panel panel-left panel-reveal left-nav">
+        <div class="img-center">
+            <img src="~/Content/images/i-f7-ios.png" class="img-sircle" />&nbsp;&nbsp;
+            <span>Favorites</span>
+        </div>
+        <div class="list-block">
+            <div class="list-group">
+                <ul>
+                    <li class="item-content list-panel-all">
+                        <div class="item-media"><i class="fa fa-map-marker" aria-hidden="true"></i></div>&nbsp;&nbsp;&nbsp;
+                        <div class="item-inner">
+                            <div class="item-title">区域</div>
+                            <div class="item-after">大润发</div>
+                        </div>
+                    </li>
+                    <li class="item-content list-panel-favorites">
+                        <div class="item-media"><i class="fa fa-shopping-cart" aria-hidden="true"></i></div>&nbsp;&nbsp;
+                        <div class="item-inner">
+                            <div class="item-title">门店</div>
+                            <div class="item-after">江山店</div>
+                        </div>
+                    </li>
+                    <li class="item-content list-panel-favorites">
+                        <div class="item-media"><i class="fa fa-phone" aria-hidden="true"></i></div>&nbsp;&nbsp;
+                        <div class="item-inner">
+                            <div class="item-title">电话</div>
+                            <div class="item-after">010-0000000</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Views -->
+    <div class="views">
+        <div class="view view-main" data-page="index">
+            <!-- Top Navbar-->
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a href="/TempSeller/Search" class="link"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    </div>
+                    <div class="center sliding"><strong>暗促系统</strong></div>
+                    <div class="right">
+                        <a href="" class="link icon-only open-panel"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Page, "data-page" contains page name -->
+                <div data-page="index" class="page">
+                    <!-- Scrollable page content -->
+                    <div class="page-content">
+                        <div class="list-block">
+                            <div class="list-group">
+                                <ul>
+                                    <li class="list-block media-list">
+                                        <div class="item-content">
+                                            <div class="item-media img-box img-color-01">
+                                                <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title"><strong>本月工作汇报</strong></div>
+                                                <div class="item-text">日期：2016-07-05</div>
+                                                <div class="item-title-row">
+                                                    <div class="item-title">本月工作日：<span>22</span></div>
+                                                    <div class="item-after">已完成天数：<span>10</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="list-group">
+                                <ul>
+                                    <li class="list-group-title">今日完成</li>
+                                    <li>
+                                        <a href="/TempSeller/About" class="item-link item-content">
+                                            <div class="item-inner"><div class="item-title">每日任务</div></div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="list-group">
+                                <ul>
+                                    <li class="list-group-title">其他功能</li>
+                                    <li>
+                                        <a href="/TempSeller/History" class="item-link item-content">
+                                            <div class="item-inner"><div class="item-title">查看历史</div></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/TempSeller/PersonalInformation" class="item-link item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">完善信息</div>
+                                                <div class="item-after"><span class="badge bg-red">3</span></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/TempSeller/Refresh" class="item-link item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">下拉刷新</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/TempSeller/InfiniteScroll" class="item-link item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">无限循环</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="~/Scripts/framework7.min.js"></script>
+    <script src="~/Scripts/my-app.js"></script>
+</body>
+</html>

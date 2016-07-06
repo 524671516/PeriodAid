@@ -1,0 +1,55 @@
+﻿
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">搜索</div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="fa fa-bars" aria-hidden="true"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div data-page="search" class="page">
+        <!-- Search bar -->
+        <form data-search-list=".list-block-search" data-search-in=".item-title" class="searchbar searchbar-init">
+            <div class="searchbar-input">
+                <input type="search" placeholder="搜索"><a href="#" class="searchbar-clear"></a>
+            </div><a href="#" class="searchbar-cancel">取消</a>
+        </form>
+
+        <!-- Search bar overlay -->
+        <div class="searchbar-overlay"></div>
+
+        <div class="page-content">
+            <!-- This block will be displayed if nothing found -->
+            <div class="content-block searchbar-not-found">
+                <div class="content-block-inner">查询内容不存在</div>
+            </div>
+
+            <!-- This block will be displayed if anything found, and this list block is used a searbar target -->
+            <div class="list-block list-block-search searchbar-found">
+                <ul>
+                    <li>
+                        <a href="#" class="item-content item-link">
+                            <div class="item-inner">
+                                <div class="item-title">Acura </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">Audi</div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>          
