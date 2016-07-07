@@ -37,5 +37,21 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public ActionResult ManagerSystem()
+        {
+            return View();
+        }
+        public ActionResult ManagerSystem_Patrol()
+        {
+            return View();
+        }
+        public ActionResult ManagerSystem_Warning()
+        {
+            return View();
+        }
+        public ActionResult ManagerSystem_SellerDetails()
+        {
+            return View();
+        }
     }
 }

@@ -1,0 +1,116 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>ManagerSystem</title>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.colors.min.css" rel="stylesheet" />
+    <link href="~/Content/my-app.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="statusbar-overlay"></div>
+    <!-- Panels overlay-->
+    <div class="panel-overlay"></div>
+    <!-- Left panel with reveal effect-->
+    <div class="panel panel-left panel-reveal left-nav">
+        <div class="img-center">
+            <img src="~/Content/images/i-f7-ios.png" class="img-sircle" />&nbsp;&nbsp;
+            <span>Favorites</span>
+        </div>
+        <div class="list-block">
+            <div class="list-group">
+                <ul>
+                    <li class="item-content list-panel-favorites">
+                        <div class="item-media"><i class="fa fa-phone" aria-hidden="true"></i></div>&nbsp;&nbsp;
+                        <div class="item-inner">
+                            <div class="item-title">电话</div>
+                            <div class="item-after">010-0000000</div>
+                        </div>
+                    </li>
+                    <li class="item-content list-panel-all">
+                        <div class="item-media"><i class="fa fa-map-marker" aria-hidden="true"></i></div>&nbsp;&nbsp;&nbsp;
+                        <div class="item-inner">
+                            <div class="item-title">公司名称</div>
+                            <div class="item-after">上海寿全斋</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Views -->
+    <div class="views">
+        <div class="view view-main" data-page="index">
+            <!-- Top Navbar-->
+            <div class="navbar">
+                <div class="navbar-inner">
+                    @*<div class="left">
+                        <a href="/TempSeller/Search" class="link"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    </div>*@
+                    <div class="center sliding"><strong>督导管理</strong></div>
+                    <div class="right">
+                        <a href="" class="link icon-only open-panel"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Page, "data-page" contains page name -->
+                <div data-page="index" class="page">
+                    <!-- Scrollable page content -->
+                    <div class="page-content">
+                        <div class="list-block">
+                            <div class="list-group">
+                                <ul>
+                                    <li class="list-group-title">店铺巡查</li>
+                                    <li>
+                                        <a href="/TempSeller/Search" class="item-link item-content">
+                                            <div class="item-inner"><div class="item-title">暗促查询</div></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/TempSeller/ManagerSystem_Patrol" class="item-link item-content">
+                                            <div class="item-inner"><div class="item-title">库存查看</div></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/TempSeller/ManagerSystem_Warning" class="item-link item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">库存预警</div>
+                                                <div class="item-after"><span class="badge bg-red">3</span></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    @*<li>
+                                            <a href="/TempSeller/Refresh" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">下拉刷新</div>
+                                                </div>
+                                            </a>
+                                     </li>*@
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="~/Scripts/framework7.min.js"></script>
+    <script src="~/Scripts/my-app.js" charset="utf-8"></script>
+</body>
+</html>

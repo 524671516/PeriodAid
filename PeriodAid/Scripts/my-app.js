@@ -1,3 +1,4 @@
+ï»¿
 // Initialize your app
 // Initialize app
 var myApp = new Framework7();
@@ -10,26 +11,25 @@ var mainView = myApp.addView('.view-main', {
     // Because we want to use dynamic navbar, we need to enable it for this view:
     dynamicNavbar: true
 });
-
-//ÏÂÀ­Ë¢ĞÂ
+//ä¸‹æ‹‰åˆ·æ–°
 $$(document).on('pageInit', '.page[data-page="refresh"]', function (e) {
     var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
     var authors = ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'];
 
-    // ÏÂÀ­Ë¢ĞÂÒ³Ãæ
+    // ä¸‹æ‹‰åˆ·æ–°é¡µé¢
     var ptrContent = $$('.pull-to-refresh-content');
 
-    // Ìí¼Ó'refresh'¼àÌıÆ÷
+    // æ·»åŠ 'refresh'ç›‘å¬å™¨
     ptrContent.on('refresh', function (e) {
-        // Ä£Äâ2sµÄ¼ÓÔØ¹ı³Ì
+        // æ¨¡æ‹Ÿ2sçš„åŠ è½½è¿‡ç¨‹
         setTimeout(function () {
-            // Ëæ»úÍ¼Æ¬
+            // éšæœºå›¾ç‰‡
             var picURL = 'http://hhhhold.com/88/d/jpg?' + Math.round(Math.random() * 100);
-            // Ëæ»úÒôÀÖ
+            // éšæœºéŸ³ä¹
             var song = songs[Math.floor(Math.random() * songs.length)];
-            // Ëæ»ú×÷Õß
+            // éšæœºä½œè€…
             var author = authors[Math.floor(Math.random() * authors.length)];
-            // ÁĞ±íÔªËØµÄHTML×Ö·û´®
+            // åˆ—è¡¨å…ƒç´ çš„HTMLå­—ç¬¦ä¸²
             var itemHTML = '<li class="item-content">' +
                               '<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
                               '<div class="item-inner">' +
@@ -39,40 +39,104 @@ $$(document).on('pageInit', '.page[data-page="refresh"]', function (e) {
                                 '<div class="item-subtitle">' + author + '</div>' +
                               '</div>' +
                             '</li>';
-            // Ç°²åĞÂÁĞ±íÔªËØ
+            // å‰æ’æ–°åˆ—è¡¨å…ƒç´ 
             ptrContent.find('ul').prepend(itemHTML);
-            // ¼ÓÔØÍê±ÏĞèÒªÖØÖÃ
+            // åŠ è½½å®Œæ¯•éœ€è¦é‡ç½®
             myApp.pullToRefreshDone();
         }, 2000);
     });
 });
 //end
-//ÎŞÏŞÑ­»·
+//æ— é™å¾ªç¯
 $$(document).on('pageInit', '.page[data-page="infinitescroll"]', function (e) {
-    var loading = false;//¼ÓÔØflag
-    var lastIndex = $$(".list-block li").length;//ÉÏ´Î¼ÓÔØµÄĞòºÅ
-    var maxItem = 100;//×î´ó¿ÉÒÔÔö¼ÓµÄÌõÊı
-    var itemPerload = 10;//Ã¿´Î¿ÉÔö¼ÓµÄÌõÊı
+    var loading = false;//åŠ è½½flag
+    var lastIndex = $$(".list-card li").length;//ä¸Šæ¬¡åŠ è½½çš„åºå·
+    var maxItem = 30;//æœ€å¤§å¯ä»¥å¢åŠ çš„æ¡æ•°
+    var itemPerload = 10;//æ¯æ¬¡å¯å¢åŠ çš„æ¡æ•°
     $$(".infinite-scroll").on("infinite", function (e) {
         if (loading) return;
         loading = true;
         setTimeout(function () {
-            loading = false;//ÖØÖÃflag
+            loading = false;//é‡ç½®flag
             if (lastIndex >= maxItem) {
-                myApp.detachInfiniteScroll($$(".infinite-scroll"))//¹Ø±Õ¹ö¶¯
-                $$(".infinite-scroll-preloader").remove();//ÒÆ³ı¼ÓÔØ·û
+                myApp.detachInfiniteScroll($$(".infinite-scroll"))//å…³é—­æ»šåŠ¨
+                $$(".infinite-scroll-preloader").remove();//ç§»é™¤åŠ è½½ç¬¦
+                $$(".infinite-pre").removeClass("hidden");
                 return;
             };
-            //Éú³ÉĞÂµÄÌõÄ¿
-            //itemList = '';
-            //for (var i = lastIndex + 1; i <= lastIndex + itemPerload; i++) {
-            //    itemList += "";
-            //}
-            var itemList = "<li class='item-content'><div class='item-inner'><div class='item-title'>item list</div><div class='item-after'>2016-07-07</div></div></li>"
-            $$(".list-block ul").append(itemList);//Ìí¼Ó
-            lastIndex = $$(".list-block li").length//ĞÂµÄÌõÊı
+            //ç”Ÿæˆæ–°çš„æ¡ç›®
+            itemList = '';
+            for (var i = lastIndex + 1; i <= lastIndex + itemPerload; i++) {
+                itemList += "<li class='card'><div class='card-content demo-card-header-pic'><div style='background-image: url('../../Content/images/img_" + i + ".jpg');' class='card-header'></div><div class='card-content-inner'><p class='color-gray'>2016-07-06</p></div></div></li>";
+            };
+            $$(".list-card").append(itemList);//æ·»åŠ 
+            lastIndex = $$(".list-card li").length//æ–°çš„æ¡æ•°
         }, 1000)
-
     });
-
 });
+//history
+$$(document).on("pageInit", ".page[data-page='history']", function () {
+    //æ—¶é—´
+    var calendarDateFormat = myApp.calendar({
+        input: '#history-calender',
+        dateFormat: 'yyyy-mm-dd'
+    });
+    $$("#history-calender").on("change", function () {
+
+    })
+});
+//search
+$$(document).on("pageInit", ".page[data-page='search']", function () {
+    //æœç´¢ä¿ƒé”€å‘˜
+    var mySearchbar = myApp.searchbar('.searchbar', {
+        searchList: '.list-block-search',
+        searchIn: '.item-title'
+    });
+    //ä¿ƒé”€å‘˜è¯¦æƒ…
+    $$(".item-link").on("click", function () {
+        var $$btn = $$(this);
+    });
+});
+//ManagerSystem-Patrol
+$$(document).on("pageInit", ".page[data-page='managersystem-patrol']", function () {
+    //æ—¶é—´
+    var calendarDateFormat = myApp.calendar({
+        input: '#calendar-default',
+        dateFormat: 'yyyy-mm-dd'
+    });
+    //æ— é™å¾ªç¯
+    var loading = false;//åŠ è½½flag
+    var lastIndex = $$(".list-card li").length;//ä¸Šæ¬¡åŠ è½½çš„åºå·
+    var maxItem = 30;//æœ€å¤§å¯ä»¥å¢åŠ çš„æ¡æ•°
+    var itemPerload = 10;//æ¯æ¬¡å¯å¢åŠ çš„æ¡æ•°
+    $$(".infinite-scroll").on("infinite", function () {
+        if (loading) return;
+        loading = true;
+        setTimeout(function () {
+            loading = false;//é‡ç½®flag
+            if (lastIndex >= maxItem) {
+                myApp.detachInfiniteScroll($$(".manager-patrol-infinitescroll"))//å…³é—­æ»šåŠ¨
+                $$(".infinite-scroll-preloader").remove();//ç§»é™¤åŠ è½½ç¬¦
+                $$(".infinite-pre").removeClass("hidden");
+                return;
+            };
+            //ç”Ÿæˆæ–°çš„æ¡ç›®
+            itemList = '';
+            for (var i = lastIndex + 1; i <= lastIndex + itemPerload; i++) {
+                itemList += "<li class='card'><div class='card-content demo-card-header-pic'><div style='background-image: url('../../Content/images/img_" + i + ".jpg');' class='card-header'></div><div class='card-footer'><span>å¤§æ¶¦å‘-æ±Ÿå±±åº—</span><span class='manager-patrol-date'>2016-07-07</span></div></div></li>";
+            };
+            $$(".list-card").append(itemList);//æ·»åŠ 
+            lastIndex = $$(".list-card li").length//æ–°çš„æ¡æ•°
+        }, 1000);
+    });
+    //æŸ¥è¯¢
+    $$("#calendar-default").on("change", function () {
+        var date = $$("#calendar-default").val();
+    });
+});
+//ManagerSystem_Warning
+$$(document).on("pageInit", ".page[data-page='managersystem-warning']", function () {
+    $$('.manager-warning-open').on('click', function () {
+        myApp.pickerModal('.picker-info')
+    });
+})
