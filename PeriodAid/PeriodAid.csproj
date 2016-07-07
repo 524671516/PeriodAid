@@ -215,6 +215,7 @@
     <Compile Include="Controllers\PeriodAidController.cs" />
     <Compile Include="Controllers\OffSalesController.cs" />
     <Compile Include="Controllers\SellerController.cs" />
+    <Compile Include="Controllers\SellerTaskController.cs" />
     <Compile Include="Controllers\TempSellerController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
@@ -806,6 +807,8 @@
     <Content Include="Views\TempSeller\ManagerSystem_Patrol.cshtml" />
     <Content Include="Views\TempSeller\ManagerSystem_Warning.cshtml" />
     <Content Include="Views\TempSeller\ManagerSystem_SellerDetails.cshtml" />
+    <Content Include="Views\SellerTask\Wx_Register.cshtml" />
+    <Content Include="Views\SellerTask\WxJSAppPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
