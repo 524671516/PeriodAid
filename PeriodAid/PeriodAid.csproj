@@ -265,6 +265,7 @@
     <Content Include="Content\example.css" />
     <Content Include="Content\font-awesome-ie7.min.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\images\img_1.jpg" />
     <Content Include="Content\images\benefits_flow_01.png" />
     <Content Include="Content\images\benefits_flow_02.png" />
     <Content Include="Content\images\benefits_flow_03.png" />
@@ -291,6 +292,7 @@
     <Content Include="Content\images\guide-ex-08.jpg" />
     <Content Include="Content\images\hand.png" />
     <Content Include="Content\images\i-f7-ios.png" />
+    <Content Include="Content\images\img_2.png" />
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\logo_new.png" />
     <Content Include="Content\images\mark_0.png" />
@@ -302,6 +304,7 @@
     <Content Include="Content\images\mark_6.png" />
     <Content Include="Content\images\mark_other.png" />
     <Content Include="Content\images\mark_wem.png" />
+    <Content Include="Content\images\img_3.jpg" />
     <Content Include="Content\images\new_huawei.jpg" />
     <Content Include="Content\images\new_sanxing.jpg" />
     <Content Include="Content\images\new_xiaomi.jpg" />
@@ -379,8 +382,8 @@
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
     <Content Include="Scripts\framework7.min.js" />
     <Content Include="Scripts\html5.js" />
-    <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\my-app.js" />
+    <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\off-JavaScript.js" />
     <Content Include="Scripts\jeDate-gh-pages\params.json" />
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
@@ -799,6 +802,10 @@
     <Content Include="Views\TempSeller\InfiniteScroll.cshtml" />
     <Content Include="Views\OffCheckin\CreateCheckin.cshtml" />
     <Content Include="Views\OffCheckin\AddCheckinProductListPartial.cshtml" />
+    <Content Include="Views\TempSeller\ManagerSystem.cshtml" />
+    <Content Include="Views\TempSeller\ManagerSystem_Patrol.cshtml" />
+    <Content Include="Views\TempSeller\ManagerSystem_Warning.cshtml" />
+    <Content Include="Views\TempSeller\ManagerSystem_SellerDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
