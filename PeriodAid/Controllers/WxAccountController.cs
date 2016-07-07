@@ -71,7 +71,7 @@ namespace PeriodAid.Controllers
                 }
                 string redirectUri = Url.Encode(redirectUrl);
                 string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
-                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + state + "#wechat_redirect";
+                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + _state + "#wechat_redirect";
 
                 return Redirect(url);
             }
