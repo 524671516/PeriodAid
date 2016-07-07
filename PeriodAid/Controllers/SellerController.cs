@@ -222,7 +222,8 @@ namespace PeriodAid.Controllers
                                     Off_System_Id = model.SystemId,
                                     Mobile = model.Mobile,
                                     NickName = model.NickName,
-                                    UserName = model.Mobile
+                                    UserName = model.Mobile, 
+                                    Type=1
                                 };
                                 offlineDB.Off_Membership_Bind.Add(ofb);
                                 await offlineDB.SaveChangesAsync();
@@ -373,7 +374,8 @@ namespace PeriodAid.Controllers
                     Mobile = user.UserName,
                     NickName = model.NickName,
                     UserName = user.UserName,
-                    Off_System_Id = model.Systemid
+                    Off_System_Id = model.Systemid, 
+                    Type=1
                 };
                 offlineDB.Off_Membership_Bind.Add(ofb);
                 await offlineDB.SaveChangesAsync();
@@ -468,6 +470,7 @@ namespace PeriodAid.Controllers
                 return View("Error");
             WeChatUtilities utilities = new WeChatUtilities();
             string _url = ViewBag.Url = Request.Url.ToString();
+
             ViewBag.AppId = utilities.getAppId();
             string _nonce = CommonUtilities.generateNonce();
             ViewBag.Nonce = _nonce;
