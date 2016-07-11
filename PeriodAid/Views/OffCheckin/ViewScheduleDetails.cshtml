@@ -6,6 +6,8 @@
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
+            <label>手工数据:</label>&nbsp;&nbsp;
+            <input type="checkbox" id="offchechin-manualbox" />&nbsp;&nbsp;&nbsp;
             <label>门店名称：</label>
             <input class="form-control input-sm offline-search-inline" id="offsalesschedule-search-query" placeholder="搜索内容" />
             <a class="btn btn-info btn-sm" id="offsalesschedule-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
@@ -72,7 +74,8 @@
             url: "/OffCheckin/ViewScheduleDetailsPartial",
             data: {
                 date: $("#offsalesschedule-current-date").val(),
-                query: query
+                query: query,
+                canceled: $("#offchechin-manualbox").prop("checked")
             },
             success: function (data) {
                 $("#offsalesschedule-list").html(data);

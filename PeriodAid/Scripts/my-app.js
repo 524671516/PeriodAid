@@ -411,3 +411,16 @@ function splitArray(value) {
     }
     return list;
 }
+//SellerTaskList
+$$(document).on("pageInit", ".page[data-page='sellertasklist]", function (e) {
+    alert("22")
+    $$(function () {
+        $$.ajax({
+            url: "/SellerTask/SellerTaskListPartial",
+            success: function (data) {
+                $$("#sellertask-list").html(data)
+            }
+        });
+        return false;
+    })
+});
