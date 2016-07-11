@@ -1,0 +1,89 @@
+﻿@model PeriodAid.Models.Off_SellerTask
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">每日任务</div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="fa fa-bars" aria-hidden="true"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div data-page="SellerReport" class="page">
+        <div class="page-content">
+            <form id="my-form">
+                <div class="content-block-title">库存报表</div>
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">红糖姜茶</div>
+                                    <div class="item-input">
+                                        <input type="text" name="" placeholder="红糖数量">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">黑糖姜茶</div>
+                                    <div class="item-input">
+                                        <input type="text" name="" placeholder="黑糖数量">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">柠檬姜茶</div>
+                                    <div class="item-input">
+                                        <input type="text" name="" placeholder="柠檬数量">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-block-title">上传照片</div>
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">上传照片</div>
+                                    <div class="item-after"><abbr id="current_image">0</abbr>/3</div>
+                                </div>
+                            </div>
+                            <div class="item-content" id="photo-list">
+                                <div class="item-inner">
+                                    <!--@Html.HiddenFor(m=>m.TaskPhotoList)-->
+                                    <input type="hidden" name="TaskPhotoList" id="TaskPhotoList" value="131087289102461432.jpg,131087289102461432.jpg"/>
+                                    <ul class="rep-imglist" id="sellerreport-imglist">
+                                        <li><div class="rep-imgitem" style="background:url('/Content/images/logo_new.png')"></div></li>
+                                        <li><div class="rep-imgitem" style="background:url('/Content/images/logo_new.png') "></div></li>
+                                        <li><div class="rep-imgitem" style="background:url('/Content/images/logo_new.png'); background-size:cover"></div></li>
+                                        <li><div class="rep-imgitem" style="background:url('/Content/images/logo_new.png') 50%"></div></li>
+                                        <li><a href="javascript:;" class="rep-imgitem" id="upload-btn"><i class="fa fa-plus"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+            <div class="content-block">
+                <a href="#" class="button button-big button-fill form-to-json">提交</a>
+            </div>
+        </div>
+    </div>
+</div>
+

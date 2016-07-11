@@ -166,7 +166,7 @@
             <div class="col-md-2">
                 <div class="input-group">
                     <div class="input-group-addon"><small>状态</small></div>
-                    <input type="text" class="input-sm form-control" value="@(PeriodAid.Models.ParseStatus.CheckInStatus(ViewBag.CheckItem.Status))" readonly />
+                    <input type="text" class="input-sm form-control" value="@(Html.CheckinStatus((int)ViewBag.CheckItem.Status))" readonly />
                 </div>
             </div>
             <div class="col-md-3">
@@ -178,7 +178,7 @@
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-addon"><small>确认人</small></div>
-                    <input type="text" class="input-sm form-control" value="@PeriodAid.Controllers.OfflineSalesController.getManagerNickName(ViewBag.CheckItem.ConfirmUser, ViewBag.SystemId)" readonly />
+                    <input type="text" class="input-sm form-control" value="@Html.ManagerNickName((string)ViewBag.CheckItem.ConfirmUser,(int)ViewBag.SystemId)" readonly />
                 </div>
             </div>
             <div class="col-md-4">
@@ -252,7 +252,7 @@
                     <div class="input-group">
                         <div class="input-group-addon"><small>考勤</small></div>
                         @Html.HiddenFor(m => m.AttendanceStatus)
-                        <input class="input-sm  form-control" value="@PeriodAid.Models.ParseStatus.AttendanceStatus(Model.AttendanceStatus)" readonly />
+                        <input class="input-sm  form-control" value="@Html.AttendanceStatus(Model.AttendanceStatus)" readonly />
                     </div>
                 </div>
                 <div class="col-md-2">

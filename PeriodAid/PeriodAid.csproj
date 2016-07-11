@@ -385,6 +385,7 @@
     <Content Include="Scripts\html5.js" />
     <Content Include="Scripts\my-app.js" />
     <Content Include="Scripts\jedate.min.js" />
+    <Content Include="Scripts\my-validate.js" />
     <Content Include="Scripts\off-JavaScript.js" />
     <Content Include="Scripts\jeDate-gh-pages\params.json" />
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
@@ -810,6 +811,11 @@
     <Content Include="Views\SellerTask\Wx_Register.cshtml" />
     <Content Include="Views\SellerTask\WxJSAppPartial.cshtml" />
     <Content Include="Views\SellerTask\Home.cshtml" />
+    <Content Include="Views\SellerTask\UserInfoPartial.cshtml" />
+    <Content Include="Views\SellerTask\UpdateAccountInfo.cshtml" />
+    <Content Include="Views\SellerTask\SellerReport.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskList.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

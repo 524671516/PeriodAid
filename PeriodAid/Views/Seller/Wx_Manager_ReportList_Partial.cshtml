@@ -20,7 +20,7 @@
                 <i class="fa fa-gift text-danger"></i> @Html.Encode(item.Bonus+"元")
             }
             </h4>
-            <p class="weui_media_desc"><i class="fa fa-user"></i>&nbsp;@Html.Encode(item.SellerName)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-history"></i>&nbsp;@Html.Encode(item.AVG_Total)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-tags"></i>&nbsp;@Html.Encode(item.Rep_Total)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-suitcase" aria-hidden="true"></i>&nbsp;@Html.Encode(PeriodAid.Models.ParseStatus.CheckInStatus(item.Status))</p>
+            <p class="weui_media_desc"><i class="fa fa-user"></i>&nbsp;@Html.Encode(item.SellerName)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-history"></i>&nbsp;@Html.Encode(item.AVG_Total)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-tags"></i>&nbsp;@Html.Encode(item.Rep_Total)&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-suitcase" aria-hidden="true"></i>&nbsp;@Html.Encode(Html.CheckinStatus(item.Status))</p>
         </div>
         }
     </div>

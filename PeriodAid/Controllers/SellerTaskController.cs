@@ -331,6 +331,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        
         public PartialViewResult WxJSAppPartial()
         {
             WeChatUtilities utilities = new WeChatUtilities();
@@ -342,6 +343,158 @@ namespace PeriodAid.Controllers
             ViewBag.TimeStamp = _timeStamp;
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return PartialView();
+        }
+        [HttpPost]
+        public ActionResult UserInfoPartial()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var binduser = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == user.UserName && m.Type == 2 && m.Off_System_Id == user.DefaultSystemId);
+            if (binduser != null)
+            {
+                ViewBag.ImgUrl = user.ImgUrl;
+                ViewBag.NickName = user.NickName;
+                return PartialView(binduser);
+            }
+            return Content("Error");
+        }
+
+        public ActionResult UpdateAccountInfo(int id)
+        {
+            
+            var Seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            if (Seller != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var banklistArray = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
+                {
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                    {
+                        CardName = Seller.CardName,
+                        CardNo = Seller.CardNo,
+                        Id = Seller.Id,
+                        IdNumber = Seller.IdNumber,
+                        Name = Seller.Name,
+                        Mobile = Seller.Mobile,
+                        AccountName = Seller.AccountName,
+                        AccountSource = Seller.AccountSource
+                    };
+                    return View(model);
+                }
+                else
+                    return View("Error");
+            }
+            return View("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult UpdateAccountInfo(Wx_SellerCreditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var item = new Wx_SellerCreditViewModel();
+                if (TryUpdateModel(item))
+                {
+                    var seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == item.Id);
+                    if (seller != null)
+                    {
+                        seller.IdNumber = item.IdNumber;
+                        seller.CardName = item.CardName;
+                        seller.CardNo = item.CardNo;
+                        seller.UploadUser = User.Identity.Name;
+                        seller.UploadTime = DateTime.Now;
+                        seller.AccountName = item.AccountName;
+                        seller.AccountSource = item.AccountSource;
+                        _offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                        _offlineDB.SaveChanges();
+                        return Content("SUCCESS");
+                    }
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var banklistArray = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
+                {
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    return View(model);
+                }
+                else
+                    return View("Error");
+            }
+        }
+
+        public ActionResult SellerReport(int id)
+        {
+            var seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            DateTime apply_date = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+            var item = _offlineDB.Off_SellerTask.SingleOrDefault(m => m.SellerId == id && m.ApplyDate == apply_date);
+            if (item != null)
+            {
+                return View(item);
+            }
+            else
+            {
+                item = new Off_SellerTask()
+                {
+                    SellerId = id,
+                    StoreId = seller.StoreId,
+                    ApplyDate = apply_date
+                };
+                return View(item);
+            }
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult SellerReport(int id, FormCollection form)
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        public ActionResult SellerTaskList()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        public ActionResult SellerTaskListPartial(int page)
+        {
+            if (page < 5)
+            {
+                List<Off_SellerTask> listarray = new List<Off_SellerTask>();
+                for (int i = 0; i < 5; i++)
+                {
+                    listarray.Add(new Off_SellerTask()
+                    {
+                        ApplyDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")),
+                        SellerId = 342,
+                        StoreId = 125,
+                        TaskPhotoList = "131087289102461432.jpg,131122526389645957.jpg",
+                        LastUpdateTime = DateTime.Now,
+                        LastUpdateUser = "test"
+                    });
+                }
+                return PartialView(listarray);
+            }
+            else
+            {
+                List<Off_SellerTask> listarray = new List<Off_SellerTask>();
+                return PartialView(listarray);
+            }
         }
     }
 }

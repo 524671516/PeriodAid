@@ -28,7 +28,7 @@
     {
         <tr>
             <td>
-                @Html.Encode(Html.ManagerNickNameCollection(item.ManagerUserName, (int)ViewBag.SystemId))
+                @Html.Encode(item.ManagerUserName)
             </td>
             <td>
                 @Html.Encode(item.StartTime.ToString("yyyy-MM-dd"))
