@@ -813,9 +813,12 @@
     <Content Include="Views\SellerTask\Home.cshtml" />
     <Content Include="Views\SellerTask\UserInfoPartial.cshtml" />
     <Content Include="Views\SellerTask\UpdateAccountInfo.cshtml" />
-    <Content Include="Views\SellerTask\SellerReport.cshtml" />
+    <Content Include="Views\SellerTask\CreateSellerReport.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskList.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskListPartial.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskProductPartial.cshtml" />
+    <Content Include="Views\SellerTask\TaskError.cshtml" />
+    <Content Include="Views\SellerTask\EditSellerTask.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

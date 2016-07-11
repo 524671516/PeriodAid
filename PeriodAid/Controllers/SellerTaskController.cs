@@ -439,14 +439,14 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult SellerReport(int id)
+        public ActionResult CreateSellerReport(int id)
         {
             var seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
             DateTime apply_date = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
             var item = _offlineDB.Off_SellerTask.SingleOrDefault(m => m.SellerId == id && m.ApplyDate == apply_date);
             if (item != null)
             {
-                return View(item);
+                return View("TaskError");
             }
             else
             {
@@ -461,10 +461,134 @@ namespace PeriodAid.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult SellerReport(int id, FormCollection form)
+        public ActionResult CreateSellerReport(int id, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                // 确认添加或者修改
+                var seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+                DateTime apply_date = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+                var existitem = _offlineDB.Off_SellerTask.SingleOrDefault(m => m.SellerId == id && m.ApplyDate == apply_date);
+                if (existitem == null)
+                {
+                    Off_SellerTask task = new Off_SellerTask();
+                    if (TryUpdateModel(task))
+                    {
+                        // 获取模板产品列表
+                        List<int> plist = new List<int>();
+                        //var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                        foreach (var i in "1,2,3,4,5".Split(','))
+                        {
+                            plist.Add(Convert.ToInt32(i));
+                        }
+                        var productlist = from m in _offlineDB.Off_Product
+                                          where plist.Contains(m.Id)
+                                          select m;
+                        // 添加或修改销售列表
+                        foreach (var item in productlist)
+                        {
+                            // 获取单品数据
+                            int? sales = null;
+                            if (form["sales_" + item.Id] != "")
+                                sales = Convert.ToInt32(form["sales_" + item.Id]);
+                            int? storage = null;
+                            if (form["storage_" + item.Id] != "")
+                                storage = Convert.ToInt32(form["storage_" + item.Id]);
+                            decimal? amount = null;
+                            if (form["amount_" + item.Id] != "")
+                                amount = Convert.ToDecimal(form["amount_" + item.Id]);
+                            // 判断是否已有数据
+
+                            // 添加数据
+                            // 如果三项数据不为空，则添加
+                            if (sales == null && storage == null && amount == null)
+                            { }
+                            else
+                            {
+                                Off_SellerTaskProduct data = new Off_SellerTaskProduct()
+                                {
+                                    Off_SellerTask = task,
+                                    ItemCode = item.ItemCode,
+                                    ProductId = item.Id,
+                                    SalesAmount = amount,
+                                    SalesCount = sales,
+                                    StorageCount = storage
+                                };
+                                _offlineDB.Off_SellerTaskProduct.Add(data);
+                            }
+                        }
+                        task.LastUpdateTime = DateTime.Now;
+                        task.LastUpdateUser = User.Identity.Name;
+                        _offlineDB.Off_SellerTask.Add(task);
+                        _offlineDB.SaveChanges();
+                        return Content("SUCCESS");
+                    }
+                    return Content("FAIL");
+                }
+                else
+                {
+                    return Content("FAIL");
+                }
+            }
+            else
+            {
+                return Content("FAIL");
+            }
+        }
+        public ActionResult SellerTaskProductPartial()
+        {
+            
+            string[] plist_tmp = "1,2,3,4,5".Split(',');
+            List<int> plist = new List<int>();
+            foreach (var i in plist_tmp)
+            {
+                plist.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in _offlineDB.Off_Product
+                              where plist.Contains(m.Id)
+                              select m;
+            List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
+            foreach (var i in productlist)
+            {
+                Wx_TemplateProduct p = new Wx_TemplateProduct()
+                {
+                    ProductId = i.Id,
+                    ItemCode = i.ItemCode,
+                    SimpleName = i.SimpleName
+                };
+                templatelist.Add(p);
+            }
+            ViewBag.productCodelist = string.Join(",", (from m in templatelist
+                                                        select m.ItemCode).ToArray());
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                AmountRequried = true,
+                StorageRequired = true,
+                ProductList = templatelist
+            };
+            return PartialView(model);
+        }
+        public ActionResult EditSellerTask(int id)
+        {
+            var sellertask = _offlineDB.Off_SellerTask.SingleOrDefault(m => m.Id == id);
+            if (sellertask != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (sellertask.Off_Seller.Off_System_Id == user.DefaultSystemId)
+                {
+                    return PartialView(sellertask);
+                }
+                else
+                    return PartialView("TaskError");
+            }
+            return PartialView("TaskError");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult EditSellerTask(int id, FormCollection form)
         {
             return View();
         }
+
         [AllowAnonymous]
         public ActionResult SellerTaskList()
         {
