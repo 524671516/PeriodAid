@@ -1,0 +1,44 @@
+﻿@model PeriodAid.Models.Off_Membership_Bind
+
+<div class="img-center">
+    <div class="row">
+    <!-- Each "cell" has col-[widht in percents] class -->
+        <div class="col-40">
+            @if (ViewBag.ImgUrl == null)
+            {
+                <img src="/Content/images/logo_new.png" class="img-sircle img-responsive" id="user-imgurl" />
+            }
+            else
+            {
+                <img src="@ViewBag.ImgUrl" class="img-sircle img-responsive" id="user-imgurl" />
+            }
+        </div>
+        <div class="col-40"><div style="margin:10px 0;"><span id="user-nickname" class="h4" >@Html.Encode(ViewBag.NickName)</span></div>
+        <a href="#" class="button active h6">更新头像</a></div>
+        <div class="col-20"></div>
+    </div>
+</div>
+<div class="list-block">
+    <div class="list-group">
+        <ul>
+            <li class="item-content list-panel-all">
+                <div class="item-inner">
+                    <div class="item-title">真实姓名</div>
+                    <div class="item-after">@Html.Encode(Model.NickName)</div>
+                </div>
+            </li>
+            <li class="item-content list-panel-all">
+                <div class="item-inner">
+                    <div class="item-title">门店</div>
+                    <div class="item-after">@Html.Encode(Model.Off_Seller.Off_Store.StoreName)</div>
+                </div>
+            </li>
+            <li class="item-content list-panel-favorites">
+                <div class="item-inner">
+                    <div class="item-title">手机</div>
+                    <div class="item-after">@Html.Encode(Model.UserName)</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
