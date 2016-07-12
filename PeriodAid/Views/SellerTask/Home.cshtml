@@ -50,13 +50,17 @@
                 <!-- Page, "data-page" contains page name -->
                 <div data-page="index" class="page">
                     <!-- Scrollable page content -->
-                    <div class="page-content">
+                    <div class="page-content pull-to-refresh-content" data-ptr-distance="55">
+                        <div class="pull-to-refresh-layer">
+                            <div class="preloader"></div>
+                            <div class="pull-to-refresh-arrow"></div>
+                        </div>
                         <div class="list-block">
                             <div class="list-group">
                                 <ul>
                                     <li class="list-block media-list">
                                         <div class="item-content">
-                                            <div class="item-media img-box img-color-01">
+                                            <div class="item-media img-box color-blue">
                                                 <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
                                             </div>
                                             <div class="item-inner">
@@ -64,7 +68,7 @@
                                                 <div class="item-text">日期：2016-07-05</div>
                                                 <div class="item-title-row">
                                                     <div class="item-title">本月工作日：<span>22</span></div>
-                                                    <div class="item-after">已完成：<span>10</span></div>
+                                                    <div class="item-after">已完成：<span class="num">10</span></div>
                                                 </div>
                                             </div>
                                         </div>
