@@ -1,2 +1,75 @@
 ﻿@model PeriodAid.Models.Off_SellerTask
 
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>库存详情</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="SellerTaskDetails">
+        <div class="page-content">
+            <div class="list-block">
+                <ul>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title">@Model.Off_Store.StoreName</div>
+                            <div class="item-after">@Model.ApplyDate.ToString("yyyy-MM-dd")</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-block-title">产品库存详情</div>
+            <div class="list-block">
+                <ul>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title">红糖姜茶</div>
+                            <div class="item-after">20</div>
+                        </div>
+                    </li>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title">黑糖姜茶</div>
+                            <div class="item-after">10</div>
+                        </div>
+                    </li>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title">柠檬姜茶</div>
+                            <div class="item-after">11</div>
+                        </div>
+                    </li>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title">红枣姜茶</div>
+                            <div class="item-after">9</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-block-title">库存图片</div>
+            <div class="list-block media-list">
+                <ul>
+                    <li>
+                        <a class="item-link item-content item-link" href="/SellerTask/">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">点击查看图片</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
