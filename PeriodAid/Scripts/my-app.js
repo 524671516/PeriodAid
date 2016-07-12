@@ -419,6 +419,25 @@ $$(document).on('pageInit', '.page[data-page="EditSellerTask"]', function (e) {
     });
 });
 
+// 查看详情页面
+$$(document).on('pageInit', '.page[data-page="SellerTaskDetails"]', function (e) {
+    
+    $$('#taskdetails-photoview').on('click', function () {
+        var photolist = splitArray($(this).attr("data-rel"));
+        var urllist = new string[photolist.length];
+        for (var i = 0; i < photolist.length; i++) {
+            urllist[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + photolist[i];
+        }
+        var myPhotoBrowserDark = myApp.photoBrowser({
+            photos: urllist,
+            theme: 'dark'
+        });
+        myPhotoBrowserDark.open();
+    });
+    
+});
+
+
 
 $$(document).on('pageInit', '.page[data-page="refresh"]', function (e) {
     var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];

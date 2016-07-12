@@ -17,6 +17,7 @@
 <div class="pages">
     <div class="page" data-page="SellerTaskDetails">
         <div class="page-content">
+            <div class="content-block-title">基本信息</div>
             <div class="list-block">
                 <ul>
                     <li class="item-content">
@@ -30,37 +31,22 @@
             <div class="content-block-title">产品库存详情</div>
             <div class="list-block">
                 <ul>
+                    @foreach (var item in Model.Off_SellerTaskProduct)
+                    {
                     <li class="item-content">
                         <div class="item-inner">
-                            <div class="item-title">红糖姜茶</div>
-                            <div class="item-after">20</div>
+                            <div class="item-title">@Html.Encode(item.Off_Product.SimpleName)</div>
+                            <div class="item-after">@Html.Encode(item.StorageCount)</div>
                         </div>
                     </li>
-                    <li class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title">黑糖姜茶</div>
-                            <div class="item-after">10</div>
-                        </div>
-                    </li>
-                    <li class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title">柠檬姜茶</div>
-                            <div class="item-after">11</div>
-                        </div>
-                    </li>
-                    <li class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title">红枣姜茶</div>
-                            <div class="item-after">9</div>
-                        </div>
-                    </li>
+                    }
                 </ul>
             </div>
             <div class="content-block-title">库存图片</div>
             <div class="list-block media-list">
                 <ul>
                     <li>
-                        <a class="item-link item-content item-link" href="/SellerTask/">
+                        <a class="item-link item-content item-link" href="javascript:;" data-rel="@Html.Encode(Model.TaskPhotoList)" id="taskdetails-photoview">
                             <div class="item-inner">
                                 <div class="item-title-row">
                                     <div class="item-title">点击查看图片</div>

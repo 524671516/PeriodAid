@@ -273,6 +273,12 @@ namespace PeriodAid.Models
                 .HasForeignKey(e => e.ProductId)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Off_Product>()
+                .HasMany(e => e.Off_SellerTaskProduct)
+                .WithRequired(e => e.Off_Product)
+                .HasForeignKey(e => e.ProductId)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Off_Expenses>()
                 .HasMany(e => e.Off_Expenses_Details)
                 .WithRequired(e => e.Off_Expenses)
@@ -696,6 +702,9 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Daily_Product> Off_Daily_Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_SellerTaskProduct> Off_SellerTaskProduct { get; set; }
     }
 
     public partial class Off_Store
@@ -1459,6 +1468,8 @@ namespace PeriodAid.Models
         public int? StorageCount { get; set; }
 
         public virtual Off_SellerTask Off_SellerTask { get; set; }
+
+        public virtual Off_Product Off_Product { get; set; }
     }
     
 }
