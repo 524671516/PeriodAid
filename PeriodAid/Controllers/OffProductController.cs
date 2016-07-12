@@ -285,5 +285,10 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
+        //DarkSellerList
+        public ActionResult DarkSellerList()
+        {
+            return View();
+        }
     }
 }

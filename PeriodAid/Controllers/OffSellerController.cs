@@ -588,6 +588,10 @@ public async Task<List<Excel_DataMessage>> UploadSellerByExcelAsync(string filen
             Array.Copy(array, 0, outBuffer, 3, array.Length);
             return outBuffer;
         }
-
+        //BindDarkSellerIndex
+        public ActionResult BindDarkSellerIndex()
+        {
+            return View();
+        }
     }
 }

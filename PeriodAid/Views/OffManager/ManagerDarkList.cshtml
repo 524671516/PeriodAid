@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "ManagerDarkList";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSix";
+}
+
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>管理员：</label>
+            <input class="form-control input-sm offline-search-inline" id="offmanager-darkmanager-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="offmanager-darkmanager-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<div id="offmanager-darkmanager-list">
+    <table class="table table-condensed table-hover" style="table-layout:fixed;width:100%;">
+        <tr class="offline-table-background">
+            <th style="width:15%;">
+                Id
+            </th>
+            <th style="width:15%;">
+                状态
+            </th>
+            <th style="width:20%;">
+                姓名
+            </th>
+            <th style="width:20%;">
+                电话
+            </th>
+            <th style="width:30%;"></th>
+        </tr>
+        <tr>
+            <td>
+                23
+            </td>
+            <td>
+                <span>管理员</span>
+
+            </td>
+            <td>
+                程萍
+            </td>
+            <td>
+                13916184989
+            </td>
+            <td>
+                <a class="btn btn-xs btn-success" href="">设置超级管理员</a>&nbsp;<a class="btn btn-xs btn-primary" href="">设置区域</a>
+                <a class="btn btn-xs btn-danger" href="">删除管理员</a>
+            </td>
+        </tr>
+    </table>
+</div>
