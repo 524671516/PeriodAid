@@ -1,6 +1,9 @@
 ﻿// Initialize your app
 // Initialize app
-var myApp = new Framework7();
+var myApp = new Framework7({
+    pushState: true,
+    swipePanel: 'left',
+});
 
 // If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Framework7.$;
@@ -14,6 +17,23 @@ var mainView = myApp.addView('.view-main', {
 refresh_userpanel();
 $("input.error").parent("div").addClass("custom-error");
 
+//index 下拉刷新时间
+var numJsons = $$(".num").text();
+// 下拉刷新页面
+var ptrContent = $$('.pull-to-refresh-content');
+
+// 添加'refresh'监听器
+ptrContent.on('refresh', function (e) {
+    // 模拟2s的加载过程
+    setTimeout(function () {
+        // 随机事件
+        var numJson = numJsons++;
+        // 前插新列表元素
+        ptrContent.find('.num').text(numJson);
+        // 加载完毕需要重置
+        myApp.pullToRefreshDone();
+    }, 2000);
+});
 //SellerTaskList
 $$(document).on("pageInit", ".page[data-page='sellertasklist']", function (e) {
     var currentpage = 1;
