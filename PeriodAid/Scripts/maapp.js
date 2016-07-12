@@ -88,3 +88,9 @@ $$(document).on("pageInit", ".page[data-page='sellertasklist']", function (e) {
         }, 1000)
     });
 });
+//SellerTaskDetails 轮播图
+$$(document).on("pageInit", ".page[data-page='SellerTaskDetails']", function () {
+    var mySwiper = myApp.swiper('.swiper-container', {
+        pagination: '.swiper-pagination'
+    });
+})
