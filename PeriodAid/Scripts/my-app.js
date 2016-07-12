@@ -2,8 +2,9 @@
 // Initialize your app
 // Initialize app
 var myApp = new Framework7({
-    cacheIgnore: ["/SellerTask/UpdateAccountInfo","/SellerTask/CreateSellerReport"],
-    cacheIgnoreGetParameters: true
+    //cacheIgnore: ["/SellerTask/UpdateAccountInfo","/SellerTask/CreateSellerReport", "/SellerTask/EditSellerTask", "/SellerTask/SellerTaskList"],
+    //cacheIgnoreGetParameters: false
+    cache:false
 });
 
 // If we need to use custom DOM library, let's save it to $$ variable:
@@ -28,7 +29,7 @@ wx.config({
     jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage']
 });
 
-//下拉刷新
+// 页面ajax
 $$(document).on('ajaxStart', function (e) {
     if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
     myApp.showIndicator();
@@ -36,6 +37,22 @@ $$(document).on('ajaxStart', function (e) {
 $$(document).on('ajaxComplete', function (e) {
     if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
     myApp.hideIndicator();
+});
+
+// 下拉刷新
+//index 下拉刷新时间
+var numJsons = $$(".num").text();
+// 下拉刷新页面
+$$(document).on('refresh',".pull-to-refresh-content", function (e) {
+    setTimeout(function () {
+        // 随机事件
+        console.log(numJsons);
+        var numJson = numJsons++;
+        // 前插新列表元素
+        $(this).find('.num').text(numJson);
+        // 加载完毕需要重置
+        myApp.pullToRefreshDone();
+    }, 2000);
 });
 
 // 更新账户信息
@@ -254,12 +271,154 @@ $$(document).on("pageInit", ".page[data-page='CreateSellerReport']", function (e
     });
     $$("#createsellerreport-btn").click(function () {
         myApp.showIndicator();
-        myApp.formStoreData("createsellerreport-form");
-        //alert(parseProductListRules($("#productcode-list").text()))
         $("#createsellerreport-form").submit();
     });
     
 });
+
+// 修改促销信息页面
+$$(document).on('pageInit', '.page[data-page="EditSellerTask"]', function (e) {
+    $("#sellerreport-imglist").html("");
+    var photolist = splitArray($("#TaskPhotoList").val());
+    $("#current_image").text(photolist.length);
+    for (var i = 0; i < photolist.length; i++) {
+        $("#sellerreport-imglist").append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
+    }
+    $("#sellerreport-imglist").append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+
+    // 上传文件
+    $$("#sellerreport-imglist").on("click", "#upload-btn", function (e) {
+        var localIds;
+        var photolist = splitArray($("#TaskPhotoList").val());
+        if (photolist.length < 3) {
+            wx.chooseImage({
+                count: 1, // 默认9
+                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    //$("#preview").attr("src", localIds);
+                    wx.uploadImage({
+                        localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            var serverId = res.serverId; // 返回图片的服务器端ID
+                            $.ajax({
+                                url: "/Seller/SaveOrignalImage",
+                                type: "post",
+                                data: {
+                                    serverId: serverId
+                                },
+                                success: function (data) {
+                                    if (data.result == "SUCCESS") {
+                                        $("#sellerreport-imglist").html("");
+                                        photolist.push(data.filename);
+                                        $("#current_image").text(photolist.length);
+                                        $("#TaskPhotoList").val(photolist.toString());
+                                        for (var i = 0; i < photolist.length; i++) {
+                                            $("#sellerreport-imglist").append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
+                                        }
+
+                                        $("#sellerreport-imglist").append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+                                    }
+                                    else {
+                                        alert("上传失败，请重试");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            myApp.alert("上传图片不得大于三张，无法添加");
+        }
+    });
+
+    // 删除图片
+    $$("#sellerreport-imglist").on("click", ".rep-imgitem", function (e) {
+        var img_item = $$(this);
+        $$(".rep-imgitem").each(function () {
+            $$(this).html("");
+        });
+        img_item.html("<div class='rep-imgitem-selected'><i class='fa fa-minus'></i></div>");
+    });
+    $$("#sellerreport-imglist").on("click", ".rep-imgitem-selected", function () {
+
+        myApp.confirm('是否确认删除已上传图片?', '提示', function () {
+            //myApp.alert('You clicked Ok button');
+            var delete_item = $(".rep-imgitem-selected").closest(".rep-imgitem").attr("data-rel");
+            var arraylist = splitArray($("#TaskPhotoList").val());
+            var pos = $.inArray(delete_item, arraylist);
+            arraylist.splice(pos, 1);
+            $("#TaskPhotoList").val(arraylist.toString());
+            $("#current_image").text(arraylist.length);
+            $("#sellerreport-imglist").html("");
+            for (var i = 0; i < arraylist.length; i++) {
+                $("#sellerreport-imglist").append("<li><div class=\"rep-imgitem\" data-rel='" + arraylist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + arraylist[i] + "); background-size:cover\"></div></li>");
+            }
+            $("#sellerreport-imglist").append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+        });
+    });
+
+    $("#editsellerreport-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#editsellerreport-btn").prop("disabled", true).addClass("color-gray");
+            var array = splitArray($("#TaskPhotoList").val());
+            if (array.length > 0) {
+                $("#editsellerreport-form").ajaxSubmit(function (data) {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        myApp.formDeleteData("editsellerreport-form");
+                        //
+                        //mainView.router.refreshPreviousPage();
+                        console.log("33");
+                        mainView.router.back({url:"/SellerTask/SellerTaskList?id="+$("#SellerId").val(), force:true });
+                        //mainView.router.reloadPreviousPage();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '表单提交成功'
+                        });
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                    else {
+                        myApp.hideIndicator();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '表单提交失败'
+                        });
+                        $("#editsellerreport-btn").prop("disabled", false).removeClass("color-gray");
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                });
+            }
+            else {
+                myApp.hideIndicator();
+                myApp.alert("请至少上传一张图片");
+                $("#editsellerreport-btn").prop("disabled", false).removeClass("color-gray");
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#editsellerreport-btn").click(function () {
+        myApp.showIndicator();
+        //alert(parseProductListRules($("#productcode-list").text()))
+        $("#editsellerreport-form").submit();
+    });
+});
+
 
 $$(document).on('pageInit', '.page[data-page="refresh"]', function (e) {
     var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
