@@ -820,6 +820,8 @@
     <Content Include="Views\SellerTask\SellerTaskProductPartial.cshtml" />
     <Content Include="Views\SellerTask\TaskError.cshtml" />
     <Content Include="Views\SellerTask\EditSellerTask.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskListPhoto.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

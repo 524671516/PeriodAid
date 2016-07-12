@@ -295,6 +295,67 @@ $$(document).on('pageInit', '.page[data-page="refresh"]', function (e) {
         }, 2000);
     });
 });
+
+$$(document).on("pageInit", ".page[data-page='SellerTaskList']", function (e) {
+    var currentpage = 1;
+    var lastIndex = $$(".seller-list li").length;//上次加载的序号
+    $$.ajax({
+        url: "/SellerTask/SellerTaskListPartial",
+        data: {
+            page: currentpage,
+            id: $("#sellertasklist-id").val()
+        },
+        success: function (data) {
+            $$("#sellertask-list").html(data);
+            currentpage++;
+            if (lastIndex < 10) {
+                $$.ajax({
+                    url: "/SellerTask/SellerTaskListPartial",
+                    data: {
+                        page: currentpage,
+                        id: $("#sellertasklist-id").val()
+                    },
+                    success: function (data) {
+                        $$("#sellertask-list").append(data);
+                        currentpage++;
+                    }
+                });
+            }
+        }
+    });
+    //刷新
+    var loading = false;//加载flag
+    $$(".infinite-scroll").on("infinite", function (e) {
+        $$(".infinite-scroll-preloader").removeClass("hidden");
+        if (loading) return;
+        loading = true;
+        setTimeout(function () {
+            loading = false;//重置flag
+            
+            //生成新的条目
+            $$.ajax({
+                url: "/SellerTask/SellerTaskListPartial",
+                data: {
+                    page: currentpage,
+                    id: $("#sellertasklist-id").val()
+                },
+                success: function (data) {
+                    if (data != "FAIL") {
+                        $$("#sellertask-list").append(data);
+                        currentpage++;
+                    }
+                    else {
+
+                        myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
+                        $$(".infinite-scroll-preloader").remove();//移除加载符
+                        $$(".infinite-pre").removeClass("hidden");
+                        return;
+                    }
+                }
+            });
+        }, 1000)
+    });
+});
 //end
 //无限循环
 $$(document).on('pageInit', '.page[data-page="infinitescroll"]', function (e) {

@@ -590,35 +590,47 @@ namespace PeriodAid.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult SellerTaskList()
+        public ActionResult SellerTaskList(int id)
         {
+            ViewBag.SellerId = id;
             return View();
         }
         [AllowAnonymous]
-        public ActionResult SellerTaskListPartial(int page)
+        public ActionResult SellerTaskListPartial(int id, int? page)
         {
-            if (page < 5)
+            int _page = page ?? 1;
+            _page = _page - 1;
+            var list = (from m in _offlineDB.Off_SellerTask
+                        where m.SellerId == id
+                        orderby m.ApplyDate descending
+                        select m).Skip(_page * 5).Take(5);
+            if (list.Count() == 0)
             {
-                List<Off_SellerTask> listarray = new List<Off_SellerTask>();
-                for (int i = 0; i < 5; i++)
-                {
-                    listarray.Add(new Off_SellerTask()
-                    {
-                        ApplyDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")),
-                        SellerId = 342,
-                        StoreId = 125,
-                        TaskPhotoList = "131087289102461432.jpg,131122526389645957.jpg",
-                        LastUpdateTime = DateTime.Now,
-                        LastUpdateUser = "test"
-                    });
-                }
-                return PartialView(listarray);
+                return Content("FAIL");
             }
             else
+                return PartialView(list);
+        }
+        [AllowAnonymous]
+        public PartialViewResult SellerTaskListPhoto(string imglist)
+        {
+            string[] s = imglist.Split(',');
+            if (s.Length > 0)
             {
-                List<Off_SellerTask> listarray = new List<Off_SellerTask>();
-                return PartialView(listarray);
+                ViewBag.img = s[0];
             }
+            return PartialView();
+        }
+
+        public PartialViewResult SellerTaskDetails(int id)
+        {
+            var sellertask = _offlineDB.Off_SellerTask.SingleOrDefault(m => m.Id == id);
+            if (sellertask != null)
+            {
+                return PartialView(sellertask);
+            }
+            else
+                return PartialView("TaskNotFound");
         }
     }
 }

@@ -1,25 +1,29 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_SellerTask>
 
-
 @foreach (var item in Model)
 {
-        <li class="swipeout">
-            <div class="swipeout-content item-content">
-                <div class="item-media"><img src="~/Content/images/wx_gambling_background02.jpg" width="50" height="50" /></div>
+    <li class="swipeout">
+        <div class="swipeout-content">
+            <a href="/SellerTask/SellerTask/@item.Id" class="item-content item-link">
+                <div class="item-media">
+                    @{
+                        Html.RenderAction("SellerTaskListPhoto", new { imglist = item.TaskPhotoList });
+                    }
+                </div>
                 <div class="item-inner">
-                    <div class="item-title-tow">
+                    <div class="item-title-row">
                         @*<div class="item-title">@item.LastUpdateUser</div>*@
-                        <div class="item-title">@item.SellerId</div>
+                        <div class="item-title">@Html.Encode(item.Off_Store.StoreName)</div>
                     </div>
-                    
                     <div class="item-subtitle color-gray">
-                        <span class="item-storeid">@item.StoreId</span>
-                        <span class="item-sellerid" style="float:right">@item.ApplyDate.ToString("yyyy-MM-dd")</span>
+                        <span class="item-storeid">剩余库存: @Html.Encode(item.Off_SellerTaskProduct.Sum(m => m.StorageCount))</span>
+                        <span class="item-sellerid" style="float:right">@Html.Encode(item.ApplyDate.ToString("MM-dd"))</span>
                     </div>
                 </div>
-            </div>
-            <div class="swipeout-actions-right">
-                @Html.ActionLink("修改", "Edit", new { id = item.Id },new { @class = "bg-green" }) 
-            </div>
-        </li>
+            </a>
+        </div>
+        <div class="swipeout-actions-right">
+            @Html.ActionLink("修改", "EditSellerTask", "SellerTask", new { id = item.Id }, new { @class = "bg-green" })
+        </div>
+    </li>
 }
