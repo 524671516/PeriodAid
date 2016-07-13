@@ -583,5 +583,10 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
+        //ManagerDarkList
+        public ActionResult ManagerDarkList()
+        {
+            return View();
+        }
     }
 }

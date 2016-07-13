@@ -74,8 +74,8 @@
         $.ajax({
             url: link_url,
             success: function (data) {
-                $(".modal-con").html(data);
                 $(".modal-box").modal();
+                $(".modal-con").html(data);
                 $(".modal-head").text("修改绑定信息");
             }
         });

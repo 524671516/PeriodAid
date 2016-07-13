@@ -824,6 +824,9 @@
     <Content Include="Views\SellerTask\SellerTaskListPhoto.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskDetails.cshtml" />
     <Content Include="Views\SellerTask\MainPanel.cshtml" />
+    <Content Include="Views\OffProduct\DarkSellerList.cshtml" />
+    <Content Include="Views\OffSeller\BindDarkSellerIndex.cshtml" />
+    <Content Include="Views\OffManager\ManagerDarkList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
