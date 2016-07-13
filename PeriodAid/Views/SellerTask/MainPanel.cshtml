@@ -1,0 +1,14 @@
+﻿<ul>
+    <li>
+        <div class="item-content">
+            <div class="item-media img-box color-blue">
+                    @Html.Encode(ViewBag.Score)
+            </div>
+            <div class="item-inner">
+                <div class="item-title">店面管理员操作系统</div>
+                <div class="item-subtitle">@Html.Encode(ViewBag.StoreName)</div>
+                <div class="item-text">日期：@Html.Encode(DateTime.Now.ToString("yyyy-MM-dd"))</div>
+            </div>
+        </div>
+    </li>
+</ul>

@@ -13,7 +13,7 @@
                 <div class="item-inner">
                     <div class="item-title-row">
                         @*<div class="item-title">@item.LastUpdateUser</div>*@
-                        <div class="item-title">@Html.Encode(item.Off_Store.StoreName)</div>
+                        <div>@Html.Encode(item.Off_Store.StoreName)</div>
                     </div>
                     <div class="item-subtitle color-gray">
                         <span class="item-storeid">剩余库存: @Html.Encode(item.Off_SellerTaskProduct.Sum(m => m.StorageCount))</span>

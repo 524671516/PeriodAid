@@ -331,6 +331,17 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        public PartialViewResult MainPanel(int id)
+        {
+            ViewBag.StoreName = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id).Off_Store.StoreName;
+            var current = DateTime.Now;
+            var month = new DateTime(current.Year, current.Month, 1);
+            ViewBag.Score = ((from m in _offlineDB.Off_SellerTask
+                             where m.ApplyDate >= month && m.SellerId == id
+                             select m).Count()*100)/30;
+            return PartialView();
+        }
         
         public PartialViewResult WxJSAppPartial()
         {

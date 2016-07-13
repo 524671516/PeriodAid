@@ -12,13 +12,13 @@
     border-radius: 50%;
 }
 .img-box {
-    font-size: 72px;
+    font-size: 48px;
 }
 .infinite-scroll-preloader {
     margin-bottom: 10px;
     text-align: center;
 }
-    .infinite-scroll-preloader .preloader {
+.infinite-scroll-preloader .preloader {
         width: 34px;
         height: 34px;
     }
@@ -116,5 +116,9 @@
   display:block;
   margin:20px;
   font-size:21px;
+}
+sup.notify{
+    font-size:0.5em;
+    color:#ff0000;
 }
 

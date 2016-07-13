@@ -72,7 +72,8 @@
         $.ajax({
             url: l,
             data: {
-                date: $("#offsalesschedule-current-date").val()
+                date: $("#offsalesschedule-current-date").val(),
+                query: $("#offsalesschedule-search-query").val()
             },
             success: function (data) {
                 $("#offsalesschedule-list").html(data);
