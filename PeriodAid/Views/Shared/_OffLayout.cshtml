@@ -179,7 +179,6 @@
                                     <li class="left-navbar"><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "TaskList", "OffManager")</li>
                                     <li class="left-navbar"><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "AnnouncementList", "OffManager")</li>
                                     <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "RequestList", "OffManager")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("暗促管理", "ManagerDarkList", "OffManager")</li>
                                 </ul>
                             </div>
                         </div>
@@ -214,6 +213,22 @@
                             <div class="panel-body">
                                 <ul class="list-unstyled">
                                     <li class="left-navbar"><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包列表", "BonusList", "OffBonus")</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTen">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                                    暗促管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTen"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseNine" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTen">
+                            <div class="panel-body">
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("暗促管理", "ManagerDarkList", "OffManager")</li>
                                 </ul>
                             </div>
                         </div>
