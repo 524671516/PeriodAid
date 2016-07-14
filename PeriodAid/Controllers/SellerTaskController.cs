@@ -331,16 +331,29 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
-        public PartialViewResult MainPanel(int id)
+        [HttpPost]
+        public JsonResult MainPanel(int id)
         {
-            ViewBag.StoreName = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id).Off_Store.StoreName;
+            var seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            string StoreName = seller.Off_Store.StoreName;
             var current = DateTime.Now;
             var month = new DateTime(current.Year, current.Month, 1);
-            ViewBag.Score = ((from m in _offlineDB.Off_SellerTask
+            int Score = ((from m in _offlineDB.Off_SellerTask
                              where m.ApplyDate >= month && m.SellerId == id
                              select m).Count()*100)/30;
-            return PartialView();
+            DateTime ApplyDate = Convert.ToDateTime(current.ToString("yyyy-MM-dd"));
+            bool finished = false;
+            var item = _offlineDB.Off_SellerTask.SingleOrDefault(m => m.SellerId == id && m.ApplyDate == ApplyDate);
+            bool notify = false;
+            if (seller.AccountSource == null || seller.AccountName == null)
+            {
+                notify = true;
+            }
+            if (item != null)
+            {
+                finished = true;
+            }
+            return Json(new { result = "SUCCESS", data = new { StoreName = StoreName, Score = Score, Status = finished, ApplyDate = ApplyDate.ToString("yyyy-MM-dd"), Notify = notify } });
         }
         
         public PartialViewResult WxJSAppPartial()
