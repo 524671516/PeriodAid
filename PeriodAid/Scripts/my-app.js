@@ -1,14 +1,28 @@
-﻿
+﻿var $$ = Dom7;
 // Initialize your app
 // Initialize app
 var myApp = new Framework7({
     //cacheIgnore: ["/SellerTask/UpdateAccountInfo","/SellerTask/CreateSellerReport", "/SellerTask/EditSellerTask", "/SellerTask/SellerTaskList"],
     //cacheIgnoreGetParameters: false
-    cache:false
+    cache: false,
+    onPageInit: function (app, page) {
+        if(page.name=="index"){
+            $$.ajax({
+                url: "/SellerTask/MainPanel",
+                data: {
+                    id: $$("#sellerId").val()
+                },
+                success: function (data) {
+                    $("#main-panel").html(data);
+                }
+            });
+            refresh_userpanel();
+        }
+    }
 });
 
 // If we need to use custom DOM library, let's save it to $$ variable:
-var $$ = Framework7.$;
+
 
 // Add view
 var mainView = myApp.addView('.view-main', {
@@ -16,8 +30,9 @@ var mainView = myApp.addView('.view-main', {
     dynamicNavbar: true
 });
 
-refresh_userpanel();
-$("input.error").parent("div").addClass("custom-error");
+myApp.onPageInit("UpdateAccountInfo", function (page) {
+    alert(page.name);
+});
 
 
 wx.config({
@@ -41,19 +56,24 @@ $$(document).on('ajaxComplete', function (e) {
 
 // 下拉刷新
 //index 下拉刷新时间
-var numJsons = $$(".num").text();
 // 下拉刷新页面
 $$(document).on('refresh',".pull-to-refresh-content", function (e) {
     setTimeout(function () {
         // 随机事件
-        console.log(numJsons);
-        var numJson = numJsons++;
-        // 前插新列表元素
-        $(this).find('.num').text(numJson);
-        // 加载完毕需要重置
-        myApp.pullToRefreshDone();
-    }, 2000);
+        $$.ajax({
+            url: "/SellerTask/MainPanel",
+            data: {
+                id: $$("#sellerId").val()
+            },
+            success: function (data) {
+                $("#main-panel").html(data);
+                myApp.pullToRefreshDone();
+            }
+        });
+    }, 1000);
 });
+
+
 
 // 更新账户信息
 $$(document).on("pageInit", ".page[data-page='UpdateAccountInfo']", function (e) {
@@ -423,16 +443,21 @@ $$(document).on('pageInit', '.page[data-page="EditSellerTask"]', function (e) {
 $$(document).on('pageInit', '.page[data-page="SellerTaskDetails"]', function (e) {
     
     $$('#taskdetails-photoview').on('click', function () {
-        var photolist = splitArray($(this).attr("data-rel"));
-        var urllist = new string[photolist.length];
-        for (var i = 0; i < photolist.length; i++) {
-            urllist[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + photolist[i];
+        var photos = $(this).attr("data-rel");
+        if (photos.trim() != "") {
+            var photolist = splitArray($(this).attr("data-rel"));
+            //var urllist = new string[photolist.length];
+            for (var i = 0; i < photolist.length; i++) {
+                photolist[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + photolist[i];
+            }
+            wx.previewImage({
+                current: photolist[0], // 当前显示图片的http链接
+                urls: photolist // 需要预览的图片http链接列表
+            });
         }
-        var myPhotoBrowserDark = myApp.photoBrowser({
-            photos: urllist,
-            theme: 'dark'
-        });
-        myPhotoBrowserDark.open();
+        else {
+            myApp.alert("找不到图片");
+        }
     });
     
 });

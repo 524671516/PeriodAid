@@ -389,6 +389,7 @@
     <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\framework7.js" />
     <Content Include="Scripts\framework7.min.js" />
     <Content Include="Scripts\html5.js" />
     <Content Include="Scripts\maapp.js" />
@@ -830,6 +831,7 @@
     <Content Include="Views\SellerTask\EditSellerTask.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskListPhoto.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskDetails.cshtml" />
+    <Content Include="Views\SellerTask\MainPanel.cshtml" />
     <Content Include="Views\OffProduct\DarkSellerList.cshtml" />
     <Content Include="Views\OffSeller\BindDarkSellerIndex.cshtml" />
     <Content Include="Views\OffManager\ManagerDarkList.cshtml" />
