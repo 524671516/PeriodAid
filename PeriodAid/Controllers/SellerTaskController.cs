@@ -757,5 +757,9 @@ namespace PeriodAid.Controllers
             else
                 return PartialView("TaskNotFound");
         }
+        public ActionResult SellerTaskGuide()
+        {
+            return View();
+        }
     }
 }

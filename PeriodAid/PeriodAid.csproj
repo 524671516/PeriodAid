@@ -316,6 +316,14 @@
     <Content Include="Content\images\redmoney_02.png" />
     <Content Include="Content\images\redmoney_03.png" />
     <Content Include="Content\images\redmoney_04.png" />
+    <Content Include="Content\images\sellertask-guide-01.jpg" />
+    <Content Include="Content\images\sellertask-guide-02.jpg" />
+    <Content Include="Content\images\sellertask-guide-03.jpg" />
+    <Content Include="Content\images\sellertask-guide-04.jpg" />
+    <Content Include="Content\images\sellertask-guide-05.jpg" />
+    <Content Include="Content\images\sellertask-guide-06.jpg" />
+    <Content Include="Content\images\sellertask-guide-07.jpg" />
+    <Content Include="Content\images\sellertask-guide-08.jpg" />
     <Content Include="Content\images\share-pic.png" />
     <Content Include="Content\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
     <Content Include="Content\images\ui-bg_diagonals-thick_20_666666_40x40.png" />

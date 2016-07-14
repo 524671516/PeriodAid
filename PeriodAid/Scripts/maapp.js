@@ -34,6 +34,51 @@ ptrContent.on('refresh', function (e) {
         myApp.pullToRefreshDone();
     }, 2000);
 });
+//使用指南 图片浏览器
+var myPhotoBrowserPopupDark = myApp.photoBrowser({
+    photos: [
+        {
+            url: '/Content/images/sellertask-guide-01.jpg',
+            caption:'促销管理系统'
+        },
+        {
+            url: '/Content/images/sellertask-guide-02.jpg',
+            caption:'个人信息'
+        },
+        {
+            url: '/Content/images/sellertask-guide-03.jpg',
+            caption:'每日任务'
+        },
+        {
+            url: '/Content/images/sellertask-guide-04.jpg',
+            caption:'历史记录'
+        },
+        {
+            url: '/Content/images/sellertask-guide-05.jpg',
+            caption:'库存详情'
+        },
+        {
+            url: '/Content/images/sellertask-guide-06.jpg',
+            caption:'修改记录'
+        },
+        {
+            url: '/Content/images/sellertask-guide-07.jpg',
+            caption:'提交修改'
+        },
+        {
+            url: '/Content/images/sellertask-guide-08.jpg',
+            caption:'完善信息'
+        }
+    ],
+    theme: 'dark',
+    type: 'standalone',
+    lazyLoading:true,
+    zoom: false,
+    backLinkText:'关闭'
+});
+$$('.sellertask-guide').on('click', function () {
+    myPhotoBrowserPopupDark.open();
+});
 //SellerTaskList
 $$(document).on("pageInit", ".page[data-page='sellertasklist']", function (e) {
     var currentpage = 1;
