@@ -58,19 +58,19 @@
                         <input type="hidden" name="sellerId" id="sellerId" value="342" />
                         <div class="content-block-title">当前得分</div>
                         <div class="list-block media-list" id="main-panel">
-                            
-                        </div>
-                        <div class="content-block-title">工作汇报</div>
-                        <div class="list-block">
                             <ul>
                                 <li>
                                     <a href="/SellerTask/CreateSellerReport?id=342" class="item-link item-content">
-                                        <div class="item-inner"><div class="item-title">每日任务</div></div>
+                                        <div class="item-media img-box color-red" id="home-score">0</div>
+                                        <div class="item-inner" style="background:url(/fonts/right.svg) no-repeat; background-position: calc(100% - 15px) center; background-size:10px 20px; ">
+                                            <div class="item-title" id="home-storename">N/A</div>
+                                            <div class="item-text" id="home-applydate">日期：N/A</div>
+                                            <div class="item-subtitle">今日任务：<span class="color-red" id="home-status">N/A</span></div>
+                                        </div>
                                     </a>
                                 </li>
                             </ul>
                         </div>
-
                         <div class="content-block-title">辅助功能</div>
                         <div class="list-block">
                             <ul>
@@ -83,10 +83,15 @@
                                     <div>
                                         <a href="/SellerTask/UpdateAccountInfo?id=342" class="item-link item-content">
                                             <div class="item-inner">
-                                                <div class="item-title">完善信息&nbsp;<sup class="notify"><i class="fa fa-circle" aria-hidden="true"></i></sup></div>
+                                                <div class="item-title">完善信息&nbsp;<sup class="notify hidden" id="account-notify"><i class="fa fa-circle" aria-hidden="true"></i></sup></div>
                                             </div>
                                         </a>
                                     </div>
+                                </li>
+                                <li>
+                                    <a href="/SellerTask/UserGuide" class="item-link item-content">
+                                        <div class="item-inner"><div class="item-title">使用帮助</div></div>
+                                    </a>
                                 </li>
                             </ul>
                         </div>

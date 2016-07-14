@@ -7,15 +7,7 @@ var myApp = new Framework7({
     cache: false,
     onPageInit: function (app, page) {
         if(page.name=="index"){
-            $$.ajax({
-                url: "/SellerTask/MainPanel",
-                data: {
-                    id: $$("#sellerId").val()
-                },
-                success: function (data) {
-                    $("#main-panel").html(data);
-                }
-            });
+            refresh_mainpanel();
             refresh_userpanel();
         }
     }
@@ -30,9 +22,6 @@ var mainView = myApp.addView('.view-main', {
     dynamicNavbar: true
 });
 
-myApp.onPageInit("UpdateAccountInfo", function (page) {
-    alert(page.name);
-});
 
 
 wx.config({
@@ -60,16 +49,8 @@ $$(document).on('ajaxComplete', function (e) {
 $$(document).on('refresh',".pull-to-refresh-content", function (e) {
     setTimeout(function () {
         // 随机事件
-        $$.ajax({
-            url: "/SellerTask/MainPanel",
-            data: {
-                id: $$("#sellerId").val()
-            },
-            success: function (data) {
-                $("#main-panel").html(data);
-                myApp.pullToRefreshDone();
-            }
-        });
+        refresh_mainpanel();
+        myApp.pullToRefreshDone();
     }, 1000);
 });
 
@@ -272,6 +253,7 @@ $$(document).on("pageInit", ".page[data-page='CreateSellerReport']", function (e
                             message: '表单提交失败'
                         });
                         $("#createsellerreport-btn").prop("disabled", false).removeClass("color-gray");
+                        refresh_mainpanel();
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
                         }, 2000);
@@ -662,6 +644,43 @@ function refresh_userpanel() {
         success: function (data) {
             if (data != "Error")
                 $$("#left-user-panel").html(data);
+        }
+    });
+}
+
+function refresh_mainpanel() {
+    $$.ajax({
+        url: "/SellerTask/MainPanel",
+        data: {
+            id: $$("#sellerId").val()
+        },
+        method:"post",
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result == "SUCCESS") {
+                var info = data.data;
+                var score = info.Score;
+                $$("#home-score").text(score);
+                if (score >= 60) {
+                    $$("#home-score").removeClass("color-red").addClass("color-green");
+                }
+                $$("#home-storename").text(info.StoreName);
+                $$("#home-applydate").text(info.ApplyDate);
+                var status = info.Status;
+                //console.log(status);
+                if (status) {
+                    $("#home-status").text("已完成").removeClass("color-red").addClass("color-green");
+                }
+                else {
+                    $("#home-status").text("未完成");
+                }
+                if (info.Notify) {
+                    $("#account-notify").removeClass("hidden");
+                }
+                else {
+                    $("#account-notify").addClass("hidden");
+                }
+            }
         }
     });
 }

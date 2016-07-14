@@ -117,8 +117,12 @@
   margin:20px;
   font-size:21px;
 }
-sup.notify{
+sup.notify {
     font-size:0.5em;
     color:#ff0000;
+}
+
+div.link-back {
+    background:url(/fonts/right.svg);
 }
 

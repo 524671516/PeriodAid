@@ -364,6 +364,7 @@
     <Content Include="fonts\i-form-tel-ios.svg" />
     <Content Include="fonts\i-form-toggle-ios.svg" />
     <Content Include="fonts\i-form-url-ios.svg" />
+    <Content Include="fonts\right.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\ajaxfileupload.js" />
@@ -823,7 +824,6 @@
     <Content Include="Views\SellerTask\EditSellerTask.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskListPhoto.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskDetails.cshtml" />
-    <Content Include="Views\SellerTask\MainPanel.cshtml" />
     <Content Include="Views\OffProduct\DarkSellerList.cshtml" />
     <Content Include="Views\OffSeller\BindDarkSellerIndex.cshtml" />
     <Content Include="Views\OffManager\ManagerDarkList.cshtml" />
