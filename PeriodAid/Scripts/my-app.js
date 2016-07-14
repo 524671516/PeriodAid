@@ -96,7 +96,7 @@ var myPhotoBrowserPopupDark = myApp.photoBrowser({
     zoom: false,
     backLinkText: '关闭'
 });
-$$(document).on('click', ".sellertask-guide", function (e) {
+$$(document).on('click', "#sellertask-guide", function (e) {
     myPhotoBrowserPopupDark.open();
 });
 
