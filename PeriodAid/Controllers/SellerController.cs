@@ -105,6 +105,7 @@ namespace PeriodAid.Controllers
                         if (systemArray.Contains(state))
                         {
                             user.DefaultSystemId = systemid;
+
                             UserManager.Update(user);
                             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                             return RedirectToAction("Wx_Seller_Redirect", new { systemid = systemid });
@@ -251,7 +252,8 @@ namespace PeriodAid.Controllers
                                     Off_System_Id = model.SystemId,
                                     Mobile = model.Mobile,
                                     NickName = model.NickName,
-                                    UserName = user.UserName
+                                    UserName = user.UserName,
+                                    Type = 1
                                 };
                                 offlineDB.Off_Membership_Bind.Add(ofb);
                                 await offlineDB.SaveChangesAsync();
@@ -394,7 +396,7 @@ namespace PeriodAid.Controllers
             ApplicationUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var userbind = from m in offlineDB.Off_Membership_Bind
                            where m.UserName == User.Identity.Name
-                           && m.Off_System_Id == user.DefaultSystemId
+                           && m.Off_System_Id == user.DefaultSystemId && m.Type==1
                            select new { SellerId = m.Off_Seller_Id, StoreName = m.Off_Seller.Off_Store.StoreName };
             if (userbind != null)
             {
@@ -1112,7 +1114,7 @@ namespace PeriodAid.Controllers
             ApplicationUser user = UserManager.FindById(User.Identity.GetUserId());
             var userbind = (from m in offlineDB.Off_Membership_Bind
                             where m.UserName == User.Identity.Name
-                            && m.Off_System_Id == user.DefaultSystemId
+                            && m.Off_System_Id == user.DefaultSystemId && m.Type==1
                             select m.Off_Seller_Id);
             if (userbind.Contains(SellerId))
                 return true;

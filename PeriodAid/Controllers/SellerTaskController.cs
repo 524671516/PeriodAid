@@ -61,6 +61,25 @@ namespace PeriodAid.Controllers
         }
 
         [AllowAnonymous]
+        public ActionResult LoginManager(int? systemid)
+        {
+            string user_Agent = HttpContext.Request.UserAgent;
+            int _state = systemid ?? 1;
+            if (user_Agent.Contains("MicroMessenger"))
+            {
+                //return Content("微信");
+                string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/SellerTask/Authorization");
+                string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + _state + "#wechat_redirect";
+                return Redirect(url);
+            }
+            else
+            {
+                return Content("其他");
+            }
+        }
+
+        [AllowAnonymous]
         public async Task<ActionResult> Authorization(string code, string state)
         {
             //return Content(code);
@@ -155,7 +174,7 @@ namespace PeriodAid.Controllers
                             exist_user.OffSalesSystem = string.Join(",", SystemList.ToArray());
                             exist_user.DefaultSystemId = model.SystemId;
                             UserManager.Update(exist_user);
-                            Off_Membership_Bind ofb = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == exist_user.UserName && m.Off_System_Id == model.SystemId);
+                            Off_Membership_Bind ofb = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == exist_user.UserName && m.Off_System_Id == model.SystemId && m.Type==2);
                             if (ofb == null)
                             {
                                 ofb = new Off_Membership_Bind()
@@ -184,7 +203,7 @@ namespace PeriodAid.Controllers
                             smsRecord.Status = true;
                             smsDB.SaveChanges();
                             await UserManager.AddToRoleAsync(user.Id, "Staff");
-                            Off_Membership_Bind ofb = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == model.SystemId);
+                            Off_Membership_Bind ofb = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == model.SystemId&&m.Type==2);
                             if (ofb == null)
                             {
                                 ofb = new Off_Membership_Bind()
@@ -219,6 +238,9 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
+
+
+
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -277,6 +299,7 @@ namespace PeriodAid.Controllers
             return result;
         }
         // 判断跳转页面
+        [AllowAnonymous]
         public ActionResult Redirect(int systemid)
         {
             if (User.IsInRole("Staff"))
@@ -288,12 +311,14 @@ namespace PeriodAid.Controllers
                 return RedirectToAction("SellerRegister", new { systemid = systemid });
             }
         }
+        [AllowAnonymous]
         public ActionResult SellerRegister(int systemid)
         {
             Wx_SellerRegisterViewModel model = new Wx_SellerRegisterViewModel();
             model.Systemid = systemid;
             return View(model);
         }
+        [AllowAnonymous]
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<ActionResult> SellerRegister(FormCollection form, Wx_SellerRegisterViewModel model)
         {
@@ -329,7 +354,50 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Home()
         {
-            return View();
+            var binduser = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.UserName == User.Identity.Name && m.Type == 2);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            if (binduser != null)
+            {
+                if (binduser.Bind)
+                {
+                    ViewBag.Bind = true;
+                    ViewBag.SellerId = binduser.Off_Seller_Id;
+                }
+                else
+                {
+                    ViewBag.Bind = false;
+                }
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("SellerRegister", new { systemid = user.DefaultSystemId });
+            }
+        }
+        public ActionResult UpdateUserInfo()
+        {
+            string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/SellerTask/UserAuthorize");
+            string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_userinfo&state=" + "1" + "#wechat_redirect";
+            return Redirect(url);
+        }
+
+        public ActionResult UserAuthorize(string code, string state)
+        {
+            WeChatUtilities wechat = new WeChatUtilities();
+            var jat = wechat.getWebOauthAccessToken(code);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            user.AccessToken = jat.access_token;
+            UserManager.Update(user);
+            //WeChatUtilities wechat = new WeChatUtilities();
+            var userinfo = wechat.getWebOauthUserInfo(user.AccessToken, user.OpenId);
+            user.NickName = userinfo.nickname;
+            user.ImgUrl = userinfo.headimgurl;
+            user.Sex = userinfo.sex == "1" ? true : false;
+            user.Province = userinfo.province;
+            user.City = userinfo.city;
+            UserManager.Update(user);
+            return RedirectToAction("Home");
         }
         [HttpPost]
         public JsonResult MainPanel(int id)
@@ -379,7 +447,12 @@ namespace PeriodAid.Controllers
                 ViewBag.NickName = user.NickName;
                 return PartialView(binduser);
             }
-            return Content("Error");
+            else
+            {
+                ViewBag.ImgUrl = user.ImgUrl;
+                ViewBag.NickName = user.NickName;
+                return PartialView();
+            }
         }
 
         public ActionResult UpdateAccountInfo(int id)
@@ -500,8 +573,15 @@ namespace PeriodAid.Controllers
                     {
                         // 获取模板产品列表
                         List<int> plist = new List<int>();
+                        var user = UserManager.FindById(User.Identity.GetUserId());
                         //var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
-                        foreach (var i in "1,2,3,4,5".Split(','))
+                        var _p = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == "TMEPPRODUCTLIST" && m.Off_System_Id == user.DefaultSystemId);
+                        string parray = "";
+                        if (_p != null)
+                        {
+                            parray = _p.SettingValue;
+                        }
+                        foreach (var i in parray.Split(','))
                         {
                             plist.Add(Convert.ToInt32(i));
                         }
@@ -564,7 +644,16 @@ namespace PeriodAid.Controllers
             int _id = taskid ?? 0;
             if (_id == 0)
             {
-                string[] plist_tmp = "1,2,3,4,5".Split(',');
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                //var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                var _p = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == "TMEPPRODUCTLIST" && m.Off_System_Id == user.DefaultSystemId);
+                string parray = "";
+                if (_p != null)
+                {
+                    parray = _p.SettingValue;
+                }
+                //foreach (var i in parray.Split(','))
+                string[] plist_tmp = parray.Split(',');
                 List<int> plist = new List<int>();
                 foreach (var i in plist_tmp)
                 {
@@ -597,7 +686,15 @@ namespace PeriodAid.Controllers
             else
             {
                 var item = _offlineDB.Off_SellerTask.SingleOrDefault(m => m.Id == _id);
-                string[] plist_tmp = "1,2,3,4,5".Split(',');
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                //var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                var _p = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == "TMEPPRODUCTLIST" && m.Off_System_Id == user.DefaultSystemId);
+                string parray = "";
+                if (_p != null)
+                {
+                    parray = _p.SettingValue;
+                }
+                string[] plist_tmp = parray.Split(',');
                 List<int> plist = new List<int>();
                 foreach (var i in plist_tmp)
                 {
@@ -665,7 +762,15 @@ namespace PeriodAid.Controllers
                     // 获取模板产品列表
                     List<int> plist = new List<int>();
                     //var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
-                    foreach (var i in "1,2,3,4,5".Split(','))
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    //var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                    var _p = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == "TMEPPRODUCTLIST" && m.Off_System_Id == user.DefaultSystemId);
+                    string parray = "";
+                    if (_p != null)
+                    {
+                        parray = _p.SettingValue;
+                    }
+                    foreach (var i in parray.Split(','))
                     {
                         plist.Add(Convert.ToInt32(i));
                     }

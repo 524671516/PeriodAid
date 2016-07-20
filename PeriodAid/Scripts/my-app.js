@@ -25,7 +25,7 @@ var mainView = myApp.addView('.view-main', {
 
 
 wx.config({
-    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
     appId: $("#appId").text(), // 必填，公众号的唯一标识
     timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
     nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
@@ -288,6 +288,7 @@ $$(document).on("pageInit", ".page[data-page='CreateSellerReport']", function (e
                             message: '表单提交成功'
                         });
                         setTimeout(function () {
+                            refresh_mainpanel();
                             myApp.closeNotification(".notifications");
                         }, 2000);
                     }
@@ -536,20 +537,9 @@ $$(document).on("pageInit", ".page[data-page='SellerTaskList']", function (e) {
             id: $("#sellertasklist-id").val()
         },
         success: function (data) {
-            $$("#sellertask-list").html(data);
-            currentpage++;
-            if (lastIndex < 10) {
-                $$.ajax({
-                    url: "/SellerTask/SellerTaskListPartial",
-                    data: {
-                        page: currentpage,
-                        id: $("#sellertasklist-id").val()
-                    },
-                    success: function (data) {
-                        $$("#sellertask-list").append(data);
-                        currentpage++;
-                    }
-                });
+            if (data != "FAIL") {
+                $$("#sellertask-list").html(data);
+                currentpage++;
             }
         }
     });
@@ -575,7 +565,6 @@ $$(document).on("pageInit", ".page[data-page='SellerTaskList']", function (e) {
                         currentpage++;
                     }
                     else {
-
                         myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
                         $$(".infinite-scroll-preloader").remove();//移除加载符
                         $$(".infinite-pre").removeClass("hidden");

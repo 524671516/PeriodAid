@@ -819,7 +819,7 @@
     <Content Include="Views\TempSeller\ManagerSystem_Patrol.cshtml" />
     <Content Include="Views\TempSeller\ManagerSystem_Warning.cshtml" />
     <Content Include="Views\TempSeller\ManagerSystem_SellerDetails.cshtml" />
-    <Content Include="Views\SellerTask\Wx_Register.cshtml" />
+    <Content Include="Views\SellerTask\Register.cshtml" />
     <Content Include="Views\SellerTask\WxJSAppPartial.cshtml" />
     <Content Include="Views\SellerTask\Home.cshtml" />
     <Content Include="Views\SellerTask\UserInfoPartial.cshtml" />
@@ -832,9 +832,12 @@
     <Content Include="Views\SellerTask\EditSellerTask.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskListPhoto.cshtml" />
     <Content Include="Views\SellerTask\SellerTaskDetails.cshtml" />
-    <Content Include="Views\OffProduct\DarkSellerList.cshtml" />
-    <Content Include="Views\OffSeller\BindDarkSellerIndex.cshtml" />
+    <Content Include="Views\OffProduct\TempSellerProductList.cshtml" />
     <Content Include="Views\OffManager\ManagerDarkList.cshtml" />
+    <Content Include="Views\SellerTask\SellerRegister.cshtml" />
+    <Content Include="Views\OffSeller\BindTempSellerPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindTempSellerListPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindTempSellerIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

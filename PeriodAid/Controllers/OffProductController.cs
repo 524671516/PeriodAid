@@ -285,10 +285,44 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-        //DarkSellerList
-        public ActionResult DarkSellerList()
+        // 暗促商品列表
+        public ActionResult TempSellerProductList()
         {
+            var productlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == "TMEPPRODUCTLIST");
+            if (productlist != null)
+            {
+                ViewBag.ProductList = productlist.SettingValue;
+            }
+            else
+            {
+                ViewBag.ProductList = "";
+            }
             return View();
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult TempSellerProductList(FormCollection form)
+        {
+            var productlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.SettingName == "TMEPPRODUCTLIST");
+            if (productlist != null)
+            {
+                productlist.SettingValue = form["offproduct-darkseller-product"].ToString();
+                _offlineDB.Entry(productlist).State = System.Data.Entity.EntityState.Modified;
+
+            }
+            else
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                productlist = new Off_System_Setting()
+                {
+                    Off_System_Id = user.DefaultSystemId,
+                    SettingName = "TMEPPRODUCTLIST",
+                    SettingResult = true,
+                    SettingValue = form["offproduct-darkseller-product"].ToString()
+                };
+                _offlineDB.Off_System_Setting.Add(productlist);
+            }
+            _offlineDB.SaveChanges();
+            return RedirectToAction("ProductList");
         }
     }
 }

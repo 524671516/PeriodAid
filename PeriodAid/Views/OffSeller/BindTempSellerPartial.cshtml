@@ -1,6 +1,6 @@
 ﻿@model PeriodAid.Models.Off_Membership_Bind
 
-@using (Html.BeginForm("BindSellerPartial", "OffSeller", FormMethod.Post, new { @id = "offseller-bindseller-editform" }))
+@using (Html.BeginForm("BindTempSellerPartial", "OffSeller", FormMethod.Post, new { @id = "offseller-bindseller-editform" }))
 {
     @Html.AntiForgeryToken()
 
@@ -57,7 +57,7 @@
             if (data == "SUCCESS") {
                 alert("修改成功");
                 $('.modal-box').modal('hide');
-                var url = "/OffSeller/BindSellerListPartial";
+                var url = "/OffSeller/BindTempSellerListPartial";
                 var cuxa = $("#offseller-bindseller-query").val();
                 var bool = $("#offseller-bindseller-bool").val();
                 $.ajax({

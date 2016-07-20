@@ -812,6 +812,8 @@ namespace PeriodAid.Models
         [StringLength(50)]
         public string AccountSource { get; set; }
 
+        public int StandardSalary { get; set; }
+
         public DateTime? UploadTime { get; set; }
 
         [StringLength(255)]

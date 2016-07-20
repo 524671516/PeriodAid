@@ -14,31 +14,33 @@
             }
         </div>
         <div class="col-40"><div style="margin:10px 0;"><span id="user-nickname" class="h4" >@Html.Encode(ViewBag.NickName)</span></div>
-        <a href="#" class="button active h6">更新头像</a></div>
+        <a href="javascript:window.location.href='/SellerTask/UpdateUserInfo';" class="button active h6">更新头像</a></div>
         <div class="col-20"></div>
     </div>
 </div>
+
 <div class="list-block">
     <div class="list-group">
         <ul>
             <li class="item-content list-panel-all">
                 <div class="item-inner">
                     <div class="item-title">真实姓名</div>
-                    <div class="item-after">@Html.Encode(Model.NickName)</div>
+                    <div class="item-after">@Html.Encode(Model.NickName==null?"N/A":Model.NickName)</div>
                 </div>
             </li>
             <li class="item-content list-panel-all">
                 <div class="item-inner">
                     <div class="item-title">门店</div>
-                    <div class="item-after">@Html.Encode(Model.Off_Seller.Off_Store.StoreName)</div>
+                    <div class="item-after">@Html.Encode(Model.Off_Seller==null?"N/A":Model.Off_Seller.Off_Store.StoreName)</div>
                 </div>
             </li>
             <li class="item-content list-panel-favorites">
                 <div class="item-inner">
                     <div class="item-title">手机</div>
-                    <div class="item-after">@Html.Encode(Model.UserName)</div>
+                    <div class="item-after">@Html.Encode(Model.UserName==null?"N/A": Model.UserName)</div>
                 </div>
             </li>
         </ul>
     </div>
 </div>
+

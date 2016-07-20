@@ -38,7 +38,11 @@
         </tr>
     </table>
 </div>
-<input class="hidden" id="offproduct-darkseller-product" />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <input class="hidden" id="offproduct-darkseller-product" name="offproduct-darkseller-product" value="@ViewBag.ProductList" />
+}
 <script>
     $(function () {
         var url = "/OffProduct/TemplateProductListAjax"
@@ -60,6 +64,14 @@
                         }
                         else {
                             $("#offproduct-darkseller-productlist").append("<option class='hidden' target-id='" + iD_arry + "' target-ic='" + iC_arry + "' target-sp='" + sP_arry + "' target-sc='" + sC_arry + "' target-sn='" + sN_arry + "'>" + iN_arry + "</option>");
+                        }
+                    }
+                    if ($("#offproduct-darkseller-product").val().trim() != "") {
+                        var L = $("#offproduct-darkseller-product").val().split(",");
+                        for (var i = 0; i < L.length; i++) {
+                            var $item = $("#offproduct-darkseller-productlist option[target-id='" + L[i] + "']");
+                            $("#offproduct-darkseller-tablelist").append("<tr id='ptr_" + L[i] + "'><td class='iN'>" + $item.text() + "</td><td class='sN'>" + $item.attr("target-sn") + "</td><td class='iC'>" + $item.attr("target-ic") + "</td><td class='sP'>" + $item.attr("target-sp") + "</td><td class='sC'>" + $item.attr("target-sc") + "</td><td><a class='btn btn-danger btn-xs offproduct-darkseller-del' target-id='" + L[i] + "'>删除</a></td></tr>");
+                            $item.remove();
                         }
                     }
                 }
@@ -99,10 +111,11 @@
                 l.push($(this).attr("target-id"));
             });
             $("#offproduct-darkseller-product").val(l);
+            alert($("#offproduct-darkseller-product").val())
         }
         //确定
         $("#offproduct-darkseller-sure").click(function () {
-            alert("保存完成");
+            $("form").submit();
         })
     });
 </script>

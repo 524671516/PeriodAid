@@ -16,8 +16,8 @@
 </table>
 <div class="container">
     <ul class="nav nav-tabs row">
-        <li role="presentation" class="active"><a class="offseller-bindseller-filter" data-rel="false" href="javascript:;">未绑定促销员</a></li>
-        <li role="presentation"><a class="offseller-bindseller-filter" data-rel="true" href="javascript:;">已绑定促销员</a></li>
+        <li role="presentation" class="active"><a class="offseller-bindseller-filter" data-rel="false" href="javascript:;">未绑定暗促促销员</a></li>
+        <li role="presentation"><a class="offseller-bindseller-filter" data-rel="true" href="javascript:;">已绑定暗促促销员</a></li>
     </ul>
 </div>
 <br />
@@ -29,7 +29,7 @@
 <script>
     $(function () {
         $.ajax({
-            url: "/OffSeller/BindSellerListPartial",
+            url: "/OffSeller/BindTempSellerListPartial",
             success: function (data) {
                 $("#offseller-bindseller-list").html(data)
             }
@@ -39,7 +39,7 @@
             $(this).parent("li").addClass("active").siblings().removeClass("active");
             $("#offseller-bindseller-bool").val($(this).attr("data-rel"));
             $.ajax({
-                url: "/OffSeller/BindSellerListPartial?bind=" + $("#offseller-bindseller-bool").val(),
+                url: "/OffSeller/BindTempSellerListPartial?bind=" + $("#offseller-bindseller-bool").val(),
                 success: function (data) {
                     $("#offseller-bindseller-list").html(data);
                 }
@@ -49,7 +49,7 @@
         //搜索
         $("#offseller-bindseller-query").val(decodeURIComponent($("#offseller-bindseller-query").val()));
         $("#offseller-bindseller-search").click(function () {
-            var url = "/OffSeller/BindSellerListPartial";
+            var url = "/OffSeller/BindTempSellerListPartial";
             var cuxa = $("#offseller-bindseller-query").val();
             var bool = $("#offseller-bindseller-bool").val();
             $.ajax({

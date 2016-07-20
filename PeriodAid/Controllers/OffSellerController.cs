@@ -363,7 +363,7 @@ namespace PeriodAid.Controllers
             {
                 var list = (from m in _offlineDB.Off_Membership_Bind
                             where m.Off_System_Id == user.DefaultSystemId
-                            && m.Bind == _bind
+                            && m.Bind == _bind && m.Type==1
                             orderby m.ApplicationDate descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -373,7 +373,7 @@ namespace PeriodAid.Controllers
                 var list = (from m in _offlineDB.Off_Membership_Bind
                             where (m.NickName.Contains(query) || m.Off_Seller.Off_Store.StoreName.Contains(query))
                             && m.Off_System_Id == user.DefaultSystemId
-                            && m.Bind == _bind
+                            && m.Bind == _bind && m.Type==1
                             orderby m.ApplicationDate descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -383,7 +383,7 @@ namespace PeriodAid.Controllers
         // Origin: Off_BindSeller
         public ActionResult BindSellerPartial(int id)
         {
-            var item = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id);
+            var item = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id && m.Type==1);
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
@@ -404,6 +404,7 @@ namespace PeriodAid.Controllers
             if (TryUpdateModel(item))
             {
                 item.Bind = true;
+
                 _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                 _offlineDB.SaveChanges();
                 return Content("SUCCESS");
@@ -414,6 +415,72 @@ namespace PeriodAid.Controllers
             }
         }
         #endregion
+
+        public ActionResult BindTempSellerIndex()
+        {
+            return View();
+        }
+        
+
+        public PartialViewResult BindTempSellerListPartial(string query, int? page, bool? bind)
+        {
+            int _page = page ?? 1;
+            bool _bind = bind ?? false;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            if (query == null)
+            {
+                var list = (from m in _offlineDB.Off_Membership_Bind
+                            where m.Off_System_Id == user.DefaultSystemId
+                            && m.Bind == _bind && m.Type == 2
+                            orderby m.ApplicationDate descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_Membership_Bind
+                            where (m.NickName.Contains(query) || m.Off_Seller.Off_Store.StoreName.Contains(query))
+                            && m.Off_System_Id == user.DefaultSystemId
+                            && m.Bind == _bind && m.Type == 2
+                            orderby m.ApplicationDate descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+        }
+
+        // Origin: Off_BindSeller
+        public ActionResult BindTempSellerPartial(int id)
+        {
+            var item = _offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == id && m.Type==2);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_System_Id == user.DefaultSystemId)
+                {
+                    return PartialView(item);
+                }
+                else
+                    return PartialView("AuthorizeErrorPartial");
+            }
+            else
+                return PartialView("ErrorPartial");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult BindTempSellerPartial(int id, FormCollection form)
+        {
+            Off_Membership_Bind item = new Off_Membership_Bind();
+            if (TryUpdateModel(item))
+            {
+                item.Bind = true;
+                _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                _offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            else
+            {
+                return View("Error");
+            }
+        }
 
 
         // Origin: Off_UpdateManager
@@ -491,8 +558,8 @@ namespace PeriodAid.Controllers
         }
 
 
-// Origin: analyseExcel_SellerTable
-public async Task<List<Excel_DataMessage>> UploadSellerByExcelAsync(string filename, List<Excel_DataMessage> messageList)
+        // Origin: analyseExcel_SellerTable
+        public async Task<List<Excel_DataMessage>> UploadSellerByExcelAsync(string filename, List<Excel_DataMessage> messageList)
         {
             try
             {
@@ -588,10 +655,6 @@ public async Task<List<Excel_DataMessage>> UploadSellerByExcelAsync(string filen
             Array.Copy(array, 0, outBuffer, 3, array.Length);
             return outBuffer;
         }
-        //BindDarkSellerIndex
-        public ActionResult BindDarkSellerIndex()
-        {
-            return View();
-        }
+        
     }
 }
