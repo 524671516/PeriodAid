@@ -1,0 +1,362 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>督导管理</title>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.colors.min.css" rel="stylesheet" />
+    <link href="~/Content/Manager.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="statusbar-overlay"></div>
+    <div class="panel-overlay"></div>
+    <div class="panel panel-left panel-reveal left-nav">
+        <div class="img-center">
+            <div class="row">
+                <div class="col-40">
+                    <img src="~/Content/images/i-f7-ios.png" class="img-circle img-responsive" />
+                </div>
+                <div class="col-40">
+                    <div style="margin:10px 0;">
+                        <span class="h4">陈皮</span>
+                    </div>
+                    <a href="#" class="button active h6">更换头像</a>
+                </div>
+                <div class="col-20"></div>
+            </div>
+            <div class="list-block">
+                <div class="list-group">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">真实姓名</div>
+                                <div class="item-after">陈皮</div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">手机</div>
+                                <div class="item-after">13636314852</div>
+                            </div>
+                        </li>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">区域</div>
+                                    <div class="item-after">欧尚</div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content">
+                                <div class="list-block">
+                                    <ul>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">大润发</div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">乐购</div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">湖南步步高</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">门店</div>
+                                    <div class="item-after">江山店</div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content">
+                                <div class="list-block">
+                                    <ul>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">先锋岛店</div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">相山南店</div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">石桥路店</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Views -->
+    <div class="views">
+        <!-- Your main view, should have "view-main" class -->
+        <div class="view view-main" data-page="home">
+            <!-- Top Navbar-->
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="center sliding"><strong>督导管理系统</strong></div>
+                    <div class="right">
+                        <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Page, "data-page" contains page name -->
+                <div data-page="index" class="page">
+                    <!-- Scrollable page content -->
+                    <div class="page-content">
+                        <div class="tabs">
+                            <div id="Task" class="tab active">
+                                @*<div class="txt-title">督导管理 签到</div>*@
+                                <div class="content-block-title">督导重点工作</div>
+                                <div class="list-block media-list">
+                                    <ul>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-media img-box color-blue"><i class="fa fa-calendar-check-o"></i></div>
+                                                <div class="item-inner">
+                                                    <div class="item-title-row">
+                                                        <div class="item-title">本周工作 (07/18 - 07/24)</div>
+                                                    </div>
+                                                    <div class="item-subtitle color-gray" style="padding:14px 0">当前重点工作项目: 0</div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="content-block-title">今日签到</div>
+                                <div class="list-block">
+                                    <ul>
+                                        <li>
+                                            <a href="/Seller/Manager_AddChekin" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">添加签到信息</div>
+                                                    <div class="item-after">已签到0次</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Seller/Manager_TaskReport" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">工作日报</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="content-block-title">信息查询</div>
+                                <div class="list-block">
+                                    <ul>
+                                        <li>
+                                            <a href="javascript:;" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">查看个人签到信息</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">查看其它签到</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="content-block-title">需求提报</div>
+                                <div class="list-block">
+                                    <ul>
+                                        <li>
+                                            <a href="javascript:;" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">店铺需求提报</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">已提报需求列表</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="Patrol" class="tab">
+                                @*<div class="txt-title">督导管理 巡店</div>*@
+                                @*<div class="content-block-title">督导信息</div>*@
+                                @*<div class="list-block">
+                                    <ul>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">陈皮</div>
+                                                <div class="item-after">10100-115151</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>*@
+                                <div class="content-block-title">店铺巡查</div>
+                                <div class="list-block">
+                                    <ul>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">今日未签到</div>
+                                                    <div class="item-after">0</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">今日未签退</div>
+                                                    <div class="item-after">0</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">未提报销量</div>
+                                                    <div class="item-after">0</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">销量待确认</div>
+                                                    <div class="item-after">0</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="Tools" class="tab">
+                                @*<div class="txt-title">督导管理 巡店</div>*@
+                                @*<div class="list-block">
+                                    <ul>
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">陈皮</div>
+                                                <div class="item-after">10100-115151</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>*@
+                                <div class="content-block-title">管理工具</div>
+                                <div class="list-block">
+                                    <ul>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">销量排名</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">活动门店列表</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">管辖门店列表</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">查询促销员</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">确认促销员奖励</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="content-block-title">使用帮助</div>
+                                <div class="list-block">
+                                    <ul>
+                                        <li>
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">使用指南</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- Bottom Toolbar-->
+        <div class="toolbar tabbar tabbar-labels">
+            <div class="toolbar-inner">
+                <a href="#Task" class="tab-link active">
+                    <i class="fa fa-map-marker padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">签到</span>
+                </a>
+                <a href="#Patrol" class="tab-link">
+                    <i class="fa fa-street-view padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">巡店</span>
+                </a>
+                <a href="#Tools" class="tab-link">
+                    <i class="fa fa-cog padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">管理</span>
+                </a>
+                <a href="#tab4" class="tab-link">
+                    <i class="fa fa-user padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">个人</span>
+                </a>
+            </div>
+        </div>
+        </div>
+    <!-- Path to Framework7 Library JS-->
+    <script src="~/Scripts/framework7.min.js"></script>
+    <!-- Path to your app js-->
+    <script src="~/Scripts/Manager.js"></script>
+</body>
+</html> 

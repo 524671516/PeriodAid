@@ -2709,5 +2709,19 @@ namespace PeriodAid.Controllers
                     return View("Error");
             }
         }
+
+        public ActionResult Manager_Home()
+        {
+            return View();
+        }
+        public ActionResult Manager_AddChekin()
+        {
+            return View();
+        }
+        public ActionResult Manager_TaskReport()
+        {
+            return View();
+        }
+        
     }
 }
