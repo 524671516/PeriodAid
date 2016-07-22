@@ -843,6 +843,12 @@
     <Content Include="Views\Seller\Manager_Home.cshtml" />
     <Content Include="Views\Seller\Manager_AddChekin.cshtml" />
     <Content Include="Views\Seller\Manager_TaskReport.cshtml" />
+    <Content Include="Views\Seller\Manager_CheckInView.cshtml" />
+    <Content Include="Views\Seller\Senior_AllCheckInList.cshtml" />
+    <Content Include="Views\Seller\Senior_CheckInDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_Request_Create.cshtml" />
+    <Content Include="Views\Seller\Manager_Request_List.cshtml" />
+    <Content Include="Views\Seller\Manager_Request_Check.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

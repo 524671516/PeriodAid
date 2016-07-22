@@ -2722,6 +2722,29 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        
+        public ActionResult Manager_CheckInView()
+        {
+            return View();
+        }
+        public ActionResult Senior_AllCheckInList()
+        {
+            return View();
+        }
+        public ActionResult Senior_CheckInDetails()
+        {
+            return View();
+        }
+        public ActionResult Manager_Request_Create()
+        {
+            return View();
+        }
+        public ActionResult Manager_Request_List()
+        {
+            return View();
+        }
+        public ActionResult Manager_Request_Check()
+        {
+            return View();
+        }
     }
 }

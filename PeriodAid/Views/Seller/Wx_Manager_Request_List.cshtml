@@ -19,7 +19,7 @@
                 <p class="weui_media_desc">需求内容：@Html.Encode(item.RequestContent)</p>
                 <p class="weui_media_desc" style="margin-top:5px;">备注信息：@Html.Encode(item.RequestRemark)</p>
                 <ul class="weui_media_info">
-                    <li class="weui_media_info_meta">@Html.Encode(ParseStatus.getManagerRequestStatus(item.Status))</li>
+                    <li class="weui_media_info_meta">@Html.Encode(Html.ManagerRequestStatus(item.Status))</li>
                     <li class="weui_media_info_meta weui_media_info_meta_extra">@Html.Encode(item.ReplyContent)</li>
                 </ul>
             </div>

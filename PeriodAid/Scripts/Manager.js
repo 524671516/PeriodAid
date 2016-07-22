@@ -18,3 +18,20 @@ $$(document).on('ajaxComplete', function (e) {
     if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
     myApp.hideIndicator();
 });
+
+//Senior_CheckInDetails
+$$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
+    var myPhotoBrowserPopupDark = myApp.photoBrowser({
+        photos: [
+            '/Content/images/guide-02-3.jpg'
+        ],
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
+    $$('.manager-chekinphoto').on('click', function () {
+        myPhotoBrowserPopupDark.open();
+    });
+});
