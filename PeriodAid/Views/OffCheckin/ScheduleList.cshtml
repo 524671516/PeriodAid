@@ -18,6 +18,7 @@
 <div id="offsales-list-schedule">
 
 </div>
+<input type="hidden" id="offsales-label-status" />
 <script>
     $(function () {
         $.ajax({
@@ -28,6 +29,7 @@
         })
     });
     $(".offsales-label").click(function () {
+        $("#offsales-label-status").val($(this).attr("data-rel"));
         var button = $(this);
         $(this).parent("li").addClass("active").siblings().removeClass("active");
         $("#offsales-label-status").val($(button).attr("data-rel"));

@@ -849,6 +849,9 @@
     <Content Include="Views\Seller\Manager_Request_Create.cshtml" />
     <Content Include="Views\Seller\Manager_Request_List.cshtml" />
     <Content Include="Views\Seller\Manager_Request_Check.cshtml" />
+    <Content Include="Views\Seller\Manager_Task.cshtml" />
+    <Content Include="Views\Seller\Manager_Tools.cshtml" />
+    <Content Include="Views\Seller\Manager_Tempseller.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

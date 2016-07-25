@@ -19,6 +19,11 @@ $$(document).on('ajaxComplete', function (e) {
     myApp.hideIndicator();
 });
 
+$$(".tab-link").on("click", function (data) {
+    var url = $$(this).attr("href");
+    $$(this).addClass("active")
+    window.location.href = url;
+});
 //Senior_CheckInDetails
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
     var myPhotoBrowserPopupDark = myApp.photoBrowser({

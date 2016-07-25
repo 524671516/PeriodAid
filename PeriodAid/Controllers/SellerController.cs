@@ -2714,6 +2714,18 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public ActionResult Manager_Task()
+        {
+            return View();
+        }
+        public ActionResult Manager_Tools()
+        {
+            return View();
+        }
+        public ActionResult Manager_Tempseller()
+        {
+            return View();
+        }
         public ActionResult Manager_AddChekin()
         {
             return View();
