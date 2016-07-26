@@ -75,7 +75,7 @@
             data: {
                 date: $("#offsalesschedule-current-date").val(),
                 query: query,
-                canceled: $("#offchechin-manualbox").prop("checked")
+                nonedata: $("#offchechin-manualbox").prop("checked")
             },
             success: function (data) {
                 $("#offsalesschedule-list").html(data);
