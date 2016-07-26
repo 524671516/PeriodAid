@@ -804,26 +804,51 @@ namespace PeriodAid.Controllers
             ViewBag.Date = date;
             return View();
         }
-        public PartialViewResult ViewScheduleDetailsPartial(string date, string query, int? page)
+        public PartialViewResult ViewScheduleDetailsPartial(string date, string query, int? page, bool? nonedata)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime day = DateTime.Parse(date);
             int _page = page ?? 1;
-            if (query != null)
+            bool _nonedata = nonedata ?? false;
+            if (!_nonedata)
             {
-                var list = (from m in _offlineDB.Off_Checkin_Schedule
-                            where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
-                            orderby m.Off_Store.StoreName
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
+                if (query != null)
+                {
+                    var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
+                                orderby m.Off_Store.StoreName
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+                else
+                {
+                    var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
+                                orderby m.Off_Store.StoreName
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
             }
             else
             {
-                var list = (from m in _offlineDB.Off_Checkin_Schedule
-                            where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
-                            orderby m.Off_Store.StoreName
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
+                if (query != null)
+                {
+                    var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
+                                && m.Off_Checkin.Count==0
+                                orderby m.Off_Store.StoreName
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+                else
+                {
+                    var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
+                                && m.Off_Checkin.Count ==0
+                                orderby m.Off_Store.StoreName
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
             }
         }
 
