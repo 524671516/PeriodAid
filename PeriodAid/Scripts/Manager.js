@@ -1,6 +1,8 @@
-﻿var $$ = Framework7.$;
+﻿var $$ = Dom7;
 // Initialize app
-var myApp = new Framework7();
+var myApp = new Framework7({
+    cache: false
+});
 
 // If we need to use custom DOM library, let's save it to $$ variable:
 

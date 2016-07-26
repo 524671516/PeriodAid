@@ -7,7 +7,7 @@
         {
         <div class="weui_media_box weui_media_text" style="padding:5px 15px;">
             <h4 class="weui_media_title">@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd")+"："+item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)</h4>
-            <p class="weui_media_desc">红包金额：@Html.Encode(item.Off_Checkin.Bonus)元&nbsp;&nbsp;|&nbsp;&nbsp;红包状态：@Html.Encode(ParseStatus.getBonusRequestStatus(item.Status))</p>
+            <p class="weui_media_desc">红包金额：@Html.Encode(item.Off_Checkin.Bonus)元&nbsp;&nbsp;|&nbsp;&nbsp;红包状态：@Html.BonusStatus(item.Status))</p>
         </div>
         }
     </div>
