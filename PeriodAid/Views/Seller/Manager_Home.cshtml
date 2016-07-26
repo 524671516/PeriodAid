@@ -13,6 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>督导管理</title>
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/framework7.ios.min.css" rel="stylesheet" />
     <link href="~/Content/framework7.ios.colors.min.css" rel="stylesheet" />
@@ -115,10 +116,9 @@
         </div>
     </div>
     <!-- Views -->
-    <div class="views tabs toolbar-through">
+    <div class="views">
         <!-- Your main view, should have "view-main" class -->
-        <div id="Task" class="view view-main tab active" data-page="Task">
-            <!-- Top Navbar-->
+        <div class="view view-main">
             <div class="navbar">
                 <div class="navbar-inner">
                     <div class="center sliding"><strong>督导管理系统</strong></div>
@@ -127,116 +127,22 @@
                     </div>
                 </div>
             </div>
-            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
-            <div class="pages navbar-through">
-                <!-- Page, "data-page" contains page name -->
-                <div data-page="Task" class="page Task">
-                    <!-- Scrollable page content -->
-                    <div class="page-content">
-                        <div class="content-block-title">督导重点工作</div>
-                        <div class="list-block media-list">
-                            <ul>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-media img-box color-blue"><i class="fa fa-calendar-check-o"></i></div>
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">本周工作 (07/18 - 07/24)</div>
-                                            </div>
-                                            <div class="item-subtitle color-gray" style="padding:14px 0">当前重点工作项目: 0</div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="content-block-title">今日签到</div>
-                        <div class="list-block">
-                            <ul>
-                                <li>
-                                    <a href="/Seller/Manager_AddChekin" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">添加签到信息</div>
-                                            <div class="item-after">已签到0次</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/Seller/Manager_TaskReport" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">工作日报</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="content-block-title">信息查询</div>
-                        <div class="list-block">
-                            <ul>
-                                <li>
-                                    <a href="/Seller/Manager_CheckInView" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">查看个人签到信息</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/Seller/Senior_AllCheckInList" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">查看其它签到</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="content-block-title">需求提报</div>
-                        <div class="list-block">
-                            <ul>
-                                <li>
-                                    <a href="/Seller/Manager_Request_Create" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">店铺需求提报</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/Seller/Manager_Request_List" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">已提报需求列表</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="Home" class="view tab" data-page="Home">
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <div class="center sliding"><strong>督导管理系统</strong></div>
-                    <div class="right">
-                        <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="pages navbar-through">
+            <div class="pages navbar-through toolbar-through">
                 <div class="page" data-page="Home">
                     <div class="page-content">
-
                         <div class="content-block-title">店铺巡查</div>
                         <div class="list-block">
                             <ul>
                                 <li>
-                                    <a href="#" class="item-link item-content">
+                                    <a href="/Seller/Manager_UnCheckInList" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title">今日未签到</div>
-                                            <div class="item-after">0</div>
+                                            <div class="item-after">1</div>
                                         </div>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="item-link item-content">
+                                    <a href="/Seller/Manager_UnCheckInList" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title">今日未签退</div>
                                             <div class="item-after">0</div>
@@ -244,7 +150,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="item-link item-content">
+                                    <a href="/Seller/Manager_UnCheckInList" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title">未提报销量</div>
                                             <div class="item-after">0</div>
@@ -252,7 +158,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="item-link item-content">
+                                    <a href="/Seller/Manager_UnCheckInList" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title">销量待确认</div>
                                             <div class="item-after">0</div>
@@ -265,105 +171,21 @@
                 </div>
             </div>
         </div>
-        <div id="Tools" class="view tab" data-page="Tools">
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <div class="center sliding"><strong>督导管理系统</strong></div>
-                    <div class="right">
-                        <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="pages navbar-through">
-                <div class="page" data-page="Tools">
-                    <div class="page-content">
-
-                        <div class="content-block-title">管理工具</div>
-                        <div class="list-block">
-                            <ul>
-                                <li>
-                                    <a href="#" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">销量排名</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">活动门店列表</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">管辖门店列表</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">查询促销员</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">确认促销员奖励</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="content-block-title">使用帮助</div>
-                        <div class="list-block">
-                            <ul>
-                                <li>
-                                    <a href="#" class="item-link item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title">使用指南</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="Tempseller" class="view tab" data-page="TempSeller">
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <div class="center sliding"><strong>督导管理系统</strong></div>
-                    <div class="right">
-                        <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="pages navbar-through">
-                <div class="page" data-page="TempSeller">
-                    <div class="page-content"></div>
-                </div>
-            </div>
-        </div>
         <div class="toolbar tabbar tabbar-labels">
             <div class="toolbar-inner">
-                <a href="#Task" class="tab-link active">
+                <a href="javascript:;" id="tab-link" class="tab-link" data-href="/Seller/Manager_Task">
                     <i class="fa fa-map-marker padding-top-2"></i>
                     <span class="tabbar-label padding-bottom-2">签到</span>
                 </a>
-                <a href="#Home" class="tab-link">
+                <a href="javascript:;" class="tab-link active" data-href="/Seller/Manager_Home">
                     <i class="fa fa-street-view padding-top-2"></i>
                     <span class="tabbar-label padding-bottom-2">巡店</span>
                 </a>
-                <a href="#Tools" class="tab-link">
+                <a href="javascript:;" class="tab-link" data-href="/Seller/Manager_Tools">
                     <i class="fa fa-cog padding-top-2"></i>
                     <span class="tabbar-label padding-bottom-2">管理</span>
                 </a>
-                <a href="#Tempseller" class="tab-link">
+                <a href="javascript:;" class="tab-link" data-href="/Seller/Manager_Tempseller">
                     <i class="fa fa-user padding-top-2"></i>
                     <span class="tabbar-label padding-bottom-2">暗促</span>
                 </a>
@@ -377,4 +199,3 @@
     <script src="~/Scripts/Manager.js"></script>
 </body>
 </html>
-<div id="Tempseller" class="tab"></div>

@@ -87,3 +87,13 @@
 .content-border-bottom {
     border-bottom: 1px solid #D6D6D6;
 }
+.text-center {
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+}
+.form-media-box {
+    width: 25px;
+    height: 18px;
+    text-align:center
+}

@@ -2758,7 +2758,41 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        //public ActionResult Manager
-
+        public ActionResult Manager_UnCheckInList()
+        {
+            return View();
+        }
+        public ActionResult Manager_ReportList()
+        {
+            return View();
+        }
+        public ActionResult Manager_EventList()
+        {
+            return View();
+        }
+        public ActionResult Manager_CreateCheckIn()
+        {
+            return View();
+        }
+        public ActionResult Manager_StoreList()
+        {
+            return View();
+        }
+        public ActionResult Manager_QuerySeller()
+        {
+            return View();
+        }
+        public ActionResult Manager_AjaxSellerDetails()
+        {
+            return View();
+        }
+        public ActionResult Manager_CreditInfo()
+        {
+            return View();
+        }
+        public ActionResult Manager_BonusList()
+        {
+            return View();
+        }
     }
 }
