@@ -1,6 +1,8 @@
-﻿var $$ = Framework7.$;
+﻿var $$ = Dom7;
 // Initialize app
-var myApp = new Framework7();
+var myApp = new Framework7({
+    cache: false
+});
 
 // If we need to use custom DOM library, let's save it to $$ variable:
 
@@ -19,11 +21,7 @@ $$(document).on('ajaxComplete', function (e) {
     myApp.hideIndicator();
 });
 
-$$(".tab-link").on("click", function (data) {
-    var url = $$(this).attr("href");
-    $$(this).addClass("active")
-    window.location.href = url;
-});
+
 //Senior_CheckInDetails
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
     var myPhotoBrowserPopupDark = myApp.photoBrowser({

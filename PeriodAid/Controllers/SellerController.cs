@@ -2758,5 +2758,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        //public ActionResult Manager
+
     }
 }
