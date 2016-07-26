@@ -852,6 +852,15 @@
     <Content Include="Views\Seller\Manager_Task.cshtml" />
     <Content Include="Views\Seller\Manager_Tools.cshtml" />
     <Content Include="Views\Seller\Manager_Tempseller.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckInList.cshtml" />
+    <Content Include="Views\Seller\Manager_ReportList.cshtml" />
+    <Content Include="Views\Seller\Manager_EventList.cshtml" />
+    <Content Include="Views\Seller\Manager_CreateCheckIn.cshtml" />
+    <Content Include="Views\Seller\Manager_StoreList.cshtml" />
+    <Content Include="Views\Seller\Manager_QuerySeller.cshtml" />
+    <Content Include="Views\Seller\Manager_AjaxSellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_CreditInfo.cshtml" />
+    <Content Include="Views\Seller\Manager_BonusList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

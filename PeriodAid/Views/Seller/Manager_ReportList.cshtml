@@ -1,0 +1,72 @@
+﻿
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>销量排名</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-reportlist">
+        <div class="page-content">
+            <div class="content-block-title">选择日期</div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">日期</div>
+                                <div class="item-input">
+                                    <input id="manager-reportlist-date" type="text" placeholder="日期" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="搜索区域" data-searchbar-cancel="取消">
+                            <select name="area">
+                                <option value="2016-07-07" selected>大润发</option>
+                                <option value="2016-07-22">欧尚</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">系统</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="list-block media-list">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title color-gray">
+                                    <span>06-10</span>:当前累计红包<span>0</span>个，合计<span>0.00</span>元
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title color-green">欧尚-丹阳店</div>
+                                <div class="item-subtitle color-gray margin-top-3">
+                                    <i class="fa fa-user"></i>&nbsp;陈皮&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-history"></i>&nbsp;17.50&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-tags"></i>&nbsp;10&nbsp;&nbsp;|&nbsp;&nbsp;<i class="fa fa-suitcase" aria-hidden="true"></i>&nbsp;已结算
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
