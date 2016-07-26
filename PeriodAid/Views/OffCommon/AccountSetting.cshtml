@@ -77,6 +77,18 @@
             </ul>
         </div>
         <hr />
+        <h5><b>链接地址</b></h5><br />
+        <div class="form-group">
+            <label class="col-md-2">促销员登录地址：</label>
+            <div class="col-md-4"><input id="seller-url" class="form-control" readonly="readonly" value="/Seller/ViewScheduleDetailsPartial" /></div>
+            <div class="col-md-2"><a href="javascript:;" class="btn btn-info" onClick="copyUr01()">复制</a></div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">暗促登录地址：</label>
+            <div class="col-md-4"><input id="tempseller-url" class="form-control" readonly="readonly" value="/Seller/ViewScheduleDetailsPartial" /></div>
+            <div class="col-md-2"><a href="javascript:;" class="btn btn-info" onClick="copyUr02()">复制</a></div>
+        </div>
+        <hr />
         <div class="form-group">
             <div class="col-md-10">
                 <button class="btn btn-success" id="offaccount-submit">保存</button>
@@ -166,4 +178,16 @@
         }, 1000);
         return false;
     });
+    function copyUr01() {
+        var Url2 = document.getElementById("seller-url");
+        Url2.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        alert("已复制好，可贴粘。");
+    }
+    function copyUr02() {
+        var Url2 = document.getElementById("tempseller-url");
+        Url2.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        alert("已复制好，可贴粘。");
+    }
 </script>
