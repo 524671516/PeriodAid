@@ -97,6 +97,7 @@ namespace PeriodAid.Controllers
                              where systemlistid.Contains(m.Id)
                              select m;
             ViewBag.SystemList = systemlist;
+            ViewBag.CurrentSystem = user.DefaultSystemId;
             return View(model);
         }
         [Authorize(Roles = "Admin")]

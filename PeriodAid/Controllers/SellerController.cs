@@ -2794,5 +2794,34 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        public ActionResult ManagerSellerTaskHome()
+        {
+            return View();
+        }
+
+        public ActionResult ManagerSellerTaskMonthStatistic()
+        {
+            return View();
+        }
+        public ActionResult ManagerSellerTaskMonthStatisticParial()
+        {
+            // 获取督导的门店列表
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m=>m.Id);
+            // 查看参数，如无参数，默认为当月数据，也可查询上月数据
+            var startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
+            var finishDate = startDate.AddMonths(1);
+            // 获取督导对应门店的当月/或者指定月份的暗促信息
+
+            var tasklist = from m in offlineDB.Off_SellerTask
+                           where storelist.Contains(m.StoreId)
+                           && m.ApplyDate >= startDate && m.ApplyDate < finishDate
+                           group m by m.Off_Seller into g
+                           select new Wx_SellerTaskMonthStatistic { Off_Seller = g.Key, AttendanceCount = g.Count()*100/30 };
+            //ViewBag.TaskList = tasklist;
+            return PartialView(tasklist);
+        }
     }
 }
