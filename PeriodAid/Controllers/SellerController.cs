@@ -2762,6 +2762,14 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public ActionResult Manager_UnCheckOutList()
+        {
+            return View();
+        }
+        public ActionResult Manager_UnCheckOutPartial()
+        {
+            return View();
+        }
         public ActionResult Manager_ReportList()
         {
             return View();
@@ -2791,6 +2799,10 @@ namespace PeriodAid.Controllers
             return View();
         }
         public ActionResult Manager_BonusList()
+        {
+            return View();
+        }
+        public ActionResult Manager_TempSellerDetails()
         {
             return View();
         }
