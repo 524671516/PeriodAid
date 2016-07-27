@@ -23,7 +23,7 @@ $$(document).on('ajaxComplete', function (e) {
 
 $$(".tab-link").on("click", function (data) {
     var url = $$(this).attr("data-href");
-    mainView.router.load({ url: url });
+    mainView.router.load({ url: url, animatePages: false });
     $(this).addClass("active").siblings().removeClass("active")
 });
 //Senior_CheckInDetails
@@ -46,6 +46,7 @@ $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function
 $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: '#manager-reportlist-date',
+
     });
 });
 //Manager_EventList

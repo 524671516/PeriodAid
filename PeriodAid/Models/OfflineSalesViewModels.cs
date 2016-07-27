@@ -345,6 +345,12 @@ namespace PeriodAid.Models
 
         public decimal? SalesAmount { get; set; }
     }
+    public class Wx_SellerTaskMonthStatistic
+    {
+        public Off_Seller Off_Seller{ get; set; }
+
+        public int AttendanceCount { get; set; }
+    }
     public class ExcelOperation
     {
         public static int? ConvertInt(DataRow dr, string columname)

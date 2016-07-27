@@ -861,9 +861,7 @@
     <Content Include="Views\Seller\Manager_AjaxSellerDetails.cshtml" />
     <Content Include="Views\Seller\Manager_CreditInfo.cshtml" />
     <Content Include="Views\Seller\Manager_BonusList.cshtml" />
-    <Content Include="Views\Seller\Manager_UnCheckOutList.cshtml" />
-    <Content Include="Views\Seller\Manager_UnCheckOutPartial.cshtml" />
-    <Content Include="Views\Seller\Manager_TempSellerDetails.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskMonthStatisticParial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
