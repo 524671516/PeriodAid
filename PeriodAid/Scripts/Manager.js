@@ -122,3 +122,7 @@ $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", funct
         }
     });
 });
+//ManangerSellerTaskSeller
+$$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function () {
+
+});
