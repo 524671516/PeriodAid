@@ -1,7 +1,13 @@
-﻿@model IEnumerable<PeriodAid.Models.Wx_SellerTaskMonthStatistic>
+﻿@model IEnumerable<PeriodAid.Models.Off_SellerTask>
 
-    @foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <li>
-            <a href="#"></a>
+            <a href="/Seller/" class="item-content item-link">
+                <div class="item-inner">
+                    <div class="item-title">@item.Off_Seller.Name</div>
+                    <div class="item-after">@item.ApplyDate</div>
+                </div>
+            </a>
         </li>
     }

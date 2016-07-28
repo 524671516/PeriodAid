@@ -123,6 +123,56 @@ $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", funct
     });
 });
 //ManangerSellerTaskSeller
-$$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function () {
+$$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function (e) {
+    var page = 1;
+    var url = "/Seller/ManagerSellerTaskSellerPartial";
+    $$.ajax({
+        url: url,
+        data: {
+            page: page,
+            id: $("#sellerid").val()
+        },
+        success: function (data) {
+            if (data != "FAIL") {
+                $$("#managerseller-list").html(data);
+                page++;
+            }
+        }
+    });
+    //刷新
+    var loading = false;//加载flag
+    $$(".infinite-scroll").on("infinite", function (e) {
+        $$(".infinite-scroll-preloader").removeClass("hidden");
+        if (loading) return;
+        loading = true;
+        setTimeout(function () {
+            loading = false;//重置flag
 
+            //生成新的条目
+            $$.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    id: $("#sellerid").val()
+                },
+                success: function (data) {
+                    if (data != "FAIL") {
+                        $$("#managerseller-list").append(data);
+                        page++;
+                    } else if (data == "NONE") {
+                        myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
+                            $$(".infinite-scroll-preloader").remove();//移除加载符
+                            $$(".infinite-pre").removeClass("hidden");
+                            return;
+                    }
+                    else {
+                        myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
+                        $$(".infinite-scroll-preloader").remove();//移除加载符
+                        $$(".infinite-pre").removeClass("hidden");
+                        return;
+                    }
+                }
+            });
+        }, 1000)
+    });
 });
