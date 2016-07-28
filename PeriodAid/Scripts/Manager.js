@@ -62,3 +62,54 @@ $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function (
         searchIn: '.item-title'
     });
 });
+//Manager_BonusList
+$$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () {
+    var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
+    var authors = ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'];
+
+    // Pull to refresh content
+    var ptrContent = $$('.pull-to-refresh-content');
+
+    // Add 'refresh' listener on it
+    ptrContent.on('refresh', function (e) {
+        // Emulate 2s loading
+        setTimeout(function () {
+            // Random song
+            var song = songs[Math.floor(Math.random() * songs.length)];
+            // Random author
+            var author = authors[Math.floor(Math.random() * authors.length)];
+            // List item html
+            var itemHTML = '<li class="item-content">' +
+                              '<div class="item-inner">' +
+                                '<div class="item-title-row">' +
+                                  '<div class="item-title">' + song + '</div>' +
+                                '</div>' +
+                                '<div class="item-subtitle">' + author + '</div>' +
+                              '</div>' +
+                            '</li>';
+            // Prepend new list element
+            ptrContent.find('ul').prepend(itemHTML);
+            // When loading done, we need to reset it
+            myApp.pullToRefreshDone();
+        }, 2000);
+    });
+});
+//Manager_TempSellerDetails
+$$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function (e) {
+    var myPhotoBrowserPopupDark = myApp.photoBrowser({
+        photos: [
+            {
+                url: '/Content/images/sellertask-guide-01.jpg',
+                caption: '2016-07-27'
+            }
+        ],
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
+    $$('.ph-tempseller').on('click', function (e) {
+        myPhotoBrowserPopupDark.open();
+    });
+});
