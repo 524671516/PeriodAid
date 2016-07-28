@@ -113,3 +113,12 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
         myPhotoBrowserPopupDark.open();
     });
 });
+//ManagerSellerTaskMonthStatistic
+$$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", function () {
+    $$.ajax({
+        url: "/Seller/ManagerSellerTaskMonthStatisticPartial",
+        success: function (data) {
+            $$("#manager-seller-taskmonth").html(data);
+        }
+    });
+});
