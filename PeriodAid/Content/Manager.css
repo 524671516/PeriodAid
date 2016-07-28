@@ -80,6 +80,17 @@
 .hidden {
     display: none;
 }
+.preloader-text {
+    text-align: center;
+}
+.infinite-scroll-preloader {
+    margin-bottom: 10px;
+    text-align: center;
+}
+.infinite-scroll-preloader .preloader {
+        width: 34px;
+        height: 34px;
+    }
 .content-text {
     padding-left: 15px;
     padding-right: 15px;
