@@ -100,3 +100,17 @@
     height: 18px;
     text-align:center
 }
+.media-paddin-right-10 {
+    padding-right:10px;
+}
+.media-arrowright-gray {
+    color: #D6D6D6;
+}
+.media-font-24 {
+    font-size: 24px;
+}
+.media-position-right {
+    position: absolute;
+    right: 0;
+    top: 22px;
+}

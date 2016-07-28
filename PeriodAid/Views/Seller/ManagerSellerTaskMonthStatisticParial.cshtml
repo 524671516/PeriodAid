@@ -1,33 +1,67 @@
 ﻿@model IEnumerable<PeriodAid.Models.Wx_SellerTaskMonthStatistic>
 
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">积分列表</div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
 
-<table class="table">
-    <tr>
-        <th>姓名</th>
-        <th>店铺名称</th>
-        <th>
-            @Html.DisplayNameFor(model => model.AttendanceCount)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) { 
-    <tr>
-        <td>
-            @Html.Encode(item.Off_Seller.Name)
-        </td>
-        <td>
-            @Html.Encode(item.Off_Seller.Off_Store.StoreName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AttendanceCount)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="pages">
+    <div class="page" data-page="managersellertask-month">
+        <div class="page-content">
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <a href="@" class="item-link smart-select" data-page-title="选择月份" data-back-text="返回">
+                            <select name="month">
+                                <option value="0" selected>2017-07</option>
+                                <option value="1">2017-06</option>
+                                <option value="2">2017-05</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">选择月份</div>
+                                    <div class="item-after">2016-07</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-block-title">暗促签到积分列表</div>
+            <div class="list-block media-list">
+                <ul>
+                    @foreach (var item in Model)
+                    {
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title-row">
+                                        <div class="item-title">@item.Off_Seller.Name</div>
+                                    </div>
+                                    <div class="subtitle margin-top-7">@item.Off_Seller.Off_Store.StoreName</div>
+                                    @if (item.AttendanceCount < 60)
+                                    {
+                                        <div class="color-red media-paddin-right-10 media-font-24 media-position-right">@item.AttendanceCount&nbsp;&nbsp;<i class="fa fa-angle-right media-arrowright-gray" aria-hidden="true"></i></div>
+                                    }
+                                    else {
+                                        <div class="color-green media-paddin-right-10 media-font-24 media-position-right">@item.AttendanceCount&nbsp;&nbsp;<i class="fa fa-angle-right media-arrowright-gray" aria-hidden="true"></i></div>
+                                    }
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
