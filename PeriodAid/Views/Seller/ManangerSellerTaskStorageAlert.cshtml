@@ -1,0 +1,34 @@
+﻿@model IEnumerable<PeriodAid.Models.Wx_SellerTaskAlert>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            店铺
+        </th>
+        <th>最小库存</th>
+        <th>日期</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.Encode(item.StoreName)
+        </td>
+        <td>
+            @Html.Encode(item.MinStorage)
+        </td>
+        <td>
+            @Html.Encode(item.ApplyDate.ToString("yyyy-MM-dd"))
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "ManagerSellerTaskDetails", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>

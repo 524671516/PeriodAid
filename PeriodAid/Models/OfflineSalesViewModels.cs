@@ -351,6 +351,13 @@ namespace PeriodAid.Models
 
         public int AttendanceCount { get; set; }
     }
+    public class Wx_SellerTaskAlert
+    {
+        public int Id { get; set; }
+        public DateTime ApplyDate { get; set; }
+        public int? MinStorage { get; set; }
+        public string StoreName { get; set; }
+    }
     public class ExcelOperation
     {
         public static int? ConvertInt(DataRow dr, string columname)
