@@ -2797,12 +2797,12 @@ namespace PeriodAid.Controllers
 
         public ActionResult ManagerSellerTaskHome()
         {
-            return View();
+            return PartialView();
         }
 
         public ActionResult ManagerSellerTaskMonthStatistic()
         {
-            return View();
+            return PartialView();
         }
         public ActionResult ManagerSellerTaskMonthStatisticParial()
         {
@@ -2822,6 +2822,30 @@ namespace PeriodAid.Controllers
                            select new Wx_SellerTaskMonthStatistic { Off_Seller = g.Key, AttendanceCount = g.Count()*100/30 };
             //ViewBag.TaskList = tasklist;
             return PartialView(tasklist);
+        }
+
+        public ActionResult MananagerSellerTaskSeller(int id)
+        {
+            ViewBag.SellerId = id;
+            return PartialView();
+        }
+
+        public ActionResult ManangerSellerTaskSeller(int id, int? page)
+        {
+            // 第一页为1
+            int _page = page ?? 1;
+            _page--;
+            var tasklist = (from m in offlineDB.Off_SellerTask
+                            where m.SellerId == id
+                            orderby m.ApplyDate descending
+                            select m).Skip(_page * 20).Take(20);
+            return PartialView(tasklist);
+        }
+
+        public ActionResult ManagerSellerTaskDetails(int id)
+        {
+            var item = offlineDB.Off_SellerTask.SingleOrDefault(m => m.Id == id);
+            return PartialView(item);
         }
     }
 }
