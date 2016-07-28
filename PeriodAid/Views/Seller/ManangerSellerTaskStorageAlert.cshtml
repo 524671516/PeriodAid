@@ -1,34 +1,41 @@
 ﻿@model IEnumerable<PeriodAid.Models.Wx_SellerTaskAlert>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            店铺
-        </th>
-        <th>最小库存</th>
-        <th>日期</th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.Encode(item.StoreName)
-        </td>
-        <td>
-            @Html.Encode(item.MinStorage)
-        </td>
-        <td>
-            @Html.Encode(item.ApplyDate.ToString("yyyy-MM-dd"))
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "ManagerSellerTaskDetails", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>库存预警</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="managersellertask-strongalbert">
+        <div class="page-content">
+            <div class="content-block-title">库存预警列表</div>
+            <div class="list-block media-list">
+                <ul>
+@foreach (var item in Model)
+{
+                    <li>
+                        <a class="item-content manager-sellermonth" href="/Seller/ManagerSellerTaskDetails?id=@item.Id">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title font-black">@item.StoreName</div>
+                                </div>
+                                <div class="subtitle margin-top-7 font-black">@item.ApplyDate.ToString("yyyy-MM-dd")</div>
+                                <div class="media-paddin-right-10 media-font-24 media-position-right color-black">@item.MinStorage&nbsp;&nbsp;<i class="fa fa-angle-right media-arrowright-gray" aria-hidden="true"></i></div>
+                            </div>
+                        </a>
+                    </li>
 }
-
-</table>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
