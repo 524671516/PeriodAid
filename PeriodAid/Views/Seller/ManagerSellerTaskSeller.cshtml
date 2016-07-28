@@ -1,4 +1,4 @@
-﻿<input type="hidden" id="sellerid" value="@ViewBag.SellerId"/>
+﻿
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -18,25 +18,15 @@
         <div class="page-content infinite-scroll">
             <div class="content-block-title">暗促签到列表</div>
             <div class="list-block">
-                <ul>
-                    <li>
-                        <a href="#" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">总库存：<span class="badge bg-yellow">50</span></div>
-                                <div class="item-after">2017-07-28</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">总库存：<span>100</span></div>
-                                <div class="item-after">2017-07-20</div>
-                            </div>
-                        </a>
-                    </li>
+                <ul id="managerseller-list">
+                    
                 </ul>
+                <div class="color-gray preloader-text hidden infinite-pre">没有更多的加载项</div>
+                <div class="infinite-scroll-preloader hidden">
+                    <div class="preloader"></div>
+                </div>
             </div>
+            <input type="hidden" id="sellerid" value="@ViewBag.SellerId" />
         </div>
     </div>
 </div>
