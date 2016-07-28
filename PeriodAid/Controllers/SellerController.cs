@@ -2810,6 +2810,14 @@ namespace PeriodAid.Controllers
 
         public ActionResult ManagerSellerTaskMonthStatistic()
         {
+            var startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
+            List<object> l = new List<object>();
+            for(int i = 0; i < 3; i++)
+            {
+                var t_date = startDate.AddMonths(0 - i);
+                l.Add(new { Key = t_date, Value = t_date });
+            }
+            ViewBag.SelectMonth = new SelectList(l, "Key", "Value");
             return PartialView();
         }
         public ActionResult ManagerSellerTaskMonthStatisticParial()
