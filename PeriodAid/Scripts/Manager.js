@@ -117,10 +117,24 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
 $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", function () {
     $$.ajax({
         url: "/Seller/ManagerSellerTaskMonthStatisticPartial",
+        data:{
+            querydate: $("#statistic-month").val()
+        },
         success: function (data) {
             $$("#manager-seller-taskmonth").html(data);
         }
     });
+    $("#statistic-month").on("change", function (e) {
+        $$.ajax({
+            url: "/Seller/ManagerSellerTaskMonthStatisticPartial",
+            data: {
+                querydate: $("#statistic-month").val()
+            },
+            success: function (data) {
+                $$("#manager-seller-taskmonth").html(data);
+            }
+        });
+    })
 });
 //ManangerSellerTaskSeller
 $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function () {

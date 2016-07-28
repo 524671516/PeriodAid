@@ -2811,23 +2811,32 @@ namespace PeriodAid.Controllers
         public ActionResult ManagerSellerTaskMonthStatistic()
         {
             var startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
+            ViewBag.CurrentMonth = startDate.ToString("yyyy-MM");
             List<object> l = new List<object>();
             for(int i = 0; i < 3; i++)
             {
                 var t_date = startDate.AddMonths(0 - i);
-                l.Add(new { Key = t_date, Value = t_date });
+                l.Add(new { Key = t_date.ToString("yyyy-MM"), Value = t_date.ToString("yyyy-MM") });
             }
             ViewBag.SelectMonth = new SelectList(l, "Key", "Value");
             return PartialView();
         }
-        public ActionResult ManagerSellerTaskMonthStatisticPartial()
+        public ActionResult ManagerSellerTaskMonthStatisticPartial(string querydate)
         {
             // 获取督导的门店列表
             var user = UserManager.FindById(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m=>m.Id);
             // 查看参数，如无参数，默认为当月数据，也可查询上月数据
-            var startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
+            DateTime startDate;
+            if (querydate == ""|| querydate==null)
+            {
+                startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
+            }
+            else
+            {
+                startDate = Convert.ToDateTime(querydate + "-01");
+            }
             var finishDate = startDate.AddMonths(1);
             // 获取督导对应门店的当月/或者指定月份的暗促信息
 
@@ -2855,7 +2864,12 @@ namespace PeriodAid.Controllers
                             where m.SellerId == id
                             orderby m.ApplyDate descending
                             select m).Skip(_page * 20).Take(20);
-            return PartialView(tasklist);
+            if (tasklist.Count() > 0)
+            {
+                return PartialView(tasklist);
+            }
+            else
+                return Content("NONE");
         }
 
         public ActionResult ManagerSellerTaskDetails(int id)
@@ -2863,5 +2877,6 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_SellerTask.SingleOrDefault(m => m.Id == id);
             return PartialView(item);
         }
+
     }
 }
