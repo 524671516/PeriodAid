@@ -1,0 +1,60 @@
+﻿@model PeriodAid.Models.Off_SellerTask
+
+<div>
+    <h4>Off_SellerTask</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.StoreId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StoreId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SellerId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SellerId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ApplyDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ApplyDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TaskPhotoList)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TaskPhotoList)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastUpdateUser)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastUpdateUser)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastUpdateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastUpdateTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
