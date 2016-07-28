@@ -2820,7 +2820,7 @@ namespace PeriodAid.Controllers
             ViewBag.SelectMonth = new SelectList(l, "Key", "Value");
             return PartialView();
         }
-        public ActionResult ManagerSellerTaskMonthStatisticParial()
+        public ActionResult ManagerSellerTaskMonthStatisticPartial()
         {
             // 获取督导的门店列表
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2840,13 +2840,13 @@ namespace PeriodAid.Controllers
             return PartialView(tasklist);
         }
 
-        public ActionResult MananagerSellerTaskSeller(int id)
+        public ActionResult ManagerSellerTaskSeller(int id)
         {
             ViewBag.SellerId = id;
             return PartialView();
         }
 
-        public ActionResult ManangerSellerTaskSeller(int id, int? page)
+        public ActionResult ManagerSellerTaskSellerPartial(int id, int? page)
         {
             // 第一页为1
             int _page = page ?? 1;

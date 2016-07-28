@@ -861,10 +861,12 @@
     <Content Include="Views\Seller\Manager_AjaxSellerDetails.cshtml" />
     <Content Include="Views\Seller\Manager_CreditInfo.cshtml" />
     <Content Include="Views\Seller\Manager_BonusList.cshtml" />
-    <Content Include="Views\Seller\ManagerSellerTaskMonthStatisticParial.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskMonthStatisticPartial.cshtml" />
     <Content Include="Views\Seller\ManangerSellerTaskSeller.cshtml" />
-    <Content Include="Views\Seller\MananagerSellerTaskSeller.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskSeller.cshtml" />
     <Content Include="Views\Seller\ManagerSellerTaskDetails.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskMonthStatistic.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskSellerPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
