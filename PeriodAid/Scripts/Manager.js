@@ -99,7 +99,7 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
     var phList = $("#sellertask-details-phlist").val().split(",");
     var photo = new Array();
     $$.each(phList, function (num,ph) {
-        var url = "/Content/images/" + ph;
+        var url = "http://cdn2.shouquanzhai.cn/checkin-img/" + ph;
         var obj = { url: url };
         photo.push(obj);
     });

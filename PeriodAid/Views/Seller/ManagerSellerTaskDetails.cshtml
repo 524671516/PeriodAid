@@ -23,8 +23,8 @@
                     <li>
                         <div class="item-content">
                             <div class="item-inner">
-                                <div class="item-title">@Html.DisplayFor(model => model.SellerId)</div>
-                                <div class="item-after">@Html.DisplayFor(model => model.StoreId)</div>
+                                <div class="item-title">@Html.Encode(Model.Off_Store.StoreName)</div>
+                                <div class="item-after">@Html.Encode(Model.Off_Seller.Name)</div>
                             </div>
                         </div>
                     </li>
@@ -48,46 +48,19 @@
                             </div>
                         </div>
                     </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title label">红糖姜茶</div>
-                                <div class="item-input">
-                                    <input type="number" value="20" disabled />
+                    @foreach (var item in Model.Off_SellerTaskProduct)
+                    {
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">@Html.Encode(item.Off_Product.SimpleName)</div>
+                                    <div class="item-input">
+                                        <input type="number" value="@Html.Encode(item.StorageCount)" disabled />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title label">黑糖姜茶</div>
-                                <div class="item-input">
-                                    <input type="number" value="11" disabled />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title label">柠檬姜茶</div>
-                                <div class="item-input">
-                                    <input type="number" value="23" disabled />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title label">红枣姜茶</div>
-                                <div class="item-input">
-                                    <input type="number" value="8" disabled />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                        </li>
+                    }
                 </ul>
             </div>
             <input class="hidden" id="sellertask-details-phlist" value="@Model.TaskPhotoList" />
