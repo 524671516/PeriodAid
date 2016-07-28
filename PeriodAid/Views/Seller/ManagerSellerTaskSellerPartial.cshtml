@@ -3,10 +3,10 @@
     @foreach (var item in Model)
     {
         <li>
-            <a href="/Seller/" class="item-content item-link">
+            <a href="/Seller/ManagerSellerTaskDetails?id=@item.Id" class="item-content item-link">
                 <div class="item-inner">
-                    <div class="item-title">@item.Off_Seller.Name</div>
-                    <div class="item-after">@item.ApplyDate</div>
+                    <div class="item-title">@item.ApplyDate.ToString("yyyy-MM-dd")</div>
+                    <div class="item-after">总库存: @Html.Encode(item.Off_SellerTaskProduct.Sum(m=>m.StorageCount))</div>
                 </div>
             </a>
         </li>

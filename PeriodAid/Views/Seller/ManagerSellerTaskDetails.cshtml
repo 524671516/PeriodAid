@@ -1,60 +1,98 @@
 ﻿@model PeriodAid.Models.Off_SellerTask
 
-<div>
-    <h4>Off_SellerTask</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.StoreId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.StoreId)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.SellerId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.SellerId)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ApplyDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ApplyDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TaskPhotoList)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TaskPhotoList)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LastUpdateUser)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LastUpdateUser)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LastUpdateTime)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LastUpdateTime)
-        </dd>
-
-    </dl>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>签到详情</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<div class="pages">
+    <div class="page" data-page="manager-tempsellerdetails">
+        <div class="page-content">
+            <div class="content-block-title">暗促签到详情</div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">@Html.DisplayFor(model => model.SellerId)</div>
+                                <div class="item-after">@Html.DisplayFor(model => model.StoreId)</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">时间</div>
+                                <div class="item-after">@Model.ApplyDate.ToString("yyyy-MM-dd")</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content item-link ph-tempseller">
+                            <div class="item-inner">
+                                <div class="item-title">签到图片</div>
+                                <div class="item-after">点击查看</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">红糖姜茶</div>
+                                <div class="item-input">
+                                    <input type="number" value="20" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">黑糖姜茶</div>
+                                <div class="item-input">
+                                    <input type="number" value="11" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">柠檬姜茶</div>
+                                <div class="item-input">
+                                    <input type="number" value="23" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">红枣姜茶</div>
+                                <div class="item-input">
+                                    <input type="number" value="8" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <input class="hidden" id="sellertask-details-phlist" value="@Model.TaskPhotoList" />
+        </div>
+    </div>
+</div>
+
+

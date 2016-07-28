@@ -96,13 +96,16 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
 });
 //Manager_TempSellerDetails
 $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function (e) {
+    var phList = $("#sellertask-details-phlist").val().split(",");
+    var photo = new Array();
+    $$.each(phList, function (num,ph) {
+        var url = "/Content/images/" + ph;
+        var obj = { url: url };
+        photo.push(obj);
+    });
+    console.log(photo);
     var myPhotoBrowserPopupDark = myApp.photoBrowser({
-        photos: [
-            {
-                url: '/Content/images/sellertask-guide-01.jpg',
-                caption: '2016-07-27'
-            }
-        ],
+        photos: photo,
         theme: 'dark',
         type: 'standalone',
         lazyLoading: true,
@@ -170,20 +173,15 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
                     id: $("#sellerid").val()
                 },
                 success: function (data) {
-                    if (data != "FAIL") {
-                        $$("#managerseller-list").append(data);
-                        page++;
-                    } else if (data == "NONE") {
+                    if (data == "NONE"|| data == "FAIL") {
                         myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
                             $$(".infinite-scroll-preloader").remove();//移除加载符
                             $$(".infinite-pre").removeClass("hidden");
                             return;
                     }
                     else {
-                        myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
-                        $$(".infinite-scroll-preloader").remove();//移除加载符
-                        $$(".infinite-pre").removeClass("hidden");
-                        return;
+                       $$("#managerseller-list").append(data);
+                        page++;
                     }
                 }
             });
