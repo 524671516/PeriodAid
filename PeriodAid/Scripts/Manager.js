@@ -186,3 +186,10 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
         }, 1000)
     });
 });
+//ManangerSellerTaskQuery
+$$(document).on("pageInit", ".page[data-page='managersellertask-query']", function () {
+    var mySearchbar = myApp.searchbar('.searchbar', {
+        searchList: '.list-block-search',
+        searchIn: '.item-content'
+    });
+});
