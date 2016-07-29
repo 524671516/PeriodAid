@@ -251,7 +251,8 @@ namespace PeriodAid.Controllers
                         Off_System_Id = currentuser.DefaultSystemId,
                         Bind = false,
                         ApplicationDate = DateTime.Now,
-                        Recruit = true
+                        Recruit = true,
+                        Type = 1
                     };
                     _offlineDB.Off_StoreManager.Remove(manager);
                     _offlineDB.Off_Membership_Bind.Add(omb);

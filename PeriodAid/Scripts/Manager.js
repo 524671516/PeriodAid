@@ -18,11 +18,79 @@ $$(document).on('ajaxComplete', function (e) {
     if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
     myApp.hideIndicator();
 });
-
+//tab-list
 $$(".tab-link").on("click", function (data) {
     var url = $$(this).attr("data-href");
     mainView.router.load({ url: url, animatePages: false });
     $(this).addClass("active").siblings().removeClass("active")
+});
+//left-navbar
+
+//Manager_Addchekin
+$$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", function (e) {
+    var tl = textLength();
+    $$("#manager-task-currentlength").text(tl);
+    function textLength() {
+        return $$("#manager-task-remark").val().length;
+    }
+    $$("#manager-task-remark").on("change", function () {
+        var tl = textLength();
+        var totalLength = $$("#manager-task-totallength").text();
+        if (tl < totalLength) {
+            $$("#manager-task-currentlength").text(tl);
+        } else {
+            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+        }
+    });
+});
+//Manager_TaskReport
+$$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
+    textLength();
+    function textLength() {
+        $$("#manager-task-currentlength-cp").text($$("#manager-task-evencomplete").val().length);
+        $$("#manager-task-currentlength-uc").text($$("#manager-task-evenuncomplete").val().length);
+        $$("#manager-task-currentlength-as").text($$("#manager-task-evenassistent").val().length);
+    };
+    function T(event, totalLength, $$length) {
+        if (event < totalLength) {
+            $$length.text(event);
+        } else {
+            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+        }
+    }
+    $$(".manager-task-evet").on("change", function () {
+        var totalLength = $$(".manager-task-total").text();
+        var $$length = $(this).siblings().;
+        var event = $$(this).val().length;
+        T(event, totalLength, $$length)
+    });
+});
+//Manager_Request_Create
+$$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", function () {
+    textLength();
+    function textLength() {
+        $$("#manager-task-requestcreate-contentlength").text($$("#manager-task-requestcreate-content").val().length);
+        $$("#manager-task-requestcreate-remarktlength").text($$("#manager-task-requestcreate-remark").val().length);
+    };
+    function T(event, totalLength, $$length) {
+        if (event < totalLength) {
+            $$length.text(event);
+        } else {
+            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+        }
+    }
+    $$("#manager-task-requestcreate-content").on("change", function () {
+        var totalLength = $$("#manager-task-requestcreate-contenttotal").text();
+        var $$length = $$("#manager-task-requestcreate-contentlength");
+        var event = $$(this).val().length;
+        T(event, totalLength, $$length)
+    });
+    $$("#manager-task-requestcreate-remark").on("change", function () {
+        var totalLength = $$("#manager-task-requestcreate-remarktotal").text();
+        var $$length = $$("#manager-task-requestcreate-remarklength");
+        var event = $$(this).val().length;
+        T(event, totalLength, $$length)
+    });
 });
 //Senior_CheckInDetails
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {

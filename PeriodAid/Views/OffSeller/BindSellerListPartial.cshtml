@@ -107,4 +107,24 @@
         }
         return false;
     });
+    //提升管理员
+    $(".offseller-bindseller-updatemanager").click(function () {
+        var url = $(this).attr("href");
+        $.ajax({
+            url: url,
+            type: "post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    alert("提升成功");
+                    $.ajax({
+                        url: "/OffSeller/BindSellerListPartial",
+                        success: function (data) {
+                            $("#offseller-bindseller-list").html(data)
+                        }
+                    });
+                }
+            }
+        });
+        return false;
+    });
 </script>
