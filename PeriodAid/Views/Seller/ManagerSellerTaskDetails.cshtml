@@ -55,7 +55,13 @@
                                 <div class="item-inner">
                                     <div class="item-title label">@Html.Encode(item.Off_Product.SimpleName)</div>
                                     <div class="item-input">
-                                        <input type="number" value="@Html.Encode(item.StorageCount)" disabled />
+                                        @if (item.StorageCount > 0 && item.StorageCount <= 50) { 
+                                            <input type="number" value="@Html.Encode(item.StorageCount)" disabled style="color:#f00"/>
+                                        }
+                                        else
+                                        {
+                                            <input type="number" value="@Html.Encode(item.StorageCount)" disabled />
+                                        }
                                     </div>
                                 </div>
                             </div>

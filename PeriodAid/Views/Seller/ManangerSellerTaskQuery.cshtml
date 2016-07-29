@@ -1,0 +1,33 @@
+﻿@model IEnumerable<PeriodAid.Models.Wx_SellerTaskMonthStatistic>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            店铺
+        </th>
+        <th>
+            促销员
+            </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.Encode(item.Off_Seller.Name)
+        </td>
+        <td>
+            @Html.Encode(item.Off_Seller.Off_Store.StoreName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>
