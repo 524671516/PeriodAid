@@ -26,6 +26,7 @@ $$(".tab-link").on("click", function (data) {
 });
 //left-navbar
 
+
 //Manager_Addchekin
 $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", function (e) {
     var tl = textLength();
@@ -43,6 +44,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", functio
         }
     });
 });
+
 //Manager_TaskReport
 $$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
     textLength();
@@ -51,20 +53,49 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
         $$("#manager-task-currentlength-uc").text($$("#manager-task-evenuncomplete").val().length);
         $$("#manager-task-currentlength-as").text($$("#manager-task-evenassistent").val().length);
     };
-    function T(event, totalLength, $$length) {
+    function T(event, $$length) {
+        var totalLength = $$(".manager-task-total").text();
         if (event < totalLength) {
             $$length.text(event);
         } else {
             myApp.alert("已超出最大值，请重新填写或删除部分信息")
         }
     }
-    $$(".manager-task-evet").on("change", function () {
-        var totalLength = $$(".manager-task-total").text();
-        var $$length = $(this).siblings().;
+    $$("#manager-task-evencomplete").on("change", function () {
+        var $$length = $$("#manager-task-currentlength-cp");
         var event = $$(this).val().length;
-        T(event, totalLength, $$length)
+        T(event, $$length)
+    });
+    $$("#manager-task-evenuncomplete").on("change", function () {
+        var $$length = $$("#manager-task-currentlength-uc");
+        var event = $$(this).val().length;
+        T(event,$$length)
+    });
+    $$("#manager-task-evenassistent").on("change", function () {
+        var $$length = $$("#manager-task-currentlength-as");
+        var event = $$(this).val().length;
+        T(event,$$length)
     });
 });
+
+//Manager_CreateCheckIn
+$$(document).on("pageInit", ".page[data-page='manager-temp-createcheckin']", function () {
+    var tl = textLength();
+    $$("#manager-temp-notecurrentlength").text(tl);
+    function textLength() {
+        return $$("#manager-temp-notecontent").val().length;
+    }
+    $$("#manager-temp-notecontent").on("change", function () {
+        var tl = textLength();
+        var totalLength = $$("#manager-temp-notetotallength").text();
+        if (tl < totalLength) {
+            $$("#manager-temp-notecurrentlength").text(tl);
+        } else {
+            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+        }
+    });
+});
+
 //Manager_Request_Create
 $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", function () {
     textLength();
@@ -94,7 +125,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
 });
 //Senior_CheckInDetails
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
-    var myPhotoBrowserPopupDark = myApp.photoBrowser({
+    var myPhotoManagerChekin = myApp.photoBrowser({
         photos: [
             '/Content/images/guide-02-3.jpg'
         ],
@@ -104,8 +135,21 @@ $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function
         zoom: false,
         backLinkText: '关闭'
     });
+    var myPhotoManagerSeller = myApp.photoBrowser({
+        photos: [
+            '/Content/images/guide-02-2.jpg'
+        ],
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
     $$('.manager-chekinphoto').on('click', function () {
-        myPhotoBrowserPopupDark.open();
+        myPhotoManagerChekin.open();
+    });
+    $$('.manager-sellerphoto').on('click', function () {
+        myPhotoManagerSeller.open();
     });
 });
 //Manager_ReportList

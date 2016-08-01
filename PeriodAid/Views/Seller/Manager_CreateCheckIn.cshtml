@@ -14,7 +14,7 @@
     </div>
 </div>
 <div class="pages">
-    <div class="page" data-page="manager-createcheckin">
+    <div class="page" data-page="manager-temp-createcheckin">
         <div class="page-content">
             <div class="list-block">
                 <ul>
@@ -75,25 +75,31 @@
                             </div>
                         </div>
                     </li>
-                    <li style="border-bottom:1px #D6D6D6 solid;margin-left:15px;">
+                    <li class="table-bottom-line">
                         <div class="row">
                             <div class="col-25 text-center">红糖姜茶</div>
                             <div class="col-25"><input type="number" placeholder="销量" /></div>
                             <div class="col-25"><input type="number" placeholder="库存" /></div>
                             <div class="col-25 hidden"><input type="number" placeholder="销售额" /></div>
                         </div>
+                    </li>
+                    <li class="table-bottom-line">
                         <div class="row">
                             <div class="col-25 text-center">黑糖姜茶</div>
                             <div class="col-25"><input type="number" placeholder="销量" /></div>
                             <div class="col-25"><input type="number" placeholder="库存" /></div>
                             <div class="col-25 hidden"><input type="number" placeholder="销售额" /></div>
                         </div>
+                    </li>
+                    <li class="table-bottom-line">
                         <div class="row">
                             <div class="col-25 text-center">蜂蜜姜茶</div>
                             <div class="col-25"><input type="number" placeholder="销量" /></div>
                             <div class="col-25"><input type="number" placeholder="库存" /></div>
                             <div class="col-25 hidden"><input type="number" placeholder="销售额" /></div>
                         </div>
+                    </li>
+                    <li class="table-bottom-line">
                         <div class="row">
                             <div class="col-25 text-center">柠檬姜茶</div>
                             <div class="col-25"><input type="number" placeholder="销量" /></div>
@@ -117,10 +123,10 @@
                     <li>
                         <div class="item-content">
                             <div class="item-inner">
-                                <textarea placeholder="请输入代签到备注"></textarea>
+                                <textarea id="manager-temp-notecontent" placeholder="请输入代签到备注"></textarea>
                                 <div class="item-title-row">
                                     <div class="item-title"></div>
-                                    <div class="item-after"><span>0</span>/500</div>
+                                    <div class="item-after"><span id="manager-temp-notecurrentlength">0</span>/<span id="manager-temp-notetotallength">500</span></div>
                                 </div>
                             </div>
                         </div>

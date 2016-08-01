@@ -66,7 +66,7 @@
             url: link,
             data: {
                 status: $("#offcheckin-status-val").val(),
-                query: $("#offcheckin-query-val").val()
+                query: $("#offcheckin-search-query").val()
             },
             success: function (data) {
                 $("#checkinlist").html(data);
