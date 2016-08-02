@@ -132,3 +132,13 @@
     border-bottom: 1px #D6D6D6 solid;
     margin-left: 15px;
 }
+
+.item-content textarea{
+    margin-right:15px;
+}
+.validate-form input.custom-error{
+    background:#d76a67;
+}
+.validate-form textarea.custom-error{
+    background:#d76a67;
+}

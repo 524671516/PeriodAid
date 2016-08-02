@@ -38,8 +38,7 @@ wx.config({
 });
 
 
-//Manager_Addchekin
-// 添加签到
+
 
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", function (e) {
@@ -48,27 +47,39 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", functio
 
     // 显示所有的已上传图片
     uploadCheckinFile("manager-imglist", "Photo", "current_image", 3);
+    uploadLocation("location-btn", "Location");
 
-    $("#createsellerreport-form").validate({
+    $("#addcheckin_form").validate({
         debug: true, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
-            $("#createsellerreport-btn").prop("disabled", true).addClass("color-gray");
-            var array = splitArray($("#TaskPhotoList").val());
-            if (array.length > 0) {
-                $("#createsellerreport-form").ajaxSubmit(function (data) {
+            $("#addcheckin-btn").prop("disabled", true).addClass("color-gray");
+            var array = splitArray($("#Photo").val());
+            if (array.length == 0) {
+                myApp.hideIndicator();
+                myApp.alert("请至少上传一张图片");
+                $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            }
+            else if($("#Location").val().trim() == "")
+            {
+                myApp.hideIndicator();
+                myApp.alert("请上传您的地理位置");
+                $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            }
+            else{
+                $("#addcheckin_form").ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
-                        myApp.formDeleteData("createsellerreport-form");
+                        //myApp.formDeleteData("createsellerreport-form");
                         mainView.router.back();
                         myApp.addNotification({
                             title: '通知',
                             message: '表单提交成功'
                         });
                         setTimeout(function () {
-                            refresh_mainpanel();
+                            //refresh_mainpanel();
                             myApp.closeNotification(".notifications");
                         }, 2000);
                     }
@@ -78,18 +89,13 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", functio
                             title: '通知',
                             message: '表单提交失败'
                         });
-                        $("#createsellerreport-btn").prop("disabled", false).removeClass("color-gray");
-                        refresh_mainpanel();
+                        $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
+                        //refresh_mainpanel();
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
                         }, 2000);
                     }
                 });
-            }
-            else {
-                myApp.hideIndicator();
-                myApp.alert("请至少上传一张图片");
-                $("#createsellerreport-btn").prop("disabled", false).removeClass("color-gray");
             }
         },
         errorPlacement: function (error, element) {
@@ -97,12 +103,14 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", functio
             element.attr("placeholder", error.text());
         }
     });
-    $$("#createsellerreport-btn").click(function () {
+    $$("#addcheckin-btn").click(function () {
         myApp.showIndicator();
-        $("#createsellerreport-form").submit();
+        $("#addcheckin_form").submit();
     });
 
 });
+
+
 
 //Manager_TaskReport 督导工作日报 填写内容字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
@@ -486,9 +494,7 @@ function uploadCheckinFile(imglist, photolist_id, current_count, max_count) {
 
 // 上传地理位置信息
 function uploadLocation(btn_id, location_id) {
-    $("#"+btn_id).click(function () {
-        //var loc_result = false;
-        //$("#loadingToast").show();
+    $$("#" + btn_id).on("click", function () {
         myApp.showIndicator();
         // 4秒后强制关闭
         setTimeout(function () {
@@ -498,29 +504,34 @@ function uploadLocation(btn_id, location_id) {
             }
         }, 4000);
         
-        //var loc_success = false;
+        var loc_success = false;
         wx.getLocation({
             type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
             success: function (res) {
-
                 var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
                 var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
                 var speed = res.speed; // 速度，以米/每秒计
                 var accuracy = res.accuracy; // 位置精度
-                location = longitude + "," + latitude;
+                var gps_location = longitude + "," + latitude;
+                //alert(location)
                 loc_success = true;
+                $$("#" + btn_id).find(".item-after").text("上传位置成功");
                 //cell_success_location(btn, "位置获取成功", latitude, longitude);
-                $("#Location").val(location);
+                $$("#" + location_id).val(gps_location);
+                myApp.hideIndicator();
             }
         });
+        return false;
     });
 }
 
 function splitArray(value) {
     var list = new Array();
-    if (value.trim() != "") {
-        list = value.trim().split(',');
-        return list;
+    if(value!=null){
+        if (value.trim() != "") {
+            list = value.trim().split(',');
+            return list;
+        }
     }
     return list;
 }

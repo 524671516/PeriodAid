@@ -2777,9 +2777,57 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        public ActionResult Manager_AddCheckin()
+        public async Task<ActionResult> Manager_AddCheckin()
         {
-            return View();
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
+            ViewBag.NickName = manager.NickName;
+            var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == manager.UserName && m.Off_System_Id == user.DefaultSystemId);
+            if (task != null)
+            {
+                Off_Manager_CheckIn checkin = new Off_Manager_CheckIn();
+                return PartialView(checkin);
+            }
+            else
+            {
+                Off_Manager_Task item = new Off_Manager_Task()
+                {
+                    TaskDate = today,
+                    Status = 0,
+                    UserName = User.Identity.Name,
+                    NickName = manager.NickName,
+                    Off_System_Id = user.DefaultSystemId
+                };
+                offlineDB.Off_Manager_Task.Add(item);
+                await offlineDB.SaveChangesAsync();
+                Off_Manager_CheckIn checkin = new Off_Manager_CheckIn();
+                return PartialView(checkin);
+            }
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Manager_AddCheckIn(Off_Manager_CheckIn model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_CheckIn item = new Off_Manager_CheckIn();
+                var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
+                if (TryUpdateModel(item))
+                {
+                    item.Off_Manager_Task = task;
+                    item.CheckIn_Time = DateTime.Now;
+                    offlineDB.Off_Manager_CheckIn.Add(item);
+                    await offlineDB.SaveChangesAsync();
+                    return Content("SUCCESS");
+                }
+                return View("Error");
+            }
+            else
+            {
+                return View(model);
+            }
         }
         public ActionResult Manager_TaskReport()
         {
@@ -2787,7 +2835,37 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Manager_CheckInView()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId
+                       && m.Status == 0
+                       orderby m.TaskDate descending
+                       select new { Key = m.Id, Value = m.TaskDate.ToString("yyyy-MM-dd") };
+            if (list.Count() > 0)
+                ViewBag.checkinlist = new SelectList(list, "Key", "Value", list.FirstOrDefault().Key);
             return View();
+        }
+        public ActionResult Manager_CheckInViewPartial(int id)
+        {
+            var list = from m in offlineDB.Off_Manager_CheckIn
+                       where m.Manager_EventId == id
+                       && m.Canceled == false
+                       select m;
+            ViewBag.TaskId = id;
+            return PartialView(list);
+        }
+        [HttpPost]
+        public JsonResult Mananger_CancelManagerCheckin(int id)
+        {
+            var item = offlineDB.Off_Manager_CheckIn.SingleOrDefault(m => m.Id == id);
+            if (item.Off_Manager_Task.UserName == User.Identity.Name)
+            {
+                item.Canceled = true;
+                offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FAIL" });
         }
         public ActionResult Senior_AllCheckInList()
         {
