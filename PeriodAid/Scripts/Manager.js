@@ -18,6 +18,10 @@ $$(document).on('ajaxComplete', function (e) {
     if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
     myApp.hideIndicator();
 });
+var monthNames= ['一月份', '二月份', '三月份', '四月份', '五月份', '六月份', '七月份', '八月份', '九月份', '十月份', '十一月份', '十二月份'];
+var monthNamesShort= ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+var dayNames = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
+var dayNamesShort = ['日', '一', '二', '三', '四', '五', '六'];
 //tab-list 底部工具栏转换
 $$(".tab-link").on("click", function (data) {
     var url = $$(this).attr("data-href");
@@ -223,20 +227,50 @@ $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function
 $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: '#manager-reportlist-date',
-
+        monthNames: monthNames,
+        monthNamesShort:monthNamesShort,
+        dayNames: dayNames,
+        dayNamesShort:dayNamesShort
     });
 });
 //Manager_EventList  活动门店列表  查看日期
 $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: '#manager-eventlist-date',
+        monthNames: monthNames,
+        monthNamesShort: monthNamesShort,
+        dayNames: dayNames,
+        dayNamesShort: dayNamesShort
+    });
+    var url = "/Seller/Manager_EventListPartial";
+    var date = $$("#manager-eventlist-date").val();
+    $$.ajax({
+        url: url,
+        data: {
+            date:date
+        },
+        success: function (data) {
+            $$("#manager-eventlist-content").html(data);
+        }
+});
+    $$("#manager-eventlist-date").on("change", function () {
+        var date = $$("#manager-eventlist-date").val();
+        $$.ajax({
+            url: "/Seller/Manager_EventListPartial",
+            data: {
+                date: date
+            },
+            success: function (data) {
+                $$("#manager-eventlist-content").html(data);
+            }
+        });
     });
 });
 //Mnaager_QuerySeller  搜索促销员
 $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function () {
     var mySearchbar = myApp.searchbar('.searchbar', {
         searchList: '.list-block-search',
-        searchIn: '.item-title'
+        searchIn: '.item-content'
     });
 });
 //Manager_BonusList  红包列表 下拉刷新  
@@ -271,7 +305,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
         }, 2000);
     });
 });
-//Manager_TempSellerDetails
+//Manager_TempSellerDetails  暗促系统  暗促签到图片查看
 $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function (e) {
     var phList = $("#sellertask-details-phlist").val().split(",");
     var photo = new Array();
@@ -292,7 +326,7 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
         myPhotoBrowserPopupDark.open();
     });
 });
-//ManagerSellerTaskMonthStatistic
+//ManagerSellerTaskMonthStatistic 暗促系统  暗促信息查询
 $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", function () {
     $$.ajax({
         url: "/Seller/ManagerSellerTaskMonthStatisticPartial",
@@ -315,7 +349,7 @@ $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", funct
         });
     })
 });
-//ManangerSellerTaskSeller
+//ManangerSellerTaskSeller 暗促系统  暗促签到列表  无限循环
 $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function (e) {
     var page = 1;
     var url = "/Seller/ManagerSellerTaskSellerPartial";
@@ -364,8 +398,16 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
         }, 1000)
     });
 });
-//ManangerSellerTaskQuery
+//ManangerSellerTaskQuery  暗促信息查询
 $$(document).on("pageInit", ".page[data-page='managersellertask-query']", function () {
+    var mySearchbar = myApp.searchbar('.searchbar', {
+        searchList: '.list-block-search',
+        searchIn: '.item-content'
+    });
+});
+
+//Manager_StoreList  督导管理门店  查询
+$$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
     var mySearchbar = myApp.searchbar('.searchbar', {
         searchList: '.list-block-search',
         searchIn: '.item-content'
@@ -401,7 +443,7 @@ function currentTextAreaLength(id_name, max_length, result_id) {
             $$("#" + id_name).val(str.slice(0, 50));
             $$("#" + result_id).text("50");
         }
-    });
+});
 }
 
 // 上传签到图片文件模块
