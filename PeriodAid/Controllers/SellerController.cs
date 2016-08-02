@@ -2840,9 +2840,14 @@ namespace PeriodAid.Controllers
                        where m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId
                        && m.Status == 0
                        orderby m.TaskDate descending
-                       select new { Key = m.Id, Value = m.TaskDate.ToString("yyyy-MM-dd") };
-            if (list.Count() > 0)
-                ViewBag.checkinlist = new SelectList(list, "Key", "Value", list.FirstOrDefault().Key);
+                       select m;
+            List<Object> attendance = new List<Object>();
+            foreach (var i in list)
+            {
+                attendance.Add(new { Key = i.Id, Value = i.TaskDate.ToString("yyyy-MM-dd") });
+            }
+            if (attendance.Count > 0)
+                ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Id);
             return View();
         }
         public ActionResult Manager_CheckInViewPartial(int id)
