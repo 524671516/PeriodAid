@@ -2712,7 +2712,58 @@ namespace PeriodAid.Controllers
 
         public ActionResult Manager_Home()
         {
+            WeChatUtilities utilities = new WeChatUtilities();
+            string _url = ViewBag.Url = Request.Url.ToString();
+            ViewBag.AppId = utilities.getAppId();
+            string _nonce = CommonUtilities.generateNonce();
+            ViewBag.Nonce = _nonce;
+            string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
+            ViewBag.TimeStamp = _timeStamp;
+            ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View();
+        }
+        public PartialViewResult Manager_UserPanel()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
+            if (manager != null)
+            {
+                ViewBag.NickName = user.NickName;
+                ViewBag.ImgUrl = user.ImgUrl;
+                return PartialView(manager);
+            }
+            else
+            {
+                ViewBag.NickName = user.NickName;
+                ViewBag.ImgUrl = user.ImgUrl;
+                return PartialView();
+            }
+            
+        }
+        public ActionResult UpdateUserInfo()
+        {
+            string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Seller/UserAuthorize");
+            string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_userinfo&state=" + "1" + "#wechat_redirect";
+            return Redirect(url);
+        }
+
+        public ActionResult UserAuthorize(string code, string state)
+        {
+            WeChatUtilities wechat = new WeChatUtilities();
+            var jat = wechat.getWebOauthAccessToken(code);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            user.AccessToken = jat.access_token;
+            UserManager.Update(user);
+            //WeChatUtilities wechat = new WeChatUtilities();
+            var userinfo = wechat.getWebOauthUserInfo(user.AccessToken, user.OpenId);
+            user.NickName = userinfo.nickname;
+            user.ImgUrl = userinfo.headimgurl;
+            user.Sex = userinfo.sex == "1" ? true : false;
+            user.Province = userinfo.province;
+            user.City = userinfo.city;
+            UserManager.Update(user);
+            return RedirectToAction("Home");
         }
         public ActionResult Manager_Task()
         {
@@ -2726,7 +2777,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        public ActionResult Manager_AddChekin()
+        public ActionResult Manager_AddCheckin()
         {
             return View();
         }
@@ -2776,7 +2827,20 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Manager_EventList()
         {
-            return View();
+            return PartialView();
+        }
+        public ActionResult Manager_EventListPartial(string date)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime today = Convert.ToDateTime(date);
+            ViewBag.Today = today;
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var schedulelist = from m in offlineDB.Off_Checkin_Schedule
+                               where m.Subscribe == today
+                               && storelist.Contains(m.Off_Store_Id)
+                               select m;
+            return PartialView(schedulelist);
         }
         public ActionResult Manager_CreateCheckIn()
         {
@@ -2784,11 +2848,21 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Manager_StoreList()
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.OrderBy(m=>m.StoreName);
+            return PartialView(storelist);
         }
-        public ActionResult Manager_QuerySeller()
+        public ActionResult Manager_SellerList()
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var sellerlist = from m in offlineDB.Off_Seller
+                             where storelist.Contains(m.Id) && m.Off_System_Id == user.DefaultSystemId
+                             orderby m.Name
+                             select m;
+            return PartialView(sellerlist);
         }
         public ActionResult Manager_AjaxSellerDetails()
         {

@@ -1,4 +1,4 @@
-﻿
+﻿@model PeriodAid.Models.Off_Manager_CheckIn
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -17,42 +17,43 @@
     <div class="page" data-page="manager-task-addchekin">
         <div class="page-content">
             <div class="content-block-title">操作</div>
+            @using (Html.BeginForm("Manager_AddCheckin", "Seller"))
+            {
+                @Html.HiddenFor(m => m.Id)
             <div class="list-block">
                 <ul>
                     <li>
-                        <a href="#" class="item-link item-content">
+                        <a href="#" class="item-link item-content" id="location-btn">
                             <div class="item-inner">
-                                <div class="item-title"><i class="fa fa-exclamation-circle color-blue" aria-hidden="true"></i>&nbsp;&nbsp;上传位置信息</div>
+                                <div class="item-title">上传位置信息</div>
                                 <div class="item-after">未上传</div>
                             </div>
                         </a>
                     </li>
-                </ul>
-            </div>
-            <div class="content-block-title">提交信息</div>
-            <div class="list-block media-list">
-                <ul>
                     <li>
                         <div class="item-content">
                             <div class="item-inner">
-                                <div class="item-title-row">
-                                    <div class="item-title">图片上传</div>
-                                    <div class="item-after">0/3</div>
+                                <div class="item-title">上传照片</div>
+                                <div class="item-after"><abbr id="current_image">0</abbr>/3</div>
+                            </div>
+                        </div>
+                        <div class="item-content" id="photo-list">
+                            <div class="item-inner">
+                                <div class="hidden">
+                                    @Html.EditorFor(m => m.Photo)
                                 </div>
-                                <div class="item-subtitle" id="photo-list">
-                                    <ul class="rep-imglist" id="sellerreport-imglist"><li><a href="javascript:;" class="rep-imgitem-btn" id="upload-btn"><i class="fa fa-plus"></i></a></li></ul>
-                                </div>
+                                <ul class="rep-imglist" id="manager-imglist"></ul>
                             </div>
                         </div>
                     </li>
                     <li>
                         <div class="item-content">
+                            @Html.TextAreaFor(m => m.Remark, new { placeholder = "请输入签到备注" })
+                        </div>
+                        <div class="item-content">
                             <div class="item-inner">
-                                <textarea id="manager-task-remark" name="manager-task-remark" placeholder="请输入签到备注"></textarea>
-                                <div class="item-title-row">
-                                    <div class="item-title"></div>
-                                    <div class="item-after"><span id="manager-task-currentlength">0</span>/<span id="manager-task-totallength">50</span></div>
-                                </div>
+                                <div class="item-title"></div>
+                                <div class="item-after"><span id="checkin-currentlength">0</span>/<span>50</span></div>
                             </div>
                         </div>
                     </li>
@@ -61,6 +62,7 @@
             <div class="content-block">
                 <a href="javascript:;" class="button button-big button-fill">提交</a>
             </div>
+            }
         </div>
     </div>
 </div>

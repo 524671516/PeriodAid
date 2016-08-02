@@ -841,7 +841,7 @@
     <Content Include="Views\OffSeller\BindTempSellerListPartial.cshtml" />
     <Content Include="Views\OffSeller\BindTempSellerIndex.cshtml" />
     <Content Include="Views\Seller\Manager_Home.cshtml" />
-    <Content Include="Views\Seller\Manager_AddChekin.cshtml" />
+    <Content Include="Views\Seller\Manager_AddCheckin.cshtml" />
     <Content Include="Views\Seller\Manager_TaskReport.cshtml" />
     <Content Include="Views\Seller\Manager_CheckInView.cshtml" />
     <Content Include="Views\Seller\Senior_AllCheckInList.cshtml" />
@@ -857,7 +857,7 @@
     <Content Include="Views\Seller\Manager_EventList.cshtml" />
     <Content Include="Views\Seller\Manager_CreateCheckIn.cshtml" />
     <Content Include="Views\Seller\Manager_StoreList.cshtml" />
-    <Content Include="Views\Seller\Manager_QuerySeller.cshtml" />
+    <Content Include="Views\Seller\Manager_SellerList.cshtml" />
     <Content Include="Views\Seller\Manager_AjaxSellerDetails.cshtml" />
     <Content Include="Views\Seller\Manager_CreditInfo.cshtml" />
     <Content Include="Views\Seller\Manager_BonusList.cshtml" />
@@ -869,7 +869,10 @@
     <Content Include="Views\Seller\ManagerSellerTaskSellerPartial.cshtml" />
     <Content Include="Views\Seller\ManangerSellerTaskStorageAlert.cshtml" />
     <Content Include="Views\Seller\ManangerSellerTaskQuery.cshtml" />
-    <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckOutList.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckOutPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UserPanel.cshtml" />
+    <Content Include="Views\Seller\Manager_EventListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

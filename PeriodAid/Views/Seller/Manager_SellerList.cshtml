@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<PeriodAid.Models.Off_Seller>
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -30,6 +30,17 @@
 
             <div class="list-block list-block-search searchbar-found">
                 <ul>
+                    @foreach (var item in Model)
+                    {
+                        <li>
+                            <a href="#" class="item-content item-link">
+                                <div class="item-inner">
+                                    <div class="item-title">@Html.Encode(item.Name)</div>
+                                    <div class="item-after">@Html.Encode(item.Off_Store.StoreName)</div>
+                                </div>
+                            </a>
+                        </li>
+                    }
                     <li>
                         <a href="/Seller/Manager_AjaxSellerDetails" class="item-content item-link">
                             <div class="item-inner">

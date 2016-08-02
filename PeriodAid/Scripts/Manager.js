@@ -24,24 +24,84 @@ $$(".tab-link").on("click", function (data) {
     mainView.router.load({ url: url, animatePages: false });
     $(this).addClass("active").siblings().removeClass("active")
 });
+refresh_userpanel();
+//left-navbar
 
+// 微信初始化
+wx.config({
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: $("#appId").text(), // 必填，公众号的唯一标识
+    timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
+    nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
+    signature: $("#signature").text(),// 必填，签名，见附录1
+    jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage']
+});
+
+
+//Manager_Addchekin
+// 添加签到
 
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", function (e) {
-    var tl = textLength();
-    $$("#manager-task-currentlength").text(tl);
-    function textLength() {
-        return $$("#manager-task-remark").val().length;
+    // 获取当前备注文本长度
+    currentTextAreaLength("Remark", 50, "checkin-currentlength");
+
+    // 显示所有的已上传图片
+    uploadCheckinFile("manager-imglist", "Photo", "current_image", 3);
+
+    $("#createsellerreport-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#createsellerreport-btn").prop("disabled", true).addClass("color-gray");
+            var array = splitArray($("#TaskPhotoList").val());
+            if (array.length > 0) {
+                $("#createsellerreport-form").ajaxSubmit(function (data) {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        myApp.formDeleteData("createsellerreport-form");
+                        mainView.router.back();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '表单提交成功'
+                        });
+                        setTimeout(function () {
+                            refresh_mainpanel();
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                    else {
+                        myApp.hideIndicator();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '表单提交失败'
+                        });
+                        $("#createsellerreport-btn").prop("disabled", false).removeClass("color-gray");
+                        refresh_mainpanel();
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                });
+            }
+            else {
+                myApp.hideIndicator();
+                myApp.alert("请至少上传一张图片");
+                $("#createsellerreport-btn").prop("disabled", false).removeClass("color-gray");
     }
-    $$("#manager-task-remark").on("change", function () {
-        var tl = textLength();
-        var totalLength = $$("#manager-task-totallength").text();
-        if (tl < totalLength) {
-            $$("#manager-task-currentlength").text(tl);
-        } else {
-            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            element.attr("placeholder", error.text());
         }
     });
+    $$("#createsellerreport-btn").click(function () {
+        myApp.showIndicator();
+        $("#createsellerreport-form").submit();
+    });
+
 });
 
 //Manager_TaskReport 督导工作日报 填写内容字数提示
@@ -173,7 +233,7 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
         success: function (data) {
             $$("#manager-eventlist-content").html(data);
         }
-    });
+});
     $$("#manager-eventlist-date").on("change", function () {
         var date = $$("#manager-eventlist-date").val();
         $$.ajax({
@@ -333,11 +393,165 @@ $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () 
         searchList: '.list-block-search',
         searchIn: '.item-content'
     });
+});
+
+
+
+// 辅助程序
+
+// 用户模板更新
+function refresh_userpanel() {
     $$.ajax({
-        url: "",
-        type: "",
+        url: "/Seller/Manager_UserPanel",
+        method: "POST",
         success: function (data) {
-            $$("#manager-storelist-content").html(data)
+            if (data != "Error")
+                $$("#manager_userpanel").html(data);
         }
     });
+}
+
+// 当前字数更新
+function currentTextAreaLength(id_name, max_length, result_id) {
+    
+    $$("#" + id_name).on("change", function () {
+        var tl = $$("#" + id_name).val().length;
+        if (tl < max_length) {
+            $$("#" + result_id).text(tl);
+        } else {
+            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+            var str = $$("#" + id_name).val();
+            $$("#" + id_name).val(str.slice(0, 50));
+            $$("#" + result_id).text("50");
+        }
 });
+}
+
+// 上传签到图片文件模块
+function uploadCheckinFile(imglist, photolist_id, current_count, max_count) {
+    $$("#"+imglist).html("");
+    var photolist = splitArray($$("#"+photolist_id).val());
+    $$("#"+current_count).text(photolist.length);
+    for (var i = 0; i < photolist.length; i++) {
+        $$("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
+    }
+    $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+
+    // 上传文件
+    $$("#" + imglist).on("click", "#upload-btn", function (e) {
+        var localIds;
+        var photolist = splitArray($("#"+photolist_id).val());
+        if (photolist.length < max_count) {
+            wx.chooseImage({
+                count: 1, // 默认9
+                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    //$("#preview").attr("src", localIds);
+                    wx.uploadImage({
+                        localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            var serverId = res.serverId; // 返回图片的服务器端ID
+                            alert(serverId);
+                            $$.ajax({
+                                url: "/Seller/SaveOrignalImage",
+                                type: "post",
+                                data: {
+                                    serverId: serverId
+                                },
+                                success: function (resource) {
+                                    data = JSON.parse(resource);
+                                    //alert(data.result);
+                                    if (data.result == "SUCCESS") {
+                                        $$("#"+imglist).html("");
+                                        photolist.push(data.filename);
+                                        $$("#"+current_count).text(photolist.length);
+                                        $$("#"+photolist_id).val(photolist.toString());
+                                        for (var i = 0; i < photolist.length; i++) {
+                                            $$("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
+                                        }
+                                        $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+                                    }
+                                    else {
+                                        alert("上传失败，请重试");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            myApp.alert("上传图片不得大于" + max_count + "张，无法添加");
+        }
+    });
+
+    // 删除图片
+    $$("#"+imglist).on("click", ".rep-imgitem", function (e) {
+        var img_item = $$(this);
+        $$(".rep-imgitem").each(function () {
+            $$(this).html("");
+        });
+        img_item.html("<div class='rep-imgitem-selected'><i class='fa fa-minus'></i></div>");
+    });
+    $$("#"+imglist).on("click", ".rep-imgitem-selected", function () {
+        myApp.confirm('是否确认删除已上传图片?', '提示', function () {
+            //myApp.alert('You clicked Ok button');
+            var delete_item = $(".rep-imgitem-selected").closest(".rep-imgitem").attr("data-rel");
+            var arraylist = splitArray($("#"+photolist_id).val());
+            var pos = $.inArray(delete_item, arraylist);
+            arraylist.splice(pos, 1);
+            $$("#"+photolist_id).val(arraylist.toString());
+            $$("#"+current_count).text(arraylist.length);
+            $$("#"+imglist).html("");
+            for (var i = 0; i < arraylist.length; i++) {
+                $("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + arraylist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + arraylist[i] + "); background-size:cover\"></div></li>");
+            }
+            $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+        });
+    });
+}
+
+// 上传地理位置信息
+function uploadLocation(btn_id, location_id) {
+    $("#"+btn_id).click(function () {
+        //var loc_result = false;
+        //$("#loadingToast").show();
+        myApp.showIndicator();
+        // 4秒后强制关闭
+        setTimeout(function () {
+            if (!loc_success) {
+                myApp.hideIndicator();
+                myApp.alert("获取位置失败");
+            }
+        }, 4000);
+        
+        //var loc_success = false;
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function (res) {
+
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
+                location = longitude + "," + latitude;
+                loc_success = true;
+                //cell_success_location(btn, "位置获取成功", latitude, longitude);
+                $("#Location").val(location);
+            }
+        });
+    });
+}
+
+function splitArray(value) {
+    var list = new Array();
+    if (value.trim() != "") {
+        list = value.trim().split(',');
+        return list;
+    }
+    return list;
+}
