@@ -2906,5 +2906,9 @@ namespace PeriodAid.Controllers
             //ViewBag.TaskList = tasklist;
             return PartialView(tasklist);
         }
+        public ActionResult ManagerTempSellerDetails()
+        {
+            return View();
+        }
     }
 }

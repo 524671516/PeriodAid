@@ -15,10 +15,21 @@
 </div>
 <div class="pages">
     <div class="page" data-page="manager-storelist">
+        <form class="searchbar">
+            <div class="searchbar-input">
+                <input type="search" placeholder="搜索">
+                <a href="#" class="searchbar-clear"></a>
+            </div>
+            <a href="#" class="searchbar-cancel">取消</a>
+        </form>
+        <div class="searchbar-overlay"></div>
         <div class="page-content">
+            <div class="content-block searchbar-not-found">
+                查询信息不存在
+            </div>
             <div class="content-block-title">店铺巡查（共<span>96</span>家）</div>
-            <div class="list-block">
-                <ul>
+            <div class="list-block list-block-search searchbar-found">
+                <ul id="manager-storelist-content">
                     <li>
                         <a href="#" class="item-content item-link">
                             <div class="item-inner">

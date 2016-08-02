@@ -869,6 +869,7 @@
     <Content Include="Views\Seller\ManagerSellerTaskSellerPartial.cshtml" />
     <Content Include="Views\Seller\ManangerSellerTaskStorageAlert.cshtml" />
     <Content Include="Views\Seller\ManangerSellerTaskQuery.cshtml" />
+    <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

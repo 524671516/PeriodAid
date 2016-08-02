@@ -163,6 +163,29 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
     var calendarDefault = myApp.calendar({
         input: '#manager-eventlist-date',
     });
+    var url = "";
+    var date = $$("#manager-eventlist-date").val();
+    $$.ajax({
+        url: "",
+        data: {
+
+        },
+        success: function (data) {
+            $$("#manager-eventlist-content").html(data);
+        }
+    });
+    $$("#manager-eventlist-date").on("change", function () {
+        var date = $$("#manager-eventlist-date").val();
+        $$.ajax({
+            url: "",
+            data: {
+
+            },
+            success: function (data) {
+                $$("#manager-eventlist-content").html(data);
+            }
+        });
+    });
 });
 //Mnaager_QuerySeller  搜索促销员
 $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function () {
@@ -203,7 +226,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
         }, 2000);
     });
 });
-//Manager_TempSellerDetails
+//Manager_TempSellerDetails  暗促系统  暗促签到图片查看
 $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function (e) {
     var phList = $("#sellertask-details-phlist").val().split(",");
     var photo = new Array();
@@ -224,7 +247,7 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
         myPhotoBrowserPopupDark.open();
     });
 });
-//ManagerSellerTaskMonthStatistic
+//ManagerSellerTaskMonthStatistic 暗促系统  暗促信息查询
 $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", function () {
     $$.ajax({
         url: "/Seller/ManagerSellerTaskMonthStatisticPartial",
@@ -247,7 +270,7 @@ $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", funct
         });
     })
 });
-//ManangerSellerTaskSeller
+//ManangerSellerTaskSeller 暗促系统  暗促签到列表  无限循环
 $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function (e) {
     var page = 1;
     var url = "/Seller/ManagerSellerTaskSellerPartial";
@@ -296,10 +319,25 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
         }, 1000)
     });
 });
-//ManangerSellerTaskQuery
+//ManangerSellerTaskQuery  暗促信息查询
 $$(document).on("pageInit", ".page[data-page='managersellertask-query']", function () {
     var mySearchbar = myApp.searchbar('.searchbar', {
         searchList: '.list-block-search',
         searchIn: '.item-content'
+    });
+});
+
+//Manager_StoreList  督导管理门店  查询
+$$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
+    var mySearchbar = myApp.searchbar('.searchbar', {
+        searchList: '.list-block-search',
+        searchIn: '.item-content'
+    });
+    $$.ajax({
+        url: "",
+        type: "",
+        success: function (data) {
+            $$("#manager-storelist-content").html(data)
+        }
     });
 });
