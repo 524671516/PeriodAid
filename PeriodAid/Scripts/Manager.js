@@ -18,7 +18,7 @@ $$(document).on('ajaxComplete', function (e) {
     if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
     myApp.hideIndicator();
 });
-//tab-list
+//tab-list 底部工具栏转换
 $$(".tab-link").on("click", function (data) {
     var url = $$(this).attr("data-href");
     mainView.router.load({ url: url, animatePages: false });
@@ -40,6 +40,8 @@ wx.config({
 
 //Manager_Addchekin
 // 添加签到
+
+//Manager_Addchekin 添加签到信息 填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", function (e) {
     // 获取当前备注文本长度
     currentTextAreaLength("Remark", 50, "checkin-currentlength");
@@ -101,7 +103,8 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", functio
     });
 
 });
-//Manager_TaskReport
+
+//Manager_TaskReport 督导工作日报 填写内容字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
     textLength();
     function textLength() {
@@ -109,21 +112,50 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
         $$("#manager-task-currentlength-uc").text($$("#manager-task-evenuncomplete").val().length);
         $$("#manager-task-currentlength-as").text($$("#manager-task-evenassistent").val().length);
     };
-    function T(event, totalLength, $$length) {
+    function T(event, $$length) {
+        var totalLength = $$(".manager-task-total").text();
         if (event < totalLength) {
             $$length.text(event);
         } else {
             myApp.alert("已超出最大值，请重新填写或删除部分信息")
         }
     }
-    $$(".manager-task-evet").on("change", function () {
-        var totalLength = $$(".manager-task-total").text();
-        //var $$length = $(this).siblings().;
+    $$("#manager-task-evencomplete").on("change", function () {
+        var $$length = $$("#manager-task-currentlength-cp");
         var event = $$(this).val().length;
-        T(event, totalLength, $$length)
+        T(event, $$length)
+    });
+    $$("#manager-task-evenuncomplete").on("change", function () {
+        var $$length = $$("#manager-task-currentlength-uc");
+        var event = $$(this).val().length;
+        T(event,$$length)
+    });
+    $$("#manager-task-evenassistent").on("change", function () {
+        var $$length = $$("#manager-task-currentlength-as");
+        var event = $$(this).val().length;
+        T(event,$$length)
     });
 });
-//Manager_Request_Create
+
+//Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
+$$(document).on("pageInit", ".page[data-page='manager-temp-createcheckin']", function () {
+    var tl = textLength();
+    $$("#manager-temp-notecurrentlength").text(tl);
+    function textLength() {
+        return $$("#manager-temp-notecontent").val().length;
+    }
+    $$("#manager-temp-notecontent").on("change", function () {
+        var tl = textLength();
+        var totalLength = $$("#manager-temp-notetotallength").text();
+        if (tl < totalLength) {
+            $$("#manager-temp-notecurrentlength").text(tl);
+        } else {
+            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+        }
+    });
+});
+
+//Manager_Request_Create 店铺需求提报 填写需求信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", function () {
     textLength();
     function textLength() {
@@ -150,9 +182,9 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
         T(event, totalLength, $$length)
     });
 });
-//Senior_CheckInDetails
+//Senior_CheckInDetails  查看其他人签到信息  图片查看
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
-    var myPhotoBrowserPopupDark = myApp.photoBrowser({
+    var myPhotoManagerChekin = myApp.photoBrowser({
         photos: [
             '/Content/images/guide-02-3.jpg'
         ],
@@ -162,31 +194,44 @@ $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function
         zoom: false,
         backLinkText: '关闭'
     });
+    var myPhotoManagerSeller = myApp.photoBrowser({
+        photos: [
+            '/Content/images/guide-02-2.jpg'
+        ],
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
     $$('.manager-chekinphoto').on('click', function () {
-        myPhotoBrowserPopupDark.open();
+        myPhotoManagerChekin.open();
+    });
+    $$('.manager-sellerphoto').on('click', function () {
+        myPhotoManagerSeller.open();
     });
 });
-//Manager_ReportList
+//Manager_ReportList  销量排名 查看日期
 $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: '#manager-reportlist-date',
 
     });
 });
-//Manager_EventList
+//Manager_EventList  活动门店列表  查看日期
 $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: '#manager-eventlist-date',
     });
 });
-//Mnaager_QuerySeller
+//Mnaager_QuerySeller  搜索促销员
 $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function () {
     var mySearchbar = myApp.searchbar('.searchbar', {
         searchList: '.list-block-search',
         searchIn: '.item-title'
     });
 });
-//Manager_BonusList
+//Manager_BonusList  红包列表 下拉刷新  
 $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () {
     var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
     var authors = ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'];
@@ -227,7 +272,6 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
         var obj = { url: url };
         photo.push(obj);
     });
-    console.log(photo);
     var myPhotoBrowserPopupDark = myApp.photoBrowser({
         photos: photo,
         theme: 'dark',

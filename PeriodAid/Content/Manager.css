@@ -128,3 +128,7 @@
     right: 0;
     top: 22px;
 }
+.table-bottom-line {
+    border-bottom: 1px #D6D6D6 solid;
+    margin-left: 15px;
+}
