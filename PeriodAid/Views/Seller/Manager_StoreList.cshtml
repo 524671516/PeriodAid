@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<PeriodAid.Models.Off_Store>
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -16,41 +16,20 @@
 <div class="pages">
     <div class="page" data-page="manager-storelist">
         <div class="page-content">
-            <div class="content-block-title">店铺巡查（共<span>96</span>家）</div>
+            <div class="content-block-title">店铺巡查（共<span>@Html.Encode(Model.Count())</span>家）</div>
             <div class="list-block">
                 <ul>
+                    @foreach (var item in Model)
+                    {
                     <li>
                         <a href="#" class="item-content item-link">
                             <div class="item-inner">
-                                <div class="item-title">大润发-安徽当涂店</div>
+                                <div class="item-title">@Html.Encode(item.StoreName)</div>
                                 <div class="item-after">点击查看</div>
                             </div>
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">大润发-安徽当涂店</div>
-                                <div class="item-after">点击查看</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">大润发-安徽当涂店</div>
-                                <div class="item-after">点击查看</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">大润发-安徽当涂店</div>
-                                <div class="item-after">点击查看</div>
-                            </div>
-                        </a>
-                    </li>
+                    }
                 </ul>
             </div>
         </div>
