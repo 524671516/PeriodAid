@@ -96,11 +96,11 @@
             </td>
         </tr>
     </table>
-    <table class="offline-table-margin-01" id="offexpenses-list-table">
+    <div class="offline-table-margin-01" id="offexpenses-list-table">
         @foreach (var item in Model.Off_Expenses_Details)
         {
-            <tr>
-                <td class="col-md-3">
+            <ul class="list-inline list-unstyled offline-table-margin-03">
+                <li class="col-md-3">
                     <input type="hidden" name="detailid" value="@item.Id">
                     <div class="input-group">
 
@@ -215,26 +215,26 @@
                             }
                         </select>
                     </div>
-                </td>
-                <td class="col-md-2">
+                </li>
+                <li class="col-md-2">
                     <div class="input-group">
                         <div class="input-group-addon"><small>费用</small></div>
                         <input class="form-control input-sm" name="detailfee" type="number" value="@item.DetailsFee">
                     </div>
-                </td>
-                <td class="col-md-6">
+                </li>
+                <li class="col-md-6">
                     <div class="input-group">
                         <div class="input-group-addon"><small>备注</small></div>
                         <input class="form-control input-sm" name="detailremarks" value="@item.Remarks">
                     </div>
-                </td>
-                <td class="col-md-1">
+                </li>
+                <li class="col-md-1">
                     <a class="btn btn-danger btn-sm" onClick="getDel(this, @item.Id)"><i class="fa fa-times"></i></a>
-                </td>
-            </tr>
+                </li>
+            </ul>
         }
 
-    </table>
+    </div>
 }
 <script>
     $(function () {
