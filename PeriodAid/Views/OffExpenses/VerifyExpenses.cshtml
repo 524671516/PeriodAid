@@ -128,17 +128,17 @@
             </td>
         </tr>
     </table>
-    <table class="offline-table-margin-01" id="offexpenses-list-table">
+    <div class="offline-table-margin-01" id="offexpenses-list-table">
         @foreach (var item in Model.Off_Expenses_Payment)
         {
-            <tr>
-                <td class="col-md-3">
+            <ul class="list-inline list-unstyled offline-table-margin-03">
+                <li class="col-md-3">
                     <div class="input-group">
                         <div class="input-group-addon"><small>日期</small></div>
                         <input class="form-control input-sm time-date" name="apdate" value="@Convert.ToDateTime(item.ApplicationDate).ToString("yyyy-MM-dd")">
                     </div>
-                </td>
-                <td class="col-md-3">
+                </li>
+                <li class="col-md-3">
                     <input type="hidden" name="detailid" value="@item.Id">
                     <div class="input-group">
                         <div class="input-group-addon"><small>核销类型</small></div>
@@ -161,37 +161,37 @@
                             }
                         </select>
                     </div>
-                </td>
-                <td class="col-md-2">
+                </li>
+                <li class="col-md-2">
                     <div class="input-group">
                         <div class="input-group-addon"><small>费用</small></div>
                         <input class="form-control input-sm" name="detailfee" type="number" value="@item.VerifyCost">
                     </div>
-                </td>
-                <td class="col-md-3">
+                </li>
+                <li class="col-md-3">
                     <div class="input-group">
                         <div class="input-group-addon"><small>备注</small></div>
                         <input class="form-control input-sm" name="detailremarks" value="@item.Remarks">
                     </div>
-                </td>
-                <td class="col-md-1">
+                </li>
+                <li class="col-md-1">
                     <a class="btn btn-danger btn-sm" onClick="getDel(this, @item.Id)"><i class="fa fa-times"></i></a>
-                </td>
-            </tr>
+                </li>
+            </ul>
         }
-    </table>
+    </div>
 }
 <script>
     $(function () {
         $(".time-date").datepicker();
         $("#offexpenses-add-costdetail").click(function () {
-            $html = "<tr class='offline-table-margin-02'><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm time-date\" name=\"apdate\"></div>" +
-                "</td><td class=\"col-md-3\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>核销类型</small></div>" +
+            $html = "<ul class='list-inline list-unstyled offline-table-margin-03'><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm time-date\" name=\"apdate\"></div>" +
+                "</li><li class=\"col-md-3\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>核销类型</small></div>" +
                 "<select class=\"form-control input-sm valid\" name=\"detaillist\"><option value=\"0\">现金</option>" +
                 "<option value=\"1\">货抵</option></select>" +
-                "</div></td><td class=\"col-md-2\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用</small></div><input class=\"form-control input-sm\" name=\"detailfee\" type=\"number\" value=\"0\">" +
-                "</div></td><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
-                "</div></td><td class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></td></tr>";
+                "</div></li><li class=\"col-md-2\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用</small></div><input class=\"form-control input-sm\" name=\"detailfee\" type=\"number\" value=\"0\">" +
+                "</div></li><li class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
+                "</div></li><li class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></li></ul>";
             $("#offexpenses-list-table").append($html);
             $(".time-date").datepicker();
         });
