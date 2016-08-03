@@ -128,7 +128,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
             currentTextAreaLength("manager-task-report", "Event_UnComplete", 500, "tasklength-uc");
             currentTextAreaLength("manager-task-report", "Event_Assistance", 500, "tasklength-as");
             uploadCheckinFile("manager-task-report", "manager-imglist", "Photo", "current_image", 7);
-            formsubmit();
         }
     });
     $$("#taskreport-date").on("change", function () {
@@ -143,56 +142,10 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
                 currentTextAreaLength("manager-task-report", "Event_UnComplete", 500, "tasklength-uc");
                 currentTextAreaLength("manager-task-report", "Event_Assistance", 500, "tasklength-as");
                 uploadCheckinFile("manager-task-report", "manager-imglist", "Photo", "current_image", 7);
-                formsubmit();
             }
         });
     });
-    function formsubmit() {
-        var s=$("#managerreport-form").validate({
-            debug: true, //调试模式取消submit的默认提交功能   
-            errorClass: "custom-error", //默认为错误的样式类为：error   
-            focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
-            onkeyup: false,
-            submitHandler: function (form) {
-                $("#addcheckin-btn").prop("disabled", true).addClass("color-gray");
-                $("#managerreport-form").ajaxSubmit(function (data) {
-                    if (data == "SUCCESS") {
-                        myApp.hideIndicator();
-                        //myApp.formDeleteData("createsellerreport-form");
-                        myApp.addNotification({
-                            title: '通知',
-                            message: '日报修改成功'
-                        });
-                        setTimeout(function () {
-                            //refresh_mainpanel();
-                            myApp.closeNotification(".notifications");
-                        }, 2000);
-                    }
-                    else {
-                        myApp.hideIndicator();
-                        myApp.addNotification({
-                            title: '通知',
-                            message: '日报修改失败'
-                        });
-                        $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
-                        //refresh_mainpanel();
-                        setTimeout(function () {
-                            myApp.closeNotification(".notifications");
-                        }, 2000);
-                    }
-                });
-            },
-            errorPlacement: function (error, element) {
-                myApp.hideIndicator();
-                element.attr("placeholder", error.text());
-            }
-        });
-        alert(s);
-        $$("#report-submit-btn").on("click", function () {
-            myApp.showIndicator();
-            $$("#managerreport-form").submit();
-        });
-    }
+    
     
 });
 
