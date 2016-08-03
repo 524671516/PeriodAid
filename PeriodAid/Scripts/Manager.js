@@ -249,6 +249,47 @@ $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e
         dayNames: dayNames,
         dayNamesShort:dayNamesShort
     });
+    var date = $$("#manager-reportlist-date").val();
+    var storesystem = $$("#manager-reportlist-storesystem").val();
+    $$.ajax({
+        url: "/Seller/Manager_ReportListPartial",
+        data: {
+            date: date,
+            storesystem: storesystem
+        },
+        success: function (data) {
+            $$("#manager-reportlist-content").html(data)
+        }
+    });
+    $$("#manager-reportlist-date").on("change", function () {
+        var date = $$("#manager-reportlist-date").val();
+        var storesystem = $$("#manager-reportlist-storesystem").val();
+        $$.ajax({
+            url: "/Seller/Manager_ReportListPartial",
+            data: {
+                date: date,
+                storesystem: storesystem
+            },
+            success: function (data) {
+                $$("#manager-reportlist-content").html(data)
+            }
+        });
+    });
+    $$("#manager-reportlist-storesystem").on("change", function () {
+        var date = $$("#manager-reportlist-date").val();
+        var storesystem = $$("#manager-reportlist-storesystem").val();
+        $$.ajax({
+            url: "/Seller/Manager_ReportListPartial",
+            data: {
+                date: date,
+                storesystem: storesystem
+            },
+            success: function (data) {
+                $$("#manager-reportlist-content").html(data)
+            }
+        });
+    });
+
 });
 //Manager_EventList  活动门店列表  查看日期
 $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {

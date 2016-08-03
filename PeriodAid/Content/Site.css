@@ -179,6 +179,9 @@ li {
     display:block;
     margin:10px 0
 }
+.offline-table-margin-03 {
+    margin: 20px 12px;
+}
 .img-list {
     width: 120px;
     height: 120px;
