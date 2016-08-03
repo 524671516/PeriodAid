@@ -20,7 +20,7 @@ $$(document).on('ajaxComplete', function (e) {
 });
 var monthNames= ['一月份', '二月份', '三月份', '四月份', '五月份', '六月份', '七月份', '八月份', '九月份', '十月份', '十一月份', '十二月份'];
 var monthNamesShort= ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
-var dayNames = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
+var dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 var dayNamesShort = ['日', '一', '二', '三', '四', '五', '六'];
 //tab-list 底部工具栏转换
 $$(".tab-link").on("click", function (data) {
@@ -414,6 +414,54 @@ $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () 
     });
 });
 
+//Manager_CheckInView 查看签到信息
+$$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
+    $$.ajax({
+        url: "/Seller/Manager_CheckInViewPartial",
+        data: {
+            id: $$("#task_id").val()
+        },
+        success: function (data) {
+            $$("#manager-checkinview-content").html(data);
+        }
+    });
+    $$("#task_id").on("change", function () {
+        $$.ajax({
+            url: "/Seller/Manager_CheckInViewPartial",
+            data: {
+                id: $$("#task_id").val()
+            },
+            success: function (data) {
+                $$("#manager-checkinview-content").html(data);
+            }
+        });
+    });
+    $$("#manager-checkinview-content").on("click", ".swipeout-delete", function () {
+        myApp.confirm("是否删除该信息？", function () {
+            $$.ajax({
+                url: "/Seller/Mananger_CancelManagerCheckin",
+                method: "POST",
+                data: {
+                    id: $$(".swipeout-delete").attr("data-url")
+                },
+                success: function (res) {
+                    var data = JSON.parse(res);
+                    if (data.result == "SUCCESS") {
+                        $$.ajax({
+                            url: "/Seller/Manager_CheckInViewPartial",
+                            data: {
+                                id: $$("#task_id").val()
+                            },
+                            success: function (data) {
+                                $$("#manager-checkinview-content").html(data);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    });
+});
 
 
 // 辅助程序

@@ -142,3 +142,6 @@
 .validate-form textarea.custom-error{
     background:#d76a67;
 }
+.img-rounded {
+    border-radius: 6px;
+}
