@@ -245,9 +245,9 @@
                 "<option value=\"端架费用\">端架费用</option><option value=\"TG费用\">TG费用</option><option value=\"地堆费用\">地堆费用</option>" +
                 "<option value=\"运输费\">运输费</option><option value=\"试吃物料\">试吃物料</option><option value=\"其他赠品\">其他赠品</option>" +
                 "<option value=\"公司赠品\">公司赠品</option><option value=\"POSM\">POSM</option><option value=\"其他费用\">其他费用</option></select>" +
-                "</div></li><li class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用</small></div><input class=\"form-control input-sm\" name=\"detailfee\" type=\"number\" value=\"0\">" +
-                "</div></li><li class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
-                "</div></li><li class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></li></ul><br/>";
+                "</div></li><li class=\"col-md-2\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用</small></div><input class=\"form-control input-sm\" name=\"detailfee\" type=\"number\" value=\"0\">" +
+                "</div></li><li class=\"col-md-6\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
+                "</div></li><li class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></li></ul>";
             $("#offexpenses-list-table").append($html);
         });
         $(document).on("change", "input[name=detailfee]", function () {
