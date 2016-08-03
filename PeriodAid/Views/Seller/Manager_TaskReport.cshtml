@@ -1,4 +1,4 @@
-﻿
+﻿@model PeriodAid.Models.Off_Manager_Task
 
 <div class="navbar">
     <div class="navbar-inner">
@@ -15,17 +15,14 @@
     </div>
 </div>
 <div class="pages">
-    <div class="page" data-page="manager-task-report">
+    <div class="page" data-page="manager-task-report" id="manager-task-report">
         <div class="page-content">
             <div class="content-block-title">选择日期</div>
             <div class="list-block">
                 <ul>
                     <li>
                        <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="搜索日期" data-searchbar-cancel="取消">
-                           <select name="date">
-                               <option value="2016-07-07" selected>2016-07-07</option>
-                               <option value="2016-07-22">2016-07-22</option>
-                           </select>
+                           @Html.DropDownList("taskreport-date", ViewBag.checkinlist as SelectList, new { })
                            <div class="item-content">
                                <div class="item-inner">
                                    <div class="item-title">日期</div>
@@ -35,59 +32,8 @@
                     </li>
                 </ul>
             </div>
-            <div class="content-block-title">工作日报</div>
-            <div class="list-block">
-                <ul>
-                    <li>
-                        <div class="item-content"><textarea id="manager-task-evencomplete" placeholder="请输入重点工作内容"></textarea></div>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title"></div>
-                                <div class="item-after">
-                                    <span id="manager-task-currentlength-cp">0</span>/<span class="manager-task-total">500</span>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content"><textarea id="manager-task-evenuncomplete" placeholder="请输入一般工作内容"></textarea></div>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title"></div>
-                                <div class="item-after">
-                                    <span id="manager-task-currentlength-uc">0</span>/<span class="manager-task-total">500</span>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content"><textarea id="manager-task-evenassistent" placeholder="请输入需协调工作"></textarea></div>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title"></div>
-                                <div class="item-after">
-                                    <span  id="manager-task-currentlength-as">0</span>/<span class="manager-task-total">500</span>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title">图片上传</div>
-                                <div class="item-after">0/7</div>
-                            </div>
-                        </div>
-                        <div class="item-content" id="photo-list">
-                            <div class="item-inner">
-                                <ul class="rep-imglist" id="sellerreport-imglist"><li><a href="javascript:;" class="rep-imgitem-btn" id="upload-btn"><i class="fa fa-plus"></i></a></li></ul>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="content-block">
-                <a href="javascript:;" class="button button-big button-fill">提交</a>
+            <div id="task_details">
+
             </div>
         </div>
     </div>

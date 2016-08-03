@@ -873,6 +873,7 @@
     <Content Include="Views\Seller\Manager_UnCheckOutPartial.cshtml" />
     <Content Include="Views\Seller\Manager_UserPanel.cshtml" />
     <Content Include="Views\Seller\Manager_EventListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_TaskReportPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

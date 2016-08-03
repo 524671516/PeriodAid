@@ -2829,10 +2829,50 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
-        public ActionResult Manager_TaskReport()
+        public ActionResult Manager_TaskReport(int? id)
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId
+                       && m.Status == 0
+                       orderby m.TaskDate descending
+                       select m;
+            List<Object> attendance = new List<Object>();
+            foreach (var i in list)
+            {
+                attendance.Add(new { Key = i.Id, Value = i.TaskDate.ToString("yyyy-MM-dd") });
+            }
+            int _id = id ?? list.FirstOrDefault().Id;
+            if (attendance.Count > 0)
+                ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", _id);
+            return PartialView();
         }
+        public ActionResult Manager_TaskReportPartial(int id)
+        {
+            var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
+            return PartialView(item);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_TaskReportPartial(Off_Manager_Task model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Task item = new Off_Manager_Task();
+                if (TryUpdateModel(item))
+                {
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                return PartialView(model);
+            }
+        }
+
         public ActionResult Manager_CheckInView()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2904,10 +2944,64 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        // 销量排名
         public ActionResult Manager_ReportList()
         {
+            ViewBag.today = DateTime.Now;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = from m in manager.Off_Store
+                            group m by m.StoreSystem into g
+                            select new { Key = g.Key };
+            ViewBag.StoreSystem = new SelectList(storelist, "Key", "Key", storelist.FirstOrDefault().Key);
             return View();
         }
+
+        public ActionResult Manager_ReportListPartial(string date, string storesystem)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime today = Convert.ToDateTime(date);
+            ViewBag.Today = today;
+            int dow = (int)today.DayOfWeek;
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Where(m => m.StoreSystem == storesystem).Select(m => m.Id);
+            var listview = from m in offlineDB.Off_Checkin
+                           where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
+                           && m.Off_Checkin_Schedule.Subscribe == today
+                           && m.Status >= 4
+                           select new
+                           {
+                               Id = m.Id,
+                               Status = m.Status,
+                               StoreId = m.Off_Checkin_Schedule.Off_Store_Id,
+                               SellerName = m.Off_Seller.Name,
+                               StoreName = m.Off_Checkin_Schedule.Off_Store.StoreName,
+                               Rep_Total = m.Off_Checkin_Product.Sum(g => g.SalesCount),
+                               Bonus = m.Bonus
+                           };
+            //var storelist = list.Select(m => m.StoreId);
+            var avglist = from m in offlineDB.Off_AVG_Info
+                          where m.DayOfWeek == dow + 1 && m.Off_Store.Off_System_Id == user.DefaultSystemId &&
+                          storelist.Contains(m.StoreId)
+                          select new { StoreId = m.StoreId, AVG_Total = m.AVG_SalesData, AVG_Amount = m.AVG_AmountData };
+
+            var finallist = from m1 in listview
+                            join m2 in avglist on m1.StoreId equals m2.StoreId into lists
+                            from m in lists.DefaultIfEmpty()
+                            select new Wx_ManagerReportListViewModel
+                            {
+                                Id = m1.Id,
+                                Status = m1.Status,
+                                StoreId = m1.StoreId,
+                                SellerName = m1.SellerName,
+                                StoreName = m1.StoreName,
+                                Rep_Total = m1.Rep_Total,
+                                Bonus = m1.Bonus,
+                                AVG_Total = m.AVG_Total
+                            };
+            return PartialView(finallist);
+        }
+
         public ActionResult Manager_EventList()
         {
             return PartialView();
