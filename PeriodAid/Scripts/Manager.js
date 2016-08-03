@@ -145,7 +145,37 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
             }
         });
     });
-    
+    $$("#task_details").on("click", "#report-submit-btn", function () {
+        myApp.showIndicator();
+        alert("##");
+        //$$("#managerreport-form").submit();
+        $("#managerreport-form").ajaxSubmit(function (data) {
+            alert("3");
+            if (data == "SUCCESS") {
+                myApp.hideIndicator();
+                //myApp.formDeleteData("createsellerreport-form");
+                myApp.addNotification({
+                    title: '通知',
+                    message: '日报修改成功'
+                });
+                setTimeout(function () {
+                    //refresh_mainpanel();
+                    myApp.closeNotification(".notifications");
+                }, 2000);
+            }
+            else {
+                myApp.hideIndicator();
+                myApp.addNotification({
+                    title: '通知',
+                    message: '日报修改失败'
+                });
+                $("#task_details").html(data);
+                setTimeout(function () {
+                    myApp.closeNotification(".notifications");
+                }, 2000);
+            }
+        });
+    });
     
 });
 
@@ -512,7 +542,6 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
 function refresh_userpanel() {
     $$.ajax({
         url: "/Seller/Manager_UserPanel",
-        method: "POST",
         success: function (data) {
             if (data != "Error")
                 $$("#manager_userpanel").html(data);
