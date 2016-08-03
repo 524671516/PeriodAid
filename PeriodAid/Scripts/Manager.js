@@ -127,6 +127,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
             currentTextAreaLength("manager-task-report", "Event_UnComplete", 500, "tasklength-uc");
             currentTextAreaLength("manager-task-report", "Event_Assistance", 500, "tasklength-as");
             uploadCheckinFile("manager-task-report", "manager-imglist", "Photo", "current_image", 7);
+            formsubmit();
         }
     });
     $$("#taskreport-date").on("change", function () {
@@ -141,27 +142,57 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
                 currentTextAreaLength("manager-task-report", "Event_UnComplete", 500, "tasklength-uc");
                 currentTextAreaLength("manager-task-report", "Event_Assistance", 500, "tasklength-as");
                 uploadCheckinFile("manager-task-report", "manager-imglist", "Photo", "current_image", 7);
+                formsubmit();
             }
         });
     });
-    $$("#report-submit-btn").click(function () {
-        myApp.showIndicator();
-        $$("#managerreport-form").submit();
-    });
-    $("#managerreport-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
-        onkeyup: false,
-        submitHandler: function (form) {
-            $("#addcheckin-btn").prop("disabled", true).addClass("color-gray");
-
-        },
-        errorPlacement: function (error, element) {
-            myApp.hideIndicator();
-            element.attr("placeholder", error.text());
-        }
-    });
+    function formsubmit() {
+        var s=$("#managerreport-form").validate({
+            debug: true, //调试模式取消submit的默认提交功能   
+            errorClass: "custom-error", //默认为错误的样式类为：error   
+            focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+            onkeyup: false,
+            submitHandler: function (form) {
+                $("#addcheckin-btn").prop("disabled", true).addClass("color-gray");
+                $("#managerreport-form").ajaxSubmit(function (data) {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        //myApp.formDeleteData("createsellerreport-form");
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '日报修改成功'
+                        });
+                        setTimeout(function () {
+                            //refresh_mainpanel();
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                    else {
+                        myApp.hideIndicator();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '日报修改失败'
+                        });
+                        $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
+                        //refresh_mainpanel();
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                });
+            },
+            errorPlacement: function (error, element) {
+                myApp.hideIndicator();
+                element.attr("placeholder", error.text());
+            }
+        });
+        alert(s);
+        $$("#report-submit-btn").on("click", function () {
+            myApp.showIndicator();
+            $$("#managerreport-form").submit();
+        });
+    }
+    
 });
 
 //Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
@@ -452,7 +483,6 @@ function currentTextAreaLength(pagename, id_name, max_length, result_id) {
     $$("#" + result_id).text(tl_c);
     //$$("#" + pagename).off("change", "#" + id_name);
     $$("#" + pagename).on("change", "#" + id_name, function () {
-        console.log("44");
         var tl = $$("#" + id_name).val().length;
         if (tl < max_length) {
             $$("#" + result_id).text(tl);
@@ -476,10 +506,7 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
     }
     $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
     console.log($$("#" + imglist).html());
-    // 上传文件
-    //alert("33");
-    //$$("#" + pagename).off("click", "#upload-btn", upload_subfunction);
-    $$("#" + pagename).on("click", "#upload-btn", function (e) {
+    $$("#"+imglist).on("click", "#upload-btn", function (e) {
         var localIds;
         var photolist = splitArray($("#" + photolist_id).val());
         if (photolist.length < max_count) {
@@ -532,16 +559,14 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
 
     // 删除图片
     //$$("#" + pagename).off("click", ".rep-imgitem");
-    $$("#" + pagename).on("click", ".rep-imgitem", function (e) {
+    $$("#" + imglist).on("click",".rep-imgitem", function (e) {
         var img_item = $$(this);
         $$(".rep-imgitem").each(function () {
             $$(this).html("");
         });
         img_item.html("<div class='rep-imgitem-selected'><i class='fa fa-minus'></i></div>");
-        //alert("2");
     });
-    $$(".rep-imgitem-selected").off("click");
-    $$("#" + pagename).on("click", ".rep-imgitem-selected", function () {
+    $$("#"+imglist).on("click",".rep-imgitem-selected", function () {
         myApp.confirm('是否确认删除已上传图片?', '提示', function () {
             //myApp.alert('You clicked Ok button');
             var delete_item = $(".rep-imgitem-selected").closest(".rep-imgitem").attr("data-rel");

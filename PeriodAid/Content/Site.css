@@ -175,9 +175,8 @@ li {
     margin: 10px 0;
     width:100%
 }
-.offline-table-margin-02 {
-    display:block;
-    margin:10px 0
+.offline-table-margin-02 td{
+    padding:10px 0;
 }
 .img-list {
     width: 120px;
