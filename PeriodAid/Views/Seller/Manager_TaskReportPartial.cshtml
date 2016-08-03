@@ -1,0 +1,74 @@
+﻿@model PeriodAid.Models.Off_Manager_Task
+@using (Html.BeginForm("Manager_TaskReportPartial", "Seller", FormMethod.Post, new { @id = "managerreport-form", @class = "validate-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.UserName)
+    @Html.HiddenFor(model => model.TaskDate)
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.NickName)
+    @Html.HiddenFor(model => model.Off_System_Id)
+    <div class="content-block-title">工作日报</div>
+    <div class="list-block">
+        <ul>
+            <li>
+                <div class="item-content">
+                    @Html.TextAreaFor(model => model.Event_Complete, new { placeholder = "请输入重点工作内容", @class = "{maxlength:500}" })
+                </div>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title"></div>
+                        <div class="item-after">
+                            <span id="tasklength-cp">0</span>/<span>500</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    @Html.TextAreaFor(model => model.Event_UnComplete, new { placeholder = "请输入一般工作内容", @class = "{maxlength:500}" })
+                </div>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title"></div>
+                        <div class="item-after">
+                            <span id="tasklength-uc">0</span>/<span>500</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    @Html.TextAreaFor(model => model.Event_Assistance, new { placeholder = "请输入需协调工作", @class = "{maxlength:500}" })
+                </div>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title"></div>
+                        <div class="item-after">
+                            <span id="tasklength-as">0</span>/<span>500</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title">上传照片</div>
+                        <div class="item-after"><abbr id="current_image">0</abbr>/7</div>
+                    </div>
+                </div>
+                <div class="item-content" id="photo-list">
+                    <div class="item-inner">
+                        <div class="hidden">
+                            @Html.EditorFor(m => m.Photo)
+                        </div>
+                        <ul class="rep-imglist" id="manager-imglist"></ul>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="content-block">
+        <a href="javascript:;" class="button button-big button-fill" id="report-submit-btn">提交</a>
+    </div>
+}

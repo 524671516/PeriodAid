@@ -20,8 +20,10 @@ $$(document).on('ajaxComplete', function (e) {
 });
 var monthNames= ['一月份', '二月份', '三月份', '四月份', '五月份', '六月份', '七月份', '八月份', '九月份', '十月份', '十一月份', '十二月份'];
 var monthNamesShort= ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+var dayNames = ['星期日','星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 var dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 var dayNamesShort = ['日', '一', '二', '三', '四', '五', '六'];
+
 //tab-list 底部工具栏转换
 $$(".tab-link").on("click", function (data) {
     var url = $$(this).attr("data-href");
@@ -45,12 +47,11 @@ wx.config({
 
 
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
-$$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", function (e) {
+$$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", function (e) {
     // 获取当前备注文本长度
-    currentTextAreaLength("Remark", 50, "checkin-currentlength");
-
+    currentTextAreaLength("manager-task-addcheckin", "Remark", 50, "checkin-currentlength");
     // 显示所有的已上传图片
-    uploadCheckinFile("manager-imglist", "Photo", "current_image", 3);
+    uploadCheckinFile("manager-task-addcheckin", "manager-imglist", "Photo", "current_image", 3);
     uploadLocation("location-btn", "Location");
 
     $("#addcheckin_form").validate({
@@ -66,13 +67,12 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", functio
                 myApp.alert("请至少上传一张图片");
                 $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
             }
-            else if($("#Location").val().trim() == "")
-            {
+            else if ($("#Location").val().trim() == "") {
                 myApp.hideIndicator();
                 myApp.alert("请上传您的地理位置");
                 $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
             }
-            else{
+            else {
                 $("#addcheckin_form").ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
@@ -111,41 +111,57 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addchekin']", functio
         myApp.showIndicator();
         $("#addcheckin_form").submit();
     });
-
 });
 
 
 
 //Manager_TaskReport 督导工作日报 填写内容字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
-    textLength();
-    function textLength() {
-        $$("#manager-task-currentlength-cp").text($$("#manager-task-evencomplete").val().length);
-        $$("#manager-task-currentlength-uc").text($$("#manager-task-evenuncomplete").val().length);
-        $$("#manager-task-currentlength-as").text($$("#manager-task-evenassistent").val().length);
-    };
-    function T(event, $$length) {
-        var totalLength = $$(".manager-task-total").text();
-        if (event < totalLength) {
-            $$length.text(event);
-        } else {
-            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+    $$.ajax({
+        url: "/Seller/Manager_TaskReportPartial",
+        data: {
+            id: $$("#taskreport-date").val()
+        },
+        success: function (data) {
+            $("#task_details").html(data);
+            currentTextAreaLength("manager-task-report", "Event_Complete", 500, "tasklength-cp");
+            currentTextAreaLength("manager-task-report", "Event_UnComplete", 500, "tasklength-uc");
+            currentTextAreaLength("manager-task-report", "Event_Assistance", 500, "tasklength-as");
+            uploadCheckinFile("manager-task-report", "manager-imglist", "Photo", "current_image", 7);
         }
+    });
+    $$("#taskreport-date").on("change", function () {
+        $$.ajax({
+            url: "/Seller/Manager_TaskReportPartial",
+            data: {
+                id: $$("#taskreport-date").val()
+            },
+            success: function (data) {
+                $("#task_details").html(data);
+                currentTextAreaLength("manager-task-report", "Event_Complete", 500, "tasklength-cp");
+                currentTextAreaLength("manager-task-report", "Event_UnComplete", 500, "tasklength-uc");
+                currentTextAreaLength("manager-task-report", "Event_Assistance", 500, "tasklength-as");
+                uploadCheckinFile("manager-task-report", "manager-imglist", "Photo", "current_image", 7);
     }
-    $$("#manager-task-evencomplete").on("change", function () {
-        var $$length = $$("#manager-task-currentlength-cp");
-        var event = $$(this).val().length;
-        T(event, $$length)
     });
-    $$("#manager-task-evenuncomplete").on("change", function () {
-        var $$length = $$("#manager-task-currentlength-uc");
-        var event = $$(this).val().length;
-        T(event,$$length)
     });
-    $$("#manager-task-evenassistent").on("change", function () {
-        var $$length = $$("#manager-task-currentlength-as");
-        var event = $$(this).val().length;
-        T(event,$$length)
+    $$("#report-submit-btn").click(function () {
+        myApp.showIndicator();
+        $$("#managerreport-form").submit();
+    });
+    $("#managerreport-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#addcheckin-btn").prop("disabled", true).addClass("color-gray");
+
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            element.attr("placeholder", error.text());
+        }
     });
 });
 
@@ -165,6 +181,7 @@ $$(document).on("pageInit", ".page[data-page='manager-temp-createcheckin']", fun
             myApp.alert("已超出最大值，请重新填写或删除部分信息")
         }
     });
+
 });
 
 //Manager_Request_Create 店铺需求提报 填写需求信息字数提示
@@ -479,9 +496,12 @@ function refresh_userpanel() {
 }
 
 // 当前字数更新
-function currentTextAreaLength(id_name, max_length, result_id) {
-    
-    $$("#" + id_name).on("change", function () {
+function currentTextAreaLength(pagename, id_name, max_length, result_id) {
+    var tl_c = $$("#" + id_name).val().length;
+    $$("#" + result_id).text(tl_c);
+    //$$("#" + pagename).off("change", "#" + id_name);
+    $$("#" + pagename).on("change", "#" + id_name, function () {
+        console.log("44");
         var tl = $$("#" + id_name).val().length;
         if (tl < max_length) {
             $$("#" + result_id).text(tl);
@@ -495,7 +515,8 @@ function currentTextAreaLength(id_name, max_length, result_id) {
 }
 
 // 上传签到图片文件模块
-function uploadCheckinFile(imglist, photolist_id, current_count, max_count) {
+function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_count) {
+    console.log($("#" + imglist));
     $$("#"+imglist).html("");
     var photolist = splitArray($$("#"+photolist_id).val());
     $$("#"+current_count).text(photolist.length);
@@ -503,11 +524,13 @@ function uploadCheckinFile(imglist, photolist_id, current_count, max_count) {
         $$("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
     }
     $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
-
+    console.log($$("#" + imglist).html());
     // 上传文件
-    $$("#" + imglist).on("click", "#upload-btn", function (e) {
+    //alert("33");
+    //$$("#" + pagename).off("click", "#upload-btn", upload_subfunction);
+    $$("#" + pagename).on("click", "#upload-btn", function (e) {
         var localIds;
-        var photolist = splitArray($("#"+photolist_id).val());
+        var photolist = splitArray($("#" + photolist_id).val());
         if (photolist.length < max_count) {
             wx.chooseImage({
                 count: 1, // 默认9
@@ -532,14 +555,14 @@ function uploadCheckinFile(imglist, photolist_id, current_count, max_count) {
                                     data = JSON.parse(resource);
                                     //alert(data.result);
                                     if (data.result == "SUCCESS") {
-                                        $$("#"+imglist).html("");
+                                        $$("#" + imglist).html("");
                                         photolist.push(data.filename);
-                                        $$("#"+current_count).text(photolist.length);
-                                        $$("#"+photolist_id).val(photolist.toString());
+                                        $$("#" + current_count).text(photolist.length);
+                                        $$("#" + photolist_id).val(photolist.toString());
                                         for (var i = 0; i < photolist.length; i++) {
-                                            $$("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
+                                            $$("#" + imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
                                         }
-                                        $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+                                        $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
                                     }
                                     else {
                                         alert("上传失败，请重试");
@@ -557,27 +580,30 @@ function uploadCheckinFile(imglist, photolist_id, current_count, max_count) {
     });
 
     // 删除图片
-    $$("#"+imglist).on("click", ".rep-imgitem", function (e) {
+    //$$("#" + pagename).off("click", ".rep-imgitem");
+    $$("#" + pagename).on("click", ".rep-imgitem", function (e) {
         var img_item = $$(this);
         $$(".rep-imgitem").each(function () {
             $$(this).html("");
         });
         img_item.html("<div class='rep-imgitem-selected'><i class='fa fa-minus'></i></div>");
+        //alert("2");
     });
-    $$("#"+imglist).on("click", ".rep-imgitem-selected", function () {
+    $$(".rep-imgitem-selected").off("click");
+    $$("#" + pagename).on("click", ".rep-imgitem-selected", function () {
         myApp.confirm('是否确认删除已上传图片?', '提示', function () {
             //myApp.alert('You clicked Ok button');
             var delete_item = $(".rep-imgitem-selected").closest(".rep-imgitem").attr("data-rel");
-            var arraylist = splitArray($("#"+photolist_id).val());
+            var arraylist = splitArray($("#" + photolist_id).val());
             var pos = $.inArray(delete_item, arraylist);
             arraylist.splice(pos, 1);
-            $$("#"+photolist_id).val(arraylist.toString());
-            $$("#"+current_count).text(arraylist.length);
-            $$("#"+imglist).html("");
+            $$("#" + photolist_id).val(arraylist.toString());
+            $$("#" + current_count).text(arraylist.length);
+            $$("#" + imglist).html("");
             for (var i = 0; i < arraylist.length; i++) {
-                $("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + arraylist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + arraylist[i] + "); background-size:cover\"></div></li>");
+                $("#" + imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + arraylist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + arraylist[i] + "); background-size:cover\"></div></li>");
             }
-            $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+            $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
         });
     });
 }
