@@ -306,6 +306,51 @@ $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e
     });
 
 });
+
+//Manager_TaskSellerDetails 销量详情
+$$(document).on("pageInit", ".page[data-page='manager-tasksellerdetails']", function () {
+    //查看签到图片
+    var myPhotoManagerSellerChekinIn = myApp.photoBrowser({
+        photos: [
+            '/Content/images/guide-02-3.jpg'
+        ],
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
+    var myPhotoManagerSellerChekinOut = myApp.photoBrowser({
+        photos: [
+            '/Content/images/guide-02-2.jpg'
+        ],
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
+    var myPhotoManagerSellerSales = myApp.photoBrowser({
+        photos: [
+            '/Content/images/guide-02-3.jpg'
+        ],
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
+    $$('.manager-tasksellerdetails-checkin').on('click', function () {
+        myPhotoManagerSellerChekinIn.open();
+    });
+    $$('.manager-tasksellerdetails-checkout').on('click', function () {
+        myPhotoManagerSellerChekinOut.open();
+    });
+    $$('.manager-tasksellerdetails-sales').on('click', function () {
+        myPhotoManagerSellerSales.open();
+    });
+});
+
 //Manager_EventList  活动门店列表  查看日期
 $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
     var calendarDefault = myApp.calendar({
@@ -313,7 +358,8 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
         monthNames: monthNames,
         monthNamesShort: monthNamesShort,
         dayNames: dayNames,
-        dayNamesShort: dayNamesShort
+        dayNamesShort: dayNamesShort,
+        closeOnSelect: true
     });
     var url = "/Seller/Manager_EventListPartial";
     var date = $$("#manager-eventlist-date").val();

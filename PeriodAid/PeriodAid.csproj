@@ -875,6 +875,8 @@
     <Content Include="Views\Seller\Manager_EventListPartial.cshtml" />
     <Content Include="Views\Seller\Manager_TaskReportPartial.cshtml" />
     <Content Include="Views\Seller\Manager_ReportListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_AnnouncementList.cshtml" />
+    <Content Include="Views\Seller\Manager_TaskSellerDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
