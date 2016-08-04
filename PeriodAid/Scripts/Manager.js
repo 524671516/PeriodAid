@@ -231,7 +231,8 @@ $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e
         monthNames: monthNames,
         monthNamesShort:monthNamesShort,
         dayNames: dayNames,
-        dayNamesShort:dayNamesShort
+        dayNamesShort: dayNamesShort,
+        closeOnSelect:true
     });
     var date = $$("#manager-reportlist-date").val();
     var storesystem = $$("#manager-reportlist-storesystem").val();
