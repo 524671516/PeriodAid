@@ -1,0 +1,18 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin>
+
+@foreach (var item in Model)
+{
+    <li class="swipeout">
+        <div class="swipeout-content">
+            <a href="#" class="item-content item-link">
+                <div class="item-inner">
+                    <div class="item-title">@Html.Encode(item.Off_Checkin_Schedule.Off_Store.StoreName)</div>
+                    <div class="item-after">@Html.Encode(item.Off_Seller.Name)</div>
+                </div>
+            </a>
+        </div>
+        <div class="swipeout-actions-right">
+            <a href="#" class="swipeout-delete">作废</a>
+        </div>
+    </li>
+}

@@ -43,8 +43,60 @@ wx.config({
     jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage']
 });
 
+function check(url) {
+    var calendarDefault = myApp.calendar({
+        input: '.check-date',
+        monthNames: monthNames,
+        monthNamesShort: monthNamesShort,
+        dayNames: dayNames,
+        dayNamesShort: dayNamesShort,
+        closeOnSelect: true
+    });
+    var date = $$(".check-date").val();
+    $$.ajax({
+        url: url,
+        data: {
+            date: date
+        },
+        success: function (data) {
+            $$(".check-content").html(data)
+        }
+    });
+    $$(".check-date").on("change", function () {
+        var date = $$(".check-date").val();
+        $$.ajax({
+            url: url,
+            data: {
+                date: date
+            },
+            success: function (data) {
+                $$(".check-content").html(data)
+            }
+        });
+    });
+};
+//Manager_UnCheckInList  巡店 未签到
+$$(document).on("pageInit", ".page[data-page='manager-unchekinlist']", function () {
+    var url = "/Seller/Manager_UnCheckInListPartial";
+    check(url)
+});
 
+//Manager_UnCheckOutList 巡店 未签退
+$$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", function () {
+    var url = "/Seller/Manager_UnCheckOutListPartial";
+    check(url);
+});
 
+//Manager_UnReportList 巡店 未提报销量
+$$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function () {
+    var url = "/Seller/Manager_UnReportListPartial";
+    check(url);
+});
+//Manager_UnConfirmList 巡店 销量待确认
+$$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
+    var url = "/Seller/Manager_UnConfirmListPartial";
+    check(url);
+});
 
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", function (e) {
@@ -555,29 +607,28 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
             }
         });
     });
-    $$("#manager-checkinview-content").on("click", ".swipeout-delete", function () {
-        myApp.confirm("是否删除该信息？", function () {
-            $$.ajax({
-                url: "/Seller/Mananger_CancelManagerCheckin",
-                method: "POST",
-                data: {
-                    id: $$(".swipeout-delete").attr("data-url")
-                },
-                success: function (res) {
-                    var data = JSON.parse(res);
-                    if (data.result == "SUCCESS") {
-                        $$.ajax({
-                            url: "/Seller/Manager_CheckInViewPartial",
-                            data: {
-                                id: $$("#task_id").val()
-                            },
-                            success: function (data) {
-                                $$("#manager-checkinview-content").html(data);
-                            }
-                        });
-                    }
+    $$("#manager-checkinview-content").on("deleted", ".swipeout", function (e) {
+        console.log($$(e.target).attr("data-url"))
+        $$.ajax({
+            url: "/Seller/Mananger_CancelManagerCheckin",
+            method: "POST",
+            data: {
+                id: $$(e.target).attr("data-url")
+            },
+            success: function (res) {
+                var data = JSON.parse(res);
+                if (data.result == "SUCCESS") {
+                    $$.ajax({
+                        url: "/Seller/Manager_CheckInViewPartial",
+                        data: {
+                            id: $$("#task_id").val()
+                        },
+                        success: function (data) {
+                            $$("#manager-checkinview-content").html(data);
+                        }
+                    });
                 }
-            });
+            }
         });
     });
 });

@@ -15,7 +15,7 @@
         </li>
 @foreach (var item in Model)
 {
-        <li class="swipeout">
+        <li class="swipeout" data-url="@item.Id">
             <div class="swipeout-content">
                 <a href="javascript:;" class="item-content item-link">
                     <div class="item-media"><img src="/Seller/ThumbnailImage_box?filename=@CommonUtilities.getFirst(item.Photo)" class="img-responsive img-rounded" width="48" /></div>
@@ -26,7 +26,7 @@
                 </a>
             </div>
             <div class="swipeout-actions-right">
-                <a href="javascript:;" data-url="@item.Id" class="swipeout-delete bg-red">删除</a>
+                <a href="javascript:;" class="swipeout-delete" data-close-on-cancel="true" data-confirm="是否删除该信息？">删除</a>
             </div>
         </li>
 }

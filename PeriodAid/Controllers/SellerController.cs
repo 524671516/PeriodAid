@@ -2963,6 +2963,7 @@ namespace PeriodAid.Controllers
         {
             return PartialView();
         }
+        
         public ActionResult Manager_UnCheckInListPartial(string date)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2977,6 +2978,7 @@ namespace PeriodAid.Controllers
                                  select m;
             return PartialView(today_schedule);
         }
+
         // 未签退列表
         public ActionResult Manager_UnCheckOutList()
         {

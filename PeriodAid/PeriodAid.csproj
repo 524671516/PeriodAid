@@ -878,6 +878,12 @@
     <Content Include="Views\Seller\Manager_AnnouncementList.cshtml" />
     <Content Include="Views\Seller\Manager_TaskSellerDetails.cshtml" />
     <Content Include="Views\Seller\Manager_CheckInViewPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckInListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckOutListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnReportList.cshtml" />
+    <Content Include="Views\Seller\Manager_UnReportListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnConfirmList.cshtml" />
+    <Content Include="Views\Seller\Manager_UnConfirmListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
