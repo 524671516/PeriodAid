@@ -2957,18 +2957,84 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        // 未签到列表
         public ActionResult Manager_UnCheckInList()
         {
-            return View();
+            return PartialView();
         }
+        public ActionResult Manager_UnCheckInListPartial(string date)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime _date = Convert.ToDateTime(date);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var today_schedule = from m in offlineDB.Off_Checkin_Schedule
+                                 where storelist.Contains(m.Off_Store_Id)
+                                 && m.Subscribe == _date
+                                 && m.Off_Checkin.Count(p => p.Status >= 0) == 0
+                                 orderby m.Off_Store.StoreName
+                                 select m;
+            return PartialView(today_schedule);
+        }
+        // 未签退列表
         public ActionResult Manager_UnCheckOutList()
         {
-            return View();
+            return PartialView();
         }
-        public ActionResult Manager_UnCheckOutPartial()
+        public ActionResult Manager_UnCheckOutListPartial(string date)
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime _date = Convert.ToDateTime(date);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var checkin = from m in offlineDB.Off_Checkin
+                          where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
+                          && m.Off_Checkin_Schedule.Subscribe == _date
+                          && m.Status == 1
+                          orderby m.Off_Checkin_Schedule.Off_Store.StoreName
+                          select m;
+            return PartialView(checkin);
         }
+        // 未提报销量列表
+        public ActionResult Manager_UnReportList()
+        {
+            return PartialView();
+        }
+        public ActionResult Manager_UnReportListPartial(string date)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime _date = Convert.ToDateTime(date);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var checkin = from m in offlineDB.Off_Checkin
+                          where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
+                          && m.Off_Checkin_Schedule.Subscribe == _date
+                          && m.Status == 2
+                          orderby m.Off_Checkin_Schedule.Off_Store.StoreName
+                          select m;
+            return PartialView(checkin);
+        }
+        // 带确认销量列表
+        public ActionResult Manager_UnConfirmList()
+        {
+            return PartialView();
+        }
+        public ActionResult Manager_UnConfirmListPartial(string date)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime _date = Convert.ToDateTime(date);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var checkin = from m in offlineDB.Off_Checkin
+                          where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
+                          && m.Off_Checkin_Schedule.Subscribe == _date
+                          && m.Status == 3
+                          orderby m.Off_Checkin_Schedule.Off_Store.StoreName
+                          select m;
+            return PartialView(checkin);
+        }
+
         // 销量排名
         public ActionResult Manager_ReportList()
         {
