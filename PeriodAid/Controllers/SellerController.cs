@@ -3034,7 +3034,14 @@ namespace PeriodAid.Controllers
                           select m;
             return PartialView(checkin);
         }
-
+        public ActionResult Manager_AnnouncementList()
+        {
+            return View();
+        }
+        public ActionResult Manager_TaskSellerDetails()
+        {
+            return View();
+        }
         // 销量排名
         public ActionResult Manager_ReportList()
         {
