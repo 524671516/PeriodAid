@@ -2763,7 +2763,7 @@ namespace PeriodAid.Controllers
             user.Province = userinfo.province;
             user.City = userinfo.city;
             UserManager.Update(user);
-            return RedirectToAction("Home");
+            return RedirectToAction("Manager_Home");
         }
         public ActionResult Manager_Task()
         {
@@ -2914,11 +2914,36 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Senior_AllCheckInList()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.Status == 0
+                       && m.Off_System_Id == user.DefaultSystemId
+                       group m by m.TaskDate into g
+                       select new { g.Key };
+            list = list.OrderByDescending(m => m.Key);
+            List<Object> attendance = new List<Object>();
+            foreach (var i in list)
+            {
+                attendance.Add(new { Key = i.Key, Value = i.Key.ToString("yyyy-MM-dd") });
+            }
+            if (attendance.Count > 0)
+                ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Key);
             return View();
         }
-        public ActionResult Senior_CheckInDetails()
+        public ActionResult Senior_AllCheckInListPartial(string date)
         {
-            return View();
+            var _date = Convert.ToDateTime(date);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in offlineDB.Off_Manager_Task
+                       where m.TaskDate == _date && m.Status >= 0
+                       && m.Off_System_Id == user.DefaultSystemId
+                       select m;
+            return PartialView(list);
+        }
+        public ActionResult Senior_CheckInDetails(int id)
+        {
+            var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
+            return View(item);
         }
         public ActionResult Manager_Request_Create()
         {
