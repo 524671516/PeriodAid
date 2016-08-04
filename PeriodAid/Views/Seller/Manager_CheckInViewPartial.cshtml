@@ -1,0 +1,34 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Manager_CheckIn>
+@using PeriodAid.DAL;
+<div class="content-block-title">签到数据列表(@Html.Encode(Model.Count()))</div>
+<div class="list-block media-list">
+    <ul>
+        <li>
+            <a href="/Seller/Manager_TaskReport/@ViewBag.TaskId" class="item-content item-link">
+                <div class="item-inner">
+                    <div class="item-title-row">
+                        <div class="item-title">编辑日报信息</div>
+                        <div class="item-after"></div>
+                    </div>
+                </div>
+            </a>
+        </li>
+@foreach (var item in Model)
+{
+        <li class="swipeout">
+            <div class="swipeout-content">
+                <a href="javascript:;" class="item-content item-link">
+                    <div class="item-media"><img src="/Seller/ThumbnailImage_box?filename=@CommonUtilities.getFirst(item.Photo)" class="img-responsive img-rounded" width="48" /></div>
+                    <div class="item-inner" style="background: url('../../fonts/right.svg') no-repeat; background-position:calc(100% - 15px) center;background-size:10px 20px">
+                        <div class="item-title">@Html.Encode(item.Remark)</div>
+                        <div class="item-subtitle color-gray">签到时间：@Html.Encode(item.CheckIn_Time.ToString("HH:mm:ss"))</div>
+                    </div>
+                </a>
+            </div>
+            <div class="swipeout-actions-right">
+                <a href="javascript:;" data-url="@item.Id" class="swipeout-delete bg-red">删除</a>
+            </div>
+        </li>
+}
+    </ul>
+</div>
