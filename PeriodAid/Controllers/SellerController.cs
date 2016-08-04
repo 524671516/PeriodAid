@@ -3015,7 +3015,7 @@ namespace PeriodAid.Controllers
                           select m;
             return PartialView(checkin);
         }
-        // 带确认销量列表
+        // 待确认销量列表
         public ActionResult Manager_UnConfirmList()
         {
             return PartialView();
