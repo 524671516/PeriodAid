@@ -2710,6 +2710,8 @@ namespace PeriodAid.Controllers
             }
         }
 
+
+        /************ 新版本界面 ************/
         public ActionResult Manager_Home()
         {
             WeChatUtilities utilities = new WeChatUtilities();
@@ -2777,6 +2779,22 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        /************ 签到 ************/
+
+        // 主要工作列表
+        public ActionResult Manager_AnnouncementList()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var list = from m in offlineDB.Off_Manager_Announcement
+                       where m.Off_System_Id == user.DefaultSystemId && m.ManagerUserName.Contains(user.UserName)
+                       && today >= m.StartTime && today < m.FinishTime
+                       orderby m.Status, m.Priority descending, m.SubmitTime descending
+                       select m;
+            return PartialView(list);
+        }
+        // 添加督导签到
         public async Task<ActionResult> Manager_AddCheckin()
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -2829,6 +2847,8 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
+
+        // 督导日报
         public ActionResult Manager_TaskReport(int? id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2873,6 +2893,7 @@ namespace PeriodAid.Controllers
             }
         }
 
+        // 督导个人签到查询
         public ActionResult Manager_CheckInView()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2899,6 +2920,7 @@ namespace PeriodAid.Controllers
             ViewBag.TaskId = id;
             return PartialView(list);
         }
+        // 作废签到位置
         [HttpPost]
         public JsonResult Mananger_CancelManagerCheckin(int id)
         {
@@ -2912,6 +2934,8 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
+
+        // 查看全部督导签到信息
         public ActionResult Senior_AllCheckInList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2940,6 +2964,7 @@ namespace PeriodAid.Controllers
                        select m;
             return PartialView(list);
         }
+        // 督导签到详情
         public ActionResult Senior_CheckInDetails(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
@@ -3082,12 +3107,14 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
 
-        // 需求确认
+        // 需求查看
         public ActionResult Manager_RequestView(int id)
         {
             var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
             return View(item);
         }
+
+        /************ 巡店 ************/
 
         // 未签到列表
         public ActionResult Manager_UnCheckInList()
@@ -3108,6 +3135,15 @@ namespace PeriodAid.Controllers
                                  orderby m.Off_Store.StoreName
                                  select m;
             return PartialView(today_schedule);
+        }
+
+        // 门店促销员列表
+        public ActionResult Manager_ScheduleSeller(int id)
+        {
+            var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            ViewBag.StoreName = schedule.Off_Store.StoreName;
+            var sellerlist = schedule.Off_Store.Off_Seller;
+            return PartialView(sellerlist);
         }
 
         // 未签退列表
@@ -3148,6 +3184,7 @@ namespace PeriodAid.Controllers
                           select m;
             return PartialView(checkin);
         }
+
         // 待确认销量列表
         public ActionResult Manager_UnConfirmList()
         {
@@ -3167,14 +3204,149 @@ namespace PeriodAid.Controllers
                           select m;
             return PartialView(checkin);
         }
-        public ActionResult Manager_AnnouncementList()
+
+        // 作废签到信息
+        [HttpPost]
+        public ActionResult Manager_DeleteCheckIn(int id)
         {
-            return View();
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                item.Status = -1;
+                offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            return Content("FAIL");
         }
-        public ActionResult Manager_TaskSellerDetails()
+
+        // 待签到
+        public ActionResult Manager_CreateCheckIn(int id)
         {
-            return View();
+            var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            ViewBag.StoreName = schedule.Off_Store.StoreName;
+            ViewBag.Subscribe = schedule.Subscribe;
+            Off_Checkin item = new Off_Checkin()
+            {
+                Off_Schedule_Id = id,
+                Status = 0
+            };
+            var sellerlist = from m in offlineDB.Off_Seller
+                             where m.StoreId == schedule.Off_Store_Id
+                             select m;
+            ViewBag.SellerDropDown = new SelectList(sellerlist, "Id", "Name");
+            return View(item);
         }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_CreateCheckIn(Off_Checkin model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin checkin = new Off_Checkin();
+                if (TryUpdateModel(checkin))
+                {
+                    // 获取模板产品列表
+                    checkin.Report_Time = DateTime.Now;
+                    checkin.CheckinLocation = "N/A";
+                    checkin.CheckoutLocation = "N/A";
+                    checkin.ConfirmTime = DateTime.Now;
+                    checkin.ConfirmUser = User.Identity.Name;
+                    checkin.Proxy = true;
+                    checkin.Status = 3;
+                    //offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.Off_Checkin.Add(checkin);
+                    offlineDB.SaveChanges();
+                    List<int> plist = new List<int>();
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var item in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + item.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + item.Id]);
+                        int? storage = null;
+                        if (form["storage_" + item.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + item.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + item.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + item.Id]);
+
+                        if (sales == null && storage == null && amount == null)
+                        { }
+                        else
+                        {
+                            Off_Checkin_Product existdata = new Off_Checkin_Product()
+                            {
+                                Off_Checkin = checkin,
+                                ItemCode = item.ItemCode,
+                                ProductId = item.Id,
+                                SalesAmount = amount,
+                                SalesCount = sales,
+                                StorageCount = storage
+                            };
+                            offlineDB.Off_Checkin_Product.Add(existdata);
+                        }
+                    }
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == model.Off_Schedule_Id);
+                ViewBag.StoreName = schedule.Off_Store.StoreName;
+                ViewBag.Subscribe = schedule.Subscribe;
+                var sellerlist = from m in offlineDB.Off_Seller
+                                 where m.StoreId == schedule.Off_Store_Id
+                                 select m;
+                ViewBag.SellerDropDown = new SelectList(sellerlist, "Id", "Name");
+                return View(model);
+            }
+        }
+        public PartialViewResult Manager_EditReport_Item(int ScheduleId)
+        {
+            var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == ScheduleId);
+            string[] plist_tmp = item.Off_Sales_Template.ProductList.Split(',');
+            List<int> plist = new List<int>();
+            foreach (var i in plist_tmp)
+            {
+                plist.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in offlineDB.Off_Product
+                              where plist.Contains(m.Id)
+                              select m;
+            List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
+            foreach (var i in productlist)
+            {
+                Wx_TemplateProduct p = new Wx_TemplateProduct()
+                {
+                    ProductId = i.Id,
+                    ItemCode = i.ItemCode,
+                    SimpleName = i.SimpleName
+                };
+                templatelist.Add(p);
+            }
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                AmountRequried = item.Off_Sales_Template.RequiredAmount,
+                StorageRequired = item.Off_Sales_Template.RequiredStorage,
+                ProductList = templatelist
+            };
+            return PartialView(model);
+        }
+
+        /************ 工具 ************/
+
         // 销量排名
         public ActionResult Manager_ReportList()
         {
@@ -3233,6 +3405,7 @@ namespace PeriodAid.Controllers
             return PartialView(finallist);
         }
 
+        // 活动门店列表
         public ActionResult Manager_EventList()
         {
             return PartialView();
@@ -3250,10 +3423,8 @@ namespace PeriodAid.Controllers
                                select m;
             return PartialView(schedulelist);
         }
-        public ActionResult Manager_CreateCheckIn()
-        {
-            return View();
-        }
+
+        // 管辖门店列表
         public ActionResult Manager_StoreList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3261,6 +3432,8 @@ namespace PeriodAid.Controllers
             var storelist = manager.Off_Store.OrderBy(m=>m.StoreName);
             return PartialView(storelist);
         }
+
+        // 管辖促销员列表
         public ActionResult Manager_SellerList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3285,11 +3458,14 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+        /************ 暗促 ************/
+        // 暗促首页
         public ActionResult ManagerSellerTaskHome()
         {
             return PartialView();
         }
 
+        // 暗促签到查看
         public ActionResult ManagerSellerTaskMonthStatistic()
         {
             var startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
@@ -3331,6 +3507,7 @@ namespace PeriodAid.Controllers
             return PartialView(tasklist);
         }
 
+        // 暗促促销员信息
         public ActionResult ManagerSellerTaskSeller(int id)
         {
             ViewBag.SellerId = id;
@@ -3354,12 +3531,14 @@ namespace PeriodAid.Controllers
                 return Content("NONE");
         }
 
+        // 暗促详情
         public ActionResult ManagerSellerTaskDetails(int id)
         {
             var item = offlineDB.Off_SellerTask.SingleOrDefault(m => m.Id == id);
             return PartialView(item);
         }
 
+        // 库存预警
         public ActionResult ManangerSellerTaskStorageAlert()
         {
             // 最新的库存预紧
@@ -3375,6 +3554,7 @@ namespace PeriodAid.Controllers
             return PartialView(tasklist);
         }
 
+        // 暗促信息查询
         public ActionResult ManangerSellerTaskQuery()
         {
             // 获取督导的门店列表

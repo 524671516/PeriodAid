@@ -70,7 +70,7 @@ wx.config({
     timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
     nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
     signature: $("#signature").text(),// 必填，签名，见附录1
-    jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage']
+    jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage','openLocation']
 });
 
 
@@ -115,7 +115,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
-            $("#addcheckin-btn").prop("disabled", true).addClass("color-gray");
+            
             var array = splitArray($("#Photo").val());
             if (array.length == 0) {
                 myApp.hideIndicator();
@@ -156,12 +156,17 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
         },
         errorPlacement: function (error, element) {
             myApp.hideIndicator();
+            $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
             element.attr("placeholder", error.text());
         }
     });
     $$("#addcheckin-btn").click(function () {
         myApp.showIndicator();
-        $("#addcheckin_form").submit();
+        $("#addcheckin-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#addcheckin_form").submit();
+        }, 500);
+        
     });
 });
 
@@ -198,36 +203,43 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
         });
     });
     $$("#task_details").on("click", "#report-submit-btn", function () {
+        $("#report-submit-btn").prop("disabled", true).addClass("color-gray");
         myApp.showIndicator();
-        alert("##");
-        //$$("#managerreport-form").submit();
-        $("#managerreport-form").ajaxSubmit(function (data) {
-            alert("3");
-            if (data == "SUCCESS") {
-                myApp.hideIndicator();
-                //myApp.formDeleteData("createsellerreport-form");
-                mainView.router.back();
-                myApp.addNotification({
-                    title: '通知',
-                    message: '日报修改成功'
-                });
-                setTimeout(function () {
-                    //refresh_mainpanel();
-                    myApp.closeNotification(".notifications");
-                }, 2000);
-            }
-            else {
-                myApp.hideIndicator();
-                myApp.addNotification({
-                    title: '通知',
-                    message: '日报修改失败'
-                });
-                $("#task_details").html(data);
-                setTimeout(function () {
-                    myApp.closeNotification(".notifications");
-                }, 2000);
-            }
-        });
+        setTimeout(function () {
+            myApp.hideIndicator();
+        }, 5000);
+        setTimeout(function () {
+            //$$("#managerreport-form").submit();
+            $("#managerreport-form").ajaxSubmit({
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        //myApp.formDeleteData("createsellerreport-form");
+                        mainView.router.back();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '日报修改成功'
+                        });
+                        setTimeout(function () {
+                            //refresh_mainpanel();
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                    else {
+                        myApp.hideIndicator();
+                        $("#report-submit-btn").prop("disabled", true).addClass("color-gray");
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '日报修改失败'
+                        });
+                        $("#task_details").html(data);
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                }
+            })
+        }, 500);
     });
     
 });
@@ -256,6 +268,7 @@ $$(document).on("pageInit", ".page[data-page='manager-allchekinlist']", function
             }
         });
     });
+
 });
 
 // Manager_RequestListPartial 需求列表
@@ -293,7 +306,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
         submitHandler: function (form) {
-            $("#requestcreate-btn").prop("disabled", true).addClass("color-gray");
             $("#requestcreate-form").ajaxSubmit(function (data) {
                 if (data == "SUCCESS") {
                     myApp.hideIndicator();
@@ -341,12 +353,17 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
         },
         errorPlacement: function (error, element) {
             myApp.hideIndicator();
+            $("#requestcreate-btn").prop("disabled", false).removeClass("color-gray");
             element.attr("placeholder", error.text());
         }
     });
     $$("#requestcreate-btn").click(function () {
         myApp.showIndicator();
-        $("#requestcreate-form").submit();
+        $("#requestcreate-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#requestcreate-form").submit();
+        }, 500);
+        
     });
 });
 // Mananger_RequestEdit 修改需求信息
@@ -358,7 +375,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
         submitHandler: function (form) {
-            $("#requestedit-btn").prop("disabled", true).addClass("color-gray");
             $("#requestedit-form").ajaxSubmit(function (data) {
                 if (data == "SUCCESS") {
                     myApp.hideIndicator();
@@ -377,7 +393,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
                         title: '通知',
                         message: '表单提交失败'
                     });
-                    $("#requestedit-btn").prop("disabled", false).removeClass("color-gray");
+                    $("#requestedit-btn").prop("disabled", false).removeClass("color-gray").show();
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
                     }, 2000);
@@ -406,78 +422,118 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
         },
         errorPlacement: function (error, element) {
             myApp.hideIndicator();
+            $("#requestedit-btn").prop("disabled", false).removeClass("color-gray").show();
             element.attr("placeholder", error.text());
         }
     });
     $$("#requestedit-btn").click(function () {
         myApp.showIndicator();
-        $("#requestedit-form").submit();
+        $("#requestedit-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#requestedit-form").submit();
+        }, 500)
+        
     });
 });
 
 //Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
-$$(document).on("pageInit", ".page[data-page='manager-temp-createcheckin']", function () {
-    var tl = textLength();
-    $$("#manager-temp-notecurrentlength").text(tl);
-    function textLength() {
-        return $$("#manager-temp-notecontent").val().length;
-    }
-    $$("#manager-temp-notecontent").on("change", function () {
-        var tl = textLength();
-        var totalLength = $$("#manager-temp-notetotallength").text();
-        if (tl < totalLength) {
-            $$("#manager-temp-notecurrentlength").text(tl);
-        } else {
-            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+$$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function () {
+    uploadCheckinFile("checkinphoto-area", "manager-checkin-imglist", "CheckinPhoto", "checkin-current-image", 1);
+    uploadCheckinFile("checkoutphoto-area", "manager-checkout-imglist", "CheckoutPhoto", "checkout-current-image", 1);
+    uploadCheckinFile("reportphoto-area", "manager-report-imglist", "Rep_Image", "report-current-image", 7);
+    currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
+    $("#createcheckin-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        onkeyup: false,
+        submitHandler: function (form) {
+            var array1 = splitArray($("#CheckinPhoto").val());
+            var array2 = splitArray($("#CheckoutPhoto").val());
+            var array3 = splitArray($("#Rep_Image").val());
+            if ($$("#Off_Seller_Id").val().trim() == "") {
+                myApp.hideIndicator();
+                myApp.alert("请选择促销员");
+                $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            }
+            else if (array1.length == 0) {
+                myApp.hideIndicator();
+                myApp.alert("请至少上传一张签到图片");
+                $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            }
+            else if (array2.length == 0) {
+                myApp.hideIndicator();
+                myApp.alert("请至少上传一张签退图片");
+                $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            }
+            else if (array3.length == 0) {
+                myApp.hideIndicator();
+                myApp.alert("请至少上传一张销量图片");
+                $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            }
+            else {
+                $("#createcheckin-form").ajaxSubmit(function (data) {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        mainView.router.back();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '表单提交成功'
+                        });
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                    else {
+                        myApp.hideIndicator();
+                        myApp.addNotification({
+                            title: '通知',
+                            message: '表单提交失败'
+                        });
+                        $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                });
+            }
+        },
+        rules: {
+            Confirm_Remark: {
+                required: true,
+                maxlength: 500
+            }
+        },
+        messages: {
+            Confirm_Remark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
         }
     });
+    $$("#createcheckin-btn").click(function () {
+        myApp.showIndicator();
+        $("#createcheckin-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#createcheckin-form").submit();
+        }, 500);
 
+    });
 });
 
 
 //Senior_CheckInDetails  查看其他人签到信息  图片查看
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
-    if ($$(".manager-chekinphoto").attr("data-target") != null) {
-        var phList = $$(".manager-chekinphoto").attr("data-target").split(",");
-        var photo = new Array();
-        $$.each(phList, function (num, ph) {
-            var url = "http://cdn2.shouquanzhai.cn/checkin-img/" + ph;
-            var obj = { url: url };
-            photo.push(obj);
-        });
-        var myPhoto = myApp.photoBrowser({
-            photos: photo,
-            theme: 'dark',
-            type: 'standalone',
-            lazyLoading: true,
-            zoom: false,
-            backLinkText: '关闭'
-        });
-    }
-    if ($$(".manager-sellerphoto").attr("data-target") != null) {
-        var phSellerlist = $$(".manager-sellerphoto").attr("data-target").split(",");
-        var photoSeller = new Array();
-        $$.each(phSellerlist, function (num, ph) {
-            var url = "http://cdn2.shouquanzhai.cn/checkin-img/" + ph;
-            var obj = { url: url };
-            photoSeller.push(obj);
-        });
-        var myPhotoSeller = myApp.photoBrowser({
-            photos: photoSeller,
-            theme: 'dark',
-            type: 'standalone',
-            lazyLoading: true,
-            zoom: false,
-            backLinkText: '关闭'
-        });
-    };
-    $$('.manager-chekinphoto').on('click', function () {
-            myPhoto.open();
-    });
-    $$('.manager-sellerphoto').on('click', function () {
-        myPhotoSeller.open();
-    });
+    PhotoBrowser("manager-checkindetails");
+    LocationBrowser("manager-checkindetails");
 });
+
+
 //Manager_ReportList  销量排名 查看日期
 $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e) {
     var calendarDefault = myApp.calendar({
@@ -780,7 +836,6 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
         });
     });
     $$("#manager-checkinview-content").on("deleted", ".swipeout", function (e) {
-        console.log(e);
         $$.ajax({
             url: "/Seller/Mananger_CancelManagerCheckin",
             method: "POST",
@@ -803,6 +858,7 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
             }
         });
     });
+    PhotoBrowser("manager-checkinview-content");
 });
 
 
@@ -839,16 +895,14 @@ function currentTextAreaLength(pagename, id_name, max_length, result_id) {
 
 // 上传签到图片文件模块
 function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_count) {
-    console.log($("#" + imglist));
     $$("#"+imglist).html("");
     var photolist = splitArray($$("#"+photolist_id).val());
     $$("#"+current_count).text(photolist.length);
     for (var i = 0; i < photolist.length; i++) {
         $$("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
     }
-    $$("#"+imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
-    console.log($$("#" + imglist).html());
-    $$("#"+imglist).on("click", "#upload-btn", function (e) {
+    $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"" + imglist + "-upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+    $$("#"+imglist).on("click", "#"+imglist+"-upload-btn", function (e) {
         var localIds;
         var photolist = splitArray($("#" + photolist_id).val());
         if (photolist.length < max_count) {
@@ -864,7 +918,6 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                         isShowProgressTips: 1, // 默认为1，显示进度提示
                         success: function (res) {
                             var serverId = res.serverId; // 返回图片的服务器端ID
-                            alert(serverId);
                             $$.ajax({
                                 url: "/Seller/SaveOrignalImage",
                                 type: "post",
@@ -873,7 +926,6 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                                 },
                                 success: function (resource) {
                                     data = JSON.parse(resource);
-                                    //alert(data.result);
                                     if (data.result == "SUCCESS") {
                                         $$("#" + imglist).html("");
                                         photolist.push(data.filename);
@@ -882,10 +934,10 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                                         for (var i = 0; i < photolist.length; i++) {
                                             $$("#" + imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
                                         }
-                                        $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+                                        $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"" + imglist + "-upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
                                     }
                                     else {
-                                        alert("上传失败，请重试");
+                                        myApp.alert("上传失败，请重试");
                                     }
                                 }
                             });
@@ -921,7 +973,7 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
             for (var i = 0; i < arraylist.length; i++) {
                 $("#" + imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + arraylist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + arraylist[i] + "); background-size:cover\"></div></li>");
             }
-            $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+            $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"" + imglist + "-upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
         });
     });
 }
@@ -947,7 +999,6 @@ function uploadLocation(btn_id, location_id) {
                 var speed = res.speed; // 速度，以米/每秒计
                 var accuracy = res.accuracy; // 位置精度
                 var gps_location = longitude + "," + latitude;
-                //alert(location)
                 loc_success = true;
                 $$("#" + btn_id).find(".item-after").text("上传位置成功");
                 //cell_success_location(btn, "位置获取成功", latitude, longitude);
@@ -968,7 +1019,7 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                 myApp.alert("获取位置失败");
             }
         }, 4000);
-        
+
         var loc_success = false;
         wx.getLocation({
             type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
@@ -978,13 +1029,12 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                 var speed = res.speed; // 速度，以米/每秒计
                 var accuracy = res.accuracy; // 位置精度
                 var gps_location = longitude + "," + latitude;
-                //alert(location)
                 loc_success = true;
                 $$("#" + btn_id).find(".item-after").text("上传位置成功");
                 //cell_success_location(btn, "位置获取成功", latitude, longitude);
                 //var translbs = 
                 $$("#" + location_id).val(gps_location);
-                var translbs = latitude+","+longitude;
+                var translbs = latitude + "," + longitude;
                 $.ajax({
                     url: "http://apis.map.qq.com/ws/coord/v1/translate",
                     method: "get",
@@ -996,8 +1046,6 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                         key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
                     },
                     success: function (data) {
-                        alert("33");
-                        console.log(data);
                         if (data.status == 0) {
                             geocoder = new qq.maps.Geocoder({
                                 complete: function (result) {
@@ -1013,6 +1061,58 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
             }
         });
         return false;
+    });
+}
+
+// 图片浏览模块
+function PhotoBrowser(pagename) {
+    $$("#" + pagename).on("click", ".checkin-photos", function () {
+        var photos = $(this).attr("data-photos");
+        if (photos.trim() != "") {
+            var images = photos.split(',');
+            for (var i = 0; i < images.length; i++) {
+                images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
+            }
+            wx.previewImage({
+                current: images[0], // 当前显示图片的http链接
+                urls: images // 需要预览的图片http链接列表
+            });
+        }
+        else {
+            myApp.alert("没有找到图片");
+        }
+    });
+}
+
+// 查看位置模块
+function LocationBrowser(pagename) {
+    $$("#" + pagename).on("click", ".checkin-lbs", function () {
+        var lbs = $$(this).attr("data-location").split(',');
+        var translbs = lbs[1] + "," + lbs[0];
+        var loc_details = $$(this).attr("data-desc");
+        $.ajax({
+            url: "http://apis.map.qq.com/ws/coord/v1/translate",
+            type: "get",
+            dataType: "jsonp",
+            data: {
+                locations: translbs,
+                type: 1,
+                output: "jsonp",
+                key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+            },
+            success: function (data) {
+                if (data.status == 0) {
+                    wx.openLocation({
+                        latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                        longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                        name: "签到地点", // 位置名
+                        address: loc_details, // 地址详情说明
+                        scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                        infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                    });
+                }
+            }
+        });
     });
 }
 

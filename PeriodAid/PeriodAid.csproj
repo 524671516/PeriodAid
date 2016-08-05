@@ -889,6 +889,8 @@
     <Content Include="Views\Seller\Manager_RequestListPartial.cshtml" />
     <Content Include="Views\Seller\Manager_RequestEdit.cshtml" />
     <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_ScheduleSeller.cshtml" />
+    <Content Include="Views\Seller\Manager_EditReport_Item.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

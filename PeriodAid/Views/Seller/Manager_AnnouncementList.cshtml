@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<PeriodAid.Models.Off_Manager_Announcement>
+
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -19,19 +20,22 @@
             <div class="content-block-title">督导重点工作列表</div>
             <div class="list-block media-list">
                 <ul>
+                    @foreach (var item in Model)
+                    {
                     <li>
                         <div class="item-content">
                             <div class="item-inner">
                                 <div class="item-title-row">
-                                    <div class="item-title color-lightblue">标题</div>
+                                    <div class="item-title">@Html.Encode(item.Title)</div>
                                 </div>
                                 <div class="item-subtitle margin-top-7">
-                                    内容
+                                    @Html.Raw(@Html.Raw(@Html.Encode(item.Content).Replace("\n", "<br />")))
                                 </div>
-                                <div class="item-text margin-top-7" style="height:auto">2016-08-04&nbsp;&nbsp;|&nbsp;&nbsp;优先级：5</div>
+                                <div class="item-text margin-top-7" style="height:auto">@Html.Encode(item.SubmitTime.ToString("yyyy年MM月dd日"))&nbsp;&nbsp;|&nbsp;&nbsp;优先级：@Html.Encode(item.Priority)</div>
                             </div>
                         </div>
                     </li>
+                    }
                 </ul>
             </div>
         </div>

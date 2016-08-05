@@ -152,3 +152,7 @@
 html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.media-list .item-title {
     font-weight:100;
 }
+.input-margin{
+    margin-top: -8px; 
+    margin-bottom: -7px;
+}

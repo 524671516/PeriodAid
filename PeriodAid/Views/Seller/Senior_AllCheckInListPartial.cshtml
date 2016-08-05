@@ -6,7 +6,7 @@
 @foreach (var item in Model)
 {
         <li>
-            <a href="/Seller/Senior_CheckInDetails?id=@item.Id" class="item-content item-link">
+            <a href="/Seller/Senior_CheckInDetails?id=@item.Id" class="item-content item-link random-param">
                 <div class="item-inner">
                     <div class="item-title">@Html.Encode(item.NickName)</div>
                     <div class="item-after">@Html.Encode(item.Off_Manager_CheckIn.Count(m => m.Canceled == false))</div>
