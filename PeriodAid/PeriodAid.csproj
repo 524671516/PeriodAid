@@ -879,6 +879,13 @@
     <Content Include="Views\Seller\Manager_AnnouncementList.cshtml" />
     <Content Include="Views\Seller\Manager_TaskSellerDetails.cshtml" />
     <Content Include="Views\Seller\Manager_CheckInViewPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckInListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckOutListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnReportList.cshtml" />
+    <Content Include="Views\Seller\Manager_UnReportListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnConfirmList.cshtml" />
+    <Content Include="Views\Seller\Manager_UnConfirmListPartial.cshtml" />
+    <Content Include="Views\Seller\Senior_AllCheckInListPartial.cshtml" />
     <Content Include="Views\Seller\Manager_RequestListPartial.cshtml" />
     <Content Include="Views\Seller\Manager_RequestEdit.cshtml" />
     <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />

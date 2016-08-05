@@ -7,31 +7,33 @@
                 <span>返回</span>
             </a>
         </div>
-        <div class="center sliding"><strong>督导管理 巡店</strong></div>
+        <div class="center sliding"><strong>巡店 未签退</strong></div>
         <div class="right">
             <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
         </div>
     </div>
 </div>
 <div class="pages">
-    <div class="page" data-page="manager-uncheckout">
+    <div class="page" data-page="manager-uncheckoutlist">
         <div class="page-content">
-            <div class="content-block-title">门店列表</div>
+            <div class="content-block-title">查看日期</div>
             <div class="list-block">
                 <ul>
-                    <li class="swipeout">
-                        <a href="/Seller/Manager_CreateCheckIn" class="swipeout-content item-content item-link">
+                    <li>
+                        <div class="item-content">
                             <div class="item-inner">
-                                <div class="item-title">大润发-八仙城店</div>
-                                <div class="item-after">13585211467</div>
+                                <div class="item-title label">日期</div>
+                                <div class="item-input">
+                                    <input class="check-date" type="text" placeholder="日期" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                </div>
                             </div>
-                        </a>
-                        <div class="swipeout-actions-right">
-                            <a href="#" class="bg-yellow">备注</a>
-                            <a href="#" class="swipeout-delete" data-confirm="确定要删除该门店信息吗?">删除</a>
                         </div>
                     </li>
                 </ul>
+            </div>
+            <div class="content-block-title">未签退列表</div>
+            <div class="list-block">
+                <ul class="check-content"></ul>
             </div>
         </div>
     </div>

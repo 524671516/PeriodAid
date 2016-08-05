@@ -21,10 +21,7 @@
                 <ul>
                     <li>
                         <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="搜索日期" data-searchbar-cancel="取消">
-                            <select name="date">
-                                <option value="2016-07-07" selected>2016-07-07</option>
-                                <option value="2016-07-22">2016-07-22</option>
-                            </select>
+                            @Html.DropDownList("checklist", ViewBag.checkinlist as SelectList, new { @id = "task_id" })
                             <div class="item-content">
                                 <div class="item-inner">
                                     <div class="item-title">日期</div>
@@ -34,34 +31,8 @@
                     </li>
                 </ul>
             </div>
-            <div class="content-block-title">当日签到数（<span>3</span>）</div>
-            <div class="list-block">
-                <ul>
-                    <li>
-                        <a href="/Seller/Senior_CheckInDetails" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">陈皮</div>
-                                <div class="item-after">1</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">张三</div>
-                                <div class="item-after">2</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="item-content item-link">
-                            <div class="item-inner">
-                                <div class="item-title">李四</div>
-                                <div class="item-after">3</div>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+            <div id="allcheckinlist-content">
+
             </div>
         </div>
     </div>
