@@ -3215,9 +3215,9 @@ namespace PeriodAid.Controllers
                 item.Status = -1;
                 offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                 offlineDB.SaveChanges();
-                return Content("SUCCESS");
+                return Json(new { result = "SUCCESS" });
             }
-            return Content("FAIL");
+            return Json(new { result = "FAIL" });
         }
 
         // 代签到
