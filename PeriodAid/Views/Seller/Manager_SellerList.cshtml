@@ -32,13 +32,18 @@
                 <ul>
                     @foreach (var item in Model)
                     {
-                        <li>
-                            <a href="/Seller/" class="item-content item-link">
-                                <div class="item-inner">
-                                    <div class="item-title">@Html.Encode(item.Name)</div>
-                                    <div class="item-after">@Html.Encode(item.Off_Store.StoreName)</div>
-                                </div>
-                            </a>
+                        <li class="swipeout">
+                            <div class="swipeout-content">
+                                <a href="/Seller/ManagerTempSellerDetails" class="item-content item-link">
+                                    <div class="item-inner">
+                                        <div class="item-title">@Html.Encode(item.Name)</div>
+                                        <div class="item-after">@Html.Encode(item.Off_Store.StoreName)</div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="swipeout-actions-right">
+                                <a href="#" class="bg-blue">修改信息</a>
+                            </div>
                         </li>
                     }
                 </ul>

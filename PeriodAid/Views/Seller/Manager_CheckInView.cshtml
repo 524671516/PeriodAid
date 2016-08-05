@@ -24,7 +24,7 @@
                 <ul>
                     <li>
                         <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="搜索日期" data-searchbar-cancel="取消">
-                            @Html.DropDownList("checklist", ViewBag.checkinlist as SelectList, new { @class = "weui_select", @id = "task_id" })
+                            @Html.DropDownList("checklist", ViewBag.checkinlist as SelectList, new { @class = "check-date" })
                             <div class="item-content">
                                 <div class="item-inner">
                                     <div class="item-title">日期</div>
@@ -34,7 +34,7 @@
                     </li>
                 </ul>
             </div>
-            <div id="manager-checkinview-content"></div>
+            <div class="list-content"></div>
 }      
         </div>
     </div>

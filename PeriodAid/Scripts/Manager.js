@@ -73,7 +73,6 @@ wx.config({
     jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage','openLocation']
 });
 
-
 //Manager_UnCheckInList  巡店 未签到
 $$(document).on("pageInit", ".page[data-page='manager-unchekinlist']", function () {
     var url = "/Seller/Manager_UnCheckInListPartial";
@@ -89,17 +88,33 @@ $$(document).on("touchstart", "a.random-param", function () {
 $$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", function () {
     var url = "/Seller/Manager_UnCheckOutListPartial";
     check(url);
+    $$(".list-content").on("deleted", ".swipeout", function () {
+        var url = "/Seller/Manager_DeleteCheckIn";
+        var Id = $$(e.target).attr("data-url");
+        deleted(url,Id)
+});
 });
 
 //Manager_UnReportList 巡店 未提报销量
 $$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function () {
     var url = "/Seller/Manager_UnReportListPartial";
     check(url);
+    $$(".list-content").on("deleted", ".swipeout", function () {
+        var url = "/Seller/Manager_DeleteCheckIn";
+        var Id = $$(e.target).attr("data-url");
+        deleted(url,Id)
 });
+});
+
 //Manager_UnConfirmList 巡店 销量待确认
 $$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
     var url = "/Seller/Manager_UnConfirmListPartial";
     check(url);
+    $$(".list-content").on("deleted", ".swipeout", function () {
+        var url = "/Seller/Manager_DeleteCheckIn";
+        var Id = $$(e.target).attr("data-url");
+        deleted(url,Id)
+});
 });
 
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
@@ -169,8 +184,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
         
     });
 });
-
-
 
 //Manager_TaskReport 督导工作日报 填写内容字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
@@ -665,6 +678,7 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
         });
     });
 });
+
 //Mnaager_QuerySeller  搜索促销员
 $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function () {
     var mySearchbar = myApp.searchbar('.searchbar', {
@@ -672,6 +686,7 @@ $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function (
         searchIn: '.item-content'
     });
 });
+
 //Manager_BonusList  红包列表 下拉刷新  
 $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () {
     var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
@@ -704,6 +719,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
         }, 2000);
     });
 });
+
 //Manager_TempSellerDetails  暗促系统  暗促签到图片查看
 $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function (e) {
     var phList = $("#sellertask-details-phlist").val().split(",");
@@ -725,6 +741,7 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
         myPhotoBrowserPopupDark.open();
     });
 });
+
 //ManagerSellerTaskMonthStatistic 暗促系统  暗促信息查询
 $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", function () {
     $$.ajax({
@@ -748,6 +765,7 @@ $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", funct
         });
     })
 });
+
 //ManangerSellerTaskSeller 暗促系统  暗促签到列表  无限循环
 $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function (e) {
     var page = 1;
@@ -797,6 +815,7 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
         }, 1000)
     });
 });
+
 //ManangerSellerTaskQuery  暗促信息查询
 $$(document).on("pageInit", ".page[data-page='managersellertask-query']", function () {
     var mySearchbar = myApp.searchbar('.searchbar', {
@@ -818,45 +837,27 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
     $$.ajax({
         url: "/Seller/Manager_CheckInViewPartial",
         data: {
-            id: $$("#task_id").val()
+            id: $$(".check-date").val()
         },
         success: function (data) {
-            $$("#manager-checkinview-content").html(data);
+            $$(".list-content").html(data);
         }
     });
     $$("#task_id").on("change", function () {
         $$.ajax({
             url: "/Seller/Manager_CheckInViewPartial",
             data: {
-                id: $$("#task_id").val()
+                id: $$(".check-date").val()
             },
             success: function (data) {
-                $$("#manager-checkinview-content").html(data);
+                $$(".list-content").html(data);
             }
         });
     });
-    $$("#manager-checkinview-content").on("deleted", ".swipeout", function (e) {
-        $$.ajax({
-            url: "/Seller/Mananger_CancelManagerCheckin",
-            method: "POST",
-            data: {
-                id: $$(e.target).attr("data-url")
-            },
-            success: function (res) {
-                var data = JSON.parse(res);
-                if (data.result == "SUCCESS") {
-                    $$.ajax({
-                        url: "/Seller/Manager_CheckInViewPartial",
-                        data: {
-                            id: $$("#task_id").val()
-                        },
-                        success: function (data) {
-                            $$("#manager-checkinview-content").html(data);
-                        }
-                    });
-                }
-            }
-        });
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Mananger_CancelManagerCheckin";
+        var Id = $$(e.target).attr("data-url");
+        deleted(url, Id);
     });
     PhotoBrowser("manager-checkinview-content");
 });
@@ -1054,8 +1055,8 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                             });
                             var coord = new qq.maps.LatLng(data.locations[0].lat, data.locations[0].lng);
                             geocoder.getAddress(coord);
-                            myApp.hideIndicator();
-                        }
+                myApp.hideIndicator();
+            }
                     }
                 });
             }
@@ -1128,6 +1129,7 @@ function splitArray(value) {
     return list;
 }
 
+//巡店 ajax异步提交
 function check(url) {
     var calendarDefault = myApp.calendar({
         input: '.check-date',
@@ -1144,7 +1146,7 @@ function check(url) {
             date: date
         },
         success: function (data) {
-            $$(".check-content").html(data)
+            $$(".list-content").html(data)
         }
     });
     $$(".check-date").on("change", function () {
@@ -1155,8 +1157,27 @@ function check(url) {
                 date: date
             },
             success: function (data) {
-                $$(".check-content").html(data)
+                $$(".list-content").html(data)
             }
         });
+    });
+};
+
+//删除
+function deleted(url,Id) {
+    $$.ajax({
+        url: url,
+        method: "POST",
+        data: {
+            id: Id
+        },
+        success: function (res) {
+            var data = JSON.parse(res);
+            if (data.result == "SUCCESS") {
+
+            } else {
+                myApp.alert("删除失败")
+            }
+        }
     });
 };
