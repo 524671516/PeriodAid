@@ -886,6 +886,10 @@
     <Content Include="Views\Seller\Manager_UnConfirmListPartial.cshtml" />
     <Content Include="Views\Seller\Senior_AllCheckInListPartial.cshtml" />
     <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestCreate.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestEdit.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestList.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
