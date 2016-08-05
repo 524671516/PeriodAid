@@ -33,6 +33,36 @@ $$(".tab-link").on("click", function (data) {
 refresh_userpanel();
 //left-navbar
 
+//下拉刷新
+var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
+var authors = ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'];
+
+    // Pull to refresh content
+var ptrContent = $$('.pull-to-refresh-content');
+
+    // Add 'refresh' listener on it
+ptrContent.on('refresh', function (e) {
+    // Emulate 2s loading
+    setTimeout(function () {
+        // Random song
+        var song = songs[Math.floor(Math.random() * songs.length)];
+        // Random author
+        var author = authors[Math.floor(Math.random() * authors.length)];
+        // List item html
+        var itemHTML = '<li class="item-content">' +
+                          '<div class="item-inner">' +
+                              '<div class="item-title">' + song + '</div>' +
+                              '<div class="item-after">' + author + '</div>' +
+                          '</div>' +
+                        '</li>';
+        // Prepend new list element
+        ptrContent.find('ul').prepend(itemHTML);
+        // When loading done, we need to reset it
+        myApp.pullToRefreshDone();
+    }, 2000);
+});
+
+
 // 微信初始化
 wx.config({
     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -231,6 +261,32 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
     
 });
 
+//Senior_AllCheckInList 查看其他人签到
+$$(document).on("pageInit", ".page[data-page='manager-allchekinlist']", function () {
+    var date = $$("#task_id").val();
+    $$.ajax({
+        url: "/Seller/Senior_AllCheckInListPartial",
+        data: {
+            date:date
+        },
+        success: function (data) {
+            $$("#allcheckinlist-content").html(data);
+        }
+    });
+    $$("#task_id").on("change", function () {
+        var date = $$("#task_id").val();
+        $$.ajax({
+            url: "/Seller/Senior_AllCheckInListPartial",
+            data: {
+                date: date
+            },
+            success: function (data) {
+                $$("#allcheckinlist-content").html(data);
+            }
+        });
+    });
+});
+
 //Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-temp-createcheckin']", function () {
     var tl = textLength();
@@ -279,31 +335,45 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
 });
 //Senior_CheckInDetails  查看其他人签到信息  图片查看
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
-    var myPhotoManagerChekin = myApp.photoBrowser({
-        photos: [
-            '/Content/images/guide-02-3.jpg'
-        ],
-        theme: 'dark',
-        type: 'standalone',
-        lazyLoading: true,
-        zoom: false,
-        backLinkText: '关闭'
-    });
-    var myPhotoManagerSeller = myApp.photoBrowser({
-        photos: [
-            '/Content/images/guide-02-2.jpg'
-        ],
-        theme: 'dark',
-        type: 'standalone',
-        lazyLoading: true,
-        zoom: false,
-        backLinkText: '关闭'
-    });
+    if ($$(".manager-chekinphoto").attr("data-target") != null) {
+        var phList = $$(".manager-chekinphoto").attr("data-target").split(",");
+        var photo = new Array();
+        $$.each(phList, function (num, ph) {
+            var url = "http://cdn2.shouquanzhai.cn/checkin-img/" + ph;
+            var obj = { url: url };
+            photo.push(obj);
+        });
+        var myPhoto = myApp.photoBrowser({
+            photos: photo,
+            theme: 'dark',
+            type: 'standalone',
+            lazyLoading: true,
+            zoom: false,
+            backLinkText: '关闭'
+        });
+    }
+    if ($$(".manager-sellerphoto").attr("data-target") != null) {
+        var phSellerlist = $$(".manager-sellerphoto").attr("data-target").split(",");
+        var photoSeller = new Array();
+        $$.each(phSellerlist, function (num, ph) {
+            var url = "http://cdn2.shouquanzhai.cn/checkin-img/" + ph;
+            var obj = { url: url };
+            photoSeller.push(obj);
+        });
+        var myPhotoSeller = myApp.photoBrowser({
+            photos: photoSeller,
+            theme: 'dark',
+            type: 'standalone',
+            lazyLoading: true,
+            zoom: false,
+            backLinkText: '关闭'
+        });
+    };
     $$('.manager-chekinphoto').on('click', function () {
-        myPhotoManagerChekin.open();
+            myPhoto.open();
     });
     $$('.manager-sellerphoto').on('click', function () {
-        myPhotoManagerSeller.open();
+        myPhotoSeller.open();
     });
 });
 //Manager_ReportList  销量排名 查看日期
@@ -608,7 +678,7 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
         });
     });
     $$("#manager-checkinview-content").on("deleted", ".swipeout", function (e) {
-        console.log($$(e.target).attr("data-url"))
+        console.log(e);
         $$.ajax({
             url: "/Seller/Mananger_CancelManagerCheckin",
             method: "POST",
