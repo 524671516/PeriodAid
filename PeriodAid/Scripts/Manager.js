@@ -88,7 +88,7 @@ $$(document).on("touchstart", "a.random-param", function () {
 $$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", function () {
     var url = "/Seller/Manager_UnCheckOutListPartial";
     check(url);
-    $$(".list-content").on("deleted", ".swipeout", function () {
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
         deleted(url,Id)
@@ -99,7 +99,7 @@ $$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", functio
 $$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function () {
     var url = "/Seller/Manager_UnReportListPartial";
     check(url);
-    $$(".list-content").on("deleted", ".swipeout", function () {
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
         deleted(url,Id)
@@ -110,7 +110,7 @@ $$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function 
 $$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
     var url = "/Seller/Manager_UnConfirmListPartial";
     check(url);
-    $$(".list-content").on("deleted", ".swipeout", function () {
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
         deleted(url,Id)

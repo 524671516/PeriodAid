@@ -2,8 +2,8 @@
 
 @foreach (var item in Model)
 {
-    <li class="swipeout">
-        <div class="swipeout-content" data-url="@item.Id">
+    <li class="swipeout" data-url="@item.Id">
+        <div class="swipeout-content">
             <a href="#" class="item-content item-link">
                 <div class="item-inner">
                     <div class="item-title">@Html.Encode(item.Off_Checkin_Schedule.Off_Store.StoreName)</div>
