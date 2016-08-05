@@ -79,6 +79,11 @@ $$(document).on("pageInit", ".page[data-page='manager-unchekinlist']", function 
     check(url)
 });
 
+$$(document).on("touchstart", "a.random-param", function () {
+    
+    var url = $$(this).attr("href") + "&rand=" + Math.random() * 500;
+    $$(this).attr("href", url);
+});
 //Manager_UnCheckOutList 巡店 未签退
 $$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", function () {
     var url = "/Seller/Manager_UnCheckOutListPartial";
@@ -87,7 +92,7 @@ $$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", functio
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
         deleted(url,Id)
-    });
+});
 });
 
 //Manager_UnReportList 巡店 未提报销量
@@ -98,7 +103,7 @@ $$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function 
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
         deleted(url,Id)
-    });
+});
 });
 
 //Manager_UnConfirmList 巡店 销量待确认
@@ -109,7 +114,7 @@ $$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
         deleted(url,Id)
-    });
+});
 });
 
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
@@ -118,8 +123,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
     currentTextAreaLength("manager-task-addcheckin", "Remark", 50, "checkin-currentlength");
     // 显示所有的已上传图片
     uploadCheckinFile("manager-task-addcheckin", "manager-imglist", "Photo", "current_image", 3);
-    uploadLocation("location-btn", "Location");
-
+    uploadLocationWithDetails("location-btn", "Location", "Location_Desc");
     $("#addcheckin_form").validate({
         debug: true, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
@@ -142,14 +146,12 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
                 $("#addcheckin_form").ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
-                        //myApp.formDeleteData("createsellerreport-form");
                         mainView.router.back();
                         myApp.addNotification({
                             title: '通知',
                             message: '表单提交成功'
                         });
                         setTimeout(function () {
-                            //refresh_mainpanel();
                             myApp.closeNotification(".notifications");
                         }, 2000);
                     }
@@ -160,7 +162,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
                             message: '表单提交失败'
                         });
                         $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
-                        //refresh_mainpanel();
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
                         }, 2000);
@@ -218,6 +219,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
             if (data == "SUCCESS") {
                 myApp.hideIndicator();
                 //myApp.formDeleteData("createsellerreport-form");
+                mainView.router.back();
                 myApp.addNotification({
                     title: '通知',
                     message: '日报修改成功'
@@ -269,6 +271,163 @@ $$(document).on("pageInit", ".page[data-page='manager-allchekinlist']", function
     });
 });
 
+// Manager_RequestListPartial 需求列表
+$$(document).on("pageInit", ".page[data-page='manager-request-list']", function () {
+    $$.ajax({
+        url: "/Seller/Manager_RequestListPartial",
+        success: function (data) {
+            $$("#manager-requestlist").html(data);
+        }
+    });
+    $$('#manager-requestlist').on('deleted', ".swipeout", function (e) {
+        $$.ajax({
+            url: "Manager_CancelRequestJson",
+            data: {
+                id : $$(e.target).attr("data-url")
+            },
+            method: "post",
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.result != "SUCCESS") {
+                    myApp.alert("删除失败");
+                }
+            }
+        })
+    });
+    
+});
+
+// Manager_RequestCreate 创建需求信息
+$$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", function () {
+    currentTextAreaLength("manager-task-requestcreate", "RequestContent", 500, "requestcontent_length");
+    $("#requestcreate-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#requestcreate-btn").prop("disabled", true).addClass("color-gray");
+            $("#requestcreate-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交成功'
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交失败'
+                    });
+                    $("#requestcreate-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        rules: {
+            RequestContent: {
+                required: true,
+                maxlength:500
+            },
+            RequestRemark: {
+                required: true,
+                maxlength:20
+            }
+        },
+        messages: {
+            RequestContent: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            },
+            RequestRemark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#requestcreate-btn").click(function () {
+        myApp.showIndicator();
+        $("#requestcreate-form").submit();
+    });
+});
+// Mananger_RequestEdit 修改需求信息
+$$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", function () {
+    currentTextAreaLength("manager-task-requestedit", "RequestContent", 500, "requestcontent_length");
+    $("#requestedit-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#requestedit-btn").prop("disabled", true).addClass("color-gray");
+            $("#requestedit-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交成功'
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交失败'
+                    });
+                    $("#requestedit-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        rules: {
+            RequestContent: {
+                required: true,
+                maxlength: 500
+            },
+            RequestRemark: {
+                required: true,
+                maxlength: 20
+            }
+        },
+        messages: {
+            RequestContent: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            },
+            RequestRemark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#requestedit-btn").click(function () {
+        myApp.showIndicator();
+        $("#requestedit-form").submit();
+    });
+});
+
 //Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-temp-createcheckin']", function () {
     var tl = textLength();
@@ -288,33 +447,6 @@ $$(document).on("pageInit", ".page[data-page='manager-temp-createcheckin']", fun
 
 });
 
-//Manager_Request_Create 店铺需求提报 填写需求信息字数提示
-$$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", function () {
-    textLength();
-    function textLength() {
-        $$("#manager-task-requestcreate-contentlength").text($$("#manager-task-requestcreate-content").val().length);
-        $$("#manager-task-requestcreate-remarktlength").text($$("#manager-task-requestcreate-remark").val().length);
-    };
-    function T(event, totalLength, $$length) {
-        if (event < totalLength) {
-            $$length.text(event);
-        } else {
-            myApp.alert("已超出最大值，请重新填写或删除部分信息")
-        }
-    }
-    $$("#manager-task-requestcreate-content").on("change", function () {
-        var totalLength = $$("#manager-task-requestcreate-contenttotal").text();
-        var $$length = $$("#manager-task-requestcreate-contentlength");
-        var event = $$(this).val().length;
-        T(event, totalLength, $$length)
-    });
-    $$("#manager-task-requestcreate-remark").on("change", function () {
-        var totalLength = $$("#manager-task-requestcreate-remarktotal").text();
-        var $$length = $$("#manager-task-requestcreate-remarklength");
-        var event = $$(this).val().length;
-        T(event, totalLength, $$length)
-    });
-});
 
 //Senior_CheckInDetails  查看其他人签到信息  图片查看
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
@@ -827,6 +959,64 @@ function uploadLocation(btn_id, location_id) {
         return false;
     });
 }
+function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
+    $$("#" + btn_id).on("click", function () {
+        myApp.showIndicator();
+        // 4秒后强制关闭
+        setTimeout(function () {
+            if (!loc_success) {
+                myApp.hideIndicator();
+                myApp.alert("获取位置失败");
+            }
+        }, 4000);
+        
+        var loc_success = false;
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function (res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
+                var gps_location = longitude + "," + latitude;
+                //alert(location)
+                loc_success = true;
+                $$("#" + btn_id).find(".item-after").text("上传位置成功");
+                //cell_success_location(btn, "位置获取成功", latitude, longitude);
+                //var translbs = 
+                $$("#" + location_id).val(gps_location);
+                var translbs = latitude+","+longitude;
+                $.ajax({
+                    url: "http://apis.map.qq.com/ws/coord/v1/translate",
+                    method: "get",
+                    dataType: "jsonp",
+                    data: {
+                        locations: translbs,
+                        type: 1,
+                        output: "jsonp",
+                        key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+                    },
+                    success: function (data) {
+                        alert("33");
+                        console.log(data);
+                        if (data.status == 0) {
+                            geocoder = new qq.maps.Geocoder({
+                                complete: function (result) {
+                                    $("#" + lbs_details_id).val(result.detail.address);
+                                }
+                            });
+                            var coord = new qq.maps.LatLng(data.locations[0].lat, data.locations[0].lng);
+                            geocoder.getAddress(coord);
+                myApp.hideIndicator();
+            }
+                    }
+                });
+            }
+        });
+        return false;
+    });
+}
+
 
 function splitArray(value) {
     var list = new Array();
