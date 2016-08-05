@@ -394,6 +394,7 @@
     <Content Include="Scripts\framework7.js" />
     <Content Include="Scripts\framework7.min.js" />
     <Content Include="Scripts\html5.js" />
+    <Content Include="Scripts\jquery.metadata.js" />
     <Content Include="Scripts\Manager.js" />
     <Content Include="Scripts\maapp.js" />
     <Content Include="Scripts\my-app.js" />
@@ -846,8 +847,8 @@
     <Content Include="Views\Seller\Manager_CheckInView.cshtml" />
     <Content Include="Views\Seller\Senior_AllCheckInList.cshtml" />
     <Content Include="Views\Seller\Senior_CheckInDetails.cshtml" />
-    <Content Include="Views\Seller\Manager_Request_Create.cshtml" />
-    <Content Include="Views\Seller\Manager_Request_List.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestCreate.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestList.cshtml" />
     <Content Include="Views\Seller\Manager_Request_Check.cshtml" />
     <Content Include="Views\Seller\Manager_Task.cshtml" />
     <Content Include="Views\Seller\Manager_Tools.cshtml" />
@@ -878,6 +879,9 @@
     <Content Include="Views\Seller\Manager_AnnouncementList.cshtml" />
     <Content Include="Views\Seller\Manager_TaskSellerDetails.cshtml" />
     <Content Include="Views\Seller\Manager_CheckInViewPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestEdit.cshtml" />
+    <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

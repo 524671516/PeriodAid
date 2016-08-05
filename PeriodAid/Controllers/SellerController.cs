@@ -2945,17 +2945,148 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
             return View(item);
         }
-        public ActionResult Manager_Request_Create()
+
+        // 添加需求
+        public ActionResult Manager_RequestCreate()
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            Off_Manager_Request request = new Off_Manager_Request();
+            request.ManagerUserName = user.UserName;
+            request.Status = 0;
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+            ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+            List<Object> typelist = new List<object>();
+            typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+            typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+            typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+            ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+            return View(request);
         }
-        public ActionResult Manager_Request_List()
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Mananger_RequestCreate(Off_Manager_Request model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Request item = new Off_Manager_Request();
+                if (TryUpdateModel(item))
+                {
+                    item.ManagerUserName = User.Identity.Name;
+                    item.RequestTime = DateTime.Now;
+                    offlineDB.Off_Manager_Request.Add(item);
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return PartialView("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+                var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                List<Object> typelist = new List<object>();
+                typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+                typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+                typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+                ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+                return PartialView(model);
+            }
         }
-        public ActionResult Manager_Request_Check()
+
+        // 修改需求
+        public ActionResult Manager_RequestEdit(int id)
         {
-            return View();
+            var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+                var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                ViewBag.StoreList = new SelectList(storelist, "Key", "Value", item.StoreId);
+                List<Object> typelist = new List<object>();
+                typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+                typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+                typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+                ViewBag.TypeList = new SelectList(typelist, "Key", "Value", item.RequestType);
+                return PartialView(item);
+            }
+            return PartialView("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_RequestEdit(Off_Manager_Request model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Manager_Request item = new Off_Manager_Request();
+                if (TryUpdateModel(item))
+                {
+                    item.ManagerUserName = User.Identity.Name;
+                    item.RequestTime = DateTime.Now;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+                var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
+                ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
+                List<Object> typelist = new List<object>();
+                typelist.Add(new { Key = "店铺补货", Value = "店铺补货" });
+                typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
+                typelist.Add(new { Key = "问题调整", Value = "问题调整" });
+                ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
+                return View(model);
+            }
+        }
+
+        // 需求列表
+        public ActionResult Manager_RequestList()
+        {
+            return PartialView();
+        }
+        public ActionResult Manager_RequestListPartial()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            if (User.IsInRole("Senior"))
+            {
+                var list = from m in offlineDB.Off_Manager_Request
+                           where m.Status >= 0 && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                           orderby m.Status, m.Id descending
+                           select m;
+                return PartialView(list);
+            }
+            else
+            {
+                var list = from m in offlineDB.Off_Manager_Request
+                           where m.Status >= 0 && m.ManagerUserName == User.Identity.Name && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                           orderby m.Status, m.Id descending
+                           select m;
+                return View(list);
+            }
+        }
+        // 作废需求内容
+        [HttpPost]
+        public JsonResult Manager_CancelRequestJson(int id)
+        {
+            var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            item.Status = -1;
+            offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            offlineDB.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
+
+        // 需求确认
+        public ActionResult Manager_RequestView(int id)
+        {
+            var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
+            return View(item);
         }
 
         // 未签到列表
