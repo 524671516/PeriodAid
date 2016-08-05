@@ -3220,7 +3220,7 @@ namespace PeriodAid.Controllers
             return Content("FAIL");
         }
 
-        // 待签到
+        // 代签到
         public ActionResult Manager_CreateCheckIn(int id)
         {
             var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
@@ -3343,6 +3343,18 @@ namespace PeriodAid.Controllers
                 ProductList = templatelist
             };
             return PartialView(model);
+        }
+
+        // 备注信息
+        public ActionResult Manager_CheckinRemark(int id)
+        {
+            var checkin = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            return View(checkin);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_CheckinRemark(Off_Checkin model)
+        {
+            return View();
         }
 
         /************ 工具 ************/
