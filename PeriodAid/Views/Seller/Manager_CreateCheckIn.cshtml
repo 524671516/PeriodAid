@@ -1,4 +1,4 @@
-﻿
+﻿@model PeriodAid.Models.Off_Checkin
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -7,151 +7,125 @@
                 <span>返回</span>
             </a>
         </div>
-        <div class="center sliding"><strong>代提报销量</strong></div>
+        <div class="center sliding"><strong>代签到</strong></div>
         <div class="right">
             <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
         </div>
     </div>
 </div>
 <div class="pages">
-    <div class="page" data-page="manager-temp-createcheckin">
+    <div class="page" data-page="manager-createcheckin">
         <div class="page-content">
             <div class="list-block">
                 <ul>
                     <li>
                         <div class="item-content">
                             <div class="item-inner">
-                                <div class="item-title">欧尚-上海南汇1店</div>
-                                <div class="item-after">2016-07-26</div>
+                                <div class="item-title">@Html.Encode(ViewBag.StoreName)</div>
+                                <div class="item-after">@Html.Encode(ViewBag.Subscribe.ToString("yyyy-MM-dd"))</div>
                             </div>
                         </div>
                     </li>
                 </ul>
             </div>
-            <div class="content-block-title">提报信息</div>
-            <div class="list-block media-list">
-                <ul>
-                    <li>
-                        <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="促销员姓名" data-searchbar-cancel="取消">
-                            <select name="storelist">
-                                <option value="165">胡红</option>
-                                <option value="320">唐青梅</option>
-                                <option value="321">唐志君</option>
-                                <option value="342">许亦安</option>
-                            </select>
+            @using (Html.BeginForm("Manager_CreateCheckIn", "Seller",FormMethod.Post, new { @id="createcheckin-form", @class="validate-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.Off_Schedule_Id)
+                @Html.HiddenFor(m => m.Status)
+                @Html.HiddenFor(m => m.Proxy)
+                @Html.HiddenFor(m => m.CheckinLocation)
+                @Html.HiddenFor(m => m.CheckinPhoto)
+                @Html.HiddenFor(m => m.CheckinTime)
+                @Html.HiddenFor(m => m.CheckoutLocation)
+                @Html.HiddenFor(m => m.CheckoutPhoto)
+                @Html.HiddenFor(m => m.CheckoutTime)
+                @Html.HiddenFor(m => m.Report_Time)
+                <div class="content-block-title">提报信息</div>
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="促销员姓名" data-searchbar-cancel="取消">
+                                @Html.DropDownListFor(m => m.Off_Seller_Id, ViewBag.SellerDropDown as SelectList, "- 请选择 -", new { })
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">促销员</div>
+                                        <div class="item-after">- 请选择 -</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li id="checkinphoto-area">
                             <div class="item-content">
                                 <div class="item-inner">
-                                    <div class="item-title-row">
-                                        <div class="item-title">人员</div>
-                                        <div class="item-after smart-select-value">- 请选择 -</div>
+                                    <div class="item-title">上传签到照片</div>
+                                    <div class="item-after"><abbr id="checkin-current-image">0</abbr>/1</div>
+                                </div>
+                            </div>
+                            <div class="item-content" id="photo-list">
+                                <div class="item-inner">
+                                    <div class="hidden">
+                                        @Html.EditorFor(m => m.CheckinPhoto)
+                                    </div>
+                                    <ul class="rep-imglist" id="manager-checkin-imglist"></ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li id="checkoutphoto-area">
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">上传签推照片</div>
+                                    <div class="item-after"><abbr id="checkout-current-image">0</abbr>/1</div>
+                                </div>
+                            </div>
+                            <div class="item-content" id="photo-list">
+                                <div class="item-inner">
+                                    <div class="hidden">
+                                        @Html.EditorFor(m => m.CheckoutPhoto)
+                                    </div>
+                                    <ul class="rep-imglist" id="manager-checkout-imglist"></ul>
+                                </div>
+                            </div>
+                        </li>
+                        @{
+                            Html.RenderAction("Manager_EditReport_Item", new { ScheduleId = Model.Off_Schedule_Id });
+                        }
+                        <li id="reportphoto-area">
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">上传提报照片</div>
+                                    <div class="item-after"><abbr id="report-current-image">0</abbr>/7</div>
+                                </div>
+                            </div>
+                            <div class="item-content" id="photo-list">
+                                <div class="item-inner">
+                                    <div class="hidden">
+                                        @Html.EditorFor(m => m.Rep_Image)
+                                    </div>
+                                    <ul class="rep-imglist" id="manager-report-imglist"></ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li id="confirmremark-area">
+                            <div class="item-content">
+                                @Html.TextAreaFor(model => model.Confirm_Remark, new { placeholder = "请输入代签到备注信息" })
+                            </div>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title"></div>
+                                    <div class="item-after">
+                                        <span id="confirmremark-length">0</span>/<span>500</span>
                                     </div>
                                 </div>
                             </div>
-                        </a>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title-row">
-                                    <div class="item-title">签到图片上传</div>
-                                    <div class="item-after">0/1</div>
-                                </div>
-                                <div class="item-subtitle" id="photo-list">
-                                    <ul class="rep-imglist" id="sellerreport-imglist"><li><a href="javascript:;" class="rep-imgitem-btn" id="upload-btn"><i class="fa fa-plus"></i></a></li></ul>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title-row">
-                                    <div class="item-title">签退图片上传</div>
-                                    <div class="item-after">0/1</div>
-                                </div>
-                                <div class="item-subtitle" id="photo-list">
-                                    <ul class="rep-imglist" id="sellerreport-imglist"><li><a href="javascript:;" class="rep-imgitem-btn" id="upload-btn"><i class="fa fa-plus"></i></a></li></ul>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="row">
-                                    <div class="col-25 text-center">红糖姜茶</div>
-                                    <div class="col-25"><input type="number" placeholder="销量" /></div>
-                                    <div class="col-25"><input type="number" placeholder="库存" /></div>
-                                    <div class="col-25 hidden"><input type="number" placeholder="销售额" /></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="row">
-                                    <div class="col-25 text-center">黑糖姜茶</div>
-                                    <div class="col-25"><input type="number" placeholder="销量" /></div>
-                                    <div class="col-25"><input type="number" placeholder="库存" /></div>
-                                    <div class="col-25 hidden"><input type="number" placeholder="销售额" /></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="row">
-                                    <div class="col-25 text-center">柠檬姜茶</div>
-                                    <div class="col-25"><input type="number" placeholder="销量" /></div>
-                                    <div class="col-25"><input type="number" placeholder="库存" /></div>
-                                    <div class="col-25 hidden"><input type="number" placeholder="销售额" /></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="row">
-                                    <div class="col-25 text-center">红枣姜茶</div>
-                                    <div class="col-25"><input type="number" placeholder="销量" /></div>
-                                    <div class="col-25"><input type="number" placeholder="库存" /></div>
-                                    <div class="col-25 hidden"><input type="number" placeholder="销售额" /></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title-row">
-                                    <div class="item-title">销量图片上传</div>
-                                    <div class="item-after">0/7</div>
-                                </div>
-                                <div class="item-subtitle" id="photo-list">
-                                    <ul class="rep-imglist" id="sellerreport-imglist"><li><a href="javascript:;" class="rep-imgitem-btn" id="upload-btn"><i class="fa fa-plus"></i></a></li></ul>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <textarea id="manager-temp-notecontent" placeholder="请输入代签到备注"></textarea>
-                                <div class="item-title-row">
-                                    <div class="item-title"></div>
-                                    <div class="item-after"><span id="manager-temp-notecurrentlength">0</span>/<span id="manager-temp-notetotallength">500</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="content-block">
-                <a href="javascript:;" class="button button-big button-fill">提交</a>
-            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-block">
+                    <a href="javascript:;" class="button button-big button-fill" id="createcheckin-btn">提交</a>
+                </div>
+            }
         </div>
     </div>
 </div>

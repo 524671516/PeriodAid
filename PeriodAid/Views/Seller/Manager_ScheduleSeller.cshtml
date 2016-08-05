@@ -1,0 +1,38 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Seller>
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">门店所属促销员</div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-scheduleseller">
+        <div class="page-content">
+            <div class="content-block-title">@Html.Encode(ViewBag.StoreName)</div>
+            <div class="list-block">
+                <ul>
+                    @foreach (var item in Model)
+                    {
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">@Html.Encode(item.Name)</div>
+                                    <div class="item-after">@Html.Encode(item.Mobile)</div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
