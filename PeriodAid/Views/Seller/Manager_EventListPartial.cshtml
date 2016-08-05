@@ -5,17 +5,14 @@
     <ul>
 @foreach (var item in Model)
 {
-    <li class="swipeout">
-        <a href="/Seller/Manager_CreateCheckIn" class="item-content item-link swipeout-content">
+    <li>
+        <div class="item-content">
             <div class="item-inner">
                 <div class="item-title">@Html.Encode(item.Off_Store.StoreName)</div>
                 <div class="item-after">
                     <i class="fa fa-sign-in margin-top-3"></i>&nbsp;@Html.Encode(item.Off_Checkin.Count(m => m.Status >= 0 && m.Status < 4))&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-pencil-square-o margin-top-3"></i>&nbsp;@Html.Encode(item.Off_Checkin.Count(m => m.Status >= 4))
                 </div>
             </div>
-        </a>
-        <div class="swipeout-actions-right">
-            <a href="#" class="swipeout-delete" data-confirm="确定要删除吗？">删除</a>
         </div>
     </li>
 }

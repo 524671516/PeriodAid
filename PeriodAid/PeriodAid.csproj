@@ -885,6 +885,7 @@
     <Content Include="Views\Seller\Manager_UnConfirmList.cshtml" />
     <Content Include="Views\Seller\Manager_UnConfirmListPartial.cshtml" />
     <Content Include="Views\Seller\Senior_AllCheckInListPartial.cshtml" />
+    <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -4,7 +4,7 @@
 @foreach (var item in Model)
 {
     <li class="swipeout">
-        <div class="swipeout-content">
+        <div class="swipeout-content" data-url="@item.Id">
             <a href="#" class="item-content item-link">
                 <div class="item-inner">
                     <div class="item-title">@Html.Encode(item.Off_Checkin_Schedule.Off_Store.StoreName)</div>
@@ -13,7 +13,7 @@
             </a>
         </div>
         <div class="swipeout-actions-right">
-            <a href="#" class="swipeout-delete">作废</a>
+            <a href="#" class="swipeout-delete" data-confirm="确定要作废该信息吗？" data-confirm-title="寿全斋" data-close-on-cancel="true">作废</a>
         </div>
     </li>
 }
