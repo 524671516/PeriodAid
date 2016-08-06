@@ -91,8 +91,8 @@ $$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", functio
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
-        deleted(url,Id)
-});
+        deleted(url, Id)
+    });
 });
 
 //Manager_UnReportList 巡店 未提报销量
@@ -102,8 +102,8 @@ $$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function 
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
-        deleted(url,Id)
-});
+        deleted(url, Id)
+    });
 });
 
 //Manager_UnConfirmList 巡店 销量待确认
@@ -113,8 +113,58 @@ $$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
-        deleted(url,Id)
+        deleted(url, Id)
+    });
 });
+
+// Manager_CheckinRemark 添加签到备注信息
+$$(document).on("pageInit", ".page[data-page='manager-checkinremark']", function () {
+    currentTextAreaLength("manager-checkinremark", "Confirm_Remark", 100, "confirmremark-length");
+    $("#checkinremark-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#checkinremark-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交成功'
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交失败'
+                    });
+                    $("#checkinremark-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#checkinremark-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#checkinremark-btn").click(function () {
+        myApp.showIndicator();
+        $("#checkinremark-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#checkinremark-form").submit();
+        }, 500);
+
+    });
 });
 
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
