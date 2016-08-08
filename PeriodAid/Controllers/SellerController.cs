@@ -3354,7 +3354,22 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CheckinRemark(Off_Checkin model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                Off_Checkin item = new Off_Checkin();
+                if (TryUpdateModel(item))
+                {
+                    //model.Confirm_Remark = item.Confirm_Remark;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return View("Error");
+            }
+            else
+            {
+                return Content("FAIL");
+            }
         }
 
         /************ 工具 ************/
