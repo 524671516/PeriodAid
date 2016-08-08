@@ -589,6 +589,137 @@ $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function
     });
 });
 
+// Manager_EditCheckin 修改签到信息
+$$(document).on("pageInit", ".page[data-page='manager-editcheckin']", function () {
+    uploadCheckinFile("checkinphoto-area", "manager-checkin-imglist", "CheckinPhoto", "checkin-current-image", 1);
+    uploadCheckinFile("checkoutphoto-area", "manager-checkout-imglist", "CheckoutPhoto", "checkout-current-image", 1);
+    uploadCheckinFile("reportphoto-area", "manager-report-imglist", "Rep_Image", "report-current-image", 7);
+    currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
+    $("#editcheckin-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#editcheckin-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交成功'
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交失败'
+                    });
+                    $("#editcheckin-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        rules: {
+            Confirm_Remark: {
+                required: true,
+                maxlength: 500
+            }
+        },
+        messages: {
+            Confirm_Remark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#editcheckin-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#editcheckin-btn").click(function () {
+        myApp.showIndicator();
+        $("#editcheckin-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#editcheckin-form").submit();
+        }, 500);
+
+    });
+});
+
+// Manager_CheckinConfirm 审核销量
+$$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", function () {
+    PhotoBrowser("checkin-photo-link");
+    PhotoBrowser("checkout-photo-link");
+    PhotoBrowser("report-photo-link");
+    LocationBrowser("checkin-location");
+    LocationBrowser("checkout-location");
+    currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
+    $("#checkinconfirm-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#checkinconfirm-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交成功'
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交失败'
+                    });
+                    $("#checkinconfirm-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        rules: {
+            Confirm_Remark: {
+                required: true,
+                maxlength: 500
+            }
+        },
+        messages: {
+            Confirm_Remark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#checkinconfirm-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#checkinconfirm-btn").click(function () {
+        myApp.showIndicator();
+        $("#checkinconfirm-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#checkinconfirm-form").submit();
+        }, 500);
+
+    });
+});
 
 //Senior_CheckInDetails  查看其他人签到信息  图片查看
 $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {

@@ -1,0 +1,190 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>审核销量</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-checkinconfirm">
+        <div class="page-content">
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">@Html.Encode(Model.Off_Checkin_Schedule.Off_Store.StoreName)</div>
+                                <div class="item-after">@Html.Encode(Model.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            @using (Html.BeginForm("Manager_CheckinConfirm", "Seller", FormMethod.Post, new { @id = "checkinconfirm-form", @class = "validate-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.Off_Schedule_Id)
+                @Html.HiddenFor(m => m.Status)
+                @Html.HiddenFor(m => m.Proxy)
+                @Html.HiddenFor(m => m.CheckinLocation)
+                @Html.HiddenFor(m => m.CheckinTime)
+                @Html.HiddenFor(m => m.CheckoutLocation)
+                @Html.HiddenFor(m => m.CheckoutTime)
+                @Html.HiddenFor(m => m.Report_Time)
+                @Html.HiddenFor(m => m.Off_Seller_Id)
+                <div class="content-block-title">基本信息</div>
+                <div class="list-block">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">促销员</div>
+                                <div class="item-after">@Html.Encode(Model.Off_Seller.Name)</div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">状态</div>
+                                <div class="item-after">@Html.Encode(Html.CheckinStatus(Model.Status))</div>
+                            </div>
+                        </li>
+
+                        <li id="confirmremark-area">
+                            <div class="item-content">
+                                @Html.TextAreaFor(model => model.Confirm_Remark, new { placeholder = "请输入备注信息" })
+                            </div>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title"></div>
+                                    <div class="item-after">
+                                        <span id="confirmremark-length">0</span>/<span>500</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-block accordion-list">
+                    <ul>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">位置/图片信息</div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content">
+                                <ul>
+                                    @if (Model.CheckinLocation != "" && Model.CheckinLocation != "N/A")
+                                    {
+                                        <li id="checkin-location">
+                                            <a href="javascript:;" class="item-link item-content checkin-lbs" data-location="@Model.CheckinLocation">
+                                                <div class="item-inner">
+                                                    <div class="item-title">签到时间</div>
+                                                    <div class="item-after">@Html.Encode(Convert.ToDateTime(Model.CheckinTime).ToString("HH:mm:ss"))</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">签到时间</div>
+                                                <div class="item-after">代签到</div>
+                                            </div>
+                                        </li>
+                                    }
+                                    <li id="checkin-photo-link">
+                                        <a href="javascript:;" class="item-link item-content checkin-photos" data-photos="@Model.CheckinPhoto">
+                                            <div class="item-inner">
+                                                <div class="item-title">签到图片</div>
+                                                <div class="item-after">点击查看</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    @if (Model.CheckoutLocation != "" && Model.CheckoutLocation != "N/A")
+                                    {
+                                        <li id="checkout-location">
+                                            <a href="#" class="item-link item-content checkin-lbs" data-location="@Model.CheckoutLocation">
+                                                <div class="item-inner">
+                                                    <div class="item-title">签退时间</div>
+                                                    <div class="item-after">@Html.Encode(Convert.ToDateTime(Model.CheckoutTime).ToString("HH:mm:ss"))</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">签退时间</div>
+                                                <div class="item-after">代签退</div>
+                                            </div>
+                                        </li>
+                                    }
+                                    <li id="checkout-photo-link">
+                                        <a href="#" class="item-link item-content checkin-photos" data-photos="@Model.CheckoutPhoto">
+                                            <div class="item-inner">
+                                                <div class="item-title">签退图片</div>
+                                                <div class="item-after">点击查看</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li id="report-photo-link">
+                                        <a href="#" class="item-link item-content checkin-photos" data-photos="@Model.Rep_Image">
+                                            <div class="item-inner">
+                                                <div class="item-title">销量图片</div>
+                                                <div class="item-after">点击查看</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">
+                                        销量数据
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content">
+                                <ul>
+                                    @{
+                                        Html.RenderAction("Manager_ViewReport_Item", new { id = Model.Id });
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">
+                                        促销员备注信息
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content">
+                                <p>@Html.Encode(Model.Remark)</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                                        }
+
+            <div class="content-block">
+                <a href="javascript:;" class="button button-big button-fill" id="checkinconfirm-btn">审核</a>
+            </div>
+        </div>
+    </div>
+</div>

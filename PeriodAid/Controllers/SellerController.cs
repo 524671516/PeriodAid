@@ -91,7 +91,7 @@ namespace PeriodAid.Controllers
             //string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
             try
             {
-                
+
                 WeChatUtilities wechat = new WeChatUtilities();
                 var jat = wechat.getWebOauthAccessToken(code);
                 var user = UserManager.FindByEmail(jat.openid);
@@ -120,7 +120,7 @@ namespace PeriodAid.Controllers
                 //return Content(jat.openid + "," + jat.access_token);
                 return RedirectToAction("Wx_Register", "Seller", new { open_id = jat.openid, accessToken = jat.access_token, systemid = systemid });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 CommonUtilities.writeLog(ex.Message);
                 return View("Error");
@@ -132,7 +132,7 @@ namespace PeriodAid.Controllers
             try
             {
                 string _state = "1";
-                if (state==null)
+                if (state == null)
                 {
                     _state = state;
                 }
@@ -176,7 +176,7 @@ namespace PeriodAid.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+
                 // 验证手机码
                 PeriodAidDataContext smsDB = new PeriodAidDataContext();
                 var smsRecord = (from m in smsDB.SMSRecord
@@ -188,7 +188,7 @@ namespace PeriodAid.Controllers
                     ModelState.AddModelError("CheckCode", "手机验证码错误");
                     return View(model);
                 }
-                if(smsRecord.ValidateCode == model.CheckCode || model.CheckCode=="1760")
+                if (smsRecord.ValidateCode == model.CheckCode || model.CheckCode == "1760")
                 {
                     // 手机号校验
                     if (smsRecord.SendDate.AddSeconds(1800) <= DateTime.Now)
@@ -223,8 +223,8 @@ namespace PeriodAid.Controllers
                                     Off_System_Id = model.SystemId,
                                     Mobile = model.Mobile,
                                     NickName = model.NickName,
-                                    UserName = model.Mobile, 
-                                    Type=1
+                                    UserName = model.Mobile,
+                                    Type = 1
                                 };
                                 offlineDB.Off_Membership_Bind.Add(ofb);
                                 await offlineDB.SaveChangesAsync();
@@ -265,7 +265,7 @@ namespace PeriodAid.Controllers
                             return Content("Failure");
                     }
                 }
-                else 
+                else
                 {
                     ModelState.AddModelError("CheckCode", "手机验证码错误");
                     return View(model);
@@ -376,8 +376,8 @@ namespace PeriodAid.Controllers
                     Mobile = user.UserName,
                     NickName = model.NickName,
                     UserName = user.UserName,
-                    Off_System_Id = model.Systemid, 
-                    Type=1
+                    Off_System_Id = model.Systemid,
+                    Type = 1
                 };
                 offlineDB.Off_Membership_Bind.Add(ofb);
                 await offlineDB.SaveChangesAsync();
@@ -396,7 +396,7 @@ namespace PeriodAid.Controllers
             ApplicationUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var userbind = from m in offlineDB.Off_Membership_Bind
                            where m.UserName == User.Identity.Name
-                           && m.Off_System_Id == user.DefaultSystemId && m.Type==1
+                           && m.Off_System_Id == user.DefaultSystemId && m.Type == 1
                            select new { SellerId = m.Off_Seller_Id, StoreName = m.Off_Seller.Off_Store.StoreName };
             if (userbind != null)
             {
@@ -437,7 +437,7 @@ namespace PeriodAid.Controllers
             int dow = (int)today.DayOfWeek;
             //int dow = (int)new DateTime(2016, 04, 03).DayOfWeek;
             var dowinfo = from m in offlineDB.Off_AVG_Info
-                          where m.DayOfWeek == dow+1 && m.StoreId == storeId
+                          where m.DayOfWeek == dow + 1 && m.StoreId == storeId
                           select new { AVG_Count = m.AVG_SalesData, AVG_Amount = m.AVG_AmountData };
             if (dowinfo.Count() == 0)
                 ViewBag.AVG_Info = 0;
@@ -840,17 +840,17 @@ namespace PeriodAid.Controllers
                                       where plist.Contains(m.Id)
                                       select m;
                     // 添加或修改销售列表
-                    foreach(var item in productlist)
+                    foreach (var item in productlist)
                     {
                         // 获取单品数据
                         int? sales = null;
-                        if(form["sales_" + item.Id] != "")
+                        if (form["sales_" + item.Id] != "")
                             sales = Convert.ToInt32(form["sales_" + item.Id]);
                         int? storage = null;
-                        if(form["storage_"+ item.Id]!="")
+                        if (form["storage_" + item.Id] != "")
                             storage = Convert.ToInt32(form["storage_" + item.Id]);
                         decimal? amount = null;
-                        if(form["amount_" + item.Id]!="")
+                        if (form["amount_" + item.Id] != "")
                             amount = Convert.ToDecimal(form["amount_" + item.Id]);
                         // 判断是否已有数据
                         var checkinproductlist = offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == checkin.Id);
@@ -877,7 +877,8 @@ namespace PeriodAid.Controllers
                             // 如果三项数据不为空，则添加
                             if (sales == null && storage == null && amount == null)
                             { }
-                            else { 
+                            else
+                            {
                                 existdata = new Off_Checkin_Product()
                                 {
                                     CheckinId = checkin.Id,
@@ -912,7 +913,7 @@ namespace PeriodAid.Controllers
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == CheckId);
             string[] plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
             List<int> plist = new List<int>();
-            foreach(var i in plist_tmp)
+            foreach (var i in plist_tmp)
             {
                 plist.Add(Convert.ToInt32(i));
             }
@@ -920,7 +921,7 @@ namespace PeriodAid.Controllers
                               where plist.Contains(m.Id)
                               select m;
             List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
-            foreach(var i in productlist)
+            foreach (var i in productlist)
             {
                 Wx_TemplateProduct p = new Wx_TemplateProduct()
                 {
@@ -930,7 +931,7 @@ namespace PeriodAid.Controllers
                 };
                 templatelist.Add(p);
             }
-            foreach(var i in item.Off_Checkin_Product)
+            foreach (var i in item.Off_Checkin_Product)
             {
                 var e = templatelist.SingleOrDefault(m => m.ProductId == i.ProductId);
                 e.SalesCount = i.SalesCount;
@@ -1114,7 +1115,7 @@ namespace PeriodAid.Controllers
             ApplicationUser user = UserManager.FindById(User.Identity.GetUserId());
             var userbind = (from m in offlineDB.Off_Membership_Bind
                             where m.UserName == User.Identity.Name
-                            && m.Off_System_Id == user.DefaultSystemId && m.Type==1
+                            && m.Off_System_Id == user.DefaultSystemId && m.Type == 1
                             select m.Off_Seller_Id);
             if (userbind.Contains(SellerId))
                 return true;
@@ -1139,7 +1140,7 @@ namespace PeriodAid.Controllers
             ViewBag.NickName = user.NickName;
             ViewBag.Mobile = user.PhoneNumber;
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id== user.DefaultSystemId);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var today_schedule = from m in offlineDB.Off_Checkin_Schedule
                                  where storelist.Contains(m.Off_Store_Id)
@@ -1528,7 +1529,7 @@ namespace PeriodAid.Controllers
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             ViewBag.NickName = user.NickName;
             ViewBag.Mobile = user.PhoneNumber;
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id==user.DefaultSystemId);
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             return View(manager.Off_Store);
         }
         [Authorize(Roles = "Manager")]
@@ -1725,7 +1726,7 @@ namespace PeriodAid.Controllers
                                StoreId = m.Off_Checkin_Schedule.Off_Store_Id,
                                SellerName = m.Off_Seller.Name,
                                StoreName = m.Off_Checkin_Schedule.Off_Store.StoreName,
-                               Rep_Total = m.Off_Checkin_Product.Sum(g=>g.SalesCount),
+                               Rep_Total = m.Off_Checkin_Product.Sum(g => g.SalesCount),
                                Bonus = m.Bonus
                            };
             //var storelist = list.Select(m => m.StoreId);
@@ -1759,7 +1760,7 @@ namespace PeriodAid.Controllers
             {
                 Id = record.Id,
                 Status = record.Status,
-                Rep_Total = record.Off_Checkin_Product.Sum(m=>m.SalesCount),
+                Rep_Total = record.Off_Checkin_Product.Sum(m => m.SalesCount),
                 Bonus = record.Bonus,
                 Bonus_Remark = record.Bonus_Remark,
                 SellerName = record.Off_Seller.Name,
@@ -1783,8 +1784,8 @@ namespace PeriodAid.Controllers
                     record.Bonus_User = User.Identity.Name;
                     record.Bonus = item.Bonus;
                     offlineDB.Entry(record).State = System.Data.Entity.EntityState.Modified;
-                    var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == record.Off_Seller_Id && m.Off_System_Id== manager.DefaultSystemId);
-                    
+                    var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == record.Off_Seller_Id && m.Off_System_Id == manager.DefaultSystemId);
+
                     if (binduser == null)
                     {
                         offlineDB.SaveChanges();
@@ -1889,7 +1890,7 @@ namespace PeriodAid.Controllers
             var storelist = manager.Off_Store.Select(m => new { Key = m.Id, Value = m.StoreName });
             ViewBag.StoreList = new SelectList(storelist, "Key", "Value");
             var today_org = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
-            var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status>=0).Select(m => new { Key = m.Id, Value = m.TemplateName });
+            var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status >= 0).Select(m => new { Key = m.Id, Value = m.TemplateName });
             ViewBag.TemplateList = new SelectList(templateList, "Key", "Value");
             schedule.Subscribe = today_org;
             schedule.Standard_CheckIn = "10:00";
@@ -2580,13 +2581,13 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in offlineDB.Off_BonusRequest
-                       where m.Status > 0
-                       && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
-                       orderby m.CommitTime descending
-                       select m).Take(30);
+                        where m.Status > 0
+                        && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                        orderby m.CommitTime descending
+                        select m).Take(30);
             return PartialView(list);
         }
-        [Authorize(Roles ="Senior")]
+        [Authorize(Roles = "Senior")]
         [SettingFilter(SettingName = "BONUS")]
         [HttpPost]
         public async Task<ActionResult> Wx_Manager_BonusQuery_Ajax()
@@ -2740,7 +2741,7 @@ namespace PeriodAid.Controllers
                 ViewBag.ImgUrl = user.ImgUrl;
                 return PartialView();
             }
-            
+
         }
         public ActionResult UpdateUserInfo()
         {
@@ -3121,7 +3122,7 @@ namespace PeriodAid.Controllers
         {
             return PartialView();
         }
-        
+
         public ActionResult Manager_UnCheckInListPartial(string date)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3313,10 +3314,20 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
-        public PartialViewResult Manager_EditReport_Item(int ScheduleId)
+        public PartialViewResult Manager_EditReport_Item(int id, int ScheduleId)
         {
-            var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == ScheduleId);
-            string[] plist_tmp = item.Off_Sales_Template.ProductList.Split(',');
+            Off_Checkin item = null;
+            string[] plist_tmp;
+            if (id == 0)
+            {
+                var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == ScheduleId);
+                plist_tmp = schedule.Off_Sales_Template.ProductList.Split(',');
+            }
+            else
+            {
+                item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+                plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
+            }
             List<int> plist = new List<int>();
             foreach (var i in plist_tmp)
             {
@@ -3336,13 +3347,35 @@ namespace PeriodAid.Controllers
                 };
                 templatelist.Add(p);
             }
-            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            if (item != null)
             {
-                AmountRequried = item.Off_Sales_Template.RequiredAmount,
-                StorageRequired = item.Off_Sales_Template.RequiredStorage,
-                ProductList = templatelist
-            };
-            return PartialView(model);
+                foreach (var i in item.Off_Checkin_Product)
+                {
+                    var e = templatelist.SingleOrDefault(m => m.ProductId == i.ProductId);
+                    e.SalesCount = i.SalesCount;
+                    e.SalesAmount = i.SalesAmount;
+                    e.Storage = i.StorageCount;
+                }
+
+                Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+                {
+                    AmountRequried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
+                    StorageRequired = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
+                    ProductList = templatelist
+                };
+                return PartialView(model);
+            }
+            else
+            {
+                var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == ScheduleId);
+                Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+                {
+                    AmountRequried = schedule.Off_Sales_Template.RequiredAmount,
+                    StorageRequired = schedule.Off_Sales_Template.RequiredStorage,
+                    ProductList = templatelist
+                };
+                return PartialView(model);
+            }
         }
 
         // 备注信息
@@ -3370,6 +3403,181 @@ namespace PeriodAid.Controllers
             {
                 return Content("FAIL");
             }
+        }
+
+        // 查看并修改签到信息
+        public ActionResult Manager_EditCheckin(int id)
+        {
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            List<Object> status_list = new List<object>();
+            status_list.Add(new { Key = 1, Value = "已签到" });
+            status_list.Add(new { Key = 2, Value = "已签退" });
+            status_list.Add(new { Key = 3, Value = "已提报销量" });
+            ViewBag.StatusSelectList = new SelectList(status_list, "Key", "Value", item.Status);
+            return View(item);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_EditCheckin(Off_Checkin model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin checkin = new Off_Checkin();
+                if (TryUpdateModel(checkin))
+                {
+                    // 获取模板产品列表
+                    List<int> plist = new List<int>();
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                    foreach (var i in Template.ProductList.Split(','))
+                    {
+                        plist.Add(Convert.ToInt32(i));
+                    }
+                    var productlist = from m in offlineDB.Off_Product
+                                      where plist.Contains(m.Id)
+                                      select m;
+                    // 添加或修改销售列表
+                    foreach (var item in productlist)
+                    {
+                        // 获取单品数据
+                        int? sales = null;
+                        if (form["sales_" + item.Id] != "")
+                            sales = Convert.ToInt32(form["sales_" + item.Id]);
+                        int? storage = null;
+                        if (form["storage_" + item.Id] != "")
+                            storage = Convert.ToInt32(form["storage_" + item.Id]);
+                        decimal? amount = null;
+                        if (form["amount_" + item.Id] != "")
+                            amount = Convert.ToDecimal(form["amount_" + item.Id]);
+                        // 判断是否已有数据
+                        var checkinproductlist = offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == checkin.Id);
+                        var existdata = checkinproductlist.SingleOrDefault(m => m.ProductId == item.Id);
+                        if (existdata != null)
+                        {
+
+                            if (sales == null && storage == null && amount == null)
+                            {
+                                // 无数据则删除
+                                offlineDB.Off_Checkin_Product.Remove(existdata);
+                            }
+                            else
+                            {
+                                // 修改数据
+                                existdata.SalesAmount = amount;
+                                existdata.SalesCount = sales;
+                                existdata.StorageCount = storage;
+                            }
+                        }
+                        else
+                        {
+                            // 添加数据
+                            // 如果三项数据不为空，则添加
+                            if (sales == null && storage == null && amount == null)
+                            { }
+                            else
+                            {
+                                existdata = new Off_Checkin_Product()
+                                {
+                                    CheckinId = checkin.Id,
+                                    ItemCode = item.ItemCode,
+                                    ProductId = item.Id,
+                                    SalesAmount = amount,
+                                    SalesCount = sales,
+                                    StorageCount = storage
+                                };
+                                offlineDB.Off_Checkin_Product.Add(existdata);
+                                //offlineDB.SaveChanges();
+                            }
+                        }
+                    }
+                    checkin.Report_Time = DateTime.Now;
+                    checkin.CheckinLocation = checkin.CheckinLocation == null ? "N/A" : checkin.CheckinLocation;
+                    checkin.CheckoutLocation = checkin.CheckoutLocation == null ? "N/A" : checkin.CheckoutLocation;
+                    checkin.ConfirmTime = DateTime.Now;
+                    checkin.ConfirmUser = User.Identity.Name;
+                    checkin.Proxy = true;
+                    offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return View("Error");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                return Content("FAIL");
+            }
+        }
+
+        // 审核签到信息
+        public ActionResult Manager_CheckinConfirm(int id)
+        {
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            ViewBag.CheckIn = item;
+            return View(item);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_CheckinConfirm(Off_Checkin model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin checkin = new Off_Checkin();
+                if (TryUpdateModel(checkin))
+                {
+                    checkin.ConfirmTime = DateTime.Now;
+                    checkin.ConfirmUser = User.Identity.Name;
+                    checkin.Status = 4;
+                    offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                return Content("FAIL");
+            }
+        }
+
+        // 查看销量明细
+        public PartialViewResult Manager_ViewReport_Item(int id)
+        {
+
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            var plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
+            List<int> plist = new List<int>();
+            foreach (var i in plist_tmp)
+            {
+                plist.Add(Convert.ToInt32(i));
+            }
+            var productlist = from m in offlineDB.Off_Product
+                              where plist.Contains(m.Id)
+                              select m;
+            List<Wx_TemplateProduct> templatelist = new List<Wx_TemplateProduct>();
+            foreach (var i in productlist)
+            {
+                Wx_TemplateProduct p = new Wx_TemplateProduct()
+                {
+                    ProductId = i.Id,
+                    ItemCode = i.ItemCode,
+                    SimpleName = i.SimpleName
+                };
+                templatelist.Add(p);
+            }
+            foreach (var i in item.Off_Checkin_Product)
+            {
+                var e = templatelist.SingleOrDefault(m => m.ProductId == i.ProductId);
+                e.SalesCount = i.SalesCount;
+                e.SalesAmount = i.SalesAmount;
+                e.Storage = i.StorageCount;
+            }
+
+            Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
+            {
+                AmountRequried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
+                StorageRequired = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
+                ProductList = templatelist
+            };
+            return PartialView(model);
         }
 
         /************ 工具 ************/
@@ -3456,7 +3664,7 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
-            var storelist = manager.Off_Store.OrderBy(m=>m.StoreName);
+            var storelist = manager.Off_Store.OrderBy(m => m.StoreName);
             return PartialView(storelist);
         }
 
@@ -3498,7 +3706,7 @@ namespace PeriodAid.Controllers
             var startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
             ViewBag.CurrentMonth = startDate.ToString("yyyy-MM");
             List<object> l = new List<object>();
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var t_date = startDate.AddMonths(0 - i);
                 l.Add(new { Key = t_date.ToString("yyyy-MM"), Value = t_date.ToString("yyyy-MM") });
@@ -3511,10 +3719,10 @@ namespace PeriodAid.Controllers
             // 获取督导的门店列表
             var user = UserManager.FindById(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
-            var storelist = manager.Off_Store.Select(m=>m.Id);
+            var storelist = manager.Off_Store.Select(m => m.Id);
             // 查看参数，如无参数，默认为当月数据，也可查询上月数据
             DateTime startDate;
-            if (querydate == ""|| querydate==null)
+            if (querydate == "" || querydate == null)
             {
                 startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
             }
@@ -3529,7 +3737,7 @@ namespace PeriodAid.Controllers
                            where storelist.Contains(m.StoreId)
                            && m.ApplyDate >= startDate && m.ApplyDate < finishDate
                            group m by m.Off_Seller into g
-                           select new Wx_SellerTaskMonthStatistic { Off_Seller = g.Key, AttendanceCount = g.Count()*100/30 };
+                           select new Wx_SellerTaskMonthStatistic { Off_Seller = g.Key, AttendanceCount = g.Count() * 100 / 30 };
             //ViewBag.TaskList = tasklist;
             return PartialView(tasklist);
         }

@@ -5,7 +5,7 @@
 {
     <li class="swipeout" data-url="@item.Id">
         <div class="swipeout-content">
-            <a href="#" class="item-content item-link">
+            <a href="/Seller/Manager_CheckinConfirm?id=@item.Id" class="item-content item-link random-param">
                 <div class="item-inner">
                     <div class="item-title">@Html.Encode(item.Off_Checkin_Schedule.Off_Store.StoreName)</div>
                     <div class="item-after">@Html.Encode(item.Off_Seller.Name)</div>
@@ -13,6 +13,7 @@
             </a>
         </div>
         <div class="swipeout-actions-right">
+            <a href="/Seller/Manager_EditCheckin?id=@item.Id" class="bg-green random-param">修改</a>
             <a href="#" class="swipeout-delete" data-confirm="确定要作废该信息吗？" data-confirm-title="寿全斋" data-close-on-cancel="true">作废</a>
         </div>
     </li>
