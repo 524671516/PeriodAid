@@ -1024,7 +1024,7 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
             $$(".list-content").html(data);
         }
     });
-    $$("#task_id").on("change", function () {
+    $$(".check-date").on("change", function () {
         $$.ajax({
             url: "/Seller/Manager_CheckInViewPartial",
             data: {
