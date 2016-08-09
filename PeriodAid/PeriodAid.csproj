@@ -901,6 +901,7 @@
     <Content Include="Views\Seller\Manager_BonusList_HistoryPartial.cshtml" />
     <Content Include="Views\Seller\Manager_BonusList_UnSendPartial.cshtml" />
     <Content Include="Views\Seller\Manager_SellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_EditSellerInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

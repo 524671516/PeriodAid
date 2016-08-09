@@ -1,0 +1,101 @@
+﻿@model PeriodAid.Models.Off_Seller
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>促销员信息修改</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-editsellerinfo">
+        <div class="page-content">
+            @using (Html.BeginForm("Manager_EditSellerInfo", "Seller", FormMethod.Post, new { @class = "validate-form", @id = "editsellerinfo-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m=>m.Id)
+                @Html.HiddenFor(m=>m.Name)
+                @Html.HiddenFor(m=>m.Mobile)
+                @Html.HiddenFor(m=>m.Off_System_Id)
+                @Html.HiddenFor(m=>m.StoreId)
+                @Html.HiddenFor(m=>m.UploadTime)
+                @Html.HiddenFor(m=>m.UploadUser)
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">身份证</div>
+                                    <div class="item-input">
+                                        @Html.TextBoxFor(m => m.IdNumber, new { placeholder = "请填写身份证信息" })
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回">
+                                @Html.DropDownListFor(m => m.CardName, ViewBag.BankList as SelectList)
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">请选择银行</div>
+                                        <div class="item-after"></div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">开户行</div>
+                                    <div class="item-input">
+                                        @Html.TextBoxFor(m => m.AccountSource, new { placeholder = "请填写开户行信息" })
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">开户人姓名</div>
+                                    <div class="item-input">
+                                        @Html.TextBoxFor(m => m.AccountName, new { placeholder = "请输入开户人姓名" })
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">银行卡号</div>
+                                    <div class="item-input">
+                                        @Html.TextBoxFor(m => m.CardNo, new { placeholder = "请输入银行卡号" })
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">暗促工资</div>
+                                    <div class="item-input">
+                                        @Html.TextBoxFor(m => m.StandardSalary, new { type = "number", placeholder = "请输入暗促标准工资" })
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-block">
+                    <a href="javascript:;" type="submit" class="button button-big button-fill" id="editsellerinfo-btn">修改</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -31,7 +31,6 @@ $$(".tab-link").on("click", function (data) {
     $(this).addClass("active").siblings().removeClass("active")
 });
 refresh_userpanel();
-//left-navbar
 
 //下拉刷新
 var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
@@ -73,119 +72,15 @@ wx.config({
     jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage','openLocation']
 });
 
-//Manager_UnCheckInList  巡店 未签到
-$$(document).on("pageInit", ".page[data-page='manager-unchekinlist']", function () {
-    var url = "/Seller/Manager_UnCheckInListPartial";
-    check(url)
-});
 
+
+// 防止缓存机制
 $$(document).on("touchstart", "a.random-param", function () {
-    
     var url = $$(this).attr("href") + "&rand=" + Math.random() * 500;
     $$(this).attr("href", url);
 });
-//Manager_UnCheckOutList 巡店 未签退
-$$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", function () {
-    var url = "/Seller/Manager_UnCheckOutListPartial";
-    check(url);
-    $$(".list-content").on("deleted", ".swipeout", function (e) {
-        var url = "/Seller/Manager_DeleteCheckIn";
-        var Id = $$(e.target).attr("data-url");
-        deleted(url, Id)
-    });
-});
 
-//Manager_UnReportList 巡店 未提报销量
-$$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function () {
-    var url = "/Seller/Manager_UnReportListPartial";
-    check(url);
-    $$(".list-content").on("deleted", ".swipeout", function (e) {
-        var url = "/Seller/Manager_DeleteCheckIn";
-        var Id = $$(e.target).attr("data-url");
-        deleted(url, Id)
-    });
-});
-
-//Manager_UnConfirmList 巡店 销量待确认
-$$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
-    var url = "/Seller/Manager_UnConfirmListPartial";
-    check(url);
-    $$(".list-content").on("deleted", ".swipeout", function (e) {
-        var url = "/Seller/Manager_DeleteCheckIn";
-        var Id = $$(e.target).attr("data-url");
-        deleted(url, Id)
-    });
-});
-
-// Manager_CheckinRemark 添加签到备注信息
-$$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function () {
-    currentTextAreaLength("manager-bonusremark", "Bonus_Remark", 100, "confirmremark_length");
-    $("#bonusremark-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
-        onkeyup: false,
-        submitHandler: function (form) {
-            $("#bonusremark-form").ajaxSubmit(function (data) {
-                if (data == "SUCCESS") {
-                    myApp.hideIndicator();
-                    mainView.router.back();
-                    myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交成功'
-                    });
-                    setTimeout(function () {
-                        myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-                else {
-                    myApp.hideIndicator();
-                    myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交失败'
-                    });
-                    $("#bonusremark-btn").prop("disabled", false).removeClass("color-gray");
-                    setTimeout(function () {
-                        myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-            });
-        },
-        rules: {
-            Bonus: {
-                required: true,
-                range: [5, 200]
-            },
-            BonusRemark: {
-                required: true,
-                maxlength: 100
-            }
-        },
-        messages: {
-            Bonus: {
-                required: "字段不能为空",
-                maxlength: jQuery.format("请输入一个介于 {0} 和 {1} 之间的值")
-            },
-            RequestRemark: {
-                required: "字段不能为空",
-                maxlength: jQuery.format("不能大于{0}个字符")
-            }
-        },
-        errorPlacement: function (error, element) {
-            myApp.hideIndicator();
-            $("#bonusremark-btn").prop("disabled", false).removeClass("color-gray");
-            element.attr("placeholder", error.text());
-        }
-    });
-    $$("#bonusremark-btn").click(function () {
-        myApp.showIndicator();
-        $("#bonusremark-btn").prop("disabled", true).addClass("color-gray");
-        setTimeout(function () {
-            $("#bonusremark-form").submit();
-        }, 500);
-    });
-});
-
+/*************** 督导签到 *************/
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", function (e) {
     // 获取当前备注文本长度
@@ -199,7 +94,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
-            
+
             var array = splitArray($("#Photo").val());
             if (array.length == 0) {
                 myApp.hideIndicator();
@@ -250,7 +145,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
         setTimeout(function () {
             $("#addcheckin_form").submit();
         }, 500);
-        
+
     });
 });
 
@@ -322,7 +217,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
             })
         }, 500);
     });
-    
+
 });
 
 //Senior_AllCheckInList 查看其他人签到
@@ -331,7 +226,7 @@ $$(document).on("pageInit", ".page[data-page='manager-allchekinlist']", function
     $$.ajax({
         url: "/Seller/Senior_AllCheckInListPartial",
         data: {
-            date:date
+            date: date
         },
         success: function (data) {
             $$("#allcheckinlist-content").html(data);
@@ -364,7 +259,7 @@ $$(document).on("pageInit", ".page[data-page='manager-request-list']", function 
         $$.ajax({
             url: "Manager_CancelRequestJson",
             data: {
-                id : $$(e.target).attr("data-url")
+                id: $$(e.target).attr("data-url")
             },
             method: "post",
             success: function (data) {
@@ -375,7 +270,7 @@ $$(document).on("pageInit", ".page[data-page='manager-request-list']", function 
             }
         })
     });
-    
+
 });
 
 // Manager_RequestCreate 创建需求信息
@@ -415,11 +310,11 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
         rules: {
             RequestContent: {
                 required: true,
-                maxlength:500
+                maxlength: 500
             },
             RequestRemark: {
                 required: true,
-                maxlength:20
+                maxlength: 20
             }
         },
         messages: {
@@ -444,9 +339,10 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
         setTimeout(function () {
             $("#requestcreate-form").submit();
         }, 500);
-        
+
     });
 });
+
 // Mananger_RequestEdit 修改需求信息
 $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", function () {
     currentTextAreaLength("manager-task-requestedit", "RequestContent", 500, "requestcontent_length");
@@ -513,7 +409,52 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
         setTimeout(function () {
             $("#requestedit-form").submit();
         }, 500)
-        
+
+    });
+});
+//Senior_CheckInDetails  查看其他人签到信息  图片查看
+$$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
+    PhotoBrowser("manager-checkindetails");
+    LocationBrowser("manager-checkindetails");
+});
+
+/*************** 店铺查询 *************/
+//Manager_UnCheckInList  巡店 未签到
+$$(document).on("pageInit", ".page[data-page='manager-unchekinlist']", function () {
+    var url = "/Seller/Manager_UnCheckInListPartial";
+    datepicker_refresh(url);
+});
+
+//Manager_UnCheckOutList 巡店 未签退
+$$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", function () {
+    var url = "/Seller/Manager_UnCheckOutListPartial";
+    datepicker_refresh(url);
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Manager_DeleteCheckIn";
+        var Id = $$(e.target).attr("data-url");
+        swipe_deleted(url, Id)
+    });
+});
+
+//Manager_UnReportList 巡店 未提报销量
+$$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function () {
+    var url = "/Seller/Manager_UnReportListPartial";
+    datepicker_refresh(url);
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Manager_DeleteCheckIn";
+        var Id = $$(e.target).attr("data-url");
+        swipe_deleted(url, Id)
+    });
+});
+
+//Manager_UnConfirmList 巡店 销量待确认
+$$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
+    var url = "/Seller/Manager_UnConfirmListPartial";
+    datepicker_refresh(url);
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Manager_DeleteCheckIn";
+        var Id = $$(e.target).attr("data-url");
+        swipe_deleted(url, Id)
     });
 });
 
@@ -735,26 +676,52 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
         setTimeout(function () {
             $("#checkinconfirm-form").submit();
         }, 500);
+    });
 
+    //Manager_CheckInView 查看签到信息
+    $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
+        $$.ajax({
+            url: "/Seller/Manager_CheckInViewPartial",
+            data: {
+                id: $$(".check-date").val()
+            },
+            success: function (data) {
+                $$(".list-content").html(data);
+            }
+        });
+        $$(".check-date").on("change", function () {
+            $$.ajax({
+                url: "/Seller/Manager_CheckInViewPartial",
+                data: {
+                    id: $$(".check-date").val()
+                },
+                success: function (data) {
+                    $$(".list-content").html(data);
+                }
+            });
+        });
+        $$(".list-content").on("deleted", ".swipeout", function (e) {
+            var url = "/Seller/Mananger_CancelManagerCheckin";
+            var Id = $$(e.target).attr("data-url");
+            swipe_deleted(url, Id);
+        });
+        PhotoBrowser("manager-checkinview-content");
     });
 });
 
-//Senior_CheckInDetails  查看其他人签到信息  图片查看
-$$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
-    PhotoBrowser("manager-checkindetails");
-    LocationBrowser("manager-checkindetails");
-});
 
 
+
+/*************** 督导工具 *************/
 //Manager_ReportList  销量排名 查看日期
 $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: '#manager-reportlist-date',
         monthNames: monthNames,
-        monthNamesShort:monthNamesShort,
+        monthNamesShort: monthNamesShort,
         dayNames: dayNames,
         dayNamesShort: dayNamesShort,
-        closeOnSelect:true
+        closeOnSelect: true
     });
     var date = $$("#manager-reportlist-date").val();
     var storesystem = $$("#manager-reportlist-storesystem").val();
@@ -843,6 +810,75 @@ $$(document).on("pageInit", ".page[data-page='manager-tasksellerdetails']", func
     });
 });
 
+// Manager_CheckinRemark 添加红包信息
+$$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function () {
+    currentTextAreaLength("manager-bonusremark", "Bonus_Remark", 100, "confirmremark_length");
+    $("#bonusremark-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#bonusremark-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交成功'
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交失败'
+                    });
+                    $("#bonusremark-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        rules: {
+            Bonus: {
+                required: true,
+                range: [5, 200]
+            },
+            BonusRemark: {
+                required: true,
+                maxlength: 100
+            }
+        },
+        messages: {
+            Bonus: {
+                required: "字段不能为空",
+                range: jQuery.format("请输入一个介于 {0} 和 {1} 之间的值")
+            },
+            RequestRemark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#bonusremark-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#bonusremark-btn").click(function () {
+        myApp.showIndicator();
+        $("#bonusremark-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#bonusremark-form").submit();
+        }, 500);
+    });
+});
+
 //Manager_EventList  活动门店列表  查看日期
 $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
     var calendarDefault = myApp.calendar({
@@ -858,12 +894,12 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
     $$.ajax({
         url: url,
         data: {
-            date:date
+            date: date
         },
         success: function (data) {
             $$("#manager-eventlist-content").html(data);
         }
-});
+    });
     $$("#manager-eventlist-date").on("change", function () {
         var date = $$("#manager-eventlist-date").val();
         $$.ajax({
@@ -878,8 +914,108 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
     });
 });
 
-//Mnaager_QuerySeller  搜索促销员
+//Manager_QuerySeller  搜索促销员
 $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function () {
+    var mySearchbar = myApp.searchbar('.searchbar', {
+        searchList: '.list-block-search',
+        searchIn: '.item-content'
+    });
+});
+
+// Manager_EditSellerInfo 修改促销员信息
+$$(document).on("pageInit", ".page[data-page='manager-editsellerinfo']", function () {
+
+    $("#editsellerinfo-form").validate({
+        debug: true, //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error", //默认为错误的样式类为：error   
+        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#editsellerinfo-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交成功'
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: '通知',
+                        message: '表单提交失败'
+                    });
+                    $("#editsellerinfo-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        rules: {
+            IdNumber: {
+                required: true,
+                idnumber: true
+            },
+            AccountSource: {
+                required: true,
+                maxlength: 50
+            },
+            AccountName: {
+                required: true,
+                maxlength: 10
+            },
+            CardNo: {
+                required: true,
+                maxlength: 30
+            },
+            StandardSalary: {
+                range:[0,500]
+            }
+        },
+        messages: {
+            IdNumber:{
+                required: "必填",
+                idnumber: "请正确填写身份证号码"
+            },
+            AccountSource:{
+                required: "必填",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            },
+            AccountName:{
+                required: "必填",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            },
+            CardNo:{
+                required: "必填",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            },
+            StandardSalary:{
+                range: jQuery.format("请输入一个介于 {0} 和 {1} 之间的值")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#editsellerinfo-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#editsellerinfo-btn").click(function () {
+        myApp.showIndicator();
+        $("#editsellerinfo-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#editsellerinfo-form").submit();
+        }, 500);
+    });
+
+});
+
+//Manager_StoreList  督导管理门店  查询
+$$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
     var mySearchbar = myApp.searchbar('.searchbar', {
         searchList: '.list-block-search',
         searchIn: '.item-content'
@@ -926,7 +1062,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
             $$.ajax({
                 url: "/Seller/Manager_BonusConfirm",
                 data: {
-                    id:data_url
+                    id: data_url
                 },
                 method: "post",
                 success: function (data) {
@@ -948,7 +1084,6 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
         });
     });
 
-
     // Pull to refresh content
     var ptrContent = $$('.pull-to-refresh-content');
     // Add 'refresh' listener on it
@@ -956,7 +1091,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
         // Emulate 2s loading
         setTimeout(function () {
             // Random song
-            
+
             $$.ajax({
                 url: "/Seller/Manager_BonusList_HistoryRefresh",
                 method: "post",
@@ -977,11 +1112,15 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
     });
 });
 
+
+
+
+/*************** 暗促信息 *************/
 //Manager_TempSellerDetails  暗促系统  暗促签到图片查看
 $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function (e) {
     var phList = $("#sellertask-details-phlist").val().split(",");
     var photo = new Array();
-    $$.each(phList, function (num,ph) {
+    $$.each(phList, function (num, ph) {
         var url = "http://cdn2.shouquanzhai.cn/checkin-img/" + ph;
         var obj = { url: url };
         photo.push(obj);
@@ -1003,7 +1142,7 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
 $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", function () {
     $$.ajax({
         url: "/Seller/ManagerSellerTaskMonthStatisticPartial",
-        data:{
+        data: {
             querydate: $("#statistic-month").val()
         },
         success: function (data) {
@@ -1057,14 +1196,14 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
                     id: $("#sellerid").val()
                 },
                 success: function (data) {
-                    if (data == "NONE"|| data == "FAIL") {
+                    if (data == "NONE" || data == "FAIL") {
                         myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
-                            $$(".infinite-scroll-preloader").remove();//移除加载符
-                            $$(".infinite-pre").removeClass("hidden");
-                            return;
+                        $$(".infinite-scroll-preloader").remove();//移除加载符
+                        $$(".infinite-pre").removeClass("hidden");
+                        return;
                     }
                     else {
-                       $$("#managerseller-list").append(data);
+                        $$("#managerseller-list").append(data);
                         page++;
                     }
                 }
@@ -1081,47 +1220,9 @@ $$(document).on("pageInit", ".page[data-page='managersellertask-query']", functi
     });
 });
 
-//Manager_StoreList  督导管理门店  查询
-$$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
-    var mySearchbar = myApp.searchbar('.searchbar', {
-        searchList: '.list-block-search',
-        searchIn: '.item-content'
-    });
-});
-
-//Manager_CheckInView 查看签到信息
-$$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
-    $$.ajax({
-        url: "/Seller/Manager_CheckInViewPartial",
-        data: {
-            id: $$(".check-date").val()
-        },
-        success: function (data) {
-            $$(".list-content").html(data);
-        }
-    });
-    $$(".check-date").on("change", function () {
-        $$.ajax({
-            url: "/Seller/Manager_CheckInViewPartial",
-            data: {
-                id: $$(".check-date").val()
-            },
-            success: function (data) {
-                $$(".list-content").html(data);
-            }
-        });
-    });
-    $$(".list-content").on("deleted", ".swipeout", function (e) {
-        var url = "/Seller/Mananger_CancelManagerCheckin";
-        var Id = $$(e.target).attr("data-url");
-        deleted(url, Id);
-    });
-    PhotoBrowser("manager-checkinview-content");
-});
 
 
 // 辅助程序
-
 // 用户模板更新
 function refresh_userpanel() {
     $$.ajax({
@@ -1374,7 +1475,7 @@ function LocationBrowser(pagename) {
     });
 }
 
-
+// 图片数组转化
 function splitArray(value) {
     var list = new Array();
     if(value!=null){
@@ -1387,7 +1488,7 @@ function splitArray(value) {
 }
 
 //巡店 ajax异步提交
-function check(url) {
+function datepicker_refresh(url) {
     var calendarDefault = myApp.calendar({
         input: '.check-date',
         monthNames: monthNames,
@@ -1421,7 +1522,7 @@ function check(url) {
 };
 
 //删除
-function deleted(url,Id) {
+function swipe_deleted(url,Id) {
     $$.ajax({
         url: url,
         method: "POST",
