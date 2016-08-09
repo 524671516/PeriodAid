@@ -3734,9 +3734,78 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        // 未发红包列表
         public ActionResult Manager_BonusList_UnSendPartial()
         {
-            return PartialView();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in offlineDB.Off_BonusRequest
+                       where m.Status == 0
+                       && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                       orderby m.Off_Checkin.Off_Checkin_Schedule.Subscribe
+                       select m;
+            return PartialView(list);
+        }
+        // 确认审核红包
+        public ActionResult Manager_BonusConfirm(int id)
+        {
+            AppPayUtilities apppay = new AppPayUtilities();
+            Random random = new Random();
+            CommonUtilities.writeLog(DateTime.Now.ToShortTimeString() + "红包");
+
+            try
+            {
+                var item = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.Id == id);
+                if (item.Status == 0)
+                {
+                    string mch_billno = "SELLERRP" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
+                    string remark = item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd") + " " + item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName + " " + "促销红包";
+                    string result = apppay.WxRedPackCreate(item.ReceiveOpenId, item.ReceiveAmount, mch_billno, "促销员红包", "寿全斋", remark, remark);
+                    if (result == "SUCCESS")
+                    {
+                        item.Mch_BillNo = mch_billno;
+                        item.Status = 1;
+                        item.CommitUserName = User.Identity.Name;
+                        item.CommitTime = DateTime.Now;
+                        offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        offlineDB.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL" });
+                }
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+        // 作废红包
+        public ActionResult Manager_BonusDismiss(int id)
+        {
+            try
+            {
+                var bonusrequest = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.Id == id);
+                var checkin = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == bonusrequest.CheckinId);
+                bonusrequest.Status = -1;
+                bonusrequest.CommitUserName = User.Identity.Name;
+                bonusrequest.CommitTime = DateTime.Now;
+                offlineDB.Entry(bonusrequest).State = System.Data.Entity.EntityState.Modified;
+                checkin.Bonus = null;
+                checkin.Remark = null;
+                offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
         // 历史红包信息
         public ActionResult Manager_BonusList_HistoryPartial()

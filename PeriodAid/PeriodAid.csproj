@@ -899,6 +899,7 @@
     <Content Include="Views\Seller\Manager_ViewReport_Item.cshtml" />
     <Content Include="Views\Seller\Manager_ViewConfirm.cshtml" />
     <Content Include="Views\Seller\Manager_BonusList_HistoryPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_BonusList_UnSendPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
