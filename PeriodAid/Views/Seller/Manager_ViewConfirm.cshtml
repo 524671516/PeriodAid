@@ -8,7 +8,7 @@
                 <span>返回</span>
             </a>
         </div>
-        <div class="center sliding"><strong>审核销量</strong></div>
+        <div class="center sliding"><strong>销量详情</strong></div>
         <div class="right">
             <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
         </div>
@@ -50,7 +50,7 @@
                         <div class="item-content">
                             督导备注信息
                         </div>
-                        <div class="item-content">
+                        <div class="item-content item-example">
                             <p>@Html.Encode(Model.Confirm_Remark)</p>
                         </div>
                     </li>
@@ -64,7 +64,7 @@
                                 <div class="item-title">位置/图片信息</div>
                             </div>
                         </a>
-                        <div class="accordion-item-content">
+                        <div class="accordion-item-content item-example">
                             <ul>
                                 @if (Model.CheckinLocation != "" && Model.CheckinLocation != "N/A")
                                 {
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
                         </a>
-                        <div class="accordion-item-content">
+                        <div class="accordion-item-content item-example">
                             <ul>
                                 @{
                                     Html.RenderAction("Manager_ViewReport_Item", new { id = Model.Id });
@@ -157,7 +157,7 @@
                                 </div>
                             </div>
                         </a>
-                        <div class="accordion-item-content">
+                        <div class="accordion-item-content item-example">
                             <p>@Html.Encode(Model.Remark)</p>
                         </div>
                     </li>

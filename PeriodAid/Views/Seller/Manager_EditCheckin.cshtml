@@ -85,7 +85,7 @@
                                 </div>
                             </a>
 
-                            <div class="accordion-item-content">
+                            <div class="accordion-item-content item-example">
                                 <div style="font-size:1.2em" id="checkinphoto-area">
                                     <div class="item-content">
                                         <div class="item-inner">
@@ -105,7 +105,7 @@
                                 <div style="font-size:1.2em" id="checkoutphoto-area">
                                     <div class="item-content">
                                         <div class="item-inner">
-                                            <div class="item-title">上传签推照片</div>
+                                            <div class="item-title">上传签退照片</div>
                                             <div class="item-after"><abbr id="checkout-current-image">0</abbr>/1</div>
                                         </div>
                                     </div>
@@ -144,13 +144,25 @@
                                     </div>
                                 </div>
                             </a>
-                            <div class="accordion-item-content">
+                            <div class="accordion-item-content item-example">
                                 <ul style="font-size:1.2em;">
                                     @{
                                         Html.RenderAction("Manager_EditReport_Item", new { id = Model.Id, ScheduleId=0 });
                                     }
                                 </ul>
 
+                            </div>
+                        </li>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">
+                                        促销员备注信息
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content item-example">
+                                <p style="margin-left:1em">@Html.Encode(Model.Remark)</p>
                             </div>
                         </li>
                     </ul>
