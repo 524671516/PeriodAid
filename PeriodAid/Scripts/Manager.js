@@ -296,7 +296,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
                 success: function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
-                        //myApp.formDeleteData("createsellerreport-form");
                         mainView.router.back();
                         myApp.addNotification({
                             title: '通知',
@@ -889,12 +888,66 @@ $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function (
 
 //Manager_BonusList  红包列表 下拉刷新  
 $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () {
+    // 列表内容更新
     $$.ajax({
         url: "/Seller/Manager_BonusList_HistoryPartial",
         success: function (html) {
             $$("#history-content").html(html);
         }
-    })
+    });
+    $$.ajax({
+        url: "/Seller/Manager_BonusList_UnSendPartial",
+        success: function (data) {
+            $$("#bonus-content").html(data);
+        }
+    });
+
+    // 滑动删除
+    $$('#bonus-content').on('deleted', ".swipeout", function (e) {
+        $$.ajax({
+            url: "/Seller/Manager_BonusDismiss",
+            data: {
+                id: $$(e.target).attr("data-url")
+            },
+            method: "post",
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.result != "SUCCESS") {
+                    myApp.alert("删除失败");
+                }
+            }
+        })
+    });
+
+    // 确认红包
+    $$("#bonus-content").on("click", ".confirmbonus", function (e) {
+        var data_url = $$(this).attr("data-url");
+        myApp.confirm('是否确认发放红包?', function () {
+            $$.ajax({
+                url: "/Seller/Manager_BonusConfirm",
+                data: {
+                    id:data_url
+                },
+                method: "post",
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data.result == "SUCCESS") {
+                        // 页面刷新
+                        $$.ajax({
+                            url: "/Seller/Manager_BonusList_UnSendPartial",
+                            success: function (data) {
+                                $$("#bonus-content").html(data);
+                            }
+                        });
+                    }
+                    else {
+                        myApp.alert("红包发放失败");
+                    }
+                }
+            })
+        });
+    });
+
 
     // Pull to refresh content
     var ptrContent = $$('.pull-to-refresh-content');
