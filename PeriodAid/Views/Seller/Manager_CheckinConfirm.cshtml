@@ -81,7 +81,7 @@
                                     <div class="item-title">位置/图片信息</div>
                                 </div>
                             </a>
-                            <div class="accordion-item-content">
+                            <div class="accordion-item-content item-example">
                                 <ul>
                                     @if (Model.CheckinLocation != "" && Model.CheckinLocation != "N/A")
                                     {
@@ -158,7 +158,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <div class="accordion-item-content">
+                            <div class="accordion-item-content item-example">
                                 <ul>
                                     @{
                                         Html.RenderAction("Manager_ViewReport_Item", new { id = Model.Id });
@@ -174,7 +174,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <div class="accordion-item-content">
+                            <div class="accordion-item-content item-example">
                                 <p style="margin-left:1em">@Html.Encode(Model.Remark)</p>
                             </div>
                         </li>

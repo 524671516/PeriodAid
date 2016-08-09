@@ -156,3 +156,10 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
     margin-top: -8px; 
     margin-bottom: -7px;
 }
+.item-example {
+    font-size: 15px;
+    white-space: normal;
+    border-left: 5px solid #eee;
+    margin-top: 10px;
+    margin: 0 0 0 16px;
+}
