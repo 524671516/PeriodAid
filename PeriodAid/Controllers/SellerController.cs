@@ -3378,33 +3378,6 @@ namespace PeriodAid.Controllers
             }
         }
 
-        // 备注信息
-        public ActionResult Manager_CheckinRemark(int id)
-        {
-            var checkin = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
-            return View(checkin);
-        }
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult Manager_CheckinRemark(Off_Checkin model)
-        {
-            if (ModelState.IsValid)
-            {
-                Off_Checkin item = new Off_Checkin();
-                if (TryUpdateModel(item))
-                {
-                    //model.Confirm_Remark = item.Confirm_Remark;
-                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    offlineDB.SaveChanges();
-                    return Content("SUCCESS");
-                }
-                return View("Error");
-            }
-            else
-            {
-                return Content("FAIL");
-            }
-        }
-
         // 查看并修改签到信息
         public ActionResult Manager_EditCheckin(int id)
         {
@@ -3511,7 +3484,6 @@ namespace PeriodAid.Controllers
         public ActionResult Manager_CheckinConfirm(int id)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
-            ViewBag.CheckIn = item;
             return View(item);
         }
 
@@ -3538,7 +3510,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        // 查看销量明细
+        // 查看销量明细列表
         public PartialViewResult Manager_ViewReport_Item(int id)
         {
 
@@ -3578,6 +3550,13 @@ namespace PeriodAid.Controllers
                 ProductList = templatelist
             };
             return PartialView(model);
+        }
+
+        // 查看促销信息详细信息
+        public ActionResult Manager_ViewConfirm(int id)
+        {
+            var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            return View(item);
         }
 
         /************ 工具 ************/
@@ -3680,6 +3659,68 @@ namespace PeriodAid.Controllers
                              select m;
             return PartialView(sellerlist);
         }
+        // 促销红包填写
+        public ActionResult Manager_CheckinBonusRemark(int id)
+        {
+            var checkin = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
+            return View(checkin);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_CheckinBonusRemark(Off_Checkin model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Checkin item = new Off_Checkin();
+                if (TryUpdateModel(item))
+                {
+                    item.Bonus_User = User.Identity.Name;
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    var manager = UserManager.FindById(User.Identity.GetUserId());
+                    var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Off_Seller_Id == item.Off_Seller_Id && m.Off_System_Id == manager.DefaultSystemId && m.Type==1);
+                    if (binduser == null)
+                    {
+                        offlineDB.SaveChanges();
+                        return Content("FAIL");
+                    }
+                    var user = UserManager.FindByName(binduser.UserName);
+                    Off_BonusRequest bonusrequest = offlineDB.Off_BonusRequest.SingleOrDefault(m => m.CheckinId == item.Id && m.Status >= 0);
+                    if (bonusrequest != null)
+                    {
+                        if (bonusrequest.Status == 0)
+                        {
+                            bonusrequest.ReceiveAmount = Convert.ToInt32(item.Bonus * 100);
+                            offlineDB.Entry(bonusrequest).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        else
+                        {
+                            return Content("FAIL");
+                        }
+                    }
+                    else
+                    {
+                        bonusrequest = new Off_BonusRequest()
+                        {
+                            CheckinId = item.Id,
+                            ReceiveUserName = user.UserName,
+                            ReceiveOpenId = user.OpenId,
+                            ReceiveAmount = Convert.ToInt32(item.Bonus * 100),
+                            RequestUserName = User.Identity.Name,
+                            RequestTime = DateTime.Now,
+                            Status = 0
+                        };
+                        offlineDB.Off_BonusRequest.Add(bonusrequest);
+                    }
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return View("Error");
+            }
+            else
+            {
+                return Content("FAIL");
+            }
+        }
+
         public ActionResult Manager_AjaxSellerDetails()
         {
             return View();
@@ -3688,9 +3729,67 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        // 红包信息列表
         public ActionResult Manager_BonusList()
         {
             return View();
+        }
+        public ActionResult Manager_BonusList_UnSendPartial()
+        {
+            return PartialView();
+        }
+        // 历史红包信息
+        public ActionResult Manager_BonusList_HistoryPartial()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = (from m in offlineDB.Off_BonusRequest
+                        where m.Status > 0
+                        && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                        orderby m.CommitTime descending
+                        select m).Take(30);
+            return PartialView(list);
+        }
+        [HttpPost]
+        public async Task<ActionResult> Manager_BonusList_HistoryRefresh()
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var query_list = from m in offlineDB.Off_BonusRequest
+                             where m.Status == 1 && m.Off_Checkin.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
+                             orderby m.CommitTime descending
+                             select m;
+            AppPayUtilities pay = new AppPayUtilities();
+            foreach (var item in query_list)
+            {
+                try
+                {
+                    string result = await pay.WxRedPackQuery(item.Mch_BillNo);
+                    switch (result)
+                    {
+                        case "SENT":
+                            item.Status = 1;
+                            break;
+                        case "RECEIVED":
+                            item.Status = 2;
+                            break;
+                        case "FAIL":
+                            item.Status = 3;
+                            break;
+                        case "REFUND":
+                            item.Status = 4;
+                            break;
+                        default:
+                            item.Status = 1;
+                            break;
+                    }
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+                catch
+                {
+
+                }
+            }
+            offlineDB.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         /************ 暗促 ************/

@@ -9,7 +9,7 @@
         {
             <li class="swipeout">
                 <div class="swipeout-content">
-                    <a href="/Seller/Manager_TaskSellerDetails" class="item-content item-link">
+                    <a href="/Seller/Manager_ViewConfirm/@item.Id" class="item-content item-link">
                         <div class="item-inner" style="background: url('../../fonts/right.svg') no-repeat; background-position:calc(100% - 15px) center;background-size:10px 20px">
                             @if (item.Status == 4)
                             {
@@ -30,7 +30,7 @@
                 </div>
                 @if (item.Status == 4) {
                 <div class="swipeout-actions-right">
-                    <a href="#" class="bg-green">发红包</a>
+                    <a href="/Seller/Manager_CheckinBonusRemark?id=@item.Id" class="bg-green random-param">发红包</a>
                 </div>
                 }
             </li>

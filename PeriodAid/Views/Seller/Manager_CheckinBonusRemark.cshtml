@@ -15,9 +15,9 @@
     </div>
 </div>
 <div class="pages">
-    <div class="page" data-page="manager-checkinremark">
+    <div class="page" data-page="manager-bonusremark" id="manager-bonusremark">
         <div class="page-content">
-            @using (Html.BeginForm("Manager_CheckinRemark", "Seller", FormMethod.Post, new { @id = "checkinremark-form", @class = "validate-form" }))
+            @using (Html.BeginForm("Manager_CheckinBonusRemark", "Seller", FormMethod.Post, new { @id = "bonusremark-form", @class = "validate-form" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.Off_Seller_Id)
@@ -34,6 +34,7 @@
                 @Html.HiddenFor(m => m.Report_Time)
                 @Html.HiddenFor(m => m.Rep_Image)
                 @Html.HiddenFor(m=>m.Remark)
+                @Html.HiddenFor(m=>m.Confirm_Remark)
                 <div class="content-block-title">基本信息</div>
                 <div class="list-block">
                     <ul>
@@ -55,13 +56,27 @@
                         </li>
                     </ul>
                 </div>
-                <div class="content-block-title">备注信息</div>
-                <div class="list-block media-list">
+                <div class="content-block-title">红包奖励信息</div>
+                <div class="list-block">
                     <ul>
                         <li>
                             <div class="item-content">
                                 <div class="item-inner">
-                                    @Html.TextAreaFor(m=>m.Confirm_Remark, new { placeholder="请输入备注信息", @class="required"})
+                                    <div class="item-title label">红包金额</div>
+                                    <div class="item-input">
+                                        @Html.TextBoxFor(m => m.Bonus, new { placeholder = "请输入红包金额", type = "number" })
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        </ul>
+                    </div>
+                    <div class="list-block media-list">
+                        <ul>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    @Html.TextAreaFor(m=>m.Bonus_Remark, new { placeholder="请输入备注信息", @class="required"})
                                     <div class="item-title-row">
                                         <div class="item-title"></div>
                                         <div class="item-after"><span id="confirmremark_length">0</span>/100</div>
@@ -72,7 +87,7 @@
                     </ul>
                 </div>
                 <div class="content-block">
-                    <a href="javascript:;" class="button button-big button-fill" id="checkinremark-btn">提交</a>
+                    <a href="javascript:;" class="button button-big button-fill" id="bonusremark-btn">提交</a>
                 </div>
             }
         </div>

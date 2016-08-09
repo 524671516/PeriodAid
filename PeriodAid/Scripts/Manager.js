@@ -118,15 +118,15 @@ $$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function
 });
 
 // Manager_CheckinRemark 添加签到备注信息
-$$(document).on("pageInit", ".page[data-page='manager-checkinremark']", function () {
-    currentTextAreaLength("manager-checkinremark", "Confirm_Remark", 100, "confirmremark-length");
-    $("#checkinremark-form").validate({
+$$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function () {
+    currentTextAreaLength("manager-bonusremark", "Bonus_Remark", 100, "confirmremark_length");
+    $("#bonusremark-form").validate({
         debug: true, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
-            $("#checkinremark-form").ajaxSubmit(function (data) {
+            $("#bonusremark-form").ajaxSubmit(function (data) {
                 if (data == "SUCCESS") {
                     myApp.hideIndicator();
                     mainView.router.back();
@@ -144,26 +144,45 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinremark']", function
                         title: '通知',
                         message: '表单提交失败'
                     });
-                    $("#checkinremark-btn").prop("disabled", false).removeClass("color-gray");
+                    $("#bonusremark-btn").prop("disabled", false).removeClass("color-gray");
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
                     }, 2000);
                 }
             });
         },
+        rules: {
+            Bonus: {
+                required: true,
+                range: [5, 200]
+            },
+            BonusRemark: {
+                required: true,
+                maxlength: 100
+            }
+        },
+        messages: {
+            Bonus: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("请输入一个介于 {0} 和 {1} 之间的值")
+            },
+            RequestRemark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            }
+        },
         errorPlacement: function (error, element) {
             myApp.hideIndicator();
-            $("#checkinremark-btn").prop("disabled", false).removeClass("color-gray");
+            $("#bonusremark-btn").prop("disabled", false).removeClass("color-gray");
             element.attr("placeholder", error.text());
         }
     });
-    $$("#checkinremark-btn").click(function () {
+    $$("#bonusremark-btn").click(function () {
         myApp.showIndicator();
-        $("#checkinremark-btn").prop("disabled", true).addClass("color-gray");
+        $("#bonusremark-btn").prop("disabled", true).addClass("color-gray");
         setTimeout(function () {
-            $("#checkinremark-form").submit();
+            $("#bonusremark-form").submit();
         }, 500);
-
     });
 });
 
@@ -870,32 +889,36 @@ $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function (
 
 //Manager_BonusList  红包列表 下拉刷新  
 $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () {
-    var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
-    var authors = ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'];
+    $$.ajax({
+        url: "/Seller/Manager_BonusList_HistoryPartial",
+        success: function (html) {
+            $$("#history-content").html(html);
+        }
+    })
 
     // Pull to refresh content
     var ptrContent = $$('.pull-to-refresh-content');
-
     // Add 'refresh' listener on it
     ptrContent.on('refresh', function (e) {
         // Emulate 2s loading
         setTimeout(function () {
             // Random song
-            var song = songs[Math.floor(Math.random() * songs.length)];
-            // Random author
-            var author = authors[Math.floor(Math.random() * authors.length)];
-            // List item html
-            var itemHTML = '<li class="item-content">' +
-                              '<div class="item-inner">' +
-                                '<div class="item-title-row">' +
-                                  '<div class="item-title">' + song + '</div>' +
-                                '</div>' +
-                                '<div class="item-subtitle">' + author + '</div>' +
-                              '</div>' +
-                            '</li>';
-            // Prepend new list element
-            ptrContent.find('ul').prepend(itemHTML);
-            // When loading done, we need to reset it
+            
+            $$.ajax({
+                url: "/Seller/Manager_BonusList_HistoryRefresh",
+                method: "post",
+                success: function (e) {
+                    var data = JSON.parse(e);
+                    if (data.result == "SUCCESS") {
+                        $$.ajax({
+                            url: "/Seller/Manager_BonusList_HistoryPartial",
+                            success: function (html) {
+                                $$("#history-content").html(html);
+                            }
+                        })
+                    }
+                }
+            });
             myApp.pullToRefreshDone();
         }, 2000);
     });
@@ -1024,7 +1047,7 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
             $$(".list-content").html(data);
         }
     });
-    $$("#task_id").on("change", function () {
+    $$(".check-date").on("change", function () {
         $$.ajax({
             url: "/Seller/Manager_CheckInViewPartial",
             data: {

@@ -891,12 +891,14 @@
     <Content Include="Views\Seller\Manager_RequestList.cshtml" />
     <Content Include="Views\Seller\Manager_RequestListPartial.cshtml" />
     <Content Include="Views\Seller\Manager_ScheduleSeller.cshtml" />
-    <Content Include="Views\Seller\Manager_CheckinRemark.cshtml" />
+    <Content Include="Views\Seller\Manager_CheckinBonusRemark.cshtml" />
     <Content Include="Views\Seller\Manager_ScheduleSeller.cshtml" />
     <Content Include="Views\Seller\Manager_EditCheckin.cshtml" />
     <Content Include="Views\Seller\Manager_EditReport_Item.cshtml" />
     <Content Include="Views\Seller\Manager_CheckinConfirm.cshtml" />
     <Content Include="Views\Seller\Manager_ViewReport_Item.cshtml" />
+    <Content Include="Views\Seller\Manager_ViewConfirm.cshtml" />
+    <Content Include="Views\Seller\Manager_BonusList_HistoryPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
