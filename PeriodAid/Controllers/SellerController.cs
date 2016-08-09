@@ -3654,7 +3654,7 @@ namespace PeriodAid.Controllers
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var sellerlist = from m in offlineDB.Off_Seller
-                             where storelist.Contains(m.Id) && m.Off_System_Id == user.DefaultSystemId
+                             where storelist.Contains(m.StoreId) && m.Off_System_Id == user.DefaultSystemId
                              orderby m.Name
                              select m;
             return PartialView(sellerlist);
@@ -3720,16 +3720,52 @@ namespace PeriodAid.Controllers
                 return Content("FAIL");
             }
         }
-
+        // 查看促销员详细信息
         public ActionResult Manager_SellerDetails(int id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id && m.Off_System_Id == user.DefaultSystemId);
             return View(seller);
         }
-        public ActionResult Manager_CreditInfo()
+        // 修改促销员信息
+        public ActionResult Manager_EditSellerInfo(int id)
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id && m.Off_System_Id == user.DefaultSystemId);
+            var banklistArray = offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+            if (banklistArray != null)
+            {
+                string[] regionarray = banklistArray.SettingValue.Split(',');
+                List<Object> banklist = new List<object>();
+                foreach (var i in regionarray)
+                {
+                    banklist.Add(new { Key = i, Value = i });
+                }
+                ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                return PartialView(seller);
+            }
+            return PartialView("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_EditSellerInfo(Off_Seller model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_Seller seller = new Off_Seller();
+                if (TryUpdateModel(seller))
+                {
+                    seller.UploadTime = DateTime.Now;
+                    seller.UploadUser = User.Identity.Name;
+                    offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                    offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                else
+                {
+                    return Content("FAIL");
+                }
+            }
+            return Content("FAIL");
         }
         // 红包信息列表
         public ActionResult Manager_BonusList()
