@@ -919,6 +919,35 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
         })
     });
 
+    // 确认红包
+    $$("#bonus-content").on("click", ".confirmbonus", function (e) {
+        var data_url = $$(this).attr("data-url");
+        myApp.confirm('是否确认发放红包?', function () {
+            $$.ajax({
+                url: "/Seller/Manager_BonusConfirm",
+                data: {
+                    id:data_url
+                },
+                method: "post",
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data.result == "SUCCESS") {
+                        // 页面刷新
+                        $$.ajax({
+                            url: "/Seller/Manager_BonusList_UnSendPartial",
+                            success: function (data) {
+                                $$("#bonus-content").html(data);
+                            }
+                        });
+                    }
+                    else {
+                        myApp.alert("红包发放失败");
+                    }
+                }
+            })
+        });
+    });
+
 
     // Pull to refresh content
     var ptrContent = $$('.pull-to-refresh-content');

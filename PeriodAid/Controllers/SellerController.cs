@@ -3721,9 +3721,11 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult Manager_AjaxSellerDetails()
+        public ActionResult Manager_SellerDetails(int id)
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id && m.Off_System_Id == user.DefaultSystemId);
+            return View(seller);
         }
         public ActionResult Manager_CreditInfo()
         {
@@ -3746,6 +3748,7 @@ namespace PeriodAid.Controllers
             return PartialView(list);
         }
         // 确认审核红包
+        [HttpPost]
         public ActionResult Manager_BonusConfirm(int id)
         {
             AppPayUtilities apppay = new AppPayUtilities();
@@ -3786,6 +3789,7 @@ namespace PeriodAid.Controllers
             }
         }
         // 作废红包
+        [HttpPost]
         public ActionResult Manager_BonusDismiss(int id)
         {
             try
@@ -3797,7 +3801,7 @@ namespace PeriodAid.Controllers
                 bonusrequest.CommitTime = DateTime.Now;
                 offlineDB.Entry(bonusrequest).State = System.Data.Entity.EntityState.Modified;
                 checkin.Bonus = null;
-                checkin.Remark = null;
+                checkin.Bonus_Remark = null;
                 offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
                 offlineDB.SaveChanges();
                 return Json(new { result = "SUCCESS" });

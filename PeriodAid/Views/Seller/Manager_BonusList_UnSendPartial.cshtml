@@ -3,20 +3,20 @@
 @foreach (var item in Model)
 {
     <li class="swipeout" data-url="@item.Id">
-        <div class="swipeout-content item-content" style="background: url('/fonts/right.svg') no-repeat; background-position:calc(100% - 15px) center;background-size:10px 20px">
+        <div class="swipeout-content item-content">
             <div class="item-inner">
                 <div class="item-title-row">
                     <div class="item-title">
                         <span>@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd"))</span>:@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)
                     </div>
                 </div>
-                <div class="subtitle color-gray margin-top-7">
-                    红包金额：<span>@Html.Encode(item.ReceiveAmount)</span>元&nbsp;&nbsp;|&nbsp;&nbsp;红包状态：<span>@Html.Encode(Html.BonusStatus(item.Status))</span>
+                <div class="subtitle color-gray margin-top-7 text-font-1">
+                    红包金额：<span>@Html.Encode(item.ReceiveAmount/100)</span>元&nbsp;&nbsp;|&nbsp;&nbsp;红包状态：<span>@Html.Encode(Html.BonusStatus(item.Status))</span>
                 </div>
             </div>
         </div>
         <div class="swipeout-actions-right">
-            <a href="#" class="bg-green">确认</a>
+            <a href="javascript:;" class="bg-green confirmbonus" data-url="@item.Id">确认</a>
             <a href="#" class="swipeout-delete" data-confirm="确定要作废该信息吗？" data-confirm-title="寿全斋" data-close-on-cancel="true">驳回</a>
         </div>
     </li>
