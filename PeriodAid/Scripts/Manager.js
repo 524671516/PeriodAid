@@ -413,14 +413,14 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
     });
 });
 //Senior_CheckInDetails  查看其他人签到信息  图片查看
-$$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
+$$(document).on("pageInit", ".page[data-page='manager-checkindetails']", function () {
     PhotoBrowser("manager-checkindetails");
     LocationBrowser("manager-checkindetails");
 });
 
 /*************** 店铺查询 *************/
 //Manager_UnCheckInList  巡店 未签到
-$$(document).on("pageInit", ".page[data-page='manager-unchekinlist']", function () {
+$$(document).on("pageInit", ".page[data-page='manager-uncheckinlist']", function () {
     var url = "/Seller/Manager_UnCheckInListPartial";
     datepicker_refresh(url);
 });
@@ -677,9 +677,21 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
             $("#checkinconfirm-form").submit();
         }, 500);
     });
+});
 
-    //Manager_CheckInView 查看签到信息
-    $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
+//Manager_CheckInView 查看签到信息
+$$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
+    alert("22")
+    $$.ajax({
+        url: "/Seller/Manager_CheckInViewPartial",
+        data: {
+            id: $$(".check-date").val()
+        },
+        success: function (data) {
+            $$(".list-content").html(data);
+        }
+    });
+    $$(".check-date").on("change", function () {
         $$.ajax({
             url: "/Seller/Manager_CheckInViewPartial",
             data: {
@@ -689,26 +701,14 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
                 $$(".list-content").html(data);
             }
         });
-        $$(".check-date").on("change", function () {
-            $$.ajax({
-                url: "/Seller/Manager_CheckInViewPartial",
-                data: {
-                    id: $$(".check-date").val()
-                },
-                success: function (data) {
-                    $$(".list-content").html(data);
-                }
-            });
-        });
-        $$(".list-content").on("deleted", ".swipeout", function (e) {
-            var url = "/Seller/Mananger_CancelManagerCheckin";
-            var Id = $$(e.target).attr("data-url");
-            swipe_deleted(url, Id);
-        });
-        PhotoBrowser("manager-checkinview-content");
     });
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Mananger_CancelManagerCheckin";
+        var Id = $$(e.target).attr("data-url");
+        swipe_deleted(url, Id);
+    });
+    PhotoBrowser("manager-checkinview-content");
 });
-
 
 
 
