@@ -392,7 +392,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
     });
 });
 //Senior_CheckInDetails  查看其他人签到信息  图片查看
-$$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function () {
+$$(document).on("pageInit", ".page[data-page='manager-checkindetails']", function () {
     PhotoBrowser("manager-checkindetails");
     LocationBrowser("manager-checkindetails");
 });
@@ -698,6 +698,7 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
         }, 500);
     });
 });
+
 //Manager_CheckInView 查看签到信息
 $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
     $$.ajax({
@@ -727,7 +728,6 @@ $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function ()
     });
     PhotoBrowser("manager-checkinview-content");
 });
-
 
 
 /*************** 督导工具 *************/
