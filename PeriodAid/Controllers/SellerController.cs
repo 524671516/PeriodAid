@@ -2750,7 +2750,7 @@ namespace PeriodAid.Controllers
             string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_userinfo&state=" + "1" + "#wechat_redirect";
             return Redirect(url);
         }
-
+        
         public ActionResult UserAuthorize(string code, string state)
         {
             WeChatUtilities wechat = new WeChatUtilities();
@@ -2841,11 +2841,11 @@ namespace PeriodAid.Controllers
                     await offlineDB.SaveChangesAsync();
                     return Content("SUCCESS");
                 }
-                return View("Error");
+                return Content("FAIL");
             }
             else
             {
-                return View(model);
+                return Content("FAIL");
             }
         }
 
@@ -2953,7 +2953,7 @@ namespace PeriodAid.Controllers
             }
             if (attendance.Count > 0)
                 ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Key);
-            return View();
+            return PartialView();
         }
         public ActionResult Senior_AllCheckInListPartial(string date)
         {
@@ -2969,7 +2969,7 @@ namespace PeriodAid.Controllers
         public ActionResult Senior_CheckInDetails(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
-            return View(item);
+            return PartialView(item);
         }
 
         // 添加需求
@@ -2987,7 +2987,7 @@ namespace PeriodAid.Controllers
             typelist.Add(new { Key = "赠品需求", Value = "赠品需求" });
             typelist.Add(new { Key = "问题调整", Value = "问题调整" });
             ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
-            return View(request);
+            return PartialView(request);
         }
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Mananger_RequestCreate(Off_Manager_Request model)
@@ -3003,7 +3003,7 @@ namespace PeriodAid.Controllers
                     offlineDB.SaveChanges();
                     return Content("SUCCESS");
                 }
-                return PartialView("Error");
+                return Content("FAIL");
             }
             else
             {
@@ -3054,7 +3054,7 @@ namespace PeriodAid.Controllers
                     offlineDB.SaveChanges();
                     return Content("SUCCESS");
                 }
-                return View("Error");
+                return Content("FAIL");
             }
             else
             {
@@ -3094,7 +3094,7 @@ namespace PeriodAid.Controllers
                            where m.Status >= 0 && m.ManagerUserName == User.Identity.Name && m.Off_Store.Off_System_Id == user.DefaultSystemId
                            orderby m.Status, m.Id descending
                            select m;
-                return View(list);
+                return PartialView(list);
             }
         }
         // 作废需求内容
@@ -3112,10 +3112,37 @@ namespace PeriodAid.Controllers
         public ActionResult Manager_RequestView(int id)
         {
             var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
-            return View(item);
+            return PartialView(item);
         }
 
         /************ 巡店 ************/
+        // 刷新店铺数量
+        [HttpPost]
+        public JsonResult Manager_RefreshAllCount()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
+            var today_schedule = from m in offlineDB.Off_Checkin_Schedule
+                                 where storelist.Contains(m.Off_Store_Id)
+                                 && m.Subscribe == today
+                                 select m;
+            int uncheckin = (from m in today_schedule
+                             where m.Off_Checkin.Count(p => p.Status >= 0) == 0
+                             select m).Count();
+            int uncheckout = (from m in today_schedule
+                              where m.Off_Checkin.Any(p => p.Status == 1)
+                              select m).Count();
+            int unreport = (from m in today_schedule
+                            where m.Off_Checkin.Any(p => p.Status == 2)
+                            select m).Count();
+            int unconfirm = (from m in offlineDB.Off_Checkin_Schedule
+                             where m.Off_Checkin.Any(p => p.Status == 3) &&
+                             storelist.Contains(m.Off_Store_Id)
+                             select m).Count();
+            return Json(new { result = "SUCCESS", data = new { uncheckin = uncheckin, uncheckout = uncheckout, unreport = unreport, unconfirm = unconfirm } });
+        }
 
         // 未签到列表
         public ActionResult Manager_UnCheckInList()
@@ -3191,15 +3218,13 @@ namespace PeriodAid.Controllers
         {
             return PartialView();
         }
-        public ActionResult Manager_UnConfirmListPartial(string date)
+        public ActionResult Manager_UnConfirmListPartial()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            DateTime _date = Convert.ToDateTime(date);
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store.Select(m => m.Id);
             var checkin = from m in offlineDB.Off_Checkin
                           where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
-                          && m.Off_Checkin_Schedule.Subscribe == _date
                           && m.Status == 3
                           orderby m.Off_Checkin_Schedule.Off_Store.StoreName
                           select m;
@@ -3236,7 +3261,7 @@ namespace PeriodAid.Controllers
                              where m.StoreId == schedule.Off_Store_Id
                              select m;
             ViewBag.SellerDropDown = new SelectList(sellerlist, "Id", "Name");
-            return View(item);
+            return PartialView(item);
         }
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CreateCheckIn(Off_Checkin model, FormCollection form)
@@ -3387,7 +3412,7 @@ namespace PeriodAid.Controllers
             status_list.Add(new { Key = 2, Value = "已签退" });
             status_list.Add(new { Key = 3, Value = "已提报销量" });
             ViewBag.StatusSelectList = new SelectList(status_list, "Key", "Value", item.Status);
-            return View(item);
+            return PartialView(item);
         }
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_EditCheckin(Off_Checkin model, FormCollection form)
@@ -3484,7 +3509,7 @@ namespace PeriodAid.Controllers
         public ActionResult Manager_CheckinConfirm(int id)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
-            return View(item);
+            return PartialView(item);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -3556,7 +3581,7 @@ namespace PeriodAid.Controllers
         public ActionResult Manager_ViewConfirm(int id)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
-            return View(item);
+            return PartialView(item);
         }
 
         /************ 工具 ************/
@@ -3571,7 +3596,7 @@ namespace PeriodAid.Controllers
                             group m by m.StoreSystem into g
                             select new { Key = g.Key };
             ViewBag.StoreSystem = new SelectList(storelist, "Key", "Key", storelist.FirstOrDefault().Key);
-            return View();
+            return PartialView();
         }
 
         public ActionResult Manager_ReportListPartial(string date, string storesystem)
@@ -3663,7 +3688,7 @@ namespace PeriodAid.Controllers
         public ActionResult Manager_CheckinBonusRemark(int id)
         {
             var checkin = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
-            return View(checkin);
+            return PartialView(checkin);
         }
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CheckinBonusRemark(Off_Checkin model)
@@ -3725,7 +3750,7 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id && m.Off_System_Id == user.DefaultSystemId);
-            return View(seller);
+            return PartialView(seller);
         }
         // 修改促销员信息
         public ActionResult Manager_EditSellerInfo(int id)
@@ -3770,7 +3795,7 @@ namespace PeriodAid.Controllers
         // 红包信息列表
         public ActionResult Manager_BonusList()
         {
-            return View();
+            return PartialView();
         }
         // 未发红包列表
         public ActionResult Manager_BonusList_UnSendPartial()
@@ -4013,7 +4038,7 @@ namespace PeriodAid.Controllers
         }
         public ActionResult ManagerTempSellerDetails()
         {
-            return View();
+            return PartialView();
         }
     }
 }

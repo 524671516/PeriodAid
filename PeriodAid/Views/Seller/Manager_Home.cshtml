@@ -38,8 +38,8 @@
                 </div>
             </div>
             <div class="pages navbar-through toolbar-through">
-                <div class="page" data-page="Home">
-                    <div class="page-content pull-to-refresh-content">
+                <div class="page" data-page="manager-home">
+                    <div class="page-content pull-to-refresh-content" id="home-refresh">
                         <div class="pull-to-refresh-layer">
                             <div class="preloader"></div>
                             <div class="pull-to-refresh-arrow"></div>
@@ -51,7 +51,7 @@
                                     <a href="/Seller/Manager_UnCheckInList" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title">今日未签到</div>
-                                            <div class="item-after">1</div>
+                                            <div class="item-after" id="uncheckin-count">N/A</div>
                                         </div>
                                     </a>
                                 </li>
@@ -59,15 +59,15 @@
                                     <a href="/Seller/Manager_UnCheckOutList" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title">今日未签退</div>
-                                            <div class="item-after">0</div>
+                                            <div class="item-after" id="uncheckout-count">N/A</div>
                                         </div>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="/Seller/Manager_UnReportList" class="item-link item-content">
                                         <div class="item-inner">
-                                            <div class="item-title">未提报销量</div>
-                                            <div class="item-after">0</div>
+                                            <div class="item-title">今日未提报销量</div>
+                                            <div class="item-after" id="unreport-count">N/A</div>
                                         </div>
                                     </a>
                                 </li>
@@ -75,7 +75,7 @@
                                     <a href="/Seller/Manager_UnConfirmList" class="item-link item-content">
                                         <div class="item-inner">
                                             <div class="item-title">销量待确认</div>
-                                            <div class="item-after">0</div>
+                                            <div class="item-after" id="unconfirm-count">N/A</div>
                                         </div>
                                     </a>
                                 </li>

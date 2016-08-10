@@ -31,36 +31,15 @@ $$(".tab-link").on("click", function (data) {
     $(this).addClass("active").siblings().removeClass("active")
 });
 refresh_userpanel();
+refresh_home();
+// Pull to refresh content
+var ptrContent = $$('#home-refresh');
 
-//下拉刷新
-var songs = ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'];
-var authors = ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'];
-
-    // Pull to refresh content
-var ptrContent = $$('.pull-to-refresh-content');
-
-    // Add 'refresh' listener on it
+// Add 'refresh' listener on it
 ptrContent.on('refresh', function (e) {
     // Emulate 2s loading
-    setTimeout(function () {
-        // Random song
-        var song = songs[Math.floor(Math.random() * songs.length)];
-        // Random author
-        var author = authors[Math.floor(Math.random() * authors.length)];
-        // List item html
-        var itemHTML = '<li class="item-content">' +
-                          '<div class="item-inner">' +
-                              '<div class="item-title">' + song + '</div>' +
-                              '<div class="item-after">' + author + '</div>' +
-                          '</div>' +
-                        '</li>';
-        // Prepend new list element
-        ptrContent.find('ul').prepend(itemHTML);
-        // When loading done, we need to reset it
-        myApp.pullToRefreshDone();
-    }, 2000);
+    setTimeout(refresh_home, 500);
 });
-
 
 // 微信初始化
 wx.config({
@@ -418,11 +397,32 @@ $$(document).on("pageInit", ".page[data-page='manager-chekindetails']", function
     LocationBrowser("manager-checkindetails");
 });
 
+
+
+
 /*************** 店铺查询 *************/
+
+$$(document).on("pageInit", ".page[data-page='manager-home']", function () {
+    refresh_home();
+    // Pull to refresh content
+    var ptrContent = $$('#home-refresh');
+
+    // Add 'refresh' listener on it
+    ptrContent.on('refresh', function (e) {
+        // Emulate 2s loading
+        setTimeout(refresh_home, 500);
+    });
+});
+
 //Manager_UnCheckInList  巡店 未签到
-$$(document).on("pageInit", ".page[data-page='manager-unchekinlist']", function () {
+$$(document).on("pageInit", ".page[data-page='manager-uncheckinlist']", function () {
     var url = "/Seller/Manager_UnCheckInListPartial";
     datepicker_refresh(url);
+});
+
+myApp.onPageBack("manager-uncheckinlist", function (e) {
+    var ptrContent = $$('#home-refresh');
+    myApp.pullToRefreshTrigger(ptrContent);
 });
 
 //Manager_UnCheckOutList 巡店 未签退
@@ -436,6 +436,11 @@ $$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", functio
     });
 });
 
+myApp.onPageBack("manager-uncheckoutlist", function (e) {
+    var ptrContent = $$('#home-refresh');
+    myApp.pullToRefreshTrigger(ptrContent);
+});
+
 //Manager_UnReportList 巡店 未提报销量
 $$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function () {
     var url = "/Seller/Manager_UnReportListPartial";
@@ -447,15 +452,30 @@ $$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function 
     });
 });
 
+myApp.onPageBack("manager-unreportlist", function (e) {
+    var ptrContent = $$('#home-refresh');
+    myApp.pullToRefreshTrigger(ptrContent);
+});
+
 //Manager_UnConfirmList 巡店 销量待确认
 $$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
     var url = "/Seller/Manager_UnConfirmListPartial";
     datepicker_refresh(url);
+    $$.ajax({
+        url: "/Seller/Manager_UnConfirmListPartial",
+        success: function (data) {
+            $(".list-content").html(data);
+        }
+    })
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
         swipe_deleted(url, Id)
     });
+});
+myApp.onPageBack("manager-unconfirmlist", function (e) {
+    var ptrContent = $$('#home-refresh');
+    myApp.pullToRefreshTrigger(ptrContent);
 });
 
 //Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
@@ -677,9 +697,19 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
             $("#checkinconfirm-form").submit();
         }, 500);
     });
-
-    //Manager_CheckInView 查看签到信息
-    $$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
+});
+//Manager_CheckInView 查看签到信息
+$$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
+    $$.ajax({
+        url: "/Seller/Manager_CheckInViewPartial",
+        data: {
+            id: $$(".check-date").val()
+        },
+        success: function (data) {
+            $$(".list-content").html(data);
+        }
+    });
+    $$(".check-date").on("change", function () {
         $$.ajax({
             url: "/Seller/Manager_CheckInViewPartial",
             data: {
@@ -689,26 +719,14 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
                 $$(".list-content").html(data);
             }
         });
-        $$(".check-date").on("change", function () {
-            $$.ajax({
-                url: "/Seller/Manager_CheckInViewPartial",
-                data: {
-                    id: $$(".check-date").val()
-                },
-                success: function (data) {
-                    $$(".list-content").html(data);
-                }
-            });
-        });
-        $$(".list-content").on("deleted", ".swipeout", function (e) {
-            var url = "/Seller/Mananger_CancelManagerCheckin";
-            var Id = $$(e.target).attr("data-url");
-            swipe_deleted(url, Id);
-        });
-        PhotoBrowser("manager-checkinview-content");
     });
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Mananger_CancelManagerCheckin";
+        var Id = $$(e.target).attr("data-url");
+        swipe_deleted(url, Id);
+    });
+    PhotoBrowser("manager-checkinview-content");
 });
-
 
 
 
@@ -1539,3 +1557,29 @@ function swipe_deleted(url,Id) {
         }
     });
 };
+
+
+// 刷新首页
+function refresh_home() {
+    $$.ajax({
+        url: "/Seller/Manager_RefreshAllCount",
+        method: "post",
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result == "SUCCESS") {
+                var countlist = data.data;
+                $$("#uncheckin-count").text(countlist.uncheckin);
+                $$("#uncheckout-count").text(countlist.uncheckout);
+                $$("#unreport-count").text(countlist.unreport);
+                $$("#unconfirm-count").text(countlist.unconfirm);
+            }
+            else {
+                $$("#uncheckin-count").text("N/A");
+                $$("#uncheckout-count").text("N/A");
+                $$("#unreport-count").text("N/A");
+                $$("#unconfirm-count").text("N/A");
+            }
+            myApp.pullToRefreshDone();
+        }
+    });
+}
