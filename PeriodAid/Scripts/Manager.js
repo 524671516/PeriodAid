@@ -460,7 +460,6 @@ myApp.onPageBack("manager-unreportlist", function (e) {
 //Manager_UnConfirmList 巡店 销量待确认
 $$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
     var url = "/Seller/Manager_UnConfirmListPartial";
-    datepicker_refresh(url);
     $$.ajax({
         url: "/Seller/Manager_UnConfirmListPartial",
         success: function (data) {
