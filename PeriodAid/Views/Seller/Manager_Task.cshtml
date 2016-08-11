@@ -56,6 +56,8 @@
                             </div>
                         </a>
                     </li>
+                    @if (User.IsInRole("Senior"))
+                    {
                     <li>
                         <a href="/Seller/Senior_AllCheckInList" class="item-link item-content">
                             <div class="item-inner">
@@ -63,6 +65,7 @@
                             </div>
                         </a>
                     </li>
+                    }
                 </ul>
             </div>
             <div class="content-block-title">需求提报</div>

@@ -304,7 +304,49 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
             })
         }, 500);
     });
+});
 
+//Manager_CheckInView 查看签到信息
+$$(document).on("pageInit", ".page[data-page='manager-checkinview']", function () {
+    $$.ajax({
+        url: "/Seller/Manager_CheckInViewPartial",
+        data: {
+            id: $$(".check-date").val()
+        },
+        success: function (data) {
+            $$(".list-content").html(data);
+        }
+    });
+    $$(".check-date").on("change", function () {
+        $$.ajax({
+            url: "/Seller/Manager_CheckInViewPartial",
+            data: {
+                id: $$(".check-date").val()
+            },
+            success: function (data) {
+                $$(".list-content").html(data);
+            }
+        });
+    });
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Mananger_CancelManagerCheckin";
+        var Id = $$(e.target).attr("data-url");
+        swipe_deleted(url, Id);
+    });
+    PhotoBrowser("manager-checkinview-content");
+});
+
+myApp.onPageBack("manager-checkinview", function (e) {
+    $$.ajax({
+        url: "/Seller/Manager_RefreshTaskCount",
+        method: "post",
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result = "SUCCESS") {
+                $$("#managertask-count").text(data.data);
+            }
+        }
+    });
 });
 
 //Senior_AllCheckInList 查看其他人签到
@@ -524,7 +566,7 @@ $$(document).on("pageInit", ".page[data-page='manager-home']", function () {
 });
 
 //Manager_UnCheckInList  巡店 未签到
-$$(document).on("pageInit", ".page[data-page='manager-uncheckinlist']", function () {
+$$(document).on("pageAfterAnimation", ".page[data-page='manager-uncheckinlist']", function () {
     var url = "/Seller/Manager_UnCheckInListPartial";
     datepicker_refresh(url);
 });
@@ -535,7 +577,7 @@ myApp.onPageBack("manager-uncheckinlist", function (e) {
 });
 
 //Manager_UnCheckOutList 巡店 未签退
-$$(document).on("pageInit", ".page[data-page='manager-uncheckoutlist']", function () {
+$$(document).on("pageAfterAnimation", ".page[data-page='manager-uncheckoutlist']", function () {
     var url = "/Seller/Manager_UnCheckOutListPartial";
     datepicker_refresh(url);
     $$(".list-content").on("deleted", ".swipeout", function (e) {
@@ -551,7 +593,7 @@ myApp.onPageBack("manager-uncheckoutlist", function (e) {
 });
 
 //Manager_UnReportList 巡店 未提报销量
-$$(document).on("pageInit", ".page[data-page='manager-unreportlist']", function () {
+$$(document).on("pageAfterAnimation", ".page[data-page='manager-unreportlist']", function () {
     var url = "/Seller/Manager_UnReportListPartial";
     datepicker_refresh(url);
     $$(".list-content").on("deleted", ".swipeout", function (e) {
@@ -567,7 +609,7 @@ myApp.onPageBack("manager-unreportlist", function (e) {
 });
 
 //Manager_UnConfirmList 巡店 销量待确认
-$$(document).on("pageInit", ".page[data-page='manager-unconfirmlist']", function () {
+$$(document).on("pageAfterAnimation", ".page[data-page='manager-unconfirmlist']", function () {
     var url = "/Seller/Manager_UnConfirmListPartial";
     $$.ajax({
         url: "/Seller/Manager_UnConfirmListPartial",
@@ -675,6 +717,7 @@ $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function
 
     });
 });
+
 
 // Manager_EditCheckin 修改签到信息
 $$(document).on("pageInit", ".page[data-page='manager-editcheckin']", function () {
@@ -807,35 +850,7 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
     });
 });
 
-//Manager_CheckInView 查看签到信息
-$$(document).on("pageInit", ".page[data-page='manager-checkinview']", function () {
-    $$.ajax({
-        url: "/Seller/Manager_CheckInViewPartial",
-        data: {
-            id: $$(".check-date").val()
-        },
-        success: function (data) {
-            $$(".list-content").html(data);
-        }
-    });
-    $$(".check-date").on("change", function () {
-        $$.ajax({
-            url: "/Seller/Manager_CheckInViewPartial",
-            data: {
-                id: $$(".check-date").val()
-            },
-            success: function (data) {
-                $$(".list-content").html(data);
-            }
-        });
-    });
-    $$(".list-content").on("deleted", ".swipeout", function (e) {
-        var url = "/Seller/Mananger_CancelManagerCheckin";
-        var Id = $$(e.target).attr("data-url");
-        swipe_deleted(url, Id);
-    });
-    PhotoBrowser("manager-checkinview-content");
-});
+
 
 //Manager_ViewConfirm 查看图片
 $$(document).on("pageInit", ".page[data-page='manager-viewconfirm']", function () {
@@ -1247,12 +1262,13 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
 //Mnanager_StoreList 门店位置信息
 $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
     $$(".store_details").click(function () {
+        var btn = $$(this);
         $.ajax({
             url: "http://apis.map.qq.com/ws/coord/v1/translate",
             type: "get",
             dataType: "jsonp",
             data: {
-                locations: $(this).attr("data-latitude") + "," + $(this).attr("data-longitude"),
+                locations: $$(this).attr("data-latitude") + "," + $$(this).attr("data-longitude"),
                 type: 3,
                 output: "jsonp",
                 key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
@@ -1262,8 +1278,8 @@ $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () 
                     wx.openLocation({
                         latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
                         longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
-                        name: $(this).attr("data-storename"), // 位置名
-                        address: $(this).attr("data-address"), // 地址详情说明
+                        name: btn.attr("data-storename"), // 位置名
+                        address: btn.attr("data-address"), // 地址详情说明
                         scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
                         infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
                     });
@@ -1606,6 +1622,7 @@ function PhotoBrowser(pagename) {
 // 查看位置模块
 function LocationBrowser(pagename) {
     $$("#" + pagename).on("click", ".checkin-lbs", function () {
+
         var lbs = $$(this).attr("data-location").split(',');
         var translbs = lbs[1] + "," + lbs[0];
         var loc_details = $$(this).attr("data-desc");
@@ -1624,7 +1641,7 @@ function LocationBrowser(pagename) {
                     wx.openLocation({
                         latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
                         longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
-                        name: "签到地点", // 位置名
+                        name: "位置信息", // 位置名
                         address: loc_details, // 地址详情说明
                         scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
                         infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转

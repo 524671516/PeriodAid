@@ -2713,6 +2713,7 @@ namespace PeriodAid.Controllers
 
 
         /************ 新版本界面 ************/
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_Home()
         {
             WeChatUtilities utilities = new WeChatUtilities();
@@ -2769,10 +2770,7 @@ namespace PeriodAid.Controllers
             return RedirectToAction("Manager_Home");
         }
         
-        public ActionResult Manager_Tools()
-        {
-            return View();
-        }
+        
         public ActionResult Manager_Tempseller()
         {
             return View();
@@ -2780,6 +2778,8 @@ namespace PeriodAid.Controllers
 
         /************ 签到 ************/
         // 首页
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_Task()
         {
             var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
@@ -2791,6 +2791,8 @@ namespace PeriodAid.Controllers
             return View();
         }
         // 当前个人签到数量
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public JsonResult Manager_RefreshTaskCount()
         {
@@ -2809,6 +2811,8 @@ namespace PeriodAid.Controllers
         }
 
         // 主要工作列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_AnnouncementList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2822,6 +2826,8 @@ namespace PeriodAid.Controllers
         }
 
         // 添加督导签到
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Manager_AddCheckin()
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -2850,6 +2856,8 @@ namespace PeriodAid.Controllers
                 return PartialView(checkin);
             }
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Manager_AddCheckIn(Off_Manager_CheckIn model)
         {
@@ -2876,6 +2884,8 @@ namespace PeriodAid.Controllers
         }
 
         // 督导日报
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_TaskReport(int? id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2894,11 +2904,15 @@ namespace PeriodAid.Controllers
                 ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", _id);
             return PartialView();
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_TaskReportPartial(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
             return PartialView(item);
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_TaskReportPartial(Off_Manager_Task model)
         {
@@ -2921,6 +2935,8 @@ namespace PeriodAid.Controllers
         }
 
         // 督导个人签到查询
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_CheckInView()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2938,6 +2954,8 @@ namespace PeriodAid.Controllers
                 ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Id);
             return View();
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_CheckInViewPartial(int id)
         {
             var list = from m in offlineDB.Off_Manager_CheckIn
@@ -2949,6 +2967,8 @@ namespace PeriodAid.Controllers
         }
 
         // 作废签到位置
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public JsonResult Mananger_CancelManagerCheckin(int id)
         {
@@ -2964,6 +2984,8 @@ namespace PeriodAid.Controllers
         }
 
         // 查看全部督导签到信息
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Senior")]
         public ActionResult Senior_AllCheckInList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -2982,6 +3004,8 @@ namespace PeriodAid.Controllers
                 ViewBag.checkinlist = new SelectList(attendance, "Key", "Value", list.FirstOrDefault().Key);
             return PartialView();
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Senior")]
         public ActionResult Senior_AllCheckInListPartial(string date)
         {
             var _date = Convert.ToDateTime(date);
@@ -2993,6 +3017,8 @@ namespace PeriodAid.Controllers
             return PartialView(list);
         }
         // 督导签到详情
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Senior_CheckInDetails(int id)
         {
             var item = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.Id == id);
@@ -3000,6 +3026,8 @@ namespace PeriodAid.Controllers
         }
 
         // 添加需求
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_RequestCreate()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3016,6 +3044,8 @@ namespace PeriodAid.Controllers
             ViewBag.TypeList = new SelectList(typelist, "Key", "Value");
             return PartialView(request);
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Mananger_RequestCreate(Off_Manager_Request model)
         {
@@ -3049,6 +3079,8 @@ namespace PeriodAid.Controllers
         }
 
         // 修改需求
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_RequestEdit(int id)
         {
             var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
@@ -3067,6 +3099,8 @@ namespace PeriodAid.Controllers
             }
             return PartialView("Error");
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_RequestEdit(Off_Manager_Request model)
         {
@@ -3100,10 +3134,14 @@ namespace PeriodAid.Controllers
         }
 
         // 需求列表
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_RequestList()
         {
             return PartialView();
         }
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_RequestListPartial()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3125,6 +3163,8 @@ namespace PeriodAid.Controllers
             }
         }
         // 作废需求内容
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public JsonResult Manager_CancelRequestJson(int id)
         {
@@ -3136,6 +3176,8 @@ namespace PeriodAid.Controllers
         }
 
         // 需求查看
+        [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_RequestView(int id)
         {
             var item = offlineDB.Off_Manager_Request.SingleOrDefault(m => m.Id == id);
@@ -3143,7 +3185,14 @@ namespace PeriodAid.Controllers
         }
 
         /************ 巡店 ************/
+        [Authorize(Roles = "Manager")]
+        public ActionResult Manager_Tools()
+        {
+            return View();
+        }
+
         // 刷新店铺数量
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public JsonResult Manager_RefreshAllCount()
         {
@@ -3172,11 +3221,12 @@ namespace PeriodAid.Controllers
         }
 
         // 未签到列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnCheckInList()
         {
             return PartialView();
         }
-
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnCheckInListPartial(string date)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3193,6 +3243,7 @@ namespace PeriodAid.Controllers
         }
 
         // 门店促销员列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_ScheduleSeller(int id)
         {
             var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
@@ -3202,10 +3253,12 @@ namespace PeriodAid.Controllers
         }
 
         // 未签退列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnCheckOutList()
         {
             return PartialView();
         }
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnCheckOutListPartial(string date)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3221,10 +3274,12 @@ namespace PeriodAid.Controllers
             return PartialView(checkin);
         }
         // 未提报销量列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnReportList()
         {
             return PartialView();
         }
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnReportListPartial(string date)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3241,10 +3296,12 @@ namespace PeriodAid.Controllers
         }
 
         // 待确认销量列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnConfirmList()
         {
             return PartialView();
         }
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_UnConfirmListPartial()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3268,6 +3325,7 @@ namespace PeriodAid.Controllers
         }
 
         // 作废签到信息
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public ActionResult Manager_DeleteCheckIn(int id)
         {
@@ -3283,6 +3341,7 @@ namespace PeriodAid.Controllers
         }
 
         // 代签到
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_CreateCheckIn(int id)
         {
             var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
@@ -3299,6 +3358,7 @@ namespace PeriodAid.Controllers
             ViewBag.SellerDropDown = new SelectList(sellerlist, "Id", "Name");
             return PartialView(item);
         }
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CreateCheckIn(Off_Checkin model, FormCollection form)
         {
@@ -3375,6 +3435,7 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
+        [Authorize(Roles = "Manager")]
         public PartialViewResult Manager_EditReport_Item(int id, int ScheduleId)
         {
             Off_Checkin item = null;
@@ -3440,6 +3501,7 @@ namespace PeriodAid.Controllers
         }
 
         // 查看并修改签到信息
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_EditCheckin(int id)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
@@ -3450,6 +3512,7 @@ namespace PeriodAid.Controllers
             ViewBag.StatusSelectList = new SelectList(status_list, "Key", "Value", item.Status);
             return PartialView(item);
         }
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_EditCheckin(Off_Checkin model, FormCollection form)
         {
@@ -3542,12 +3605,14 @@ namespace PeriodAid.Controllers
         }
 
         // 审核签到信息
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_CheckinConfirm(int id)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
             return PartialView(item);
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CheckinConfirm(Off_Checkin model)
         {
@@ -3572,6 +3637,7 @@ namespace PeriodAid.Controllers
         }
 
         // 查看销量明细列表
+        [Authorize(Roles = "Manager")]
         public PartialViewResult Manager_ViewReport_Item(int id)
         {
 
@@ -3614,6 +3680,7 @@ namespace PeriodAid.Controllers
         }
 
         // 查看促销信息详细信息
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_ViewConfirm(int id)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
@@ -3623,6 +3690,7 @@ namespace PeriodAid.Controllers
         /************ 工具 ************/
 
         // 销量排名
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_ReportList()
         {
             ViewBag.today = DateTime.Now;
@@ -3635,6 +3703,7 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
 
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_ReportListPartial(string date, string storesystem)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3681,10 +3750,12 @@ namespace PeriodAid.Controllers
         }
 
         // 活动门店列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_EventList()
         {
             return PartialView();
         }
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_EventListPartial(string date)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3700,6 +3771,7 @@ namespace PeriodAid.Controllers
         }
 
         // 管辖门店列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_StoreList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3709,6 +3781,7 @@ namespace PeriodAid.Controllers
         }
 
         // 管辖促销员列表
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_SellerList()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3721,11 +3794,14 @@ namespace PeriodAid.Controllers
             return PartialView(sellerlist);
         }
         // 促销红包填写
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_CheckinBonusRemark(int id)
         {
             var checkin = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
             return PartialView(checkin);
         }
+
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CheckinBonusRemark(Off_Checkin model)
         {
@@ -3782,6 +3858,7 @@ namespace PeriodAid.Controllers
             }
         }
         // 查看促销员详细信息
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_SellerDetails(int id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3789,6 +3866,7 @@ namespace PeriodAid.Controllers
             return PartialView(seller);
         }
         // 修改促销员信息
+        [Authorize(Roles = "Manager")]
         public ActionResult Manager_EditSellerInfo(int id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3807,6 +3885,7 @@ namespace PeriodAid.Controllers
             }
             return PartialView("Error");
         }
+        [Authorize(Roles = "Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_EditSellerInfo(Off_Seller model)
         {
@@ -3828,12 +3907,18 @@ namespace PeriodAid.Controllers
             }
             return Content("FAIL");
         }
+
+
         // 红包信息列表
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         public ActionResult Manager_BonusList()
         {
             return PartialView();
         }
         // 未发红包列表
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         public ActionResult Manager_BonusList_UnSendPartial()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3845,6 +3930,8 @@ namespace PeriodAid.Controllers
             return PartialView(list);
         }
         // 确认审核红包
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         [HttpPost]
         public ActionResult Manager_BonusConfirm(int id)
         {
@@ -3885,7 +3972,10 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+
         // 作废红包
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         [HttpPost]
         public ActionResult Manager_BonusDismiss(int id)
         {
@@ -3908,7 +3998,10 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+
         // 历史红包信息
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         public ActionResult Manager_BonusList_HistoryPartial()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3919,6 +4012,9 @@ namespace PeriodAid.Controllers
                         select m).Take(30);
             return PartialView(list);
         }
+
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
         [HttpPost]
         public async Task<ActionResult> Manager_BonusList_HistoryRefresh()
         {
@@ -3964,6 +4060,7 @@ namespace PeriodAid.Controllers
 
         /************ 暗促 ************/
         // 暗促首页
+        [Authorize(Roles ="Manager")]
         public ActionResult Manager_SellerTaskHome()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -3979,6 +4076,7 @@ namespace PeriodAid.Controllers
         }
 
         // 暗促签到查看
+        [Authorize(Roles = "Manager")]
         public ActionResult ManagerSellerTaskMonthStatistic()
         {
             var startDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-01"));
@@ -3992,6 +4090,8 @@ namespace PeriodAid.Controllers
             ViewBag.SelectMonth = new SelectList(l, "Key", "Value");
             return PartialView();
         }
+
+        [Authorize(Roles = "Manager")]
         public ActionResult ManagerSellerTaskMonthStatisticPartial(string querydate)
         {
             // 获取督导的门店列表
@@ -4021,12 +4121,14 @@ namespace PeriodAid.Controllers
         }
 
         // 暗促促销员信息
+        [Authorize(Roles = "Manager")]
         public ActionResult ManagerSellerTaskSeller(int id)
         {
             ViewBag.SellerId = id;
             return PartialView();
         }
 
+        [Authorize(Roles = "Manager")]
         public ActionResult ManagerSellerTaskSellerPartial(int id, int? page)
         {
             // 第一页为1
@@ -4045,6 +4147,7 @@ namespace PeriodAid.Controllers
         }
 
         // 暗促详情
+        [Authorize(Roles = "Manager")]
         public ActionResult ManagerSellerTaskDetails(int id)
         {
             var item = offlineDB.Off_SellerTask.SingleOrDefault(m => m.Id == id);
@@ -4052,6 +4155,7 @@ namespace PeriodAid.Controllers
         }
 
         // 库存预警
+        [Authorize(Roles = "Manager")]
         public ActionResult ManangerSellerTaskStorageAlert()
         {
             // 最新的库存预紧
@@ -4068,6 +4172,7 @@ namespace PeriodAid.Controllers
         }
 
         // 暗促信息查询
+        [Authorize(Roles = "Manager")]
         public ActionResult ManangerSellerTaskQuery()
         {
             // 获取督导的门店列表
@@ -4080,10 +4185,6 @@ namespace PeriodAid.Controllers
                            select new Wx_SellerTaskMonthStatistic { Off_Seller = g.Key, AttendanceCount = g.Count() };
             //ViewBag.TaskList = tasklist;
             return PartialView(tasklist);
-        }
-        public ActionResult ManagerTempSellerDetails()
-        {
-            return PartialView();
         }
     }
 }
