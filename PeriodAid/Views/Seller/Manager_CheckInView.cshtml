@@ -16,26 +16,25 @@
 <div class="pages">
     <div class="page" data-page="manager-checkinview">
         <div class="page-content">
-
-@if (ViewBag.checkinlist != null)
-{
-            <div class="content-block-title">选择/编辑数据</div>
-            <div class="list-block">
-                <ul>
-                    <li>
-                        <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="搜索日期" data-searchbar-cancel="取消">
-                            @Html.DropDownList("checklist", ViewBag.checkinlist as SelectList, new { @class = "check-date" })
-                            <div class="item-content">
-                                <div class="item-inner">
-                                    <div class="item-title">日期</div>
+            @if (ViewBag.checkinlist != null)
+            {
+                <div class="content-block-title">选择/编辑数据</div>
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="搜索日期" data-searchbar-cancel="取消">
+                                @Html.DropDownList("checklist", ViewBag.checkinlist as SelectList, new { @class = "check-date" })
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">日期</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="list-content" id="manager-checkinview-content"></div>
-}      
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-content" id="manager-checkinview-content"></div>
+            }
         </div>
     </div>
 </div>
