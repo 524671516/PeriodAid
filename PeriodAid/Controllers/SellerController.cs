@@ -3253,8 +3253,17 @@ namespace PeriodAid.Controllers
             var checkin = from m in offlineDB.Off_Checkin
                           where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
                           && m.Status == 3
-                          orderby m.Off_Checkin_Schedule.Off_Store.StoreName
                           select m;
+            var dategroup = from m in checkin
+                                group m by m.Off_Checkin_Schedule.Subscribe into g
+                                orderby g.Key descending
+                                select new { g.Key };
+            List<DateTime> p = new List<DateTime>();
+            foreach(var item in dategroup)
+            {
+                p.Add(item.Key);
+            }
+            ViewBag.DateGroup = p;
             return PartialView(checkin);
         }
 
