@@ -1252,7 +1252,7 @@ $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () 
             type: "get",
             dataType: "jsonp",
             data: {
-                locations: $$(this).attr("data-latitude") + "," + $$(this).attr("data-longitude"),
+                locations: $(this).attr("data-latitude") + "," + $(this).attr("data-longitude"),
                 type: 3,
                 output: "jsonp",
                 key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
@@ -1262,8 +1262,8 @@ $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () 
                     wx.openLocation({
                         latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
                         longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
-                        name: $$(this).attr("data-storename"), // 位置名
-                        address: $$(this).attr("data-address"), // 地址详情说明
+                        name: $(this).attr("data-storename"), // 位置名
+                        address: $(this).attr("data-address"), // 地址详情说明
                         scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
                         infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
                     });
