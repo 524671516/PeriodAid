@@ -43,7 +43,7 @@ ptrContent.on('refresh', function (e) {
 
 // 微信初始化
 wx.config({
-    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
     appId: $("#appId").text(), // 必填，公众号的唯一标识
     timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
     nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
@@ -57,6 +57,89 @@ wx.config({
 $$(document).on("touchstart", "a.random-param", function () {
     var url = $$(this).attr("href") + "&rand=" + Math.random() * 500;
     $$(this).attr("href", url);
+});
+
+//使用指南
+var photo = [
+           {
+               url: "/Content/images/Manager_app_01.jpg",
+               caption: "督导签到 - - 首页"
+           },
+           {
+               url: "/Content/images/Manager_app_03.jpg",
+               caption: "督导签到 - - 首页"
+           },
+           {
+               url: "/Content/images/Manager_app_02.jpg",
+               caption: "督导签到 - - 督导个人信息"
+           },
+           {
+               url: "/Content/images/Manager_app_04.jpg",
+               caption: "督导签到 - - 督导每日签到"
+           },
+           {
+               url: "/Content/images/Manager_app_05.jpg",
+               caption: "督导签到 - - 督导工作日报"
+           },
+           {
+               url: "/Content/images/Manager_app_06.jpg",
+               caption: "督导签到 - - 查看个人签到信息"
+           },
+           {
+               url: "/Content/images/Manager_app_07.jpg",
+               caption: "督导签到 - - 查看其他督导签到"
+           },
+           {
+               url: "/Content/images/Manager_app_08.jpg",
+               caption: "督导签到 - - 店铺提报列表"
+           },
+           {
+               url: "/Content/images/Manager_app_09.jpg",
+               caption: "督导巡店 - - 首页"
+           },
+           {
+               url: "/Content/images/Manager_app_10.jpg",
+               caption: "督导巡店 - - 未签到"
+           },
+           {
+               url: "/Content/images/Manager_app_11.jpg",
+               caption: "督导巡店 - - 未签退"
+           },
+           {
+               url: "/Content/images/Manager_app_12.jpg",
+               caption: "督导巡店 - - 修改签到信息"
+           },
+           {
+               url: "/Content/images/Manager_app_13.jpg",
+               caption: "督导管理 - - 首页"
+           },
+           {
+               url: "/Content/images/Manager_app_14.jpg",
+               caption: "督导管理 - - 销量排名"
+           },
+           {
+               url: "/Content/images/Manager_app_15.jpg",
+               caption: "督导管理 - - 红包发放"
+           },
+           {
+               url: "/Content/images/Manager_app_16.jpg",
+               caption: "督导管理 - - 红包记录"
+           },
+           {
+               url: "/Content/images/Manager_app_17.jpg",
+               caption: "督导暗促 - - 首页"
+           },
+]
+var myPhotoBrowserPopupDark = myApp.photoBrowser({
+    photos: photo,
+    theme: 'dark',
+    type: 'standalone',
+    lazyLoading: true,
+    zoom: false,
+    backLinkText: '关闭'
+});
+$$("#manager_userpanel").on("click", ".manager-photolist", function () {
+    myPhotoBrowserPopupDark.open();
 });
 
 /*************** 督导签到 *************/
@@ -80,7 +163,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
     uploadCheckinFile("manager-task-addcheckin", "manager-imglist", "Photo", "current_image", 3);
     uploadLocationWithDetails("location-btn", "Location", "Location_Desc");
     $("#addcheckin_form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
@@ -281,7 +364,7 @@ $$(document).on("pageInit", ".page[data-page='manager-request-list']", function 
 $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", function () {
     currentTextAreaLength("manager-task-requestcreate", "RequestContent", 500, "requestcontent_length");
     $("#requestcreate-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
@@ -351,7 +434,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
 $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", function () {
     currentTextAreaLength("manager-task-requestedit", "RequestContent", 500, "requestcontent_length");
     $("#requestedit-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
@@ -510,7 +593,7 @@ $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function
     uploadCheckinFile("reportphoto-area", "manager-report-imglist", "Rep_Image", "report-current-image", 7);
     currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
     $("#createcheckin-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
@@ -600,7 +683,7 @@ $$(document).on("pageInit", ".page[data-page='manager-editcheckin']", function (
     uploadCheckinFile("reportphoto-area", "manager-report-imglist", "Rep_Image", "report-current-image", 7);
     currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
     $("#editcheckin-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
@@ -667,7 +750,7 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
     LocationBrowser("checkout-location");
     currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
     $("#checkinconfirm-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
@@ -752,6 +835,11 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinview']", function (
         swipe_deleted(url, Id);
     });
     PhotoBrowser("manager-checkinview-content");
+});
+
+//Manager_ViewConfirm 查看图片
+$$(document).on("pageInit", ".page[data-page='manager-viewconfirm']", function () {
+    PhotoBrowser("manager-viewconfirm");
 });
 
 
@@ -857,7 +945,7 @@ $$(document).on("pageInit", ".page[data-page='manager-tasksellerdetails']", func
 $$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function () {
     currentTextAreaLength("manager-bonusremark", "Bonus_Remark", 100, "confirmremark_length");
     $("#bonusremark-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
@@ -969,7 +1057,7 @@ $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function (
 $$(document).on("pageInit", ".page[data-page='manager-editsellerinfo']", function () {
 
     $("#editsellerinfo-form").validate({
-        debug: true, //调试模式取消submit的默认提交功能   
+        debug: false, //调试模式取消submit的默认提交功能   
         errorClass: "custom-error", //默认为错误的样式类为：error   
         focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
@@ -1155,90 +1243,6 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
     });
 });
 
-//Manager_Tools 督导使用指南
-$$(document).on("pageInit", ".page[data-page='manager-tools']", function () {
-    var photo = [
-        {
-            url: "/Content/images/Manager_app_01.jpg",
-            caption:"督导签到 - - 首页"
-        },
-        {
-            url: "/Content/images/Manager_app_03.jpg",
-            caption: "督导签到 - - 首页"
-        },
-        {
-            url: "/Content/images/Manager_app_02.jpg",
-            caption: "督导签到 - - 督导个人信息"
-        },
-        {
-            url: "/Content/images/Manager_app_04.jpg",
-            caption: "督导签到 - - 督导每日签到"
-        },
-        {
-            url: "/Content/images/Manager_app_05.jpg",
-            caption: "督导签到 - - 督导工作日报"
-        },
-        {
-            url: "/Content/images/Manager_app_06.jpg",
-            caption: "督导签到 - - 查看个人签到信息"
-        },
-        {
-            url: "/Content/images/Manager_app_07.jpg",
-            caption: "督导签到 - - 查看其他督导签到"
-        },
-        {
-            url: "/Content/images/Manager_app_08.jpg",
-            caption: "督导签到 - - 店铺提报列表"
-        },
-        {
-            url: "/Content/images/Manager_app_09.jpg",
-            caption: "督导巡店 - - 首页"
-        },
-        {
-            url: "/Content/images/Manager_app_10.jpg",
-            caption: "督导巡店 - - 未签到"
-        },
-        {
-            url: "/Content/images/Manager_app_11.jpg",
-            caption: "督导巡店 - - 未签退"
-        },
-        {
-            url: "/Content/images/Manager_app_12.jpg",
-            caption: "督导巡店 - - 修改签到信息"
-        },
-        {
-            url: "/Content/images/Manager_app_13.jpg",
-            caption: "督导管理 - - 首页"
-        },
-        {
-            url: "/Content/images/Manager_app_14.jpg",
-            caption: "督导管理 - - 销量排名"
-        },
-        {
-            url: "/Content/images/Manager_app_15.jpg",
-            caption: "督导管理 - - 红包发放"
-        },
-        {
-            url: "/Content/images/Manager_app_16.jpg",
-            caption: "督导管理 - - 红包记录"
-        },
-        {
-            url: "/Content/images/Manager_app_17.jpg",
-            caption: "督导暗促 - - 首页"
-        },
-    ]
-    var myPhotoBrowserPopupDark = myApp.photoBrowser({
-        photos: photo,
-        theme: 'dark',
-        type: 'standalone',
-        lazyLoading: true,
-        zoom: false,
-        backLinkText: '关闭'
-    });
-    $$('.manager-photolist').on('click', function (e) {
-        myPhotoBrowserPopupDark.open();
-    });
-});
 
 //Mnanager_StoreList 门店位置信息
 $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {

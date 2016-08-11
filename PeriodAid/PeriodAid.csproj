@@ -417,6 +417,7 @@
     <Content Include="Scripts\html5.js" />
     <Content Include="Scripts\Manager.js" />
     <Content Include="Scripts\maapp.js" />
+    <Content Include="Scripts\Manager.min.js" />
     <Content Include="Scripts\my-app.js" />
     <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\my-validate.js" />
