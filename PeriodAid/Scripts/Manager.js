@@ -1217,7 +1217,7 @@ $$(document).on("pageInit", ".page[data-page='manager-tools']", function () {
 //Mnanager_StoreList 门店位置信息
 $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
     $$(".store_details").click(function () {
-        $$.ajax({
+        $.ajax({
             url: "http://apis.map.qq.com/ws/coord/v1/translate",
             type: "get",
             dataType: "jsonp",
