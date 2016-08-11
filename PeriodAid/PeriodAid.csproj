@@ -868,7 +868,7 @@
     <Content Include="Views\Seller\Manager_Request_Check.cshtml" />
     <Content Include="Views\Seller\Manager_Task.cshtml" />
     <Content Include="Views\Seller\Manager_Tools.cshtml" />
-    <Content Include="Views\Seller\Manager_Tempseller.cshtml" />
+    <Content Include="Views\Seller\Manager_SellerTaskHome.cshtml" />
     <Content Include="Views\Seller\Manager_UnCheckInList.cshtml" />
     <Content Include="Views\Seller\Manager_ReportList.cshtml" />
     <Content Include="Views\Seller\Manager_EventList.cshtml" />

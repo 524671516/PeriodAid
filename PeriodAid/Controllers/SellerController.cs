@@ -2768,10 +2768,7 @@ namespace PeriodAid.Controllers
             UserManager.Update(user);
             return RedirectToAction("Manager_Home");
         }
-        public ActionResult Manager_Task()
-        {
-            return View();
-        }
+        
         public ActionResult Manager_Tools()
         {
             return View();
@@ -2782,6 +2779,34 @@ namespace PeriodAid.Controllers
         }
 
         /************ 签到 ************/
+        // 首页
+        public ActionResult Manager_Task()
+        {
+            var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            ViewBag.Weekly = today.AddDays(1 - (int)today.DayOfWeek).ToString("MM/dd") + " - " + today.AddDays(7 - (int)today.DayOfWeek).ToString("MM/dd");
+            ViewBag.AnnounceCount = (from m in offlineDB.Off_Manager_Announcement
+                                     where m.ManagerUserName.Contains(User.Identity.Name)
+                                     && today >= m.StartTime && today < m.FinishTime
+                                     select m).Count();
+            return View();
+        }
+        // 当前个人签到数量
+        [HttpPost]
+        public JsonResult Manager_RefreshTaskCount()
+        {
+            var today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var task = offlineDB.Off_Manager_Task.SingleOrDefault(m => m.TaskDate == today && m.Status >= 0 && m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
+            if (task == null)
+            {
+                return Json(new { result = "SUCCESS", data = 0 });
+            }
+            else
+            {
+                int count = task.Off_Manager_CheckIn.Count(m => m.Canceled == false);
+                return Json(new { result = "SUCCESS", data = count });
+            }
+        }
 
         // 主要工作列表
         public ActionResult Manager_AnnouncementList()
@@ -2795,6 +2820,7 @@ namespace PeriodAid.Controllers
                        select m;
             return PartialView(list);
         }
+
         // 添加督导签到
         public async Task<ActionResult> Manager_AddCheckin()
         {
@@ -2921,6 +2947,7 @@ namespace PeriodAid.Controllers
             ViewBag.TaskId = id;
             return PartialView(list);
         }
+
         // 作废签到位置
         [HttpPost]
         public JsonResult Mananger_CancelManagerCheckin(int id)
@@ -3937,8 +3964,17 @@ namespace PeriodAid.Controllers
 
         /************ 暗促 ************/
         // 暗促首页
-        public ActionResult ManagerSellerTaskHome()
+        public ActionResult Manager_SellerTaskHome()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = string.Join(",", manager.Off_Store.Select(m => m.Id));
+            // 使用SQL查询
+            string sql = "SELECT t.Id,t.ApplyDate, Min(t3.StorageCount) as MinStorage, T4.StoreName FROM[dbo].[Off_SellerTask] as t left join dbo.Off_SellerTaskProduct as t3 on t.Id= t3.SellerTaskId left join" +
+                " dbo.Off_Store as T4 on t.StoreId = T4.Id where t.Id = (select top 1 t2.Id from [dbo].[Off_SellerTask] t2 where t2.StoreId in (" + storelist + ") and t2.StoreId = t.StoreId order by T2.ApplyDate desc) and t3.StorageCount>0" +
+                " group by t.Id, T4.StoreName, t.ApplyDate having MIN(t3.StorageCount)<50";
+            var tasklist = offlineDB.Database.SqlQuery<Wx_SellerTaskAlert>(sql);
+            ViewBag.AlertCount = tasklist.Count();
             return PartialView();
         }
 
