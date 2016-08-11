@@ -18,9 +18,9 @@
                             <div class="item-media img-box color-blue"><i class="fa fa-calendar-check-o"></i></div>
                             <div class="item-inner" style="background: url('../../fonts/right.svg') no-repeat; background-position:calc(100% - 15px) center;background-size:10px 20px">
                                 <div class="item-title-row">
-                                    <div class="item-title color-black">本周工作 (07/18 - 07/24)</div>
+                                    <div class="item-title color-black">本周工作 (<span>@Html.Encode(ViewBag.Weekly)</span>)</div>
                                 </div>
-                                <div class="item-subtitle color-gray" style="padding:14px 0">当前重点工作项目: 0</div>
+                                <div class="item-subtitle color-gray" style="padding:14px 0">当前重点工作项目: @Html.Encode(ViewBag.AnnounceCount)</div>
                             </div>
                         </a>
                     </li>
@@ -33,7 +33,7 @@
                         <a href="/Seller/Manager_AddCheckin" class="item-link item-content">
                             <div class="item-inner">
                                 <div class="item-title">添加签到信息</div>
-                                <div class="item-after">已签到0次</div>
+                                <div class="item-after"><sapn class="badge bg-yellow" id="managertask-count">N/A</sapn></div>
                             </div>
                         </a>
                     </li>

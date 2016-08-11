@@ -60,6 +60,18 @@ $$(document).on("touchstart", "a.random-param", function () {
 });
 
 /*************** 督导签到 *************/
+$$(document).on("pageInit", ".page[data-page='manager-task']", function (e) {
+    $$.ajax({
+        url: "/Seller/Manager_RefreshTaskCount",
+        method: "post",
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result = "SUCCESS") {
+                $$("#managertask-count").text(data.data);
+            }
+        }
+    });
+});
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", function (e) {
     // 获取当前备注文本长度
@@ -127,6 +139,19 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
 
     });
 });
+
+myApp.onPageBack("manager-task-addcheckin", function () {
+    $$.ajax({
+        url: "/Seller/Manager_RefreshTaskCount",
+        method: "post",
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result = "SUCCESS") {
+                $$("#managertask-count").text(data.data);
+            }
+        }
+    })
+})
 
 //Manager_TaskReport 督导工作日报 填写内容字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
@@ -392,6 +417,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
     });
 });
 //Senior_CheckInDetails  查看其他人签到信息  图片查看
+
 $$(document).on("pageInit", ".page[data-page='manager-checkindetails']", function () {
     PhotoBrowser("manager-checkindetails");
     LocationBrowser("manager-checkindetails");
@@ -700,7 +726,7 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
 });
 
 //Manager_CheckInView 查看签到信息
-$$(document).on("pageInit", ".page[data-page='manager-chekinview']", function () {
+$$(document).on("pageInit", ".page[data-page='manager-checkinview']", function () {
     $$.ajax({
         url: "/Seller/Manager_CheckInViewPartial",
         data: {
@@ -1135,7 +1161,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
 
 /*************** 暗促信息 *************/
 //Manager_TempSellerDetails  暗促系统  暗促签到图片查看
-$$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function (e) {
+$$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", function () {
     var phList = $("#sellertask-details-phlist").val().split(",");
     var photo = new Array();
     $$.each(phList, function (num, ph) {
@@ -1181,7 +1207,7 @@ $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", funct
 });
 
 //ManangerSellerTaskSeller 暗促系统  暗促签到列表  无限循环
-$$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function (e) {
+$$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", function () {
     var page = 1;
     var url = "/Seller/ManagerSellerTaskSellerPartial";
     $$.ajax({
