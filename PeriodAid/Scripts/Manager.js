@@ -1129,6 +1129,119 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
     });
 });
 
+//Manager_Tools 督导使用指南
+$$(document).on("pageInit", ".page[data-page='manager-tools']", function () {
+    var photo = [
+        {
+            url: "/Content/images/Manager_app_01.jpg",
+            caption:"督导签到 - - 首页"
+        },
+        {
+            url: "/Content/images/Manager_app_03.jpg",
+            caption: "督导签到 - - 首页"
+        },
+        {
+            url: "/Content/images/Manager_app_02.jpg",
+            caption: "督导签到 - - 督导个人信息"
+        },
+        {
+            url: "/Content/images/Manager_app_04.jpg",
+            caption: "督导签到 - - 督导每日签到"
+        },
+        {
+            url: "/Content/images/Manager_app_05.jpg",
+            caption: "督导签到 - - 督导工作日报"
+        },
+        {
+            url: "/Content/images/Manager_app_06.jpg",
+            caption: "督导签到 - - 查看个人签到信息"
+        },
+        {
+            url: "/Content/images/Manager_app_07.jpg",
+            caption: "督导签到 - - 查看其他督导签到"
+        },
+        {
+            url: "/Content/images/Manager_app_08.jpg",
+            caption: "督导签到 - - 店铺提报列表"
+        },
+        {
+            url: "/Content/images/Manager_app_09.jpg",
+            caption: "督导巡店 - - 首页"
+        },
+        {
+            url: "/Content/images/Manager_app_10.jpg",
+            caption: "督导巡店 - - 未签到"
+        },
+        {
+            url: "/Content/images/Manager_app_11.jpg",
+            caption: "督导巡店 - - 未签退"
+        },
+        {
+            url: "/Content/images/Manager_app_12.jpg",
+            caption: "督导巡店 - - 修改签到信息"
+        },
+        {
+            url: "/Content/images/Manager_app_13.jpg",
+            caption: "督导管理 - - 首页"
+        },
+        {
+            url: "/Content/images/Manager_app_14.jpg",
+            caption: "督导管理 - - 销量排名"
+        },
+        {
+            url: "/Content/images/Manager_app_15.jpg",
+            caption: "督导管理 - - 红包发放"
+        },
+        {
+            url: "/Content/images/Manager_app_16.jpg",
+            caption: "督导管理 - - 红包记录"
+        },
+        {
+            url: "/Content/images/Manager_app_17.jpg",
+            caption: "督导暗促 - - 首页"
+        },
+    ]
+    var myPhotoBrowserPopupDark = myApp.photoBrowser({
+        photos: photo,
+        theme: 'dark',
+        type: 'standalone',
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: '关闭'
+    });
+    $$('.manager-photolist').on('click', function (e) {
+        myPhotoBrowserPopupDark.open();
+    });
+});
+
+//Mnanager_StoreList 门店位置信息
+$$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
+    $$(".store_details").click(function () {
+        $$.ajax({
+            url: "http://apis.map.qq.com/ws/coord/v1/translate",
+            type: "get",
+            dataType: "jsonp",
+            data: {
+                locations: $$(this).attr("data-latitude") + "," + $$(this).attr("data-longitude"),
+                type: 3,
+                output: "jsonp",
+                key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+            },
+            success: function (data) {
+                if (data.status == 0) {
+                    wx.openLocation({
+                        latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                        longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                        name: $$(this).attr("data-storename"), // 位置名
+                        address: $$(this).attr("data-address"), // 地址详情说明
+                        scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                        infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                    });
+                }
+            }
+        });
+    });
+});
 
 
 
