@@ -335,15 +335,19 @@ namespace PeriodAid.Controllers
             return result;
         }
         // 判断跳转页面
-        public ActionResult Wx_Seller_Redirect(int systemid)
+        public ActionResult Wx_Seller_Redirect(int systemid, int? version)
         {
-            if (User.IsInRole("Seller"))
+            int _version = version ?? 0;
+            if (User.IsInRole("Manager"))
+            {
+                if (_version == 0)
+                    return RedirectToAction("Wx_Manager_Home");
+                else
+                    return RedirectToAction("Manager_Home");
+            }
+            else if (User.IsInRole("Seller"))
             {
                 return RedirectToAction("Wx_Seller_Home");
-            }
-            else if (User.IsInRole("Manager"))
-            {
-                return RedirectToAction("Wx_Manager_Home");
             }
             else
             {
@@ -2713,6 +2717,68 @@ namespace PeriodAid.Controllers
 
 
         /************ 新版本界面 ************/
+        [AllowAnonymous]
+        public ActionResult LoginManager_New(int? systemid)
+        {
+            int _systemid = systemid ?? 1;
+            string user_Agent = HttpContext.Request.UserAgent;
+            if (user_Agent.Contains("MicroMessenger"))
+            {
+                //return Content("微信");
+                string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Seller/Authorization_New");
+                string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+                string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_base&state=" + _systemid + "#wechat_redirect";
+
+                return Redirect(url);
+            }
+            else
+            {
+                return Content("其他");
+            }
+        }
+        [AllowAnonymous]
+        public async Task<ActionResult> Authorization_New(string code, string state)
+        {
+            //return Content(code);
+            //string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            try
+            {
+
+                WeChatUtilities wechat = new WeChatUtilities();
+                var jat = wechat.getWebOauthAccessToken(code);
+                var user = UserManager.FindByEmail(jat.openid);
+                int systemid = Convert.ToInt32(state);
+                if (user != null)
+                {
+                    //var user = UserManager.FindByName("13636314852");
+                    if (user.OffSalesSystem != null)
+                    {
+                        string[] systemArray = user.OffSalesSystem.Split(',');
+                        if (systemArray.Contains(state))
+                        {
+                            user.DefaultSystemId = systemid;
+
+                            UserManager.Update(user);
+                            await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                            return RedirectToAction("Wx_Seller_Redirect", new { systemid = systemid, version = 1 });
+                        }
+                    }
+                    else
+                    {
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        return RedirectToAction("Wx_Seller_Redirect", new { systemid = systemid, version = 1 });
+                    }
+                }
+                //return Content(jat.openid + "," + jat.access_token);
+                return RedirectToAction("Wx_Register", "Seller", new { open_id = jat.openid, accessToken = jat.access_token, systemid = systemid });
+            }
+            catch (Exception ex)
+            {
+                CommonUtilities.writeLog(ex.Message);
+                return View("Error");
+            }
+        }
+
         [Authorize(Roles = "Manager")]
         public ActionResult Manager_Home()
         {
