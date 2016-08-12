@@ -866,7 +866,7 @@ namespace PeriodAid.Controllers
                                        where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
                                        orderby m.TemplateName
                                        select new { Key = m.Id, Value = m.TemplateName };
-                    ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
+                    ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value", item.TemplateId);
                     return PartialView(item);
                 }
                 else

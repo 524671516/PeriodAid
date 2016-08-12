@@ -9,7 +9,6 @@
         @Html.HiddenFor(model => model.Id)
         @Html.HiddenFor(model => model.Off_Store_Id)
         @Html.HiddenFor(model => model.Off_System_Id)
-        @Html.HiddenFor(m => m.TemplateId)
         <div class="form-group">
             <label class="control-label col-md-3">店铺名称</label>
             <div class="col-md-9">
@@ -45,7 +44,7 @@
             <label class="control-label col-md-3">提报模板</label>
             <div class="col-md-9">
                 @Html.DropDownListFor(model => model.TemplateId, ViewBag.TemplateList as SelectList, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Standard_CheckOut, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.TemplateId, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -64,19 +63,25 @@
         </div>
     </div>
 }
-<script src="~/Scripts/JavaScript.js"></script>
 <script>
     $('#offsales-schedule-form').ajaxForm(function (data) {
         if (data == "SUCCESS") {
             alert("修改成功");
-            $('#myModal').modal('hide');
-            var attr = $("#offsalesschedule-current-date").val();
-            window.location = "/OffSales/ViewScheduleDetails?date=" + attr;
+            $('.modal-box').modal('hide');
+            $.ajax({
+                url: "/OffCheckin/ViewScheduleDetailsPartial",
+                data: {
+                    date: $("#offsalesschedule-current-date").val()
+                },
+                success: function (data) {
+                    $("#offsalesschedule-list").html(data);
+                    alert("2222")
+                }
+            });
         }
         else {
-            $("#editcontent").html(data);
+            $(".modal-con").html(data);
         }
-
     });
 </script>
 
