@@ -1034,6 +1034,10 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
                 $$("#manager-eventlist-content").html(data);
             }
         });
+        //滑动删除
+        var url = "";
+        var Id=$$(e.target).attr("data-url")
+        swipe_deleted(url, Id);
     });
 });
 
