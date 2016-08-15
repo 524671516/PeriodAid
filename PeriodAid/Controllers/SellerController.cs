@@ -3836,6 +3836,56 @@ namespace PeriodAid.Controllers
             return PartialView(schedulelist);
         }
 
+        // 删除活动记录
+        [Authorize(Roles = "Manager")]
+        [HttpPost]
+        public ActionResult Manager_DeleteEvent(int id)
+        {
+            var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            if (schedule!=null)
+            {
+                // 确认活动预约下是否有没有作废的签到
+                var exist = schedule.Off_Checkin.Any(m => m.Status >= 0);
+                if (exist)
+                {
+                    offlineDB.Off_Checkin_Schedule.Remove(schedule);
+                    offlineDB.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                else
+                {
+                    return Json(new { result = "FAIL" });
+                }
+
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        // 添加日程记录
+        [Authorize(Roles ="Manager")]
+        public ActionResult Manager_CreateEvent()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store;
+            ViewBag.StoreList = new SelectList(storelist, "StoreName", "Id");
+            var grouplist = from m in storelist
+                            group m by m.StoreSystem into g
+                            select g;
+            ViewBag.GroupList = grouplist;
+            Off_Checkin_Schedule model = new Off_Checkin_Schedule();
+            model.Off_System_Id = user.DefaultSystemId;
+            return PartialView(model);
+        }
+        [Authorize(Roles ="Manager")]
+        public ActionResult Manager_CreateEvent(FormCollection form)
+        {
+            return Content("SUCCESS");
+        }
+
+        // 
+
+
         // 管辖门店列表
         [Authorize(Roles = "Manager")]
         public ActionResult Manager_StoreList()

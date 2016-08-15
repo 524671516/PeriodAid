@@ -25,7 +25,6 @@ $$(document).on("ajaxComplete", function (e) {
 });
 
 var monthNames = ["一月份", "二月份", "三月份", "四月份", "五月份", "六月份", "七月份", "八月份", "九月份", "十月份", "十一月份", "十二月份"];
-
 var monthNamesShort = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
 
 var dayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
@@ -36,18 +35,19 @@ var dayNamesShort = ["日", "一", "二", "三", "四", "五", "六"];
 
 //tab-list 底部工具栏转换
 $$(".tab-link").on("click", function (data) {
-    var url = $$(this).attr("data-href");
-    mainView.router.load({
-        url: url,
-        animatePages: false
-    });
-    $(this).addClass("active").siblings().removeClass("active");
+    if (!$$(this).hasClass("active")) {
+        var url = $$(this).attr("data-href");
+        mainView.router.load({
+            url: url,
+            animatePages: false
+        });
+        $(this).addClass("active").siblings().removeClass("active");
+    }
 });
 
 refresh_userpanel();
 
 refresh_home();
-
 // Pull to refresh content
 var ptrContent = $$("#home-refresh");
 
@@ -550,7 +550,6 @@ $$(document).on("pageInit", ".page[data-page='manager-checkindetails']", functio
 /*************** 店铺查询 *************/
 $$(document).on("pageInit", ".page[data-page='manager-home']", function () {
     refresh_home();
-    // Pull to refresh content
     var ptrContent = $$("#home-refresh");
     // Add 'refresh' listener on it
     ptrContent.on("refresh", function (e) {
@@ -580,11 +579,11 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-uncheckoutlist']
         swipe_deleted(url, Id);
     });
 });
-
 myApp.onPageBack("manager-uncheckoutlist", function (e) {
     var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
+
 
 //Manager_UnReportList 巡店 未提报销量
 $$(document).on("pageAfterAnimation", ".page[data-page='manager-unreportlist']", function () {
@@ -596,11 +595,11 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-unreportlist']",
         swipe_deleted(url, Id);
     });
 });
-
 myApp.onPageBack("manager-unreportlist", function (e) {
     var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
+
 
 //Manager_UnConfirmList 巡店 销量待确认
 $$(document).on("pageAfterAnimation", ".page[data-page='manager-unconfirmlist']", function () {
@@ -617,11 +616,11 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-unconfirmlist']"
         swipe_deleted(url, Id);
     });
 });
-
 myApp.onPageBack("manager-unconfirmlist", function (e) {
     var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
+
 
 //Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function () {
@@ -843,7 +842,7 @@ $$(document).on("pageInit", ".page[data-page='manager-viewconfirm']", function (
 
 /*************** 督导工具 *************/
 //Manager_ReportList  销量排名 查看日期
-$$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e) {
+$$(document).on("pageAfterAnimation", ".page[data-page='manager-reportlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: "#manager-reportlist-date",
         monthNames: monthNames,
