@@ -1042,6 +1042,19 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
     });
 });
 
+//ManagerAddSchedule
+$$(document).on("pageInit", ".page[data-page='manager-addschedule']", function () {
+    var calendarMultiple = myApp.calendar({
+        input: '#startDate',
+        dateFormat: 'yyyy-mm-dd',
+        multiple: true,
+        monthNames: monthNames,
+        monthNamesShort: monthNamesShort,
+        dayNames: dayNames,
+        dayNamesShort: dayNamesShort,
+    });
+});
+
 //Manager_QuerySeller  搜索促销员
 $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function () {
     var mySearchbar = myApp.searchbar(".searchbar", {
