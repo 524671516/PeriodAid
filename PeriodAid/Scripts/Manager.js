@@ -1034,14 +1034,17 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
                 $$("#manager-eventlist-content").html(data);
             }
         });
-        //滑动删除
-        var url = "";
-        var Id=$$(e.target).attr("data-url")
+    });
+    //滑动删除
+    $$("#manager-eventlist-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Manager_DeleteEvent";
+        var Id = $$(e.target).attr("data-url");
+        console.log(Id);
         swipe_deleted(url, Id);
     });
 });
 
-//ManagerAddSchedule
+//Manager_CreateEvent
 $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function () {
     var calendarMultiple = myApp.calendar({
         input: '#startDate',
@@ -1052,6 +1055,27 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
         dayNames: dayNames,
         dayNamesShort: dayNamesShort,
     });
+    var pickerInline = myApp.picker({
+        input: '#startTime',
+        toolbar: true,
+        rotateEffect: true,
+        toolbarCloseText:"取消",
+        formatValue: function (p, values) {
+            return values[0] + ':' + values[1];
+        },
+        cols: col
+    });
+    var pickerInline = myApp.picker({
+        input: '#endTime',
+        toolbar: true,
+        rotateEffect: true,
+        toolbarCloseText: "取消",
+        formatValue: function (p, values) {
+            return values[0] + ':' + values[1];
+        },
+        cols: col
+    });
+
 });
 
 //Manager_QuerySeller  搜索促销员
@@ -1747,3 +1771,27 @@ function refresh_home() {
         }
     });
 }
+//小时 分钟
+var col=[
+            // Hours
+            {
+                values: (function () {
+                    var arr = [];
+                    for (var i = 0; i <= 23; i++) { arr.push(i); }
+                    return arr;
+                })(),
+            },
+            // Divider
+            {
+                divider: true,
+                content: ':'
+            },
+            // Minutes
+            {
+                values: (function () {
+                    var arr = [];
+                    for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
+                    return arr;
+                })(),
+            }
+];

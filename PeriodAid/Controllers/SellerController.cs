@@ -3846,7 +3846,7 @@ namespace PeriodAid.Controllers
             {
                 // 确认活动预约下是否有没有作废的签到
                 var exist = schedule.Off_Checkin.Any(m => m.Status >= 0);
-                if (exist)
+                if (!exist)
                 {
                     offlineDB.Off_Checkin_Schedule.Remove(schedule);
                     offlineDB.SaveChanges();
@@ -3878,6 +3878,7 @@ namespace PeriodAid.Controllers
             return PartialView(model);
         }
         [Authorize(Roles ="Manager")]
+        [HttpPost]
         public ActionResult Manager_CreateEvent(FormCollection form)
         {
             return Content("SUCCESS");
