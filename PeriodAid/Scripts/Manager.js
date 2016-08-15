@@ -1,57 +1,76 @@
 ﻿var $$ = Dom7;
+
 // Initialize app
 var myApp = new Framework7();
 
 // If we need to use custom DOM library, let's save it to $$ variable:
-
-
 // Add view
-var mainView = myApp.addView('.view-main', {
+var mainView = myApp.addView(".view-main", {
     // Because we want to use dynamic navbar, we need to enable it for this view:
     dynamicNavbar: true
 });
-$$(document).on('ajaxStart', function (e) {
-    if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
+
+$$(document).on("ajaxStart", function (e) {
+    if (e.detail.xhr.requestUrl.indexOf("autocomplete-languages.json") >= 0) {
+        return;
+    }
     myApp.showIndicator();
 });
-$$(document).on('ajaxComplete', function (e) {
-    if (e.detail.xhr.requestUrl.indexOf('autocomplete-languages.json') >= 0) { return; }
+
+$$(document).on("ajaxComplete", function (e) {
+    if (e.detail.xhr.requestUrl.indexOf("autocomplete-languages.json") >= 0) {
+        return;
+    }
     myApp.hideIndicator();
 });
-var monthNames= ['一月份', '二月份', '三月份', '四月份', '五月份', '六月份', '七月份', '八月份', '九月份', '十月份', '十一月份', '十二月份'];
-var monthNamesShort= ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
-var dayNames = ['星期日','星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-var dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-var dayNamesShort = ['日', '一', '二', '三', '四', '五', '六'];
+
+var monthNames = ["一月份", "二月份", "三月份", "四月份", "五月份", "六月份", "七月份", "八月份", "九月份", "十月份", "十一月份", "十二月份"];
+
+var monthNamesShort = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
+
+var dayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+
+var dayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+
+var dayNamesShort = ["日", "一", "二", "三", "四", "五", "六"];
 
 //tab-list 底部工具栏转换
 $$(".tab-link").on("click", function (data) {
     var url = $$(this).attr("data-href");
-    mainView.router.load({ url: url, animatePages: false });
-    $(this).addClass("active").siblings().removeClass("active")
+    mainView.router.load({
+        url: url,
+        animatePages: false
+    });
+    $(this).addClass("active").siblings().removeClass("active");
 });
+
 refresh_userpanel();
+
 refresh_home();
+
 // Pull to refresh content
-var ptrContent = $$('#home-refresh');
+var ptrContent = $$("#home-refresh");
 
 // Add 'refresh' listener on it
-ptrContent.on('refresh', function (e) {
+ptrContent.on("refresh", function (e) {
     // Emulate 2s loading
     setTimeout(refresh_home, 500);
 });
 
 // 微信初始化
 wx.config({
-    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-    appId: $("#appId").text(), // 必填，公众号的唯一标识
-    timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
-    nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
-    signature: $("#signature").text(),// 必填，签名，见附录1
-    jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'getLocation', 'previewImage','openLocation']
+    debug: false,
+    // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: $("#appId").text(),
+    // 必填，公众号的唯一标识
+    timestamp: $("#timeStamp").text(),
+    // 必填，生成签名的时间戳
+    nonceStr: $("#nonce").text(),
+    // 必填，生成签名的随机串
+    signature: $("#signature").text(),
+    // 必填，签名，见附录1
+    jsApiList: ["uploadImage", "downloadImage", "chooseImage", "getLocation", "previewImage", "openLocation"]
 });
-
-
 
 // 防止缓存机制
 $$(document).on("touchstart", "a.random-param", function () {
@@ -59,86 +78,68 @@ $$(document).on("touchstart", "a.random-param", function () {
     $$(this).attr("href", url);
 });
 
-//使用指南
-var photo = [
-           {
-               url: "/Content/images/Manager_app_01.jpg",
-               caption: "督导签到 - - 首页"
-           },
-           {
-               url: "/Content/images/Manager_app_03.jpg",
-               caption: "督导签到 - - 首页"
-           },
-           {
-               url: "/Content/images/Manager_app_02.jpg",
-               caption: "督导签到 - - 督导个人信息"
-           },
-           {
-               url: "/Content/images/Manager_app_04.jpg",
-               caption: "督导签到 - - 督导每日签到"
-           },
-           {
-               url: "/Content/images/Manager_app_05.jpg",
-               caption: "督导签到 - - 督导工作日报"
-           },
-           {
-               url: "/Content/images/Manager_app_06.jpg",
-               caption: "督导签到 - - 查看个人签到信息"
-           },
-           {
-               url: "/Content/images/Manager_app_07.jpg",
-               caption: "督导签到 - - 查看其他督导签到"
-           },
-           {
-               url: "/Content/images/Manager_app_08.jpg",
-               caption: "督导签到 - - 店铺提报列表"
-           },
-           {
-               url: "/Content/images/Manager_app_09.jpg",
-               caption: "督导巡店 - - 首页"
-           },
-           {
-               url: "/Content/images/Manager_app_10.jpg",
-               caption: "督导巡店 - - 未签到"
-           },
-           {
-               url: "/Content/images/Manager_app_11.jpg",
-               caption: "督导巡店 - - 未签退"
-           },
-           {
-               url: "/Content/images/Manager_app_12.jpg",
-               caption: "督导巡店 - - 修改签到信息"
-           },
-           {
-               url: "/Content/images/Manager_app_13.jpg",
-               caption: "督导管理 - - 首页"
-           },
-           {
-               url: "/Content/images/Manager_app_14.jpg",
-               caption: "督导管理 - - 销量排名"
-           },
-           {
-               url: "/Content/images/Manager_app_15.jpg",
-               caption: "督导管理 - - 红包发放"
-           },
-           {
-               url: "/Content/images/Manager_app_16.jpg",
-               caption: "督导管理 - - 红包记录"
-           },
-           {
-               url: "/Content/images/Manager_app_17.jpg",
-               caption: "督导暗促 - - 首页"
-           },
-]
-var myPhotoBrowserPopupDark = myApp.photoBrowser({
-    photos: photo,
-    theme: 'dark',
-    type: 'standalone',
-    lazyLoading: true,
-    zoom: false,
-    backLinkText: '关闭'
-});
+// 使用指南
 $$("#manager_userpanel").on("click", ".manager-photolist", function () {
+    var photo = [{
+        url: "/Content/images/Manager_app_01.jpg",
+        caption: "督导签到 - - 首页"
+    }, {
+        url: "/Content/images/Manager_app_03.jpg",
+        caption: "督导签到 - - 首页"
+    }, {
+        url: "/Content/images/Manager_app_02.jpg",
+        caption: "督导签到 - - 督导个人信息"
+    }, {
+        url: "/Content/images/Manager_app_04.jpg",
+        caption: "督导签到 - - 督导每日签到"
+    }, {
+        url: "/Content/images/Manager_app_05.jpg",
+        caption: "督导签到 - - 督导工作日报"
+    }, {
+        url: "/Content/images/Manager_app_06.jpg",
+        caption: "督导签到 - - 查看个人签到信息"
+    }, {
+        url: "/Content/images/Manager_app_07.jpg",
+        caption: "督导签到 - - 查看其他督导签到"
+    }, {
+        url: "/Content/images/Manager_app_08.jpg",
+        caption: "督导签到 - - 店铺提报列表"
+    }, {
+        url: "/Content/images/Manager_app_09.jpg",
+        caption: "督导巡店 - - 首页"
+    }, {
+        url: "/Content/images/Manager_app_10.jpg",
+        caption: "督导巡店 - - 未签到"
+    }, {
+        url: "/Content/images/Manager_app_11.jpg",
+        caption: "督导巡店 - - 未签退"
+    }, {
+        url: "/Content/images/Manager_app_12.jpg",
+        caption: "督导巡店 - - 修改签到信息"
+    }, {
+        url: "/Content/images/Manager_app_13.jpg",
+        caption: "督导管理 - - 首页"
+    }, {
+        url: "/Content/images/Manager_app_14.jpg",
+        caption: "督导管理 - - 销量排名"
+    }, {
+        url: "/Content/images/Manager_app_15.jpg",
+        caption: "督导管理 - - 红包发放"
+    }, {
+        url: "/Content/images/Manager_app_16.jpg",
+        caption: "督导管理 - - 红包记录"
+    }, {
+        url: "/Content/images/Manager_app_17.jpg",
+        caption: "督导暗促 - - 首页"
+    }];
+    var myPhotoBrowserPopupDark = myApp.photoBrowser({
+        photos: photo,
+        theme: "dark",
+        type: "standalone",
+        lazyLoading: true,
+        zoom: false,
+        backLinkText: "关闭"
+    });
     myPhotoBrowserPopupDark.open();
 });
 
@@ -155,6 +156,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task']", function (e) {
         }
     });
 });
+
 //Manager_Addchekin 添加签到信息 填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", function (e) {
     // 获取当前备注文本长度
@@ -163,46 +165,45 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
     uploadCheckinFile("manager-task-addcheckin", "manager-imglist", "Photo", "current_image", 3);
     uploadLocationWithDetails("location-btn", "Location", "Location_Desc");
     $("#addcheckin_form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
-
             var array = splitArray($("#Photo").val());
             if (array.length == 0) {
                 myApp.hideIndicator();
                 myApp.alert("请至少上传一张图片");
                 $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
-            }
-            else if ($("#Location").val().trim() == "") {
+            } else if ($("#Location").val().trim() == "") {
                 myApp.hideIndicator();
                 myApp.alert("请上传您的地理位置");
                 $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
-            }
-            else {
+            } else {
                 $("#addcheckin_form").ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
                         mainView.router.back();
                         myApp.addNotification({
-                            title: '通知',
-                            message: '表单提交成功'
+                            title: "通知",
+                            message: "表单提交成功"
                         });
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
-                        }, 2000);
-                    }
-                    else {
+                        }, 2e3);
+                    } else {
                         myApp.hideIndicator();
                         myApp.addNotification({
-                            title: '通知',
-                            message: '表单提交失败'
+                            title: "通知",
+                            message: "表单提交失败"
                         });
                         $("#addcheckin-btn").prop("disabled", false).removeClass("color-gray");
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
-                        }, 2000);
+                        }, 2e3);
                     }
                 });
             }
@@ -219,7 +220,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-addcheckin']", functi
         setTimeout(function () {
             $("#addcheckin_form").submit();
         }, 500);
-
     });
 });
 
@@ -233,8 +233,8 @@ myApp.onPageBack("manager-task-addcheckin", function () {
                 $$("#managertask-count").text(data.data);
             }
         }
-    })
-})
+    });
+});
 
 //Manager_TaskReport 督导工作日报 填写内容字数提示
 $$(document).on("pageInit", ".page[data-page='manager-task-report']", function () {
@@ -271,7 +271,7 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
         myApp.showIndicator();
         setTimeout(function () {
             myApp.hideIndicator();
-        }, 5000);
+        }, 5e3);
         setTimeout(function () {
             //$$("#managerreport-form").submit();
             $("#managerreport-form").ajaxSubmit({
@@ -280,28 +280,27 @@ $$(document).on("pageInit", ".page[data-page='manager-task-report']", function (
                         myApp.hideIndicator();
                         mainView.router.back();
                         myApp.addNotification({
-                            title: '通知',
-                            message: '日报修改成功'
+                            title: "通知",
+                            message: "日报修改成功"
                         });
                         setTimeout(function () {
                             //refresh_mainpanel();
                             myApp.closeNotification(".notifications");
-                        }, 2000);
-                    }
-                    else {
+                        }, 2e3);
+                    } else {
                         myApp.hideIndicator();
                         $("#report-submit-btn").prop("disabled", true).addClass("color-gray");
                         myApp.addNotification({
-                            title: '通知',
-                            message: '日报修改失败'
+                            title: "通知",
+                            message: "日报修改失败"
                         });
                         $("#task_details").html(data);
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
-                        }, 2000);
+                        }, 2e3);
                     }
                 }
-            })
+            });
         }, 500);
     });
 });
@@ -373,7 +372,6 @@ $$(document).on("pageInit", ".page[data-page='manager-allchekinlist']", function
             }
         });
     });
-
 });
 
 // Manager_RequestListPartial 需求列表
@@ -384,7 +382,7 @@ $$(document).on("pageInit", ".page[data-page='manager-request-list']", function 
             $$("#manager-requestlist").html(data);
         }
     });
-    $$('#manager-requestlist').on('deleted', ".swipeout", function (e) {
+    $$("#manager-requestlist").on("deleted", ".swipeout", function (e) {
         $$.ajax({
             url: "Manager_CancelRequestJson",
             data: {
@@ -397,18 +395,20 @@ $$(document).on("pageInit", ".page[data-page='manager-request-list']", function 
                     myApp.alert("删除失败");
                 }
             }
-        })
+        });
     });
-
 });
 
 // Manager_RequestCreate 创建需求信息
 $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", function () {
     currentTextAreaLength("manager-task-requestcreate", "RequestContent", 500, "requestcontent_length");
     $("#requestcreate-form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
         submitHandler: function (form) {
             $("#requestcreate-form").ajaxSubmit(function (data) {
@@ -416,23 +416,22 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
                     myApp.hideIndicator();
                     mainView.router.back();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交成功'
+                        title: "通知",
+                        message: "表单提交成功"
                     });
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-                else {
+                    }, 2e3);
+                } else {
                     myApp.hideIndicator();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交失败'
+                        title: "通知",
+                        message: "表单提交失败"
                     });
                     $("#requestcreate-btn").prop("disabled", false).removeClass("color-gray");
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
+                    }, 2e3);
                 }
             });
         },
@@ -468,7 +467,6 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
         setTimeout(function () {
             $("#requestcreate-form").submit();
         }, 500);
-
     });
 });
 
@@ -476,9 +474,12 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestcreate']", fun
 $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", function () {
     currentTextAreaLength("manager-task-requestedit", "RequestContent", 500, "requestcontent_length");
     $("#requestedit-form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
         submitHandler: function (form) {
             $("#requestedit-form").ajaxSubmit(function (data) {
@@ -486,23 +487,22 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
                     myApp.hideIndicator();
                     mainView.router.back();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交成功'
+                        title: "通知",
+                        message: "表单提交成功"
                     });
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-                else {
+                    }, 2e3);
+                } else {
                     myApp.hideIndicator();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交失败'
+                        title: "通知",
+                        message: "表单提交失败"
                     });
                     $("#requestedit-btn").prop("disabled", false).removeClass("color-gray").show();
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
+                    }, 2e3);
                 }
             });
         },
@@ -537,29 +537,23 @@ $$(document).on("pageInit", ".page[data-page='manager-task-requestedit']", funct
         $("#requestedit-btn").prop("disabled", true).addClass("color-gray");
         setTimeout(function () {
             $("#requestedit-form").submit();
-        }, 500)
-
+        }, 500);
     });
 });
-//Senior_CheckInDetails  查看其他人签到信息  图片查看
 
+//Senior_CheckInDetails  查看其他人签到信息  图片查看
 $$(document).on("pageInit", ".page[data-page='manager-checkindetails']", function () {
     PhotoBrowser("manager-checkindetails");
     LocationBrowser("manager-checkindetails");
 });
 
-
-
-
 /*************** 店铺查询 *************/
-
 $$(document).on("pageInit", ".page[data-page='manager-home']", function () {
     refresh_home();
     // Pull to refresh content
-    var ptrContent = $$('#home-refresh');
-
+    var ptrContent = $$("#home-refresh");
     // Add 'refresh' listener on it
-    ptrContent.on('refresh', function (e) {
+    ptrContent.on("refresh", function (e) {
         // Emulate 2s loading
         setTimeout(refresh_home, 500);
     });
@@ -572,7 +566,7 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-uncheckinlist']"
 });
 
 myApp.onPageBack("manager-uncheckinlist", function (e) {
-    var ptrContent = $$('#home-refresh');
+    var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
 
@@ -583,12 +577,12 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-uncheckoutlist']
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
-        swipe_deleted(url, Id)
+        swipe_deleted(url, Id);
     });
 });
 
 myApp.onPageBack("manager-uncheckoutlist", function (e) {
-    var ptrContent = $$('#home-refresh');
+    var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
 
@@ -599,12 +593,12 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-unreportlist']",
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
-        swipe_deleted(url, Id)
+        swipe_deleted(url, Id);
     });
 });
 
 myApp.onPageBack("manager-unreportlist", function (e) {
-    var ptrContent = $$('#home-refresh');
+    var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
 
@@ -616,15 +610,16 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-unconfirmlist']"
         success: function (data) {
             $(".list-content").html(data);
         }
-    })
+    });
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteCheckIn";
         var Id = $$(e.target).attr("data-url");
-        swipe_deleted(url, Id)
+        swipe_deleted(url, Id);
     });
 });
+
 myApp.onPageBack("manager-unconfirmlist", function (e) {
-    var ptrContent = $$('#home-refresh');
+    var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
 
@@ -635,9 +630,12 @@ $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function
     uploadCheckinFile("reportphoto-area", "manager-report-imglist", "Rep_Image", "report-current-image", 7);
     currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
     $("#createcheckin-form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
         submitHandler: function (form) {
             var array1 = splitArray($("#CheckinPhoto").val());
@@ -647,45 +645,32 @@ $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function
                 myApp.hideIndicator();
                 myApp.alert("请选择促销员");
                 $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
-            }
-            else if (array1.length == 0) {
-                myApp.hideIndicator();
-                myApp.alert("请至少上传一张签到图片");
-                $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
-            }
-            else if (array2.length == 0) {
-                myApp.hideIndicator();
-                myApp.alert("请至少上传一张签退图片");
-                $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
-            }
-            else if (array3.length == 0) {
+            } else if (array3.length == 0) {
                 myApp.hideIndicator();
                 myApp.alert("请至少上传一张销量图片");
                 $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
-            }
-            else {
+            } else {
                 $("#createcheckin-form").ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
                         mainView.router.back();
                         myApp.addNotification({
-                            title: '通知',
-                            message: '表单提交成功'
+                            title: "通知",
+                            message: "表单提交成功"
                         });
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
-                        }, 2000);
-                    }
-                    else {
+                        }, 2e3);
+                    } else {
                         myApp.hideIndicator();
                         myApp.addNotification({
-                            title: '通知',
-                            message: '表单提交失败'
+                            title: "通知",
+                            message: "表单提交失败"
                         });
                         $("#createcheckin-btn").prop("disabled", false).removeClass("color-gray");
                         setTimeout(function () {
                             myApp.closeNotification(".notifications");
-                        }, 2000);
+                        }, 2e3);
                     }
                 });
             }
@@ -714,10 +699,8 @@ $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function
         setTimeout(function () {
             $("#createcheckin-form").submit();
         }, 500);
-
     });
 });
-
 
 // Manager_EditCheckin 修改签到信息
 $$(document).on("pageInit", ".page[data-page='manager-editcheckin']", function () {
@@ -726,9 +709,12 @@ $$(document).on("pageInit", ".page[data-page='manager-editcheckin']", function (
     uploadCheckinFile("reportphoto-area", "manager-report-imglist", "Rep_Image", "report-current-image", 7);
     currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
     $("#editcheckin-form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
         submitHandler: function (form) {
             $("#editcheckin-form").ajaxSubmit(function (data) {
@@ -736,23 +722,22 @@ $$(document).on("pageInit", ".page[data-page='manager-editcheckin']", function (
                     myApp.hideIndicator();
                     mainView.router.back();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交成功'
+                        title: "通知",
+                        message: "表单提交成功"
                     });
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-                else {
+                    }, 2e3);
+                } else {
                     myApp.hideIndicator();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交失败'
+                        title: "通知",
+                        message: "表单提交失败"
                     });
                     $("#editcheckin-btn").prop("disabled", false).removeClass("color-gray");
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
+                    }, 2e3);
                 }
             });
         },
@@ -780,7 +765,6 @@ $$(document).on("pageInit", ".page[data-page='manager-editcheckin']", function (
         setTimeout(function () {
             $("#editcheckin-form").submit();
         }, 500);
-
     });
 });
 
@@ -793,9 +777,12 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
     LocationBrowser("checkout-location");
     currentTextAreaLength("confirmremark-area", "Confirm_Remark", 500, "confirmremark-length");
     $("#checkinconfirm-form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应
         onkeyup: false,
         submitHandler: function (form) {
             $("#checkinconfirm-form").ajaxSubmit(function (data) {
@@ -803,23 +790,22 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
                     myApp.hideIndicator();
                     mainView.router.back();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交成功'
+                        title: "通知",
+                        message: "表单提交成功"
                     });
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-                else {
+                    }, 2e3);
+                } else {
                     myApp.hideIndicator();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交失败'
+                        title: "通知",
+                        message: "表单提交失败"
                     });
                     $("#checkinconfirm-btn").prop("disabled", false).removeClass("color-gray");
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
+                    }, 2e3);
                 }
             });
         },
@@ -850,19 +836,16 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
     });
 });
 
-
-
 //Manager_ViewConfirm 查看图片
 $$(document).on("pageInit", ".page[data-page='manager-viewconfirm']", function () {
     PhotoBrowser("manager-viewconfirm");
 });
 
-
 /*************** 督导工具 *************/
 //Manager_ReportList  销量排名 查看日期
 $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e) {
     var calendarDefault = myApp.calendar({
-        input: '#manager-reportlist-date',
+        input: "#manager-reportlist-date",
         monthNames: monthNames,
         monthNamesShort: monthNamesShort,
         dayNames: dayNames,
@@ -878,7 +861,7 @@ $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e
             storesystem: storesystem
         },
         success: function (data) {
-            $$("#manager-reportlist-content").html(data)
+            $$("#manager-reportlist-content").html(data);
         }
     });
     $$("#manager-reportlist-date").on("change", function () {
@@ -891,7 +874,7 @@ $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e
                 storesystem: storesystem
             },
             success: function (data) {
-                $$("#manager-reportlist-content").html(data)
+                $$("#manager-reportlist-content").html(data);
             }
         });
     });
@@ -905,53 +888,46 @@ $$(document).on("pageInit", ".page[data-page='manager-reportlist']", function (e
                 storesystem: storesystem
             },
             success: function (data) {
-                $$("#manager-reportlist-content").html(data)
+                $$("#manager-reportlist-content").html(data);
             }
         });
     });
-
 });
 
 //Manager_TaskSellerDetails 销量详情
 $$(document).on("pageInit", ".page[data-page='manager-tasksellerdetails']", function () {
     //查看签到图片
     var myPhotoManagerSellerChekinIn = myApp.photoBrowser({
-        photos: [
-            '/Content/images/guide-02-3.jpg'
-        ],
-        theme: 'dark',
-        type: 'standalone',
+        photos: ["/Content/images/guide-02-3.jpg"],
+        theme: "dark",
+        type: "standalone",
         lazyLoading: true,
         zoom: false,
-        backLinkText: '关闭'
+        backLinkText: "关闭"
     });
     var myPhotoManagerSellerChekinOut = myApp.photoBrowser({
-        photos: [
-            '/Content/images/guide-02-2.jpg'
-        ],
-        theme: 'dark',
-        type: 'standalone',
+        photos: ["/Content/images/guide-02-2.jpg"],
+        theme: "dark",
+        type: "standalone",
         lazyLoading: true,
         zoom: false,
-        backLinkText: '关闭'
+        backLinkText: "关闭"
     });
     var myPhotoManagerSellerSales = myApp.photoBrowser({
-        photos: [
-            '/Content/images/guide-02-3.jpg'
-        ],
-        theme: 'dark',
-        type: 'standalone',
+        photos: ["/Content/images/guide-02-3.jpg"],
+        theme: "dark",
+        type: "standalone",
         lazyLoading: true,
         zoom: false,
-        backLinkText: '关闭'
+        backLinkText: "关闭"
     });
-    $$('.manager-tasksellerdetails-checkin').on('click', function () {
+    $$(".manager-tasksellerdetails-checkin").on("click", function () {
         myPhotoManagerSellerChekinIn.open();
     });
-    $$('.manager-tasksellerdetails-checkout').on('click', function () {
+    $$(".manager-tasksellerdetails-checkout").on("click", function () {
         myPhotoManagerSellerChekinOut.open();
     });
-    $$('.manager-tasksellerdetails-sales').on('click', function () {
+    $$(".manager-tasksellerdetails-sales").on("click", function () {
         myPhotoManagerSellerSales.open();
     });
 });
@@ -960,9 +936,12 @@ $$(document).on("pageInit", ".page[data-page='manager-tasksellerdetails']", func
 $$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function () {
     currentTextAreaLength("manager-bonusremark", "Bonus_Remark", 100, "confirmremark_length");
     $("#bonusremark-form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
             $("#bonusremark-form").ajaxSubmit(function (data) {
@@ -970,23 +949,22 @@ $$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function (
                     myApp.hideIndicator();
                     mainView.router.back();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交成功'
+                        title: "通知",
+                        message: "表单提交成功"
                     });
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-                else {
+                    }, 2e3);
+                } else {
                     myApp.hideIndicator();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交失败'
+                        title: "通知",
+                        message: "表单提交失败"
                     });
                     $("#bonusremark-btn").prop("disabled", false).removeClass("color-gray");
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
+                    }, 2e3);
                 }
             });
         },
@@ -1028,7 +1006,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function (
 //Manager_EventList  活动门店列表  查看日期
 $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
     var calendarDefault = myApp.calendar({
-        input: '#manager-eventlist-date',
+        input: "#manager-eventlist-date",
         monthNames: monthNames,
         monthNamesShort: monthNamesShort,
         dayNames: dayNames,
@@ -1066,19 +1044,21 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
 
 //Manager_QuerySeller  搜索促销员
 $$(document).on("pageInit", ".page[data-page='manager-queryseller']", function () {
-    var mySearchbar = myApp.searchbar('.searchbar', {
-        searchList: '.list-block-search',
-        searchIn: '.item-content'
+    var mySearchbar = myApp.searchbar(".searchbar", {
+        searchList: ".list-block-search",
+        searchIn: ".item-content"
     });
 });
 
 // Manager_EditSellerInfo 修改促销员信息
 $$(document).on("pageInit", ".page[data-page='manager-editsellerinfo']", function () {
-
     $("#editsellerinfo-form").validate({
-        debug: false, //调试模式取消submit的默认提交功能   
-        errorClass: "custom-error", //默认为错误的样式类为：error   
-        focusInvalid: false, //当为false时，验证无效时，没有焦点响应  
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
             $("#editsellerinfo-form").ajaxSubmit(function (data) {
@@ -1086,23 +1066,22 @@ $$(document).on("pageInit", ".page[data-page='manager-editsellerinfo']", functio
                     myApp.hideIndicator();
                     mainView.router.back();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交成功'
+                        title: "通知",
+                        message: "表单提交成功"
                     });
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
-                }
-                else {
+                    }, 2e3);
+                } else {
                     myApp.hideIndicator();
                     myApp.addNotification({
-                        title: '通知',
-                        message: '表单提交失败'
+                        title: "通知",
+                        message: "表单提交失败"
                     });
                     $("#editsellerinfo-btn").prop("disabled", false).removeClass("color-gray");
                     setTimeout(function () {
                         myApp.closeNotification(".notifications");
-                    }, 2000);
+                    }, 2e3);
                 }
             });
         },
@@ -1124,27 +1103,27 @@ $$(document).on("pageInit", ".page[data-page='manager-editsellerinfo']", functio
                 maxlength: 30
             },
             StandardSalary: {
-                range:[0,500]
+                range: [0, 500]
             }
         },
         messages: {
-            IdNumber:{
+            IdNumber: {
                 required: "必填",
                 idnumber: "请正确填写身份证号码"
             },
-            AccountSource:{
+            AccountSource: {
                 required: "必填",
                 maxlength: jQuery.format("不能大于{0}个字符")
             },
-            AccountName:{
+            AccountName: {
                 required: "必填",
                 maxlength: jQuery.format("不能大于{0}个字符")
             },
-            CardNo:{
+            CardNo: {
                 required: "必填",
                 maxlength: jQuery.format("不能大于{0}个字符")
             },
-            StandardSalary:{
+            StandardSalary: {
                 range: jQuery.format("请输入一个介于 {0} 和 {1} 之间的值")
             }
         },
@@ -1161,14 +1140,13 @@ $$(document).on("pageInit", ".page[data-page='manager-editsellerinfo']", functio
             $("#editsellerinfo-form").submit();
         }, 500);
     });
-
 });
 
 //Manager_StoreList  督导管理门店  查询
 $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
-    var mySearchbar = myApp.searchbar('.searchbar', {
-        searchList: '.list-block-search',
-        searchIn: '.item-content'
+    var mySearchbar = myApp.searchbar(".searchbar", {
+        searchList: ".list-block-search",
+        searchIn: ".item-content"
     });
 });
 
@@ -1187,9 +1165,8 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
             $$("#bonus-content").html(data);
         }
     });
-
     // 滑动删除
-    $$('#bonus-content').on('deleted', ".swipeout", function (e) {
+    $$("#bonus-content").on("deleted", ".swipeout", function (e) {
         $$.ajax({
             url: "/Seller/Manager_BonusDismiss",
             data: {
@@ -1202,13 +1179,12 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
                     myApp.alert("删除失败");
                 }
             }
-        })
+        });
     });
-
     // 确认红包
     $$("#bonus-content").on("click", ".confirmbonus", function (e) {
         var data_url = $$(this).attr("data-url");
-        myApp.confirm('是否确认发放红包?', function () {
+        myApp.confirm("是否确认发放红包?", function () {
             $$.ajax({
                 url: "/Seller/Manager_BonusConfirm",
                 data: {
@@ -1225,23 +1201,20 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
                                 $$("#bonus-content").html(data);
                             }
                         });
-                    }
-                    else {
+                    } else {
                         myApp.alert("红包发放失败");
                     }
                 }
-            })
+            });
         });
     });
-
     // Pull to refresh content
-    var ptrContent = $$('.pull-to-refresh-content');
+    var ptrContent = $$(".pull-to-refresh-content");
     // Add 'refresh' listener on it
-    ptrContent.on('refresh', function (e) {
+    ptrContent.on("refresh", function (e) {
         // Emulate 2s loading
         setTimeout(function () {
             // Random song
-
             $$.ajax({
                 url: "/Seller/Manager_BonusList_HistoryRefresh",
                 method: "post",
@@ -1253,15 +1226,14 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
                             success: function (html) {
                                 $$("#history-content").html(html);
                             }
-                        })
+                        });
                     }
                 }
             });
             myApp.pullToRefreshDone();
-        }, 2000);
+        }, 2e3);
     });
 });
-
 
 //Mnanager_StoreList 门店位置信息
 $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
@@ -1280,20 +1252,23 @@ $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () 
             success: function (data) {
                 if (data.status == 0) {
                     wx.openLocation({
-                        latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
-                        longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
-                        name: btn.attr("data-storename"), // 位置名
-                        address: btn.attr("data-address"), // 地址详情说明
-                        scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
-                        infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        latitude: data.locations[0].lat,
+                        // 纬度，浮点数，范围为90 ~ -90
+                        longitude: data.locations[0].lng,
+                        // 经度，浮点数，范围为180 ~ -180。
+                        name: btn.attr("data-storename"),
+                        // 位置名
+                        address: btn.attr("data-address"),
+                        // 地址详情说明
+                        scale: 25,
+                        // 地图缩放级别,整形值,范围从1~28。默认为最大
+                        infoUrl: ""
                     });
                 }
             }
         });
     });
 });
-
-
 
 /*************** 暗促信息 *************/
 //Manager_TempSellerDetails  暗促系统  暗促签到图片查看
@@ -1302,18 +1277,20 @@ $$(document).on("pageInit", ".page[data-page='manager-tempsellerdetails']", func
     var photo = new Array();
     $$.each(phList, function (num, ph) {
         var url = "http://cdn2.shouquanzhai.cn/checkin-img/" + ph;
-        var obj = { url: url };
+        var obj = {
+            url: url
+        };
         photo.push(obj);
     });
     var myPhotoBrowserPopupDark = myApp.photoBrowser({
         photos: photo,
-        theme: 'dark',
-        type: 'standalone',
+        theme: "dark",
+        type: "standalone",
         lazyLoading: true,
         zoom: false,
-        backLinkText: '关闭'
+        backLinkText: "关闭"
     });
-    $$('.ph-tempseller').on('click', function (e) {
+    $$(".ph-tempseller").on("click", function (e) {
         myPhotoBrowserPopupDark.open();
     });
 });
@@ -1339,7 +1316,7 @@ $$(document).on("pageInit", ".page[data-page='manager-sellertask-month']", funct
                 $$("#manager-seller-taskmonth").html(data);
             }
         });
-    })
+    });
 });
 
 //ManangerSellerTaskSeller 暗促系统  暗促签到列表  无限循环
@@ -1360,14 +1337,15 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
         }
     });
     //刷新
-    var loading = false;//加载flag
+    var loading = false;
+    //加载flag
     $$(".infinite-scroll").on("infinite", function (e) {
         $$(".infinite-scroll-preloader").removeClass("hidden");
         if (loading) return;
         loading = true;
         setTimeout(function () {
-            loading = false;//重置flag
-
+            loading = false;
+            //重置flag
             //生成新的条目
             $$.ajax({
                 url: url,
@@ -1377,30 +1355,29 @@ $$(document).on("pageInit", ".page[data-page='managerseller-taskdate']", functio
                 },
                 success: function (data) {
                     if (data == "NONE" || data == "FAIL") {
-                        myApp.detachInfiniteScroll($$(".infinite-scroll"))//关闭滚动
-                        $$(".infinite-scroll-preloader").remove();//移除加载符
+                        myApp.detachInfiniteScroll($$(".infinite-scroll"));
+                        //关闭滚动
+                        $$(".infinite-scroll-preloader").remove();
+                        //移除加载符
                         $$(".infinite-pre").removeClass("hidden");
                         return;
-                    }
-                    else {
+                    } else {
                         $$("#managerseller-list").append(data);
                         page++;
                     }
                 }
             });
-        }, 1000)
+        }, 1e3);
     });
 });
 
 //ManangerSellerTaskQuery  暗促信息查询
 $$(document).on("pageInit", ".page[data-page='managersellertask-query']", function () {
-    var mySearchbar = myApp.searchbar('.searchbar', {
-        searchList: '.list-block-search',
-        searchIn: '.item-content'
+    var mySearchbar = myApp.searchbar(".searchbar", {
+        searchList: ".list-block-search",
+        searchIn: ".item-content"
     });
 });
-
-
 
 // 辅助程序
 // 用户模板更新
@@ -1408,8 +1385,7 @@ function refresh_userpanel() {
     $$.ajax({
         url: "/Seller/Manager_UserPanel",
         success: function (data) {
-            if (data != "Error")
-                $$("#manager_userpanel").html(data);
+            if (data != "Error") $$("#manager_userpanel").html(data);
         }
     });
 }
@@ -1424,39 +1400,46 @@ function currentTextAreaLength(pagename, id_name, max_length, result_id) {
         if (tl < max_length) {
             $$("#" + result_id).text(tl);
         } else {
-            myApp.alert("已超出最大值，请重新填写或删除部分信息")
+            myApp.alert("已超出最大值，请重新填写或删除部分信息");
             var str = $$("#" + id_name).val();
             $$("#" + id_name).val(str.slice(0, 50));
             $$("#" + result_id).text("50");
         }
-});
+    });
 }
 
 // 上传签到图片文件模块
 function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_count) {
-    $$("#"+imglist).html("");
-    var photolist = splitArray($$("#"+photolist_id).val());
-    $$("#"+current_count).text(photolist.length);
+    $$("#" + imglist).html("");
+    var photolist = splitArray($$("#" + photolist_id).val());
+    $$("#" + current_count).text(photolist.length);
     for (var i = 0; i < photolist.length; i++) {
-        $$("#"+imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
+        $$("#" + imglist).append('<li><div class="rep-imgitem" data-rel=\'' + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + '); background-size:cover"></div></li>');
     }
-    $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"" + imglist + "-upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
-    $$("#"+imglist).on("click", "#"+imglist+"-upload-btn", function (e) {
+    $$("#" + imglist).append('<li><a href="javascript:;" class="rep-imgitem-btn" id="' + imglist + '-upload-btn"><i class="fa fa-plus"></i></a></li>');
+    $$("#" + imglist).on("click", "#" + imglist + "-upload-btn", function (e) {
         var localIds;
         var photolist = splitArray($("#" + photolist_id).val());
         if (photolist.length < max_count) {
             wx.chooseImage({
-                count: 1, // 默认9
-                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
-                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                count: 1,
+                // 默认9
+                sizeType: ["compressed"],
+                // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ["album", "camera"],
+                // 可以指定来源是相册还是相机，默认二者都有
                 success: function (res) {
-                    localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    localIds = res.localIds;
+                    // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
                     //$("#preview").attr("src", localIds);
                     wx.uploadImage({
-                        localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        localId: localIds[0],
+                        // 需要上传的图片的本地ID，由chooseImage接口获得
+                        isShowProgressTips: 1,
+                        // 默认为1，显示进度提示
                         success: function (res) {
-                            var serverId = res.serverId; // 返回图片的服务器端ID
+                            var serverId = res.serverId;
+                            // 返回图片的服务器端ID
                             $$.ajax({
                                 url: "/Seller/SaveOrignalImage",
                                 type: "post",
@@ -1471,11 +1454,10 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                                         $$("#" + current_count).text(photolist.length);
                                         $$("#" + photolist_id).val(photolist.toString());
                                         for (var i = 0; i < photolist.length; i++) {
-                                            $$("#" + imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + "); background-size:cover\"></div></li>");
+                                            $$("#" + imglist).append('<li><div class="rep-imgitem" data-rel=\'' + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + '); background-size:cover"></div></li>');
                                         }
-                                        $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"" + imglist + "-upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
-                                    }
-                                    else {
+                                        $$("#" + imglist).append('<li><a href="javascript:;" class="rep-imgitem-btn" id="' + imglist + '-upload-btn"><i class="fa fa-plus"></i></a></li>');
+                                    } else {
                                         myApp.alert("上传失败，请重试");
                                     }
                                 }
@@ -1484,23 +1466,21 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                     });
                 }
             });
-        }
-        else {
+        } else {
             myApp.alert("上传图片不得大于" + max_count + "张，无法添加");
         }
     });
-
     // 删除图片
     //$$("#" + pagename).off("click", ".rep-imgitem");
-    $$("#" + imglist).on("click",".rep-imgitem", function (e) {
+    $$("#" + imglist).on("click", ".rep-imgitem", function (e) {
         var img_item = $$(this);
         $$(".rep-imgitem").each(function () {
             $$(this).html("");
         });
         img_item.html("<div class='rep-imgitem-selected'><i class='fa fa-minus'></i></div>");
     });
-    $$("#"+imglist).on("click",".rep-imgitem-selected", function () {
-        myApp.confirm('是否确认删除已上传图片?', '提示', function () {
+    $$("#" + imglist).on("click", ".rep-imgitem-selected", function () {
+        myApp.confirm("是否确认删除已上传图片?", "提示", function () {
             //myApp.alert('You clicked Ok button');
             var delete_item = $(".rep-imgitem-selected").closest(".rep-imgitem").attr("data-rel");
             var arraylist = splitArray($("#" + photolist_id).val());
@@ -1510,9 +1490,9 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
             $$("#" + current_count).text(arraylist.length);
             $$("#" + imglist).html("");
             for (var i = 0; i < arraylist.length; i++) {
-                $("#" + imglist).append("<li><div class=\"rep-imgitem\" data-rel='" + arraylist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + arraylist[i] + "); background-size:cover\"></div></li>");
+                $("#" + imglist).append('<li><div class="rep-imgitem" data-rel=\'' + arraylist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + arraylist[i] + '); background-size:cover"></div></li>');
             }
-            $$("#" + imglist).append("<li><a href=\"javascript:;\" class=\"rep-imgitem-btn\" id=\"" + imglist + "-upload-btn\"><i class=\"fa fa-plus\"></i></a></li>");
+            $$("#" + imglist).append('<li><a href="javascript:;" class="rep-imgitem-btn" id="' + imglist + '-upload-btn"><i class="fa fa-plus"></i></a></li>');
         });
     });
 }
@@ -1527,16 +1507,20 @@ function uploadLocation(btn_id, location_id) {
                 myApp.hideIndicator();
                 myApp.alert("获取位置失败");
             }
-        }, 4000);
-        
+        }, 4e3);
         var loc_success = false;
         wx.getLocation({
-            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            type: "wgs84",
+            // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
             success: function (res) {
-                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                var speed = res.speed; // 速度，以米/每秒计
-                var accuracy = res.accuracy; // 位置精度
+                var latitude = res.latitude;
+                // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude;
+                // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed;
+                // 速度，以米/每秒计
+                var accuracy = res.accuracy;
+                // 位置精度
                 var gps_location = longitude + "," + latitude;
                 loc_success = true;
                 $$("#" + btn_id).find(".item-after").text("上传位置成功");
@@ -1548,6 +1532,7 @@ function uploadLocation(btn_id, location_id) {
         return false;
     });
 }
+
 function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
     $$("#" + btn_id).on("click", function () {
         myApp.showIndicator();
@@ -1557,16 +1542,20 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                 myApp.hideIndicator();
                 myApp.alert("获取位置失败");
             }
-        }, 4000);
-
+        }, 4e3);
         var loc_success = false;
         wx.getLocation({
-            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            type: "wgs84",
+            // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
             success: function (res) {
-                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                var speed = res.speed; // 速度，以米/每秒计
-                var accuracy = res.accuracy; // 位置精度
+                var latitude = res.latitude;
+                // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude;
+                // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed;
+                // 速度，以米/每秒计
+                var accuracy = res.accuracy;
+                // 位置精度
                 var gps_location = longitude + "," + latitude;
                 loc_success = true;
                 $$("#" + btn_id).find(".item-after").text("上传位置成功");
@@ -1593,8 +1582,8 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                             });
                             var coord = new qq.maps.LatLng(data.locations[0].lat, data.locations[0].lng);
                             geocoder.getAddress(coord);
-                myApp.hideIndicator();
-            }
+                            myApp.hideIndicator();
+                        }
                     }
                 });
             }
@@ -1608,16 +1597,16 @@ function PhotoBrowser(pagename) {
     $$("#" + pagename).on("click", ".checkin-photos", function () {
         var photos = $(this).attr("data-photos");
         if (photos.trim() != "") {
-            var images = photos.split(',');
+            var images = photos.split(",");
             for (var i = 0; i < images.length; i++) {
                 images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
             }
             wx.previewImage({
-                current: images[0], // 当前显示图片的http链接
-                urls: images // 需要预览的图片http链接列表
+                current: images[0],
+                // 当前显示图片的http链接
+                urls: images
             });
-        }
-        else {
+        } else {
             myApp.alert("没有找到图片");
         }
     });
@@ -1626,8 +1615,7 @@ function PhotoBrowser(pagename) {
 // 查看位置模块
 function LocationBrowser(pagename) {
     $$("#" + pagename).on("click", ".checkin-lbs", function () {
-
-        var lbs = $$(this).attr("data-location").split(',');
+        var lbs = $$(this).attr("data-location").split(",");
         var translbs = lbs[1] + "," + lbs[0];
         var loc_details = $$(this).attr("data-desc");
         $.ajax({
@@ -1643,12 +1631,17 @@ function LocationBrowser(pagename) {
             success: function (data) {
                 if (data.status == 0) {
                     wx.openLocation({
-                        latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
-                        longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
-                        name: "位置信息", // 位置名
-                        address: loc_details, // 地址详情说明
-                        scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
-                        infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        latitude: data.locations[0].lat,
+                        // 纬度，浮点数，范围为90 ~ -90
+                        longitude: data.locations[0].lng,
+                        // 经度，浮点数，范围为180 ~ -180。
+                        name: "位置信息",
+                        // 位置名
+                        address: loc_details,
+                        // 地址详情说明
+                        scale: 25,
+                        // 地图缩放级别,整形值,范围从1~28。默认为最大
+                        infoUrl: ""
                     });
                 }
             }
@@ -1659,9 +1652,9 @@ function LocationBrowser(pagename) {
 // 图片数组转化
 function splitArray(value) {
     var list = new Array();
-    if(value!=null){
+    if (value != null) {
         if (value.trim() != "") {
-            list = value.trim().split(',');
+            list = value.trim().split(",");
             return list;
         }
     }
@@ -1671,7 +1664,7 @@ function splitArray(value) {
 //巡店 ajax异步提交
 function datepicker_refresh(url) {
     var calendarDefault = myApp.calendar({
-        input: '.check-date',
+        input: ".check-date",
         monthNames: monthNames,
         monthNamesShort: monthNamesShort,
         dayNames: dayNames,
@@ -1685,7 +1678,7 @@ function datepicker_refresh(url) {
             date: date
         },
         success: function (data) {
-            $$(".list-content").html(data)
+            $$(".list-content").html(data);
         }
     });
     $$(".check-date").on("change", function () {
@@ -1696,14 +1689,14 @@ function datepicker_refresh(url) {
                 date: date
             },
             success: function (data) {
-                $$(".list-content").html(data)
+                $$(".list-content").html(data);
             }
         });
     });
-};
+}
 
 //删除
-function swipe_deleted(url,Id) {
+function swipe_deleted(url, Id) {
     $$.ajax({
         url: url,
         method: "POST",
@@ -1712,15 +1705,12 @@ function swipe_deleted(url,Id) {
         },
         success: function (res) {
             var data = JSON.parse(res);
-            if (data.result == "SUCCESS") {
-
-            } else {
-                myApp.alert("删除失败")
+            if (data.result == "SUCCESS") { } else {
+                myApp.alert("删除失败");
             }
         }
     });
-};
-
+}
 
 // 刷新首页
 function refresh_home() {
@@ -1735,8 +1725,7 @@ function refresh_home() {
                 $$("#uncheckout-count").text(countlist.uncheckout);
                 $$("#unreport-count").text(countlist.unreport);
                 $$("#unconfirm-count").text(countlist.unconfirm);
-            }
-            else {
+            } else {
                 $$("#uncheckin-count").text("N/A");
                 $$("#uncheckout-count").text("N/A");
                 $$("#unreport-count").text("N/A");
