@@ -17,6 +17,8 @@
     <div class="page" data-page="manager-addschedule">
         <div class="page-content">
             <div class="content-block-title">活动日程</div>
+@using (Html.BeginForm("Manager_CreateEvent", "Seller", FormMethod.Post, new { @id = "createevent-form", @class = "validate-form" }))
+{
             <div class="list-block">
                 <ul>
                     <li>
@@ -24,26 +26,24 @@
                             <div class="item-inner">
                                 <div class="item-title label">活动时间</div>
                                 <div class="item-input">
-                                    <input type="text" id="startDate" placeholder="请选择日期">
+                                    <input type="text" id="actDate" name="actDate" placeholder="请选择日期">
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
                         <a href="#" class="smart-select item-link" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="店铺名称" data-searchbar-cancel="取消">
-                            <select multiple>
-                                <optgroup label="大润发">
-                                    <option value="1">大润发-安徽当涂店</option>
-                                    <option value="2">大润发-安徽阜阳店</option>
-                                    <option value="3">大润发-安徽淮南店</option>
-                                    <option value="4">大润发-安庆店</option>
-                                </optgroup>
-                                <optgroup label="欧尚">
-                                    <option value="5">欧尚-蚌埠店</option>
-                                    <option value="6">欧尚-常熟黄河店</option>
-                                    <option value="7">欧尚-常州五星店</option>
-                                    <option value="8">欧尚-丹阳店</option>
-                                </optgroup>
+                            <select multiple id="actStore" name="actStore">
+                                @foreach (string groupname in ViewBag.GroupList)
+                                {
+                                    <optgroup label="@groupname">
+                                        @foreach (var item in ((IEnumerable<PeriodAid.Models.Off_Store>)(ViewBag.StoreList)).Where(m=>m.StoreSystem == groupname))
+                                        {
+                                            <option value="@item.Id">@Html.Encode(item.StoreName)</option>
+                                        }
+                                    </optgroup>
+                                }
+                                
                             </select>
                             <div class="item-content">
                                 <div class="item-inner">
@@ -58,7 +58,7 @@
                             <div class="item-inner">
                                 <div class="item-title label">标准上班时间</div>
                                 <div class="item-input">
-                                    <input id="startTime" type="text" placeholder="请输入时间">
+                                    <input id="startTime" name="startTime" type="text" placeholder="请输入时间">
                                 </div>
                             </div>
                         </div>
@@ -66,16 +66,16 @@
                     <li>
                         <div class="item-content">
                             <div class="item-inner">
-                                <div class="item-title label">标准上班时间</div>
+                                <div class="item-title label">标准下班时间</div>
                                 <div class="item-input">
-                                    <input id="endTime" type="text" placeholder="请输入时间">
+                                    <input id="endTime" name="endTime" type="text" placeholder="请输入时间">
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
                         <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="选择模板" data-searchbar-cancel="取消">
-                            <select>
+                            <select id="actTemp" name="actTemp">
                                 <option value="1">日常销售</option>
                                 <option value="2">欧尚日常销售</option>
                                 <option value="3">大润发日常销售</option>
@@ -83,7 +83,7 @@
                             <div class="item-content">
                                 <div class="item-inner">
                                     <div class="item-title">选择模板</div>
-                                    <div class="item-after smart-select-value">- 请选择 -</div>
+                                    <div class="item-after"></div>
                                 </div>
                             </div>
                         </a>
@@ -93,7 +93,7 @@
                             <div class="item-inner">
                                 <div class="item-title label">标准薪资</div>
                                 <div class="item-input">
-                                    <input id="Salary" type="text" placeholder="请输入标准薪资">
+                                    <input id="Salary" name="Salary" type="number" placeholder="请输入标准薪资">
                                 </div>
                             </div>
                         </div>
@@ -103,6 +103,7 @@
             <div class="content-block">
                 <a href="javascript:;" class="button button-big button-fill" id="manangerschedule-btn">提交</a>
             </div>
+}
         </div>
     </div>
 </div>

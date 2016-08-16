@@ -3868,10 +3868,10 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store;
-            ViewBag.StoreList = new SelectList(storelist, "StoreName", "Id");
+            ViewBag.StoreList = storelist;
             var grouplist = from m in storelist
                             group m by m.StoreSystem into g
-                            select g;
+                            select g.Key;
             ViewBag.GroupList = grouplist;
             Off_Checkin_Schedule model = new Off_Checkin_Schedule();
             model.Off_System_Id = user.DefaultSystemId;
@@ -4304,6 +4304,10 @@ namespace PeriodAid.Controllers
             return PartialView(tasklist);
         }
         public ActionResult ManagerAddSchedule()
+        {
+            return View();
+        }
+        public ActionResult Seller_Home()
         {
             return View();
         }

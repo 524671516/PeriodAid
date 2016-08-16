@@ -6,6 +6,30 @@ $.validator.addMethod("idnumber", function (value, element) {
     var tel = /(^\d{18}$)|(^\d{15}$)|(^\d{17}(\\d|X|x))$/;
     return this.optional(element) || (tel.test(value));
 }, "请正确填写您的身份证号码");
+$.validator.addMethod("time", function (value, element) {
+    var time = /^([01]\d|2[01234]):([0-5]\d|60)$/;
+    return this.optional(element) || (time.test(value));
+}, "请正确填写您的时间");
+$.validator.addMethod("datearray", function (value, element) {
+    var date = /([0-9]{4})-([0-9]{2})-([0-9]{2})$/;
+    var array = value.split(",");
+    var result = true;
+    for (var i = 0; i < array.length; i++) {
+        var r = !/Invalid|NaN/.test(new Date(array[i]).toString());
+        result = r && result;
+    }
+    return this.optional(element) || (result);
+}, "请正确填写您的时间");
+$.validator.addMethod("storelist", function (value, element) {
+    var storename = /[\u4e00 - \u9fa5]/;
+    var array = value.split(",");
+    var result = true;
+    for (var i = 0; i < array.length; i++) {
+        var r = !/Invalid|NaN/.test(new Date(array[i]).toString());
+        result = r && result;
+    }
+    return this.optional(element) || (result);
+}, "至少选择一个门店");
 
 (function (factory) {
     if (typeof define === "function" && define.amd) {
