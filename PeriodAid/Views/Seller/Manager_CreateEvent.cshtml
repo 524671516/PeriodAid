@@ -1,77 +1,109 @@
 ﻿@model PeriodAid.Models.Off_Checkin_Schedule
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Off_Checkin_Schedule</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Off_Store_Id, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Off_Store_Id, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Off_Store_Id, "", new { @class = "text-danger" })
-            </div>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Subscribe, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Subscribe, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Subscribe, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Standard_CheckIn, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Standard_CheckIn, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Standard_CheckIn, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Standard_CheckOut, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Standard_CheckOut, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Standard_CheckOut, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Standard_Salary, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Standard_Salary, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Standard_Salary, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Off_System_Id, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Off_System_Id, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Off_System_Id, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.TemplateId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TemplateId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TemplateId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
+        <div class="center sliding"><strong>添加活动日程</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
         </div>
     </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-addschedule">
+        <div class="page-content">
+            <div class="content-block-title">活动日程</div>
+@using (Html.BeginForm("Manager_CreateEvent", "Seller", FormMethod.Post, new { @id = "createevent-form", @class = "validate-form" }))
+{
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">活动时间</div>
+                                <div class="item-input">
+                                    <input type="text" id="actDate" name="actDate" placeholder="请选择日期">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#" class="smart-select item-link" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="店铺名称" data-searchbar-cancel="取消">
+                            <select multiple id="actStore" name="actStore">
+                                @foreach (string groupname in ViewBag.GroupList)
+                                {
+                                    <optgroup label="@groupname">
+                                        @foreach (var item in ((IEnumerable<PeriodAid.Models.Off_Store>)(ViewBag.StoreList)).Where(m=>m.StoreSystem == groupname))
+                                        {
+                                            <option value="@item.Id">@Html.Encode(item.StoreName)</option>
+                                        }
+                                    </optgroup>
+                                }
+                                
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">选择门店</div>
+                                    <div class="item-after smart-select-value">- 请选择 -</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">标准上班时间</div>
+                                <div class="item-input">
+                                    <input id="startTime" name="startTime" type="text" placeholder="请输入时间">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">标准下班时间</div>
+                                <div class="item-input">
+                                    <input id="endTime" name="endTime" type="text" placeholder="请输入时间">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="选择模板" data-searchbar-cancel="取消">
+                            <select id="actTemp" name="actTemp">
+                                <option value="1">日常销售</option>
+                                <option value="2">欧尚日常销售</option>
+                                <option value="3">大润发日常销售</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">选择模板</div>
+                                    <div class="item-after"></div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">标准薪资</div>
+                                <div class="item-input">
+                                    <input id="Salary" name="Salary" type="number" placeholder="请输入标准薪资">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-block">
+                <a href="javascript:;" class="button button-big button-fill" id="manangerschedule-btn">提交</a>
+            </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
+        </div>
+    </div>
 </div>

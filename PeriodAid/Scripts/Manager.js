@@ -1035,10 +1035,164 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
                 $$("#manager-eventlist-content").html(data);
             }
         });
-        //滑动删除
-        var url = "";
-        var Id=$$(e.target).attr("data-url")
+    });
+    //滑动删除
+    $$("#manager-eventlist-content").on("deleted", ".swipeout", function (e) {
+        var url = "/Seller/Manager_DeleteEvent";
+        var Id = $$(e.target).attr("data-url");
+        console.log(Id);
         swipe_deleted(url, Id);
+    });
+});
+
+//Manager_CreateEvent 添加活动日程
+$$(document).on("pageInit", ".page[data-page='manager-addschedule']", function () {
+    var calendarMultiple = myApp.calendar({
+        input: '#actDate',
+        dateFormat: 'yyyy-mm-dd',
+        multiple: true,
+        monthNames: monthNames,
+        monthNamesShort: monthNamesShort,
+        dayNames: dayNames,
+        dayNamesShort: dayNamesShort,
+    });
+    var pickerInline = myApp.picker({
+        input: '#startTime',
+        toolbar: true,
+        rotateEffect: true,
+        toolbarCloseText:"关闭",
+        formatValue: function (p, values) {
+            return values[0] + ':' + values[1];
+        },
+        cols: col
+    });
+    var pickerInline = myApp.picker({
+        input: '#endTime',
+        toolbar: true,
+        rotateEffect: true,
+        toolbarCloseText: "关闭",
+        formatValue: function (p, values) {
+            return values[0] + ':' + values[1];
+        },
+        cols: col
+    });
+    //表单提交
+    $("#createevent-form").validate({
+        debug: true,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#createevent-form").ajaxSubmit(function (data) {
+                console.log($$("#actStore").val());
+                var store=$$("#actStore").val();
+                var start = $$("#startTime").val();
+                var end = $$("#endTime").val();
+                if (start > end) {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: "通知",
+                        message: "开始时间不能大于结束时间"
+                    });
+                    $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2e3);
+                } if (store == "") {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: "通知",
+                        message: "必须选择一个门店"
+                    });
+                    $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2e3);
+                }
+                else {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        mainView.router.back();
+                        myApp.addNotification({
+                            title: "通知",
+                            message: "表单提交成功"
+                        });
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2e3);
+                    } else {
+                        myApp.hideIndicator();
+                        myApp.addNotification({
+                            title: "通知",
+                            message: "表单提交失败"
+                        });
+                        $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2e3);
+                    }
+                }
+            });
+        },
+        rules: {
+            actStore: {
+                required: true,
+                storelist:true
+            },
+            actDate: {
+                required: true,
+                datearray: true
+            },
+            startTime: {
+                required: true,
+                time:true
+            },
+            endTime: {
+                required: true,
+                time:true
+            },
+            Salary: {
+                required: true,
+                range: [0, 500]
+            }
+        },
+        messages: {
+            actStore: {
+                required: "必填",
+                storelist: "必须选择一家门店"
+            },
+            actDate: {
+                required: "必填",
+                datearray: "时间格式不正确"
+            },
+            startTime: {
+                required: "必填",
+                time:"时间格式不正确"
+            },
+            endTime: {
+                required: "必填",
+                time:"时间格式不正确"
+            },
+            Salary: {
+                required: "必填",
+                range: jQuery.format("请输入一个介于 {0} 和 {1} 之间的值")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#manangerschedule-btn").click(function () {
+        myApp.showIndicator();
+        $("#manangerschedule-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#createevent-form").submit();
+        }, 500);
     });
 });
 
@@ -1735,3 +1889,27 @@ function refresh_home() {
         }
     });
 }
+//小时 分钟
+var col = [
+            // Hours
+            {
+                values: (function () {
+                    var arr = [];
+                    for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? '0' + i : i); }
+                    return arr;
+                })(),
+            },
+            // Divider
+            {
+                divider: true,
+                content: ':'
+            },
+            // Minutes
+            {
+                values: (function () {
+                    var arr = [];
+                    for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
+                    return arr;
+                })(),
+            }
+];

@@ -452,6 +452,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Seller.js" />
     <Content Include="Scripts\zepto.min.js" />
     <None Include="Scripts\_references.js" />
     <Content Include="Views\favicon.ico" />
@@ -921,6 +922,7 @@
     <Content Include="Views\Seller\Manager_SellerDetails.cshtml" />
     <Content Include="Views\Seller\Manager_EditSellerInfo.cshtml" />
     <Content Include="Views\Seller\Manager_CreateEvent.cshtml" />
+    <Content Include="Views\Seller\Seller_Home.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

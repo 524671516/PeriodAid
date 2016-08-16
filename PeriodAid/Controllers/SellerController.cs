@@ -3846,7 +3846,7 @@ namespace PeriodAid.Controllers
             {
                 // 确认活动预约下是否有没有作废的签到
                 var exist = schedule.Off_Checkin.Any(m => m.Status >= 0);
-                if (exist)
+                if (!exist)
                 {
                     offlineDB.Off_Checkin_Schedule.Remove(schedule);
                     offlineDB.SaveChanges();
@@ -3867,7 +3867,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = manager.Off_Store;
-            ViewBag.StoreList = new SelectList(storelist, "StoreName", "Id");
+            ViewBag.StoreList = storelist;
             var grouplist = from m in storelist
                             group m by m.StoreSystem into g
                             select g.Key;
@@ -4301,6 +4301,14 @@ namespace PeriodAid.Controllers
                            select new Wx_SellerTaskMonthStatistic { Off_Seller = g.Key, AttendanceCount = g.Count() };
             //ViewBag.TaskList = tasklist;
             return PartialView(tasklist);
+        }
+        public ActionResult ManagerAddSchedule()
+        {
+            return View();
+        }
+        public ActionResult Seller_Home()
+        {
+            return View();
         }
     }
 }

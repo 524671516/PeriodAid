@@ -16,9 +16,22 @@
                 </div>
             </div>
         </div>
-        <div class="swipeout-actions-right">
-            <a href="#" class="swipeout-delete" data-confirm="确定要作废该信息吗？" data-confirm-title="寿全斋" data-close-on-cancel="true">作废</a>
-        </div>
+        @if (item.Off_Checkin.Count(m => m.Status >= 0) > 0)
+        {
+            // 不能删
+            <div class="swipeout-actions-right">
+                <a href="javascript:myApp.alert('无法删除');" class="color-gray">作废</a>
+            </div>
+        }
+        else
+        {
+            // 可以删
+            <div class="swipeout-actions-right">
+                <a href="#" class="swipeout-delete" data-confirm="确定要作废该信息吗？" data-confirm-title="寿全斋" data-close-on-cancel="true">作废</a>
+            </div>
+
+        }
+        
     </li>
 }
     </ul>
