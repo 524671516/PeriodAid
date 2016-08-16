@@ -3856,7 +3856,6 @@ namespace PeriodAid.Controllers
                 {
                     return Json(new { result = "FAIL" });
                 }
-
             }
             return Json(new { result = "FAIL" });
         }
@@ -3878,7 +3877,7 @@ namespace PeriodAid.Controllers
             return PartialView(model);
         }
         [Authorize(Roles ="Manager")]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CreateEvent(FormCollection form)
         {
             return Content("SUCCESS");

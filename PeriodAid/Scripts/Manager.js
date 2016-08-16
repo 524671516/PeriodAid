@@ -838,7 +838,7 @@ $$(document).on("pageInit", ".page[data-page='manager-checkinconfirm']", functio
 //Manager_ViewConfirm 查看图片
 $$(document).on("pageInit", ".page[data-page='manager-viewconfirm']", function () {
     PhotoBrowser("manager-viewconfirm");
-    LocationBrowser("manager-viewconfirm")
+    LocationBrowser("manager-viewconfirm");
 });
 
 /*************** 督导工具 *************/
