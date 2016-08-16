@@ -1078,7 +1078,7 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
     });
     //表单提交
     $("#createevent-form").validate({
-        debug: true,
+        debug: false,
         //调试模式取消submit的默认提交功能   
         errorClass: "custom-error",
         //默认为错误的样式类为：error   
@@ -1086,33 +1086,33 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
         //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
-            $("#createevent-form").ajaxSubmit(function (data) {
-                console.log($$("#actStore").val());
-                var store=$$("#actStore").val();
-                var start = $$("#startTime").val();
-                var end = $$("#endTime").val();
-                if (start > end) {
-                    myApp.hideIndicator();
-                    myApp.addNotification({
-                        title: "通知",
-                        message: "开始时间不能大于结束时间"
-                    });
-                    $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
-                    setTimeout(function () {
-                        myApp.closeNotification(".notifications");
-                    }, 2e3);
-                } if (store == "") {
-                    myApp.hideIndicator();
-                    myApp.addNotification({
-                        title: "通知",
-                        message: "必须选择一个门店"
-                    });
-                    $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
-                    setTimeout(function () {
-                        myApp.closeNotification(".notifications");
-                    }, 2e3);
-                }
-                else {
+            var store = $$("#actStore").val();
+            var start = $$("#startTime").val();
+            var end = $$("#endTime").val();
+            if (start > end) {
+                myApp.hideIndicator();
+                myApp.addNotification({
+                    title: "通知",
+                    message: "开始时间不能大于结束时间"
+                });
+                $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
+                setTimeout(function () {
+                    myApp.closeNotification(".notifications");
+                }, 2e3);
+            }
+            else if (store == "") {
+                myApp.hideIndicator();
+                myApp.addNotification({
+                    title: "通知",
+                    message: "必须选择一个门店"
+                });
+                $("#manangerschedule-btn").prop("disabled", false).removeClass("color-gray");
+                setTimeout(function () {
+                    myApp.closeNotification(".notifications");
+                }, 2e3);
+            }
+            else {
+                $("#createevent-form").ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
                         mainView.router.back();
@@ -1134,14 +1134,10 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
                             myApp.closeNotification(".notifications");
                         }, 2e3);
                     }
-                }
-            });
+                });
+            }
         },
         rules: {
-            actStore: {
-                required: true,
-                storelist:true
-            },
             actDate: {
                 required: true,
                 datearray: true
@@ -1160,10 +1156,6 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
             }
         },
         messages: {
-            actStore: {
-                required: "必填",
-                storelist: "必须选择一家门店"
-            },
             actDate: {
                 required: "必填",
                 datearray: "时间格式不正确"

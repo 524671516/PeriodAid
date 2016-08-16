@@ -380,6 +380,7 @@
     <Content Include="Content\framework7.ios.min.css" />
     <Content Include="Content\my-app.css" />
     <Content Include="Content\Manager.css" />
+    <Content Include="Content\Seller.css" />
     <Content Include="DevelopmentPlan\201603.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
