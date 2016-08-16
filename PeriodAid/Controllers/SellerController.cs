@@ -3856,7 +3856,6 @@ namespace PeriodAid.Controllers
                 {
                     return Json(new { result = "FAIL" });
                 }
-
             }
             return Json(new { result = "FAIL" });
         }
@@ -3871,13 +3870,14 @@ namespace PeriodAid.Controllers
             ViewBag.StoreList = new SelectList(storelist, "StoreName", "Id");
             var grouplist = from m in storelist
                             group m by m.StoreSystem into g
-                            select g;
+                            select g.Key;
             ViewBag.GroupList = grouplist;
             Off_Checkin_Schedule model = new Off_Checkin_Schedule();
             model.Off_System_Id = user.DefaultSystemId;
             return PartialView(model);
         }
         [Authorize(Roles ="Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CreateEvent(FormCollection form)
         {
             return Content("SUCCESS");
