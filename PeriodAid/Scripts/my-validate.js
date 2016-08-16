@@ -20,13 +20,16 @@ $.validator.addMethod("datearray", function (value, element) {
     }
     return this.optional(element) || (result);
 }, "请正确填写您的时间");
+
 $.validator.addMethod("storelist", function (value, element) {
     var storename = /[\u4e00 - \u9fa5]/;
+    console.log(value);
     var array = value.split(",");
     var result = true;
     for (var i = 0; i < array.length; i++) {
         var r = !/Invalid|NaN/.test(new Date(array[i]).toString());
         result = r && result;
+        console.log(r);
     }
     return this.optional(element) || (result);
 }, "至少选择一个门店");

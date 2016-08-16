@@ -33,7 +33,7 @@
                     </li>
                     <li>
                         <a href="#" class="smart-select item-link" data-back-text="返回" data-searchbar="true" data-searchbar-placeholder="店铺名称" data-searchbar-cancel="取消">
-                            <select multiple id="actStore" name="actStore">
+                            <select multiple id="store" name="actStore">
                                 @foreach (string groupname in ViewBag.GroupList)
                                 {
                                     <optgroup label="@groupname">
@@ -98,6 +98,7 @@
                             </div>
                         </div>
                     </li>
+                            
                 </ul>
             </div>
             <div class="content-block">

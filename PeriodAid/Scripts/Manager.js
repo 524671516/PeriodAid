@@ -1076,6 +1076,9 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
         },
         cols: col
     });
+    $$("#car").on("chanage", function () {
+        alert($$(this).val());
+    })
     //表单提交
     $("#createevent-form").validate({
         debug: true,
@@ -1086,8 +1089,11 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
         //当为false时，验证无效时，没有焦点响应  
         onkeyup: false,
         submitHandler: function (form) {
+            $$("[name='actStore']").each(function () {
+                console.log($$(this));
+            })
             $("#createevent-form").ajaxSubmit(function (data) {
-                console.log($$("#actStore").val());
+                //myApp.alert($$("#actStore").val());
                 var store=$$("#actStore").val();
                 var start = $$("#startTime").val();
                 var end = $$("#endTime").val();
