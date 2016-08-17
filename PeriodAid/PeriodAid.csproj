@@ -926,6 +926,9 @@
     <Content Include="Views\Seller\Seller_Home.cshtml" />
     <Content Include="Views\Seller\Manager_ViewSchedule.cshtml" />
     <Content Include="Views\Seller\Manager_EditSchedule.cshtml" />
+    <Content Include="Views\Seller\Seller_CheckIn.cshtml" />
+    <Content Include="Views\Seller\Seller_CheckOut.cshtml" />
+    <Content Include="Views\Seller\Seller_Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

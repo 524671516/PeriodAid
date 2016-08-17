@@ -4422,5 +4422,17 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public ActionResult Seller_CheckIn()
+        {
+            return View();
+        }
+        public ActionResult Seller_CheckOut()
+        {
+            return View();
+        }
+        public ActionResult Seller_Report()
+        {
+            return View();
+        }
     }
 }
