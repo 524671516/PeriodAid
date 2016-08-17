@@ -866,8 +866,6 @@
     <Content Include="Views\Seller\Manager_CheckInView.cshtml" />
     <Content Include="Views\Seller\Senior_AllCheckInList.cshtml" />
     <Content Include="Views\Seller\Senior_CheckInDetails.cshtml" />
-    <Content Include="Views\Seller\Manager_Request_Create.cshtml" />
-    <Content Include="Views\Seller\Manager_Request_List.cshtml" />
     <Content Include="Views\Seller\Manager_Request_Check.cshtml" />
     <Content Include="Views\Seller\Manager_Task.cshtml" />
     <Content Include="Views\Seller\Manager_Tools.cshtml" />
@@ -882,7 +880,6 @@
     <Content Include="Views\Seller\Manager_CreditInfo.cshtml" />
     <Content Include="Views\Seller\Manager_BonusList.cshtml" />
     <Content Include="Views\Seller\ManagerSellerTaskMonthStatisticPartial.cshtml" />
-    <Content Include="Views\Seller\ManangerSellerTaskSeller.cshtml" />
     <Content Include="Views\Seller\ManagerSellerTaskSeller.cshtml" />
     <Content Include="Views\Seller\ManagerSellerTaskDetails.cshtml" />
     <Content Include="Views\Seller\ManagerSellerTaskMonthStatistic.cshtml" />
@@ -890,7 +887,6 @@
     <Content Include="Views\Seller\ManangerSellerTaskStorageAlert.cshtml" />
     <Content Include="Views\Seller\ManangerSellerTaskQuery.cshtml" />
     <Content Include="Views\Seller\Manager_UnCheckOutList.cshtml" />
-    <Content Include="Views\Seller\Manager_UnCheckOutPartial.cshtml" />
     <Content Include="Views\Seller\Manager_UserPanel.cshtml" />
     <Content Include="Views\Seller\Manager_EventListPartial.cshtml" />
     <Content Include="Views\Seller\Manager_TaskReportPartial.cshtml" />
@@ -910,9 +906,7 @@
     <Content Include="Views\Seller\Manager_RequestEdit.cshtml" />
     <Content Include="Views\Seller\Manager_RequestList.cshtml" />
     <Content Include="Views\Seller\Manager_RequestListPartial.cshtml" />
-    <Content Include="Views\Seller\Manager_ScheduleSeller.cshtml" />
     <Content Include="Views\Seller\Manager_CheckinBonusRemark.cshtml" />
-    <Content Include="Views\Seller\Manager_ScheduleSeller.cshtml" />
     <Content Include="Views\Seller\Manager_EditCheckin.cshtml" />
     <Content Include="Views\Seller\Manager_EditReport_Item.cshtml" />
     <Content Include="Views\Seller\Manager_CheckinConfirm.cshtml" />
@@ -926,6 +920,7 @@
     <Content Include="Views\Seller\Seller_Home.cshtml" />
     <Content Include="Views\Seller\Manager_ViewSchedule.cshtml" />
     <Content Include="Views\Seller\Manager_EditSchedule.cshtml" />
+    <Content Include="Views\Seller\Manager_ScheduleSeller.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
