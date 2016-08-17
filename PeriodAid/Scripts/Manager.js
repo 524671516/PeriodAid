@@ -1039,7 +1039,7 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-eventlist']", fu
         });
     });
     //滑动删除
-    $$("#manager-eventlist-content").on("deleted", ".swipeout", function (e) {
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteEvent";
         var Id = $$(e.target).attr("data-url");
         console.log(Id);
