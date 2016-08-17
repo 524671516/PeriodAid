@@ -25,6 +25,7 @@ $$(document).on("ajaxComplete", function (e) {
 });
 
 var monthNames = ["一月份", "二月份", "三月份", "四月份", "五月份", "六月份", "七月份", "八月份", "九月份", "十月份", "十一月份", "十二月份"];
+
 var monthNamesShort = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
 
 var dayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
@@ -48,6 +49,7 @@ $$(".tab-link").on("click", function (data) {
 refresh_userpanel();
 
 refresh_home();
+
 // Pull to refresh content
 var ptrContent = $$("#home-refresh");
 
@@ -579,11 +581,11 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-uncheckoutlist']
         swipe_deleted(url, Id);
     });
 });
+
 myApp.onPageBack("manager-uncheckoutlist", function (e) {
     var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
-
 
 //Manager_UnReportList 巡店 未提报销量
 $$(document).on("pageAfterAnimation", ".page[data-page='manager-unreportlist']", function () {
@@ -595,11 +597,11 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-unreportlist']",
         swipe_deleted(url, Id);
     });
 });
+
 myApp.onPageBack("manager-unreportlist", function (e) {
     var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
-
 
 //Manager_UnConfirmList 巡店 销量待确认
 $$(document).on("pageAfterAnimation", ".page[data-page='manager-unconfirmlist']", function () {
@@ -616,11 +618,11 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-unconfirmlist']"
         swipe_deleted(url, Id);
     });
 });
+
 myApp.onPageBack("manager-unconfirmlist", function (e) {
     var ptrContent = $$("#home-refresh");
     myApp.pullToRefreshTrigger(ptrContent);
 });
-
 
 //Manager_CreateCheckIn 代提报销量  填写备注信息字数提示
 $$(document).on("pageInit", ".page[data-page='manager-createcheckin']", function () {
@@ -1004,7 +1006,7 @@ $$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function (
 });
 
 //Manager_EventList  活动门店列表  查看日期
-$$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
+$$(document).on("pageAfterAnimation", ".page[data-page='manager-eventlist']", function (e) {
     var calendarDefault = myApp.calendar({
         input: "#manager-eventlist-date",
         monthNames: monthNames,
@@ -1047,38 +1049,39 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
 
 //Manager_CreateEvent 添加活动日程
 $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function () {
+    var starttime = $$("#startTime").val().split(":");
+    var endtime = $$("#endTime").val().split(":");
     var calendarMultiple = myApp.calendar({
-        input: '#actDate',
-        dateFormat: 'yyyy-mm-dd',
+        input: "#actDate",
+        dateFormat: "yyyy-mm-dd",
         multiple: true,
         monthNames: monthNames,
         monthNamesShort: monthNamesShort,
         dayNames: dayNames,
-        dayNamesShort: dayNamesShort,
+        dayNamesShort: dayNamesShort
     });
     var pickerInline = myApp.picker({
-        input: '#startTime',
-        toolbar: true,
-        rotateEffect: true,
-        toolbarCloseText:"关闭",
-        formatValue: function (p, values) {
-            return values[0] + ':' + values[1];
-        },
-        cols: col
-    });
-    var pickerInline = myApp.picker({
-        input: '#endTime',
+        input: "#startTime",
         toolbar: true,
         rotateEffect: true,
         toolbarCloseText: "关闭",
         formatValue: function (p, values) {
-            return values[0] + ':' + values[1];
+            return values[0] + ":" + values[1];
         },
+        value: [starttime[0], starttime[1]],
         cols: col
     });
-    $$("#car").on("chanage", function () {
-        alert($$(this).val());
-    })
+    var pickerInline = myApp.picker({
+        input: "#endTime",
+        toolbar: true,
+        rotateEffect: true,
+        toolbarCloseText: "关闭",
+        formatValue: function (p, values) {
+            return values[0] + ":" + values[1];
+        },
+        value: [endtime[0], endtime[1]],
+        cols: col
+    });
     //表单提交
     $("#createevent-form").validate({
         debug: false,
@@ -1102,8 +1105,7 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
                 setTimeout(function () {
                     myApp.closeNotification(".notifications");
                 }, 2e3);
-            }
-            else if (store == "") {
+            } else if (/Invalid|NaN|undefined/.test(store) || store == "") {
                 myApp.hideIndicator();
                 myApp.addNotification({
                     title: "通知",
@@ -1113,8 +1115,7 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
                 setTimeout(function () {
                     myApp.closeNotification(".notifications");
                 }, 2e3);
-            }
-            else {
+            } else {
                 $("#createevent-form").ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
                         myApp.hideIndicator();
@@ -1147,11 +1148,11 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
             },
             startTime: {
                 required: true,
-                time:true
+                time: true
             },
             endTime: {
                 required: true,
-                time:true
+                time: true
             },
             Salary: {
                 required: true,
@@ -1165,11 +1166,11 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
             },
             startTime: {
                 required: "必填",
-                time:"时间格式不正确"
+                time: "时间格式不正确"
             },
             endTime: {
                 required: "必填",
-                time:"时间格式不正确"
+                time: "时间格式不正确"
             },
             Salary: {
                 required: "必填",
@@ -1187,6 +1188,123 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
         $("#manangerschedule-btn").prop("disabled", true).addClass("color-gray");
         setTimeout(function () {
             $("#createevent-form").submit();
+        }, 500);
+    });
+});
+
+//Manager_EditSchedule 修改活动日程
+$$(document).on("pageInit", ".page[data-page='manager-editschedule']", function () {
+    var starttime = $$("#Standard_CheckIn").val().split(":");
+    var endtime = $$("#Standard_CheckOut").val().split(":");
+    var pickerInline = myApp.picker({
+        input: "#Standard_CheckIn",
+        toolbar: true,
+        rotateEffect: true,
+        toolbarCloseText: "关闭",
+        formatValue: function (p, values) {
+            return values[0] + ":" + values[1];
+        },
+        value: [starttime[0], starttime[1]],
+        cols: col
+    });
+    var pickerInline = myApp.picker({
+        input: "#Standard_CheckOut",
+        toolbar: true,
+        rotateEffect: true,
+        toolbarCloseText: "关闭",
+        formatValue: function (p, values) {
+            return values[0] + ":" + values[1];
+        },
+        value: [endtime[0], endtime[1]],
+        cols: col
+    });
+    //表单提交
+    $("#editschedule-form").validate({
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应  
+        onkeyup: false,
+        submitHandler: function (form) {
+            var start = $$("#Standard_CheckIn").val();
+            var end = $$("#Standard_CheckOut").val();
+            if (start > end) {
+                myApp.hideIndicator();
+                myApp.addNotification({
+                    title: "通知",
+                    message: "开始时间不能大于结束时间"
+                });
+                $("#editschedule-btn").prop("disabled", false).removeClass("color-gray");
+                setTimeout(function () {
+                    myApp.closeNotification(".notifications");
+                }, 2e3);
+            } else {
+                $("#editschedule-form").ajaxSubmit(function (data) {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        mainView.router.back();
+                        myApp.addNotification({
+                            title: "通知",
+                            message: "表单提交成功"
+                        });
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2e3);
+                    } else {
+                        myApp.hideIndicator();
+                        myApp.addNotification({
+                            title: "通知",
+                            message: "表单提交失败"
+                        });
+                        $("#editschedule-btn").prop("disabled", false).removeClass("color-gray");
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2e3);
+                    }
+                });
+            }
+        },
+        rules: {
+            Standard_CheckIn: {
+                required: true,
+                time: true
+            },
+            Standard_CheckOut: {
+                required: true,
+                time: true
+            },
+            Standard_Salary: {
+                required: true,
+                range: [0, 500]
+            }
+        },
+        messages: {
+            Standard_CheckIn: {
+                required: "必填",
+                time: "时间格式不正确"
+            },
+            Standard_CheckOut: {
+                required: "必填",
+                time: "时间格式不正确"
+            },
+            Standard_Salary: {
+                required: "必填",
+                range: jQuery.format("请输入一个介于 {0} 和 {1} 之间的值")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#editschedule-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#editschedule-btn").click(function () {
+        myApp.showIndicator();
+        $("#editschedule-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#editschedule-form").submit();
         }, 500);
     });
 });
@@ -1884,27 +2002,28 @@ function refresh_home() {
         }
     });
 }
+
 //小时 分钟
-var col = [
-            // Hours
-            {
-                values: (function () {
-                    var arr = [];
-                    for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? '0' + i : i); }
-                    return arr;
-                })(),
-            },
-            // Divider
-            {
-                divider: true,
-                content: ':'
-            },
-            // Minutes
-            {
-                values: (function () {
-                    var arr = [];
-                    for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
-                    return arr;
-                })(),
-            }
-];
+var col = [ // Hours
+{
+    values: function () {
+        var arr = [];
+        for (var i = 0; i <= 23; i++) {
+            arr.push(i < 10 ? "0" + i : i);
+        }
+        return arr;
+    }()
+}, // Divider
+{
+    divider: true,
+    content: ":"
+}, // Minutes
+{
+    values: function () {
+        var arr = [];
+        for (var i = 0; i <= 59; i++) {
+            arr.push(i < 10 ? "0" + i : i);
+        }
+        return arr;
+    }()
+}];

@@ -268,6 +268,7 @@ namespace PeriodAid.Models
 
     public class Wx_ManagerCreateScheduleViewModel
     {
+        public int ScheduleId { get; set; }
 
         [Required(ErrorMessage = "至少选择一个门店")]
         public int Off_Store_Id { get; set; }
@@ -286,7 +287,6 @@ namespace PeriodAid.Models
         public string Standard_CheckOut { get; set; }
 
         [Required(ErrorMessage = "标准薪资不能为空")]
-        public decimal Salary { get; set; }
         public decimal Standard_Salary { get; set; }
     }
 

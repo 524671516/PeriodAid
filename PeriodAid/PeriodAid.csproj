@@ -924,6 +924,8 @@
     <Content Include="Views\Seller\Manager_EditSellerInfo.cshtml" />
     <Content Include="Views\Seller\Manager_CreateEvent.cshtml" />
     <Content Include="Views\Seller\Seller_Home.cshtml" />
+    <Content Include="Views\Seller\Manager_ViewSchedule.cshtml" />
+    <Content Include="Views\Seller\Manager_EditSchedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -3836,6 +3836,70 @@ namespace PeriodAid.Controllers
             return PartialView(schedulelist);
         }
 
+        // 查看活动门店
+        [Authorize(Roles ="Manager")]
+        public ActionResult Manager_ViewSchedule(int id)
+        {
+            var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            return PartialView(schedule);
+        }
+
+        // 编辑活动门店
+        [Authorize(Roles ="Manager")]
+        public ActionResult Manager_EditSchedule(int id)
+        {
+            var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            var model = new Wx_ManagerCreateScheduleViewModel{
+                Off_Store_Id = schedule.Off_Store_Id,
+                Off_Template_Id = schedule.TemplateId,
+                Standard_CheckIn = schedule.Standard_CheckIn.ToString("HH:mm"),
+                Standard_Salary = schedule.Standard_Salary??0,
+                Standard_CheckOut = schedule.Standard_CheckOut.ToString("HH:mm"),
+                Subscribe = schedule.Subscribe,
+                ScheduleId = schedule.Id
+            };
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            ViewBag.StoreName = schedule.Off_Store.StoreName;
+            var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status >= 0).Select(m => new { Key = m.Id, Value = m.TemplateName });
+            ViewBag.TemplateList = new SelectList(templateList, "Key", "Value", schedule.TemplateId);
+            return PartialView(model);
+        }
+        [Authorize(Roles ="Manager")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Manager_EditSchedule(FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Wx_ManagerCreateScheduleViewModel model = new Wx_ManagerCreateScheduleViewModel();
+                    if (TryUpdateModel(model))
+                    {
+                        var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == model.ScheduleId);
+                        if (schedule != null)
+                        {
+                            schedule.Standard_CheckIn = Convert.ToDateTime(schedule.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckIn);
+                            schedule.Standard_CheckOut = Convert.ToDateTime(schedule.Subscribe.ToString("yyyy-MM-dd") + " " + model.Standard_CheckOut);
+                            schedule.TemplateId = model.Off_Template_Id;
+                            schedule.Standard_Salary = model.Standard_Salary;
+                            offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
+                            offlineDB.SaveChanges();
+                            return Content("SUCCESS");
+                        }
+                    }
+                    return Content("FAIL");
+                }
+                catch
+                {
+                    return Content("FAIL");
+                }
+            }
+            else
+            {
+                return Content("FAIL");
+            }
+        }
+
         // 删除活动记录
         [Authorize(Roles = "Manager")]
         [HttpPost]
@@ -3874,13 +3938,61 @@ namespace PeriodAid.Controllers
             ViewBag.GroupList = grouplist;
             Off_Checkin_Schedule model = new Off_Checkin_Schedule();
             model.Off_System_Id = user.DefaultSystemId;
+            var templateList = offlineDB.Off_Sales_Template.Where(m => m.Off_System_Id == user.DefaultSystemId && m.Status >= 0).Select(m => new { Key = m.Id, Value = m.TemplateName });
+            ViewBag.TemplateList = new SelectList(templateList, "Key", "Value");
             return PartialView(model);
         }
         [Authorize(Roles ="Manager")]
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Manager_CreateEvent(FormCollection form)
         {
-            return Content("SUCCESS");
+            string[] storelist = form["actStore"].Split(',');
+            string[] datelist = form["actDate"].Split(',');
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            try
+            {
+                int actTemp = Convert.ToInt32(form["actTemp"]);
+                decimal Salary = Convert.ToDecimal(form["Salary"]);
+                foreach (var singledate in datelist)
+                {
+                    DateTime _subscribe = Convert.ToDateTime(singledate);
+                    DateTime _date_begin = Convert.ToDateTime(singledate + " " + form["startTime"]);
+                    DateTime _date_end = Convert.ToDateTime(singledate + " " + form["endTime"]);
+                    foreach(var singlestore in storelist)
+                    {
+                        int _storeid = Convert.ToInt32(singlestore);
+                        var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Off_Store_Id == _storeid && m.Subscribe == _subscribe);
+                        if (schedule == null)
+                        {
+                            schedule = new Off_Checkin_Schedule()
+                            {
+                                Off_Store_Id = _storeid,
+                                Subscribe = _subscribe,
+                                Standard_CheckIn = _date_begin,
+                                Standard_CheckOut = _date_end,
+                                Standard_Salary = Salary,
+                                TemplateId = actTemp,
+                                Off_System_Id = user.DefaultSystemId
+                            };
+                            offlineDB.Off_Checkin_Schedule.Add(schedule);
+                        }
+                        else
+                        {
+                            schedule.Standard_CheckIn = _date_begin;
+                            schedule.Standard_CheckOut = _date_end;
+                            schedule.Standard_Salary = Salary;
+                            schedule.TemplateId = actTemp;
+                            offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+                }
+                offlineDB.SaveChanges();
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
         }
 
         // 
