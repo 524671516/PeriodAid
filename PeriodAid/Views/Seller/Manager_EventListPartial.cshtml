@@ -2,7 +2,7 @@
 
 <div class="content-block-title">@Html.Encode(ViewBag.Today.ToString("MM-dd")):&nbsp;活动门店列表&nbsp;(@Html.Encode(Model.Count()))</div>
 <div class="list-block">
-    <ul class="list-content">
+    <ul>
         @foreach (var item in Model)
         {
             <li class="swipeout" data-url="@item.Id">

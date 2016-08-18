@@ -1006,7 +1006,8 @@ $$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function (
 });
 
 //Manager_EventList  活动门店列表  查看日期
-$$(document).on("pageAfterAnimation", ".page[data-page='manager-eventlist']", function (e) {
+$$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
+    
     var calendarDefault = myApp.calendar({
         input: "#manager-eventlist-date",
         monthNames: monthNames,
@@ -1023,7 +1024,7 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-eventlist']", fu
             date: date
         },
         success: function (data) {
-            $$("#manager-eventlist-content").html(data);
+            $$(".list-content").html(data);
         }
     });
     $$("#manager-eventlist-date").on("change", function () {
@@ -1034,7 +1035,7 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-eventlist']", fu
                 date: date
             },
             success: function (data) {
-                $$("#manager-eventlist-content").html(data);
+                $$(".list-content").html(data);
             }
         });
     });
@@ -1192,6 +1193,20 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
     });
 });
 
+
+$$(document).on("pageAfterBack", ".page[data-page='manager-addschedule']", function () {
+    var url = "/Seller/Manager_EventListPartial";
+    var date = $$("#manager-eventlist-date").val();
+    $$.ajax({
+        url: url,
+        data: {
+            date: date
+        },
+        success: function (data) {
+            $$(".list-content").html(data);
+        }
+    });
+});
 //Manager_EditSchedule 修改活动日程
 $$(document).on("pageInit", ".page[data-page='manager-editschedule']", function () {
     var starttime = $$("#Standard_CheckIn").val().split(":");
