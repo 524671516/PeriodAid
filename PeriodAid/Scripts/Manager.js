@@ -1023,7 +1023,7 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-eventlist']", fu
             date: date
         },
         success: function (data) {
-            $$("#manager-eventlist-content").html(data);
+            $$(".list-content").html(data);
         }
     });
     $$("#manager-eventlist-date").on("change", function () {
@@ -1034,15 +1034,14 @@ $$(document).on("pageAfterAnimation", ".page[data-page='manager-eventlist']", fu
                 date: date
             },
             success: function (data) {
-                $$("#manager-eventlist-content").html(data);
+                $$(".list-content").html(data);
             }
         });
     });
     //滑动删除
-    $$("#manager-eventlist-content").on("deleted", ".swipeout", function (e) {
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteEvent";
         var Id = $$(e.target).attr("data-url");
-        console.log(Id);
         swipe_deleted(url, Id);
     });
 });

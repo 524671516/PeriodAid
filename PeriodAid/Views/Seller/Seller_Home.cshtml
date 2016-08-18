@@ -77,7 +77,7 @@
                     <div class="item-content">
                         <div class="item-inner">
                             <div class="item-title">当前版本</div>
-                            <div class="item-after">v 1.5</div>
+                            <div class="item-after">v 1.6</div>
                         </div>
                     </div>
                 </li>
@@ -98,7 +98,11 @@
             </div>
             <div class="pages navbar-through toolbar-through">
                 <div class="page" data-page="manager-home">
-                    <div class="page-content">
+                    <div class="page-content pull-to-refresh-content">
+                        <div class="pull-to-refresh-layer">
+                            <div class="preloader"></div>
+                            <div class="pull-to-refresh-arrow"></div>
+                        </div>
                         <div class="content-block-title">今日任务</div>
                         <div class="list-block media-list">
                             <ul>
@@ -110,7 +114,7 @@
                                             </div>
                                             <div class="subtitle color-gray font-style-01">今日可签到</div>
                                         </div>
-                                        <div class="item-media media-box" style="border-bottom:1px solid #c8c7cc;"><span class="color-lightblue font-style-02">50</span>&nbsp;盒</div>
+                                        <div class="item-media media-box"><span class="color-lightblue font-style-02">50</span>&nbsp;盒</div>
                                     </div>
                                 </li>
                                 <li>
@@ -138,7 +142,17 @@
                                         <div class="item-inner">
                                             <div class="item-title-row">
                                                 <div class="item-title">销售报表</div>
-                                                <div class="item-after">待提交：<span>0</span>次</div>
+                                                <div class="item-after">待提交：<span>0</span></div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="item-content item-link">
+                                        <div class="item-inner">
+                                            <div class="item-title-row">
+                                                <div class="item-title">更多操作</div>
+                                                <div class="item-after"></div>
                                             </div>
                                         </div>
                                     </a>
@@ -149,7 +163,7 @@
                         <div class="list-block">
                             <ul>
                                 <li>
-                                    <a href="#" class="item-content item-link">
+                                    <a href="/Seller/Seller_ScheduleList" class="item-content item-link">
                                         <div class="item-inner">
                                             <div class="item-title">排班表</div>
                                             <div class="item-after"></div>
@@ -157,7 +171,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="item-content item-link">
+                                    <a href="/Seller/Seller_ConfirmedData" class="item-content item-link">
                                         <div class="item-inner">
                                             <div class="item-title">考勤数据</div>
                                             <div class="item-after"></div>
@@ -165,7 +179,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="item-content item-link">
+                                    <a href="/Seller/Seller_CreditInfo" class="item-content item-link">
                                         <div class="item-inner">
                                             <div class="item-title">完善账户信息</div>
                                             <div class="item-after"></div>
@@ -178,8 +192,13 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Bottom Toolbar-->
+    </div>
+    <div class="hidden">
+        <span id="appId">@ViewBag.AppId</span>
+        <span id="timeStamp">@ViewBag.TimeStamp</span>
+        <span id="nonce">@ViewBag.Nonce</span>
+        <span id="url">@ViewBag.Url</span>
+        <span id="signature">@ViewBag.Signature</span>
     </div>
     <!-- Path to Framework7 Library JS-->
     <script src="~/Scripts/framework7.min.js"></script>

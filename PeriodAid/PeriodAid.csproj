@@ -929,6 +929,9 @@
     <Content Include="Views\Seller\Seller_CheckIn.cshtml" />
     <Content Include="Views\Seller\Seller_CheckOut.cshtml" />
     <Content Include="Views\Seller\Seller_Report.cshtml" />
+    <Content Include="Views\Seller\Seller_ScheduleList.cshtml" />
+    <Content Include="Views\Seller\Seller_ConfirmedData.cshtml" />
+    <Content Include="Views\Seller\Seller_CreditInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

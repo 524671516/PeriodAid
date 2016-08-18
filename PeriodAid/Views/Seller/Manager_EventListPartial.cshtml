@@ -4,10 +4,10 @@
 <div class="list-block">
     <ul>
         @foreach (var item in Model)
-        {
+            {
             <li class="swipeout" data-url="@item.Id">
                 <div class="swipeout-content">
-                    <a href="/Seller/Manager_ViewSchedule?id=@item.Id" class="item-content item-link random-param">
+                    <a href="/Seller/Manager_ViewSchedule?id=@item.Id" class="item-content item-link">
                         <div class="item-inner">
                             <div class="item-title">@Html.Encode(item.Off_Store.StoreName)</div>
                             <div class="item-after">
@@ -36,3 +36,4 @@
         }
     </ul>
 </div>
+
