@@ -1042,7 +1042,6 @@ $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e)
     $$(".list-content").on("deleted", ".swipeout", function (e) {
         var url = "/Seller/Manager_DeleteEvent";
         var Id = $$(e.target).attr("data-url");
-        console.log(Id);
         swipe_deleted(url, Id);
     });
 });
