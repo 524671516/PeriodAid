@@ -32,9 +32,9 @@
                 </div>
                 <div class="col-40">
                     <div class="leftnav-margin-10">
-                        <span class="h4">张三</span>
+                        <span>张三</span>
                     </div>
-                    <a href="#" class="button active h6">更新头像</a>
+                    <a href="#" class="button active">更新头像</a>
                 </div>
                 <div class="col-20"></div>
             </div>
@@ -74,6 +74,14 @@
                     </a>
                 </li>
                 <li>
+                    <a href="/Seller/Seller_APITest" class="item-content close-panel item-link">
+                        <div class="item-inner">
+                            <div class="item-title">手机测试</div>
+                            <div class="item-after"></div>
+                        </div>
+                    </a>
+                </li>
+                <li>
                     <div class="item-content">
                         <div class="item-inner">
                             <div class="item-title">当前版本</div>
@@ -98,66 +106,32 @@
             </div>
             <div class="pages navbar-through toolbar-through">
                 <div class="page" data-page="manager-home">
-                    <div class="page-content pull-to-refresh-content">
-                        <div class="pull-to-refresh-layer">
-                            <div class="preloader"></div>
-                            <div class="pull-to-refresh-arrow"></div>
+                    <div class="page-content">
+                        <div class="circle-box">
+                            <span>50.22</span>
+                            <div>同期平均销量</div>
                         </div>
-                        <div class="content-block-title">今日任务</div>
-                        <div class="list-block media-list">
-                            <ul>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">店铺同期平均销量</div>
-                                            </div>
-                                            <div class="subtitle color-gray font-style-01">今日可签到</div>
-                                        </div>
-                                        <div class="item-media media-box"><span class="color-lightblue font-style-02">50</span>&nbsp;盒</div>
+                        <div class="list-block">
+                            <div class="row no-gutter">
+                                <a href="javascript:;" data-url="/Seller/Seller_CheckIn" class="col-33 active" id="checkin">
+                                    <div class="color-blue">
+                                        <i class="fa fa-sign-in" aria-hidden="true"></i>
                                     </div>
-                                </li>
-                                <li>
-                                    <a href="/Seller/Seller_CheckIn" class="item-content item-link">
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">开始签到</div>
-                                                <div class="item-after">可签到</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/Seller/Seller_CheckOut" class="item-content item-link">
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">开始签退</div>
-                                                <div class="item-after">可签退</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/Seller/Seller_Report" class="item-content item-link">
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">销售报表</div>
-                                                <div class="item-after">待提交：<span>0</span></div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="item-content item-link">
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">更多操作</div>
-                                                <div class="item-after"></div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
+                                    <span>开始签到</span>
+                                </a>
+                                <a href="javascript:;" data-url="/Seller/Seller_CheckOut" class="col-33 readonly" id="checkout">
+                                    <div class="color-blue">
+                                        <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                    </div>
+                                    <span>开始签退</span>
+                                </a>
+                                <a href="/Seller/Seller_Report" class="col-33" id="report">
+                                    <div class="color-blue">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </div>
+                                    <span>提报销量</span>
+                                </a>
+                            </div>
                         </div>
                         <div class="content-block-title">工具</div>
                         <div class="list-block">

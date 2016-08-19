@@ -4434,5 +4434,21 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public ActionResult Seller_ScheduleList()
+        {
+            return View();
+        }
+        public ActionResult Seller_ConfirmedData()
+        {
+            return View();
+        }
+        public ActionResult Seller_CreditInfo()
+        {
+            return View();
+        }
+        public ActionResult Seller_APITest()
+        {
+            return View();
+        }
     }
 }

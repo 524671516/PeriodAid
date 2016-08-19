@@ -24,24 +24,40 @@ wx.config({
     // 必填，签名，见附录1
     jsApiList: ["uploadImage", "downloadImage", "chooseImage", "getLocation", "previewImage", "openLocation"]
 });
-
-//下拉刷新主界面数据
-// Pull to refresh content
-var ptrContent = $$('.pull-to-refresh-content');
-ptrContent.on("refresh", function (e) {
-    setTimeout(function () {
-
-        // When loading done, we need to reset it
-        myApp.pullToRefreshDone();
-    },2000);
+$$("#checkin").on("click", function () {
+    if (!$$(this).hasClass("readonly")) {
+        var url = $$(this).attr("data-url");
+        mainView.router.load({
+            url: url,
+            animatePages: false
+        });
+        $$("#checkin span").text("重新签到");
+        $$("#checkout").removeClass("readonly");
+        $$("#report").removeClass("active");
+        $$(this).addClass("active")
+    }
 });
-
-//Seller_ConfirmedData 数据表单 滚动循环
-$$(document).on("pageInit", ".page[data-page='seller-confirmeddata']", function () {
-
+$$("#checkout").on("click", function () {
+    if (!$$(this).hasClass("readonly")) {
+        $$("#report").removeClass("active");
+        $$("#checkin").removeClass("active").addClass("readonly");
+        var url = $$(this).attr("data-url");
+        mainView.router.load({
+            url: url,
+            animatePages: false
+        });
+        $$("#checkout span").text("重新签退");
+        $$(this).addClass("active");
+    };
 });
-
-//Seller_CreditInfo 修改个人信息 提交
-$$(document).on("pageInit", ".page[data-page='seller-creditinfo']", function () {
-  
+$$("#report").on("click", function () {
+    $$(this).addClass("active");
+    $$("#checkin").removeClass("active").children("span").text("开始签到");
+    $$("#checkout").removeClass("active").addClass("readonly").children("span").text("开始签退");
+    var url = $$(this).attr("data-url");
+    mainView.router.load({
+        url: url,
+        animatePages: false
+    });
+    $$("#report span").text("重新提报");
 });
