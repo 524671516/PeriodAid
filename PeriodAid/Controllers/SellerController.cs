@@ -4414,10 +4414,9 @@ namespace PeriodAid.Controllers
             //ViewBag.TaskList = tasklist;
             return PartialView(tasklist);
         }
-        public ActionResult ManagerAddSchedule()
-        {
-            return View();
-        }
+
+
+        /************ 促销员 ************/
         public ActionResult Seller_Home()
         {
             return View();

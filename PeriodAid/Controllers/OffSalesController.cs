@@ -13,7 +13,8 @@ using PagedList;
 using PeriodAid.Models;
 using PeriodAid.Filters;
 using PeriodAid.DAL;
-
+using System.IO;
+using CsvHelper;
 
 namespace PeriodAid.Controllers
 {
@@ -825,6 +826,46 @@ namespace PeriodAid.Controllers
             }
         }
 
-        
+        // Origin:Ajax_downloadSalary
+        // 下载门店销售统计
+        public FileResult DownloadSalaryFile(DateTime start, DateTime end)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var sql = "select T3.StoreName, SUM(T4.SalesCount) as SalesCount, T3.StoreSystem, convert(char(10), T3.Date, 120) as SalesDate  from (SELECT T1.Id, convert(char(10), T1.Date, 120) as Date, T2.StoreName, T2.StoreSystem" +
+                " FROM Off_SalesInfo_Daily as T1 left join Off_Store as T2 on T1.StoreId = T2.Id" +
+                " where Date>= '" + start.ToString("yyyy-MM-dd") + "' and Date<= '" + end.ToString("yyyy-MM-dd") + "' and T2.Off_System_Id = " + user.DefaultSystemId + ") as T3 left join Off_Daily_Product as T4" +
+                " on T3.Id = T4.DailyId group by T3.StoreName, T3.StoreSystem, convert(char(10), T3.Date, 120)";
+            var list = _offlineDB.Database.SqlQuery<StoreStaticExcel>(sql);
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            CsvWriter csv = new CsvWriter(writer);
+            //string[] columname = new string[] {"店铺名称", "经销商", "姓名", "电话号码", "身份证号码", "开户行", "银行卡号", "工资", "奖金", "全勤天数", "迟到天数" };
+            csv.WriteField("日期");
+            csv.WriteField("系统");
+            csv.WriteField("店铺名称");
+            csv.WriteField("促销数量");
+            csv.NextRecord();
+            foreach (var item in list)
+            {
+                csv.WriteField(item.SalesDate);
+                csv.WriteField(item.StoreSystem);
+                csv.WriteField(item.StoreName);
+                csv.WriteField(item.SalesCount ?? 0);
+                csv.NextRecord();
+            }
+            //csv.WriteRecords(list);
+            writer.Flush();
+            writer.Close();
+            return File(convertCSV(stream.ToArray()), "@text/csv", "促销信息" + start.ToShortDateString() + "-" + end.ToShortDateString() + ".csv");
+        }
+        private byte[] convertCSV(byte[] array)
+        {
+            byte[] outBuffer = new byte[array.Length + 3];
+            outBuffer[0] = (byte)0xEF;//有BOM,解决乱码
+            outBuffer[1] = (byte)0xBB;
+            outBuffer[2] = (byte)0xBF;
+            Array.Copy(array, 0, outBuffer, 3, array.Length);
+            return outBuffer;
+        }
     }
 }

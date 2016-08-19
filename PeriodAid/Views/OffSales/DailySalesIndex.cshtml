@@ -18,12 +18,39 @@
         <li><a class="btn btn-info btn-sm" id="offsales-add-daily"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a></li>
         <li><a class="btn btn-info btn-sm" id="offsales-upload-daily"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传日报表</a></li>
         <li><a class="btn btn-danger btn-sm" id="offsale-batchdelete">删除信息</a></li>
+        <li><a class="btn btn-info btn-sm" id="offseller-seller-updown"><i class="fa fa-download"></i>&nbsp;&nbsp;下载促销信息</a></li>
     </ul>
 </div><br />
 <div id="offsales-list">
 
 </div>
+
 @Html.Partial("modal")
+<div class="modal fade" id="modal-downloadsales">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">下载工资数据表</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="start-date" class="sr-only">开始时间</label>
+                            <input type="text" id="start-date" class="form-control input-sm" placeholder="开始时间" />
+                        </div>
+                        <div class="form-group">
+                            <label for="end-date" class="sr-only">开始时间</label>
+                            <input type="text" id="end-date" class="form-control input-sm" placeholder="结束时间" />
+                        </div>
+                        <button type="submit" class="btn btn-default btn-sm" id="modal-downloadsalary-submit"><i class="fa fa-download"></i>&nbsp;&nbsp;下载</button>
+                    </form><br />
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 <script>
     $(function () {
         $.ajax({
@@ -117,6 +144,16 @@
                 }
             });
         }
+    });
+    //下载工资表
+    $("#offseller-seller-updown").click(function () {
+        $("#modal-downloadsales").modal();
+    });
+    $("#modal-downloadsalary-submit").click(function () {
+        var start = $("#start-date").val();
+        var end = $("#end-date").val();
+        window.location.href = "/OffSales/DownloadSalaryFile?start=" + start + "&end=" + end;
+        return false;
     });
 </script>
 

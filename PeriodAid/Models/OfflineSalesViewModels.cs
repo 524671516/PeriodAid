@@ -168,6 +168,14 @@ namespace PeriodAid.Models
         public int? Att_Absence { get; set; }
     }
 
+    public class StoreStaticExcel
+    {
+        public string StoreName { get; set; }
+        public string StoreSystem { get; set; }
+        public int? SalesCount { get; set; }
+        public string SalesDate { get; set; }
+    }
+
     public class StoreSchedule_ViewModel
     {
         [Required(ErrorMessage ="至少选择一个门店")]

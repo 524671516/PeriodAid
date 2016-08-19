@@ -1007,7 +1007,6 @@ $$(document).on("pageInit", ".page[data-page='manager-bonusremark']", function (
 
 //Manager_EventList  活动门店列表  查看日期
 $$(document).on("pageInit", ".page[data-page='manager-eventlist']", function (e) {
-    
     var calendarDefault = myApp.calendar({
         input: "#manager-eventlist-date",
         monthNames: monthNames,
@@ -1193,7 +1192,6 @@ $$(document).on("pageInit", ".page[data-page='manager-addschedule']", function (
     });
 });
 
-
 $$(document).on("pageAfterBack", ".page[data-page='manager-addschedule']", function () {
     var url = "/Seller/Manager_EventListPartial";
     var date = $$("#manager-eventlist-date").val();
@@ -1207,6 +1205,7 @@ $$(document).on("pageAfterBack", ".page[data-page='manager-addschedule']", funct
         }
     });
 });
+
 //Manager_EditSchedule 修改活动日程
 $$(document).on("pageInit", ".page[data-page='manager-editschedule']", function () {
     var starttime = $$("#Standard_CheckIn").val().split(":");

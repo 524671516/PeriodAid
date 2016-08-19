@@ -47,10 +47,10 @@ namespace PeriodAid.DAL
             erpdb.taskstatus.Add(currenttask);
             string[] results;
             erpdb.SaveChanges();
-            if (totalcount > 10000)
+            if (totalcount > 50000)
             {
                 currenttask.status = -1;
-                currenttask.message = "超过10000条数据，获取失败";
+                currenttask.message = "超过50000条数据，获取失败";
                 erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
                 erpdb.SaveChanges();
                 return -1;
@@ -403,10 +403,10 @@ namespace PeriodAid.DAL
             erpdb.taskstatus.Add(currenttask);
             erpdb.SaveChanges();
             string[] results;
-            if (totalcount > 10000)
+            if (totalcount > 50000)
             {
                 currenttask.status = -1;
-                currenttask.message = "超过10000条数据，获取失败";
+                currenttask.message = "超过50000条数据，获取失败";
                 erpdb.Entry(currenttask).State = System.Data.Entity.EntityState.Modified;
                 erpdb.SaveChanges();
                 return -1;
