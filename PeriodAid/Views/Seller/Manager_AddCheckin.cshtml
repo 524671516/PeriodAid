@@ -12,14 +12,14 @@
 </div>
 <div class="pages">
     <div class="page" data-page="manager-task-addcheckin" id="manager-task-addcheckin">
-        @using (Html.BeginForm("Manager_AddCheckin", "Seller", FormMethod.Post, new { @id="addcheckin_form", @class="validate-form"}))
-        {
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(m => m.Id)
-            @Html.HiddenFor(m => m.Location)
-            @Html.HiddenFor(m=>m.Location_Desc)
-            @Html.HiddenFor(m => m.CheckIn_Time)
-            <div class="page-content">
+        <div class="page-content">
+            @using (Html.BeginForm("Manager_AddCheckin", "Seller", FormMethod.Post, new { @id = "addcheckin_form", @class = "validate-form" }))
+{
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.Location)
+                @Html.HiddenFor(m => m.Location_Desc)
+                @Html.HiddenFor(m => m.CheckIn_Time)
                 <div class="content-block-title">操作</div>
                 <div class="list-block">
                     <ul>
@@ -63,8 +63,9 @@
                 <div class="content-block">
                     <a href="javascript:;" class="button button-big button-fill" id="addcheckin-btn">提交</a>
                 </div>
+            }
             </div>
-        }
-    </div>
+       
+        </div>
 
-</div>
+    </div>

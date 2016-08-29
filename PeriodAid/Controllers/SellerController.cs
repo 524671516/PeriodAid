@@ -4521,6 +4521,7 @@ namespace PeriodAid.Controllers
                 {
                     var checkitem = offlineDB.Off_Checkin.SingleOrDefault(m => m.Off_Schedule_Id == item.Id && m.Off_Seller_Id == seller.Id && m.Status != -1);
                     ViewBag.StoreName = item.Off_Store.StoreName;
+                    ViewBag.NickName = seller.Name;
                     if (checkitem != null)
                     {
                         return PartialView(checkitem);
