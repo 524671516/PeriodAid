@@ -4404,8 +4404,8 @@ namespace PeriodAid.Controllers
         {
             // 获取督导的门店列表
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName
-
+            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
+            var storelist = manager.Off_Store.Select(m => m.Id);
             var tasklist = from m in offlineDB.Off_SellerTask
                            where storelist.Contains(m.StoreId)
                            group m by m.Off_Seller into g
