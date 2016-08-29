@@ -10,6 +10,27 @@ var mainView = myApp.addView(".view-main", {
     dynamicNavbar: true
 });
 
+$$(document).on("ajaxStart", function (e) {
+    if (e.detail.xhr.requestUrl.indexOf("autocomplete-languages.json") >= 0) {
+        return;
+    }
+    myApp.showIndicator();
+});
+
+$$(document).on("ajaxComplete", function (e) {
+    if (e.detail.xhr.requestUrl.indexOf("autocomplete-languages.json") >= 0) {
+        return;
+    }
+    myApp.hideIndicator();
+});
+
+$$.ajax({
+    url: "/Seller/Seller_Panel",
+    success: function (data) {
+        $$("#user-panel").html(data);
+    }
+})
+
 // 微信初始化
 wx.config({
     debug: false,
@@ -24,6 +45,65 @@ wx.config({
     // 必填，签名，见附录1
     jsApiList: ["uploadImage", "downloadImage", "chooseImage", "getLocation", "previewImage", "openLocation"]
 });
+
+$$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function (e) {
+    myApp.closePanel();
+    $$("#SystemId").change(function (e) {
+        var selectlist = $$("#SystemId");
+        $$.ajax({
+            url: "/Seller/Seller_RefreshBindListAjax",
+            data: {
+                id: selectlist.val()
+            },
+            method: "post",
+            success: function (data) {
+                $$("#BindId").html(data);
+                $$("#bindstore").text($$("#BindId>option")[0].innerText);
+            }
+        });
+    })
+    $$("#changeaccount-submit").click(function () {
+        console.log($$("#SystemId").val());
+        console.log($$("#BindId").val());
+        myApp.showIndicator();
+        $("#changeaccount-submit").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#changeaccount-form").submit();
+        }, 500);
+    });
+    $("#changeaccount-form").validate({
+        debug: false,
+        //调试模式取消submit的默认提交功能   
+        errorClass: "custom-error",
+        //默认为错误的样式类为：error   
+        focusInvalid: false,
+        //当为false时，验证无效时，没有焦点响应
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#changeaccount-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    window.location.href = "/Seller/Seller_Home";
+                } else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        title: "通知",
+                        message: "表单提交失败"
+                    });
+                    $("#changeaccount-submit").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2e3);
+                }
+            });
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#changeaccount-submit").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+})
 $$("#checkin").on("click", function () {
     if (!$$(this).hasClass("readonly")) {
         var url = $$(this).attr("data-url");

@@ -196,6 +196,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AuthorizationController.cs" />
     <Compile Include="Controllers\OffBonusController.cs" />
     <Compile Include="Controllers\OffCheckinController.cs" />
     <Compile Include="Controllers\OffCommonController.cs" />
@@ -216,7 +217,6 @@
     <Compile Include="Controllers\OffSalesController.cs" />
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\SellerTaskController.cs" />
-    <Compile Include="Controllers\TempSellerController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
     <Compile Include="DAL\AliOSSUtilities.cs" />
@@ -828,19 +828,8 @@
     <Content Include="Views\OffBonus\BonusList.cshtml" />
     <Content Include="Views\OffBonus\BonusListPartial.cshtml" />
     <Content Include="Views\OffManager\AddManagerArea.cshtml" />
-    <Content Include="Views\TempSeller\Index.cshtml" />
-    <Content Include="Views\TempSeller\About.cshtml" />
-    <Content Include="Views\TempSeller\Search.cshtml" />
-    <Content Include="Views\TempSeller\History.cshtml" />
-    <Content Include="Views\TempSeller\PersonalInformation.cshtml" />
-    <Content Include="Views\TempSeller\Refresh.cshtml" />
-    <Content Include="Views\TempSeller\InfiniteScroll.cshtml" />
     <Content Include="Views\OffCheckin\CreateCheckin.cshtml" />
     <Content Include="Views\OffCheckin\AddCheckinProductListPartial.cshtml" />
-    <Content Include="Views\TempSeller\ManagerSystem.cshtml" />
-    <Content Include="Views\TempSeller\ManagerSystem_Patrol.cshtml" />
-    <Content Include="Views\TempSeller\ManagerSystem_Warning.cshtml" />
-    <Content Include="Views\TempSeller\ManagerSystem_SellerDetails.cshtml" />
     <Content Include="Views\SellerTask\Register.cshtml" />
     <Content Include="Views\SellerTask\WxJSAppPartial.cshtml" />
     <Content Include="Views\SellerTask\Home.cshtml" />
@@ -928,12 +917,15 @@
     <Content Include="Views\Seller\Seller_ConfirmedData.cshtml" />
     <Content Include="Views\Seller\Seller_CreditInfo.cshtml" />
     <Content Include="Views\Seller\Seller_APITest.cshtml" />
+    <Content Include="Views\Seller\Seller_Panel.cshtml" />
+    <Content Include="Views\Seller\Seller_ChangeAccount.cshtml" />
+    <Content Include="Views\Seller\Seller_RefreshBindListAjax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
-    <Folder Include="Views\Common\" />
+    <Folder Include="Views\Authorization\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,6 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Membership_Bind>
+
+@foreach(var item in Model)
+{
+    <option value="@item.Id">@Html.Encode(item.Off_Seller.Off_Store.StoreName)</option>
+}
