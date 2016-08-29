@@ -34,6 +34,8 @@ namespace PeriodAid.Models
         public string OffSalesSystem { get; set; }
 
         public int DefaultSystemId { get; set; }
+
+        public int DefaultSellerId { get; set; }
         
         public int Credits { get; set; }
 

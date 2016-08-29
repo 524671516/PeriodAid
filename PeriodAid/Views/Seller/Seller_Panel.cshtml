@@ -1,0 +1,62 @@
+﻿@model PeriodAid.Models.Off_Seller
+<div class="img-center">
+    <div class="row">
+        <!-- Each "cell" has col-[widht in percents] class -->
+        <div class="col-40">
+            @if (ViewBag.ImgUrl == null)
+            {
+                <img src="/Content/images/logo_new.png" class="img-circle img-responsive" id="user-imgurl" />
+            }
+            else
+            {
+                <img src="@ViewBag.ImgUrl" class="img-circle img-responsive" id="user-imgurl" />
+            }
+        </div>
+        <div class="col-40">
+            <div style="margin:10px 0;"><span id="user-nickname" class="h4">@Html.Encode(ViewBag.NickName)</span></div>
+            <a href="javascript:window.location.href='/Seller/UpdateUserInfo';" class="button active h6">更新头像</a>
+        </div>
+        <div class="col-20"></div>
+    </div>
+</div>
+
+<div class="list-block h5">
+    <ul>
+        <li class="item-content list-panel-all">
+            <div class="item-inner">
+                <div class="item-title">真实姓名</div>
+                <div class="item-after">@Html.Encode(Model.Name)</div>
+            </div>
+        </li>
+        <li class="item-content list-panel-all">
+            <div class="item-inner">
+                <div class="item-title">联系电话</div>
+                <div class="item-after">@Html.Encode(Model.Mobile)</div>
+            </div>
+        </li>
+        <li class="item-content list-panel-favorites">
+            <div class="item-inner">
+                <div class="item-title">门店名称</div>
+                <div class="item-after">@Html.Encode(Model.Off_Store.StoreName)</div>
+            </div>
+        </li>
+        <li>
+            <a href="javascript:;" class="item-content item-link manager-photolist">
+                <div class="item-inner">
+                    <div class="item-title">使用指南</div>
+                    <div class="item-after"></div>
+                </div>
+            </a>
+        </li>
+        <li class="item-content">
+            <div class="item-inner">
+                <div class="item-title">当前版本</div>
+                <div class="item-after">v1.5.1</div>
+            </div>
+        </li>
+    </ul>
+    <div class="img-center">
+        <a href="/Seller/Seller_ChangeAccount" class="button active h6 color-red">切换账户</a>
+    </div>
+</div>
+

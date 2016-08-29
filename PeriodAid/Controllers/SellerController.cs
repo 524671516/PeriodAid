@@ -2808,7 +2808,6 @@ namespace PeriodAid.Controllers
                 ViewBag.ImgUrl = user.ImgUrl;
                 return PartialView();
             }
-
         }
         public ActionResult UpdateUserInfo()
         {
@@ -4419,7 +4418,77 @@ namespace PeriodAid.Controllers
         /************ 促销员 ************/
         public ActionResult Seller_Home()
         {
+            // 判断当前是否有默认店铺
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            if (user.DefaultSellerId == 0)
+            {
+                var binduser = (from m in offlineDB.Off_Membership_Bind
+                                   where m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId
+                                   orderby m.Id descending
+                                   select m).FirstOrDefault();
+                if (binduser != null)
+                {
+                    user.DefaultSellerId = binduser.Id;
+                    UserManager.Update(user);
+                }
+            }
             return View();
+        }
+        public PartialViewResult Seller_Panel()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            ViewBag.ImgUrl = user.ImgUrl;
+            ViewBag.NickName = user.NickName;
+            var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId);
+            if (binduser != null)
+            {
+                return PartialView(binduser.Off_Seller);
+            }
+            else
+            {
+                return PartialView("Error");
+            }
+        }
+
+        public PartialViewResult Seller_ChangeAccount()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            string[] systems = user.OffSalesSystem.Split(',');
+            var systemlist = from m in offlineDB.Off_System
+                             where systems.Contains(m.Id.ToString())
+                             select new { Key = m.Id, Value = m.SystemName };
+            var bindlist = from m in offlineDB.Off_Membership_Bind
+                           where m.Off_System_Id == user.DefaultSystemId && m.UserName == user.UserName
+                           select new { Key = m.Id, Value = m.Off_Seller.Off_Store.StoreName };
+            ViewBag.SystemList = new SelectList(systemlist, "Key", "Value", user.DefaultSystemId);
+            ViewBag.BindList = new SelectList(bindlist, "Key", "Value", user.DefaultSellerId);
+            return PartialView();
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Seller_ChangeAccount(FormCollection form)
+        {
+            try
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                user.DefaultSystemId = Convert.ToInt32(form["SystemId"]);
+                user.DefaultSellerId = Convert.ToInt32(form["BindId"]);
+                UserManager.Update(user);
+                return Content("SUCCESS");
+            }
+            catch
+            {
+                return Content("FAIL");
+            }
+        }
+
+        [HttpPost]
+        public PartialViewResult Seller_RefreshBindListAjax(int id)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var bindlist = from m in offlineDB.Off_Membership_Bind
+                           where m.Off_System_Id == id && m.UserName == user.UserName
+                           select m;
+            return PartialView(bindlist);
         }
         public ActionResult Seller_CheckIn()
         {
