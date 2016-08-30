@@ -210,6 +210,7 @@
     <Compile Include="Controllers\OffManagerController.cs" />
     <Compile Include="Controllers\OffProductController.cs" />
     <Compile Include="Controllers\OffSellerController.cs" />
+    <Compile Include="Controllers\OffSellerTaskController.cs" />
     <Compile Include="Controllers\OffStatisticController.cs" />
     <Compile Include="Controllers\OffStoreController.cs" />
     <Compile Include="Controllers\PayController.cs" />
@@ -926,6 +927,7 @@
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
+    <Folder Include="Views\OffSellerTask\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
