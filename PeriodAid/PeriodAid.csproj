@@ -921,6 +921,7 @@
     <Content Include="Views\Seller\Seller_ChangeAccount.cshtml" />
     <Content Include="Views\Seller\Seller_RefreshBindListAjax.cshtml" />
     <Content Include="Views\Seller\Seller_ReportPartial.cshtml" />
+    <Content Include="Views\Seller\Seller_EditReport_Item.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

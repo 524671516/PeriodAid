@@ -4612,7 +4612,7 @@ namespace PeriodAid.Controllers
         }
 
         // 修改促销信息（时间列表）
-        public ActionResult Seller_Report(int id)
+        public ActionResult Seller_Report()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;

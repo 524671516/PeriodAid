@@ -8,104 +8,35 @@
             </a>
         </div>
         <div class="center sliding">促销员 提报销量</div>
-        @*<div class="right">
-            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
-        </div>*@
     </div>
 </div>
 <div class="pages">
     <div class="page" data-page="seller-report">
         <div class="page-content">
-            <div class="content-block-title">选择日期</div>
-            <div class="list-block">
-                <ul>
-                    <li>
-                        <a href="#" class="item-link smart-select"  data-back-text="返回" data-back-on-select="true">
-                            <select>
-                                <option value="1">2016-08-17</option>
-                                <option value="2">2016-08-14</option>
-                                <option value="3">2016-08-13</option>
-                                <option value="4">2016-08-12</option>
-                            </select>
-                            <div class="item-content">
-                                <div class="item-inner">
-                                    <div class="item-title">提报时间</div>
-                                    <div class="item-after"></div>
+            @if (ViewBag.Report != null)
+            {
+                <div class="content-block-title">选择日期</div>
+
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true">
+                                @Html.DropDownList("reportlist", ViewBag.Report as SelectList)
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">提报时间</div>
+                                        <div class="item-after"></div>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="content-block-title">提报信息</div>
-            <div class="list-block media-list">
-                <ul>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title-row row">
-                                    <div class="col-30" style="margin-top:3px;">红糖姜茶</div>
-                                    <div class="col-35"><input style="height:auto;margin-top:5px;" type="number" placeholder="销量"></div>
-                                    <div class="col-35"><input style="height:auto;margin-top:5px;" type="number" placeholder="库存"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title-row row">
-                                    <div class="col-30" style="margin-top:3px;">黑糖姜茶</div>
-                                    <div class="col-35"><input style="height:auto;margin-top:5px;" type="number" placeholder="销量"></div>
-                                    <div class="col-35"><input style="height:auto;margin-top:5px;" type="number" placeholder="库存"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title-row row">
-                                    <div class="col-30" style="margin-top:3px;">柠檬姜茶</div>
-                                    <div class="col-35"><input style="height:auto;margin-top:5px;" type="number" placeholder="销量"></div>
-                                    <div class="col-35"><input style="height:auto;margin-top:5px;" type="number" placeholder="库存"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <textarea placeholder="请填写简报"></textarea>
-                                <div class="item-title-row">
-                                    <div class="item-title"></div>
-                                    <div class="item-after">0/500</div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title-row">
-                                    <div class="item-title">图片上传</div>
-                                    <div class="item-after">0/7</div>
-                                </div>
-                                <div class="subtitle">
-                                    <ul class="rep-imglist">
-                                        <li>
-                                            <a href="javascript:;" class="rep-imgitem-btn"><i class="fa fa-plus"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="content-block">
-                <a href="javascript:;" class="button button-big button-fill">提交</a>
-            </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+            else {
+                <div class="content-block-title">暂无须填写的销量报表</div>
+            }
+            <div id="report-content"></div>
         </div>
     </div>
 </div>
