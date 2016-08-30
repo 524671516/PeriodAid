@@ -1,4 +1,5 @@
-﻿<div class="navbar">
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
+<div class="navbar">
     <div class="navbar-inner">
         <div class="left">
             <a href="#" class="back link">
@@ -11,32 +12,34 @@
 </div>
 <div class="pages">
     <div class="page" data-page="seller-schedulelist">
-        <div class="page-content">
-            <div class="content-block-title">活动日期列表</div>
+        <div class="page-content pull-to-refresh-content">
+            <div class="pull-to-refresh-layer">
+                <div class="preloader"></div>
+                <div class="pull-to-refresh-arrow"></div>
+            </div>
+            <div class="content-block-title">@ViewBag.StoreName</div>
+            @{
+                DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            }
             <div class="list-block">
                 <ul>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title">2016-08-17</div>
-                                <div class="color-blue" style="float:right;">今天&nbsp;&nbsp;<i class="fa fa-exclamation-circle" aria-hidden="true"></i></div>
+                    @foreach (var item in Model.OrderBy(m => m.Subscribe))
+                    {
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">@Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))</div>
+                                    @if (item.Subscribe == today)
+                                    {
+                                        <div class="color-blue" style="float:right;">今天&nbsp;&nbsp;<i class="fa fa-exclamation-circle" aria-hidden="true"></i></div>
+                                    }
+                                    else {
+                                        <div class="item-after"></div>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title">2016-07-11</div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title">2016-07-12</div>
-                            </div>
-                        </div>
-                    </li>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

@@ -33,7 +33,7 @@ $$.ajax({
 
 // 微信初始化
 wx.config({
-    debug: true,
+    debug: false,
     // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
     appId: $("#appId").text(),
     // 必填，公众号的唯一标识
@@ -141,8 +141,47 @@ $$("#report").on("click", function () {
     });
     $$("#report span").text("重新提报");
 });
+
 //Seller_CheckIn 签到
 $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
+    //新用户弹窗
+    $$.ajax({
+        url: "/Seller/Wx_Seller_IsRecruit",
+        type: "post",
+        data: {
+            sellerid: $("#Off_Seller_Id").val()
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result == "SUCCESS") {
+                if (!data.recruit) {
+                    myApp.modal({
+                        title: "温馨提示",
+                        text: "请上传带有上班编码的签到图片",
+                        buttons: [
+                            {
+                                text: "查看示例",
+                                onClick: function () {
+                                    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
+                                    var image = urls.split(',');
+                                    wx.previewImage({
+                                        current: image[0], // 当前显示图片的http链接
+                                        urls: image // 需要预览的图片http链接列表
+                                    });
+                                }
+                            },
+                            {
+                                text: "取消",
+                                onClick: function () {
+                                    myApp.closeModal();
+                                }
+                            }
+                        ]
+                    });
+                }
+            }
+        }
+    });
     //上传位置信息、图片信息
     uploadLocation("location-btn", "CheckinLocation");
     uploadImage("img-btn", "CheckinPhoto");
@@ -206,6 +245,44 @@ $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
 
 //Seller_CheckOut 签退
 $$(document).on("pageInit", ".page[data-page='seller-checkout']", function () {
+    //新用户弹窗
+    $$.ajax({
+        url: "/Seller/Wx_Seller_IsRecruit",
+        type: "post",
+        data: {
+            sellerid: $("#Off_Seller_Id").val()
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result == "SUCCESS") {
+                if (!data.recruit) {
+                    myApp.modal({
+                        title: "温馨提示",
+                        text: "请上传带有上班编码的签退图片",
+                        buttons: [
+                            {
+                                text: "查看示例",
+                                onClick: function () {
+                                    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
+                                    var image = urls.split(',');
+                                    wx.previewImage({
+                                        current: image[0], // 当前显示图片的http链接
+                                        urls: image // 需要预览的图片http链接列表
+                                    });
+                                }
+                            },
+                            {
+                                text: "取消",
+                                onClick: function () {
+                                    myApp.closeModal();
+                                }
+                            }
+                        ]
+                    });
+                }
+            }
+        }
+    });
     //上传位置信息、签退图片
     uploadLocation("location-btn", "CheckoutLocation");
     uploadImage("img-btn", "CheckoutPhoto");
@@ -265,6 +342,7 @@ $$(document).on("pageInit", ".page[data-page='seller-checkout']", function () {
 
 //Seller_Report 销量报表
 $$(document).on("pageInit", ".page[data-page='seller-report']", function () {
+    var submit_count = 0;
     $$.ajax({
         url: "/Seller/Seller_ReportPartial",
         data: {
@@ -291,50 +369,72 @@ $$(document).on("pageInit", ".page[data-page='seller-report']", function () {
     });
     //提交
     $$("#report-content").on("click", "#report-btn", function () {
-        $$("#report-btn").prop("disabled", true).addClass("color-gray");
-        myApp.showIndicator();
-        setTimeout(function () {
-            myApp.hideIndicator();
-        }, 2000);
-        setTimeout(function () {
-            var photoArray = splitArray($$("#Rep_Image").val());
-            if (photoArray.length == 0) {
-                myApp.hideIndicator();
-                myApp.alert("至少上传一张图片");
-                $("#report-btn").prop("disabled", true).removeClass("color-gray");
-            }
-            else {
-                $("#report_form").ajaxSubmit({
-                    success: function (data) {
-                        if (data == "SUCCESS") {
-                            myApp.hideIndicator();
-                            mainView.router.back();
-                            myApp.addNotification({
-                                title: "通知",
-                                message: "销量报表提交成功"
-                            });
-                            setTimeout(function () {
-                                myApp.closeNotification(".notifications");
-                            }, 2000);
-                        } else {
-                            myApp.hideIndicator();
-                            $("#report-btn").prop("disabled", true).addClass("color-gray");
-                            myApp.addNotification({
-                                title: "通知",
-                                message: "销量报表提交失败"
-                            });
-                            $("#report-content").html(data);
-                            setTimeout(function () {
-                                myApp.closeNotification(".notifications");
-                            }, 2000);
+        if (submit_count == 0) {
+            submit_count = 1;
+            $$("#report-btn").prop("disabled", true).addClass("color-gray");
+            myApp.showIndicator();
+            setTimeout(function () {
+                var photoArray = splitArray($$("#Rep_Image").val());
+                if (photoArray.length == 0) {
+                    myApp.hideIndicator();
+                    myApp.alert("至少上传一张图片");
+                    $("#report-btn").prop("disabled", true).removeClass("color-gray");
+                }
+                else {
+                    $("#report_form").ajaxSubmit({
+                        success: function (data) {
+                            if (data == "SUCCESS") {
+                                myApp.hideIndicator();
+                                mainView.router.back();
+                                myApp.addNotification({
+                                    title: "通知",
+                                    message: "销量报表提交成功"
+                                });
+                                setTimeout(function () {
+                                    myApp.closeNotification(".notifications");
+                                }, 2000);
+                            } else {
+                                myApp.hideIndicator();
+                                $("#report-btn").prop("disabled", true).addClass("color-gray");
+                                myApp.addNotification({
+                                    title: "通知",
+                                    message: "销量报表提交失败"
+                                });
+                                //$("#report-content").html(data);
+                                setTimeout(function () {
+                                    myApp.closeNotification(".notifications");
+                                }, 2000);
+                            }
                         }
-                    }
-                });
-            }
-        }, 500);
+                    });
+                }
+            }, 500);
+        }
     });
 });
 
+//Seller_ScheduleList 排班表
+$$(document).on("pageInit", ".page[data-page='seller-schedulelist']", function () {
+    var dateList = ["2016-06-16", "2016-07-17", "2016-08-14", "2016-06-01", "2016-06-10"];
+    var ptrContent = $$('.pull-to-refresh-content');
+    ptrContent.on('refresh', function (e) {
+        // Emulate 2s loading
+        setTimeout(function () {
+            // Random author
+            var date = dateList[Math.floor(Math.random() *dateList.length)];
+            // List item html
+            var itemHTML = '<li class="item-content">' +
+                              '<div class="item-inner">' +
+                                  '<div class="item-title">' + date + '</div>' +
+                              '</div>' +
+                            '</li>';
+            // Prepend new list element
+            ptrContent.find('ul').prepend(itemHTML);
+            // When loading done, we need to reset it
+            myApp.pullToRefreshDone();
+        }, 2000);
+    });
+});
 //辅助程序
 
 //上传位置信息
@@ -431,7 +531,7 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
         var photolist = splitArray($("#" + photolist_id).val());
         if (photolist.length < max_count) {
             wx.chooseImage({
-                count: 1,
+                count: max_count - photolist.length,
                 // 默认9
                 sizeType: ["compressed"],
                 // 可以指定是原图还是压缩图，默认二者都有
@@ -441,45 +541,54 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                     localIds = res.localIds;
                     // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
                     //$("#preview").attr("src", localIds);
-                    wx.uploadImage({
-                        localId: localIds[0],
-                        // 需要上传的图片的本地ID，由chooseImage接口获得
-                        isShowProgressTips: 1,
-                        // 默认为1，显示进度提示
-                        success: function (res) {
-                            var serverId = res.serverId;
-                            // 返回图片的服务器端ID
-                            $$.ajax({
-                                url: "/Seller/SaveOrignalImage",
-                                type: "post",
-                                data: {
-                                    serverId: serverId
-                                },
-                                success: function (resource) {
-                                    data = JSON.parse(resource);
-                                    if (data.result == "SUCCESS") {
-                                        $$("#" + imglist).html("");
-                                        photolist.push(data.filename);
-                                        $$("#" + current_count).text(photolist.length);
-                                        $$("#" + photolist_id).val(photolist.toString());
-                                        for (var i = 0; i < photolist.length; i++) {
-                                            $$("#" + imglist).append('<li><div class="rep-imgitem" data-rel=\'' + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + '); background-size:cover"></div></li>');
-                                        }
-                                        $$("#" + imglist).append('<li><a href="javascript:;" class="rep-imgitem-btn" id="' + imglist + '-upload-btn"><i class="fa fa-plus"></i></a></li>');
-                                    } else {
-                                        myApp.alert("上传失败，请重试");
-                                    }
-                                }
-                            });
-                        }
-                    });
+                    upload_img(localIds, 0, photolist);
                 }
             });
         } else {
             myApp.alert("上传图片不得大于" + max_count + "张，无法添加");
         }
     });
+    function upload_img(localIds, arraycount, pl) {
+        if (arraycount < localIds.length) {
+            wx.uploadImage({
+                localId: localIds[arraycount], // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips: 0, // 默认为1，显示进度提示
+                success: function (res) {
+                    var serverId = res.serverId; // 返回图片的服务器端ID
+                    $$.ajax({
+                        url: "/Seller/SaveOrignalImage",
+                        type: "post",
+                        data: {
+                            serverId: serverId
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data.result == "SUCCESS") {
+                                pl.push(data.filename);
+                                arraycount++;
+                                upload_img(localIds, arraycount, pl);
+                            }
+                            else {
+                                myApp.alert("上传失败");
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            $$("#" + imglist).html("");
+            $$("#" + current_count).text(pl.length);
+            $$("#" + photolist_id).val(pl.toString());
+            for (var i = 0; i < pl.length; i++) {
+                $$("#" + imglist).append('<li><div class="rep-imgitem" data-rel=\'' + pl[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + pl[i] + '); background-size:cover"></div></li>');
+            }
+            $$("#" + imglist).append('<li><a href="javascript:;" class="rep-imgitem-btn" id="' + imglist + '-upload-btn"><i class="fa fa-plus"></i></a></li>');
+            myApp.hideIndicator();
+        }
+    }
     // 删除图片
+    //$$("#" + pagename).off("click", ".rep-imgitem");
     $$("#" + imglist).on("click", ".rep-imgitem", function (e) {
         var img_item = $$(this);
         $$(".rep-imgitem").each(function () {
@@ -489,6 +598,7 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
     });
     $$("#" + imglist).on("click", ".rep-imgitem-selected", function () {
         myApp.confirm("是否确认删除已上传图片?", "提示", function () {
+            //myApp.alert('You clicked Ok button');
             var delete_item = $(".rep-imgitem-selected").closest(".rep-imgitem").attr("data-rel");
             var arraylist = splitArray($("#" + photolist_id).val());
             var pos = $.inArray(delete_item, arraylist);
@@ -527,7 +637,7 @@ function currentTextAreaLength(pagename, id_name, max_length, result_id) {
             myApp.alert("已超出最大值，请重新填写或删除部分信息");
             var str = $$("#" + id_name).val();
             $$("#" + id_name).val(str.slice(0, 50));
-            $$("#" + result_id).text("50");
+            $$("#" + result_id).text("500");
         }
     });
 }
