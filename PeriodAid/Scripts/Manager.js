@@ -1702,7 +1702,7 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
         var photolist = splitArray($("#" + photolist_id).val());
         if (photolist.length < max_count) {
             wx.chooseImage({
-                count: 1,
+                count: max_count-photolist.length,
                 // 默认9
                 sizeType: ["compressed"],
                 // 可以指定是原图还是压缩图，默认二者都有
@@ -1712,44 +1712,52 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                     localIds = res.localIds;
                     // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
                     //$("#preview").attr("src", localIds);
-                    wx.uploadImage({
-                        localId: localIds[0],
-                        // 需要上传的图片的本地ID，由chooseImage接口获得
-                        isShowProgressTips: 1,
-                        // 默认为1，显示进度提示
-                        success: function (res) {
-                            var serverId = res.serverId;
-                            // 返回图片的服务器端ID
-                            $$.ajax({
-                                url: "/Seller/SaveOrignalImage",
-                                type: "post",
-                                data: {
-                                    serverId: serverId
-                                },
-                                success: function (resource) {
-                                    data = JSON.parse(resource);
-                                    if (data.result == "SUCCESS") {
-                                        $$("#" + imglist).html("");
-                                        photolist.push(data.filename);
-                                        $$("#" + current_count).text(photolist.length);
-                                        $$("#" + photolist_id).val(photolist.toString());
-                                        for (var i = 0; i < photolist.length; i++) {
-                                            $$("#" + imglist).append('<li><div class="rep-imgitem" data-rel=\'' + photolist[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + photolist[i] + '); background-size:cover"></div></li>');
-                                        }
-                                        $$("#" + imglist).append('<li><a href="javascript:;" class="rep-imgitem-btn" id="' + imglist + '-upload-btn"><i class="fa fa-plus"></i></a></li>');
-                                    } else {
-                                        myApp.alert("上传失败，请重试");
-                                    }
-                                }
-                            });
-                        }
-                    });
+                    upload_img(localIds, 0, photolist);
                 }
             });
         } else {
             myApp.alert("上传图片不得大于" + max_count + "张，无法添加");
         }
     });
+    function upload_img(localIds, arraycount, pl) {
+        if (arraycount < localIds.length) {
+            wx.uploadImage({
+                localId: localIds[arraycount], // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips: 0, // 默认为1，显示进度提示
+                success: function (res) {
+                    var serverId = res.serverId; // 返回图片的服务器端ID
+                    $$.ajax({
+                        url: "/Seller/SaveOrignalImage",
+                        type: "post",
+                        data: {
+                            serverId: serverId
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data.result == "SUCCESS") {
+                                pl.push(data.filename);
+                                arraycount++;
+                                upload_img(localIds, arraycount, pl);
+                            }
+                            else {
+                                myApp.alert("上传失败");
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            $$("#" + imglist).html("");
+            $$("#" + current_count).text(pl.length);
+            $$("#" + photolist_id).val(pl.toString());
+            for (var i = 0; i < pl.length; i++) {
+                $$("#" + imglist).append('<li><div class="rep-imgitem" data-rel=\'' + pl[i] + "' style=\"background-image:url(/Seller/ThumbnailImage?filename=" + pl[i] + '); background-size:cover"></div></li>');
+            }
+            $$("#" + imglist).append('<li><a href="javascript:;" class="rep-imgitem-btn" id="' + imglist + '-upload-btn"><i class="fa fa-plus"></i></a></li>');
+            myApp.hideIndicator();
+        }
+    }
     // 删除图片
     //$$("#" + pagename).off("click", ".rep-imgitem");
     $$("#" + imglist).on("click", ".rep-imgitem", function (e) {
