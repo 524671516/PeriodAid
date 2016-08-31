@@ -16,6 +16,7 @@
 <div class="pages">
     <div class="page" data-page="seller-confirmeddata">
         <div class="page-content infinite-scroll">
+            @Html.DropDownList("dd", ViewBag.MonthSelect as SelectList)
             <div class="content-block-title">考勤数据表</div>
             <div class="list-block">
                 <ul>

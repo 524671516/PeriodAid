@@ -4423,15 +4423,16 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             if (user.DefaultSellerId == 0)
             {
-                var binduser = (from m in offlineDB.Off_Membership_Bind
+                var bind_user = (from m in offlineDB.Off_Membership_Bind
                                    where m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId
                                    orderby m.Id descending
                                    select m).FirstOrDefault();
-                if (binduser != null)
+                if (bind_user != null)
                 {
-                    user.DefaultSellerId = binduser.Id;
+                    user.DefaultSellerId = bind_user.Id;
                     UserManager.Update(user);
                 }
+
             }
             WeChatUtilities utilities = new WeChatUtilities();
             string _url = ViewBag.Url = Request.Url.ToString();
@@ -4441,8 +4442,72 @@ namespace PeriodAid.Controllers
             string _timeStamp = CommonUtilities.generateTimeStamp().ToString();
             ViewBag.TimeStamp = _timeStamp;
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
+            var binduser = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId);
+            if (binduser!=null && binduser.Bind)
+            {
+                ViewBag.BindInfo = true;
+                DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+                int dow = (int)today.DayOfWeek;
+                //int dow = (int)new DateTime(2016, 04, 03).DayOfWeek;
+                var dowinfo = from m in offlineDB.Off_AVG_Info
+                              where m.DayOfWeek == dow + 1 && m.StoreId == binduser.Off_Seller.Off_Store.Id
+                              select new { AVG_Count = m.AVG_SalesData, AVG_Amount = m.AVG_AmountData };
+                if (dowinfo.Count() == 0)
+                    ViewBag.AVG_Info = 0;
+                else
+                {
+                    var l = dowinfo.FirstOrDefault();
+                    ViewBag.AVG_Info = l.AVG_Count;
+                }
+            }
+            else
+            {
+                ViewBag.BindInfo = false;
+            }
             return View();
         }
+
+        // 首页页面更新信息
+        [HttpPost]
+        public JsonResult Seller_HomeJson()
+        {
+            int status;
+            int checkinId =0;
+            int scheduleId = 0;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var bind = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId);
+            if(bind==null || !bind.Bind)
+            {
+                status = -1;
+            }
+            else
+            {
+                status = 0;
+                DateTime today = DateTime.Today;
+                int sellerId = bind.Off_Seller.Id;
+                var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == sellerId);
+                if (schedule != null)
+                {
+                    scheduleId = schedule.Id;
+                    var checkinlist = from m in offlineDB.Off_Checkin
+                                      where m.Off_Schedule_Id == scheduleId && m.Off_Seller_Id == sellerId
+                                      && m.Status > 0
+                                      select m;
+                    if (checkinlist.Count() == 0)
+                    {
+                        status = 1;
+                    }
+                    else
+                    {
+                        var checkin = checkinlist.FirstOrDefault();
+                        checkinId = checkin.Id;
+                        status = checkin.Status + 1;
+                    }
+                }
+            }
+            return Json(new { result = "SUCCESS", data = new { Status = status, Checkin_Id = checkinId, Schedule_Id = scheduleId } });
+        }
+
         // 用户页面
         public PartialViewResult Seller_Panel()
         {
@@ -4611,13 +4676,14 @@ namespace PeriodAid.Controllers
         }
 
         // 修改促销信息（时间列表）
-        public ActionResult Seller_Report(int id)
+        public ActionResult Seller_Report()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
             var reportlist = from m in offlineDB.Off_Checkin
                              where m.Off_Seller_Id == seller.Id
                              && (m.Status == 2 || m.Status == 3)
+                             orderby m.Off_Checkin_Schedule.Subscribe descending
                              select new { Id = m.Id, ReportDate = m.Off_Checkin_Schedule.Subscribe };
             List<Object> attendance = new List<Object>();
             foreach (var i in reportlist)
@@ -4816,13 +4882,13 @@ namespace PeriodAid.Controllers
         }
 
         // 修改账户信息
-        public ActionResult Seller_CreditInfo(int id)
+        public ActionResult Seller_CreditInfo()
         {
 
-            var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var Seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
             if (Seller != null)
             {
-                var user = UserManager.FindById(User.Identity.GetUserId());
                 var banklistArray = offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
                 if (banklistArray != null)
                 {
@@ -4879,6 +4945,7 @@ namespace PeriodAid.Controllers
             return Content("FAIL");
         }
         
+        // 页面测试
         public ActionResult Seller_APITest()
         {
             return View();
