@@ -4722,6 +4722,7 @@ namespace PeriodAid.Controllers
             }
             return Content("FAIL");
         }
+
         // 修改表单内的产品列表
         public PartialViewResult Seller_EditReport_Item(int id)
         {
@@ -4763,8 +4764,13 @@ namespace PeriodAid.Controllers
         }
 
 
-
+        // 排班表
         public ActionResult Seller_ScheduleList()
+        {
+            return PartialView();
+        }
+        // page从0开始
+        public ActionResult Seller_ScheduleListPartial(int page)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var Seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
@@ -4773,34 +4779,106 @@ namespace PeriodAid.Controllers
                 ViewBag.StoreName = Seller.Off_Store.StoreName;
                 var currentTime = DateTime.Now;
                 //今日以前4个
-                var schedule_before = (from m in offlineDB.Off_Checkin_Schedule
+                var schedule = (from m in offlineDB.Off_Checkin_Schedule
                                        where m.Off_Store_Id == Seller.StoreId
-                                       && m.Subscribe <= currentTime
                                        orderby m.Subscribe descending
-                                       select m).Take(4);
-                //今日以后6个
-                var schedule_after = (from m in offlineDB.Off_Checkin_Schedule
-                                      where m.Off_Store_Id == Seller.StoreId
-                                      && m.Subscribe > currentTime
-                                      select m).Take(10 - schedule_before.Count());
-                var schedule = schedule_before.Concat(schedule_after);
+                                       select m).Skip(page*10).Take(10);
                 return PartialView(schedule);
             }
-            return View("Error");
+            return PartialView("Error");
         }
 
-
+        // 已确认工资情况
         public ActionResult Seller_ConfirmedData()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var Seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
-            ViewBag.SellerId = Seller.Id;
+            var seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
+            var monthlist = from m in offlineDB.Off_SalesInfo_Daily
+                            where m.SellerId == seller.Id
+                            group m by new { Month = m.Date.Month, Year = m.Date.Year } into g
+                            orderby g.Key.Year, g.Key.Month descending
+                            select new { Key = g.Key.Year + "-" + g.Key.Month, Value = g.Key.Year + "-" + g.Key.Month };
+            ViewBag.MonthSelect = new SelectList(monthlist, "Key", "Value", monthlist.FirstOrDefault().Key);
             return View();
         }
-        public ActionResult Seller_CreditInfo()
+        public ActionResult Seller_ConfirmedDataPartial(string month)
         {
-            return View();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
+            var monthStart = Convert.ToDateTime(month + "-01");
+            var monthEnd = monthStart.AddMonths(1);
+            var SalaryList = from m in offlineDB.Off_SalesInfo_Daily
+                             where m.Date >= monthStart && m.Date < monthEnd
+                             && m.SellerId == seller.Id
+                             orderby m.Date
+                             select m;
+            return PartialView(SalaryList);
         }
+
+        // 修改账户信息
+        public ActionResult Seller_CreditInfo(int id)
+        {
+
+            var Seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
+            if (Seller != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var banklistArray = offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
+                if (banklistArray != null)
+                {
+                    string[] regionarray = banklistArray.SettingValue.Split(',');
+                    List<Object> banklist = new List<object>();
+                    foreach (var i in regionarray)
+                    {
+                        banklist.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.BankList = new SelectList(banklist, "Key", "Value");
+                    Wx_SellerCreditViewModel model = new Wx_SellerCreditViewModel()
+                    {
+                        CardName = Seller.CardName,
+                        CardNo = Seller.CardNo,
+                        Id = Seller.Id,
+                        IdNumber = Seller.IdNumber,
+                        Name = Seller.Name,
+                        Mobile = Seller.Mobile,
+                        AccountName = Seller.AccountName,
+                        AccountSource = Seller.AccountSource
+                    };
+                    return PartialView(model);
+                }
+                else
+                    return PartialView("Error");
+            }
+            return PartialView("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Seller_CreditInfo(Wx_SellerCreditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var item = new Wx_SellerCreditViewModel();
+                if (TryUpdateModel(item))
+                {
+                    var seller = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == item.Id);
+                    if (seller != null)
+                    {
+                        seller.IdNumber = item.IdNumber;
+                        seller.CardName = item.CardName;
+                        seller.CardNo = item.CardNo;
+                        seller.UploadUser = User.Identity.Name;
+                        seller.UploadTime = DateTime.Now;
+                        seller.AccountName = item.AccountName;
+                        seller.AccountSource = item.AccountSource;
+                        offlineDB.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                        offlineDB.SaveChanges();
+                        return Content("SUCCESS");
+                    }
+                }
+                return Content("FAIL");
+            }
+            return Content("FAIL");
+        }
+        
         public ActionResult Seller_APITest()
         {
             return View();

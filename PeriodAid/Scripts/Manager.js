@@ -1790,13 +1790,14 @@ function uploadLocation(btn_id, location_id) {
     $$("#" + btn_id).on("click", function () {
         myApp.showIndicator();
         // 4秒后强制关闭
+        var loc_success = false;
         setTimeout(function () {
             if (!loc_success) {
                 myApp.hideIndicator();
                 myApp.alert("获取位置失败");
             }
-        }, 4e3);
-        var loc_success = false;
+        }, 8e3);
+        
         wx.getLocation({
             type: "wgs84",
             // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
