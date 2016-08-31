@@ -923,6 +923,9 @@
     <Content Include="Views\Seller\Seller_RefreshBindListAjax.cshtml" />
     <Content Include="Views\Seller\Seller_ReportPartial.cshtml" />
     <Content Include="Views\Seller\Seller_EditReport_Item.cshtml" />
+    <Content Include="Views\Seller\Seller_ScheduleListPartial.cshtml" />
+    <Content Include="Views\Seller\Seller_ConfirmedDataPartial.cshtml" />
+    <Content Include="Views\Seller\Seller_ConfirmedDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

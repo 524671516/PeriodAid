@@ -1,0 +1,29 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
+@{
+    DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+}
+@*<div class="content-block-title">@Html.Encode(ViewBag.StoreName)</div>
+    <div class="list-block">
+        <ul>
+
+        </ul>
+    </div>
+*@
+<input id="schedule-storename" class="hidden" value="@Html.Encode(ViewBag.StoreName)" />
+@foreach (var item in Model.OrderBy(m => m.Subscribe))
+{
+    <li>
+        <div class="item-content">
+            <div class="item-inner">
+                <div class="item-title">@Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))</div>
+                @if (item.Subscribe == today)
+                {
+                    <div class="color-blue" style="float:right;">今天&nbsp;&nbsp;<i class="fa fa-exclamation-circle" aria-hidden="true"></i></div>
+                }
+                else {
+                    <div class="item-after"></div>
+                }
+            </div>
+        </div>
+    </li>
+}

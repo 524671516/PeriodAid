@@ -47,11 +47,11 @@ else
     <div class="weui_cells weui_cells_access">
         @foreach (var item in Model)
         {
-            <a class="weui_cell salary_details" href="javascript:;" data-salary="@item.Salary" data-bonus="@item.Bonus" data-debit="@item.Debit" data-attendance="@ParseStatus.AttendanceStatus(item.Attendance)" data-date="@item.Date.ToString("MM-dd")">
+            <a class="weui_cell salary_details" href="javascript:;" data-salary="@item.Salary" data-bonus="@item.Bonus" data-debit="@item.Debit" data-attendance="@Html.AttendanceStatus(item.Attendance??0)" data-date="@item.Date.ToString("MM-dd")">
                 <div class="weui_cell_bd weui_cell_primary">
                     <p>@item.Date.ToString("MM-dd")</p>
                 </div>
-                <div class="weui_cell_ft">@ParseStatus.AttendanceStatus(item.Attendance)</div>
+                <div class="weui_cell_ft">@Html.AttendanceStatus(item.Attendance??0)</div>
             </a>
         }
     </div>

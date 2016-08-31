@@ -4815,7 +4815,10 @@ namespace PeriodAid.Controllers
                              select m;
             return PartialView(SalaryList);
         }
-
+        public ActionResult Seller_ConfirmedDetails()
+        {
+            return View();
+        }
         // 修改账户信息
         public ActionResult Seller_CreditInfo(int id)
         {

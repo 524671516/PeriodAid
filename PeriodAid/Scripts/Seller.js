@@ -350,28 +350,82 @@ $$(document).on("pageInit", ".page[data-page='seller-report']", function () {
 
 //Seller_ScheduleList 排班表
 $$(document).on("pageInit", ".page[data-page='seller-schedulelist']", function () {
-    var dateList = ["2016-06-16", "2016-07-17", "2016-08-14", "2016-06-01", "2016-06-10"];
-    var ptrContent = $$('.pull-to-refresh-content');
-    ptrContent.on('refresh', function (e) {
-        // Emulate 2s loading
+    var currentpage = 0;
+    $$.ajax({
+        url: "/Seller/Seller_ScheduleListPartial",
+        data: {
+            page:currentpage
+        },
+        success: function (data) {
+            if (data != "FAIL") {
+                $$("#schedulelist-content").html(data);
+                currentpage++;
+                var storeName = $$("#schedule-storename").val();
+                $$(".content-block-title").text(storeName);
+            }
+        }
+    });
+    var loading = false;
+    $$(".infinite-scroll").on("infinite", function (e) {
+        $$(".infinite-scroll-preloader").removeClass("hidden");
+        if (loading) return;
+        loading = true;
         setTimeout(function () {
-            // Random author
-            var date = dateList[Math.floor(Math.random() *dateList.length)];
-            // List item html
-            var itemHTML = '<li class="item-content">' +
-                              '<div class="item-inner">' +
-                                  '<div class="item-title">' + date + '</div>' +
-                              '</div>' +
-                            '</li>';
-            // Prepend new list element
-            ptrContent.find('ul').prepend(itemHTML);
-            // When loading done, we need to reset it
-            myApp.pullToRefreshDone();
+            loading = false;
+            //生成新的条目
+            $$.ajax({
+                url: "/Seller/Seller_ScheduleListPartial",
+                data: {
+                    page: currentpage
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data == "FAIL") {
+                        // 加载完毕，则注销无限加载事件，以防不必要的加载
+                        myApp.detachInfiniteScroll($$('.infinite-scroll'));
+                        // 删除加载提示符
+                        $$('.infinite-scroll-preloader').remove();
+                        $$(".infinite-pre").removeClass("hidden");
+                        return;
+                    } else {
+                        $$("#schedulelist-content").append(data);
+                        currentpage++;
+                    }
+                }
+            });
         }, 2000);
     });
 });
-//辅助程序
 
+//Seller_ConfirmedData 考勤数据
+$$(document).on("pageInit", ".page[data-page='seller-confirmeddata']", function () {
+    $$.ajax({
+        url: "/Seller/Seller_ConfirmedDataPartial",
+        data: {
+            month: $$("#monthlist").val()
+        },
+        success: function (data) {
+            $$("#confirmed-content").html(data);
+            var month = $$("#monthlist").val()
+            $$("#current-month").text(month);
+        }
+    });
+    $$("#monthlist").on("change", function () {
+        $$.ajax({
+            url: "/Seller/Seller_ConfirmedDataPartial",
+            data: {
+                month: $$("#monthlist").val()
+            },
+            success: function (data) {
+                $$("#confirmed-content").html(data);
+                var month = $$("#monthlist").val()
+                $$("#current-month").text(month);
+            }
+        });
+    });
+});
+
+//辅助程序
 //上传位置信息
 function uploadLocation(btn_id, location_id) {
     $$("#" + btn_id).on("click", function () {

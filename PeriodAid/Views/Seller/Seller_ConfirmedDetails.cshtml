@@ -1,0 +1,55 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_SalesInfo_Daily>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">考勤明细</div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="seller-confirmeddetails">
+        <div class="page-content">
+            <div class="content-block-title"><span>@Html.Encode(ViewBag.Date.ToString("MM-dd"))</span>：考勤明细</div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">考勤状态</div>
+                                <div class="item-after">@Html.Encode(ViewBag.AttendanceStatus(ViewBag.Attendance ?? 0))</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">工资</div>
+                                <div class="item-after">@Html.Encode(ViewBag.Salary)</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">奖金</div>
+                                <div class="item-after">@Html.Encode(ViewBag.Bonus)</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">扣款</div>
+                                <div class="item-after">@Html.Encode(ViewBag.Debit)</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

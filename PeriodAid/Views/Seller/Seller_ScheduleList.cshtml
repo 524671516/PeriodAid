@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
+﻿
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -12,35 +12,14 @@
 </div>
 <div class="pages">
     <div class="page" data-page="seller-schedulelist">
-        <div class="page-content pull-to-refresh-content">
-            <div class="pull-to-refresh-layer">
-                <div class="preloader"></div>
-                <div class="pull-to-refresh-arrow"></div>
-            </div>
-            <div class="content-block-title">@ViewBag.StoreName</div>
-            @{
-                DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            }
+        <div class="page-content infinite-scroll">
+            <div class="content-block-title"></div>
             <div class="list-block">
-                <ul>
-                    @foreach (var item in Model.OrderBy(m => m.Subscribe))
-                    {
-                        <li>
-                            <div class="item-content">
-                                <div class="item-inner">
-                                    <div class="item-title">@Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))</div>
-                                    @if (item.Subscribe == today)
-                                    {
-                                        <div class="color-blue" style="float:right;">今天&nbsp;&nbsp;<i class="fa fa-exclamation-circle" aria-hidden="true"></i></div>
-                                    }
-                                    else {
-                                        <div class="item-after"></div>
-                                    }
-                                </div>
-                            </div>
-                        </li>
-                    }
-                </ul>
+                <ul id="schedulelist-content"></ul>
+            </div>
+            <div class="color-gray preloader-text hidden infinite-pre">没有更多的加载项</div>
+            <div class="infinite-scroll-preloader hidden">
+                <div class="preloader"></div>
             </div>
         </div>
     </div>
