@@ -145,43 +145,9 @@ $$("#report").on("click", function () {
 //Seller_CheckIn 签到
 $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
     //新用户弹窗
-    $$.ajax({
-        url: "/Seller/Wx_Seller_IsRecruit",
-        type: "post",
-        data: {
-            sellerid: $("#Off_Seller_Id").val()
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if (data.result == "SUCCESS") {
-                if (!data.recruit) {
-                    myApp.modal({
-                        title: "温馨提示",
-                        text: "请上传带有上班编码的签到图片",
-                        buttons: [
-                            {
-                                text: "查看示例",
-                                onClick: function () {
-                                    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
-                                    var image = urls.split(',');
-                                    wx.previewImage({
-                                        current: image[0], // 当前显示图片的http链接
-                                        urls: image // 需要预览的图片http链接列表
-                                    });
-                                }
-                            },
-                            {
-                                text: "取消",
-                                onClick: function () {
-                                    myApp.closeModal();
-                                }
-                            }
-                        ]
-                    });
-                }
-            }
-        }
-    });
+    var text = "请上传带有上班编码的签到图片";
+    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
+    newPrompt(text,urls)
     //上传位置信息、图片信息
     uploadLocation("location-btn", "CheckinLocation");
     uploadImage("img-btn", "CheckinPhoto");
@@ -246,43 +212,9 @@ $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
 //Seller_CheckOut 签退
 $$(document).on("pageInit", ".page[data-page='seller-checkout']", function () {
     //新用户弹窗
-    $$.ajax({
-        url: "/Seller/Wx_Seller_IsRecruit",
-        type: "post",
-        data: {
-            sellerid: $("#Off_Seller_Id").val()
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if (data.result == "SUCCESS") {
-                if (!data.recruit) {
-                    myApp.modal({
-                        title: "温馨提示",
-                        text: "请上传带有上班编码的签退图片",
-                        buttons: [
-                            {
-                                text: "查看示例",
-                                onClick: function () {
-                                    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
-                                    var image = urls.split(',');
-                                    wx.previewImage({
-                                        current: image[0], // 当前显示图片的http链接
-                                        urls: image // 需要预览的图片http链接列表
-                                    });
-                                }
-                            },
-                            {
-                                text: "取消",
-                                onClick: function () {
-                                    myApp.closeModal();
-                                }
-                            }
-                        ]
-                    });
-                }
-            }
-        }
-    });
+    var text = "请上传带有上班编码的签退图片";
+    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
+    newPrompt(text, urls)
     //上传位置信息、签退图片
     uploadLocation("location-btn", "CheckoutLocation");
     uploadImage("img-btn", "CheckoutPhoto");
@@ -350,8 +282,11 @@ $$(document).on("pageInit", ".page[data-page='seller-report']", function () {
         },
         success: function (data) {
             $$("#report-content").html(data);
+            var text = "请上传证明门店真实销量的系统截图照片";
+            var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131046821453176088.jpg,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0931.JPG,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0932.JPG,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0933.JPG,http://cdn2.shouquanzhai.cn/checkin-img/IMG_0934.JPG";
+            newPrompt(text, urls)
             currentTextAreaLength("report-content", "Remark", 500, "report-curracount");
-            uploadCheckinFile("report-content", "report-imglist", "Rep_Image", "report-imgaccount", 7)
+            uploadCheckinFile("report-content", "report-imglist", "Rep_Image", "report-imgaccount", 7);
         }
     });
     $$("#reportlist").on("change", function () {
@@ -638,6 +573,46 @@ function currentTextAreaLength(pagename, id_name, max_length, result_id) {
             var str = $$("#" + id_name).val();
             $$("#" + id_name).val(str.slice(0, 50));
             $$("#" + result_id).text("500");
+        }
+    });
+}
+//新用户提示
+function newPrompt(text,urls) {
+    $$.ajax({
+        url: "/Seller/Wx_Seller_IsRecruit",
+        method: "post",
+        data: {
+            sellerid: $("#Off_Seller_Id").val()
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.result == "SUCCESS") {
+                if (!data.recruit) {
+                    myApp.modal({
+                        title: "温馨提示",
+                        text: text,
+                        buttons: [
+                            {
+                                text: "查看示例",
+                                onClick: function () {
+                                    var urls = urls;
+                                    var image = urls.split(',');
+                                    wx.previewImage({
+                                        current: image[0], // 当前显示图片的http链接
+                                        urls: image // 需要预览的图片http链接列表
+                                    });
+                                }
+                            },
+                            {
+                                text: "取消",
+                                onClick: function () {
+                                    myApp.closeModal();
+                                }
+                            }
+                        ]
+                    });
+                }
+            }
         }
     });
 }
