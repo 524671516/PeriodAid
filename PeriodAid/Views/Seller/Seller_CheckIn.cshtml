@@ -8,13 +8,13 @@
                 <span>返回</span>
             </a>
         </div>
-        <div class="center sliding">促销员 签退</div>
+        <div class="center sliding">促销员 签到</div>
     </div>
 </div>
 <div class="pages">
-    <div class="page" data-page="seller-checkout">
+    <div class="page" data-page="seller-checkin">
         <div class="page-content">
-            @using (Html.BeginForm("Seller_CheckOut", "Seller", FormMethod.Post, new { @id = "checkout_form", @class = "validate-form" }))
+            @using (Html.BeginForm("Seller_CheckIn", "Seller", FormMethod.Post, new { @id = "checkin_form", @class = "validate-form" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.Id)
@@ -50,7 +50,7 @@
                     </ul>
                 </div>
                 <div class="content-block">
-                    <a href="javascript:;" class="button button-big button-fill" id="checkout-btn">提交</a>
+                    <a href="javascript:;" class="button button-big button-fill" id="checkin-btn">提交</a>
                 </div>
             }
         </div>

@@ -56,7 +56,28 @@
 html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.media-list .item-title {
     font-weight: 400;
 }
-
+.list-block ul.rep-imglist {
+    padding: 0;
+}
+.list-block ul.rep-imglist li{
+    float:left;
+}
+.rep-imgitem{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:60px; height:60px; 
+    border:solid #ccc 1px; 
+    margin:10px;
+    font-size:48px; line-height:60px; text-align:center;
+    color:#ccc;
+    display:block;
+}
+.rep-imgitem-selected{
+    opacity:0.5;
+    color:#fff;
+    background-color:#000;
+}
 .rep-imgitem-btn {
     background-position: center;
     background-repeat: no-repeat;
@@ -71,7 +92,13 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
     color: #ccc;
     display: block;
 }
-
+.sellertasklist-photo{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:44px; height:44px; 
+    border-radius:5px;
+}
 .list-block ul.rep-imglist {
     padding: 0;
 }
@@ -127,7 +154,6 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
     text-align: center;
     color: #000;
     border: 1px solid #ddd;
-    padding: 5px;
 }
 
     .list-block a[class*="col-"] div {
