@@ -25,7 +25,7 @@
     <div class="statusbar-overlay"></div>
     <div class="panel-overlay"></div>
     <div class="panel panel-left panel-reveal left-nav" id="user-panel">
-       
+
     </div>
     <!-- Views -->
     <div class="views">
@@ -40,50 +40,67 @@
                 </div>
             </div>
             <div class="pages navbar-through toolbar-through">
-                <div class="page" data-page="manager-home">
+                <div class="page" data-page="seller-home">
                     <div class="page-content">
-                        @*<div class="circle-box">
-                            <span>50.22</span>
-                            <div>同期平均销量</div>
-                        </div>*@
-                        <div class="list-block media-list">
+                        <div id="seller-status">
+                            <div class="list-block media-list">
+                                <ul>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title-row">
+                                                    <div class="item-title">店铺同期平均销量</div>
+                                                </div>
+                                                <div class="item-subtitle color-gray" style="font-size:12px;margin-top:5px;">今日无日程</div>
+                                            </div>
+                                            <div class="item-media">
+                                                <span class="color-blue" style="padding-right:15px;font-size:30px;">@Html.Encode(ViewBag.AVG_Info)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="list-block">
+                                <div class="row no-gutter">
+                                    <a href="/Seller/Seller_CheckIn" class="col-33 readonly" id="checkin">
+                                        <div class="color-blue">
+                                            <i class="fa fa-sign-in" aria-hidden="true"></i>
+                                        </div>
+                                        <span>开始签到</span>
+                                    </a>
+                                    <a href="/Seller/Seller_CheckOut" class="col-33 readonly" id="checkout">
+                                        <div class="color-blue">
+                                            <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                        </div>
+                                        <span>开始签退</span>
+                                    </a>
+                                    <a href="/Seller/Seller_Report" class="col-33 readonly" id="report">
+                                        <div class="color-blue">
+                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                        </div>
+                                        <span>提报销量</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-block hidden" id="seller-status-1">
                             <ul>
                                 <li>
                                     <div class="item-content">
                                         <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title">店铺同期平均销量</div>
-                                            </div>
-                                            <div class="item-subtitle color-gray" style="font-size:12px;margin-top:5px;">今日无日程</div>
+                                            <div class="item-title">@Html.Encode(ViewBag.NickName)</div>
+                                            <div class="item-after">@Html.Encode(ViewBag.Mobile)</div>
                                         </div>
-                                        <div class="item-media">
-                                            <span class="color-blue" style="padding-right:15px;font-size:30px;">50.22</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">未绑定</div>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
-                        </div>
-                        <div class="list-block">
-                            <div class="row no-gutter">
-                                <a href="javascript:;" data-url="/Seller/Seller_CheckIn?id=2298" class="col-33 active" id="checkin">
-                                    <div class="color-blue">
-                                        <i class="fa fa-sign-in" aria-hidden="true"></i>
-                                    </div>
-                                    <span>开始签到</span>
-                                </a>
-                                <a href="javascript:;" data-url="/Seller/Seller_CheckOut?id=695" class="col-33 readonly" id="checkout">
-                                    <div class="color-blue">
-                                        <i class="fa fa-sign-out" aria-hidden="true"></i>
-                                    </div>
-                                    <span>开始签退</span>
-                                </a>
-                                <a href="/Seller/Seller_Report" class="col-33" id="report">
-                                    <div class="color-blue">
-                                        <i class="fa fa-edit" aria-hidden="true"></i>
-                                    </div>
-                                    <span>提报销量</span>
-                                </a>
-                            </div>
                         </div>
                         <div class="content-block-title">工具</div>
                         <div class="list-block">
@@ -105,7 +122,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/Seller/Seller_CreditInfo" class="item-content item-link">
+                                    <a href="/Seller/Seller_CreditInfo" class="item-content item-link random-param">
                                         <div class="item-inner">
                                             <div class="item-title">完善账户信息</div>
                                             <div class="item-after"></div>
@@ -138,4 +155,3 @@
     <script src="~/Scripts/Seller.js"></script>
 </body>
 </html>
-

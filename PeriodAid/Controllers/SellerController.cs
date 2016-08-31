@@ -4485,7 +4485,8 @@ namespace PeriodAid.Controllers
                 status = 0;
                 DateTime today = DateTime.Today;
                 int sellerId = bind.Off_Seller.Id;
-                var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == sellerId);
+                int storeId = bind.Off_Seller.StoreId;
+                var schedule = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Subscribe == today && m.Off_Store_Id == storeId);
                 if (schedule != null)
                 {
                     scheduleId = schedule.Id;
@@ -4881,9 +4882,14 @@ namespace PeriodAid.Controllers
                              select m;
             return PartialView(SalaryList);
         }
-        public ActionResult Seller_ConfirmedDetails()
+        public ActionResult Seller_ConfirmedDetails(int id)
         {
-            return View();
+            var item = offlineDB.Off_SalesInfo_Daily.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                return PartialView(item);
+            }
+            return PartialView("Error");
         }
         // 修改账户信息
         public ActionResult Seller_CreditInfo()

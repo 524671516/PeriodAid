@@ -30,6 +30,17 @@ $$.ajax({
         $$("#user-panel").html(data);
     }
 })
+// 防止缓存机制
+$$(document).on("touchstart", "a.random-param", function () {
+    if ($$(this).attr("href").indexOf('?') == -1) {
+        var url = $$(this).attr("href") + "?rand=" + Math.random() * 500;
+        $$(this).attr("href", url);
+    }
+    else {
+        var url = $$(this).attr("href") + "&rand=" + Math.random() * 500;
+        $$(this).attr("href", url);
+    }
+});
 
 // 微信初始化
 wx.config({
@@ -44,6 +55,11 @@ wx.config({
     signature: $("#signature").text(),
     // 必填，签名，见附录1
     jsApiList: ["uploadImage", "downloadImage", "chooseImage", "getLocation", "previewImage", "openLocation"]
+});
+backrefrensh();
+//Seller_Home 首页刷新
+$$(document).on("pageAfterAnimation", ".page[data-page='seller-home']", function () {
+    backrefrensh();
 });
 
 $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function (e) {
@@ -104,43 +120,6 @@ $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function 
         }
     });
 })
-$$("#checkin").on("click", function () {
-    if (!$$(this).hasClass("readonly")) {
-        var url = $$(this).attr("data-url");
-        mainView.router.load({
-            url: url,
-            animatePages: false
-        });
-        $$("#checkin span").text("重新签到");
-        $$("#checkout").removeClass("readonly");
-        $$("#report").removeClass("active");
-        $$(this).addClass("active")
-    }
-});
-$$("#checkout").on("click", function () {
-    if (!$$(this).hasClass("readonly")) {
-        $$("#report").removeClass("active");
-        $$("#checkin").removeClass("active").addClass("readonly");
-        var url = $$(this).attr("data-url");
-        mainView.router.load({
-            url: url,
-            animatePages: false
-        });
-        $$("#checkout span").text("重新签退");
-        $$(this).addClass("active");
-    };
-});
-$$("#report").on("click", function () {
-    $$(this).addClass("active");
-    $$("#checkin").removeClass("active").children("span").text("开始签到");
-    $$("#checkout").removeClass("active").addClass("readonly").children("span").text("开始签退");
-    var url = $$(this).attr("data-url");
-    mainView.router.load({
-        url: url,
-        animatePages: false
-    });
-    $$("#report span").text("重新提报");
-});
 
 //Seller_CheckIn 签到
 $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
@@ -425,6 +404,90 @@ $$(document).on("pageInit", ".page[data-page='seller-confirmeddata']", function 
     });
 });
 
+//Seller_CreditInfo 完善个人信息
+$$(document).on("pageInit", ".page[data-page='seller-creditinfo']", function () {
+    $("#credit-form").validate({
+        debug: false,//调试模式取消submit的默认提交功能
+        errorClass: "custom-error",//默认为错误的样式类为：error;
+        focusInvalid: false,//当为false时，验证无效时，没有焦点相应
+        onkeyup: false,
+        submitHandler: function (form) {
+            $("#credit-form").ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    myApp.hideIndicator();
+                    mainView.router.back();
+                    myApp.addNotification({
+                        title: "通知",
+                        message: "表单提交成功"
+                    });
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000)
+                }
+                else {
+                    myApp.hideIndicator();
+                    myApp.addNotification({
+                        text: "通知",
+                        message: "表单提交失败"
+                    });
+                    $("#credit-btn").prop("disabled", false).removeClass("color-gray");
+                    setTimeout(function () {
+                        myApp.closeNotification(".notifications");
+                    }, 2000);
+                }
+            });
+        },
+        rules: {
+            IdNumber: {
+                required: true,
+                idnumber: true
+            },
+            AccountSource: {
+                required: true,
+                maxlength: 50
+            },
+            AccountName: {
+                required: true,
+                maxlength: 10
+            },
+            CardNo: {
+                required: true,
+                maxlength: 30
+            }
+        },
+        message: {
+            IdNumber: {
+                required: "必填",
+                idnumber: "请正确填写身份证号码"
+            },
+            AccountSource: {
+                required: "必填",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            },
+            AccountName: {
+                required: "必填",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            },
+            CardNo: {
+                required: "必填",
+                maxlength: jQuery.format("不能大于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#credit-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#credit-btn").click(function () {
+        myApp.showIndicator();
+        $("#credit-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#credit-form").submit();
+        }, 500);
+    });
+});
+
 //辅助程序
 //上传位置信息
 function uploadLocation(btn_id, location_id) {
@@ -665,6 +728,68 @@ function newPrompt(text,urls) {
                             }
                         ]
                     });
+                }
+            }
+        }
+    });
+}
+function backrefrensh() {
+    $$.ajax({
+        url: "/Seller/Seller_HomeJson",
+        method: "post",
+        success: function (data) {
+            data = JSON.parse(data)
+            console.log(data);
+            if (data.result == "SUCCESS") {
+                $$("#report").removeClass("readonly");
+                if (data.data.Status == -1) {
+                    $$("#seller-status").addClass("hidden");
+                    $$("#seller-status-1").removeClass("hidden");
+                }
+                if (data.data.Status == 0) {
+                    $$("#seller-status").removeClass("hidden");
+                    $$("#seller-status-1").addClass("hidden");
+                    $$(".item-subtitle").text("今日无日程");
+                    $$("#checkin").addClass("readonly").attr("href","javascript:;");//签到只读
+                    $$("#checkout").addClass("readonly").attr("href", "javascript:;");//签退只读
+                }
+                if (data.data.Status == 1) {
+                    $$("#seller-status").removeClass("hidden");
+                    $$("#seller-status-1").addClass("hidden");
+                    $$(".item-subtitle").text("今日任务");
+                    $$("#checkin").addClass("active");//签到
+                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?id=" + data.data.Schedule_Id);
+                    $$("#checkout").addClass("readonly").attr("href", "javascript:;");//签退只读
+                }
+                if (data.data.Status == 2) {
+                    $$("#seller-status").removeClass("hidden");
+                    $$("#seller-status-1").addClass("hidden");
+                    $$(".item-subtitle").text("今日任务");
+                    $$("#checkin").addClass("active");
+                    $$("#checkin span").text("重新签到");//重新签到
+                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?id=" + data.data.Schedule_Id);
+                    $$("#checkout").removeClass("readonly");//签退
+                    $$("#checkout").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id)
+                }
+                if (data.data.Status == 3) {
+                    $$("#seller-status").removeClass("hidden");
+                    $$("#seller-status-1").addClass("hidden");
+                    $$(".item-subtitle").text("今日任务");
+                    $$("#checkin").addClass("readonly").attr("href", "javascript:;");//签到只读
+                    $$("#checkin span").text("开始签到");
+                    $$("#checkout").removeClass("readonly").addClass("active");//重新签退
+                    $$("#checkout span").text("重新签退");
+                    $$("#checkout").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id)
+                }
+                if (data.data.Status == 4) {
+                    $$("#seller-status").removeClass("hidden");
+                    $$("#seller-status-1").addClass("hidden");
+                    $$(".item-subtitle").text("今日任务");
+                    $$("#checkin").addClass("readonly").attr("href", "javascript:;");
+                    $$("#checkin span").text("开始签到");//签到只读
+                    $$("#checkout").addClass("readonly").attr("href", "javascript:;");
+                    $$("#checkout span").text("开始签退");
+                    $$("#report").addClass("active");
                 }
             }
         }

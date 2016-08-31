@@ -48,7 +48,7 @@ else {
             @foreach (var item in Model)
             {
                 <li>
-                    <a href="/Seller/Seller_ConfirmedDetails" class="item-content item-link">
+                    <a href="/Seller/Seller_ConfirmedDetails?id=@item.Id" class="item-content item-link">
                         <div class="item-inner">
                             <div class="item-title">@item.Date.ToString("MM-dd")</div>
                             <div class="item-after">@Html.AttendanceStatus(item.Attendance ?? 0)</div>
