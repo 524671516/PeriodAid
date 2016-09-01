@@ -29,7 +29,19 @@ $$.ajax({
     success: function (data) {
         $$("#user-panel").html(data);
     }
-})
+});
+//切换版本
+$$("#user-panel").on("click", ".seller-change", function () {
+    var url = $$(".seller-change").attr("data-url");
+    myApp.confirm("确定要切换当前版本吗？",
+        function () {
+            window.location.href = url;
+        },
+        function () {
+            myApp.closePanel();
+        }
+         );
+});
 // 防止缓存机制
 $$(document).on("touchstart", "a.random-param", function () {
     if ($$(this).attr("href").indexOf('?') == -1) {
@@ -123,10 +135,11 @@ $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function 
 
 //Seller_CheckIn 签到
 $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
+    console.log($("#Id").val());
     //新用户弹窗
     var text = "请上传带有上班编码的签到图片";
-    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
-    newPrompt(text,urls)
+    var urlList = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
+    newPrompt(text, urlList)
     //上传位置信息、图片信息
     uploadLocation("location-btn", "CheckinLocation");
     uploadImage("img-btn", "CheckinPhoto");
@@ -192,8 +205,8 @@ $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
 $$(document).on("pageInit", ".page[data-page='seller-checkout']", function () {
     //新用户弹窗
     var text = "请上传带有上班编码的签退图片";
-    var urls = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
-    newPrompt(text, urls)
+    var urlList = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
+    newPrompt(text, urlList)
     //上传位置信息、签退图片
     uploadLocation("location-btn", "CheckoutLocation");
     uploadImage("img-btn", "CheckoutPhoto");
@@ -333,7 +346,7 @@ $$(document).on("pageInit", ".page[data-page='seller-schedulelist']", function (
     $$.ajax({
         url: "/Seller/Seller_ScheduleListPartial",
         data: {
-            page:currentpage
+            page: currentpage
         },
         success: function (data) {
             if (data != "FAIL") {
@@ -487,6 +500,43 @@ $$(document).on("pageInit", ".page[data-page='seller-creditinfo']", function () 
         }, 500);
     });
 });
+//Seller_Statistic 销量图表
+$$(document).on("pageInit", ".page[data-page='seller-statistic']", function () {
+    $('#container').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: '店铺同期平均销量 （单位：盒）'
+        },
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis:{
+            labels: {
+                enabled: false
+            },
+            title: {
+                text: '',
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: '销量',
+            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }, {
+            name: '平均销量',
+            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }]
+    });
+});
 
 //辅助程序
 //上传位置信息
@@ -563,6 +613,13 @@ function uploadImage(img_id, img_filename) {
                                 }
                             }
                         });
+                    },
+                    fail: function (res) {
+                        $$("#" + img_id).find(".item-title").children("i").remove();
+                        $$("#" + img_id).find(".item-title").prepend("<i class='fa fa-check-circle color-green' aria-hidden='true'></i>");
+                        $$("#" + img_id).find(".item-after").text("使用默认位置");
+                        $$("#" + img_filename).val("N/A");
+                        myApp.hideIndicator();
                     }
                 });
             }
@@ -694,7 +751,7 @@ function currentTextAreaLength(pagename, id_name, max_length, result_id) {
     });
 }
 //新用户提示
-function newPrompt(text,urls) {
+function newPrompt(text, urlList) {
     $$.ajax({
         url: "/Seller/Wx_Seller_IsRecruit",
         method: "post",
@@ -712,7 +769,7 @@ function newPrompt(text,urls) {
                             {
                                 text: "查看示例",
                                 onClick: function () {
-                                    var urls = urls;
+                                    var urls = urlList;
                                     var image = urls.split(',');
                                     wx.previewImage({
                                         current: image[0], // 当前显示图片的http链接
@@ -742,6 +799,8 @@ function backrefrensh() {
             console.log(data);
             if (data.result == "SUCCESS") {
                 $$("#report").removeClass("readonly");
+                $$("#checkin").removeClass("readonly");
+                $$("#checkout").removeClass("readonly");
                 if (data.data.Status == -1) {
                     $$("#seller-status").addClass("hidden");
                     $$("#seller-status-1").removeClass("hidden");
@@ -749,45 +808,46 @@ function backrefrensh() {
                 if (data.data.Status == 0) {
                     $$("#seller-status").removeClass("hidden");
                     $$("#seller-status-1").addClass("hidden");
-                    $$(".item-subtitle").text("今日无日程");
-                    $$("#checkin").addClass("readonly").attr("href","javascript:;");//签到只读
+                    $$(".seller-subtitle").text("今日无日程");
+                    $$("#checkin").addClass("readonly").attr("href", "javascript:;");//签到只读
                     $$("#checkout").addClass("readonly").attr("href", "javascript:;");//签退只读
                 }
                 if (data.data.Status == 1) {
                     $$("#seller-status").removeClass("hidden");
                     $$("#seller-status-1").addClass("hidden");
-                    $$(".item-subtitle").text("今日任务");
+                    $$(".seller-subtitle").text("今日任务");
                     $$("#checkin").addClass("active");//签到
-                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?id=" + data.data.Schedule_Id);
+                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?sid=" + data.data.Schedule_Id);
                     $$("#checkout").addClass("readonly").attr("href", "javascript:;");//签退只读
                 }
                 if (data.data.Status == 2) {
                     $$("#seller-status").removeClass("hidden");
                     $$("#seller-status-1").addClass("hidden");
-                    $$(".item-subtitle").text("今日任务");
-                    $$("#checkin").addClass("active");
+                    $$(".seller-subtitle").text("今日任务");
+                    $$("#checkin").addClass("altive");
                     $$("#checkin span").text("重新签到");//重新签到
-                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?id=" + data.data.Schedule_Id);
-                    $$("#checkout").removeClass("readonly");//签退
+                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?sid=" + data.data.Schedule_Id);
+                    $$("#checkout").addClass("active")
                     $$("#checkout").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id)
                 }
                 if (data.data.Status == 3) {
                     $$("#seller-status").removeClass("hidden");
                     $$("#seller-status-1").addClass("hidden");
-                    $$(".item-subtitle").text("今日任务");
-                    $$("#checkin").addClass("readonly").attr("href", "javascript:;");//签到只读
+                    $$(".seller-subtitle").text("今日任务");
+                    $$("#checkin").addClass("readonly").removeClass("active").attr("href", "javascript:;");//签到只读
                     $$("#checkin span").text("开始签到");
-                    $$("#checkout").removeClass("readonly").addClass("active");//重新签退
+                    $$("#checkout").addClass("altive");//重新签退
                     $$("#checkout span").text("重新签退");
-                    $$("#checkout").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id)
+                    $$("#checkout").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id);
+                    $$("#report").addClass("active");
                 }
                 if (data.data.Status == 4) {
                     $$("#seller-status").removeClass("hidden");
                     $$("#seller-status-1").addClass("hidden");
-                    $$(".item-subtitle").text("今日任务");
+                    $$(".seller-subtitle").text("今日任务");
                     $$("#checkin").addClass("readonly").attr("href", "javascript:;");
                     $$("#checkin span").text("开始签到");//签到只读
-                    $$("#checkout").addClass("readonly").attr("href", "javascript:;");
+                    $$("#checkout").addClass("readonly").removeClass("active").attr("href", "javascript:;");
                     $$("#checkout span").text("开始签退");
                     $$("#report").addClass("active");
                 }

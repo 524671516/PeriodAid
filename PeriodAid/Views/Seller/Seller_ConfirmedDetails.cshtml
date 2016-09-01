@@ -28,7 +28,7 @@
                         <div class="item-content">
                             <div class="item-inner">
                                 <div class="item-title">工资</div>
-                                <div class="item-after">@Html.Encode(Model.Salary)</div>
+                                <div class="item-after">@String.Format("{0:0.00} 元",Model.Salary??0)</div>
                             </div>
                         </div>
                     </li>
@@ -36,7 +36,7 @@
                         <div class="item-content">
                             <div class="item-inner">
                                 <div class="item-title">奖金</div>
-                                <div class="item-after">@Html.Encode(Model.Bonus)</div>
+                                <div class="item-after">@String.Format("{0:0.00} 元", Model.Bonus??0)</div>
                             </div>
                         </div>
                     </li>
@@ -44,7 +44,7 @@
                         <div class="item-content">
                             <div class="item-inner">
                                 <div class="item-title">扣款</div>
-                                <div class="item-after">@Html.Encode(Model.Debit)</div>
+                                <div class="item-after">@String.Format("{0:0.00} 元", Model.Debit??0)</div>
                             </div>
                         </div>
                     </li>

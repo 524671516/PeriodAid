@@ -926,6 +926,7 @@
     <Content Include="Views\Seller\Seller_ScheduleListPartial.cshtml" />
     <Content Include="Views\Seller\Seller_ConfirmedDataPartial.cshtml" />
     <Content Include="Views\Seller\Seller_ConfirmedDetails.cshtml" />
+    <Content Include="Views\Seller\Seller_Statistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

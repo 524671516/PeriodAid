@@ -4569,7 +4569,7 @@ namespace PeriodAid.Controllers
         }
 
         // 促销员签到，id为scheduleid
-        public ActionResult Seller_CheckIn(int id)
+        public ActionResult Seller_CheckIn(int sid)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
 
@@ -4580,14 +4580,12 @@ namespace PeriodAid.Controllers
             }
             var storeId = seller.Off_Store.Id;
             DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
+            var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == sid);
             if (item != null)
             {
                 if (item.Subscribe == today && item.Off_Store_Id == storeId)
                 {
                     var checkitem = offlineDB.Off_Checkin.SingleOrDefault(m => m.Off_Schedule_Id == item.Id && m.Off_Seller_Id == seller.Id && m.Status != -1);
-                    ViewBag.StoreName = item.Off_Store.StoreName;
-                    ViewBag.NickName = seller.Name;
                     if (checkitem != null)
                     {
                         return PartialView(checkitem);
@@ -4597,7 +4595,7 @@ namespace PeriodAid.Controllers
                         checkitem = new Off_Checkin()
                         {
                             Off_Seller_Id = seller.Id,
-                            Off_Schedule_Id = id,
+                            Off_Schedule_Id = sid,
                             Status = 0,
                             Proxy = false
                         };
@@ -4634,7 +4632,7 @@ namespace PeriodAid.Controllers
                         return Content("SUCCESS");
                     }
                 }
-                catch
+                catch(Exception e)
                 {
                     return Content("FAIL");
                 }
@@ -4835,6 +4833,9 @@ namespace PeriodAid.Controllers
         // 排班表
         public ActionResult Seller_ScheduleList()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var Seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
+            ViewBag.StoreName = Seller.Off_Store.StoreName;
             return PartialView();
         }
         // page从0开始
@@ -4844,16 +4845,16 @@ namespace PeriodAid.Controllers
             var Seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
             if (Seller != null)
             {
-                ViewBag.StoreName = Seller.Off_Store.StoreName;
-                var currentTime = DateTime.Now;
-                //今日以前4个
                 var schedule = (from m in offlineDB.Off_Checkin_Schedule
                                        where m.Off_Store_Id == Seller.StoreId
                                        orderby m.Subscribe descending
                                        select m).Skip(page*10).Take(10);
-                return PartialView(schedule);
+                if (schedule.Count() != 0)
+                    return PartialView(schedule);
+                else
+                    return Content("FAIL");
             }
-            return PartialView("Error");
+            return Content("FAIL");
         }
 
         // 已确认工资情况
@@ -4957,6 +4958,10 @@ namespace PeriodAid.Controllers
         
         // 页面测试
         public ActionResult Seller_APITest()
+        {
+            return View();
+        }
+        public ActionResult Seller_Statistic()
         {
             return View();
         }

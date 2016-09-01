@@ -78,6 +78,9 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
     color:#fff;
     background-color:#000;
 }
+.font-px-18 {
+    font-size: 18px;
+}
 .rep-imgitem-btn {
     background-position: center;
     background-repeat: no-repeat;
@@ -153,9 +156,14 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
     background: #fff;
     text-align: center;
     color: #000;
-    border: 1px solid #ddd;
+    border-top:1px solid #ddd;
+    border-bottom:1px solid #ddd;
+    border-right:1px solid #ddd;
 }
 
+    .list-block a[class*="col-"] span {
+        font-size: 18px;
+    }
     .list-block a[class*="col-"] div {
         text-align: center;
         font-size: 42px;
@@ -164,7 +172,9 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
     .list-block a[class*="col-"].active {
         opacity: 0.8;
     }
-
+    .list-block a[class*="col-"].altive span{
+        color: #007aff;
+    }
         .list-block a[class*="col-"].active span {
             color: #007aff;
         }

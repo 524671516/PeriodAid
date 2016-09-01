@@ -2,15 +2,7 @@
 @{
     DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
 }
-@*<div class="content-block-title">@Html.Encode(ViewBag.StoreName)</div>
-    <div class="list-block">
-        <ul>
-
-        </ul>
-    </div>
-*@
-<input id="schedule-storename" class="hidden" value="@Html.Encode(ViewBag.StoreName)" />
-@foreach (var item in Model.OrderBy(m => m.Subscribe))
+@foreach (var item in Model)
 {
     <li>
         <div class="item-content">
