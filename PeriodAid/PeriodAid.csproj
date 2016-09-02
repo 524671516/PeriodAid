@@ -930,6 +930,7 @@
     <Content Include="Views\OffSellerTask\TaskSellerHome.cshtml" />
     <Content Include="Views\OffSellerTask\TaskSellerQueryMonthPartial.cshtml" />
     <Content Include="Views\OffSellerTask\TaskSellerAlert.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerQueryMonthBySellerPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

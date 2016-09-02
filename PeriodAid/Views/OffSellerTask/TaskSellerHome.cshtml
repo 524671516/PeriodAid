@@ -7,8 +7,12 @@
 
 <table class="offline-search-box">
     <tbody>
-        <tr>
-            <td class="pull-right">
+        <tr class="pull-right">
+            <td style="padding-right:15px;">
+                <label>查询时间：</label>
+                <input class="form-control input-sm offline-search-inline" id="off-taskseller-data" placeholder="选择日期">
+            </td>
+            <td>
                 <label>暗促信息：</label>
                 <input class="form-control input-sm offline-search-inline" id="off-taskseller-search" placeholder="搜索内容">
                 <a class="btn btn-info btn-sm" id="off-taskseller-searchbtn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
@@ -21,10 +25,24 @@
 </div>
 <script>
     $(function () {
+        $("#off-taskseller-data").datepicker({dateFormat: 'yy-mm'});
         $.ajax({
             url: "/OffSellerTask/TaskSellerQueryMonthPartial",
             data:{
-                month:"2016-07"
+                month: $("#off-taskseller-data").val(),
+            },
+            success: function (data) {
+                $("#off-taskseller-content").html(data);
+            }
+        });
+    });
+    //查询
+    $("#off-taskseller-searchbtn").click(function () {
+        $.ajax({
+            url: "/OffSellerTask/TaskSellerQueryMonthPartial",
+            data: {
+                month: $("#off-taskseller-data").val(),
+                sellertask: $("#off-taskseller-search").val()
             },
             success: function (data) {
                 $("#off-taskseller-content").html(data);

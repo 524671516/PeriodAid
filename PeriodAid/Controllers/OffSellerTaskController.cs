@@ -71,7 +71,7 @@ namespace PeriodAid.Controllers
                        where m.ApplyDate >= _month && m.ApplyDate < _month_next
                        && m.Off_Seller.Off_System_Id == user.DefaultSystemId
                        group m by m.Off_Seller into g
-                       select new { Seller = g.Key, Count = g.Count() };
+                       select new Wx_SellerTaskMonthStatistic { Off_Seller = g.Key, AttendanceCount = g.Count() };
             return PartialView(list);
         }
         // 查看个人当月明细
