@@ -102,8 +102,6 @@ namespace PeriodAid.Controllers
         public ActionResult TaskSellerAlert()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
-            var storelist = string.Join(",", manager.Off_Store.Select(m => m.Id));
             // 使用SQL查询
             string sql = "SELECT t.Id,t.ApplyDate, Min(t3.StorageCount) as MinStorage, T4.StoreName FROM [dbo].[Off_SellerTask] as t left join dbo.Off_SellerTaskProduct as t3 on t.Id= t3.SellerTaskId left join" +
                 " dbo.Off_Store as T4 on t.StoreId = T4.Id where t.Id = (select top 1 t2.Id from [dbo].[Off_SellerTask] t2 where t4.Off_System_Id = " + user.DefaultSystemId + " and t2.StoreId = t.StoreId order by T2.ApplyDate desc) and t3.StorageCount>0" +

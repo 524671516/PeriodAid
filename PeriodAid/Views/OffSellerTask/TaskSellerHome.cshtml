@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewBag.Title = "TaskSellerHome";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTen";
+}
+
+<table class="offline-search-box">
+    <tbody>
+        <tr>
+            <td class="pull-right">
+                <label>暗促信息：</label>
+                <input class="form-control input-sm offline-search-inline" id="off-taskseller-search" placeholder="搜索内容">
+                <a class="btn btn-info btn-sm" id="off-taskseller-searchbtn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div id="off-taskseller-content">
+
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OffSellerTask/TaskSellerQueryMonthPartial",
+            data:{
+                month:"2016-07"
+            },
+            success: function (data) {
+                $("#off-taskseller-content").html(data);
+            }
+        });
+    });
+</script>

@@ -927,13 +927,15 @@
     <Content Include="Views\Seller\Seller_ConfirmedDataPartial.cshtml" />
     <Content Include="Views\Seller\Seller_ConfirmedDetails.cshtml" />
     <Content Include="Views\Seller\Seller_Statistic.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerHome.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerQueryMonthPartial.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerAlert.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
-    <Folder Include="Views\OffSellerTask\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
