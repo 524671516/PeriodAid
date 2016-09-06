@@ -1,0 +1,68 @@
+﻿@model PeriodAid.Models.Wx_ReportItemsViewModel
+
+<div class="list-block media-list">
+    <ul>
+        @foreach (var item in Model.ProductList)
+        {
+            if (Model.StorageRequired && Model.AmountRequried)
+            {
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title-row row">
+                                <div class="col-25" style="margin-top:3px;">@Html.Encode(item.SimpleName)</div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="销量" name="sales_@item.ProductId" id="sales_@item.ProductId" value="@item.SalesCount"></div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="库存" name="storage_@item.ProductId" id="storage_@item.ProductId" value="@item.Storage"></div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="销售额" name="amount_@item.ProductId" id="amount_@item.ProductId" value="@item.SalesAmount"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+            else if (Model.StorageRequired)
+            {
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title-row row">
+                                <div class="col-25" style="margin-top:3px;">@Html.Encode(item.SimpleName)</div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="销量" name="sales_@item.ProductId" id="sales_@item.ProductId" value="@item.SalesCount"></div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="库存" name="storage_@item.ProductId" id="storage_@item.ProductId" value="@item.Storage"></div>
+                                <div class="col-25 hidden"><input style="height:auto;margin-top:5px;" type="number" placeholder="销售额" name="amount_@item.ProductId" id="amount_@item.ProductId" value="@item.SalesAmount"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+            else if (Model.AmountRequried)
+            {
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title-row row">
+                                <div class="col-25" style="margin-top:3px;">@Html.Encode(item.SimpleName)</div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="销量" name="sales_@item.ProductId" id="sales_@item.ProductId" value="@item.SalesCount"></div>
+                                <div class="col-25 hidden"><input style="height:auto;margin-top:5px;" type="number" placeholder="库存" name="storage_@item.ProductId" id="storage_@item.ProductId" value="@item.Storage"></div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="销售额" name="amount_@item.ProductId" id="amount_@item.ProductId" value="@item.SalesAmount"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+            else {
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title-row row">
+                                <div class="col-25" style="margin-top:3px;">@Html.Encode(item.SimpleName)</div>
+                                <div class="col-25"><input style="height:auto;margin-top:5px;" type="number" placeholder="销量" name="sales_@item.ProductId" id="sales_@item.ProductId" value="@item.SalesCount"></div>
+                                <div class="col-25 hidden"><input style="height:auto;margin-top:5px;" type="number" placeholder="库存" name="storage_@item.ProductId" id="storage_@item.ProductId" value="@item.Storage"></div>
+                                <div class="col-25 hidden"><input style="height:auto;margin-top:5px;" type="number" placeholder="销售额" name="amount_@item.ProductId" id="amount_@item.ProductId" value="@item.SalesAmount"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>
