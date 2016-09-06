@@ -56,7 +56,7 @@ $$(document).on("touchstart", "a.random-param", function () {
 
 // 微信初始化
 wx.config({
-    debug: false,
+    debug: true,
     // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
     appId: $("#appId").text(),
     // 必填，公众号的唯一标识
@@ -135,7 +135,7 @@ $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function 
 
 //Seller_CheckIn 签到
 $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
-    console.log($("#Id").val());
+    alert($("#Id").val());
     //新用户弹窗
     var text = "请上传带有上班编码的签到图片";
     var urlList = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
@@ -190,7 +190,6 @@ $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
                 });
             }
         }
-
     });
     $$("#checkin-btn").click(function () {
         myApp.showIndicator();
@@ -299,6 +298,7 @@ $$(document).on("pageInit", ".page[data-page='seller-report']", function () {
         if (submit_count == 0) {
             submit_count = 1;
             $$("#report-btn").prop("disabled", true).addClass("color-gray");
+            console.log($$("#Id").val());
             myApp.showIndicator();
             setTimeout(function () {
                 var photoArray = splitArray($$("#Rep_Image").val());
@@ -682,6 +682,9 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                             }
                         }
                     });
+                },
+                cancel: function () {
+                    myApp.hideIndicator();
                 }
             });
         }
