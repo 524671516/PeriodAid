@@ -544,11 +544,16 @@ function uploadLocation(btn_id, location_id) {
     $$("#" + btn_id).on("click", function () {
         myApp.showIndicator();
         setTimeout(function () {
-            if (!loc_success) {
-                myApp.hideIndicator();
+            if ($$("#" + location_id).val().trim() == '') {
                 myApp.alert("获取位置信息失败");
+                $$("#" + btn_id).find(".item-title").children("i").remove();
+                $$("#" + btn_id).find(".item-title").prepend("<i class='fa fa-check-circle color-green' aria-hidden='true'></i>");
+                $$("#" + btn_id).find(".item-after").text("使用默认位置");
+                $$("#" + location_id).val("N/A");
+                myApp.hideIndicator();
             }
-        }, 2000);
+        }, 5000);
+        var gps_location = '';
         var loc_success = false;
         wx.getLocation({
             type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
@@ -563,6 +568,13 @@ function uploadLocation(btn_id, location_id) {
                 $$("#" + btn_id).find(".item-title").prepend("<i class='fa fa-check-circle color-green' aria-hidden='true'></i>");
                 $$("#" + btn_id).find(".item-after").text("上传位置成功");
                 $$("#" + location_id).val(gps_location);
+                myApp.hideIndicator();
+            },
+            fail: function (res) {
+                $$("#" + btn_id).find(".item-title").children("i").remove();
+                $$("#" + btn_id).find(".item-title").prepend("<i class='fa fa-check-circle color-green' aria-hidden='true'></i>");
+                $$("#" + btn_id).find(".item-after").text("使用默认位置");
+                $$("#" + location_id).val("N/A");
                 myApp.hideIndicator();
             }
         });
@@ -613,15 +625,11 @@ function uploadImage(img_id, img_filename) {
                                 }
                             }
                         });
-                    },
-                    fail: function (res) {
-                        $$("#" + img_id).find(".item-title").children("i").remove();
-                        $$("#" + img_id).find(".item-title").prepend("<i class='fa fa-check-circle color-green' aria-hidden='true'></i>");
-                        $$("#" + img_id).find(".item-after").text("使用默认位置");
-                        $$("#" + img_filename).val("N/A");
-                        myApp.hideIndicator();
                     }
                 });
+            },
+            cancel: function () {
+                myApp.hideIndicator();
             }
         });
     });
@@ -827,7 +835,7 @@ function backrefrensh() {
                     $$("#seller-status").removeClass("hidden");
                     $$("#seller-status-1").addClass("hidden");
                     $$(".seller-subtitle").text("今日任务");
-                    $$("#checkin").addClass("altive");
+                    $$("#checkin").removeClass("active").addClass("altive");
                     $$("#checkin span").text("重新签到");//重新签到
                     $$("#checkin").attr("href", "/Seller/Seller_CheckIn?sid=" + data.data.Schedule_Id);
                     $$("#checkout").addClass("active")
@@ -837,7 +845,8 @@ function backrefrensh() {
                     $$("#seller-status").removeClass("hidden");
                     $$("#seller-status-1").addClass("hidden");
                     $$(".seller-subtitle").text("今日任务");
-                    $$("#checkin").addClass("readonly").removeClass("active").attr("href", "javascript:;");//签到只读
+                    $$("#checkin").removeClass("active").addClass("readonly");
+                    $$("#checkin").attr("href", "javascript:;");//签到只读
                     $$("#checkin span").text("开始签到");
                     $$("#checkout").addClass("altive");//重新签退
                     $$("#checkout span").text("重新签退");
@@ -850,7 +859,7 @@ function backrefrensh() {
                     $$(".seller-subtitle").text("今日任务");
                     $$("#checkin").addClass("readonly").attr("href", "javascript:;");
                     $$("#checkin span").text("开始签到");//签到只读
-                    $$("#checkout").addClass("readonly").removeClass("active").attr("href", "javascript:;");
+                    $$("#checkout").removeClass("active").addClass("readonly").attr("href", "javascript:;");
                     $$("#checkout span").text("开始签退");
                     $$("#report").addClass("active");
                 }
