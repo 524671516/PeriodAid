@@ -663,6 +663,7 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                 localId: localIds[arraycount], // 需要上传的图片的本地ID，由chooseImage接口获得
                 isShowProgressTips: 0, // 默认为1，显示进度提示
                 success: function (res) {
+                    alert(res.errMsg);
                     var serverId = res.serverId; // 返回图片的服务器端ID
                     $$.ajax({
                         url: "/Seller/SaveOrignalImage",
@@ -682,9 +683,6 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
                             }
                         }
                     });
-                },
-                cancel: function () {
-                    myApp.hideIndicator();
                 }
             });
         }

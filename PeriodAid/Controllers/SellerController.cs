@@ -148,7 +148,7 @@ namespace PeriodAid.Controllers
                         user.DefaultSystemId = systemid;
                         UserManager.Update(user);
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToAction("Wx_Seller_Redirect");
+                        return RedirectToAction("Wx_Seller_Redirect", new { systemid = systemid });
                     }
                 }
                 //return Content(jat.openid + "," + jat.access_token);
