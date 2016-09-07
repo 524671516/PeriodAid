@@ -183,6 +183,6 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
         opacity: 0.6;
     }
 
-        .list-block a[class*="col-"].readonly i, .list-block a[class*="col-"].readonly a {
+        .list-block a[class*="col-"].readonly i, .list-block a[class*="col-"].readonly span {
             color: #808080;
         }
