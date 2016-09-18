@@ -63,9 +63,9 @@
     <br />
     <div class="col-md-12">
         <div id="sellertask-img-list">
-            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('//cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
-            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('//cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
-            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('//cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
+            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
+            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
+            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
         </div>
     </div>
 </div>
@@ -97,7 +97,7 @@
         })
     });
     $(".img-list").click(function () {
-        var link_url = "//cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
+        var link_url = "http://cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
         $(".modal-box").modal();
         $("#img-view").attr("src",link_url);
         $(".modal-head").text("签到图片");

@@ -88,7 +88,7 @@
             }
             @foreach (var g in imglist)
                 {
-                <div class="img-list" data-rel="@g" style="background-image:url('//cdn2.shouquanzhai.cn/checkin-img/@g')"></div>
+                <div class="img-list" data-rel="@g" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/@g')"></div>
             }
         </div>
     </div>
@@ -188,7 +188,7 @@ else
             </div>
             <div class="modal-body" id="carousel-body">
                 <div class="carousel-inner" role="listbox" id="modal_con">
-                    <img class='img-thumbnail img-responsive' src='//cdn2.shouquanzhai.cn/checkin-img/131021529529080785.jpg' style='max-width:600px; max-height:450px;margin-left:auto; margin-right:auto;display:block;' />
+                    <img class='img-thumbnail img-responsive' src='http://cdn2.shouquanzhai.cn/checkin-img/131021529529080785.jpg' style='max-width:600px; max-height:450px;margin-left:auto; margin-right:auto;display:block;' />
                 </div>
                 <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
                     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -220,7 +220,7 @@ else
         return false;
     });
     $(".img-list").click(function () {
-        var link_url = "//cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
+        var link_url = "http://cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
         $("#img-view").attr("src", link_url);
         $('#myModal').modal();
         return false;
@@ -229,7 +229,7 @@ else
         
         var photos = $(this).attr("data-target") + "";
         var photo_array = photos.split(",");
-        $("#modal_con img").attr("src", "//cdn2.shouquanzhai.cn/checkin-img/" + photo_array[0]);
+        $("#modal_con img").attr("src", "http://cdn2.shouquanzhai.cn/checkin-img/" + photo_array[0]);
         $("#current-photos").val(photos);
         $("#msModal").modal();
     });
@@ -243,7 +243,7 @@ else
             next = parseInt($("#current-pos").val()) - 1;
         }
         $("#current-pos").val(next);
-        $("#modal_con img").attr("src", "//cdn2.shouquanzhai.cn/checkin-img/" + photo_array[next]);
+        $("#modal_con img").attr("src", "http://cdn2.shouquanzhai.cn/checkin-img/" + photo_array[next]);
     });
     $(".right.carousel-control").click(function () {
         var photo_array = $("#current-photos").val().split(",");
@@ -255,7 +255,7 @@ else
             next = parseInt($("#current-pos").val()) + 1;
         }
         $("#current-pos").val(next);
-        $("#modal_con img").attr("src", "//cdn2.shouquanzhai.cn/checkin-img/" + photo_array[next]);
+        $("#modal_con img").attr("src", "http://cdn2.shouquanzhai.cn/checkin-img/" + photo_array[next]);
     });
 </script>
 

@@ -415,7 +415,7 @@
     <Content Include="Scripts\html5.js" />
     <Content Include="Scripts\Manager.js" />
     <Content Include="Scripts\maapp.js" />
-    <Content Include="Scripts\Manager.min.js" />
+    <Content Include="Scripts\manager.min.js" />
     <Content Include="Scripts\my-app.js" />
     <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\my-validate.js" />
@@ -454,6 +454,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\seller.min.js" />
     <Content Include="Scripts\Seller.js" />
     <Content Include="Scripts\zepto.min.js" />
     <None Include="Scripts\_references.js" />
@@ -931,6 +932,13 @@
     <Content Include="Views\OffSellerTask\TaskSellerAlert.cshtml" />
     <Content Include="Views\OffSellerTask\TaskSellerQueryMonthBySellerPartial.cshtml" />
     <Content Include="Views\Seller\Seller_EditReport_Item.cshtml" />
+    <Content Include="Views\Seller\Seller_CreateCompetitionInfo.cshtml" />
+    <Content Include="Views\Seller\Seller_CompetitionInfoList.cshtml" />
+    <Content Include="Views\Seller\Seller_CompetitionInfoListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoList.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoList_UnSendPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoList_HistoryPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

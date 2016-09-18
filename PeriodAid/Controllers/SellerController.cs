@@ -230,7 +230,7 @@ namespace PeriodAid.Controllers
                                 await offlineDB.SaveChangesAsync();
                             }
                             await SignInManager.SignInAsync(exist_user, isPersistent: false, rememberBrowser: false);
-                            return RedirectToAction("Wx_Seller_Home");
+                            return RedirectToAction("Seller_Home");
                         }
                     }
                     else
@@ -259,7 +259,7 @@ namespace PeriodAid.Controllers
                                 await offlineDB.SaveChangesAsync();
                             }
                             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                            return RedirectToAction("Wx_Seller_Home");
+                            return RedirectToAction("Seller_Home");
                         }
                         else
                             return Content("Failure");
@@ -347,7 +347,7 @@ namespace PeriodAid.Controllers
             }
             else if (User.IsInRole("Seller"))
             {
-                return RedirectToAction("Wx_Seller_Home");
+                return RedirectToAction("Seller_Home");
             }
             else
             {
@@ -385,7 +385,7 @@ namespace PeriodAid.Controllers
                 };
                 offlineDB.Off_Membership_Bind.Add(ofb);
                 await offlineDB.SaveChangesAsync();
-                return RedirectToAction("Wx_Seller_Home");
+                return RedirectToAction("Seller_Home");
             }
             else
             {
@@ -2743,7 +2743,6 @@ namespace PeriodAid.Controllers
             //string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
             try
             {
-
                 WeChatUtilities wechat = new WeChatUtilities();
                 var jat = wechat.getWebOauthAccessToken(code);
                 var user = UserManager.FindByEmail(jat.openid);
@@ -4278,11 +4277,162 @@ namespace PeriodAid.Controllers
                 }
                 catch
                 {
+                }
+            }
+            offlineDB.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
+
+        // 竞品信息列表
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
+        public ActionResult Manager_CompetitionInfoList()
+        {
+            return PartialView();
+        }
+        // 未发红包列表
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
+        public ActionResult Manager_CompetitionInfoList_UnSendPartial()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in offlineDB.Off_CompetitionInfo
+                       where m.Status == 0
+                       && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                       orderby m.ApplicationDate descending
+                       select m;
+            return PartialView(list);
+        }
+        // 确认审核红包
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
+        [HttpPost]
+        public ActionResult Manager_CompetitionInfoConfirm(int id)
+        {
+            AppPayUtilities apppay = new AppPayUtilities();
+            Random random = new Random();
+            CommonUtilities.writeLog(DateTime.Now.ToShortTimeString() + "红包");
+            try
+            {
+                var item = offlineDB.Off_CompetitionInfo.SingleOrDefault(m => m.Id == id);
+                if (item.Status == 0)
+                {
+                    string mch_billno = "SELLERRP" + CommonUtilities.generateTimeStamp() + random.Next(1000, 9999);
+                    string remark = item.ApplicationDate.ToString("MM-dd") + " " + "竞品信息提报红包";
+                    string result = apppay.WxRedPackCreate(item.ReceiveOpenId, 500, mch_billno, "竞品信息提报红包", "寿全斋", remark, remark);
+                    if (result == "SUCCESS")
+                    {
+                        item.Mch_BillNo = mch_billno;
+                        item.Status = 1;
+                        item.BonusApplyDate = DateTime.Now;
+                        item.BonusApplyUser = User.Identity.Name;
+                        item.BonusAmount = 500;
+                        //item.CommitTime = DateTime.Now;
+                        offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        offlineDB.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL" });
+                }
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        // 作废红包
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
+        [HttpPost]
+        public ActionResult Manager_CompetitionInfoDismiss(int id)
+        {
+            try
+            {
+                var bonusrequest = offlineDB.Off_CompetitionInfo.SingleOrDefault(m => m.Id == id);
+                bonusrequest.Status = -1;
+                bonusrequest.BonusApplyUser = User.Identity.Name;
+                bonusrequest.BonusApplyDate = DateTime.Now;
+                offlineDB.Entry(bonusrequest).State = System.Data.Entity.EntityState.Modified;
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        // 历史红包信息
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
+        public ActionResult Manager_CompetitionInfoList_HistoryPartial()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = (from m in offlineDB.Off_CompetitionInfo
+                        where m.Status > 0
+                        && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                        orderby m.BonusApplyDate descending
+                        select m).Take(30);
+            return PartialView(list);
+        }
+
+        [Authorize(Roles = "Senior")]
+        [SettingFilter(SettingName = "BONUS")]
+        [HttpPost]
+        public async Task<ActionResult> Manager_CompetitionInfoList_HistoryRefresh()
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var query_list = from m in offlineDB.Off_CompetitionInfo
+                             where m.Status == 1 && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                             orderby m.BonusApplyDate descending
+                             select m;
+            AppPayUtilities pay = new AppPayUtilities();
+            foreach (var item in query_list)
+            {
+                try
+                {
+                    string result = await pay.WxRedPackQuery(item.Mch_BillNo);
+                    switch (result)
+                    {
+                        case "SENT":
+                            item.Status = 1;
+                            break;
+                        case "RECEIVED":
+                            item.Status = 2;
+                            break;
+                        case "FAIL":
+                            item.Status = 3;
+                            break;
+                        case "REFUND":
+                            item.Status = 4;
+                            break;
+                        default:
+                            item.Status = 1;
+                            break;
+                    }
+                    offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+                catch
+                {
 
                 }
             }
             offlineDB.SaveChanges();
             return Json(new { result = "SUCCESS" });
+        }
+
+        public ActionResult Manager_CompetitionInfoDetails(int id)
+        {
+            var item = offlineDB.Off_CompetitionInfo.SingleOrDefault(m => m.Id == id);
+            return PartialView(item);
         }
 
         /************ 暗促 ************/
@@ -4452,6 +4602,7 @@ namespace PeriodAid.Controllers
                 var dowinfo = from m in offlineDB.Off_AVG_Info
                               where m.DayOfWeek == dow + 1 && m.StoreId == binduser.Off_Seller.Off_Store.Id
                               select new { AVG_Count = m.AVG_SalesData, AVG_Amount = m.AVG_AmountData };
+                ViewBag.StoreName = binduser.Off_Seller.Off_Store.StoreName;
                 if (dowinfo.Count() == 0)
                     ViewBag.AVG_Info = 0;
                 else
@@ -4462,7 +4613,9 @@ namespace PeriodAid.Controllers
             }
             else
             {
+                ViewBag.StoreName = "未绑定";
                 ViewBag.BindInfo = false;
+                ViewBag.AVG_Info = "N/A";
             }
             return View();
         }
@@ -4522,7 +4675,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return PartialView("Error");
+                return PartialView(null);
             }
         }
         // 更换账户（商家以及店铺的切换）
@@ -4534,8 +4687,8 @@ namespace PeriodAid.Controllers
                              where systems.Contains(m.Id.ToString())
                              select new { Key = m.Id, Value = m.SystemName };
             var bindlist = from m in offlineDB.Off_Membership_Bind
-                           where m.Off_System_Id == user.DefaultSystemId && m.UserName == user.UserName
-                           select new { Key = m.Id, Value = m.Off_Seller.Off_Store.StoreName };
+                           where m.Off_System_Id == user.DefaultSystemId && m.UserName == user.UserName && m.Type==1
+                           select new { Key = m.Id, Value = m.Bind?m.Off_Seller.Off_Store.StoreName:"未绑定" };
             ViewBag.SystemList = new SelectList(systemlist, "Key", "Value", user.DefaultSystemId);
             ViewBag.BindList = new SelectList(bindlist, "Key", "Value", user.DefaultSellerId);
             return PartialView();
@@ -4563,7 +4716,7 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var bindlist = from m in offlineDB.Off_Membership_Bind
-                           where m.Off_System_Id == id && m.UserName == user.UserName
+                           where m.Off_System_Id == id && m.UserName == user.UserName && m.Type == 1
                            select m;
             return PartialView(bindlist);
         }
@@ -4632,7 +4785,7 @@ namespace PeriodAid.Controllers
                         return Content("SUCCESS");
                     }
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     return Content("FAIL");
                 }
@@ -4848,7 +5001,7 @@ namespace PeriodAid.Controllers
                 var schedule = (from m in offlineDB.Off_Checkin_Schedule
                                        where m.Off_Store_Id == Seller.StoreId
                                        orderby m.Subscribe descending
-                                       select m).Skip(page*10).Take(10);
+                                       select m).Skip(page*10).Take(15);
                 if (schedule.Count() != 0)
                     return PartialView(schedule);
                 else
@@ -4955,6 +5108,91 @@ namespace PeriodAid.Controllers
             }
             return Content("FAIL");
         }
+        // 竞品信息提报
+        public ActionResult Seller_CompetitionInfoList()
+        {
+            return View();
+        }
+
+        public ActionResult Seller_CompetitionInfoListPartial(int? page)
+        {
+            int _page = page ?? 0;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var Seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
+            if (Seller != null)
+            {
+                var list = (from m in offlineDB.Off_CompetitionInfo
+                            where m.ReceiveUserName == user.UserName && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                            orderby m.ApplicationDate descending
+                            select m).Skip(15 * _page).Take(15);
+                if (list.Count() > 0)
+                {
+                    return PartialView(list);
+                }
+                else
+                    return Content("FAIL");
+            }
+            else
+                return Content("FAIL");
+        }
+
+        public ActionResult Seller_CreateCompetitionInfo()
+        {
+            Off_CompetitionInfo model = new Off_CompetitionInfo();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            model.ReceiveOpenId = user.OpenId;
+            model.ReceiveUserName = user.UserName;
+            var seller = offlineDB.Off_Membership_Bind.SingleOrDefault(m => m.Id == user.DefaultSellerId).Off_Seller;
+            model.NickName = seller.Name;
+            model.StoreId = seller.StoreId;
+            return PartialView(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Seller_CreateCompetitionInfo(FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Off_CompetitionInfo item = new Off_CompetitionInfo();
+                    if (TryUpdateModel(item))
+                    {
+                        
+                        item.ApplicationDate = DateTime.Now;
+                        item.Status = 0;
+                        offlineDB.Off_CompetitionInfo.Add(item);
+                        offlineDB.SaveChanges();
+                        return Content("SUCCESS");
+                    }
+                    else
+                    {
+                        return Content("FAIL");
+                    }
+                }
+                catch
+                {
+                    return Content("FAIL");
+                }
+            }
+            else
+            {
+                return Content("FAIL");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Seller_DeleteCompetitionInfo(int id)
+        {
+            var item = offlineDB.Off_CompetitionInfo.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                offlineDB.Off_CompetitionInfo.Remove(item);
+                offlineDB.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+                return Json(new { result = "FAIL" });
+        }
         
         // 页面测试
         public ActionResult Seller_APITest()
@@ -4964,6 +5202,32 @@ namespace PeriodAid.Controllers
         public ActionResult Seller_Statistic()
         {
             return View();
+        }
+
+        public ActionResult UpdateSellerUserInfo()
+        {
+            string redirectUri = Url.Encode("http://webapp.shouquanzhai.cn/Seller/SellerUserAuthorize");
+            string appId = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUri + "&response_type=code&scope=snsapi_userinfo&state=" + "1" + "#wechat_redirect";
+            return Redirect(url);
+        }
+
+        public ActionResult SellerUserAuthorize(string code, string state)
+        {
+            WeChatUtilities wechat = new WeChatUtilities();
+            var jat = wechat.getWebOauthAccessToken(code);
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            user.AccessToken = jat.access_token;
+            UserManager.Update(user);
+            //WeChatUtilities wechat = new WeChatUtilities();
+            var userinfo = wechat.getWebOauthUserInfo(user.AccessToken, user.OpenId);
+            user.NickName = userinfo.nickname;
+            user.ImgUrl = userinfo.headimgurl;
+            user.Sex = userinfo.sex == "1" ? true : false;
+            user.Province = userinfo.province;
+            user.City = userinfo.city;
+            UserManager.Update(user);
+            return RedirectToAction("Seller_Home");
         }
     }
 }

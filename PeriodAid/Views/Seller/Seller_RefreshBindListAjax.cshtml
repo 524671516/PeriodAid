@@ -1,6 +1,13 @@
 ﻿@model IEnumerable<PeriodAid.Models.Off_Membership_Bind>
 
-@foreach(var item in Model)
+@foreach (var item in Model)
 {
-    <option value="@item.Id">@Html.Encode(item.Off_Seller.Off_Store.StoreName)</option>
+    if (item.Bind)
+    {
+        <option value="@item.Id">@Html.Encode(item.Off_Seller.Off_Store.StoreName)</option>
+    }
+    else
+    {
+        <option value="@item.Id">未绑定</option>
+    }
 }

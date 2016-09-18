@@ -4,6 +4,20 @@
     font-size: 16px;
     color: lightgray;
 }
+.text-center{
+    margin: auto auto;
+    text-align:center;
+}
+.icon-text{
+    font-size:0.6em;
+}
+.icon-accordion{
+    font-size:1.4em;
+    padding:10px 0px 15px 0;
+}
+.icon-accordionheader{
+    font-size:0.8em;
+}
 .h3{
     font-size:1.5em;
 }
@@ -53,9 +67,6 @@
     font-size: 36px;
 }
 
-html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.media-list .item-title {
-    font-weight: 400;
-}
 .list-block ul.rep-imglist {
     padding: 0;
 }
@@ -77,9 +88,6 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
     opacity:0.5;
     color:#fff;
     background-color:#000;
-}
-.font-px-18 {
-    font-size: 18px;
 }
 .rep-imgitem-btn {
     background-position: center;
@@ -131,58 +139,6 @@ html.ios-gt-8 .list-block li.media-item .item-title, html.ios-gt-8 .list-block.m
 .validate-form textarea.custom-error {
     background: #d76a67;
 }
-
-.circle-box {
-    width: 40%;
-    height: 40vw;
-    border-radius: 50%;
-    border: 3px solid rgba(0,122,255,0.8);
-    margin: 20px auto auto auto;
-    text-align: center;
-    font-size: 48px;
+block.media-list .item-title {
+    font-weight: normal;
 }
-
-    .circle-box span {
-        line-height: 38vw;
-        color: #007aff;
-    }
-
-    .circle-box div {
-        font-size: 14px;
-        margin-top: -38px;
-    }
-
-.list-block a[class*="col-"] {
-    background: #fff;
-    text-align: center;
-    color: #000;
-    border-top:1px solid #ddd;
-    border-bottom:1px solid #ddd;
-    border-right:1px solid #ddd;
-}
-
-    .list-block a[class*="col-"] span {
-        font-size: 18px;
-    }
-    .list-block a[class*="col-"] div {
-        text-align: center;
-        font-size: 42px;
-    }
-
-    .list-block a[class*="col-"].active {
-        opacity: 0.8;
-    }
-    .list-block a[class*="col-"].altive span{
-        color: #007aff;
-    }
-        .list-block a[class*="col-"].active span {
-            color: #007aff;
-        }
-
-    .list-block a[class*="col-"].readonly {
-        opacity: 0.6;
-    }
-
-        .list-block a[class*="col-"].readonly i, .list-block a[class*="col-"].readonly span {
-            color: #808080;
-        }

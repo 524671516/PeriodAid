@@ -18,12 +18,15 @@
     @Html.HiddenFor(m => m.Rep_Image)
 
     <div class="content-block-title">提报信息</div>
-    {
-        Html.RenderAction("Seller_EditReport_Item", new { id = Model.Id });
-    }
+    <div class="list-block">
+        <ul>
+            @{
+                Html.RenderAction("Seller_EditReport_Item", new { id = Model.Id });
+            }
+        </ul>
+    </div>
     <div class="list-block media-list">
         <ul>
-            
             <li>
                 <div class="item-content">
                     <div class="item-inner">

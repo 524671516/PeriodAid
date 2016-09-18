@@ -55,6 +55,8 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_SellerTask> Off_SellerTask { get; set; }
         public virtual DbSet<Off_SellerTaskProduct> Off_SellerTaskProduct { get; set; }
 
+        public virtual DbSet<Off_CompetitionInfo> Off_CompetitionInfo { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -180,7 +182,13 @@ namespace PeriodAid.Models
                 .HasMany(e => e.Off_SellerTask)
                 .WithRequired(e => e.Off_Store)
                 .HasForeignKey(e => e.StoreId)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Off_Store>()
+                .HasMany(e => e.Off_CompetitionInfo)
+                .WithRequired(e => e.Off_Store)
+                .HasForeignKey(e => e.StoreId)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Off_System>()
                 .HasMany(e => e.Off_Store)
@@ -770,6 +778,9 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_SellerTask> Off_SellerTask { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_CompetitionInfo> Off_CompetitionInfo { get; set; }
 
         public int Off_System_Id { get; set; }
 
@@ -1472,6 +1483,43 @@ namespace PeriodAid.Models
         public virtual Off_SellerTask Off_SellerTask { get; set; }
 
         public virtual Off_Product Off_Product { get; set; }
+    }
+
+    public partial class Off_CompetitionInfo
+    {
+        public int Id { get; set; }
+
+        public int StoreId { get; set; }
+
+        [StringLength(512, ErrorMessage = "不超过512个字符")]
+        public string CompetitionImage { get; set; }
+
+        [StringLength(512, ErrorMessage = "不超过512个字符")]
+        public string Remark { get; set; }
+
+        [StringLength(64)]
+        public string ReceiveOpenId { get; set; }
+
+        [StringLength(128)]
+        public string ReceiveUserName { get; set; }
+
+        [StringLength(128)]
+        public string NickName { get; set; }
+
+        public decimal? BonusAmount { get; set; }
+
+        public int Status { get; set; }
+
+        public DateTime ApplicationDate { get; set; }
+
+        public DateTime? BonusApplyDate { get; set; }
+
+        public string BonusApplyUser { get; set; }
+
+        [StringLength(256)]
+        public string Mch_BillNo { get; set; }
+
+        public virtual Off_Store Off_Store { get; set; }
     }
     
 }

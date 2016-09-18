@@ -147,6 +147,26 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
+        public static string CompetitionInfoStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "已作废";
+                case 0:
+                    return "已提交";
+                case 1:
+                    return "提报通过";
+                case 2:
+                    return "已收款";
+                case 3:
+                    return "发送失败";
+                case 4:
+                    return "已退款";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {

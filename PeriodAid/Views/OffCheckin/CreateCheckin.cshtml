@@ -140,7 +140,7 @@
                         } else {
                             alert("上传成功");
                             $("#" + targetname).val(data.imgurl);
-                            $("#" + imglist).html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
+                            $("#" + imglist).html("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\"></div>");
                             //alert(document.getElementById(fileelment).value);
                         }
                     }
@@ -174,7 +174,7 @@
                             $("#Rep_Image").val(filearray);
                             $("#report-img-list").html("");
                             for (var item in filearray) {
-                                $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('//cdn2.shouquanzhai.cn/checkin-img/" + filearray[item] + "')\">"+
+                                $("#report-img-list").append("<div class='img-list' data-rel='" + filearray[item] + "' style=\"background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/" + filearray[item] + "')\">"+
                                     "<span class=\"img-close\">\<span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");
                             }
                         }
@@ -188,7 +188,7 @@
             return false;
         }
         $("#report-img-list").on("click",".img-list", function () {
-            var link_url = "//cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
+            var link_url = "http://cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
             $("#img-view").attr("src", link_url);
             $('#myModal').modal();
         });

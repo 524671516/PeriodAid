@@ -1,0 +1,41 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_CompetitionInfo>
+
+@foreach (var item in Model)
+{
+    if (item.Status < 1)
+    {
+    <li class="swipeout"  data-url="@item.Id">
+        <div class="item-content swipeout-content">
+            <div class="item-inner">
+                <div class="item-title-row">
+                    <div class="item-title">@Html.Encode(item.Off_Store.StoreName)</div>
+                    <div class="item-after">@Html.CompetitionInfoStatus(item.Status)</div>
+                </div>
+                <div class="item-subtitle">@Html.Encode(item.ApplicationDate.ToString("yyyy-MM-dd"))</div>
+                <div class="item-text" style="height:22px;">@Html.Encode(item.Remark)</div>
+            </div>
+        </div>
+        <div class="swipeout-actions-right">
+            <a href="#" class="swipeout-delete" data-confirm="确定要作废该信息吗？" data-confirm-title="寿全斋" data-close-on-cancel="true">删除</a>
+        </div>
+    </li>
+    }
+    else
+    {
+        <li class="swipeout" data-url="@item.Id">
+            <div class="item-content swipeout-content">
+                <div class="item-inner">
+                    <div class="item-title-row">
+                        <div class="item-title">@Html.Encode(item.Off_Store.StoreName)</div>
+                        <div class="item-after">@Html.CompetitionInfoStatus(item.Status)</div>
+                    </div>
+                    <div class="item-subtitle">@Html.Encode(item.ApplicationDate.ToString("yyyy-MM-dd"))</div>
+                    <div class="item-text" style="height:22px;">@Html.Encode(item.Remark)</div>
+                </div>
+            </div>
+            <div class="swipeout-actions-right">
+                <a href="javascript:myApp.alert('无法删除');" class="color-gray">删除</a>
+            </div>
+        </li>
+    }
+}

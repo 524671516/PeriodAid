@@ -31,16 +31,15 @@ $$.ajax({
     }
 });
 //切换版本
-$$("#user-panel").on("click", ".seller-change", function () {
-    var url = $$(".seller-change").attr("data-url");
+$$("#user-panel").on("click", "#versionChange", function () {
+    var url = $$(this).attr("href");
     myApp.confirm("确定要切换当前版本吗？",
         function () {
             window.location.href = url;
         },
         function () {
             myApp.closePanel();
-        }
-         );
+        });
 });
 // 防止缓存机制
 $$(document).on("touchstart", "a.random-param", function () {
@@ -56,7 +55,7 @@ $$(document).on("touchstart", "a.random-param", function () {
 
 // 微信初始化
 wx.config({
-    debug: true,
+    debug: false,
     // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
     appId: $("#appId").text(),
     // 必填，公众号的唯一标识
@@ -68,10 +67,10 @@ wx.config({
     // 必填，签名，见附录1
     jsApiList: ["uploadImage", "downloadImage", "chooseImage", "getLocation", "previewImage", "openLocation"]
 });
-backrefrensh();
+homeRefrensh();
 //Seller_Home 首页刷新
 $$(document).on("pageAfterAnimation", ".page[data-page='seller-home']", function () {
-    backrefrensh();
+    homeRefrensh();
 });
 
 $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function (e) {
@@ -91,8 +90,6 @@ $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function 
         });
     })
     $$("#changeaccount-submit").click(function () {
-        console.log($$("#SystemId").val());
-        console.log($$("#BindId").val());
         myApp.showIndicator();
         $("#changeaccount-submit").prop("disabled", true).addClass("color-gray");
         setTimeout(function () {
@@ -135,7 +132,6 @@ $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function 
 
 //Seller_CheckIn 签到
 $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
-    alert($("#Id").val());
     //新用户弹窗
     var text = "请上传带有上班编码的签到图片";
     var urlList = "http://cdn2.shouquanzhai.cn/checkin-img/131020514063255853.jpg,http://cdn2.shouquanzhai.cn/checkin-img/131047257330039093.jpg";
@@ -157,12 +153,12 @@ $$(document).on("pageInit", ".page[data-page='seller-checkin']", function (e) {
             if ($("#CheckinLocation").val().trim == "") {
                 myApp.hideIndicator();
                 myApp.alert("请上传您的地理位置");
-                $("#checkin-btn").prop("disabled", true).removeClass("color-gray");
+                $("#checkin-btn").prop("disabled", false).removeClass("color-gray");
             }
             else if (photoList.length == 0) {
                 myApp.hideIndicator();
                 myApp.alert("至少上传一张照片");
-                $("#checkin-btn").prop("disabled", true).removeClass("color-gray");
+                $("#checkin-btn").prop("disabled", false).removeClass("color-gray");
             }
             else {
                 $("#checkin_form").ajaxSubmit(function (data) {
@@ -220,12 +216,12 @@ $$(document).on("pageInit", ".page[data-page='seller-checkout']", function () {
             if (photoList.length == 0) {
                 myApp.hideIndicator();
                 myApp.alert("至少上传一张图片");
-                $("#checkout-btn").prop("disabled", true).removeClass("color-gray");
+                $("#checkout-btn").prop("disabled", false).removeClass("color-gray");
             }
             else if ($("#CheckoutLocation").val().trim == "") {
                 myApp.hideIndicator();
                 myApp.alert("请上传您的位置信息");
-                $("#checkout-btn").prop("disabled", true).removeClass("color-gray");
+                $("#checkout-btn").prop("disabled", false).removeClass("color-gray");
             }
             else {
                 $("#checkout_form").ajaxSubmit(function (data) {
@@ -298,14 +294,14 @@ $$(document).on("pageInit", ".page[data-page='seller-report']", function () {
         if (submit_count == 0) {
             submit_count = 1;
             $$("#report-btn").prop("disabled", true).addClass("color-gray");
-            console.log($$("#Id").val());
             myApp.showIndicator();
             setTimeout(function () {
                 var photoArray = splitArray($$("#Rep_Image").val());
                 if (photoArray.length == 0) {
                     myApp.hideIndicator();
                     myApp.alert("至少上传一张图片");
-                    $("#report-btn").prop("disabled", true).removeClass("color-gray");
+                    $("#report-btn").prop("disabled", false).removeClass("color-gray");
+                    submit_count = 0;
                 }
                 else {
                     $("#report_form").ajaxSubmit({
@@ -339,6 +335,153 @@ $$(document).on("pageInit", ".page[data-page='seller-report']", function () {
         }
     });
 });
+// Seller_CompetitionList 竞品列表
+$$(document).on("pageInit", ".page[data-page='seller-competitioninfolist']", function () {
+    //var currentpage = $$("#current-page").val();
+    var loading = false;
+    $$(".infinite-scroll").on("infinite", function (e) {
+        $$(".infinite-scroll-preloader").removeClass("hidden");
+        if (loading) return;
+        loading = true;
+        setTimeout(function () {
+            loading = false;
+            //生成新的条目
+
+            $$.ajax({
+                url: "/Seller/Seller_CompetitionInfoListPartial",
+                data: {
+                    page: $$("#current-page").val()
+                },
+                success: function (data) {
+                    if (data == "FAIL") {
+                        // 加载完毕，则注销无限加载事件，以防不必要的加载
+                        myApp.detachInfiniteScroll($$('.infinite-scroll'));
+                        // 删除加载提示符
+                        $$('.infinite-scroll-preloader').remove();
+                        $$(".infinite-pre").removeClass("hidden");
+                        return;
+                    } else {
+                        $$(".list-content").append(data);
+                        var page = parseInt($$("#current-page").val()) + 1;
+                        $$("#current-page").val(page);
+                    }
+                }
+            });
+        }, 2000);
+    });
+    
+    $$(".list-content").on("deleted", ".swipeout", function (e) {
+        $$.ajax({
+            url: "/Seller/Seller_DeleteCompetitionInfo",
+            method: "POST",
+            data: {
+                id: $$(e.target).attr("data-url")
+            },
+            success: function (res) {
+                var data = JSON.parse(res);
+                if (data.result == "SUCCESS") { } else {
+                    myApp.alert("删除失败");
+                }
+            }
+        });
+    });
+});
+$$(document).on("pageAfterAnimation", ".page[data-page='seller-competitioninfolist']", function () {
+    if ($$(".infinite-scroll-preloader").length == 0) {
+        $$(".infinite-scroll").append("<div class='infinite-scroll-preloader hidden'><div class='preloader'></div></div>");
+        $$(".infinite-pre").addClass("hidden");
+        myApp.attachInfiniteScroll($$('.infinite-scroll'));
+    }
+    $$.ajax({
+        url: "/Seller/Seller_CompetitionInfoListPartial",
+        data: {
+            page: 0
+        },
+        success: function (data) {
+            if (data != "FAIL") {
+                $$(".list-content").html(data);
+                $$("#current-page").val(1);
+            } else {
+                // 加载完毕，则注销无限加载事件，以防不必要的加载
+                myApp.detachInfiniteScroll($$('.infinite-scroll'));
+                // 删除加载提示符
+                $$('.infinite-scroll-preloader').remove();
+                $$(".infinite-pre").removeClass("hidden");
+            }
+        }
+    });
+});
+
+// Seller_CreateCompetitionInfo 添加竞品信息
+$$(document).on("pageInit", ".page[data-page='seller-createcompetitioninfo']", function () {
+    currentTextAreaLength("createcompetitioninfo-form", "Remark", 500, "report-current");
+    uploadCheckinFile("createcompetitioninfo-form", "report-imglist", "CompetitionImage", "report-imgcount", 5)
+    //提交
+    $("#createcompetitioninfo-form").validate({
+        debug: false,//调试模式取消submit的默认提交功能
+        errorClass: "custom-error",//默认为错误的样式类为：error;
+        focusInvalid: false,//当为false时，验证无效时，没有焦点相应
+        onkeyup: false,
+        submitHandler: function (form) {
+            var photoList = splitArray($("#CompetitionImage").val());
+            if (photoList.length < 0) {
+                myApp.hideIndicator();
+                myApp.alert("至少上传一张图片");
+                $("#createcompetitioninfo-btn").prop("disabled", false).removeClass("color-gray");
+            }
+            else {
+                $("#createcompetitioninfo-form").ajaxSubmit(function (data) {
+                    if (data == "SUCCESS") {
+                        myApp.hideIndicator();
+                        mainView.router.back();
+                        myApp.addNotification({
+                            title: "通知",
+                            message: "信息提交成功"
+                        });
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    } else {
+                        myApp.hideIndicator();
+                        myApp.addNotification({
+                            title: "通知",
+                            message: "信息提交失败"
+                        });
+                        $("#createcompetitioninfo-btn").prop("disabled", false).removeClass("color-gray");
+                        setTimeout(function () {
+                            myApp.closeNotification(".notifications");
+                        }, 2000);
+                    }
+                });
+            }
+        },
+        rules: {
+            Remark: {
+                required: true,
+                maxlength: 500
+            }
+        },
+        messages: {
+            Rmark: {
+                required: "字段不能为空",
+                maxlength: jQuery.format("不能小于{0}个字符")
+            }
+        },
+        errorPlacement: function (error, element) {
+            myApp.hideIndicator();
+            $("#createcompetitioninfo-btn").prop("disabled", false).removeClass("color-gray");
+            element.attr("placeholder", error.text());
+        }
+    });
+    $$("#createcompetitioninfo-btn").click(function () {
+        myApp.showIndicator();
+        $$("#createcompetitioninfo-btn").prop("disabled", true).addClass("color-gray");
+        setTimeout(function () {
+            $("#createcompetitioninfo-form").submit();
+        }, 500);
+    });
+
+});
 
 //Seller_ScheduleList 排班表
 $$(document).on("pageInit", ".page[data-page='seller-schedulelist']", function () {
@@ -371,7 +514,6 @@ $$(document).on("pageInit", ".page[data-page='seller-schedulelist']", function (
                     page: currentpage
                 },
                 success: function (data) {
-                    console.log(data)
                     if (data == "FAIL") {
                         // 加载完毕，则注销无限加载事件，以防不必要的加载
                         myApp.detachInfiniteScroll($$('.infinite-scroll'));
@@ -669,9 +811,8 @@ function uploadCheckinFile(pagename, imglist, photolist_id, current_count, max_c
         if (arraycount < localIds.length) {
             wx.uploadImage({
                 localId: localIds[arraycount], // 需要上传的图片的本地ID，由chooseImage接口获得
-                isShowProgressTips: 0, // 默认为1，显示进度提示
+                isShowProgressTips: 1, // 默认为1，显示进度提示
                 success: function (res) {
-                    alert(res.errMsg);
                     var serverId = res.serverId; // 返回图片的服务器端ID
                     $$.ajax({
                         url: "/Seller/SaveOrignalImage",
@@ -770,7 +911,7 @@ function newPrompt(text, urlList) {
         success: function (data) {
             data = JSON.parse(data);
             if (data.result == "SUCCESS") {
-                if (!data.recruit) {
+                if (data.recruit) {
                     myApp.modal({
                         title: "温馨提示",
                         text: text,
@@ -799,67 +940,56 @@ function newPrompt(text, urlList) {
         }
     });
 }
-function backrefrensh() {
+function homeRefrensh() {
     $$.ajax({
         url: "/Seller/Seller_HomeJson",
         method: "post",
         success: function (data) {
             data = JSON.parse(data)
-            console.log(data);
             if (data.result == "SUCCESS") {
-                $$("#report").removeClass("readonly");
-                $$("#checkin").removeClass("readonly");
-                $$("#checkout").removeClass("readonly");
+                // 未绑定
                 if (data.data.Status == -1) {
-                    $$("#seller-status").addClass("hidden");
-                    $$("#seller-status-1").removeClass("hidden");
+                    // 所有初始化
+                    $$(".icon-item").attr("href", "javascript:;").removeClass("random-param").removeClass("color-blue").addClass("color-gray");
                 }
+                // 无日程
                 if (data.data.Status == 0) {
-                    $$("#seller-status").removeClass("hidden");
-                    $$("#seller-status-1").addClass("hidden");
-                    $$(".seller-subtitle").text("今日无日程");
-                    $$("#checkin").addClass("readonly").attr("href", "javascript:;");//签到只读
-                    $$("#checkout").addClass("readonly").attr("href", "javascript:;");//签退只读
+                    // 所有初始化
+                    $$(".icon-item").attr("href", "javascript:;").removeClass("random-param").removeClass("color-blue").addClass("color-gray");
+                    $$("#report-icon").attr("href", "/Seller/Seller_Report").removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#refresh-icon>.icon-text").text("重填数据");
                 }
+                // 可签到
                 if (data.data.Status == 1) {
-                    $$("#seller-status").removeClass("hidden");
-                    $$("#seller-status-1").addClass("hidden");
-                    $$(".seller-subtitle").text("今日任务");
-                    $$("#checkin").addClass("active");//签到
-                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?sid=" + data.data.Schedule_Id);
-                    $$("#checkout").addClass("readonly").attr("href", "javascript:;");//签退只读
+                    // 所有初始化
+                    $$(".icon-item").attr("href", "javascript:;").removeClass("random-param").removeClass("color-blue").addClass("color-gray");
+                    $$("#report-icon").attr("href", "/Seller/Seller_Report").removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#checkin-icon").attr("href", "/Seller/Seller_CheckIn?sid=" + data.data.Schedule_Id).removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#refresh-icon>.icon-text").text("重填数据");
                 }
+                // 可签退
                 if (data.data.Status == 2) {
-                    $$("#seller-status").removeClass("hidden");
-                    $$("#seller-status-1").addClass("hidden");
-                    $$(".seller-subtitle").text("今日任务");
-                    $$("#checkin").removeClass("active").addClass("altive");
-                    $$("#checkin span").text("重新签到");//重新签到
-                    $$("#checkin").attr("href", "/Seller/Seller_CheckIn?sid=" + data.data.Schedule_Id);
-                    $$("#checkout").addClass("active")
-                    $$("#checkout").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id)
+                    // 所有初始化
+                    $$(".icon-item").attr("href", "javascript:;").removeClass("random-param").removeClass("color-blue").addClass("color-gray");
+                    $$("#report-icon").attr("href", "/Seller/Seller_Report").removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#checkout-icon").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id).removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#refresh-icon").attr("href", "/Seller/Seller_CheckIn?sid=" + data.data.Schedule_Id).removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#refresh-icon>.icon-text").text("重新签到");
                 }
+                // 可提报销量
                 if (data.data.Status == 3) {
-                    $$("#seller-status").removeClass("hidden");
-                    $$("#seller-status-1").addClass("hidden");
-                    $$(".seller-subtitle").text("今日任务");
-                    $$("#checkin").removeClass("active").addClass("readonly");
-                    $$("#checkin").attr("href", "javascript:;");//签到只读
-                    $$("#checkin span").text("开始签到");
-                    $$("#checkout").addClass("altive");//重新签退
-                    $$("#checkout span").text("重新签退");
-                    $$("#checkout").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id);
-                    $$("#report").addClass("active");
+                    // 所有初始化
+                    $$(".icon-item").attr("href", "javascript:;").removeClass("random-param").removeClass("color-blue").addClass("color-gray");
+                    $$("#report-icon").attr("href", "/Seller/Seller_Report").removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#refresh-icon").attr("href", "/Seller/Seller_CheckOut?id=" + data.data.Checkin_Id).removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#refresh-icon>.icon-text").text("重新签退");
                 }
+                // 提报销量完成
                 if (data.data.Status == 4) {
-                    $$("#seller-status").removeClass("hidden");
-                    $$("#seller-status-1").addClass("hidden");
-                    $$(".seller-subtitle").text("今日任务");
-                    $$("#checkin").addClass("readonly").attr("href", "javascript:;");
-                    $$("#checkin span").text("开始签到");//签到只读
-                    $$("#checkout").removeClass("active").addClass("readonly").attr("href", "javascript:;");
-                    $$("#checkout span").text("开始签退");
-                    $$("#report").addClass("active");
+                    // 所有初始化
+                    $$(".icon-item").attr("href", "javascript:;").removeClass("random-param").removeClass("color-blue").addClass("color-gray");
+                    $$("#report-icon").attr("href", "/Seller/Seller_Report").removeClass("color-gray").addClass("color-blue").addClass("random-param");
+                    $$("#refresh-icon>.icon-text").text("重填数据");
                 }
             }
         }

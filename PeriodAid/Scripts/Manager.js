@@ -1515,7 +1515,97 @@ $$(document).on("pageInit", ".page[data-page='manager-bonuslist']", function () 
     });
 });
 
-//Mnanager_StoreList 门店位置信息
+// Manager_CompetitionInfoList
+//Manager_BonusList  红包列表 下拉刷新  
+$$(document).on("pageInit", ".page[data-page='manager-competitioninfolist']", function () {
+    // 列表内容更新
+    $$.ajax({
+        url: "/Seller/Manager_CompetitionInfoList_HistoryPartial",
+        success: function (html) {
+            $$("#history-content").html(html);
+        }
+    });
+    $$.ajax({
+        url: "/Seller/Manager_CompetitionInfoList_UnSendPartial",
+        success: function (data) {
+            $$("#bonus-content").html(data);
+        }
+    });
+    // 滑动删除
+    $$("#bonus-content").on("deleted", ".swipeout", function (e) {
+        $$.ajax({
+            url: "/Seller/Manager_CompetitionInfoDismiss",
+            data: {
+                id: $$(e.target).attr("data-url")
+            },
+            method: "post",
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.result != "SUCCESS") {
+                    myApp.alert("删除失败");
+                }
+            }
+        });
+    });
+    // 确认红包
+    $$("#bonus-content").on("click", ".confirm-competitioninfo", function (e) {
+        var data_url = $$(this).attr("data-url");
+        myApp.confirm("是否确认发放红包?", function () {
+            $$.ajax({
+                url: "/Seller/Manager_CompetitionInfoConfirm",
+                data: {
+                    id: data_url
+                },
+                method: "post",
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data.result == "SUCCESS") {
+                        // 页面刷新
+                        $$.ajax({
+                            url: "/Seller/Manager_CompetitionInfoList_UnSendPartial",
+                            success: function (data) {
+                                $$("#bonus-content").html(data);
+                            }
+                        });
+                    } else {
+                        myApp.alert("红包发放失败");
+                    }
+                }
+            });
+        });
+    });
+    // Pull to refresh content
+    var ptrContent = $$(".pull-to-refresh-content");
+    // Add 'refresh' listener on it
+    ptrContent.on("refresh", function (e) {
+        // Emulate 2s loading
+        setTimeout(function () {
+            // Random song
+            $$.ajax({
+                url: "/Seller/Manager_CompetitionInfoList_HistoryRefresh",
+                method: "post",
+                success: function (e) {
+                    var data = JSON.parse(e);
+                    if (data.result == "SUCCESS") {
+                        $$.ajax({
+                            url: "/Seller/Manager_CompetitionInfoList_HistoryPartial",
+                            success: function (html) {
+                                $$("#history-content").html(html);
+                            }
+                        });
+                    }
+                }
+            });
+            myApp.pullToRefreshDone();
+        }, 2e3);
+    });
+});
+// Manager_CompetitionInfoDetails
+$$(document).on("pageInit", ".page[data-page='manager-comeptitioninfodetails']", function () {
+    PhotoBrowser("manager-comeptitioninfodetails");
+});
+
+// Manager_StoreList 门店位置信息
 $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () {
     $$(".store_details").click(function () {
         var btn = $$(this);
@@ -1527,7 +1617,7 @@ $$(document).on("pageInit", ".page[data-page='manager-storelist']", function () 
                 locations: $$(this).attr("data-latitude") + "," + $$(this).attr("data-longitude"),
                 type: 3,
                 output: "jsonp",
-                key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+                key: "WRRBZ-PHV3K-KWOJ5-AMKPV-PASC3-GSFQU"
             },
             success: function (data) {
                 if (data.status == 0) {
@@ -1802,6 +1892,7 @@ function uploadLocation(btn_id, location_id) {
             type: "wgs84",
             // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
             success: function (res) {
+                alert("3");
                 var latitude = res.latitude;
                 // 纬度，浮点数，范围为90 ~ -90
                 var longitude = res.longitude;
@@ -1813,7 +1904,6 @@ function uploadLocation(btn_id, location_id) {
                 var gps_location = longitude + "," + latitude;
                 loc_success = true;
                 $$("#" + btn_id).find(".item-after").text("上传位置成功");
-                //cell_success_location(btn, "位置获取成功", latitude, longitude);
                 $$("#" + location_id).val(gps_location);
                 myApp.hideIndicator();
             }
@@ -1860,13 +1950,15 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                         locations: translbs,
                         type: 1,
                         output: "jsonp",
-                        key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+                        key: "WRRBZ-PHV3K-KWOJ5-AMKPV-PASC3-GSFQU"
                     },
                     success: function (data) {
+                        console.log(data);
                         if (data.status == 0) {
                             geocoder = new qq.maps.Geocoder({
                                 complete: function (result) {
                                     $("#" + lbs_details_id).val(result.detail.address);
+                                    alert(result.details.address);
                                 }
                             });
                             var coord = new qq.maps.LatLng(data.locations[0].lat, data.locations[0].lng);
@@ -1875,6 +1967,7 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                         }
                     }
                 });
+                //myApp.hideIndicator();
             }
         });
         return false;
@@ -1915,7 +2008,7 @@ function LocationBrowser(pagename) {
                 locations: translbs,
                 type: 1,
                 output: "jsonp",
-                key: "FAKBZ-YPIW4-TOLUE-XLQOL-MAYZQ-3FFGF"
+                key: "WRRBZ-PHV3K-KWOJ5-AMKPV-PASC3-GSFQU"
             },
             success: function (data) {
                 if (data.status == 0) {

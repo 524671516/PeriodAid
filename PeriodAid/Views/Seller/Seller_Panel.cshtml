@@ -14,7 +14,7 @@
         </div>
         <div class="col-40">
             <div style="margin:10px 0;"><span id="user-nickname" class="h4">@Html.Encode(ViewBag.NickName)</span></div>
-            <a href="javascript:window.location.href='/Seller/UpdateUserInfo';" class="button active h6">更新头像</a>
+            <a href="/Seller/UpdateSellerUserInfo" class="button active h6 external">更新头像</a>
         </div>
         <div class="col-20"></div>
     </div>
@@ -25,19 +25,19 @@
         <li class="item-content list-panel-all">
             <div class="item-inner">
                 <div class="item-title">真实姓名</div>
-                <div class="item-after">@Html.Encode(Model.Name)</div>
+                <div class="item-after">@Html.Encode(Model==null?"未绑定":Model.Name)</div>
             </div>
         </li>
         <li class="item-content list-panel-all">
             <div class="item-inner">
                 <div class="item-title">联系电话</div>
-                <div class="item-after">@Html.Encode(Model.Mobile)</div>
+                <div class="item-after">@Html.Encode(Model==null?"未绑定":Model.Mobile)</div>
             </div>
         </li>
         <li class="item-content list-panel-favorites">
             <div class="item-inner">
                 <div class="item-title">门店名称</div>
-                <div class="item-after">@Html.Encode(Model.Off_Store.StoreName)</div>
+                <div class="item-after">@Html.Encode(Model==null?"未绑定": Model.Off_Store.StoreName)</div>
             </div>
         </li>
         <li>
@@ -48,16 +48,23 @@
                 </div>
             </a>
         </li>
+        <li>
+            <a href="/Seller/Wx_Seller_Home" class="item-content item-link" id="versionChange">
+                <div class="item-inner">
+                    <div class="item-title">返回旧版本</div>
+                    <div class="item-after"></div>
+                </div>
+            </a>
+        </li>
         <li class="item-content">
             <div class="item-inner">
                 <div class="item-title">当前版本</div>
-                <div class="item-after">v1.5.1</div>
+                <div class="item-after">v1.6.0</div>
             </div>
         </li>
     </ul>
     <div class="img-center">
         <a href="/Seller/Seller_ChangeAccount" class="button active h6 color-red">切换账户</a><br />
-        <a href="javascript:;" data-url="/Seller/Wx_Seller_Home" class="button active h6 color-blue seller-change">版本切换</a>
     </div>
 </div>
 
