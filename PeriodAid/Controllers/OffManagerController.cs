@@ -589,5 +589,11 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        // 管理员签到路线
+        [AllowAnonymous]
+        public ActionResult ManagerRouter()
+        {
+            return View();
+        }
     }
 }

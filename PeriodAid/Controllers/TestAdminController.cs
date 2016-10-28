@@ -17,6 +17,7 @@ namespace PeriodAid.Controllers
     {
         // GET: TestAdmin
         OfflineSales offlineDB = new OfflineSales();
+        PressConference pcdb = new PressConference();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         public TestAdminController()
@@ -348,5 +349,7 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
         }
+
+        
     }
 }

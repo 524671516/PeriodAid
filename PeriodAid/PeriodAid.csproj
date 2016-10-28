@@ -247,6 +247,7 @@
     <Compile Include="Models\OfflineSalesViewModels.cs" />
     <Compile Include="Models\PeriodAidDataContext.cs" />
     <Compile Include="Models\PeriodAidViewModels.cs" />
+    <Compile Include="Models\PressConference.cs" />
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\TestViewModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
@@ -939,6 +940,9 @@
     <Content Include="Views\Seller\Manager_CompetitionInfoList_UnSendPartial.cshtml" />
     <Content Include="Views\Seller\Manager_CompetitionInfoList_HistoryPartial.cshtml" />
     <Content Include="Views\Seller\Manager_CompetitionInfoDetails.cshtml" />
+    <Content Include="Views\Pay\PressConferenceRegister.cshtml" />
+    <Content Include="Views\Pay\PressConferenceHome.cshtml" />
+    <Content Include="Views\OffManager\ManagerRouter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

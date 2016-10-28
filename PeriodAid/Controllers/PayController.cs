@@ -10,6 +10,8 @@ using System.Xml;
 using System.IO;
 using PeriodAid.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace PeriodAid.Controllers
 {
@@ -17,6 +19,43 @@ namespace PeriodAid.Controllers
     {
         // GET: Pay
         OfflineSales offlineDB = new OfflineSales();
+        PressConference pcdb = new PressConference();
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+        public PayController()
+        {
+
+        }
+
+        public PayController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
         public ActionResult Index()
         {
             return View();
@@ -599,6 +638,131 @@ namespace PeriodAid.Controllers
             xml += "<sign>" + sign + "</sign>";
             xml += "</xml>";
             return xml;
+        }
+
+        public async Task<ActionResult> PressConferenceMain(string code, string state)
+        {
+            try
+            {
+                WeChatUtilities utilites = new WeChatUtilities();
+                Wx_WebOauthAccessToken jat = utilites.getWebOauthAccessToken(code);
+                var user = UserManager.FindByEmail(jat.openid);
+                if (user != null)
+                {
+                    //var user = UserManager.FindByName("13636314852");
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    return RedirectToAction("PressConferenceHome");
+                }
+                //return Content(jat.openid + "," + jat.access_token);
+                return RedirectToAction("PressConferenceRegister", new { open_id = jat.openid, accessToken = jat.access_token });
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+        public ActionResult PressConferenceRegister(string open_id, string accessToken)
+        {
+            var model = new Wx_OffRegisterViewModel();
+            model.Open_Id = open_id;
+            model.AccessToken = accessToken;
+
+            return View();
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> PressConferenceRegister(Wx_OffRegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // 手机号校验
+                var exist_user = UserManager.FindByName(model.Mobile);
+                if (exist_user != null)
+                {
+                    ModelState.AddModelError("Mobile", "手机号已注册");
+                    return View(model);
+                }
+                // 验证手机码
+                PeriodAidDataContext smsDB = new PeriodAidDataContext();
+                var smsRecord = (from m in smsDB.SMSRecord
+                                 where m.Mobile == model.Mobile && m.SMS_Type == 0 && m.Status == false
+                                 orderby m.SendDate descending
+                                 select m).FirstOrDefault();
+                if (smsRecord == null)
+                {
+                    ModelState.AddModelError("CheckCode", "手机验证码错误");
+                    return View(model);
+                }
+                else if (smsRecord.ValidateCode != model.CheckCode)
+                {
+                    ModelState.AddModelError("CheckCode", "手机验证码错误");
+                    return View(model);
+                }
+                else if (smsRecord.SendDate.AddSeconds(1800) <= DateTime.Now)
+                {
+                    ModelState.AddModelError("CheckCode", "手机验证码超时");
+                    return View(model);
+                }
+                else
+                {
+                    var user = new ApplicationUser { UserName = model.Mobile, Email = model.Open_Id, PhoneNumber = model.Mobile, AccessToken = model.AccessToken, OpenId = model.Open_Id };
+                    var result = await UserManager.CreateAsync(user, model.Open_Id);
+                    if (result.Succeeded)
+                    {
+                        smsRecord.Status = true;
+                        smsDB.SaveChanges();
+
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        return RedirectToAction("PressConferenceHome");
+                    }
+                    else
+                        return Content("Failure");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "注册失败");
+                return View(model);
+            }
+        }
+
+        [Authorize]
+        public ActionResult PressConferenceHome()
+        {
+            return View();
+        }
+        [Authorize, HttpPost, ValidateAntiForgeryToken]
+        public JsonResult PayMoney()
+        {
+            //随机数字，并且生成Prepay
+            string appid = WeChatUtilities.getConfigValue(WeChatUtilities.APP_ID);
+            string mch_id = WeChatUtilities.getConfigValue(WeChatUtilities.MCH_ID);
+            //先确认，之后做随机数
+            string nonce_str = CommonUtilities.generateNonce();
+            string out_trade_no = "WXJSAPI_" + DateTime.Now.Ticks;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            try
+            {
+                Wx_OrderResult result = createUnifiedOrder(user.OpenId, "测试", out_trade_no, 10, WeChatUtilities.TRADE_TYPE_JSAPI, "");
+                if (result.Result == "SUCCESS")
+                {
+                    PC_Order order = new PC_Order()
+                    {
+                        ApplicationTime = DateTime.Now,
+                        OrderAmount = 100000,
+                        PurchaseAmount = 10,
+                        Status = 0,
+                        UserName = user.UserName
+                    };
+                    pcdb.PC_Order.Add(order);
+                    pcdb.SaveChanges();
+                    return Json(new { result = "SUCCESS", prepay_id = result.PrepayId });
+                }
+                return Json(new { result = "FAIL", msg = result.Message }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { result = "FAIL", msg = e.ToString() }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }
