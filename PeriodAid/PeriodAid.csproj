@@ -425,6 +425,7 @@
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
     <Content Include="Content\xlsx\产品销售明细表-Template.xlsx" />
     <Content Include="Content\xlsx\产品运营数据表-Template.xlsx" />
+    <Content Include="event1.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />

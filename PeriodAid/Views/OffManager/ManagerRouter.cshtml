@@ -15,36 +15,44 @@
     }
     .map-box{
         height:400px;
+        border:1px solid #ccc;
+
+    }
+    .nav-tabs{
+        display:none;
     }
 </style>
 <div class="wrap">
     <div class="container">
         <form class="form-inline" role="form">
             <div class="form-group">
-                <label for="inputStaffName">职员姓名：</label>
+                <label for="input-staffname">职员姓名：</label>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="inputStaffName">
+                <input type="text" class="form-control" id="input-staffname">
             </div>
             <div class="form-group">
-                <label for="inputDate">日期：</label>
+                <label for="input-date">日期：</label>
             </div>
             <div class="form-group">
-                <input class="form-control" id="inputDate">
+                <input class="form-control" id="input-date">
             </div>
-            <button type="submit" class="btn btn-default">查询</button>
+            <button type="button" class="btn btn-default" id="btn-100">查询</button>
         </form>
         <div class="staff-content">
             <div class="row">
                 <div class="col-md-8 map-box" id="allmap">
                 </div>
                 <div class="col-md-4 staff-info">
-                    <h4>总结</h4>
-                    <ul>
-                        <li>工作重点：</li>
-                        <li>日常工作：</li>
-                        <li>问题：</li>
+                    
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active" id="complete"><a href="javascript:;">工作重点</a></li>
+                        <li role="presentation" id="uncomplete"><a href="javascript:;">日常工作</a></li>
+                        <li role="presentation" id="assistance"><a href="javascript:;">问题</a></li>
                     </ul>
+                    <div id="event-complete">1</div>
+                    <div id="event-uncomplete">2</div>
+                    <div id="event-assistance">3</div>
                 </div>
             </div>
         </div>
@@ -53,68 +61,83 @@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=XVa3iy9AFIZBX9QQApmHonEG"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#btn").click(function () {
-            htmlobj = $.ajax({
-                url: "json.json",
+        $("#btn-100").click(function () {
+            $.ajax({
+                url: "/event1.json",
                 type: "GET",
-                success: function () {
-                    alert(1);
-                }            
+                dataType: "json",
+                success: function (data) {
+                    if (data.result == "fail") {
+                        alert("error")
+                    } else {
+                        createmap(data);
+                        createsummary(data);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.status);
+                }
             });
         });
-    });
     // 百度地图API功能
-    function createmap() {
-        var map = new BMap.Map("allmap");
-        var point = new BMap.Point(121.390113, 31.181186);
-        map.centerAndZoom(point, 15);
-        var data_info = [[121.390113, 31.181186, "地址：北京市东城区王府井大街88号乐天银泰百货八层"],
-                         [121.388894, 31.18133, "地址：北京市东城区东华门大街"],
-                         [121.390111, 31.18186, "地址：北京市东城区正义路甲5号"]
-        ];
-        var markerarray = [[121.390113, 31.181186], [121.388894, 31.18133], [121.390111, 31.181867], [121.389024, 31.181083]];
-        var opts = {
-            width: 250,     // 信息窗口宽度
-            height: 80,     // 信息窗口高度
-            title: "信息窗口", // 信息窗口标题
-            enableMessage: true//设置允许信息窗发送短息
-        };
-        map.enableScrollWheelZoom(true);
-        map.disableDragging();     //禁止拖拽
-        setTimeout(function () {
-            map.enableDragging();   //两秒后开启拖拽
-            map.enableInertialDragging();   //两秒后开启惯性拖拽
-        }, 2000);
-        var mymarker = new Array();
-        for (var i = 0; i < markerarray.length; i++) {
-            var marker1 = new BMap.Marker(new BMap.Point(markerarray[i][0], markerarray[i][1]));
-            mymarker[i] = new BMap.Point(markerarray[i][0], markerarray[i][1]);
-            map.addOverlay(marker1);   //增加点
-        }
-        var polyline = new BMap.Polyline(mymarker, { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 1 });   //创建折线
-        map.addOverlay(polyline);   //增加折线
-        for (var i = 0; i < data_info.length; i++) {
-            var marker = new BMap.Marker(new BMap.Point(data_info[i][0], data_info[i][1]));  // 创建标注
-            var content = data_info[i][2];
-            map.addOverlay(marker);               // 将标注添加到地图中
-            addClickHandler(content, marker);
-        }
-        function addClickHandler(content, marker) {
-            marker.addEventListener("click", function (e) {
-                openInfo(content, e)
+    function createmap(data) {
+            var map = new BMap.Map("allmap");
+            var point = new BMap.Point(121.390113, 31.181186);
+            map.centerAndZoom(point, 15);
+            var opts = {
+                width: 250,     // 信息窗口宽度
+                height: 80,     // 信息窗口高度
+                title: "信息窗口", // 信息窗口标题
+                enableMessage: true//设置允许信息窗发送短息
+            };
+            map.enableScrollWheelZoom(true);
+            map.disableDragging();     //禁止拖拽
+            setTimeout(function () {
+                map.enableDragging();   //两秒后开启拖拽
+                map.enableInertialDragging();   //两秒后开启惯性拖拽
+            }, 2000);
+            var mymarker = new Array();
+            for (var i = 0; i < data.router.length; i++) {
+                var temp_mark = data.router[i].Location.toString().split(',');
+                var marker = new BMap.Marker(new BMap.Point(temp_mark[0], temp_mark[1]));
+                mymarker[i] = new BMap.Point(temp_mark[0], temp_mark[1]);
+                map.addOverlay(marker);   //增加点
+                var content = data.router[i].Remark; //创建文本
+                addClickHandler(content, marker);  //增加文本
+   
             }
-            );
+            var polyline = new BMap.Polyline(mymarker, { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 1 });   //创建折线
+            map.addOverlay(polyline);   //增加折线
+            function addClickHandler(content, marker) {
+                marker.addEventListener("click", function (e) {
+                    openInfo(content, e)
+                }
+                );
+            }
+            function openInfo(content, e) {
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+                map.openInfoWindow(infoWindow, point); //开启信息窗口
+            }
         }
-        function openInfo(content, e) {
-            var p = e.target;
-            var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-            var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
-            map.openInfoWindow(infoWindow, point); //开启信息窗口
-        }
+    });
+    //创建个人信息
+    function createsummary(data) {
+        $(".nav-tabs").show();
+        var nav = $(".nav-tabs").find("li");
+        nav.each(function () {
+            $(this).click(function () {
+                nav.removeClass("active");
+                $(this).addClass("active");
+                var id=
+            })
+        })
+        $("#event_complete").html(data.summary.Event_Complete);
+        $("#event-uncomplete").html(data.summary.Event_UnComplete);
+        $("#event-assistance").html(data.summary.Event_Assistance);
     }
-    function checktext() {
-        var inputStaffName = $(".inputStaffName");
-    }
-    $("#inputDate").datepicker({ dateFormat: 'yy-mm-dd' });
+    $("#input-date").datepicker({ dateFormat: 'yy-mm-dd' });
 </script>
+
 

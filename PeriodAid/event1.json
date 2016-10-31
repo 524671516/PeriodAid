@@ -1,0 +1,38 @@
+{
+  "result": "success",
+  "summary": {
+    "Event_Complete": "无重点",
+    "Event_UnComplete": "无工作",
+    "Event_Assistance": "没有问题"
+  },
+  "router": [
+    {
+      "Id": "151",
+      "Remark": "123001",
+      "Photo": "/portal/portal_common.jpg,/portal/portal_common.jpg,/portal/portal_common.jpg",
+      "CheckIn_Time": "2010-04-29 11:51:49",
+      "Location": "121.390113, 31.181186"
+    },
+    {
+      "Id": "151",
+      "Remark": "123002",
+      "Photo": "/portal/portal_common.jpg,/portal/portal_common.jpg,/portal/portal_common.jpg",
+      "CheckIn_Time": "2010-04-29 11:51:49",
+      "Location": "121.388894, 31.18133"
+    },
+    {
+      "Id": "151",
+      "Remark": "123003",
+      "Photo": "/portal/portal_common.jpg,/portal/portal_common.jpg,/portal/portal_common.jpg",
+      "CheckIn_Time": "2010-04-29 11:51:49",
+      "Location": "121.390111, 31.181867"
+    },
+    {
+      "Id": "151",
+      "Remark": "123004",
+      "Photo": "/portal/portal_common.jpg,/portal/portal_common.jpg,/portal/portal_common.jpg",
+      "CheckIn_Time": "2010-04-29 11:51:49",
+      "Location": "121.389024, 31.181083"
+    }
+  ]
+}
