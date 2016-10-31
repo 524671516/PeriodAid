@@ -4,6 +4,117 @@
     Layout = "~/Views/Shared/_OffLayout.cshtml";
     ViewBag.Current = "headingSix";
 }
-
 <h2>ManagerRouter</h2>
+<style>
+    .staff-content{
+        margin-top:20px;
+    }
+    .staff-info{
+        height:200px;
+        border:1px solid #ccc;
+    }
+    .map-box{
+        height:400px;
+    }
+</style>
+<div class="wrap">
+    <div class="container">
+        <form class="form-inline" role="form">
+            <div class="form-group">
+                <label for="inputStaffName">职员姓名：</label>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="inputStaffName">
+            </div>
+            <div class="form-group">
+                <label for="inputDate">日期：</label>
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="inputDate">
+            </div>
+            <button type="submit" class="btn btn-default">查询</button>
+        </form>
+        <div class="staff-content">
+            <div class="row">
+                <div class="col-md-8 map-box" id="allmap">
+                </div>
+                <div class="col-md-4 staff-info">
+                    <h4>总结</h4>
+                    <ul>
+                        <li>工作重点：</li>
+                        <li>日常工作：</li>
+                        <li>问题：</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=XVa3iy9AFIZBX9QQApmHonEG"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btn").click(function () {
+            htmlobj = $.ajax({
+                url: "json.json",
+                type: "GET",
+                success: function () {
+                    alert(1);
+                }            
+            });
+        });
+    });
+    // 百度地图API功能
+    function createmap() {
+        var map = new BMap.Map("allmap");
+        var point = new BMap.Point(121.390113, 31.181186);
+        map.centerAndZoom(point, 15);
+        var data_info = [[121.390113, 31.181186, "地址：北京市东城区王府井大街88号乐天银泰百货八层"],
+                         [121.388894, 31.18133, "地址：北京市东城区东华门大街"],
+                         [121.390111, 31.18186, "地址：北京市东城区正义路甲5号"]
+        ];
+        var markerarray = [[121.390113, 31.181186], [121.388894, 31.18133], [121.390111, 31.181867], [121.389024, 31.181083]];
+        var opts = {
+            width: 250,     // 信息窗口宽度
+            height: 80,     // 信息窗口高度
+            title: "信息窗口", // 信息窗口标题
+            enableMessage: true//设置允许信息窗发送短息
+        };
+        map.enableScrollWheelZoom(true);
+        map.disableDragging();     //禁止拖拽
+        setTimeout(function () {
+            map.enableDragging();   //两秒后开启拖拽
+            map.enableInertialDragging();   //两秒后开启惯性拖拽
+        }, 2000);
+        var mymarker = new Array();
+        for (var i = 0; i < markerarray.length; i++) {
+            var marker1 = new BMap.Marker(new BMap.Point(markerarray[i][0], markerarray[i][1]));
+            mymarker[i] = new BMap.Point(markerarray[i][0], markerarray[i][1]);
+            map.addOverlay(marker1);   //增加点
+        }
+        var polyline = new BMap.Polyline(mymarker, { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 1 });   //创建折线
+        map.addOverlay(polyline);   //增加折线
+        for (var i = 0; i < data_info.length; i++) {
+            var marker = new BMap.Marker(new BMap.Point(data_info[i][0], data_info[i][1]));  // 创建标注
+            var content = data_info[i][2];
+            map.addOverlay(marker);               // 将标注添加到地图中
+            addClickHandler(content, marker);
+        }
+        function addClickHandler(content, marker) {
+            marker.addEventListener("click", function (e) {
+                openInfo(content, e)
+            }
+            );
+        }
+        function openInfo(content, e) {
+            var p = e.target;
+            var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+            var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+            map.openInfoWindow(infoWindow, point); //开启信息窗口
+        }
+    }
+    function checktext() {
+        var inputStaffName = $(".inputStaffName");
+    }
+    $("#inputDate").datepicker({ dateFormat: 'yy-mm-dd' });
+</script>
 
