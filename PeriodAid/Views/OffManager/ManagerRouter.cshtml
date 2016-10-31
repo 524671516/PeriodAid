@@ -29,7 +29,7 @@
                 <label for="input-staffname">职员姓名：</label>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="input-staffname">
+                @Html.DropDownList("input-staffname", ViewBag.ManagerList as SelectList, new { @class= "form-control" })
             </div>
             <div class="form-group">
                 <label for="input-date">日期：</label>
@@ -58,16 +58,34 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+                <h4 class="modal-title">查看图片</h4>
+            </div>
+            <div class="modal-body" id="router-info">
+                <img id="img-view" href="#" class="img-thumbnail img-responsive" />
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=XVa3iy9AFIZBX9QQApmHonEG"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+
         $("#btn-100").click(function () {
             $.ajax({
-                url: "/event1.json",
+                url: "/OffManager/ManagerRouterDetails",
                 type: "GET",
                 dataType: "json",
+                data:{
+                    username: $("#input-staffname").val(),
+                    date: $("#input-date").val()
+                },
                 success: function (data) {
-                    if (data.result == "fail") {
+                    if (data.result == "FAIL") {
                         alert("error")
                     } else {
                         createmap(data);
@@ -103,23 +121,19 @@
                 mymarker[i] = new BMap.Point(temp_mark[0], temp_mark[1]);
                 map.addOverlay(marker);   //增加点
                 var content = data.router[i].Remark; //创建文本
-                addClickHandler(content, marker);  //增加文本
+                addClickHandler(content, marker, data.router[i].Photo, data.router[i].CheckIn_Time, data.router[i].Id);  //增加文本
    
             }
             var polyline = new BMap.Polyline(mymarker, { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 1 });   //创建折线
             map.addOverlay(polyline);   //增加折线
-            function addClickHandler(content, marker) {
+            function addClickHandler(content, marker, photo, time, id) {
                 marker.addEventListener("click", function (e) {
-                    openInfo(content, e)
-                }
-                );
+                    $("#router-info").html(content + "," + time + "," + photo + "," + id);
+                    // 添加代码
+                    $("#myModal").modal();
+                });
             }
-            function openInfo(content, e) {
-                var p = e.target;
-                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-                var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
-                map.openInfoWindow(infoWindow, point); //开启信息窗口
-            }
+            
         }
     });
     //创建个人信息
@@ -127,11 +141,11 @@
         $(".nav-tabs").show();
         var nav = $(".nav-tabs").find("li");
         nav.each(function () {
-            $(this).click(function () {
+            /*$(this).click(function () {
                 nav.removeClass("active");
                 $(this).addClass("active");
                 var id=
-            })
+            })*/
         })
         $("#event_complete").html(data.summary.Event_Complete);
         $("#event-uncomplete").html(data.summary.Event_UnComplete);

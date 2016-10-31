@@ -590,10 +590,30 @@ namespace PeriodAid.Controllers
             return View();
         }
         // 管理员签到路线
-        [AllowAnonymous]
         public ActionResult ManagerRouter()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var managerlist = from m in _offlineDB.Off_StoreManager
+                              where m.Off_System_Id == user.DefaultSystemId
+                              select m;
+            ViewBag.ManagerList = new SelectList(managerlist, "UserName", "NickName", managerlist.FirstOrDefault().UserName);
             return View();
+        }
+        public JsonResult ManagerRouterDetails(string username, DateTime date)
+        {
+            var router = _offlineDB.Off_Manager_Task.SingleOrDefault(m => m.UserName == username && m.TaskDate == date);
+            if (router != null)
+            {
+                var routerdetails = from m in router.Off_Manager_CheckIn
+                                    orderby m.CheckIn_Time
+                                    select new { Id = m.Id, CheckIn_Time = m.CheckIn_Time.ToString("HH:mm:ss"), Location = m.Location, Remark = m.Remark, Photo = m.Photo };
+                return Json(new { result = "SUCCESS", summary = new { Event_Complete = router.Event_Complete, Event_UnComplete = router.Event_UnComplete, Event_Assistance = router.Event_Assistance }, router = routerdetails }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
+            }
+
         }
     }
 }
