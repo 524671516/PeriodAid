@@ -1,9 +1,9 @@
 {
   "result": "success",
   "summary": {
-    "Event_Complete": "无重点",
-    "Event_UnComplete": "无工作",
-    "Event_Assistance": "没有问题"
+    "Event_Complete": "1",
+    "Event_UnComplete": "2",
+    "Event_Assistance": "3"
   },
   "router": [
     {
