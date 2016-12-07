@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PeriodAid.Models.Off_SellerTask>
+﻿@model PeriodAid.Models.Off_SellerTask
 
 @{
     ViewBag.Title = "TaskSellerHome";
@@ -15,21 +15,13 @@
             <tr>
                 <td>
                     <label>暗促人员：</label>
-                    <span>测试</span>
+                    <span>@Html.Encode(Model.Off_Seller.Name)</span>
                 </td>
                 <td>
                     <label>绑定门店：</label>
-                    <span>欧尚-上海南汇店</span>
+                    <span>@Html.Encode(Model.Off_Store.StoreName)</span>
                 </td>
-                <td>
-                    <label>选择时间：</label>
-                    <select class="form-control input-sm offline-search-inline-01" id="sellertask-checkindate">
-                        <option>2016-06-01</option>
-                        <option>2016-06-01</option>
-                        <option>2016-06-01</option>
-                        <option>2016-06-01</option>
-                    </select>
-                </td>
+                
             </tr>
         </tbody>
     </table>
@@ -44,28 +36,27 @@
                 <th class="text-center" style="width:50%">产品名称</th>
                 <th class="text-center" style="width:50%">产品库存</th>
             </tr>
-            <tr>
-                <td>
-                    红糖姜茶
-                </td>
-                <td>20</td>
-            </tr>
-            <tr>
-                <td>
-                    黑糖姜茶
-                </td>
-                <td>20</td>
-            </tr>
+            @foreach(var item in Model.Off_SellerTaskProduct)
+            {
+                <tr>
+                    <td>@Html.Encode(item.Off_Product.SimpleName)</td>
+                    <td>@Html.Encode(item.StorageCount)</td>
+                </tr>
+            }
         </tbody>
     </table>
     <hr />
     <h5>签到图片</h5>
     <br />
+    @{
+        var photolist = Model.TaskPhotoList.Split(',');
+    }
     <div class="col-md-12">
         <div id="sellertask-img-list">
-            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
-            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
-            <div class="img-list" data-rel="131172114907560788.jpg" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/131172114907560788.jpg')"></div>
+            @foreach (var item in photolist)
+            {
+                <div class="img-list" data-rel="@item" style="background-image:url("http://cdn2.shouquanzhai.cn/checkin-img/"+ @item)></div>
+            }
         </div>
     </div>
 </div>

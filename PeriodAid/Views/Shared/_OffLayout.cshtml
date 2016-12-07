@@ -177,6 +177,7 @@
                                 <ul class="list-unstyled">
                                     <li class="left-navbar"><a><i class="fa fa-user-secret"></i>&nbsp;&nbsp;</a>@Html.ActionLink("管理员", "ManagerList", "OffManager")</li>
                                     <li class="left-navbar"><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "TaskList", "OffManager")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-map"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到路线", "ManagerRouter", "OffManager")</li>
                                     <li class="left-navbar"><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "AnnouncementList", "OffManager")</li>
                                     <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "RequestList", "OffManager")</li>
                                 </ul>
@@ -237,8 +238,10 @@
                 </div>
             </div>
             <div class="col-md-10">
-                <div class="container body-content">
-                    @RenderBody()
+                <div class="row">
+                    <div class="col-md-12">
+                        @RenderBody()
+                    </div>
                 </div>
             </div>
         </div>
