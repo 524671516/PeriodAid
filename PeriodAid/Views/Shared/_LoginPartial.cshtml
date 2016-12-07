@@ -5,7 +5,7 @@
     {
     @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right">
+    <ul class="nav navbar-nav navbar-right" style="margin-right:15px;">
         <li>
             <a><i class="fa fa-user" style="font-size:20px;line-height:20px;"></i>&nbsp;&nbsp;@Html.Encode(User.Identity.GetUserName())</a>
         </li>
