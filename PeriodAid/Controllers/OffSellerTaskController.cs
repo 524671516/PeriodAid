@@ -67,6 +67,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime _month = Convert.ToDateTime(month);
             DateTime _month_next = _month.AddMonths(1);
+            ViewBag.Month = month;
             var list = from m in offlineDB.Off_SellerTask
                        where m.ApplyDate >= _month && m.ApplyDate < _month_next
                        && m.Off_Seller.Off_System_Id == user.DefaultSystemId

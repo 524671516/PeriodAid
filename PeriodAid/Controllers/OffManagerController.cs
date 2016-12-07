@@ -594,24 +594,26 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var managerlist = from m in _offlineDB.Off_StoreManager
-                              where m.Off_System_Id == user.DefaultSystemId
+                              where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
                               select m;
             ViewBag.ManagerList = new SelectList(managerlist, "UserName", "NickName", managerlist.FirstOrDefault().UserName);
             return View();
         }
+        [HttpPost]
         public JsonResult ManagerRouterDetails(string username, DateTime date)
         {
-            var router = _offlineDB.Off_Manager_Task.SingleOrDefault(m => m.UserName == username && m.TaskDate == date);
+            var router = _offlineDB.Off_Manager_Task.SingleOrDefault(m => m.UserName == username && m.TaskDate == date && m.Status>=0);
             if (router != null)
             {
                 var routerdetails = from m in router.Off_Manager_CheckIn
+                                    where m.Canceled== false
                                     orderby m.CheckIn_Time
                                     select new { Id = m.Id, CheckIn_Time = m.CheckIn_Time.ToString("HH:mm:ss"), Location = m.Location, Remark = m.Remark, Photo = m.Photo };
-                return Json(new { result = "SUCCESS", summary = new { Event_Complete = router.Event_Complete, Event_UnComplete = router.Event_UnComplete, Event_Assistance = router.Event_Assistance }, router = routerdetails }, JsonRequestBehavior.AllowGet);
+                return Json(new { result = "SUCCESS", summary = new { Event_Complete = router.Event_Complete, Event_UnComplete = router.Event_UnComplete, Event_Assistance = router.Event_Assistance }, router = routerdetails });
             }
             else
             {
-                return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
+                return Json(new { result = "FAIL" });
             }
 
         }

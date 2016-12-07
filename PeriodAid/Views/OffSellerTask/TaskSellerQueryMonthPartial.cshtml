@@ -26,7 +26,7 @@
             @Html.Encode(((double)item.AttendanceCount/100)*3*100)
         </td>
         <td>
-            @Html.ActionLink("查看明细", "TaskSellerQueryMonthBySellerPartial", new { sellerid = item.Off_Seller.Id, month="2016-07" }, new { @class="btn btn-xs btn-info offseller-taskpartial-btn"})
+            @Html.ActionLink("查看明细", "TaskSellerQueryMonthBySellerPartial", new { sellerid = item.Off_Seller.Id, month=ViewBag.Month }, new { @class="btn btn-xs btn-info offseller-taskpartial-btn"})
         </td>
     </tr>
 }
