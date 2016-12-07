@@ -786,7 +786,7 @@ namespace PeriodAid.Controllers
                             group m by m.Subscribe into g
                             orderby g.Key descending
                             select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) }).ToPagedList(_page, 20);
-                return View(list);
+                return PartialView(list);
             }
             else
             {
@@ -795,7 +795,7 @@ namespace PeriodAid.Controllers
                             group m by m.Subscribe into g
                             orderby g.Key
                             select new ScheduleList { Subscribe = g.Key, Count = g.Count(), Unfinished = g.Count(m => m.Off_Checkin.Any(p => p.Status >= 3)) }).ToPagedList(_page, 20);
-                return View(list);
+                return PartialView(list);
             }
         }
         // Origin: Off_ScheduleDetails(原本是单页面，现在做成ajax+partial的形式)
