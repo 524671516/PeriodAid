@@ -176,19 +176,24 @@
                     addClickHandler(content, marker, data.router[i].Photo, data.router[i].CheckIn_Time, data.router[i].Id);  //增加文本
                 }
             }
-            translateCallback = function (dat) {
-                console.log(dat);
-                if (dat.status === 0) {
-                    console.log(data.mymarker);
-                    for (var i = 0; i < data.mymarker.length; i++) {
-                        bm.addOverlay(new BMap.Marker(data.mymarker[i]));
-                        bm.setCenter(data.mymarker[i]);
+            var points = [new BMap.Point(116.3786889372559, 39.90762965106183),
+                      new BMap.Point(116.38632786853032, 39.90795884517671),
+                      new BMap.Point(116.39534009082035, 39.907432133833574),
+                      new BMap.Point(116.40624058825688, 39.90789300648029),
+                      new BMap.Point(116.41413701159672, 39.90795884517671)
+            ];
+            translateCallback = function (daa) {
+                alert(daa.status)
+                if (daa.status === 0) {
+                    for (var i = 0; i < daa.points.length; i++) {
+                        map.addOverlay(new BMap.Marker(daa.points[i]));
+                        map.setCenter(daa.points[i]);
                     }
                 }
             }
             setTimeout(function () {
                 var convertor = new BMap.Convertor();
-                convertor.translate(mymarker, 1, 5, translateCallback)
+                convertor.translate(points, 1, 50, translateCallback)
             }, 1000);
             var polyline = new BMap.Polyline(mymarker, { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 1 });   //创建折线
             map.addOverlay(polyline);//增加折线
