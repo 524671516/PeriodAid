@@ -27,7 +27,7 @@
     @Html.HiddenFor(m=>m.Off_System_Id)
     @Html.HiddenFor(m=>m.Status)
     <h5><b>基本信息</b></h5>
-    <div class="container">
+    <div>
         <div class="row">
             <div class="col-md-3">
                 <div class="input-group">
@@ -58,7 +58,7 @@
     </div>
     <br />
     <h5><b>详细内容</b></h5>
-    <div class="container">
+    <div>
         <div class="input-group">
             <div class="input-group-addon"><small>未完成内容</small></div>
             <input id="Event_UnComplete" name="Event_UnComplete" type="text" class="input-sm form-control" value="@Model.Event_UnComplete" title="@Model.Event_UnComplete" readonly />
@@ -77,7 +77,7 @@
     </div>
     <br />
     <h5><b>图片</b></h5>
-    <div class="container">
+    <div>
         <div class="col-md-12">
             @{
                 string[] imglist = new string[] { };
@@ -94,7 +94,7 @@
     </div>
     <br />
     <h5><b>签到记录</b></h5>
-    <div class="container">
+    <div>
         @foreach (var item in Model.Off_Manager_CheckIn.Where(m => m.Canceled == false))
         {
             <div class="row" style="margin-top:5px;">
@@ -129,7 +129,7 @@
     </div>
     <br />
     <h5><b>其他</b></h5>
-    <div class="container">
+    <div>
         <div class="row">
             <div class="col-md-4">
                 <div class="input-group">

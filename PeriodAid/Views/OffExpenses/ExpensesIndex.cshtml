@@ -4,19 +4,19 @@
     Layout = "~/Views/Shared/_OffLayout.cshtml";
     ViewBag.Current = "headingThree";
 }
-<div class="container">
+<div>
     <ul class="nav nav-tabs row">
         <li role="presentation" class="active"><a class="offexpenses-label" href="javascript:;" type="button" data-rel="0">进场费</a></li>
         <li role="presentation"><a class="offexpenses-label" href="javascript:;" type="button" data-rel="1">活动费</a></li>
     </ul>
 </div><br />
-<div class="container">
+<div>
     <ul class="list-inline list-unstyled row">
         <li><a class="btn btn-info btn-sm" id="offexpenses-add"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增费用</a></li>
     </ul>
 </div>
 <br />
-<div class="col-md-12" id="offexpenses-list">
+<div id="offexpenses-list">
 
 </div>
 @Html.Partial("modal")
