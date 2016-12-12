@@ -416,6 +416,109 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
+
+        /* 招募促销员信息与绑定 */
+        public ActionResult BindRecruitIndex()
+        {
+            return View();
+        }
+
+        public ActionResult BindRecruitIndexPartial(string query, int? page, bool? bind)
+        {
+            int _page = page ?? 1;
+            int _bind = bind == true ? 1 : 0;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            if (query == null)
+            {
+                var list = (from m in _offlineDB.Off_Recruit
+                            where m.Off_System_Id == user.DefaultSystemId
+                            && m.Status==_bind
+                            orderby m.ApplyTime descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_Recruit
+                            where (m.Name.Contains(query) || m.Area.Contains(query))
+                            && m.Off_System_Id == user.DefaultSystemId
+                            && m.Status==_bind
+                            orderby m.ApplyTime descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+        }
+
+        public ActionResult BindRecruitForm(int id)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var storelist = _offlineDB.Off_Store.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
+            ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
+            var recruit = _offlineDB.Off_Recruit.SingleOrDefault(m => m.Id == id);
+            Seller_RecruitBind model = new Seller_RecruitBind()
+            {
+                Area = recruit.Area,
+                Mobile = recruit.Mobile,
+                Name = recruit.Name,
+                WorkType = recruit.WorkType,
+                IdNumber = recruit.IdNumber
+            };
+            return PartialView(model);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> BindRecruitForm(Seller_RecruitBind model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                Seller_RecruitBind item = new Seller_RecruitBind();
+                if (TryUpdateModel(item))
+                {
+                    // 新建促销员
+                    var recruit = _offlineDB.Off_Recruit.SingleOrDefault(m => m.Id == model.Id);
+                    Off_Seller seller = new Off_Seller()
+                    {
+                        Off_System_Id = user.DefaultSystemId,
+                        Name = model.Name,
+                        Mobile = model.Mobile,
+                        IdNumber = model.IdNumber,
+                        StoreId = model.StoreId
+                    };
+                    _offlineDB.Off_Seller.Add(seller);
+                    await _offlineDB.SaveChangesAsync();
+                    seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Mobile == model.Mobile);
+                    // 绑定
+                    Off_Membership_Bind omb = new Off_Membership_Bind()
+                    {
+                        Mobile = seller.Mobile,
+                        ApplicationDate = DateTime.Now,
+                        Bind = true,
+                        Off_Seller_Id = seller.Id,
+                        NickName = seller.Name,
+                        Off_System_Id = user.DefaultSystemId,
+                        Recruit = true,
+                        UserName = seller.Mobile,
+                        Type = 1
+                    };
+                    _offlineDB.Off_Membership_Bind.Add(omb);
+                    recruit.Status = 1;
+                    _offlineDB.Entry(recruit).State = System.Data.Entity.EntityState.Modified;
+                    await _offlineDB.SaveChangesAsync();
+                    return Content("SUCCESS");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("","发生错误");
+                return PartialView(model);
+            }
+        }
+
         public ActionResult BindTempSellerIndex()
         {
             return View();

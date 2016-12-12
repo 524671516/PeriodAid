@@ -954,6 +954,9 @@
     <Content Include="Views\Pay\PressConferenceRegister.cshtml" />
     <Content Include="Views\Pay\PressConferenceHome.cshtml" />
     <Content Include="Views\OffManager\ManagerRouter.cshtml" />
+    <Content Include="Views\OffSeller\BindRecruitIndex.cshtml" />
+    <Content Include="Views\OffSeller\BindRecruitIndexPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindRecruitForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

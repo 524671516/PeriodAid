@@ -41,7 +41,6 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_StoreManager> Off_StoreManager { get; set; }
         public virtual DbSet<Off_Manager_Task> Off_Manager_Task { get; set; }
         public virtual DbSet<Off_Manager_CheckIn> Off_Manager_CheckIn { get; set; }
-        public virtual DbSet<Off_AVG_SalesData> Off_AVG_SalesData { get; set; }
         public virtual DbSet<Off_Manager_Announcement> Off_Manager_Announcement { get; set; }
         public virtual DbSet<Off_Manager_Request> Off_Manager_Request { get; set; }
         public virtual DbSet<Off_BonusRequest> Off_BonusRequest { get; set; }
@@ -54,8 +53,8 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_System_Setting> Off_System_Setting { get; set; }
         public virtual DbSet<Off_SellerTask> Off_SellerTask { get; set; }
         public virtual DbSet<Off_SellerTaskProduct> Off_SellerTaskProduct { get; set; }
-
         public virtual DbSet<Off_CompetitionInfo> Off_CompetitionInfo { get; set; }
+        public virtual DbSet<Off_Recruit> Off_Recruit { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -221,12 +220,6 @@ namespace PeriodAid.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Off_System>()
-                .HasMany(e => e.Off_AVG_SalesData)
-                .WithRequired(e => e.Off_System)
-                .HasForeignKey(e => e.Off_System_Id)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Off_System>()
                 .HasMany(e => e.Off_Expenses)
                 .WithRequired(e => e.Off_System)
                 .HasForeignKey(e => e.Off_System_Id)
@@ -258,6 +251,12 @@ namespace PeriodAid.Models
 
             modelBuilder.Entity<Off_System>()
                 .HasMany(e => e.Off_System_Setting)
+                .WithRequired(e => e.Off_System)
+                .HasForeignKey(e => e.Off_System_Id)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Off_System>()
+                .HasMany(e => e.Off_Recruit)
                 .WithRequired(e => e.Off_System)
                 .HasForeignKey(e => e.Off_System_Id)
                 .WillCascadeOnDelete(false);
@@ -294,7 +293,7 @@ namespace PeriodAid.Models
                 .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Off_Expenses>()
-                .HasMany(e=>e.Off_Expenses_Payment)
+                .HasMany(e => e.Off_Expenses_Payment)
                 .WithRequired(e => e.Off_Expenses)
                 .HasForeignKey(e => e.ExpensesId)
                 .WillCascadeOnDelete(true);
@@ -659,9 +658,6 @@ namespace PeriodAid.Models
         public virtual ICollection<Off_Manager_Task> Off_Manager_Task { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Off_AVG_SalesData> Off_AVG_SalesData { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Product> Off_Product { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -669,6 +665,9 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_System_Setting> Off_System_Setting { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_Recruit> Off_Recruit { get; set; }
     }
     public partial class Off_System_Setting
     {
@@ -676,7 +675,7 @@ namespace PeriodAid.Models
         public int Off_System_Id { get; set; }
         public virtual Off_System Off_System { get; set; }
         public string SettingName { get; set; }
-        public bool SettingResult  { get; set; }
+        public bool SettingResult { get; set; }
         public string SettingValue { get; set; }
     }
     public partial class Off_Product
@@ -752,7 +751,7 @@ namespace PeriodAid.Models
 
         [StringLength(255)]
         public string UploadUser { get; set; }
-        
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_SalesInfo_Daily> Off_SalesInfo_Daily { get; set; }
@@ -765,7 +764,7 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Checkin_Schedule> Off_Checkin_Schedule { get; set; }
-        
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_StoreManager> Off_StoreManager { get; set; }
@@ -847,7 +846,6 @@ namespace PeriodAid.Models
         public int Off_System_Id { get; set; }
 
         public virtual Off_System Off_System { get; set; }
-        
     }
 
     public partial class Off_SalesInfo_Daily
@@ -1041,13 +1039,13 @@ namespace PeriodAid.Models
         [Required]
         [StringLength(64)]
         public string Mobile { get; set; }
-        
+
         public bool Bind { get; set; }
 
         public bool Recruit { get; set; }
 
         public int? Off_Seller_Id { get; set; }
-        
+
         public DateTime ApplicationDate { get; set; }
 
         public virtual Off_Seller Off_Seller { get; set; }
@@ -1148,10 +1146,10 @@ namespace PeriodAid.Models
 
         public int? Rep_Other { get; set; }
 
-        [StringLength(512, ErrorMessage ="不超过512个字符")]
+        [StringLength(512, ErrorMessage = "不超过512个字符")]
         public string Rep_Image { get; set; }
 
-        [StringLength(512,ErrorMessage ="不超过512个字符")]
+        [StringLength(512, ErrorMessage = "不超过512个字符")]
         public string Remark { get; set; }
 
         public DateTime? Report_Time { get; set; }
@@ -1182,7 +1180,7 @@ namespace PeriodAid.Models
         public virtual Off_Checkin_Schedule Off_Checkin_Schedule { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Off_BonusRequest> Off_BonusRequest{ get; set; }
+        public virtual ICollection<Off_BonusRequest> Off_BonusRequest { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Checkin_Product> Off_Checkin_Product { get; set; }
@@ -1239,14 +1237,14 @@ namespace PeriodAid.Models
 
         public int Status { get; set; }
         [StringLength(32)]
-        public string UserName{get;set;}
+        public string UserName { get; set; }
 
         [StringLength(32)]
         public string NickName { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime TaskDate { get; set; }
-                                          
+
         [StringLength(512)]
         public string Photo { get; set; }
 
@@ -1300,29 +1298,6 @@ namespace PeriodAid.Models
         public DateTime CheckIn_Time { get; set; }
 
         public virtual Off_Manager_Task Off_Manager_Task { get; set; }
-    }
-
-    public partial class Off_AVG_SalesData
-    {
-        public int Id { get; set; }
-
-        public int StoreId { get; set; }
-
-        public int DayOfWeek { get; set; }
-
-        public decimal? AVG_BROWN { get; set; }
-
-        public decimal? AVG_BLACK { get; set; }
-
-        public decimal? AVG_LEMON { get; set; }
-
-        public decimal? AVG_HONEY { get; set; }
-
-        public decimal? AVG_DATES { get; set; }
-
-        public int Off_System_Id { get; set; }
-
-        public virtual Off_System Off_System { get; set; }
     }
 
     public partial class Off_AVG_Info
@@ -1418,7 +1393,7 @@ namespace PeriodAid.Models
 
         [StringLength(128)]
         public string ReceiveUserName { get; set; }
-        
+
         public int ReceiveAmount { get; set; }
 
         [StringLength(128)]
@@ -1521,5 +1496,40 @@ namespace PeriodAid.Models
 
         public virtual Off_Store Off_Store { get; set; }
     }
-    
+
+    public partial class Off_Recruit
+    {
+        public int Id { get; set; }
+
+        [StringLength(32)]
+        public string Name { get; set; }
+
+        [StringLength(32)]
+        public string UserName { get; set; }
+
+        [StringLength(32)]
+        public string Mobile { get; set; }
+
+        public int Status { get; set; }
+
+        [StringLength(256)]
+        public string Area { get; set; }
+
+        [StringLength(64)]
+        public string WorkType { get; set; }
+
+        [StringLength(64)]
+        public string IdNumber { get; set; }
+
+        [StringLength(128)]
+        public string RecommandUserId { get; set; }
+
+        public bool Reward { get; set; }
+
+        public DateTime ApplyTime { get; set; }
+
+        public int Off_System_Id { get; set; }
+
+        public virtual Off_System Off_System { get; set; }
+    }
 }

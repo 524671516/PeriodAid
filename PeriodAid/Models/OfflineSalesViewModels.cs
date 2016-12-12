@@ -366,6 +366,24 @@ namespace PeriodAid.Models
         public int? MinStorage { get; set; }
         public string StoreName { get; set; }
     }
+
+    public class Seller_RecruitBind
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Mobile { get; set; }
+
+        public string Area { get; set; }
+
+        public string WorkType { get; set; }
+
+        public int StoreId { get; set; }
+
+        public string IdNumber { get; set; }
+    }
+
     public class ExcelOperation
     {
         public static int? ConvertInt(DataRow dr, string columname)
