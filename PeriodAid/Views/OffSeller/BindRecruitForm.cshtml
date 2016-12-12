@@ -1,71 +1,113 @@
 ﻿@model PeriodAid.Models.Seller_RecruitBind
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("BindRecruitForm", "OffSeller", FormMethod.Post, new { @id = "offseller-bindrecruit-editform" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>Seller_RecruitBind</h4>
-        <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">姓名</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">手机号</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Area, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">地区</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Area, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Area, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.Area, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.WorkType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">工作时间</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.WorkType, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.WorkType, "", new { @class = "text-danger" })
+                <div class="form-control">
+                    @Html.HiddenFor(model => model.WorkType)
+                    <input type="checkbox" name="my-checkbox" disabled data-checked="" id="weekend">周末
+                    <input type="checkbox" name="my-checkbox" disabled data-checked="" id="holiday">节假日
+                    <input type="checkbox" name="my-checkbox" disabled data-checked="" id="weekday">工作日
+                </div>
+
             </div>
         </div>
-
         <div class="form-group">
-            @Html.LabelFor(model => model.StoreId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">身份证</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.StoreId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.IdNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.IdNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.IdNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-md-2">店铺</label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.StoreId, ViewBag.StoreList as SelectList, "-请选择-", new { @class = "text-danger form-control" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="保存" class="btn btn-default" id="recruit-submit" />
             </div>
         </div>
     </div>
 }
+<script>
+    $(function () {
+        //选择项
+        $("input[name=\"WorkType\"]").each(function () {
+            var worktype = $(this).val();
+            var weekday = worktype.substr(worktype.indexOf(":") + 1, 1);
+            var weekend = worktype.substr(worktype.indexOf(":", worktype.indexOf(":") + 1) + 1, 1);
+            var holiday = worktype.substr(worktype.indexOf(":", worktype.indexOf(":", worktype.indexOf(":") + 1) + 1) + 1, 1);
+            $(this).parent().find("#weekday").attr("data-checked", weekday);
+            $(this).parent().find("#weekend").attr("data-checked", weekend);
+            $(this).parent().find("#holiday").attr("data-checked", holiday);
+            $(this).parent().children("input").each(function () {
+                if ($(this).attr("data-checked") == "T") {
+                    $(this).prop("checked", "checked");
+                }
+            });
+        });
+        //提交
+        $("#recruit-submit").on("click", function () {
+            $('#offseller-bindrecruit-editform').ajaxForm(function (data) {
+                if (data == "SUCCESS") {
+                    alert("绑定成功");
+                    $('.modal-box').modal('hide');
+                    var url = "/OffSeller/BindRecruitIndexPartial";
+                    var cuxa = $("#offseller-bindrecruit-query").val();
+                    var bool = $("#offseller-bindrecruit-bool").val();
+                    $.ajax({
+                        url: url,
+                        data: {
+                            query: cuxa,
+                            bind: bool
+                        },
+                        success: function (data) {
+                            $("#offseller-bindrecruit-list").html(data);
+                        }
+                    })
+                }
+                else {
+                    $(".modal-con").html(data);
+                }
+            });
+        })
+    })
+</script>
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
