@@ -55,19 +55,38 @@
         <div class="form-group">
             <label class="control-label col-md-2">店铺</label>
             <div class="col-md-10">
-                @Html.DropDownListFor(m => m.StoreId, ViewBag.StoreList as SelectList, "-请选择-", new { @class = "text-danger form-control" })
+                <input id="store-input" type="text" class="span4 form-control" placeholder="搜索店铺" autocomplete="off" name="store-input"/>
+                <input type="hidden" id="StoreId" name="StoreId" />
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="保存" class="btn btn-default" id="recruit-submit" />
+                <input type="submit" value="保存" class="btn btn-default" id="recruit-submit" disabled="disabled"/>
             </div>
         </div>
     </div>
 }
 <script>
+    //店铺搜索  
+    function displayResult(item, val, text) {
+        $("#StoreId").val(val);
+        $("#recruit-submit").attr("disabled",false);
+    }
     $(function () {
+        $("#store-input").on("keyup", function () {
+            $("#recruit-submit").attr("disabled", true);
+        });
+        $('#store-input').typeahead({
+            ajax: {
+                url: '/OffSeller/QueryStore',
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'StoreName',
+            val: 'Id'
+        });
+
         //选择项
         $("input[name=\"WorkType\"]").each(function () {
             var worktype = $(this).val();

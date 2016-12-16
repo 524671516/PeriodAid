@@ -375,6 +375,7 @@
     <Content Include="Content\jquery.fullPage.css" />
     <Content Include="Content\PA-Site.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\prettify.css" />
     <Content Include="Content\weui.min.css" />
     <Content Include="Content\framework7.ios.colors.min.css" />
     <Content Include="Content\framework7.ios.min.css" />
@@ -400,6 +401,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\ajaxfileupload.js" />
     <Content Include="Scripts\bootstrap-switch.min.js" />
+    <Content Include="Scripts\bootstrap-typeahead.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="fonts\fontawesome-webfont.eot" />
@@ -419,6 +421,7 @@
     <Content Include="Scripts\Manager.js" />
     <Content Include="Scripts\maapp.js" />
     <Content Include="Scripts\manager.min.js" />
+    <Content Include="Scripts\mockjax.js" />
     <Content Include="Scripts\my-app.js" />
     <Content Include="Scripts\jedate.min.js" />
     <Content Include="Scripts\my-validate.js" />
@@ -464,6 +467,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\prettify.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\seller.min.js" />

@@ -91,6 +91,16 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
+        [HttpPost]
+        public JsonResult QueryStore(string query)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var store = from m in _offlineDB.Off_Store
+                        where m.Off_System_Id == user.DefaultSystemId
+                        && m.StoreName.Contains(query)
+                        select new { Id = m.Id, StoreName = m.StoreName };
+            return Json(store);
+        }
         // Origin: Ajax_AddSeller
         public PartialViewResult AddSellerPartial()
         {
