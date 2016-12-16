@@ -404,7 +404,6 @@ namespace PeriodAid.Controllers
             if (TryUpdateModel(item))
             {
                 item.Bind = true;
-
                 _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                 _offlineDB.SaveChanges();
                 return Content("SUCCESS");
