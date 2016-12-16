@@ -11,7 +11,8 @@
         <div class="form-group">
             <label class="control-label col-md-3">门店名称</label>
             <div class="col-md-9">
-                @Html.DropDownListFor(model => model.StoreId, ViewBag.StoreDropDown as SelectList, "- 请选择 -", new { @class = "form-control" })
+                <input id="store-input" type="text" class="span4 form-control" placeholder="搜索店铺" autocomplete="off" name="store-input" />
+                <input type="hidden" id="StoreId" name="StoreId" />
                 @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -101,6 +102,23 @@
 }
 <script>
     $(function () {
+        //店铺搜索  
+        function displayResult(item, val, text) {
+            $("#StoreId").val(val);
+            $("#offsale-sure-daily").attr("disabled", false);
+        }
+        $("#store-input").on("keyup", function () {
+            $("#offsale-sure-daily").attr("disabled", true);
+        });
+        $('#store-input').typeahead({
+            ajax: {
+                url: '/OffSeller/QueryStore',
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'StoreName',
+            val: 'Id'
+        });
         $("#Date").datepicker({
             dateFormat:'yy-mm-dd'
         })
