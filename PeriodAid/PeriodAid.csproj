@@ -961,6 +961,10 @@
     <Content Include="Views\OffSeller\BindRecruitIndex.cshtml" />
     <Content Include="Views\OffSeller\BindRecruitIndexPartial.cshtml" />
     <Content Include="Views\OffSeller\BindRecruitForm.cshtml" />
+    <Content Include="Views\OffStore\EditStoreSystemPartial.cshtml" />
+    <Content Include="Views\OffStore\CreateStoreSystemPartial.cshtml" />
+    <Content Include="Views\OffStore\StoreSystemList.cshtml" />
+    <Content Include="Views\OffStore\StoreSystemListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

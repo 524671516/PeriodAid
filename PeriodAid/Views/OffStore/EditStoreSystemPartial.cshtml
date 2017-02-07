@@ -1,0 +1,66 @@
+﻿@model PeriodAid.Models.Off_StoreSystem
+@using (Html.BeginForm("EditStoreSystemPartial", "OffStore", FormMethod.Post, new { @id = "storesystem-ajaxform" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Off_System_Id)
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.RequiredAmount)
+    @Html.HiddenFor(m => m.RequiredStorage)
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="control-label col-md-3">渠道名称</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.SystemName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SystemName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">批发商</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Distributor, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">区域</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.Region, ViewBag.Regionlist as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Region, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">产品列表</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.ProductList, ViewBag.Regionlist as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ProductList, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" id="storesystem-sure" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $('#storesystem-ajaxform').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                $('.modal-box').modal('hide');
+                alert("修改成功");
+                $.ajax({
+                    url: "/OffStore/StoreSystemListPartial",
+                    success: function (data) {
+                        $("#storesystem-list").html(data);
+                    }
+
+                })
+            }
+            else {
+                $(".modal-con").html(data);
+            }
+        })
+    });
+</script>
+

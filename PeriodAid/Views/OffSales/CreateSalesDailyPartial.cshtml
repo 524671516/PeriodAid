@@ -106,6 +106,21 @@
         function displayResult(item, val, text) {
             $("#StoreId").val(val);
             $("#offsale-sure-daily").attr("disabled", false);
+            $.ajax({
+                url: "/OffSales/GetStoreSellerAjax",
+                data: {
+                    id: $("#StoreId").val()
+                },
+                type: "post",
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#SellerId").html("").append("<option value=''>- 请选择 -</option>");
+                        for (var i = 0; i < data.data.length; i++) {
+                            $("#SellerId").append("<option value='" + data.data[i].Id + "'>" + data.data[i].Name + "</option>");
+                        }
+                    }
+                }
+            })
         }
         $("#store-input").on("keyup", function () {
             $("#offsale-sure-daily").attr("disabled", true);
@@ -126,23 +141,6 @@
             $(this).attr("disabled", "disabled").val("添加中...");
             setTimeout(formsubmit, 1000);
             return false;
-        });
-        $("#StoreId").bind("change", function () {
-            $.ajax({
-                url: "/OffSales/GetStoreSellerAjax",
-                data: {
-                    id: $("#StoreId").val()
-                },
-                type: "post",
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        $("#SellerId").html("").append("<option value=''>- 请选择 -</option>");
-                        for (var i = 0; i < data.data.length; i++) {
-                            $("#SellerId").append("<option value='" + data.data[i].Id + "'>" + data.data[i].Name + "</option>");
-                        }
-                    }
-                }
-            })
         });
     });
     $("#add-p").click(function () {

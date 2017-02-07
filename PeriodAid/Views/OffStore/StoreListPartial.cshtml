@@ -9,11 +9,9 @@
             门店名称
         </th>
         <th style="width:5%">
-            区域
-        </th>
-        <th style="width:12%">
-            经销商
-        </th>
+            渠道
+        </th> 
+        
         <th style="width:30%">
             地址
         </th>
@@ -30,16 +28,13 @@
     {
         <tr>
             <td>
-                <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Region" />
+                <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Off_StoreSystemId" />
             </td>
             <td class="ellipsis ">
                 @Html.DisplayFor(modelItem => item.StoreName)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Region)
-            </td>
-            <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.Distributor)
+                @Html.DisplayFor(modelItem => item.Off_StoreSystem.SystemName)
             </td>
             <td class="ellipsis ">
                 @Html.DisplayFor(modelItem => item.Address)

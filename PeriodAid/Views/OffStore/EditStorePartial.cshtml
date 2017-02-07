@@ -7,7 +7,13 @@
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
-        @Html.HiddenFor(model => model.Off_System_Id)
+        <div class="form-group">
+            <label class="control-label col-md-3">渠道</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.Off_StoreSystemId, ViewBag.QD as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Off_StoreSystemId, "", new { @class = "text-danger" })
+            </div>
+        </div>
         <div class="form-group">
             <label class="control-label col-md-3">店铺名称</label>
             <div class="col-md-9">
@@ -15,31 +21,6 @@
                 @Html.ValidationMessageFor(model => model.StoreName, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">渠道</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.StoreSystem, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StoreSystem, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">区域</label>
-            <div class="col-md-9">
-                @Html.DropDownListFor(model => model.Region, ViewBag.Regionlist as SelectList, "- 请选择区域 -", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Region, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">经销商</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Distributor, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
         <div class="form-group">
             <label class="control-label col-md-3">详细地址</label>
             <div class="col-md-9">
@@ -82,6 +63,7 @@
                     success: function (data) {
                         $("#offstore-list").html(data);
                     }
+                  
                 })
             }
             else {

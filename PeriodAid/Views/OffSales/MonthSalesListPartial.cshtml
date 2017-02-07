@@ -8,7 +8,7 @@
             店铺名称
         </th>
         <th style="width:6%">
-            系统
+            渠道
         </th>
         <th style="width:8%">
             经销商
@@ -47,10 +47,10 @@
                 @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Off_Store.StoreSystem)
+                @Html.DisplayFor(modelItem => item.Off_Store.Off_StoreSystem.SystemName)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Off_Store.Distributor)
+                @Html.DisplayFor(modelItem => item.Off_Store.Off_StoreSystem.Distributor)
             </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Item_Brown)

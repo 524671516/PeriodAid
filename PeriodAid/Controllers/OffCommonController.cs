@@ -151,11 +151,11 @@ namespace PeriodAid.Controllers
         public JsonResult StoreSystemListAjax()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storesystem = from m in _offlineDB.Off_StoreSystem
+            var storesystemlist = from m in _offlineDB.Off_StoreSystem
                               where m.Off_System_Id == user.DefaultSystemId
-                              select m;
+                              select new { Key = m.Id, Value= m.SystemName};
             //ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
-            return Json(new { storesystem = storesystem });
+            return Json(new { storesystem = storesystemlist });
         }
 
         // Origin: Off_Add_Schedule_StoreList

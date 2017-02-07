@@ -22,7 +22,7 @@
         </div>
         <div class="col-md-9">
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-5 row">
                     <div class="input-group">
                         <div class="input-group-addon"><small>开始时间</small></div>
                         <input type="text" class="input-sm form-control" id="StartTime" name="StartTime" value="@Model.StartTime.ToString("yyyy-MM-dd")" />
@@ -74,13 +74,9 @@
                     <textarea class="form-control input-sm" rows="10" id="Content" name="Content">@Model.Content</textarea>
                 </div>
             </div><br />
-            <div class="row">
-                <div class="col-md-2">
+            <div class="row btn-group">
                     <input type="submit" class="btn btn-success" value="提交" />
-                </div>
-                <div class="col-md-1">
                     <a class="btn btn-default" href="/OffManager/AnnouncementList">返回</a>
-                </div>
             </div>
         </div>
     </div>

@@ -98,7 +98,13 @@ namespace PeriodAid.Controllers
         // Origin Off_CreateStore
         public ActionResult CreateStorePartial()
         {
+            //var user = UserManager.
             var store = new Off_Store();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var QD = from m in _offlineDB.Off_StoreSystem
+                     where m.Off_System_Id == user.DefaultSystemId
+                     select m;
+            ViewBag.QD = new SelectList(QD, "Id", "SystemName");
             return PartialView(store);
         }
         [HttpPost, ValidateAntiForgeryToken]
@@ -219,6 +225,10 @@ namespace PeriodAid.Controllers
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 if (item.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
+                    var QD = from m in _offlineDB.Off_StoreSystem
+                             where m.Off_System_Id == user.DefaultSystemId
+                             select m;
+                    ViewBag.QD = new SelectList(QD, "Id", "SystemName");
                     return PartialView(item);
                 }
             }
@@ -410,7 +420,7 @@ namespace PeriodAid.Controllers
                 return PartialView("ErrorPartial");
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult CreateStorePartial(Off_StoreSystem model)
+        public ActionResult CreateStoreSystemPartial(Off_StoreSystem model)
         {
             if (ModelState.IsValid)
             {

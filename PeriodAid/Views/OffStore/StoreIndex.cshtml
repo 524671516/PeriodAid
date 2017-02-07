@@ -16,8 +16,8 @@
 <div>
     <ul class="list-inline list-unstyled row">
         <li><a class="btn btn-info btn-sm" id="offstore-store-create"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a></li>
-        <li><a class="btn btn-info btn-sm" id="offstore-store-upstore" href="/OffStore/UploadStore"><i class="fa fa-upload"></i>&nbsp;&nbsp;上传数据</a></li>
-        <li><a class="btn btn-warning btn-sm" id="offstore-store-batchedit">修改区域</a></li>
+        @*<li><a class="btn btn-info btn-sm" id="offstore-store-upstore" href="/OffStore/UploadStore"><i class="fa fa-upload"></i>&nbsp;&nbsp;上传数据</a></li>*@
+        @*<li><a class="btn btn-warning btn-sm" id="offstore-store-batchedit">修改区域</a></li>*@
     </ul>
 </div>
 <br />
@@ -25,7 +25,7 @@
 
 </div>
 @Html.Partial("modal")
-<div class="modal fade" id="offstore-store-batchmodal">
+@*<div class="modal fade" id="offstore-store-batchmodal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -44,7 +44,7 @@
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div>*@
 <script>
     $(function () {
         $.ajax({

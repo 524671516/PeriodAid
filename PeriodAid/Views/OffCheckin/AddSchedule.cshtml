@@ -28,9 +28,7 @@
                     <label class="col-md-2 control-label">标准下班时间</label>
                     <div class="col-md-4">@Html.EditorFor(m => m.FinishTime, new { htmlAttributes = new { @class = "form-control input-sm", type = "time" } })</div>
                 </div><br />
-                <div class="row">
-                    <label class="col-md-2 control-label">提报模板</label>
-                    <div class="col-md-4">@Html.DropDownList("TemplateId", ViewBag.TemplateList as SelectList, "- 请选择模板 -", new { @class = "form-control input-sm" })</div>
+                <div class="row">           
                     <label class="col-md-2 control-label">标准薪资</label>
                     <div class="col-md-4">@Html.EditorFor(m => m.Salary, new { htmlAttributes = new { @class = "form-control input-sm", type = "number" } })</div>
                 </div><br />
@@ -45,12 +43,25 @@
 }
 <script>
     $(function () {
+        $.ajax({
+            url: "/OffCommon/StoreListAjax",
+            type: "post",
+            data: {
+                storesystemId: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                }
+            }
+        })
         $("#StoreSystem").change(function () {
             $.ajax({
                 url: "/OffCommon/StoreListAjax",
                 type: "post",
                 data: {
-                    storesystem: $("#StoreSystem").val()
+                    storesystemId: $("#StoreSystem").val()
                 },
                 success: function (data) {
                     $("#StoreList").html("");

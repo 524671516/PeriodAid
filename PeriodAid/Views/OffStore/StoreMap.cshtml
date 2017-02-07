@@ -61,36 +61,28 @@
             type: "post",
             success: function (data) {
                 for (var i = 0; i < data.storesystem.length; i++) {
-                    $("#storesystem-list").append("<option value='" + data.storesystem[i] + "'>" + data.storesystem[i] + "</option>");
+                    $("#storesystem-list").append("<option value='" + data.storesystem[i].Key +"'>" + data.storesystem[i].Value + "</option>");
                 }
-            }
-        });
-        $.ajax({
-            url: "/OffStore/StoreMapDetailsAjax",
-            type:"post",
-            data: {
-                storesystem: ""
             },
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    map.clearOverlays();
-                    addMarks(data.list);
-                }
+            error: function (e) {
+                console.log(e);
             }
         });
-        $("#search-btn").click(function () {
+        $("#offstore-search-btn").click(function () {
             if ($("#search-val").val() != "")
                 getBoundary($("#search-val").val());
         });
         $("#storesystem-btn").click(function () {
+            console.log($("#storesystem-list").val())
             $.ajax({
                 url: "/OffStore/StoreMapDetailsAjax",
                 type:"post",
                 data: {
-                    storesystem: $("#storesystem-list").val().toString()
+                    storesystemId: $("#storesystem-list").val()
                 },
                 success:function(data){
                     if (data.result == "SUCCESS") {
+                        console.log(data.list);
                         map.clearOverlays();
                         addMarks(data.list, $("#storesystem-list").val().toString().split(','));
                     }
@@ -147,7 +139,7 @@
         map.clearOverlays();
         var bdary = new BMap.Boundary();
         bdary.get(info, function (rs) {       //获取行政区域
-            //map.clearOverlays();        //清除地图覆盖物       
+            //map.clearOverlays();        //清除地图覆盖物 
             var count = rs.boundaries.length; //行政区域的点有多少个
             if (count === 0) {
                 alert('未能获取当前输入行政区域');
@@ -174,8 +166,9 @@
                     });
                     var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
                         icon: icon
-                    });  // 创建标注
-                    map.addOverlay(marker);               // 将标注添加到地图中
+                    });  // 创建标注   
+                    map.addOverlay(marker);
+                    // 将标注添加到地图中
                     addClickHandler(content, marker);
                 }
             }
@@ -186,7 +179,7 @@
                 for (var i = 0; i < storelist.length; i++) {
                     var content = storelist[i].StoreName + ":" + storelist[i].Address;
                     var icon_url = "";
-                    for(var j=0;j<storesystem.length;j++){
+                    for (var j = 0; j < storesystem.length; j++) {
                         if(storelist[i].StoreSystem == storesystem[j])
                             icon_url = "/Content/images/mark_" + j + ".png"
                     }
@@ -196,7 +189,8 @@
                     var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
                         icon: icon
                     });  // 创建标注
-                    map.addOverlay(marker);               // 将标注添加到地图中
+                    map.addOverlay(marker);
+                    // 将标注添加到地图中
                     addClickHandler(content, marker);
                     //$("#mark-icon").append("<div><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;" + storelist[i].StoreName + "</div>");
                 }
