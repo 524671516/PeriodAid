@@ -356,5 +356,163 @@ namespace PeriodAid.Controllers
             return View();
         }*/
 
+        public ActionResult StoreSystemList()
+        {
+            return View();
+        }
+        // Origin: Off_Store_ajaxlist
+        /// <summary>
+        /// 首页列表局部页
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public PartialViewResult StoreSystemListPartial(int? page, string query)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            int _page = page ?? 1;
+            if (query == null || query == "")
+            {
+                var list = (from m in _offlineDB.Off_StoreSystem
+                            where m.Off_System_Id == user.DefaultSystemId
+                            orderby m.Id descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+            else
+            {
+                var list = (from m in _offlineDB.Off_StoreSystem
+                            where (m.SystemName.Contains(query))
+                            && m.Off_System_Id == user.DefaultSystemId
+                            orderby m.Id descending
+                            select m).ToPagedList(_page, 20);
+                return PartialView(list);
+            }
+        }
+        // Origin Off_CreateStore
+        public ActionResult CreateStoreSystemPartial()
+        {
+            var model = new Off_StoreSystem();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
+            if (regionlist != null)
+            {
+                string[] regionarray = regionlist.SettingValue.Split(',');
+                List<Object> attendance = new List<Object>();
+                foreach (var i in regionarray)
+                {
+                    attendance.Add(new { Key = i, Value = i });
+                }
+                ViewBag.Regionlist = new SelectList(attendance, "Key", "Value");
+                return PartialView(model);
+            }
+            else
+                return PartialView("ErrorPartial");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult CreateStorePartial(Off_StoreSystem model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_StoreSystem item = new Off_StoreSystem();
+                if (TryUpdateModel(item))
+                {
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    //var user = UserManager.FindById(User.Identity.GetUserId());
+                    item.Off_System_Id = user.DefaultSystemId;
+                    _offlineDB.Off_StoreSystem.Add(item);
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "发生错误");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
+                if (regionlist != null)
+                {
+                    string[] regionarray = regionlist.SettingValue.Split(',');
+                    List<Object> attendance = new List<Object>();
+                    foreach (var i in regionarray)
+                    {
+                        attendance.Add(new { Key = i, Value = i });
+                    }
+                    ViewBag.Regionlist = new SelectList(attendance, "Key", "Value");
+                    return PartialView(model);
+                }
+                else
+                    return PartialView("ErrorPartial");
+            }
+        }
+        // Origin: Ajax_EditStore
+        public PartialViewResult EditStoreSystemPartial(int id)
+        {
+            var item = _offlineDB.Off_StoreSystem.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (item.Off_System_Id == user.DefaultSystemId)
+                {
+                    var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
+                    if (regionlist != null)
+                    {
+                        string[] regionarray = regionlist.SettingValue.Split(',');
+                        List<Object> attendance = new List<Object>();
+                        foreach (var i in regionarray)
+                        {
+                            attendance.Add(new { Key = i, Value = i });
+                        }
+                        ViewBag.Regionlist = new SelectList(attendance, "Key", "Value");
+                        return PartialView(item);
+                    }
+                    else
+                        return PartialView("ErrorPartial");
+                }
+            }
+            return PartialView("ErrorPartial");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditStoreSystemPartial(Off_StoreSystem model)
+        {
+            if (ModelState.IsValid)
+            {
+                var item = new Off_StoreSystem();
+                if (TryUpdateModel(item))
+                {
+                    
+
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "错误");
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
+                    if (regionlist != null)
+                    {
+                        string[] regionarray = regionlist.SettingValue.Split(',');
+                        List<Object> attendance = new List<Object>();
+                        foreach (var i in regionarray)
+                        {
+                            attendance.Add(new { Key = i, Value = i });
+                        }
+                        ViewBag.Regionlist = new SelectList(attendance, "Key", "Value");
+                        return PartialView(model);
+                    }
+                    else
+                        return PartialView("ErrorPartial");
+                }
+            }
+            else
+            {
+                return PartialView("ErrorPartial");
+            }
+        }
+
     }
 }
