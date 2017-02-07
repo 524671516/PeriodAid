@@ -80,7 +80,7 @@ namespace PeriodAid.Controllers
             if (query == null || query == "")
             {
                 var list = (from m in _offlineDB.Off_Store
-                            where m.Off_System_Id == user.DefaultSystemId
+                            where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -89,7 +89,7 @@ namespace PeriodAid.Controllers
             {
                 var list = (from m in _offlineDB.Off_Store
                             where (m.StoreName.Contains(query) || m.Address.Contains(query))
-                            && m.Off_System_Id == user.DefaultSystemId
+                            && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -99,21 +99,7 @@ namespace PeriodAid.Controllers
         public ActionResult CreateStorePartial()
         {
             var store = new Off_Store();
-            var user = UserManager.FindById(User.Identity.GetUserId());
-            var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
-            if (regionlist != null)
-            {
-                string[] regionarray = regionlist.SettingValue.Split(',');
-                List<Object> attendance = new List<Object>();
-                foreach (var i in regionarray)
-                {
-                    attendance.Add(new { Key = i, Value = i });
-                }
-                ViewBag.Regionlist = new SelectList(attendance, "Key", "Value");
-                return PartialView(store);
-            }
-            else
-                return PartialView("ErrorPartial");
+            return PartialView(store);
         }
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult CreateStorePartial(Off_Store model)
@@ -123,10 +109,9 @@ namespace PeriodAid.Controllers
                 Off_Store item = new Off_Store();
                 if (TryUpdateModel(item))
                 {
-                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    //var user = UserManager.FindById(User.Identity.GetUserId());
                     item.UploadTime = DateTime.Now;
                     item.UploadUser = User.Identity.Name;
-                    item.Off_System_Id = user.DefaultSystemId;
                     _offlineDB.Off_Store.Add(item);
                     _offlineDB.SaveChanges();
                     return Content("SUCCESS");
@@ -136,21 +121,7 @@ namespace PeriodAid.Controllers
             else
             {
                 ModelState.AddModelError("", "发生错误");
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
-                if (regionlist != null)
-                {
-                    string[] regionarray = regionlist.SettingValue.Split(',');
-                    List<Object> attendance = new List<Object>();
-                    foreach (var i in regionarray)
-                    {
-                        attendance.Add(new { Key = i, Value = i });
-                    }
-                    ViewBag.Regionlist = new SelectList(attendance, "Key", "Value", model.Region);
-                    return PartialView(model);
-                }
-                else
-                    return PartialView("ErrorPartial");
+                return PartialView(model);
             }
         }
 
@@ -162,7 +133,7 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (item.Off_System_Id == user.DefaultSystemId)
+                if (item.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
                     try
                     {
@@ -201,8 +172,8 @@ namespace PeriodAid.Controllers
         }
         
         [SettingFilter(SettingName = "GENERAL")]
-        #region 上传店铺信息
-        public ActionResult UploadStore()
+        //上传店铺信息["删除"]
+        /*public ActionResult UploadStore()
         {
             return PartialView();
         }
@@ -237,7 +208,7 @@ namespace PeriodAid.Controllers
                 messageList.Add(new Excel_DataMessage(0, "文件上传错误", true));
             }
             return View("UploadResult", messageList);
-        }
+        }*/
 
         // Origin: Ajax_EditStore
         public PartialViewResult EditStorePartial(int id)
@@ -246,33 +217,12 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (item.Off_System_Id == user.DefaultSystemId)
+                if (item.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
-                    //var user = UserManager.FindById(User.Identity.GetUserId());
-                    var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
-                    if (regionlist != null)
-                    {
-                        string[] regionarray = regionlist.SettingValue.Split(',');
-                        List<Object> attendance = new List<Object>();
-                        foreach (var i in regionarray)
-                        {
-                            attendance.Add(new { Key = i, Value = i });
-                        }
-                        ViewBag.Regionlist = new SelectList(attendance, "Key", "Value", item.Region);
-                        return PartialView(item);
-                    }
-                    else
-                        return PartialView("ErrorPartial");
-                }
-                else
-                {
-                    return PartialView("AuthorizeErrorPartial");
+                    return PartialView(item);
                 }
             }
-            else
-            {
-                return PartialView("ErrorPartial");
-            }
+            return PartialView("ErrorPartial");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -292,21 +242,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     ModelState.AddModelError("", "错误");
-                    var user = UserManager.FindById(User.Identity.GetUserId());
-                    var regionlist = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AreaList");
-                    if (regionlist != null)
-                    {
-                        string[] regionarray = regionlist.SettingValue.Split(',');
-                        List<Object> attendance = new List<Object>();
-                        foreach (var i in regionarray)
-                        {
-                            attendance.Add(new { Key = i, Value = i });
-                        }
-                        ViewBag.Regionlist = new SelectList(attendance, "Key", "Value", item.Region);
-                        return PartialView(item);
-                    }
-                    else
-                        return PartialView("ErrorPartial");
+                    return PartialView(item);
                 }
             }
             else
@@ -322,30 +258,18 @@ namespace PeriodAid.Controllers
         // 地图里的店铺列表
         // Origin: JsonStoreList
         [HttpPost]
-        public JsonResult StoreMapDetailsAjax(string storesystem)
+        public JsonResult StoreMapDetailsAjax(int storesystemId)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            if (storesystem == null || storesystem == "")
-            {
-                var list = from m in _offlineDB.Off_Store
-                           where m.Latitude != "" && m.Longitude != "" && m.Off_System_Id == user.DefaultSystemId
-                           orderby m.Id descending
-                           select new { StoreName = m.StoreName, StoreSystem = m.StoreSystem, Address = m.Address, Longitude = m.Longitude, Latitude = m.Latitude };
-                return Json(new { result = "SUCCESS", list = list }, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                string[] systems = storesystem.Split(',');
-                var list = from m in _offlineDB.Off_Store
-                           where systems.Contains(m.StoreSystem) && m.Off_System_Id == user.DefaultSystemId
-                           orderby m.Id descending
-                           select new { StoreName = m.StoreName, StoreSystem = m.StoreSystem, Address = m.Address, Longitude = m.Longitude, Latitude = m.Latitude };
-                return Json(new { result = "SUCCESS", list = list }, JsonRequestBehavior.AllowGet);
-            }
+            var list = from m in _offlineDB.Off_Store
+                       where m.Latitude != "" && m.Longitude != "" && m.Off_StoreSystemId == storesystemId
+                       orderby m.Id descending
+                       select new { StoreName = m.StoreName, StoreSystem = m.Off_StoreSystem.SystemName, Address = m.Address, Longitude = m.Longitude, Latitude = m.Latitude };
+            return Json(new { result = "SUCCESS", list = list }, JsonRequestBehavior.AllowGet);
         }
 
-        // Origin: analyseExcel_StoreTable
-        private async Task<List<Excel_DataMessage>> UploadStoreByExcelAsync(string filename, List<Excel_DataMessage> messageList)
+        // Origin: analyseExcel_StoreTable["删除"]
+        /*private async Task<List<Excel_DataMessage>> UploadStoreByExcelAsync(string filename, List<Excel_DataMessage> messageList)
         {
             try
             {
@@ -430,6 +354,7 @@ namespace PeriodAid.Controllers
         public ActionResult UploadResult()
         {
             return View();
-        }
+        }*/
+
     }
 }

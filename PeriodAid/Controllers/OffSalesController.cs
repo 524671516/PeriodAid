@@ -78,7 +78,7 @@ namespace PeriodAid.Controllers
             if (query == null || query == "")
             {
                 var list = (from m in _offlineDB.Off_SalesInfo_Daily
-                            where m.Off_Store.Off_System_Id == user.DefaultSystemId
+                            where m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -86,7 +86,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in _offlineDB.Off_SalesInfo_Daily
-                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -99,7 +99,7 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (item.Off_Store.Off_System_Id == user.DefaultSystemId)
+                if (item.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
                     var sellerlist = from m in _offlineDB.Off_Seller
                                      where m.StoreId == item.StoreId
@@ -225,7 +225,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             var item = new Off_SalesInfo_Daily();
             var storelist = from m in _offlineDB.Off_Store
-                            where m.Off_System_Id == user.DefaultSystemId
+                            where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.StoreName
                             select new { Key = m.Id, Value = m.StoreName };
             ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
@@ -318,7 +318,7 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (item.Off_Store.Off_System_Id == user.DefaultSystemId)
+                if (item.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
                     try
                     {
@@ -347,7 +347,7 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             var item = new Off_SalesInfo_Month();
             var storelist = from m in _offlineDB.Off_Store
-                            where m.Off_System_Id == user.DefaultSystemId
+                            where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.StoreName
                             select new { Key = m.Id, Value = m.StoreName };
             ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
@@ -395,7 +395,7 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (item.Off_Store.Off_System_Id == user.DefaultSystemId)
+                if (item.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
                     try
                     {
@@ -448,7 +448,7 @@ namespace PeriodAid.Controllers
             if (query == null || query == "")
             {
                 var list = (from m in _offlineDB.Off_SalesInfo_Month
-                            where m.Off_Store.Off_System_Id == user.DefaultSystemId
+                            where m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -456,7 +456,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in _offlineDB.Off_SalesInfo_Month
-                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -469,7 +469,7 @@ namespace PeriodAid.Controllers
             if (item != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (item.Off_Store.Off_System_Id == user.DefaultSystemId)
+                if (item.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
                     return PartialView(item);
                 }
@@ -513,8 +513,8 @@ namespace PeriodAid.Controllers
        
 
 
-        // Origin:UploadDailyInfo
-        [SettingFilter(SettingName = "GENERAL")]
+        // Origin:UploadDailyInfo[删除]
+        /*[SettingFilter(SettingName = "GENERAL")]
         public ActionResult UploadDailySales()
         {
             return PartialView();
@@ -550,11 +550,7 @@ namespace PeriodAid.Controllers
                 messageList.Add(new Excel_DataMessage(0, "文件上传错误", true));
             }
             return View("UploadResult", messageList);
-        }
-
-
-        
-
+        }*/
         
         // Origin:UploadMonthInfo
         [SettingFilter(SettingName = "GENERAL")]
@@ -619,7 +615,7 @@ namespace PeriodAid.Controllers
                     {
                         // 判断是否存在店铺
                         string storename = dr["店铺名称"].ToString();
-                        var exist_store = _offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_System_Id == user.DefaultSystemId);
+                        var exist_store = _offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId);
                         if (exist_store == null)
                         {
                             messageList.Add(new Excel_DataMessage(i, "店铺不存在", true));
@@ -682,8 +678,8 @@ namespace PeriodAid.Controllers
         
         
 
-        // Origin: analyseExcel_DailyInfoTable
-        public async Task<List<Excel_DataMessage>> UploadDailySalesByExcelAsync(string filename, List<Excel_DataMessage> messageList)
+        // Origin: analyseExcel_DailyInfoTable[删除]
+        /*public async Task<List<Excel_DataMessage>> UploadDailySalesByExcelAsync(string filename, List<Excel_DataMessage> messageList)
         {
             try
             {
@@ -706,7 +702,7 @@ namespace PeriodAid.Controllers
                     {
                         // 判断是否存在店铺
                         string storename = dr["店铺名称"].ToString();
-                        var exist_store = _offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_System_Id == user.DefaultSystemId);
+                        var exist_store = _offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId);
                         if (exist_store == null)
                         {
                             messageList.Add(new Excel_DataMessage(i, "店铺不存在", true));
@@ -807,7 +803,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
+        */
         
         // Origin: Off_Daily_Delete_batch
         [HttpPost]

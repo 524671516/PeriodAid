@@ -175,7 +175,7 @@ namespace PeriodAid.Controllers
             return View();
         }
         // Origin:Off_Template_List_Ajax
-        public ActionResult TemplateListPartial(int? page)
+        /*public ActionResult TemplateListPartial(int? page)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
@@ -323,6 +323,7 @@ namespace PeriodAid.Controllers
             }
             _offlineDB.SaveChanges();
             return RedirectToAction("ProductList");
-        }
+        }*/
+
     }
 }

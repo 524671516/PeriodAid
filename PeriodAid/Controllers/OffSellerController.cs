@@ -96,7 +96,7 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var store = from m in _offlineDB.Off_Store
-                        where m.Off_System_Id == user.DefaultSystemId
+                        where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                         && m.StoreName.Contains(query)
                         select new { Id = m.Id, StoreName = m.StoreName };
             return Json(store);
@@ -105,7 +105,7 @@ namespace PeriodAid.Controllers
         public PartialViewResult AddSellerPartial()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storelist = _offlineDB.Off_Store.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
+            var storelist = _offlineDB.Off_Store.Where(m => m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
             ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
             Off_Seller seller = new Off_Seller();
             seller.Off_System_Id = user.DefaultSystemId;
@@ -147,7 +147,7 @@ namespace PeriodAid.Controllers
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 ModelState.AddModelError("", "错误");
-                var storelist = _offlineDB.Off_Store.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
+                var storelist = _offlineDB.Off_Store.Where(m => m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
                 ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
                 var banklistArray = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "BankList");
                 if (banklistArray != null)
@@ -461,7 +461,7 @@ namespace PeriodAid.Controllers
         public ActionResult BindRecruitForm(int id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storelist = _offlineDB.Off_Store.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
+            var storelist = _offlineDB.Off_Store.Where(m => m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
             ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
             var recruit = _offlineDB.Off_Recruit.SingleOrDefault(m => m.Id == id);
             Seller_RecruitBind model = new Seller_RecruitBind()
@@ -694,7 +694,7 @@ namespace PeriodAid.Controllers
                     {
                         // 判断是否存在店铺
                         string storename = dr["店铺名称"].ToString();
-                        var exist_store = _offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_System_Id == user.DefaultSystemId);
+                        var exist_store = _offlineDB.Off_Store.SingleOrDefault(m => m.StoreName == storename && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId);
                         if (exist_store == null)
                         {
                             messageList.Add(new Excel_DataMessage(i, "店铺不存在", true));

@@ -199,7 +199,7 @@ namespace PeriodAid.Controllers
                         _offlineDB.Off_SalesInfo_Daily.Add(info);
                         // 获取模板产品列表
                         List<int> plist = new List<int>();
-                        var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                        var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                         foreach (var i in Template.ProductList.Split(','))
                         {
                             plist.Add(Convert.ToInt32(i));
@@ -288,7 +288,7 @@ namespace PeriodAid.Controllers
                     else if (item.Status >= 0 && item.Status <= 3)
                     {
                         List<int> plist = new List<int>();
-                        var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                        var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                         foreach (var i in Template.ProductList.Split(','))
                         {
                             plist.Add(Convert.ToInt32(i));
@@ -378,7 +378,7 @@ namespace PeriodAid.Controllers
         {
             var item = _offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == id);
 
-            string[] plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
+            string[] plist_tmp = item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.ProductList.Split(',');
             List<int> plist_int = new List<int>();
             foreach (var i in plist_tmp)
             {
@@ -410,8 +410,8 @@ namespace PeriodAid.Controllers
             }
             Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
             {
-                AmountRequried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
-                StorageRequired = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
+                AmountRequried = item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.RequiredAmount,
+                StorageRequired = item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.RequiredStorage,
                 ProductList = templatelist
             };
             return PartialView(model);
@@ -421,7 +421,7 @@ namespace PeriodAid.Controllers
         public PartialViewResult AddCheckinProductListPartial(int id)
         {
             var item = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == id);
-            string[] plist_tmp = item.Off_Sales_Template.ProductList.Split(',');
+            string[] plist_tmp = item.Off_Store.Off_StoreSystem.ProductList.Split(',');
             List<int> plist = new List<int>();
             foreach (var i in plist_tmp)
             {
@@ -443,8 +443,8 @@ namespace PeriodAid.Controllers
             }
             Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
             {
-                AmountRequried = item.Off_Sales_Template.RequiredAmount,
-                StorageRequired = item.Off_Sales_Template.RequiredStorage,
+                AmountRequried = item.Off_Store.Off_StoreSystem.RequiredAmount,
+                StorageRequired = item.Off_Store.Off_StoreSystem.RequiredStorage,
                 ProductList = templatelist
             };
             return PartialView(model);
@@ -488,7 +488,7 @@ namespace PeriodAid.Controllers
                     //offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
                     List<int> plist = new List<int>();
-                    var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                     foreach (var i in Template.ProductList.Split(','))
                     {
                         plist.Add(Convert.ToInt32(i));
@@ -559,7 +559,7 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(item))
                 {
                     List<int> plist = new List<int>();
-                    var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Sales_Template;
+                    var Template = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == item.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                     foreach (var i in Template.ProductList.Split(','))
                     {
                         plist.Add(Convert.ToInt32(i));
@@ -862,11 +862,6 @@ namespace PeriodAid.Controllers
                 if (item.Off_System_Id == user.DefaultSystemId)
                 {
                     ViewBag.StoreName = item.Off_Store.StoreName;
-                    var TemplateList = from m in _offlineDB.Off_Sales_Template
-                                       where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
-                                       orderby m.TemplateName
-                                       select new { Key = m.Id, Value = m.TemplateName };
-                    ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value", item.TemplateId);
                     return PartialView(item);
                 }
                 else
@@ -898,11 +893,6 @@ namespace PeriodAid.Controllers
                 ModelState.AddModelError("", "请重试");
                 var user = UserManager.FindById(User.Identity.GetUserId());
                 ViewBag.StoreName = _offlineDB.Off_Store.SingleOrDefault(m => m.Id == model.Off_Store_Id).StoreName;
-                var TemplateList = from m in _offlineDB.Off_Sales_Template
-                                   where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
-                                   orderby m.TemplateName
-                                   select new { Key = m.Id, Value = m.TemplateName };
-                ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
                 return PartialView(model);
             }
         }
@@ -932,17 +922,10 @@ namespace PeriodAid.Controllers
         public ActionResult AddSchedule()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storesystem = from m in _offlineDB.Off_Store
+            var storesystem = from m in _offlineDB.Off_StoreSystem
                               where m.Off_System_Id == user.DefaultSystemId
-                              group m by m.StoreSystem into g
-                              orderby g.Key
-                              select new { Key = g.Key, Value = g.Key };
-            var TemplateList = from m in _offlineDB.Off_Sales_Template
-                               where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
-                               orderby m.TemplateName
-                               select new { Key = m.Id, Value = m.TemplateName };
-            ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
-            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                              select m;
+            ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
             return View();
         }
         [HttpPost]
@@ -953,23 +936,22 @@ namespace PeriodAid.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var user = UserManager.FindById(User.Identity.GetUserId());
                     if (model.StartDate > model.EndDate)
                     {
-                        var storesystem = from m in _offlineDB.Off_Store
-                                          group m by m.StoreSystem into g
-                                          orderby g.Key
-                                          select new { Key = g.Key, Value = g.Key };
-                        ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                        var storesystem = from m in _offlineDB.Off_StoreSystem
+                                          where m.Off_System_Id == user.DefaultSystemId
+                                          select m;
+                        ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
                         ModelState.AddModelError("", "开始日期不得大于结束日期");
                         return View(model);
                     }
                     if (form["StoreList"].ToString().Trim() == "")
                     {
-                        var storesystem = from m in _offlineDB.Off_Store
-                                          group m by m.StoreSystem into g
-                                          orderby g.Key
-                                          select new { Key = g.Key, Value = g.Key };
-                        ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                        var storesystem = from m in _offlineDB.Off_StoreSystem
+                                          where m.Off_System_Id == user.DefaultSystemId
+                                          select m;
+                        ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
                         ModelState.AddModelError("", "请至少选择一个店铺");
                         return View(model);
                     }
@@ -977,7 +959,6 @@ namespace PeriodAid.Controllers
                     // 每天循环
                     for (int i = 0; i <= datelength; i++)
                     {
-                        var user = UserManager.FindById(User.Identity.GetUserId());
                         string[] storelist = form["StoreList"].ToString().Split(',');
                         for (int j = 0; j < storelist.Length; j++)
                         {
@@ -998,7 +979,6 @@ namespace PeriodAid.Controllers
                                     Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
                                     Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
                                     Standard_Salary = model.Salary,
-                                    TemplateId = model.TemplateId,
                                     Off_System_Id = user.DefaultSystemId
                                 };
                                 _offlineDB.Off_Checkin_Schedule.Add(schedule);
@@ -1008,7 +988,6 @@ namespace PeriodAid.Controllers
                                 schedule.Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0);
                                 schedule.Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0);
                                 schedule.Standard_Salary = model.Salary;
-                                schedule.TemplateId = model.TemplateId;
                                 _offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
                             }
                         }
@@ -1019,16 +998,10 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var user = UserManager.FindById(User.Identity.GetUserId());
-                    var storesystem = from m in _offlineDB.Off_Store
-                                      group m by m.StoreSystem into g
-                                      orderby g.Key
-                                      select new { Key = g.Key, Value = g.Key };
-                    ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
-                    var TemplateList = from m in _offlineDB.Off_Sales_Template
-                                       where m.Off_System_Id == user.DefaultSystemId && m.Status >= 0
-                                       orderby m.TemplateName
-                                       select new { Key = m.Id, Value = m.TemplateName };
-                    ViewBag.TemplateList = new SelectList(TemplateList, "Key", "Value");
+                    var storesystem = from m in _offlineDB.Off_StoreSystem
+                                      where m.Off_System_Id == user.DefaultSystemId
+                                      select m;
+                    ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
                     return View(model);
                 }
             }

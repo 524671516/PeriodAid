@@ -129,12 +129,10 @@ namespace PeriodAid.Controllers
                 if (manager.Off_System_Id == user.DefaultSystemId)
                 {
                     ViewBag.StoreList = manager.Off_Store.OrderBy(m => m.StoreName);
-                    var storesystem = from m in _offlineDB.Off_Store
+                    var storesystem = from m in _offlineDB.Off_StoreSystem
                                       where m.Off_System_Id == user.DefaultSystemId
-                                      group m by m.StoreSystem into g
-                                      orderby g.Key
-                                      select new { Key = g.Key, Value = g.Key };
-                    ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                                      select m;
+                    ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
                     //ViewBag.SystemId = manager.Off_System_Id;
                     return View(manager);
                 }
@@ -182,7 +180,7 @@ namespace PeriodAid.Controllers
                     arr_int.Add(Convert.ToInt32(s));
                 }
                 var select_list = (from m in _offlineDB.Off_Store
-                                   where arr_int.Contains(m.Id) && m.Off_System_Id == user.DefaultSystemId
+                                   where arr_int.Contains(m.Id) && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                                    select m).Select(m => m.Id);
                 var storelist = (from m in manager.Off_Store
                                  select m.Id).ToList();
@@ -509,7 +507,7 @@ namespace PeriodAid.Controllers
             var _page = page ?? 1;
             var user = UserManager.FindById(User.Identity.GetUserId());
             var list = (from m in _offlineDB.Off_Manager_Request
-                        where m.Status >= 0 && m.Off_Store.Off_System_Id == user.DefaultSystemId
+                        where m.Status >= 0 && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                         orderby m.Status, m.Id descending
                         select m).ToPagedList(_page, 20);
             ViewBag.SystemId = user.DefaultSystemId;
@@ -525,7 +523,7 @@ namespace PeriodAid.Controllers
             if (request != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (request.Off_Store.Off_System_Id == user.DefaultSystemId)
+                if (request.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
                     return PartialView(request);
                 }
@@ -570,7 +568,7 @@ namespace PeriodAid.Controllers
             if (request != null)
             {
                 var user = UserManager.FindById(User.Identity.GetUserId());
-                if (request.Off_Store.Off_System_Id == user.DefaultSystemId)
+                if (request.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId)
                 {
                     request.Status = 3;
                     request.ReplyUser = User.Identity.Name;

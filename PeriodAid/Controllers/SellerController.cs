@@ -18,6 +18,7 @@ using System.Drawing.Imaging;
 
 namespace PeriodAid.Controllers
 {
+    /*
     [Authorize]
     public class SellerController : Controller
     {
@@ -835,7 +836,7 @@ namespace PeriodAid.Controllers
                 {
                     // 获取模板产品列表
                     List<int> plist = new List<int>();
-                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                     foreach (var i in Template.ProductList.Split(','))
                     {
                         plist.Add(Convert.ToInt32(i));
@@ -915,7 +916,7 @@ namespace PeriodAid.Controllers
         public PartialViewResult Wx_Seller_EditReport_Item(int CheckId)
         {
             var item = offlineDB.Off_Checkin.SingleOrDefault(m => m.Id == CheckId);
-            string[] plist_tmp = item.Off_Checkin_Schedule.Off_Sales_Template.ProductList.Split(',');
+            string[] plist_tmp = item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.ProductList.Split(',');
             List<int> plist = new List<int>();
             foreach (var i in plist_tmp)
             {
@@ -944,8 +945,8 @@ namespace PeriodAid.Controllers
             }
             Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
             {
-                AmountRequried = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredAmount,
-                StorageRequired = item.Off_Checkin_Schedule.Off_Sales_Template.RequiredStorage,
+                AmountRequried = item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.RequiredAmount,
+                StorageRequired = item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.RequiredStorage,
                 ProductList = templatelist
             };
             return PartialView(model);
@@ -1181,9 +1182,9 @@ namespace PeriodAid.Controllers
                                  where storelist.Contains(m.Off_Store_Id)
                                  && m.Subscribe == today
                                  select m;
-            /*ViewBag.uncheckin_null = from m in today_schedule
+            ViewBag.uncheckin_null = from m in today_schedule
                                      where m.Off_Checkin.Count() == 0
-                                     select m;*/
+                                     select m;
             ViewBag.Status = status;
             if (status == 0)
             {
@@ -1267,7 +1268,7 @@ namespace PeriodAid.Controllers
                        select m;
             return View(list);
         }
-        /* 代签到 */
+        //代签到
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_ProxyCheckIn(int checkid)
         {
@@ -1297,7 +1298,7 @@ namespace PeriodAid.Controllers
                 {
                     // 获取模板产品列表
                     List<int> plist = new List<int>();
-                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                     foreach (var i in Template.ProductList.Split(','))
                     {
                         plist.Add(Convert.ToInt32(i));
@@ -1383,7 +1384,7 @@ namespace PeriodAid.Controllers
                 return View(model);
             }
         }
-        /* 新建签到 */
+        // 新建签到 
         [Authorize(Roles = "Manager")]
         public ActionResult Wx_Manager_CreateCheckIn(int sid)
         {
@@ -1431,7 +1432,7 @@ namespace PeriodAid.Controllers
                     offlineDB.Off_Checkin.Add(checkin);
                     offlineDB.SaveChanges();
                     List<int> plist = new List<int>();
-                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                     foreach (var i in Template.ProductList.Split(','))
                     {
                         plist.Add(Convert.ToInt32(i));
@@ -1490,7 +1491,7 @@ namespace PeriodAid.Controllers
         public PartialViewResult Wx_Manager_EditReport_Item(int ScheduleId)
         {
             var item = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == ScheduleId);
-            string[] plist_tmp = item.Off_Sales_Template.ProductList.Split(',');
+            string[] plist_tmp = item.Off_Store.Off_StoreSystem.ProductList.Split(',');
             List<int> plist = new List<int>();
             foreach (var i in plist_tmp)
             {
@@ -1512,8 +1513,8 @@ namespace PeriodAid.Controllers
             }
             Wx_ReportItemsViewModel model = new Wx_ReportItemsViewModel()
             {
-                AmountRequried = item.Off_Sales_Template.RequiredAmount,
-                StorageRequired = item.Off_Sales_Template.RequiredStorage,
+                AmountRequried = item.Off_Store.Off_StoreSystem.RequiredAmount,
+                StorageRequired = item.Off_Store.Off_StoreSystem.RequiredStorage,
                 ProductList = templatelist
             };
             return PartialView(model);
@@ -1609,7 +1610,7 @@ namespace PeriodAid.Controllers
                 {
                     // 获取模板产品列表
                     List<int> plist = new List<int>();
-                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Sales_Template;
+                    var Template = offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Id == checkin.Off_Schedule_Id).Off_Store.Off_StoreSystem;
                     foreach (var i in Template.ProductList.Split(','))
                     {
                         plist.Add(Convert.ToInt32(i));
@@ -1704,21 +1705,21 @@ namespace PeriodAid.Controllers
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
             var storelist = from m in manager.Off_Store
-                            group m by m.StoreSystem into g
-                            select new { Key = g.Key };
-            ViewBag.StoreSystem = new SelectList(storelist, "Key", "Key", storelist.FirstOrDefault().Key);
+                            group m by m.Off_StoreSystem into g
+                            select new { Key = g.Key.Id, Value=g.Key.SystemName };
+            ViewBag.StoreSystem = new SelectList(storelist, "Key", "Value", storelist.FirstOrDefault().Key);
             return View();
         }
         [HttpPost]
         [Authorize(Roles = "Manager")]
-        public async Task<ActionResult> Wx_Manager_ReportList_Partial(string date, string storesystem)
+        public async Task<ActionResult> Wx_Manager_ReportList_Partial(string date, int storesystemId)
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             DateTime today = Convert.ToDateTime(date);
             ViewBag.Today = today;
             int dow = (int)today.DayOfWeek;
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
-            var storelist = manager.Off_Store.Where(m => m.StoreSystem == storesystem).Select(m => m.Id);
+            var storelist = manager.Off_Store.Where(m => m.Off_StoreSystemId == storesystemId).Select(m => m.Id);
             var listview = from m in offlineDB.Off_Checkin
                            where storelist.Contains(m.Off_Checkin_Schedule.Off_Store_Id)
                            && m.Off_Checkin_Schedule.Subscribe == today
@@ -1735,7 +1736,7 @@ namespace PeriodAid.Controllers
                            };
             //var storelist = list.Select(m => m.StoreId);
             var avglist = from m in offlineDB.Off_AVG_Info
-                          where m.DayOfWeek == dow + 1 && m.Off_Store.Off_System_Id == user.DefaultSystemId &&
+                          where m.DayOfWeek == dow + 1 && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId &&
                           storelist.Contains(m.StoreId)
                           select new { StoreId = m.StoreId, AVG_Total = m.AVG_SalesData, AVG_Amount = m.AVG_AmountData };
 
@@ -2716,7 +2717,7 @@ namespace PeriodAid.Controllers
         }
 
 
-        /************ 新版本界面 ************/
+        
         [AllowAnonymous]
         public ActionResult LoginManager_New(int? systemid)
         {
@@ -2840,7 +2841,7 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        /************ 签到 ************/
+        
         // 首页
         [SettingFilter(SettingName = "MANAGER_ATTENDANCE")]
         [Authorize(Roles = "Manager")]
@@ -3248,7 +3249,7 @@ namespace PeriodAid.Controllers
             return PartialView(item);
         }
 
-        /************ 巡店 ************/
+        
         [Authorize(Roles = "Manager")]
         public ActionResult Manager_Tools()
         {
@@ -3751,7 +3752,7 @@ namespace PeriodAid.Controllers
             return PartialView(item);
         }
 
-        /************ 工具 ************/
+        
 
         // 销量排名
         [Authorize(Roles = "Manager")]
@@ -4435,7 +4436,7 @@ namespace PeriodAid.Controllers
             return PartialView(item);
         }
 
-        /************ 暗促 ************/
+        
         // 暗促首页
         [Authorize(Roles ="Manager")]
         public ActionResult Manager_SellerTaskHome()
@@ -4565,7 +4566,7 @@ namespace PeriodAid.Controllers
         }
 
 
-        /************ 促销员 ************/
+        
         // 首页
         public ActionResult Seller_Home()
         {
@@ -5229,5 +5230,7 @@ namespace PeriodAid.Controllers
             UserManager.Update(user);
             return RedirectToAction("Seller_Home");
         }
-    }
+
+    }*/
+
 }

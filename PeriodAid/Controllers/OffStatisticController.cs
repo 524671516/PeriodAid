@@ -63,12 +63,10 @@ namespace PeriodAid.Controllers
         public ActionResult StoreSystemStatistic()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storesystem = from m in _offlineDB.Off_Store
+            var storesystem = from m in _offlineDB.Off_StoreSystem
                               where m.Off_System_Id == user.DefaultSystemId
-                              group m by m.StoreSystem into g
-                              orderby g.Key
-                              select new { Key = g.Key, Value = g.Key };
-            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                              select m;
+            ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
             return View();
         }
         // Origin: Off_Statistic_StoreSystem_Ajax
@@ -151,12 +149,10 @@ namespace PeriodAid.Controllers
         public ActionResult StoreStatistic()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storesystem = from m in _offlineDB.Off_Store
+            var storesystem = from m in _offlineDB.Off_StoreSystem
                               where m.Off_System_Id == user.DefaultSystemId
-                              group m by m.StoreSystem into g
-                              orderby g.Key
-                              select new { Key = g.Key, Value = g.Key };
-            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                              select m;
+            ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
             return View();
         }
 
@@ -243,12 +239,10 @@ namespace PeriodAid.Controllers
         public ActionResult SellerStatistic()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storesystem = from m in _offlineDB.Off_Store
+            var storesystem = from m in _offlineDB.Off_StoreSystem
                               where m.Off_System_Id == user.DefaultSystemId
-                              group m by m.StoreSystem into g
-                              orderby g.Key
-                              select new { Key = g.Key, Value = g.Key };
-            ViewBag.SystemList = new SelectList(storesystem, "Key", "Value", storesystem.FirstOrDefault().Value);
+                              select m;
+            ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
             return View();
         }
         // Origin: Off_Statistic_Seller_Ajax
