@@ -75,77 +75,77 @@
             success: function (data) {
                 $(".modal-con").html(data);
                 $(".modal-box").modal();
-                $(".modal-head").text(head)
+                $(".modal-head").text(head);
             }
         })
         return false
     });
-    //上传门店
-    $("#offstore-store-upstore").click(function () {
-        var link_url = "/OffStore/UploadStore"
-        var head = "上传门店"
-        $.ajax({
-            url: link_url,
-            success: function (data) {
-                $(".modal-con").html(data);
-                $(".modal-box").modal();
-                $(".modal-head").text(head)
-            }
-        })
-        return false
-    });
-    //批量修改区域
-    $("#offstore-store-batchedit").click(function () {
-        var checkedNum = $("input[name='subChk']:checked").length;
-        if (checkedNum == 0) {
-            alert("请选择至少一项！");
-            return;
-        } else {
-            var checkedList = new Array();
-            var checkedRegion = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-                checkedRegion.push($(this).attr("data-region"));
-            });
-            for (var i = 0; i < checkedRegion.length; i++) {
-                $("#check-region").val(checkedRegion[0])
-            }
-            $("#offstore-store-batchmodal").modal('show');
-        }
-    });
-    $(".check-sure").click(function () {
-        if (confirm("确定要修改所选门店区域？")) {
-            var link_url = "/OffStore/ChangeStoreAreaBatchAjax";
-            var modify_area = $("#change-content").val();
-            var checkedList = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-            });
-            $.ajax({
-                url: link_url,
-                type: "post",
-                data: {
-                    ids: checkedList.toString(),
-                    modify_area: modify_area
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        setTimeout(function () {
-                            $("#offstore-store-batchmodal").modal('hide');
-                            $.ajax({
-                                url: "/OffStore/StoreListPartial",
-                                success: function (data) {
-                                    $("#offstore-list").html(data);
-                                }
-                            });
-                            alert("修改成功")
-                        }, 1000)
-                    }
-                }
-            })
-        }
-    });
-    $(".check-fail").click(function () {
-        $("#offstore-store-batchmodal").modal('hide')
-    });
+    ////上传门店
+    //$("#offstore-store-upstore").click(function () {
+    //    var link_url = "/OffStore/UploadStore"
+    //    var head = "上传门店"
+    //    $.ajax({
+    //        url: link_url,
+    //        success: function (data) {
+    //            $(".modal-con").html(data);
+    //            $(".modal-box").modal();
+    //            $(".modal-head").text(head)
+    //        }
+    //    })
+    //    return false
+    //});
+    ////批量修改区域
+    //$("#offstore-store-batchedit").click(function () {
+    //    var checkedNum = $("input[name='subChk']:checked").length;
+    //    if (checkedNum == 0) {
+    //        alert("请选择至少一项！");
+    //        return;
+    //    } else {
+    //        var checkedList = new Array();
+    //        var checkedRegion = new Array();
+    //        $("input[name='subChk']:checked").each(function () {
+    //            checkedList.push($(this).val());
+    //            checkedRegion.push($(this).attr("data-region"));
+    //        });
+    //        for (var i = 0; i < checkedRegion.length; i++) {
+    //            $("#check-region").val(checkedRegion[0])
+    //        }
+    //        $("#offstore-store-batchmodal").modal('show');
+    //    }
+    //});
+    //$(".check-sure").click(function () {
+    //    if (confirm("确定要修改所选门店区域？")) {
+    //        var link_url = "/OffStore/ChangeStoreAreaBatchAjax";
+    //        var modify_area = $("#change-content").val();
+    //        var checkedList = new Array();
+    //        $("input[name='subChk']:checked").each(function () {
+    //            checkedList.push($(this).val());
+    //        });
+    //        $.ajax({
+    //            url: link_url,
+    //            type: "post",
+    //            data: {
+    //                ids: checkedList.toString(),
+    //                modify_area: modify_area
+    //            },
+    //            success: function (data) {
+    //                if (data.result == "SUCCESS") {
+    //                    setTimeout(function () {
+    //                        $("#offstore-store-batchmodal").modal('hide');
+    //                        $.ajax({
+    //                            url: "/OffStore/StoreListPartial",
+    //                            success: function (data) {
+    //                                $("#offstore-list").html(data);
+    //                            }
+    //                        });
+    //                        alert("修改成功")
+    //                    }, 1000)
+    //                }
+    //            }
+    //        })
+    //    }
+    //});
+    //$(".check-fail").click(function () {
+    //    $("#offstore-store-batchmodal").modal('hide')
+    //});
 </script>

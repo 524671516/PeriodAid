@@ -10,7 +10,7 @@
         <div class="form-group">
             <label class="control-label col-md-2" id="ItemName" name="ItemName">产品名称</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { @class = "form-control",@required="required",@maxlength="20" } })
                 @Html.ValidationMessageFor(model => model.ItemName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -18,7 +18,7 @@
         <div class="form-group">
             <label class="control-label col-md-2" id="SimpleName" name="SimpleName">产品简称</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.SimpleName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.SimpleName, new { htmlAttributes = new { @class = "form-control",@required="required",@maxlength="20" } })
                 @Html.ValidationMessageFor(model => model.SimpleName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -48,27 +48,51 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="保存" class="btn btn-default" />
+                <input type="submit" value="保存" class="btn btn-default" id="create-product"/>
             </div>
         </div>
     </div>
 }
 <script>
     $(function () {
-        $('#offproduct-product-form').ajaxForm(function (data) {
+        //表单验证
+        $('#offproduct-product-form').validate({
+            focusCleanup: true,
+            errorPlacement: function (error, element) {
+                $("#create-product").attr("disabled", false).val("保存");
+                element.parent().parent().addClass("has-error");
+            },
+            submitHandler: function (form) {
+                setTimeout(formsubmit, 1000);
+            },
+        })
+        //按钮点击
+        $("#create-product").click(function () {
+            $(".form-group").removeClass("has-error");
+            $(this).attr("disabled", "disabled").val("保存中...");
+            $('#offproduct-product-form').submit();
+        })
+    });     
+    function formsubmit() {
+        $('#offproduct-product-form').ajaxSubmit(function (data) {
             if (data == "SUCCESS") {
-                alert("添加成功");
                 $('.modal-box').modal('hide');
+                alert("添加成功");
                 $.ajax({
                     url: "/OffProduct/ProductListPartial",
                     success: function (data) {
                         $("#offproduct-product-list").html(data)
+                    },
+                    error: function () {
+                        alert("提交失败");
+                        $("#create-product").attr("disabled", false).val("保存");
                     }
                 })
             }
             else {
-                $(".modal-con").html(data)
+                alert("提交失败");
+                $("#create-product").attr("disabled", false).val("保存");
             }
         });
-    });
+    }
 </script>

@@ -10,21 +10,21 @@
         <div class="form-group">
             <label class="control-label col-md-3">渠道</label>
             <div class="col-md-9">
-                @Html.DropDownListFor(model => model.Off_StoreSystemId, ViewBag.QD as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.Off_StoreSystemId, ViewBag.QD as SelectList, "- 请选择 -", new { @class = "form-control",@required="required" })
                 @Html.ValidationMessageFor(model => model.Off_StoreSystemId, "", new { @class = "text-danger" })
             </div>
         </div>  
         <div class="form-group">
             <label class="control-label col-md-3">门店名称</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "form-control", @required = "required",@maxlength="20" } })
                 @Html.ValidationMessageFor(model => model.StoreName, "", new { @class = "text-danger" })
             </div>
         </div>      
         <div class="form-group">
             <label class="control-label col-md-3">地址</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
                 @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -32,7 +32,7 @@
         <div class="form-group">
             <label class="control-label col-md-3">经度</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control", @maxlength = "20" } })
                 @Html.ValidationMessageFor(model => model.Longitude, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -40,23 +40,35 @@
         <div class="form-group">
             <label class="control-label col-md-3">纬度</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control", @maxlength = "20" } })
                 @Html.ValidationMessageFor(model => model.Latitude, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-3 col-md-9">
-                <input type="submit" value="保存" id="offstore-store-sure" class="btn btn-default" />
+                <input type="submit" value="保存" id="offstore-store-save" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
 <script>
     $(function () {
-        $("#offstore-store-sure").click(function () {
-            $(this).attr("disabled", "disabled").val("添加中...");
-            setTimeout(formsubmit, 1000);
-            return false;
+        //表单验证
+        $('#offstore-store-form').validate({
+            focusCleanup: true,
+            errorPlacement: function (error, element) {
+                $("#offstore-store-save").attr("disabled", false).val("保存");
+                element.parent().parent().addClass("has-error");
+            },
+            submitHandler: function (form) {
+                setTimeout(formsubmit, 1000);
+            },
+        })
+        //按钮点击
+        $("#offstore-store-save").click(function () {
+            $(".form-group").removeClass("has-error");
+            $(this).attr("disabled", "disabled").val("保存中...");
+            $('#offstore-store-form').submit();
         })
     });
     function formsubmit() {
@@ -68,11 +80,16 @@
                     url: "/OffStore/StoreListPartial",
                     success: function (data) {
                         $("#offstore-list").html(data);
+                    },
+                    error: function () {
+                        alert("提交失败");
+                        $("#offstore-store-save").attr("disabled", false).val("保存");
                     }
                 })
             }
             else {
-                $(".modal-con").html(data);
+                alert("提交失败");
+                $("#offstore-store-save").attr("disabled", false).val("保存");
             }
         });
     }

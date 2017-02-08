@@ -9,8 +9,8 @@
     </div>
     <div class="col-xs-12 col-md-5">
         <div class="form-group">
-            <label>门店名称：</label>
-            <input class="form-control input-sm offline-search-inline" id="offstore-search-query" placeholder="搜索内容" />
+            <label>区域名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="offstore-search-query" placeholder="搜索区域(如:闵行、上海)" />
             <a class="btn btn-info btn-sm" id="offstore-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </div>
     </div>
@@ -69,8 +69,8 @@
             }
         });
         $("#offstore-search-btn").click(function () {
-            if ($("#search-val").val() != "")
-                getBoundary($("#search-val").val());
+            if ($("#offstore-search-query").val() != "")
+            getBoundary($("#offstore-search-query").val());
         });
         $("#storesystem-btn").click(function () {
             if ($("#storesystem-list").val() != null) {
@@ -138,7 +138,6 @@
     };
 
     function getBoundary(info) {
-        map.clearOverlays();
         var bdary = new BMap.Boundary();
         bdary.get(info, function (rs) {       //获取行政区域
             //map.clearOverlays();        //清除地图覆盖物 
