@@ -274,7 +274,7 @@ namespace PeriodAid.Controllers
             var list = from m in _offlineDB.Off_Store
                        where m.Latitude != "" && m.Longitude != "" && m.Off_StoreSystemId == storesystemId
                        orderby m.Id descending
-                       select new { StoreName = m.StoreName, StoreSystem = m.Off_StoreSystem.SystemName, Address = m.Address, Longitude = m.Longitude, Latitude = m.Latitude };
+                       select new { StoreName = m.StoreName, StoreSystem = m.Off_StoreSystemId, Address = m.Address, Longitude = m.Longitude, Latitude = m.Latitude };
             return Json(new { result = "SUCCESS", list = list }, JsonRequestBehavior.AllowGet);
         }
 
