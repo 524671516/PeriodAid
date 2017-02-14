@@ -51,7 +51,12 @@
                 @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
             </div>
         </div>
-        
+        <div class="form-group">
+            <label class="control-label col-md-2">渠道</label>
+            <div class="col-md-10">
+                @Html.DropDownList("storesystemid", ViewBag.storesystemlist as SelectList,new {@class= "form-control" })
+            </div>
+        </div>
         <div class="form-group">
             <label class="control-label col-md-2">店铺</label>
             <div class="col-md-10">
@@ -80,7 +85,8 @@
         $('#store-input').typeahead({
             ajax: {
                 url: '/OffSeller/QueryStore',
-                triggerLength: 1
+                triggerLength: 1,
+               
             },
             itemSelected: displayResult,
             display: 'StoreName',

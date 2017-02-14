@@ -6,8 +6,14 @@
 }
 @if (Model != null)
 {
-    <h4>修改管辖范围</h4>
-    <h4>管理员姓名：@Html.Encode(Html.ManagerNickName(Model.NickName, Model.Off_System_Id))</h4><br />
+   <div class="col-md-12">
+       <h3 class="page-title">
+           修改管辖范围 <small>管理员姓名：@Html.Encode(Html.ManagerNickName(Model.NickName, Model.Off_System_Id))</small>
+       </h3>
+   </div>
+   <br />
+<br />
+<br />
     using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
@@ -26,7 +32,7 @@
             </div>
             <div class="col-md-3">
                 <select multiple id="selectList" name="selectList" class="form-control input-sm" style="height:454px;">
-                    @foreach (var item in Model.Off_Store)
+                    @foreach (var item in ViewBag.StoreList)
                     {
                         <option value="@item.Id">@item.StoreName</option>
                     }

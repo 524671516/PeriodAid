@@ -92,7 +92,7 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost]
-        public JsonResult QueryStore(string query)
+        public JsonResult QueryStore( string query)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var store = from m in _offlineDB.Off_Store
@@ -461,8 +461,8 @@ namespace PeriodAid.Controllers
         public ActionResult BindRecruitForm(int id)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var storelist = _offlineDB.Off_Store.Where(m => m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.StoreName);
-            ViewBag.Storelist = new SelectList(storelist, "Id", "StoreName");
+            var storesystemlist = _offlineDB.Off_StoreSystem.Where(m => m.Off_System_Id == user.DefaultSystemId).OrderBy(m => m.SystemName);
+            ViewBag.storesystemlist = new SelectList(storesystemlist, "Id", "SystemName");
             var recruit = _offlineDB.Off_Recruit.SingleOrDefault(m => m.Id == id);
             Seller_RecruitBind model = new Seller_RecruitBind()
             {

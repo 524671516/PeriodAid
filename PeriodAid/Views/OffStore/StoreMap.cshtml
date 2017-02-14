@@ -73,20 +73,23 @@
             getBoundary($("#offstore-search-query").val());
         });
         $("#storesystem-btn").click(function () {
+            map.clearOverlays();
             if ($("#storesystem-list").val() != null) {
-                $.ajax({
-                    url: "/OffStore/StoreMapDetailsAjax",
-                    type: "post",
-                    data: {
-                        storesystemId: $("#storesystem-list").val()
-                    },
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            map.clearOverlays();
-                            addMarks(data.list, $("#storesystem-list").val().toString().split(','));
+                for (i = 0; i < $("#storesystem-list").val().length; i++) {
+                    var _storesystemId = $("#storesystem-list").val()[i];
+                    $.ajax({
+                        url: "/OffStore/StoreMapDetailsAjax",
+                        type: "post",
+                        data: {
+                            storesystemId: _storesystemId
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                    addMarks(data.list, $("#storesystem-list").val());
+                            }
                         }
-                    }
-                })
+                    })
+                }
             } else {
                 alert("请选择想要查看的渠道!");
             }
@@ -159,26 +162,44 @@
     function addMarks(storelist, storesystem) {
         $("#mark-icon").html("");
         if (storesystem != null) {
-            for (var i = 0; i < storesystem.length; i++) {
-                $("#mark-icon").append("<h6 class='text-sm'><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;&nbsp;" + storesystem[i] + "</h6>");
-            }
-            for (var i = 0; i < storelist.length; i++) {
-                var content = storelist[i].StoreName + ":" + storelist[i].Address;
-                var icon_url = "";
-                for (var j = 0; j < storesystem.length; j++) {
-                    if (storelist[i].StoreSystem == storesystem[j])
-                        icon_url = "/Content/images/mark_" + j + ".png"
+            if (storesystem.length > 5) {
+                for (var i = 0; i < storelist.length; i++) {
+                    var content = storelist[i].StoreName + ":" + storelist[i].Address;
+                    var icon = new BMap.Icon("/Content/images/mark_0.png", new BMap.Size(20, 25), {
+                        anchor: new BMap.Size(10, 25)
+                    });
+                    var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
+                        icon: icon
+                    });  // 创建标注
+                    map.addOverlay(marker);
+                    // 将标注添加到地图中
+                    addClickHandler(content, marker);
+                    //$("#mark-icon").append("<div><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;" + storelist[i].StoreName + "</div>");
                 }
-                var icon = new BMap.Icon(icon_url, new BMap.Size(20, 25), {
-                    anchor: new BMap.Size(10, 25)
-                });
-                var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
-                    icon: icon
-                });  // 创建标注
-                map.addOverlay(marker);
-                // 将标注添加到地图中
-                addClickHandler(content, marker);
-                //$("#mark-icon").append("<div><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;" + storelist[i].StoreName + "</div>");
+            }
+            else {
+                for (var i = 0; i < storesystem.length; i++) {
+                    var systemname = $("#storesystem-list").find("option" + "[" + "value" + "=" + storesystem[i] + "]").html();
+                    $("#mark-icon").append("<h6 class='text-sm'><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;&nbsp;" + systemname + "</h6>");
+                }
+                for (var i = 0; i < storelist.length; i++) {
+                    var content = storelist[i].StoreName + ":" + storelist[i].Address;
+                    var icon_url = "";
+                    for (var j = 0; j < storesystem.length; j++) {
+                        if (storelist[i].StoreSystem == storesystem[j])
+                            icon_url = "/Content/images/mark_" + j + ".png"
+                    }
+                    var icon = new BMap.Icon(icon_url, new BMap.Size(20, 25), {
+                        anchor: new BMap.Size(10, 25)
+                    });
+                    var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
+                        icon: icon
+                    });  // 创建标注
+                    map.addOverlay(marker);
+                    // 将标注添加到地图中
+                    addClickHandler(content, marker);
+                    //$("#mark-icon").append("<div><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;" + storelist[i].StoreName + "</div>");
+                }
             }
         }
         else {

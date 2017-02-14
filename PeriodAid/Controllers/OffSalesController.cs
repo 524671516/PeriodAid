@@ -224,11 +224,11 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var item = new Off_SalesInfo_Daily();
-            var storelist = from m in _offlineDB.Off_Store
-                            where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
-                            orderby m.StoreName
-                            select new { Key = m.Id, Value = m.StoreName };
-            ViewBag.StoreDropDown = new SelectList(storelist, "Key", "Value");
+            var QD = from m in _offlineDB.Off_StoreSystem
+                     where m.Off_System_Id == user.DefaultSystemId
+                     select m;
+            ViewBag.QD = new SelectList(QD, "Id", "SystemName");
+
             return PartialView(item);
         }
         [HttpPost, ValidateAntiForgeryToken]

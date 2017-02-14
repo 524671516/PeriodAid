@@ -48,12 +48,25 @@
 <div id="myChart_Column" style="min-width:500px;height:400px"></div>
 <script>
     $(function () {
+        $.ajax({
+            url: "/OffCommon/StoreListAjax",
+            type: "post",
+            data: {
+                storesystemId: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                }
+            }
+        })
         $("#StoreSystem").change(function () {
             $.ajax({
                 url: "/OffCommon/StoreListAjax",
                 type: "post",
                 data: {
-                    storesystem: $("#StoreSystem").val()
+                    storesystemId: $("#StoreSystem").val()
                 },
                 success: function (data) {
                     $("#StoreList").html("");
