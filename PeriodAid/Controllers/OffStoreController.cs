@@ -523,6 +523,45 @@ namespace PeriodAid.Controllers
                 return PartialView("ErrorPartial");
             }
         }
+        // 编辑模板
+        public PartialViewResult EditProductListPartial(int id)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var model = _offlineDB.Off_StoreSystem.SingleOrDefault(m => m.Id == id);
+            var productlist = from m in _offlineDB.Off_Product
+                              where m.Off_System_Id == user.DefaultSystemId
+                              &&
+                              m.status>=0
+                              select m;
+            ViewBag.ProductList = productlist;
+            return PartialView(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult EditProductListPartial(Off_StoreSystem model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_StoreSystem item = new Off_StoreSystem();
+                if (TryUpdateModel(item))
+                {
+                    item.ProductList = form["ProductList"].ToString();
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return PartialView("ErrorPartial");
 
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var productlist = from m in _offlineDB.Off_Product
+                                  where m.Off_System_Id == user.DefaultSystemId
+                                  select m;
+                ViewBag.ProductList = productlist;
+                return PartialView(model);
+            }
+        }
     }
 }

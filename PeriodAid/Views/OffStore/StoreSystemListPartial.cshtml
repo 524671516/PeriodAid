@@ -1,0 +1,128 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_StoreSystem>
+@using PagedList.Mvc;
+<table class="table table-hover table-condensed table-list" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:2%">
+            <input type="checkbox" class="allChk" />
+        </th>
+        <th style="width:16%">
+            渠道名称
+        </th>
+        <th style="width:10%">
+            批发商
+        </th>
+        <th style="width:10%">
+            区域
+        </th>
+        <th style="width:8%">库存</th>
+        <th style="width:8%">金额</th>
+        <th style="width:36%">
+            产品
+        </th>
+        <th style="width:12%">
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Off_System_Id" />
+            </td>
+            <td class="ellipsis ">
+                @Html.DisplayFor(modelItem => item.SystemName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Distributor)
+            </td>
+            <td class="ellipsis ">
+                @Html.DisplayFor(modelItem => item.Region)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(m=>item.RequiredStorage)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(m => item.RequiredAmount)
+            </td>
+            <td class="ellipsis ">
+                @Html.DisplayFor(modelItem=>item.ProductList)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "EditStoreSystemPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info storesystem-edit" })
+                @Html.ActionLink("编辑模板", "EditProductListPartial", new { id = item.Id }, new { @class="btn btn-xs btn-default productlist-edit"})             
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("StoreSystemListPartial", new { page }))</div>
+<script>
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#offstore-search-query").val();
+            l = l + "&query=" + query;
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#offstore-list").html(data);
+                }
+            });
+            return false;
+        });
+        //修改渠道信息
+        $(".storesystem-edit").click(function () {
+            var url = $(this).attr("href")
+            var head = "修改渠道信息"
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".modal-con").html(data);
+                    $(".modal-box").modal();
+                    $(".modal-head").text(head)
+                }
+            });
+            return false;
+        });
+        // 编辑产品列表
+        $(".productlist-edit").click(function () {
+            console.log(3);
+            var url = $(this).attr("href");
+            var head = "编辑产品列表";
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".modal-con").html(data);
+                    $(".model-head").text(head);
+                    $(".modal-box").modal();
+                }
+            });
+            return false;
+        });
+        //删除渠道
+        //$(".offstore-store-del").click(function () {
+        //    var result = confirm("确定删除吗？");
+        //    if (result) {
+        //        var url = $(this).attr("href");
+        //        $.ajax({
+        //            url: url,
+        //            type: "post",
+        //            success: function (data) {
+        //                if (data.result == "SUCCESS") {
+        //                    setTimeout(function () {
+        //                        $.ajax({
+        //                            url: "/OffStore/StoreListPartial",
+        //                            success: function (data) {
+        //                                $("#offstore-list").html(data);
+        //                            }
+        //                        })
+        //                        alert("删除成功")
+        //                    }, 1000);
+        //                }
+        //            }
+        //        })
+        //    }
+        //    return false;
+        //})
+    });
+</script>
