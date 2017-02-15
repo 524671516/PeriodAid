@@ -5,7 +5,7 @@
         <th style="width:2%">
             <input type="checkbox" class="allChk" />
         </th>
-        <th style="width:10%">
+        <th style="width:16%">
             渠道名称
         </th>
         <th style="width:10%">
@@ -14,7 +14,9 @@
         <th style="width:10%">
             区域
         </th>
-        <th style="width:50%">
+        <th style="width:8%">库存</th>
+        <th style="width:8%">金额</th>
+        <th style="width:36%">
             产品
         </th>
         <th style="width:12%">
@@ -36,10 +38,18 @@
             <td class="ellipsis ">
                 @Html.DisplayFor(modelItem => item.Region)
             </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(m=>item.RequiredStorage)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(m => item.RequiredAmount)
+            </td>
             <td class="ellipsis ">
+                @Html.DisplayFor(modelItem=>item.ProductList)
             </td>
             <td>
-                @Html.ActionLink("修改", "EditStoreSystemPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info storesystem-edit" })              
+                @Html.ActionLink("修改", "EditStoreSystemPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info storesystem-edit" })
+                @Html.ActionLink("编辑模板", "EditProductListPartial", new { id = item.Id }, new { @class="btn btn-xs btn-default productlist-edit"})             
             </td>
         </tr>
     }
@@ -70,6 +80,21 @@
                     $(".modal-con").html(data);
                     $(".modal-box").modal();
                     $(".modal-head").text(head)
+                }
+            });
+            return false;
+        });
+        // 编辑产品列表
+        $(".productlist-edit").click(function () {
+            console.log(3);
+            var url = $(this).attr("href");
+            var head = "编辑产品列表";
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".modal-con").html(data);
+                    $(".model-head").text(head);
+                    $(".modal-box").modal();
                 }
             });
             return false;

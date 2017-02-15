@@ -1,0 +1,98 @@
+﻿@model PeriodAid.Models.Off_StoreSystem
+@using PeriodAid.Models
+@using (Html.BeginForm("EditProductListPartial", "OffStore", FormMethod.Post, new { @id = "editproductlist-ajaxform" })) 
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m=>m.Id)
+    @Html.HiddenFor(m=>m.Distributor)
+    @Html.HiddenFor(m=>m.Off_System_Id)
+    @Html.HiddenFor(m=>m.Region)
+    @Html.HiddenFor(m=>m.SystemName)
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="control-label col-md-3">库存</label>
+            <div class="col-md-9">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.RequiredStorage)
+                    @Html.ValidationMessageFor(model => model.RequiredStorage, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">销售金额</label>
+            <div class="col-md-9">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.RequiredAmount)
+                    @Html.ValidationMessageFor(model => model.RequiredAmount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">产品列表</label>
+            <div class="col-md-9">
+                @foreach (var item in ViewBag.ProductList as IEnumerable<Off_Product>)
+                {
+                    <input name="ProductList" type="checkbox" value="@item.Id" />@Html.Encode(item.ItemName)<br />
+                }
+            </div>
+        </div>
+
+        
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="提交" class="btn btn-default" id="editproductlist-modify"/>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        //表单验证
+        $('#editproductlist-ajaxform').validate({
+            focusCleanup: true,
+            errorPlacement: function (error, element) {
+                $("#editproductlist-modify").attr("disabled", false).val("保存");
+                element.parent().parent().addClass("has-error");
+            },
+            submitHandler: function (form) {
+                setTimeout(formsubmit, 1000);
+                //console.log(1);
+            },
+        })
+        //按钮点击
+        $("#editproductlist-modify").click(function () {
+            $(".form-group").removeClass("has-error");
+            $(this).attr("disabled", "disabled").val("修改中...");
+            $('#editproductlist-ajaxform').submit();
+            //console.log($("#ProductList").val());
+        })
+    });
+    //提交方法
+    function formsubmit() {
+        $('#editproductlist-ajaxform').ajaxSubmit(function (data) {
+            console.log(999);
+            if (data == "SUCCESS") {
+                $('.modal-box').modal('hide');
+                alert("修改成功");
+                $.ajax({
+                    url: "/OffStore/StoreSystemListPartial",
+                    success: function (data) {
+                        $("#storesystem-list").html(data);
+                    },
+                    error: function () {
+                        alert("提交失败");
+                        $("#editproductlist-modify").attr("disabled", false).val("保存");
+                    }
+                })
+            }
+            else {
+                alert("提交失败");
+                $("#editproductlist-modify").attr("disabled", false).val("保存");
+            }
+        });
+    }
+</script>

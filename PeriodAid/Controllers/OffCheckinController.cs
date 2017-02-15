@@ -1066,5 +1066,107 @@ namespace PeriodAid.Controllers
             ViewBag.CurrentDate = datetime;
             return View();
         }
+
+        // 签呈列表
+        public ActionResult SalesEventList()
+        {
+            return View();
+        }
+        public ActionResult SalesEventListPartial(int? page, string query)
+        {
+            int _page = page ?? 1;
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            if (query == null)
+            {
+                var list = from m in _offlineDB.Off_SalesEvent
+                           where m.Off_StoreSystem_Id == user.DefaultSystemId
+                           && m.Status >= 0
+                           orderby m.EndDate descending
+                           select m;
+                return PartialView(list);
+            }
+            else
+            {
+                var list = from m in _offlineDB.Off_SalesEvent
+                           where m.Off_StoreSystem_Id == user.DefaultSystemId
+                           && m.Status >= 0 && (m.EventTitle.Contains(query) || m.SerialNo.Contains(query))
+                           orderby m.EndDate descending
+                           select m;
+                return PartialView(list);
+            }
+        }
+        // 门店列表
+        [HttpPost]
+        public ActionResult GetStoreListByStoreSystem(int id)
+        {
+            var list = from m in _offlineDB.Off_Store
+                       where m.Off_StoreSystemId == id
+                       select new { Id = m.Id, StoreName = m.StoreName };
+            return Json(new { result = "SUCCESS", data = list });
+        }
+        // 修改签呈
+        public ActionResult EditSalesEvent(int id)
+        {
+            var model = _offlineDB.Off_SalesEvent.SingleOrDefault(m => m.Id == id);
+            return PartialView(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult EditSalesEvent(Off_SalesEvent model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_SalesEvent item = _offlineDB.Off_SalesEvent.SingleOrDefault(m => m.Id == model.Id);
+                if (TryUpdateModel(item))
+                {
+                    try
+                    {
+                        string[] storelist = form["StoreList"].Split(',');
+                        //foreach(var existstore in item.st)
+                        item.Off_Store.Clear();
+                        List<int> storelistIds = new List<int>();
+                        foreach (string v in storelist)
+                        {
+                            storelistIds.Add(Convert.ToInt32(v));
+                        }
+                        var stores = _offlineDB.Off_Store.Where(m => storelistIds.Contains(m.Id));
+                        foreach (var store in stores)
+                        {
+                            item.Off_Store.Add(store);
+                            //store.Off_SalesEvent.Add(item);
+                        }
+                        _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        _offlineDB.SaveChanges();
+                        return Content("SUCCESS");
+                    }
+                    catch (Exception e)
+                    {
+                        return Content(e.Message);
+                    }
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                return Content("FAIL");
+            }
+        }
+        // 下架签呈
+        [HttpPost]
+        public async Task<ContentResult> DeleteSalesEvent(int id)
+        {
+            var item = _offlineDB.Off_SalesEvent.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                item.Status = -1;
+                _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                await _offlineDB.SaveChangesAsync();
+                return Content("SUCCESS");
+            }
+            else
+            {
+                return Content("FAIL");
+            }
+        }
     }
+
 }

@@ -965,6 +965,7 @@
     <Content Include="Views\OffStore\CreateStoreSystemPartial.cshtml" />
     <Content Include="Views\OffStore\StoreSystemList.cshtml" />
     <Content Include="Views\OffStore\StoreSystemListPartial.cshtml" />
+    <Content Include="Views\OffStore\EditProductListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
