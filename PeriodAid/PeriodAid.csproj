@@ -235,6 +235,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702150603399_20172156.cs" />
+    <Compile Include="Migrations\201702150603399_20172156.Designer.cs">
+      <DependentUpon>201702150603399_20172156.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -966,6 +970,9 @@
     <Content Include="Views\OffStore\StoreSystemList.cshtml" />
     <Content Include="Views\OffStore\StoreSystemListPartial.cshtml" />
     <Content Include="Views\OffStore\EditProductListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\SalesEventList.cshtml" />
+    <Content Include="Views\OffCheckin\SalesEventListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\EditSalesEvent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -977,6 +984,11 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201702150603399_20172156.resx">
+      <DependentUpon>201702150603399_20172156.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

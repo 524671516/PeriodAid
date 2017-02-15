@@ -1074,24 +1074,25 @@ namespace PeriodAid.Controllers
         }
         public ActionResult SalesEventListPartial(int? page, string query)
         {
+            
             int _page = page ?? 1;
             var user = UserManager.FindById(User.Identity.GetUserId());
             if (query == null)
             {
-                var list = from m in _offlineDB.Off_SalesEvent
+                var list = (from m in _offlineDB.Off_SalesEvent
                            where m.Off_StoreSystem_Id == user.DefaultSystemId
                            && m.Status >= 0
                            orderby m.EndDate descending
-                           select m;
+                           select m).ToPagedList(_page,20);
                 return PartialView(list);
             }
             else
             {
-                var list = from m in _offlineDB.Off_SalesEvent
+                var list = (from m in _offlineDB.Off_SalesEvent
                            where m.Off_StoreSystem_Id == user.DefaultSystemId
                            && m.Status >= 0 && (m.EventTitle.Contains(query) || m.SerialNo.Contains(query))
                            orderby m.EndDate descending
-                           select m;
+                           select m).ToPagedList(_page,20);
                 return PartialView(list);
             }
         }

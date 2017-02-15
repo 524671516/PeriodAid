@@ -1585,7 +1585,7 @@ namespace PeriodAid.Models
         public string EventTitle { get; set; }
 
         [StringLength(256)]
-        public string EventDetials { get; set; }
+        public string EventDetails { get; set; }
 
         public decimal? OrderAmount { get; set; }
 
@@ -1594,7 +1594,16 @@ namespace PeriodAid.Models
         [StringLength(256)]
         public string OrderDetials { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [StringLength(32)]
+        public string CreateUserName { get; set; }
+
+        public DateTime CreateDateTime { get; set; }
+
+        [StringLength(32)]
+        public string CommitUserName { get; set; }
+
+        public DateTime? CommitDateTime { get; set; }
+
         public virtual ICollection<Off_Store> Off_Store { get; set; }
     }
 }

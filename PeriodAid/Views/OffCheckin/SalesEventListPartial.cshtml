@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesEvent>
 @using PagedList.Mvc;
 <table class="table table-hover table-condensed table-list" style="width:100%;table-layout:fixed">
     <tr class="offline-table-background">
@@ -6,20 +6,14 @@
             <input type="checkbox" class="allChk" />
         </th>
         <th style="width:15%">
-            门店名称
+            活动名称
         </th>
         <th style="width:5%">
-            渠道
-        </th>       
+            活动时间
+        </th>
         <th style="width:30%">
-            地址
-        </th>
-        <th style="width:12%">
-            经度
-        </th>
-        <th style="width:12%">
-            纬度
-        </th>
+            活动状态
+        </th>     
         <th style="width:12%"></th>
     </tr>
 
@@ -27,31 +21,25 @@
     {
         <tr>
             <td>
-                <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Off_StoreSystemId" />
+                
             </td>
             <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.StoreName)
+                @Html.DisplayFor(modelItem => item.EventTitle)
             </td>
             <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Off_StoreSystem.SystemName)
+                @Html.Encode(@item.EndDate.ToString("yyyy/MM/dd")+"-"+@item.StartDate.ToString("yyyy/MM/dd"))
             </td>
             <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.Longitude)
-            </td>
-            <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.Latitude)
+                @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.ActionLink("修改", "EditStorePartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offstore-store-edit" })
-                @Html.ActionLink("删除", "DeleteStoreAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-danger offstore-store-del" })
+                @Html.ActionLink("修改", "EditSalesEvent", new { id = item.Id }, new { @class = "btn btn-xs btn-info saleevent-edit" })
+                @Html.ActionLink("删除", "DeleteSalesEvent", new { id = item.Id }, new { @class = "btn btn-xs btn-danger saleevent-del" })
             </td>
         </tr>
     }
 </table>
-<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("StoreListPartial", new { page }))</div>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("SalesEventListPartial", new { page }))</div>
 <script>
     $(function () {
         //页码
@@ -62,13 +50,13 @@
             $.ajax({
                 url: l,
                 success: function (data) {
-                    $("#offstore-list").html(data);
+                    $("#saleevent-list").html(data);
                 }
             });
             return false;
         });
-        //修改门店信息
-        $(".offstore-store-edit").click(function () {
+        //修改信息
+        $(".saleeventedit").click(function () {
             var url = $(this).attr("href")
             var head = "修改门店信息"
             $.ajax({
@@ -82,7 +70,7 @@
             return false;
         });
         //删除门店
-        $(".offstore-store-del").click(function () {
+        $(".saleevent-del").click(function () {
             var result = confirm("确定删除吗？");
             if (result) {
                 var url = $(this).attr("href");
@@ -93,9 +81,9 @@
                         if (data.result == "SUCCESS") {
                             setTimeout(function () {
                                 $.ajax({
-                                    url: "/OffStore/StoreListPartial",
+                                    url: "/OffCheckin/SalesEventListPartial",
                                     success: function (data) {
-                                        $("#offstore-list").html(data);
+                                        $("#saleevent-list").html(data);
                                     }
                                 })
                                 alert("删除成功")

@@ -9,38 +9,42 @@
     @Html.HiddenFor(m=>m.Region)
     @Html.HiddenFor(m=>m.SystemName)
     <div class="form-horizontal">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })   
         <div class="form-group">
-            <label class="control-label col-md-3">库存</label>
-            <div class="col-md-9">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.RequiredStorage)
-                    @Html.ValidationMessageFor(model => model.RequiredStorage, "", new { @class = "text-danger" })
+            <div>
+                <label class="control-label col-md-3" for="RequiredStorage">库存</label>
+                <div class="checkbox col-md-9">
+                    <label>
+                        @Html.EditorFor(model => model.RequiredStorage, new { htmlAttributes = new { @class = "", @required = "required" } })
+                        @Html.ValidationMessageFor(model => model.RequiredStorage, "", new { @class = "text-danger" })
+                    </label>
                 </div>
             </div>
         </div>
-
         <div class="form-group">
-            <label class="control-label col-md-3">销售金额</label>
-            <div class="col-md-9">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.RequiredAmount)
-                    @Html.ValidationMessageFor(model => model.RequiredAmount, "", new { @class = "text-danger" })
+            <div>
+                <label class="control-label col-md-3" for="RequiredAmount">销售金额</label>
+                <div class="checkbox col-md-9">
+                    <label>
+                        @Html.EditorFor(model => model.RequiredAmount, new { htmlAttributes = new { @class = "", @required = "required" } })
+                        @Html.ValidationMessageFor(model => model.RequiredStorage, "", new { @class = "text-danger" })
+                    </label>
                 </div>
             </div>
         </div>
-
-        <div class="form-group">
+        <div class="form-group" data-id="@Model.ProductList" id="product-list">
             <label class="control-label col-md-3">产品列表</label>
             <div class="col-md-9">
                 @foreach (var item in ViewBag.ProductList as IEnumerable<Off_Product>)
                 {
-                    <input name="ProductList" type="checkbox" value="@item.Id" />@Html.Encode(item.ItemName)<br />
-                }
-            </div>
-        </div>
-
-        
+                    <div class="checkbox">
+                        <label>
+                            <input required name="ProductList" type="checkbox" value="@item.Id" />@Html.Encode(item.ItemName)
+                        </label>
+                    </div>
+                }              
+            </div>                   
+        </div>  
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="提交" class="btn btn-default" id="editproductlist-modify"/>
@@ -48,19 +52,24 @@
         </div>
     </div>
 }
-
 <script>
     $(function () {
+        checkinput()
+        function checkinput() {
+            var arr = $("#product-list").attr("data-id").split(",");
+            for (i = 0; i < arr.length; i++) {
+                $("#product-list").find("input[value=" + arr[i] + "]").attr("checked", true);
+}
+        }
         //表单验证
         $('#editproductlist-ajaxform').validate({
             focusCleanup: true,
             errorPlacement: function (error, element) {
                 $("#editproductlist-modify").attr("disabled", false).val("保存");
-                element.parent().parent().addClass("has-error");
+                element.parent().parent().parent().parent().addClass("has-error");
             },
             submitHandler: function (form) {
                 setTimeout(formsubmit, 1000);
-                //console.log(1);
             },
         })
         //按钮点击
@@ -68,13 +77,11 @@
             $(".form-group").removeClass("has-error");
             $(this).attr("disabled", "disabled").val("修改中...");
             $('#editproductlist-ajaxform').submit();
-            //console.log($("#ProductList").val());
         })
     });
     //提交方法
     function formsubmit() {
         $('#editproductlist-ajaxform').ajaxSubmit(function (data) {
-            console.log(999);
             if (data == "SUCCESS") {
                 $('.modal-box').modal('hide');
                 alert("修改成功");
