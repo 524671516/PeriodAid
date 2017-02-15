@@ -7,16 +7,45 @@
     @Html.HiddenFor(m=>m.Status)
     @Html.HiddenFor(m=>m.CommitDateTime)
     @Html.HiddenFor(m=>m.CommitUserName)
-    @Html.HiddenFor(m=>m.CostAmount)
     @Html.HiddenFor(m=>m.CreateDateTime)
     @Html.HiddenFor(m=>m.EventTypeName)
     @Html.HiddenFor(m=>m.EventType)
     @Html.HiddenFor(m=>m.CreateUserName)
-    @Html.HiddenFor(m=>m.OrderAmount)
     @Html.HiddenFor(m=>m.OrderDetials)
-    @Html.HiddenFor(m=>m.SerialNo)
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @if (Model.Status == 1)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-3">活动编号</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.SerialNo, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20", @readonly = true } })
+                    @Html.ValidationMessageFor(model => model.SerialNo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">活动经费</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.CostAmount, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20", @readonly = true } })
+                    @Html.ValidationMessageFor(model => model.CostAmount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">订单数量</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.OrderAmount, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20",@readonly=true} })
+                    @Html.ValidationMessageFor(model => model.OrderAmount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+        }
+        else
+        {
+            @Html.HiddenFor(m => m.OrderAmount)
+            @Html.HiddenFor(m => m.SerialNo)
+            @Html.HiddenFor(m => m.CostAmount)
+
+        }
         <div class="form-group">
             <label class="control-label col-md-3">活动名称</label>
             <div class="col-md-9">
@@ -48,9 +77,26 @@
         </div>
         <div class="form-group">
             <label class="control-label col-md-3">活动门店</label>
-            <div class="col-md-5">
-                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px;" required></select>
+            <div class="col-md-4">
+                <select multiple id="AllStoreList" name="AllStoreList" class="form-control input-sm" style="height:200px;">
+                        
+                </select>
             </div>
+                <div class="col-md-1" style="padding:0">
+                    <ul class="text-center">
+                        <li><a class="btn btn-default btn-xs btn-info" href="javascript:;" id="add-btn">添加</a></li><br />
+                        <li><a class="btn btn-default btn-warning btn-xs" href="javascript:;" id="remove-btn">移除</a></li>
+                    </ul>
+                </div>
+            <div class="col-md-4">
+                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:200px;" required>
+                    @foreach (var item in Model.Off_Store)
+                    {
+                        <option value="@item.Id" selected>@item.StoreName</option>
+                    }
+                </select>
+            </div>
+
         </div>
         <div class="form-group">
             <label class="control-label col-md-3">活动细节</label>
@@ -61,13 +107,42 @@
         </div>  
         <div class="form-group">
             <div class="col-md-offset-3 col-md-9">
+               @if (Model.Status == 1)
+               {
+                <input type="submit" value="保存" class="btn btn-default" id="saleevent-modify" disabled/>
+               }
+               else
+               {
                 <input type="submit" value="保存" class="btn btn-default" id="saleevent-modify" />
+               }
             </div>
         </div>
     </div>
 }
 <script>
     $(function () {
+        $("#add-btn").on("click", function () {
+            $("#AllStoreList option:selected").each(function () {
+                $(this).remove();
+                $("#StoreList").append("<option value=" + "'"+$(this).val()+"'" + "selected>" + $(this).html() + "</option>");
+            })
+        })
+        $("#remove-btn").on("click", function () {
+            $("#StoreList option:selected").each(function () {
+                $(this).remove();
+                $("#AllStoreList").append("<option value=" + "'" + $(this).val() + "'" + ">" + $(this).html() + "</option>");
+                $('#AllStoreList option').sort(function (a, b) {
+                    var aText = $(a).text();
+                    var bText = $(b).text();
+                    if (aText < bText) return -1;
+                    if (aText > bText) return 1;
+                    return 0;
+                }).appendTo('#AllStoreList');
+            })
+        })
+        $("#reset-btn").click(function () {
+            $("#StoreList>option").removeAttr("selected");
+        })
         $("#StartDate").datepicker({
             dateFormat: 'yy-mm-dd'
         })
@@ -81,11 +156,11 @@
                 id: $("#Off_StoreSystem_Id").val()
             },
             success: function (data) {
-                $("#StoreList").html("");
-                console.log(data.result);
                 if (data.result == "SUCCESS") {
                     for (var i = 0; i < data.data.length; i++) {
-                        $("#StoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                        if (!$("#StoreList").find("option[value=" + data.data[i].Id + "]").val()) {
+                            $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                        }                       
                     }
                 } else {
                     alert("获取店铺列表失败!")
@@ -102,9 +177,10 @@
                 },
                 success: function (data) {
                     $("#StoreList").html("");
+                    $("#AllStoreList").html("");
                     if (data.result == "SUCCESS") {
                         for (var i = 0; i < data.data.length; i++) {
-                            $("#StoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                            $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
                         }
                     } else {
                         alert("获取店铺列表失败!")
@@ -126,6 +202,7 @@
         })
         //按钮点击
         $("#saleevent-modify").click(function () {
+            $("#StoreList option").prop("selected", true);
             $(".form-group").removeClass("has-error");
             $(this).attr("disabled", "disabled").val("修改中...");
             $('#edit-saleevent-ajaxform').submit();

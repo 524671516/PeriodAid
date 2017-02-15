@@ -9,8 +9,14 @@
             活动名称
         </th>
         <th style="width:15%">
+            申请人
+        </th>
+        <th style="width:18%">
             活动时间
         </th>
+        <th style="width:15%">
+            活动渠道
+        </th> 
         <th style="width:30%">
             活动状态
         </th>     
@@ -23,11 +29,17 @@
             <td>
                 <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Off_StoreSystem_Id" />
             </td>
-            <td class="ellipsis ">
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.EventTitle)
             </td>
             <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.CreateUserName)
+            </td>
+            <td class="ellipsis">
                 @Html.Encode(@item.EndDate.ToString("yyyy/MM/dd")+"-"+@item.StartDate.ToString("yyyy/MM/dd"))
+            </td>
+            <td class="ellipsis">
+                @Html.Encode(@item.Off_StoreSystem.SystemName)
             </td>
             <td class="ellipsis ">
                 @if (item.Status == 1)

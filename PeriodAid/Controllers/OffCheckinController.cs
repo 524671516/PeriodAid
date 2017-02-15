@@ -1080,7 +1080,7 @@ namespace PeriodAid.Controllers
             if (query == null)
             {
                 var list = (from m in _offlineDB.Off_SalesEvent
-                           where m.Off_StoreSystem_Id == user.DefaultSystemId
+                           where m.Off_StoreSystem.Off_System_Id== user.DefaultSystemId
                            && m.Status >= 0
                            orderby m.EndDate descending
                            select m).ToPagedList(_page,20);
@@ -1089,7 +1089,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in _offlineDB.Off_SalesEvent
-                           where m.Off_StoreSystem_Id == user.DefaultSystemId
+                           where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                            && m.Status >= 0 && (m.EventTitle.Contains(query) || m.SerialNo.Contains(query))
                            orderby m.EndDate descending
                            select m).ToPagedList(_page,20);
@@ -1102,6 +1102,7 @@ namespace PeriodAid.Controllers
         {
             var list = from m in _offlineDB.Off_Store
                        where m.Off_StoreSystemId == id
+                       orderby m.StoreName
                        select new { Id = m.Id, StoreName = m.StoreName };
             return Json(new { result = "SUCCESS", data = list });
         }
