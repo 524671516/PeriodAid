@@ -313,6 +313,7 @@ namespace PeriodAid.Models
             modelBuilder.Entity<Off_WeekendBreak>().HasMany(e => e.Off_WeekendBreakRecord).WithRequired(e => e.Off_WeekendBreak).HasForeignKey(e => e.WeekendBreakId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Off_StoreSystem>().HasMany(e => e.Off_Store).WithRequired(e => e.Off_StoreSystem).HasForeignKey(e => e.Off_StoreSystemId).WillCascadeOnDelete(false);
+            modelBuilder.Entity<Off_StoreSystem>().HasMany(e => e.Off_SalesEvent).WithRequired(e => e.Off_StoreSystem).HasForeignKey(e => e.Off_StoreSystem_Id).WillCascadeOnDelete(false);
         }
     }
 
@@ -717,13 +718,6 @@ namespace PeriodAid.Models
 
     public partial class Off_Store
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Off_Store()
-        {
-            Off_SalesInfo_Daily = new HashSet<Off_SalesInfo_Daily>();
-            Off_SalesInfo_Month = new HashSet<Off_SalesInfo_Month>();
-        }
-
         public int Id { get; set; }
 
         [Required]
@@ -1556,6 +1550,9 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Off_Store> Off_Store { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Off_SalesEvent> Off_SalesEvent { get; set; }
     }
 
     public partial class Off_SalesEvent
