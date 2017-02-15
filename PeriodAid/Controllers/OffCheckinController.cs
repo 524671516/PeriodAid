@@ -1108,6 +1108,11 @@ namespace PeriodAid.Controllers
         // 修改签呈
         public ActionResult EditSalesEvent(int id)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var QD = from m in _offlineDB.Off_StoreSystem
+                     where m.Off_System_Id == user.DefaultSystemId
+                     select m;
+            ViewBag.QD = new SelectList(QD, "Id", "SystemName");
             var model = _offlineDB.Off_SalesEvent.SingleOrDefault(m => m.Id == id);
             return PartialView(model);
         }

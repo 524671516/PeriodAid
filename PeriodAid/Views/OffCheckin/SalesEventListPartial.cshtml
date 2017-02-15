@@ -8,7 +8,7 @@
         <th style="width:15%">
             活动名称
         </th>
-        <th style="width:5%">
+        <th style="width:15%">
             活动时间
         </th>
         <th style="width:30%">
@@ -21,7 +21,7 @@
     {
         <tr>
             <td>
-                
+                <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Off_StoreSystem_Id" />
             </td>
             <td class="ellipsis ">
                 @Html.DisplayFor(modelItem => item.EventTitle)
@@ -30,7 +30,15 @@
                 @Html.Encode(@item.EndDate.ToString("yyyy/MM/dd")+"-"+@item.StartDate.ToString("yyyy/MM/dd"))
             </td>
             <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.Status)
+                @if (item.Status == 1)
+                {
+                    <span>已审核</span>
+                }
+                else
+                {
+                    <span>已提交</span>
+                }
+
             </td>
             <td>
                 @Html.ActionLink("修改", "EditSalesEvent", new { id = item.Id }, new { @class = "btn btn-xs btn-info saleevent-edit" })
@@ -56,7 +64,7 @@
             return false;
         });
         //修改信息
-        $(".saleeventedit").click(function () {
+        $(".saleevent-edit").click(function () {
             var url = $(this).attr("href")
             var head = "修改门店信息"
             $.ajax({
@@ -78,7 +86,7 @@
                     url: url,
                     type: "post",
                     success: function (data) {
-                        if (data.result == "SUCCESS") {
+                        if (data== "SUCCESS") {
                             setTimeout(function () {
                                 $.ajax({
                                     url: "/OffCheckin/SalesEventListPartial",

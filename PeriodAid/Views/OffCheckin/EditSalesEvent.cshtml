@@ -1,119 +1,157 @@
 ﻿@model PeriodAid.Models.Off_SalesEvent
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("EditSalesEvent", "OffCheckin", FormMethod.Post, new { id = "edit-saleevent-ajaxform" }))
 {
     @Html.AntiForgeryToken()
-    
+    @Html.HiddenFor(m=>m.Id)
+    @Html.HiddenFor(m=>m.Status)
+    @Html.HiddenFor(m=>m.CommitDateTime)
+    @Html.HiddenFor(m=>m.CommitUserName)
+    @Html.HiddenFor(m=>m.CostAmount)
+    @Html.HiddenFor(m=>m.CreateDateTime)
+    @Html.HiddenFor(m=>m.EventTypeName)
+    @Html.HiddenFor(m=>m.EventType)
+    @Html.HiddenFor(m=>m.CreateUserName)
+    @Html.HiddenFor(m=>m.OrderAmount)
+    @Html.HiddenFor(m=>m.OrderDetials)
+    @Html.HiddenFor(m=>m.SerialNo)
     <div class="form-horizontal">
-        <h4>Off_SalesEvent</h4>
-        <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
         <div class="form-group">
-            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SerialNo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SerialNo, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SerialNo, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Off_StoreSystem_Id, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Off_StoreSystem_Id, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Off_StoreSystem_Id, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EventType, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EventType, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EventType, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EventTypeName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EventTypeName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EventTypeName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EventTitle, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EventTitle, new { htmlAttributes = new { @class = "form-control" } })
+            <label class="control-label col-md-3">活动名称</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.EventTitle, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20" } })
                 @Html.ValidationMessageFor(model => model.EventTitle, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
-            @Html.LabelFor(model => model.EventDetials, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EventDetials, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EventDetials, "", new { @class = "text-danger" })
+            <label class="control-label col-md-3">开始时间</label>
+            <div class="col-md-9">
+                <input class="form-control" value=@Model.StartDate.ToString("yyyy-MM-dd") required name="StartDate" id="StartDate"/>
+               
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
-            @Html.LabelFor(model => model.OrderAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.OrderAmount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.OrderAmount, "", new { @class = "text-danger" })
+            <label class="control-label col-md-3">结束时间</label>
+            <div class="col-md-9">
+                <input class="form-control" value=@Model.EndDate.ToString("yyyy-MM-dd") required  name="EndDate" id="EndDate"/>
+                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
-            @Html.LabelFor(model => model.CostAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CostAmount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CostAmount, "", new { @class = "text-danger" })
+            <label class="control-label col-md-3">渠道</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.Off_StoreSystem_Id, ViewBag.QD as SelectList,  new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.Off_StoreSystem_Id, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
-            @Html.LabelFor(model => model.OrderDetials, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.OrderDetials, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.OrderDetials, "", new { @class = "text-danger" })
+            <label class="control-label col-md-3">活动门店</label>
+            <div class="col-md-5">
+                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px;" required></select>
             </div>
         </div>
-
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+            <label class="control-label col-md-3">活动细节</label>
+            <div class="col-md-9">
+                @Html.TextAreaFor(model => model.EventDetails, new { @class = "form-control", @maxlength = "20" } )
+                @Html.ValidationMessageFor(model => model.EventDetails, "", new { @class = "text-danger" })
+            </div>
+        </div>  
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" class="btn btn-default" id="saleevent-modify" />
             </div>
         </div>
     </div>
 }
+<script>
+    $(function () {
+        $("#StartDate").datepicker({
+            dateFormat: 'yy-mm-dd'
+        })
+        $("#EndDate").datepicker({
+            dateFormat: 'yy-mm-dd'
+        })
+        $.ajax({
+            url: "/OffCheckin/GetStoreListByStoreSystem",
+            type: "post",
+            data: {
+                id: $("#Off_StoreSystem_Id").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                console.log(data.result);
+                if (data.result == "SUCCESS") {
+                    for (var i = 0; i < data.data.length; i++) {
+                        $("#StoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                    }
+                } else {
+                    alert("获取店铺列表失败!")
+                }
+               
+            }
+        })
+        $("#Off_StoreSystem_Id").on("change", function () {
+            $.ajax({
+                url: "/OffCheckin/GetStoreListByStoreSystem",
+                type: "post",
+                data: {
+                    id: $("#Off_StoreSystem_Id").val()
+                },
+                success: function (data) {
+                    $("#StoreList").html("");
+                    if (data.result == "SUCCESS") {
+                        for (var i = 0; i < data.data.length; i++) {
+                            $("#StoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                        }
+                    } else {
+                        alert("获取店铺列表失败!")
+                    }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+                }
+            })
+        })
+        //表单验证
+        $('#edit-saleevent-ajaxform').validate({
+            focusCleanup: true,
+            errorPlacement: function (error, element) {
+                $("#saleevent-modify").attr("disabled", false).val("保存");
+                element.parent().parent().addClass("has-error");
+            },
+            submitHandler: function (form) {
+                setTimeout(formsubmit, 1000);
+            },
+        })
+        //按钮点击
+        $("#saleevent-modify").click(function () {
+            $(".form-group").removeClass("has-error");
+            $(this).attr("disabled", "disabled").val("修改中...");
+            $('#edit-saleevent-ajaxform').submit();
+        })
+    });
+    function formsubmit() {
+        $('#edit-saleevent-ajaxform').ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                $('.modal-box').modal('hide');
+                alert("修改成功");
+                $.ajax({
+                    url: "/OffCheckin/SalesEventListPartial",
+                    success: function (data) {
+                        $("#saleevent-list").html(data);
+                    },
+                    error: function (e) {
+                        alert("提交失败");
+                        $("#saleevent-modify").attr("disabled", false).val("保存");
+                    }
+                })
+            }
+            else {
+                alert("提交失败");
+                $("#saleevent-modify").attr("disabled", false).val("保存");
+            }
+        });
+    }
+</script>
+

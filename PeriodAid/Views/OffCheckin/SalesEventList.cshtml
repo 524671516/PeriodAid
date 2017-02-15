@@ -32,30 +32,30 @@
             }
         })
     });
-    ////搜索
-    //$("#offstore-search-btn").click(function () {
-    //    $.ajax({
-    //        url: "/OffStore/StoreListPartial",
-    //        data: {
-    //            query: $("#offstore-search-query").val()
-    //        },
-    //        success: function (data) {
-    //            $("#offstore-list").html(data);
-    //        }
-    //    });
-    //});
-    ////新增门店
-    //$("#offstore-store-create").click(function () {
-    //    var link_url = "/OffStore/CreateStorePartial"
-    //    var head = "新增门店"
-    //    $.ajax({
-    //        url: link_url,
-    //        success: function (data) {
-    //            $(".modal-con").html(data);
-    //            $(".modal-box").modal();
-    //            $(".modal-head").text(head);
-    //        }
-    //    })
-    //    return false
-    //});
+    //搜索
+    $("#offstore-search-btn").click(function () {
+        $.ajax({
+            url: "/OffStore/StoreListPartial",
+            data: {
+                query: $("#offstore-search-query").val()
+            },
+            success: function (data) {
+                $("#offstore-list").html(data);
+            }
+        });
+    });
+    //新增门店
+    $("#saleevent-create").click(function () {
+        var link_url = "/OffStore/CreateStorePartial"
+        var head = "新增门店"
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head);
+            }
+        })
+        return false
+    });
 </script>
