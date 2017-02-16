@@ -86,6 +86,8 @@
         $('#offsales-month-form').ajaxForm(function (data) {
             if (data == "SUCCESS") {              
                 alert("修改成功");
+                $('.modal-box').modal('hide');
+                $(".modal-backdrop").remove();
                 $.ajax({
                     url: "/OffSales/MonthSalesListPartial",
                     success: function (data) {

@@ -260,24 +260,28 @@
         $(".date-select").datepicker();
     });
     function getDel(k, d_id) {
-        var del_confirm = confirm("确认要删除记录吗?");
-        if (del_confirm) {
-            $.ajax({
-                url: "/OffExpenses/DeleteExpensesDetailsAjax",
-                type: "post",
-                data: {
-                    id: d_id
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        $(k).closest("ul").remove();
+        confirm("确认要删除记录吗?", "你将把此条记录删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: "/OffExpenses/DeleteExpensesDetailsAjax",
+                    type: "post",
+                    data: {
+                        id: d_id
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $(k).closest("ul").remove();
+                        }
+                        else {
+                            alert("删除失败", "", function () {
+                                //after click the confirm button, will run this callback function
+                            }, { type: 'error' });
+                        }
                     }
-                    else {
-                        alert("删除失败");
-                    }
-                }
-            })
-        }
+                })
+            }
+        });
+
     }
     $("#offexpenses-audit").click(function(){
         var url=$(this).attr("href")
