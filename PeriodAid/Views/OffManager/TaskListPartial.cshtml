@@ -67,27 +67,28 @@
     });
     //删除
     $(".offmanager-task-del").click(function () {
-        var result = confirm("确定删除该信息吗？")
-        if (result) {
-            var link_url = $(this).attr("href")
-            $.ajax({
-                type: "post",
-                url: link_url,
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        setTimeout(function () {
-                            $.ajax({
-                                url: "/OffManager/TaskListPartial",
-                                success: function (data) {
-                                    $("#offmanager-task-list").html(data)
-                                }
-                            });
-                            alert("删除成功")
-                        }, 1000);
+        var link_url = $(this).attr("href")
+        confirm("确定要删除该信息吗?", "你将把此条信息从签到列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "post",
+                    url: link_url,
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffManager/TaskListPartial",
+                                    success: function (data) {
+                                        $("#offmanager-task-list").html(data)
+                                    }
+                                });
+                                alert("删除成功")
+                            }, 1000);
+                        }
                     }
-                }
-            })
-        }
+                })
+            }
+        });
         return false;
     });
 </script>

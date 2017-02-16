@@ -117,24 +117,25 @@
     });
     
     $(".offmanager-manager-cancel").click(function () {
-        var result = confirm("确定要删除管理员吗？")
-        if (result) {
-            var url = $(this).attr("href")
-            $.ajax({
-                url: url,
-                type: "post",
-                success: function (data) {
-                    if (getDeleteResult(data)) {
-                        $.ajax({
-                            url: "/OffManager/ManagerListPartial",
-                            success: function (data) {
-                                $("#offmanager-manager-list").html(data)
-                            }
-                        })
+        var url = $(this).attr("href")
+        confirm("确定要删除管理员吗?", "你将把此条信息从管理员列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (getDeleteResult(data)) {
+                            $.ajax({
+                                url: "/OffManager/ManagerListPartial",
+                                success: function (data) {
+                                    $("#offmanager-manager-list").html(data)
+                                }
+                            })
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
         return false;
     });
 </script>

@@ -104,29 +104,32 @@
         });
         //删除门店
         $(".saleevent-del").click(function () {
-            var result = confirm("确定删除吗？");
-            if (result) {
-                var url = $(this).attr("href");
-                $.ajax({
-                    url: url,
-                    type: "post",
-                    success: function (data) {
-                        if (data== "SUCCESS") {
-                            setTimeout(function () {
-                                $.ajax({
-                                    url: "/OffCheckin/SalesEventListPartial",
-                                    success: function (data) {
-                                        $("#saleevent-list").html(data);
-                                    }
-                                })
-                                alert("删除成功")
-                            }, 1000);
-                        } else {
-                            alert("删除失败")
+            var url = $(this).attr("href");
+            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: url,
+                        type: "post",
+                        success: function (data) {
+                            if (data == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/OffCheckin/SalesEventListPartial",
+                                        success: function (data) {
+                                            $("#saleevent-list").html(data);
+                                        }
+                                    })
+                                    alert("删除成功")
+                                }, 1000);
+                            } else {
+                                alert("删除失败", "未知错误", function () {
+                                    //after click the confirm button, will run this callback function
+                                }, { type: 'error' });
+                            }
                         }
-                    }
-                })
-            }
+                    })
+                }
+            });
             return false;
         })
     });

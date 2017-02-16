@@ -67,29 +67,30 @@
     });
     //删除
     $(".offmanager-announcement-del").click(function () {
-        var result = confirm("确定删除该信息吗？");
-        if (result) {
-            var url = $(this).attr("href");
-            $.ajax({
-                url: url,
-                type: "post",
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        setTimeout(function () {
-                            $.ajax({
-                                url: "/OffManager/AnnouncementListPartial",
-                                success: function (list) {
-                                    $("#offmanager-announcement-list").html(list);
-                                }
-                            });
-                            alert("删除成功")
-                        }, 1000);
-                    } else {
-                        alert("删除失败")
+        var url = $(this).attr("href")
+        confirm("确定要删除该信息吗?", "你将把此条信息从督导日报列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffManager/AnnouncementListPartial",
+                                    success: function (list) {
+                                        $("#offmanager-announcement-list").html(list);
+                                    }
+                                });
+                                alert("删除成功")
+                            }, 1000);
+                        } else {
+                            alert("删除失败")
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
         return false;
     });
 </script>

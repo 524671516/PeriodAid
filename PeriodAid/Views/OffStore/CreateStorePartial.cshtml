@@ -82,15 +82,18 @@
                         $("#offstore-list").html(data);
                     },
                     error: function () {
-                        alert("提交失败");
-                        $("#offstore-store-save").attr("disabled", false).val("保存");
+                        alert("添加门店信息失败", "发生未知错误", function () {
+                            $("#offstore-store-save").attr("disabled", false).val("保存");
+                        }, { type: 'error' });
                     }
                 })
             }
             else {
-                alert("提交失败");
-                $("#offstore-store-save").attr("disabled", false).val("保存");
+                alert("添加门店信息失败", "请刷新重新填写后再尝试提交一下!", function () {
+                    $("#offstore-store-save").attr("disabled", false).val("保存");
+                }, { type: 'error' });
             }
+               
         });
     }
 </script>

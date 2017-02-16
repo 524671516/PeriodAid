@@ -114,36 +114,39 @@
         // 判断是否至少选择一项
         var checkedNum = $("input[name='subChk']:checked").length;
         if (checkedNum == 0) {
-            alert("请选择至少一项！");
+            alert("操作失败", "请至少选择一项", function () {
+                //after click the confirm button, will run this callback function
+            }, { type: 'error' });
             return;
         }
-        // 批量选择
-        if (confirm("确定要删除所选项目？")) {
-            var checkedList = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-            });
-            $.ajax({
-                type: "post",
-                url: url,
-                data: {
-                    ids: checkedList.toString()
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        setTimeout(function () {
-                            $.ajax({
-                                url: link_url,
-                                success: function (data) {
-                                    $list.html(data)
-                                }
-                            });
-                            alert("批量删除成功")
-                        }, 1000);
+        confirm("确定要批量删除吗?", "你将把这些信息从日报列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                var checkedList = new Array();
+                $("input[name='subChk']:checked").each(function () {
+                    checkedList.push($(this).val());
+                });
+                $.ajax({
+                    type: "post",
+                    url: url,
+                    data: {
+                        ids: checkedList.toString()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: link_url,
+                                    success: function (data) {
+                                        $list.html(data)
+                                    }
+                                });
+                                alert("批量删除成功")
+                            }, 1000);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });      
     });
     //下载工资表
     $("#offseller-seller-updown").click(function () {

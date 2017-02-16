@@ -75,29 +75,30 @@
     });
     //驳回
     $(".offmanager-request-del").click(function () {
-        var result = confirm("是否驳回该类需求提报")
         var link_url = $(this).attr("href");
-        if (result) {
-            $.ajax({
-                url: link_url,
-                type: "post",
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        setTimeout(function () {
-                            $.ajax({
-                                url: "/OffManager/RequestListPartial",
-                                success: function (list) {
-                                    $("#offmanager-request-list").html(list)
-                                }
-                            });
-                            alert("成功驳回")
-                        }, 1000);
-                    } else {
-                        alert("驳回无效")
+        confirm("确定要驳回吗?", "你将把此需求驳回", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffManager/RequestListPartial",
+                                    success: function (list) {
+                                        $("#offmanager-request-list").html(list)
+                                    }
+                                });
+                                alert("成功驳回")
+                            }, 1000);
+                        } else {
+                            alert("驳回无效")
+                        }
                     }
-                }
-            })
-        }
+                })
+            }
+        });
         return false;
     });
 </script>

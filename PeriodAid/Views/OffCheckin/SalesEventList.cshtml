@@ -15,7 +15,7 @@
 </table>
 <div>
     <ul class="list-inline list-unstyled row">
-        <li><a class="btn btn-info btn-sm" id="saleevent-create"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动</a></li>
+        <li><a class="btn btn-info btn-sm" id="saleevent-add"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动</a></li>
     </ul>
 </div>
 <br />
@@ -45,18 +45,17 @@
         });
     });
     //新增门店
-    $("#saleevent-create").click(function () {
-        alert("功能还在创建中...")
-        //var link_url = "/OffStore/CreateStorePartial"
-        //var head = "新增门店"
-        //$.ajax({
-        //    url: link_url,
-        //    success: function (data) {
-        //        $(".modal-con").html(data);
-        //        $(".modal-box").modal();
-        //        $(".modal-head").text(head);
-        //    }
-        //})
-        //return false
+    $("#saleevent-add").click(function () {
+        var link_url = "/OffCheckin/CreateSalesEvent"
+        var head = "新增门店"
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head);
+            }
+        })
+        return false
     });
 </script>

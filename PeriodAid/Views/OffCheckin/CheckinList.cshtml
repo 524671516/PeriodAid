@@ -37,28 +37,29 @@
             }
         });
         $(document).delegate(".offcheckin-cancel-checkin", "click", function () {
-            var cfm = confirm("确认要删除签到信息吗？");
-            if (cfm) {
-                var link_url = $(this).attr("href");
-                $.ajax({
-                    url: link_url,
-                    type: "post",
-                    success: function (data) {
-                        if (getDeleteResult(data)){
-                            $.ajax({
-                                url: "/OffCheckin/CheckinListPartial",
-                                data: {
-                                    status: $("#offcheckin-status-val").val(),
-                                    query: $("#offcheckin-search-query").val()
-                                },
-                                success: function (data) {
-                                    $("#checkinlist").html(data);
-                                }
-                            });
+            var link_url = $(this).attr("href");
+            confirm("确认要删除签到信息吗?", "你将把此条信息从签到列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: link_url,
+                        type: "post",
+                        success: function (data) {
+                            if (getDeleteResult(data)) {
+                                $.ajax({
+                                    url: "/OffCheckin/CheckinListPartial",
+                                    data: {
+                                        status: $("#offcheckin-status-val").val(),
+                                        query: $("#offcheckin-search-query").val()
+                                    },
+                                    success: function (data) {
+                                        $("#checkinlist").html(data);
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
             return false;
         });
     });

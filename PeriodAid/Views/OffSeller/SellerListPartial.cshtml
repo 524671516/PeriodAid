@@ -77,29 +77,31 @@
         });
         //删除
         $(".offseller-seller-del").click(function () {
-            var result = confirm("确定删除促销员信息吗？")
-            if (result) {
-                var url = $(this).attr("href")
-                $.ajax({
-                    url: url,
-                    type: "post",
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            setTimeout(function () {
-                                $.ajax({
-                                    url: "/OffSeller/SellerListPartial",
-                                    success: function (data) {
-                                        $("#offseller-seller-list").html(data);
-                                    }
-                                });
-                                alert("删除成功")
-                            }, 1000);
-                        } else if (data.result == "FAIL") {
-                            alert("删除错误");
+            var url = $(this).attr("href");
+            confirm("确定要删除吗?", "你将把此条信息从促销员列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: url,
+                        type: "post",
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/OffSeller/SellerListPartial",
+                                        success: function (data) {
+                                            $("#offseller-seller-list").html(data);
+                                        }
+                                    });
+                                    alert("删除成功")
+                                }, 1000);
+                            } else if (data.result == "FAIL") {
+                                alert("删除失败", "", function () {
+                                }, { type: 'error' });
+                            }
                         }
-                    }
-                })
-            }
+                    })
+                }
+            });
             return false;
         })
 

@@ -91,46 +91,50 @@
         // 判断是否至少选择一项
         var checkedNum = $("input[name='subChk']:checked").length;
         if (checkedNum == 0) {
-            alert("请选择至少一项！");
+            alert("操作失败", "请至少选择一项", function () {
+            }, { type: 'error' });
             return;
         }
         // 批量选择
-        if (confirm("确定要删除所选项目？")) {
-            var checkedList = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-            });
-            $.ajax({
-                url: url,
-                type: "post",
-                data: {
-                    ids: checkedList.toString()
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        setTimeout(function () {
-                            $.ajax({
-                                url: link_url,
-                                data: {
-                                    date: $("#offsalesschedule-current-date").val()
-                                },
-                                success: function (data) {
-                                    $list.html(data)
-                                }
-                            })
-                            alert("删除成功")
-                        }, 1000);
+        confirm("确定要删除吗?", "你将把这些信息从门店日程列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                var checkedList = new Array();
+                $("input[name='subChk']:checked").each(function () {
+                    checkedList.push($(this).val());
+                });
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: {
+                        ids: checkedList.toString()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: link_url,
+                                    data: {
+                                        date: $("#offsalesschedule-current-date").val()
+                                    },
+                                    success: function (data) {
+                                        $list.html(data)
+                                    }
+                                })
+                                alert("删除成功")
+                            }, 1000);
+                        }
                     }
-                }
-            });
-            return false
-        }
+                });
+                return false
+            }
+        });
     })
     //批量修改时间及工资
     $("#offsalesschedule-batchedit").click(function () {
         var checkedNum = $("input[name='subChk']:checked").length;
         if (checkedNum == 0) {
-            alert("请选择至少一项！");
+            alert("操作失败", "请至少选择一项", function () {
+            }, { type: 'error' });
             return;
         } else {
             var checkedList = new Array();
@@ -161,35 +165,38 @@
         }
     });
     $(".check-sure").click(function () {
-        if (confirm("确认要修改所选门店的相关信息吗？")) {
-            var link_url = "/OffCheckin/EditScheduleBatchAjax";
-            var checkedList = new Array();
-            $("input[name='subChk']:checked").each(function () {
-                checkedList.push($(this).val());
-            });
-            var starttime = $(".editTimeIn").val();
-            var finishtime = $(".editTimeOut").val();
-            var salary = $(".editSalary").val();
-            var time = $(".dataTime").val();
-            $.ajax({
-                type: "post",
-                url: link_url,
-                data: {
-                    ids: checkedList.toString(),
-                    date: time,
-                    starttime: starttime,
-                    finishtime: finishtime,
-                    salary: salary
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        $("#offsalesschedule-modal-batchedit").modal('hide');
-                        var attr = $.getUrlParam("date");
-                        window.location = "/OffCheckin/ViewScheduleDetails?date=" + attr;
+        confirm("确定要修改吗?", "你将修改所选项的信息", function (isConfirm) {
+            if (isConfirm) {
+                var link_url = "/OffCheckin/EditScheduleBatchAjax";
+                var checkedList = new Array();
+                $("input[name='subChk']:checked").each(function () {
+                    checkedList.push($(this).val());
+                });
+                var starttime = $(".editTimeIn").val();
+                var finishtime = $(".editTimeOut").val();
+                var salary = $(".editSalary").val();
+                var time = $(".dataTime").val();
+                $.ajax({
+                    type: "post",
+                    url: link_url,
+                    data: {
+                        ids: checkedList.toString(),
+                        date: time,
+                        starttime: starttime,
+                        finishtime: finishtime,
+                        salary: salary
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#offsalesschedule-modal-batchedit").modal('hide');
+                            var attr = $.getUrlParam("date");
+                            window.location = "/OffCheckin/ViewScheduleDetails?date=" + attr;
+                        }
                     }
-                }
-            })
-        }
+                })
+                return false
+            }
+        });
     });
     $(".check-fail").click(function () {
         $("#offsalesschedule-modal-batchedit").modal('hide')

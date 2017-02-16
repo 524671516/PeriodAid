@@ -66,31 +66,33 @@
         });
         //删除产品
         $(".offproduct-product-del").click(function () {
-            var result = confirm("确定要删除该产品信息吗？")
-            if (result) {
-                var link_url = $(this).attr("href")
-                $.ajax({
-                    url: link_url,
-                    type: "post",
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            setTimeout(function () {
-                                $.ajax({
-                                    url: "/OffProduct/ProductListPartial",
-                                    success: function (data) {
-                                        $("#offproduct-product-list").html(data)
-                                    }
-                                });
-                                alert("删除成功")
-                            }, 1000);
+            var link_url = $(this).attr("href");
+            confirm("确定要删除吗?", "你将把此条信息从产品列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: link_url,
+                        type: "post",
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/OffProduct/ProductListPartial",
+                                        success: function (data) {
+                                            $("#offproduct-product-list").html(data)
+                                        }
+                                    });
+                                    alert("删除成功")
+                                }, 1000);
+                            }
+                            else if (data.result == "FAIL") {
+                                alert("删除失败", "未知错误", function () {
+                                    //after click the confirm button, will run this callback function
+                                }, { type: 'error' });
+                            }
                         }
-                        else if (data.result == "FAIL") {
-                            alert("无法删除")
-                        }
-                    }
-                })
-
-            }
+                    })
+                }
+            });          
             return false
         })
     });

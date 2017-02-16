@@ -94,28 +94,28 @@
         });
         //删除
         $(".offsales-del-daily").click(function () {
-            var result = confirm("确定删除吗？")
-            if (result) {
-                var url = $(this).attr("href")
-                $.ajax({
-                    url: url,
-                    type: "post",
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            setTimeout(function () {
-                                $.ajax({
-                                    url: "/OffSales/DailySalesListPartial",
-                                    success: function (data) {
-                                        $("#offsales-list").html(data);
-                                    }
-                                });
-                                alert("删除成功");
-                            }, 1000);
+            var url = $(this).attr("href");
+            confirm("确定要删除吗?", "你将把此条信息从日报列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: url,
+                        type: "post",
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/OffSales/DailySalesListPartial",
+                                        success: function (data) {
+                                            $("#offsales-list").html(data);
+                                        }
+                                    });
+                                    alert("删除成功");
+                                }, 1000);
+                            }
                         }
-                    }
-                });
-
-            }
+                    });
+                }
+            });
             return false;
         })
     });

@@ -1,51 +1,22 @@
 ﻿@model PeriodAid.Models.Off_SalesEvent
 
-@using (Html.BeginForm("EditSalesEvent", "OffCheckin", FormMethod.Post, new { id = "edit-saleevent-ajaxform" }))
+@using (Html.BeginForm("CreateSalesEvent", "OffCheckin", FormMethod.Post, new { id = "create-saleevent-ajaxform" }))
 {
     @Html.AntiForgeryToken()
-    @Html.HiddenFor(m=>m.Id)
-    @Html.HiddenFor(m=>m.Status)
-    @Html.HiddenFor(m=>m.CommitDateTime)
-    @Html.HiddenFor(m=>m.CommitUserName)
-    @Html.HiddenFor(m=>m.CreateDateTime)
-    @Html.HiddenFor(m=>m.EventTypeName)
-    @Html.HiddenFor(m=>m.EventType)
-    @Html.HiddenFor(m=>m.CreateUserName)
-    @Html.HiddenFor(m=>m.OrderDetials)
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.CommitDateTime)
+    @Html.HiddenFor(m => m.CommitUserName)
+    @Html.HiddenFor(m => m.CreateDateTime)
+    @Html.HiddenFor(m => m.EventTypeName)
+    @Html.HiddenFor(m => m.EventType)
+    @Html.HiddenFor(m => m.CreateUserName)
+    @Html.HiddenFor(m => m.OrderDetials)
+    @Html.HiddenFor(m => m.OrderAmount)
+    @Html.HiddenFor(m => m.SerialNo)
+    @Html.HiddenFor(m => m.CostAmount)
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @if (Model.Status == 1)
-        {
-            <div class="form-group">
-                <label class="control-label col-md-3">活动编号</label>
-                <div class="col-md-9">
-                    @Html.EditorFor(model => model.SerialNo, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20", @readonly = true } })
-                    @Html.ValidationMessageFor(model => model.SerialNo, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-md-3">活动经费</label>
-                <div class="col-md-9">
-                    @Html.EditorFor(model => model.CostAmount, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20", @readonly = true } })
-                    @Html.ValidationMessageFor(model => model.CostAmount, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-md-3">订单数量</label>
-                <div class="col-md-9">
-                    @Html.EditorFor(model => model.OrderAmount, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20",@readonly=true} })
-                    @Html.ValidationMessageFor(model => model.OrderAmount, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-        }
-        else
-        {
-            @Html.HiddenFor(m => m.OrderAmount)
-            @Html.HiddenFor(m => m.SerialNo)
-            @Html.HiddenFor(m => m.CostAmount)
-
-        }
         <div class="form-group">
             <label class="control-label col-md-3">活动名称</label>
             <div class="col-md-9">
@@ -56,44 +27,39 @@
         <div class="form-group">
             <label class="control-label col-md-3">开始时间</label>
             <div class="col-md-9">
-                <input class="form-control" value=@Model.StartDate.ToString("yyyy-MM-dd") required name="StartDate" id="StartDate" dateISO=true/>
-               
+                <input class="form-control"  required name="StartDate" id="StartDate" dateISO=true/>
+
                 @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-3">结束时间</label>
             <div class="col-md-9">
-                <input class="form-control" value=@Model.EndDate.ToString("yyyy-MM-dd") required  name="EndDate" id="EndDate" dateISO=true/>
+                <input class="form-control" required  name="EndDate" id="EndDate" dateISO=true/>
                 @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-3">渠道</label>
             <div class="col-md-9">
-                @Html.DropDownListFor(model => model.Off_StoreSystem_Id, ViewBag.QD as SelectList,  new { @class = "form-control", @required = "required" })
+                @Html.DropDownListFor(model => model.Off_StoreSystem_Id, ViewBag.StoreSystemList as SelectList, new { @class = "form-control", @required = "required" })
                 @Html.ValidationMessageFor(model => model.Off_StoreSystem_Id, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-3">活动门店</label>
             <div class="col-md-4">
-                <select multiple id="AllStoreList" name="AllStoreList" class="form-control input-sm" style="height:200px;">
-                        
-                </select>
+                <select multiple id="AllStoreList" name="AllStoreList" class="form-control input-sm" style="height:200px;"></select>
             </div>
-                <div class="col-md-1" style="padding:0">
-                    <ul class="text-center">
-                        <li><a class="btn btn-default btn-xs btn-info" href="javascript:;" id="add-btn">添加</a></li><br />
-                        <li><a class="btn btn-default btn-warning btn-xs" href="javascript:;" id="remove-btn">移除</a></li>
-                    </ul>
-                </div>
+            <div class="col-md-1" style="padding:0">
+                <ul class="text-center">
+                    <li><a class="btn btn-default btn-xs btn-info" href="javascript:;" id="add-btn">添加</a></li>
+                    <br />
+                    <li><a class="btn btn-default btn-warning btn-xs" href="javascript:;" id="remove-btn">移除</a></li>
+                </ul>
+            </div>
             <div class="col-md-4">
-                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:200px;" required>
-                    @foreach (var item in Model.Off_Store)
-                    {
-                        <option value="@item.Id" selected>@item.StoreName</option>
-                    }
+                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:200px;" required>              
                 </select>
             </div>
 
@@ -101,20 +67,13 @@
         <div class="form-group">
             <label class="control-label col-md-3">活动细节</label>
             <div class="col-md-9">
-                @Html.TextAreaFor(model => model.EventDetails, new { @class = "form-control", @maxlength = "20" } )
+                @Html.TextAreaFor(model => model.EventDetails, new { @class = "form-control", @maxlength = "20",@required="required" })
                 @Html.ValidationMessageFor(model => model.EventDetails, "", new { @class = "text-danger" })
             </div>
-        </div>  
+        </div>
         <div class="form-group">
             <div class="col-md-offset-3 col-md-9">
-               @if (Model.Status == 1)
-               {
-                <input type="submit" value="保存" class="btn btn-default" id="saleevent-modify" disabled/>
-               }
-               else
-               {
-                <input type="submit" value="保存" class="btn btn-default" id="saleevent-modify" />
-               }
+                    <input type="submit" value="保存" class="btn btn-default" id="saleevent-create" />
             </div>
         </div>
     </div>
@@ -146,9 +105,6 @@
                 }).appendTo('#AllStoreList');
             })
         })
-        $("#reset-btn").click(function () {
-            $("#StoreList>option").removeAttr("selected");
-        })     
         $.ajax({
             url: "/OffCheckin/GetStoreListByStoreSystem",
             type: "post",
@@ -160,14 +116,14 @@
                     for (var i = 0; i < data.data.length; i++) {
                         if (!$("#StoreList").find("option[value=" + data.data[i].Id + "]").val()) {
                             $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
-                        }                       
+                        }
                     }
                 } else {
                     alert("获取店铺列表失败", "尝试刷新页面重新获取", function () {
-                        $("#saleevent-modify").attr("disabled", false).val("保存");
+                        $("#saleevent-create").attr("disabled", false).val("保存");
                     }, { type: 'error' });
                 }
-               
+
             }
         })
         $("#Off_StoreSystem_Id").on("change", function () {
@@ -186,7 +142,7 @@
                         }
                     } else {
                         alert("获取店铺列表失败", "尝试刷新页面重新获取", function () {
-                            $("#saleevent-modify").attr("disabled", false).val("保存");
+                            $("#saleevent-create").attr("disabled", false).val("保存");
                         }, { type: 'error' });
                     }
 
@@ -194,16 +150,16 @@
             })
         })
         //表单验证
-        $('#edit-saleevent-ajaxform').validate({
+        $('#create-saleevent-ajaxform').validate({
             focusCleanup: true,
             errorPlacement: function (error, element) {
-                $("#saleevent-modify").attr("disabled", false).val("保存");
+                $("#saleevent-create").attr("disabled", false).val("保存");
                 element.parent().parent().addClass("has-error");
             },
             submitHandler: function (form) {
-                if ($("#StartDate").val() > $("#EndDate").val()) {                  
-                    alert("修改活动信息失败", "开始时间不能大于结束时间", function () {
-                        $("#saleevent-modify").attr("disabled", false).val("保存");
+                if ($("#StartDate").val() > $("#EndDate").val()) {
+                    alert("添加活动信息失败", "开始时间不能大于结束时间", function () {
+                        $("#saleevent-create").attr("disabled", false).val("保存");
                     }, { type: 'error' });
                 } else {
                     setTimeout(formsubmit, 1000);
@@ -211,36 +167,39 @@
             },
         })
         //按钮点击
-        $("#saleevent-modify").click(function () {
+        $("#saleevent-create").click(function () {
             $("#StoreList option").prop("selected", true);
             $(".form-group").removeClass("has-error");
-            $(this).attr("disabled", "disabled").val("修改中...");
-            $('#edit-saleevent-ajaxform').submit();
+            $(this).attr("disabled", "disabled").val("添加中...");
+            $('#create-saleevent-ajaxform').submit();
         })
     });
     function formsubmit() {
-        $('#edit-saleevent-ajaxform').ajaxSubmit(function (data) {
+        $('#create-saleevent-ajaxform').ajaxSubmit(function (data) {
             if (data == "SUCCESS") {
                 $('.modal-box').modal('hide');
-                alert("修改成功");
+                alert("添加活动信息成功");
                 $.ajax({
                     url: "/OffCheckin/SalesEventListPartial",
                     success: function (data) {
                         $("#saleevent-list").html(data);
                     },
                     error: function (e) {
-                        alert("修改活动信息失败", "发生未知错误", function () {
-                            $("#saleevent-modify").attr("disabled", false).val("保存");
+                        alert("添加活动信息失败", "发生未知错误", function () {
+                            $("#saleevent-create").attr("disabled", false).val("保存");
                         }, { type: 'error' });
+                        $("#saleevent-create").attr("disabled", false).val("保存");
                     }
                 })
             }
             else {
-                alert("修改活动信息失败", "请刷新页面重新填写后再尝试提交一下!", function () {
-                    $("#saleevent-modify").attr("disabled", false).val("保存");
+                alert("添加活动信息失败", "请刷新页面重新填写后再尝试提交一下!", function () {
+                    $("#saleevent-create").attr("disabled", false).val("保存");
                 }, { type: 'error' });
+                $("#saleevent-create").attr("disabled", false).val("保存");
             }
         });
     }
 </script>
+
 

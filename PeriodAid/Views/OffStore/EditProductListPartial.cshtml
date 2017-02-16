@@ -91,14 +91,16 @@
                         $("#storesystem-list").html(data);
                     },
                     error: function () {
-                        alert("提交失败");
-                        $("#editproductlist-modify").attr("disabled", false).val("保存");
+                        alert("修改产品信息失败", "发生未知错误", function () {
+                            $("#editproductlist-modify").attr("disabled", false).val("保存");
+                        }, { type: 'error' });                     
                     }
                 })
             }
             else {
-                alert("提交失败");
-                $("#editproductlist-modify").attr("disabled", false).val("保存");
+                alert("修改产品信息失败", "请刷新页面重新填写后再尝试提交一下!", function () {
+                    $("#editproductlist-modify").attr("disabled", false).val("保存");
+                }, { type: 'error' });
             }
         });
     }

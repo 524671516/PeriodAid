@@ -97,30 +97,31 @@
     });
     //删除
     $(".offsales-schedule-del").click(function () {
-        var result = confirm("确认要删除信息吗？");
-        if (result) {
-            var link_url = $(this).attr("href");
-            $.ajax({
-                url: link_url,
-                type: "post",
-                success: function (data) {
-                    if (data.data == "SUCCESS") {
-                        setTimeout(function () {
-                            $.ajax({
-                                url: "/OffCheckin/ViewScheduleDetailsPartial",
-                                data: {
-                                    date: $("#offsalesschedule-current-date").val()
-                                },
-                                success: function (data) {
-                                    $("#offsalesschedule-list").html(data)
-                                }
-                            });
-                            alert("删除成功")
-                        }, 1000);
+        var link_url = $(this).attr("href");
+        confirm("确定要删除吗?", "你将把此条信息从门店日程列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.data == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffCheckin/ViewScheduleDetailsPartial",
+                                    data: {
+                                        date: $("#offsalesschedule-current-date").val()
+                                    },
+                                    success: function (data) {
+                                        $("#offsalesschedule-list").html(data)
+                                    }
+                                });
+                                alert("删除成功")
+                            }, 1000);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
         return false;
     });
 </script>

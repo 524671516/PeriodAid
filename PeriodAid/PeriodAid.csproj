@@ -267,6 +267,12 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\CustomSite.css" />
+    <Content Include="Content\dialog\error.png" />
+    <Content Include="Content\dialog\info.png" />
+    <Content Include="Content\dialog\overlay.png" />
+    <Content Include="Content\dialog\question.png" />
+    <Content Include="Content\dialog\success.png" />
+    <Content Include="Content\dialog\warning.png" />
     <Content Include="Content\example.css" />
     <Content Include="Content\font-awesome-ie7.min.css" />
     <Content Include="Content\font-awesome.min.css" />
@@ -969,6 +975,7 @@
     <Content Include="Views\OffCheckin\SalesEventList.cshtml" />
     <Content Include="Views\OffCheckin\SalesEventListPartial.cshtml" />
     <Content Include="Views\OffCheckin\EditSalesEvent.cshtml" />
+    <Content Include="Views\OffCheckin\CreateSalesEvent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
