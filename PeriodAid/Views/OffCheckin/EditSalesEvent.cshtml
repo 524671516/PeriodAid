@@ -123,16 +123,16 @@
     $(function () {
         $("#StartDate").datepicker({
             dateFormat: 'yy-mm-dd'
-        })
+        });
         $("#EndDate").datepicker({
             dateFormat: 'yy-mm-dd'
-        })
+        });
         $("#add-btn").on("click", function () {
             $("#AllStoreList option:selected").each(function () {
                 $(this).remove();
-                $("#StoreList").append("<option value=" + "'"+$(this).val()+"'" + "selected>" + $(this).html() + "</option>");
-            })
-        })
+                $("#StoreList").append("<option value=" + "'" + $(this).val() + "'" + "selected>" + $(this).html() + "</option>");
+            });
+        });
         $("#remove-btn").on("click", function () {
             $("#StoreList option:selected").each(function () {
                 $(this).remove();
@@ -144,32 +144,34 @@
                     if (aText > bText) return 1;
                     return 0;
                 }).appendTo('#AllStoreList');
-            })
-        })
+            });
+        });
         $("#reset-btn").click(function () {
             $("#StoreList>option").removeAttr("selected");
-        })     
-        $.ajax({
-            url: "/OffCheckin/GetStoreListByStoreSystem",
-            type: "post",
-            data: {
-                id: $("#Off_StoreSystem_Id").val()
-            },
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    for (var i = 0; i < data.data.length; i++) {
-                        if (!$("#StoreList").find("option[value=" + data.data[i].Id + "]").val()) {
-                            $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
-                        }                       
+        });
+        function loadStoreList() {
+            $.ajax({
+                url: "/OffCheckin/GetStoreListByStoreSystem",
+                type: "post",
+                data: {
+                    id: $("#Off_StoreSystem_Id").val()
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        for (var i = 0; i < data.data.length; i++) {
+                            if (!$("#StoreList").find("option[value=" + data.data[i].Id + "]").val()) {
+                                $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                            }
+                        }
+                    } else {
+                        alert("获取店铺列表失败", "尝试刷新页面重新获取", function () {
+                            $("#saleevent-modify").attr("disabled", false).val("保存");
+                        }, { type: 'error' });
                     }
-                } else {
-                    alert("获取店铺列表失败", "尝试刷新页面重新获取", function () {
-                        $("#saleevent-modify").attr("disabled", false).val("保存");
-                    }, { type: 'error' });
                 }
-               
-            }
-        })
+            });
+        }
+        loadStoreList();
         $("#Off_StoreSystem_Id").on("change", function () {
             $.ajax({
                 url: "/OffCheckin/GetStoreListByStoreSystem",
@@ -189,10 +191,9 @@
                             $("#saleevent-modify").attr("disabled", false).val("保存");
                         }, { type: 'error' });
                     }
-
                 }
-            })
-        })
+            });
+        });
         //表单验证
         $('#edit-saleevent-ajaxform').validate({
             focusCleanup: true,
@@ -201,7 +202,7 @@
                 element.parent().parent().addClass("has-error");
             },
             submitHandler: function (form) {
-                if ($("#StartDate").val() > $("#EndDate").val()) {                  
+                if ($("#StartDate").val() > $("#EndDate").val()) {
                     alert("修改活动信息失败", "开始时间不能大于结束时间", function () {
                         $("#saleevent-modify").attr("disabled", false).val("保存");
                     }, { type: 'error' });
@@ -209,13 +210,13 @@
                     setTimeout(formsubmit, 1000);
                 }
             },
-        })
+        });
         //按钮点击
         $("#saleevent-modify").click(function () {
             $("#StoreList option").prop("selected", true);
             $(".form-group").removeClass("has-error");
             $(this).attr("disabled", "disabled").val("修改中...");
-            $('#edit-saleevent-ajaxform').submit();
+            $("#edit-saleevent-ajaxform").submit();
         })
     });
     function formsubmit() {

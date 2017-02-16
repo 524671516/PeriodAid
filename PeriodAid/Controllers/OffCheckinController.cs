@@ -1240,7 +1240,35 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
-
+        // 审核签呈
+        public ActionResult CommitSalesEvent(int id)
+        {
+            var model = _offlineDB.Off_SalesEvent.SingleOrDefault(m => m.Id == id);
+            return PartialView(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult ConmmitSalesEvent(Off_SalesEvent model)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_SalesEvent item = _offlineDB.Off_SalesEvent.SingleOrDefault(m => m.Id == model.Id);
+                if (TryUpdateModel(item))
+                {
+                    item.CommitUserName = User.Identity.Name;
+                    item.Status = 1;
+                    item.CommitDateTime = DateTime.Now;
+                    _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS");
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                ModelState.AddModelError("", "错误");
+                return PartialView(model);
+            }
+        }
     }
 
 }
