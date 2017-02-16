@@ -642,9 +642,7 @@ function getDeleteResult(data) {
     return false;
 }
 /*---end---*/
-/**
- * Created by Luker on 2016/10/31.
- */
+/******dialog*****/
 if (typeof $ === 'function') {
     $(function () {
         var BeAlert = {
