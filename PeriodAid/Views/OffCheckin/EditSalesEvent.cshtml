@@ -12,6 +12,13 @@
     @Html.HiddenFor(m=>m.EventType)
     @Html.HiddenFor(m=>m.CreateUserName)
     @Html.HiddenFor(m=>m.OrderDetials)
+    <input  id="CurrentStoreSystemId" type="hidden" value="@Model.Off_StoreSystem_Id"/>
+    <span class="hide" id="CurrentStore">
+        @foreach(var item in Model.Off_Store)
+        {
+            @Html.Encode(@item.Id.ToString()+",")
+        }
+    </span>
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @if (Model.Status == 1)
@@ -146,9 +153,6 @@
                 }).appendTo('#AllStoreList');
             });
         });
-        $("#reset-btn").click(function () {
-            $("#StoreList>option").removeAttr("selected");
-        });
         function loadStoreList() {
             $.ajax({
                 url: "/OffCheckin/GetStoreListByStoreSystem",
@@ -183,9 +187,26 @@
                     $("#StoreList").html("");
                     $("#AllStoreList").html("");
                     if (data.result == "SUCCESS") {
-                        for (var i = 0; i < data.data.length; i++) {
-                            $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
-                        }
+                        if ($("#CurrentStoreSystemId").val() == $("#Off_StoreSystem_Id").val()) {
+                            var arr = $("#CurrentStore").html().toString().trim().split(",")
+                            for (var i = 0; i < data.data.length; i++) {
+                                var bool = false;
+                                for (j = 0; j < arr.length; j++) {
+                                    if (arr[j] == data.data[i].Id) {
+                                        $("#StoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                                        bool = true;
+                                        break;
+                                    } 
+                                }
+                                if (bool==false) {
+                                    $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                                }
+                            }
+                        } else {
+                            for (var i = 0; i < data.data.length; i++) {
+                                $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
+                            }
+                        }                       
                     } else {
                         alert("获取店铺列表失败", "尝试刷新页面重新获取", function () {
                             $("#saleevent-modify").attr("disabled", false).val("保存");
@@ -204,6 +225,7 @@
             submitHandler: function (form) {
                 if ($("#StartDate").val() > $("#EndDate").val()) {
                     alert("修改活动信息失败", "开始时间不能大于结束时间", function () {
+                        $("#StartDate").parent().parent().addClass("has-error");
                         $("#saleevent-modify").attr("disabled", false).val("保存");
                     }, { type: 'error' });
                 } else {
