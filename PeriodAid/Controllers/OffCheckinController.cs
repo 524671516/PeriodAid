@@ -1154,7 +1154,13 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return Content("FAIL");
+                ModelState.AddModelError("", "错误");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var QD = from m in _offlineDB.Off_StoreSystem
+                         where m.Off_System_Id == user.DefaultSystemId
+                         select m;
+                ViewBag.QD = new SelectList(QD, "Id", "SystemName");
+                return PartialView(model);
             }
         }
         // 下架签呈
@@ -1174,6 +1180,67 @@ namespace PeriodAid.Controllers
                 return Content("FAIL");
             }
         }
+        // 添加签呈
+        public ActionResult CreateSalesEvent()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            Off_SalesEvent model = new Off_SalesEvent();
+            var storesystem = from m in _offlineDB.Off_StoreSystem
+                              where m.Off_System_Id == user.DefaultSystemId
+                              select m;
+            ViewBag.StoreSystemList = new SelectList(storesystem, "Id", "SystemName");
+            return PartialView(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateSalesEvent(Off_SalesEvent model, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                Off_SalesEvent item = new Off_SalesEvent();
+                if (TryUpdateModel(item))
+                {
+                    try
+                    {
+                        string[] storelist = form["StoreList"].Split(',');
+                        item.Status = 0;
+                        item.CreateUserName = User.Identity.Name;
+                        item.CreateDateTime = DateTime.Now;
+                        List<int> storelistIds = new List<int>();
+                        foreach (string v in storelist)
+                        {
+                            storelistIds.Add(Convert.ToInt32(v));
+                        }
+                        var stores = _offlineDB.Off_Store.Where(m => storelistIds.Contains(m.Id));
+                        List<Off_Store> tempstorelist = new List<Off_Store>();
+                        item.Off_Store = tempstorelist;
+                        foreach (var store in stores)
+                        {
+                            item.Off_Store.Add(store);
+                        }
+                        _offlineDB.Off_SalesEvent.Add(item);
+                        await _offlineDB.SaveChangesAsync();
+                        return Content("SUCCESS");
+                    }
+                    catch (Exception e)
+                    {
+                        return Content(e.Message);
+                    }
+                }
+                return Content("FAIL");
+            }
+            else
+            {
+                //return Content("FAIL");
+                ModelState.AddModelError("", "错误");
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                var storesystem = from m in _offlineDB.Off_StoreSystem
+                                  where m.Off_System_Id == user.DefaultSystemId
+                                  select m;
+                ViewBag.StoreSystemList = new SelectList(storesystem, "Id", "SystemName");
+                return PartialView(model);
+            }
+        }
+
     }
 
 }
