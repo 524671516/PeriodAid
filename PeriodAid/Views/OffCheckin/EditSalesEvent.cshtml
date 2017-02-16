@@ -121,6 +121,12 @@
 }
 <script>
     $(function () {
+        $("#StartDate").datepicker({
+            dateFormat: 'yy-mm-dd'
+        })
+        $("#EndDate").datepicker({
+            dateFormat: 'yy-mm-dd'
+        })
         $("#add-btn").on("click", function () {
             $("#AllStoreList option:selected").each(function () {
                 $(this).remove();
@@ -142,13 +148,7 @@
         })
         $("#reset-btn").click(function () {
             $("#StoreList>option").removeAttr("selected");
-        })
-        $("#StartDate").datepicker({
-            dateFormat: 'yy-mm-dd'
-        })
-        $("#EndDate").datepicker({
-            dateFormat: 'yy-mm-dd'
-        })
+        })     
         $.ajax({
             url: "/OffCheckin/GetStoreListByStoreSystem",
             type: "post",

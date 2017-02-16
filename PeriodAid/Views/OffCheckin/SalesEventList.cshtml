@@ -35,27 +35,28 @@
     //搜索
     $("#offstore-search-btn").click(function () {
         $.ajax({
-            url: "/OffStore/StoreListPartial",
+            url: "/OffCheckin/SalesEventListPartial",
             data: {
                 query: $("#offstore-search-query").val()
             },
             success: function (data) {
-                $("#offstore-list").html(data);
+                $("#saleevent-list").html(data);
             }
         });
     });
     //新增门店
     $("#saleevent-create").click(function () {
-        var link_url = "/OffStore/CreateStorePartial"
-        var head = "新增门店"
-        $.ajax({
-            url: link_url,
-            success: function (data) {
-                $(".modal-con").html(data);
-                $(".modal-box").modal();
-                $(".modal-head").text(head);
-            }
-        })
-        return false
+        alert("功能还在创建中...")
+        //var link_url = "/OffStore/CreateStorePartial"
+        //var head = "新增门店"
+        //$.ajax({
+        //    url: link_url,
+        //    success: function (data) {
+        //        $(".modal-con").html(data);
+        //        $(".modal-box").modal();
+        //        $(".modal-head").text(head);
+        //    }
+        //})
+        //return false
     });
 </script>

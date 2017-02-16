@@ -5,6 +5,9 @@
         <th style="width:2%">
             <input type="checkbox" class="allChk" />
         </th>
+        <th style="width:10%">
+            活动编号
+        </th>
         <th style="width:15%">
             活动名称
         </th>
@@ -28,6 +31,16 @@
         <tr>
             <td>
                 <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Off_StoreSystem_Id" />
+            </td>
+            <td class="ellipsis">
+                @if (item.SerialNo == null)
+                {
+                    <span>空</span>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.SerialNo)
+                }
             </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.EventTitle)
