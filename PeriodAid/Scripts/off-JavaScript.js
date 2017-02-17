@@ -718,57 +718,57 @@ if (typeof $ === 'function') {
 }
 /*结束dialog*/
 /******页面可复用按钮方法*****/
-function PageBtn(obj) {
-    this.obj = obj;
-    this.url = obj.url;
-    this.btnClass = obj.btnClass;
-    this.addNew = addNew;
-    this.modifyOld = modifyOld;
-    this.searchInfo = searchInfo;
-    this.deleteOld = deleteOld;
-    this.addSomething = addSomething;   
-    this.bindFunction = bindFunction;
-}
-function bindFunction() {
-    for (var item in this.btnClass) {
-        switch(item){
-            case search:
-                $("." + this.btnClass[item]).on("click", this.searchInfo);
-                break;
-            case add:
-                $("." + this.btnClass[item]).on("click", this.addNew);
-                break;
-            case modify:
-                $("." + this.btnClass[item]).on("click", this.modifyOld);
-                break;
-            case del:
-                $("." + this.btnClass[item]).on("click", this.deleteOld);
-                break;
-            case addSomething:
-                $("." + this.btnClass[item]).on("click", this.addSomething);
-                break;
-            default:
-                $("." + this.btnClass[item]).on("click", function () {
-                    alert("未找到指定时间");
-                });
-        }
-    }
-}
-function searchInfo() {
+//function PageBtn(obj) {
+//    this.obj = obj;
+//    this.url = obj.url;
+//    this.btnClass = obj.btnClass;
+//    this.addNew = addNew;
+//    this.modifyOld = modifyOld;
+//    this.searchInfo = searchInfo;
+//    this.deleteOld = deleteOld;
+//    this.addSomething = addSomething;   
+//    this.bindFunction = bindFunction;
+//}
+//function bindFunction() {
+//    for (var item in this.btnClass) {
+//        switch(item){
+//            case search:
+//                $("." + this.btnClass[item]).on("click", this.searchInfo);
+//                break;
+//            case add:
+//                $("." + this.btnClass[item]).on("click", this.addNew);
+//                break;
+//            case modify:
+//                $("." + this.btnClass[item]).on("click", this.modifyOld);
+//                break;
+//            case del:
+//                $("." + this.btnClass[item]).on("click", this.deleteOld);
+//                break;
+//            case addSomething:
+//                $("." + this.btnClass[item]).on("click", this.addSomething);
+//                break;
+//            default:
+//                $("." + this.btnClass[item]).on("click", function () {
+//                    alert("未找到指定时间");
+//                });
+//        }
+//    }
+//}
+//function searchInfo() {
     
-}
-var pagebtn = new PageBtn({
-    url: {
-        startUrl: "/OffSales/DailySalesListPartial",
-        searchUrl: "1",
-        daleteUrl:"2"
-        },
-    btnClass: {
-        search: "srarc",
-        del:"dl"
-    }
-})
-pagebtn.bindFunction();
-console.log(pagebtn.url);
+//}
+//var pagebtn = new PageBtn({
+//    url: {
+//        startUrl: "/OffSales/DailySalesListPartial",
+//        searchUrl: "1",
+//        daleteUrl:"2"
+//        },
+//    btnClass: {
+//        search: "srarc",
+//        del:"dl"
+//    }
+//})
+//pagebtn.bindFunction();
+//console.log(pagebtn.url);
 
 
