@@ -6,7 +6,7 @@
     @Html.HiddenFor(m => m.RequiredAmount)
     @Html.HiddenFor(m => m.RequiredStorage)
     @Html.HiddenFor(m=>m.ProductList)
-
+    @Html.HiddenFor(m=>m.Off_System_Id)
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
