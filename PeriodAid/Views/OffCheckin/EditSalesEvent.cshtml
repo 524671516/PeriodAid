@@ -190,15 +190,16 @@
                         if ($("#CurrentStoreSystemId").val() == $("#Off_StoreSystem_Id").val()) {
                             var arr = $("#CurrentStore").html().toString().trim().split(",")
                             for (var i = 0; i < data.data.length; i++) {
-                                var bool = false;
+                                var repeat = false;
                                 for (j = 0; j < arr.length; j++) {
                                     if (arr[j] == data.data[i].Id) {
                                         $("#StoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
-                                        bool = true;
+                                        arr = arr.splice(0, arr.indexOf(arr[j]));
+                                        repeat = !repeat;
                                         break;
                                     } 
                                 }
-                                if (bool==false) {
+                                if (!repeat) {
                                     $("#AllStoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
                                 }
                             }
