@@ -547,14 +547,14 @@ namespace PeriodAid.Controllers
                     item.ReplyUser = User.Identity.Name;
                     _offlineDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
-                    return RedirectToAction("RequestList");
+                    return Content("SUCCESS");
                 }
-                return View("Error");
+                return PartialView("Error");
             }
             else
             {
                 ModelState.AddModelError("", "发生错误");
-                return View(model);
+                return PartialView(model);
             }
         }
 

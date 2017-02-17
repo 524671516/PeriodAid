@@ -717,58 +717,64 @@ if (typeof $ === 'function') {
     });
 }
 /*结束dialog*/
-/******页面可复用按钮方法*****/
-//function PageBtn(obj) {
-//    this.obj = obj;
-//    this.url = obj.url;
-//    this.btnClass = obj.btnClass;
-//    this.addNew = addNew;
-//    this.modifyOld = modifyOld;
-//    this.searchInfo = searchInfo;
-//    this.deleteOld = deleteOld;
-//    this.addSomething = addSomething;   
-//    this.bindFunction = bindFunction;
-//}
-//function bindFunction() {
-//    for (var item in this.btnClass) {
-//        switch(item){
-//            case search:
-//                $("." + this.btnClass[item]).on("click", this.searchInfo);
-//                break;
-//            case add:
-//                $("." + this.btnClass[item]).on("click", this.addNew);
-//                break;
-//            case modify:
-//                $("." + this.btnClass[item]).on("click", this.modifyOld);
-//                break;
-//            case del:
-//                $("." + this.btnClass[item]).on("click", this.deleteOld);
-//                break;
-//            case addSomething:
-//                $("." + this.btnClass[item]).on("click", this.addSomething);
-//                break;
-//            default:
-//                $("." + this.btnClass[item]).on("click", function () {
-//                    alert("未找到指定时间");
-//                });
-//        }
-//    }
-//}
-//function searchInfo() {
-    
-//}
-//var pagebtn = new PageBtn({
-//    url: {
-//        startUrl: "/OffSales/DailySalesListPartial",
-//        searchUrl: "1",
-//        daleteUrl:"2"
-//        },
-//    btnClass: {
-//        search: "srarc",
-//        del:"dl"
-//    }
-//})
-//pagebtn.bindFunction();
-//console.log(pagebtn.url);
+function PageBtn(obj) {
+    this.obj = obj;
+    this.init = init;
+    this.initAjax = initAjax;
+}
+function initAjax() {
+    var partialBox = this.obj.init.partialBox
+    var _url = this.obj.init.url
+    $.ajax({
+        url: _url,
+        success: function (data) {
+            $(partialBox).html(data);
+        }
+    })
+}
+function init() {
+    this.initAjax();
+    var partialBox = this.obj.init.partialBox
+    for (var item in this.obj) {
+        if (item == "search") {
+            var __url = this.obj[item].url;
+            var _querybox = this.obj[item].query
+            $(this.obj[item].btn).on("click", function () {
+                var _query = $(_querybox).val()
+                $.ajax({
+                    url: __url,
+                    data: {
+                        query: _query
+                    },
+                    success: function (data) {
+                        $(partialBox).html(data);
+                    }
+                });
+
+            })
+        } else {
+            var _url = this.obj[item].url;
+            var _head = this.obj[item].head;
+            $(this.obj[item].btn).on("click", function () {
+                $.ajax({
+                    url: _url,
+                    data: {
+                        random: Date.now()
+                    },
+                    success: function (data) {
+                        $(".modal-con").html(data);
+                        $(".modal-box").modal();
+                        $(".modal-head").text(_head)
+                    }
+                });
+
+            })
+        }
+    }
+}
+
+
+
+
 
 

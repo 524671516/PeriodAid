@@ -11,7 +11,7 @@
     @Html.HiddenFor(m=>m.EventTypeName)
     @Html.HiddenFor(m=>m.EventType)
     @Html.HiddenFor(m=>m.CreateUserName)
-    @Html.HiddenFor(m=>m.OrderDetials)
+    @Html.HiddenFor(m=>m.OrderDetails)
     <input  id="CurrentStoreSystemId" type="hidden" value="@Model.Off_StoreSystem_Id"/>
     <span class="hide" id="CurrentStore">
         @foreach(var item in Model.Off_Store)
@@ -194,7 +194,7 @@
                                 for (j = 0; j < arr.length; j++) {
                                     if (arr[j] == data.data[i].Id) {
                                         $("#StoreList").append("<option value='" + data.data[i].Id + "'>" + data.data[i].StoreName + "</option>");
-                                        arr = arr.splice(0, arr.indexOf(arr[j]));
+                                        arr.splice(j, 1);
                                         repeat = !repeat;
                                         break;
                                     } 

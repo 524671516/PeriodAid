@@ -95,24 +95,25 @@
     });
     //撤销
     $(".offmanager-manager-backout").click(function () {
-        var result = confirm("确定要撤销超级管理员吗？")
-        if (result) {
-            var url = $(this).attr("href")
-            $.ajax({
-                url: url,
-                type: "post",
-                success: function (data) {
-                    if (getDeleteResult(data)) {
-                        $.ajax({
-                            url: "/OffManager/ManagerListPartial",
-                            success: function (data) {
-                                $("#offmanager-manager-list").html(data)
-                            }
-                        })
+        var url = $(this).attr("href")
+        confirm("确定要撤销超级管理员吗?", "", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (getDeleteResult(data)) {
+                            $.ajax({
+                                url: "/OffManager/ManagerListPartial",
+                                success: function (data) {
+                                    $("#offmanager-manager-list").html(data)
+                                }
+                            })
+                        }
                     }
-                }
-            })
-        }
+                })
+            }
+        });
         return false;
     });
     

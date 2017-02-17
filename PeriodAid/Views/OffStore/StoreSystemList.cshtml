@@ -25,39 +25,24 @@
 </div>
 @Html.Partial("modal")
 <script>
-    $(function () {
-        $.ajax({
-            url: "/OffStore/StoreSystemListPartial",
-            success: function (data) {
-                $("#storesystem-list").html(data);
-            }
-        })
-    });
-    //搜索
-    $("#storesystem-search-btn").click(function () {
-        $.ajax({
-            url: "/OffStore/StoreSystemListPartial",
-            data: {
-                query: $("#storesystem-search-query").val()
+    window.onload = function () {
+        var StoreSystemList = new PageBtn({
+            init: {
+                url: "/OffStore/StoreSystemListPartial",
+                partialBox: "#storesystem-list"
             },
-            success: function (data) {
-                $("#storesystem-list").html(data);
+            search: {
+                btn: "#storesystem-search-btn",
+                url: "/OffStore/StoreSystemListPartial",
+                query: "#storesystem-search-query"
+            },
+            add: {
+                btn: "#storesystem-create",
+                url: "/OffStore/CreateStoreSystemPartial",
+                head:"新增渠道"
             }
         });
-    });
-    //新增渠道
-    $("#storesystem-create").click(function () {
-        var link_url = "/OffStore/CreateStoreSystemPartial"
-        var head = "新增渠道"
-        $.ajax({
-            url: link_url,
-            success: function (data) {
-                $(".modal-con").html(data);
-                $(".modal-box").modal();
-                $(".modal-head").text(head)
-            }
-        })
-        return false
-    });
-
+        StoreSystemList.init();
+    }
 </script>
+
