@@ -1953,7 +1953,6 @@ function uploadLocationWithDetails(btn_id, location_id, lbs_details_id) {
                         key: "WRRBZ-PHV3K-KWOJ5-AMKPV-PASC3-GSFQU"
                     },
                     success: function (data) {
-                        console.log(data);
                         if (data.status == 0) {
                             geocoder = new qq.maps.Geocoder({
                                 complete: function (result) {

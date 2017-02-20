@@ -425,7 +425,6 @@ $$(document).on('pageInit', '.page[data-page="EditSellerTask"]', function (e) {
                         myApp.formDeleteData("editsellerreport-form");
                         //
                         //mainView.router.refreshPreviousPage();
-                        console.log("33");
                         mainView.router.back({url:"/SellerTask/SellerTaskList?id="+$("#SellerId").val(), force:true });
                         //mainView.router.reloadPreviousPage();
                         myApp.addNotification({

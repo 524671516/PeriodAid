@@ -91,7 +91,6 @@
         var end = $("#end-date").val();
         var storesystem = $("#StoreSystem").val();
         var type = $(this).attr("data-salary");
-        console.log(start + ":" + end + ":" + storesystem + ":" + type)
         if (start > end) {
             $("#danger").text("开始时间不能大于结束时间")
         } else if (start == "" || end == "") {
@@ -412,7 +411,6 @@
         var type = $(this).attr("data-salary");
         var selectvalue = $("#StoreList").val() + "";
         var managerArray = selectvalue.split(',');
-        console.log(start + ":" + "end" + ":" + storeid + ":" + type);
         for (var i = 0; i < managerArray.length; i++) {
             var optionitem = $("option[value='" + managerArray[i] + "']").text();
             $("#storeName").val(optionitem);
@@ -731,6 +729,7 @@ function initAjax() {
             $(partialBox).html(data);
         }
     })
+    this.inAjax()
 }
 function init() {
     this.initAjax();

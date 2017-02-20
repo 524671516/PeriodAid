@@ -127,7 +127,6 @@
                 alert("添加成功");
                 $('.modal-box').modal('hide');
                 $(".modal-backdrop").remove();
-                console.log(1)
                 $.ajax({
                     url: "/OffSales/MonthSalesListPartial",
                     success: function (data) {
