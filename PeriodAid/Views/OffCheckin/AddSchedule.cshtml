@@ -12,7 +12,13 @@
     <row>
         <div class="col-md-3">
             @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control", id = "StoreSystem" })<br />
-            <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px;"></select>
+            <input class="form-control" id="store-input" placeholder="搜索门店"><br />
+            <select multiple id="AllStoreList" name="AllStoreList" class="form-control input-sm" style="height:200px;"></select>
+            <div class="text-center" style="padding:10px 0;">
+                    <a class="btn btn-default btn-xs btn-info" href="javascript:;" id="add-btn">添加</a>
+                    <a class="btn btn-default btn-warning btn-xs" href="javascript:;" id="remove-btn">移除</a>
+            </div>
+            <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:200px;"></select>
         </div>
         <div class="col-md-9">
             <div>
@@ -43,6 +49,53 @@
 }
 <script>
     $(function () {
+        //店铺搜索  
+        function displayResult(item, val, text) {
+            if ($("#AllStoreList option[value=" + val + "]").length>0) {
+                $("#StoreList").append($("#AllStoreList option[value=" + val + "]"));
+                $("#AllStoreList option[value=" + val + "]").remove();
+            } else {
+                $("#StoreList option").prop("selected", false);
+                $("#StoreList option[value=" + val + "]").prop("selected",true);
+                alert("添加失败", "列表中无此项请查看是否已添加", function () {
+                }, { type: 'error' });
+            }
+        }
+            $("#store-input").on("keyup", function () {
+                $("#recruit-submit").attr("disabled", true);
+            });
+            $('#store-input').typeahead({
+                ajax: {
+                    url: '/OffSeller/QueryStore',
+                    triggerLength: 1,
+               
+                },
+                itemSelected: displayResult,
+                display: 'StoreName',
+                val: 'Id'
+            });
+        $("#add-btn").on("click", function () {
+            $("#AllStoreList option:selected").each(function () {
+                $(this).remove();
+                $("#StoreList").append($(this));
+            })
+        })
+        $("#remove-btn").on("click", function () {
+            $("#StoreList option:selected").each(function () {
+                $(this).remove();
+                $("#AllStoreList").append($(this));
+                $('#AllStoreList option').sort(function (a, b) {
+                    var aText = $(a).text();
+                    var bText = $(b).text();
+                    if (aText < bText) return -1;
+                    if (aText > bText) return 1;
+                    return 0;
+                }).appendTo('#AllStoreList');
+            })
+        })
+        $("#offsales-sure-btn").on("click", function () {
+            $("#StoreList option").prop("selected", true);
+        })
         $.ajax({
             url: "/OffCommon/StoreListAjax",
             type: "post",
@@ -50,12 +103,14 @@
                 storesystemId: $("#StoreSystem").val()
             },
             success: function (data) {
+                $("#AllStoreList").html("");
                 $("#StoreList").html("");
                 for (var i = 0; i < data.StoreList.length; i++) {
-                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                    $("#AllStoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
                 }
             }
         })
+
         $("#StoreSystem").change(function () {
             $.ajax({
                 url: "/OffCommon/StoreListAjax",
@@ -64,9 +119,10 @@
                     storesystemId: $("#StoreSystem").val()
                 },
                 success: function (data) {
+                    $("#AllStoreList").html("");
                     $("#StoreList").html("");
                     for (var i = 0; i < data.StoreList.length; i++) {
-                        $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                        $("#AllStoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
                     }
                 }
             })

@@ -15,7 +15,7 @@
                 <label class="control-label col-md-3" for="RequiredStorage">库存</label>
                 <div class="checkbox col-md-9">
                     <label>
-                        @Html.EditorFor(model => model.RequiredStorage, new { htmlAttributes = new { @class = "", @required = "required" } })
+                        @Html.EditorFor(model => model.RequiredStorage, new { htmlAttributes = new { @class = ""} })
                         @Html.ValidationMessageFor(model => model.RequiredStorage, "", new { @class = "text-danger" })
                     </label>
                 </div>
@@ -26,7 +26,7 @@
                 <label class="control-label col-md-3" for="RequiredAmount">销售金额</label>
                 <div class="checkbox col-md-9">
                     <label>
-                        @Html.EditorFor(model => model.RequiredAmount, new { htmlAttributes = new { @class = "", @required = "required" } })
+                        @Html.EditorFor(model => model.RequiredAmount, new { htmlAttributes = new { @class = ""} })
                         @Html.ValidationMessageFor(model => model.RequiredStorage, "", new { @class = "text-danger" })
                     </label>
                 </div>
