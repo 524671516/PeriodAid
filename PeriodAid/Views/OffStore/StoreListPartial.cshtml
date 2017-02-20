@@ -6,19 +6,13 @@
             <input type="checkbox" class="allChk" />
         </th>
         <th style="width:15%">
+            渠道
+        </th> 
+        <th style="width:20%">
             门店名称
         </th>
-        <th style="width:5%">
-            渠道
-        </th>       
         <th style="width:30%">
             地址
-        </th>
-        <th style="width:12%">
-            经度
-        </th>
-        <th style="width:12%">
-            纬度
         </th>
         <th style="width:12%"></th>
     </tr>
@@ -29,20 +23,15 @@
             <td>
                 <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Off_StoreSystemId" />
             </td>
-            <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.StoreName)
-            </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Off_StoreSystem.SystemName)
             </td>
             <td class="ellipsis ">
+                @Html.DisplayFor(modelItem => item.StoreName)
+            </td>
+            
+            <td class="ellipsis ">
                 @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.Longitude)
-            </td>
-            <td class="ellipsis ">
-                @Html.DisplayFor(modelItem => item.Latitude)
             </td>
             <td>
                 @Html.ActionLink("修改", "EditStorePartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offstore-store-edit" })

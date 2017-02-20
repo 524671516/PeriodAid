@@ -92,13 +92,13 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost]
-        public JsonResult QueryStore( string query)
+        public JsonResult QueryStore(string query)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var store = from m in _offlineDB.Off_Store
                         where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                         && m.StoreName.Contains(query)
-                        select new { Id = m.Id, StoreName = m.StoreName };
+                        select new { Id = m.Id, StoreName = m.Off_StoreSystem.SystemName + "-" + m.StoreName };
             return Json(store);
         }
         // Origin: Ajax_AddSeller

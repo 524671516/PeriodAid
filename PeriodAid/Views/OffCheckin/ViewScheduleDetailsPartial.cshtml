@@ -8,14 +8,17 @@
         <th style="width:10%">
             时间
         </th>
+        <th style="width:12%">
+            系统名称
+        </th>
         <th style="width:15%">
             店铺名称
         </th>
-        <th style="width:15%">
-            标准签到时间
+        <th style="width:10%">
+            签到时间
         </th>
-        <th style="width:15%">
-            标准签退时间
+        <th style="width:10%">
+            签退时间
         </th>
         <th style="width:10%">
             标准工资
@@ -33,6 +36,9 @@
             </td>
             <td>
                 @Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td>
+                @Html.Encode(item.Off_Store.Off_StoreSystem.SystemName)
             </td>
             <td>
                 @Html.Encode(item.Off_Store.StoreName)

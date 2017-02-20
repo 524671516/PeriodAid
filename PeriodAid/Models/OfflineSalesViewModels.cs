@@ -364,6 +364,7 @@ namespace PeriodAid.Models
         public int Id { get; set; }
         public DateTime ApplyDate { get; set; }
         public int? MinStorage { get; set; }
+        public string SystemName { get; set; }
         public string StoreName { get; set; }
     }
 

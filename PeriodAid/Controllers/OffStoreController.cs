@@ -88,7 +88,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in _offlineDB.Off_Store
-                            where (m.StoreName.Contains(query) || m.Address.Contains(query))
+                            where (m.StoreName.Contains(query) || m.Address.Contains(query) || m.Off_StoreSystem.SystemName.Contains(query))
                             && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
                             select m).ToPagedList(_page, 20);

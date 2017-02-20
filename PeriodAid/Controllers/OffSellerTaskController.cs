@@ -104,9 +104,9 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             // 使用SQL查询
-            string sql = "SELECT t.Id,t.ApplyDate, Min(t3.StorageCount) as MinStorage, T4.StoreName FROM [dbo].[Off_SellerTask] as t left join dbo.Off_SellerTaskProduct as t3 on t.Id= t3.SellerTaskId left join" +
+            string sql = "SELECT t.Id,t.ApplyDate, Min(t3.StorageCount) as MinStorage, T5.SystemName, T4.StoreName FROM [dbo].[Off_SellerTask] as t left join dbo.Off_SellerTaskProduct as t3 on t.Id= t3.SellerTaskId left join" +
                 " dbo.Off_Store as T4 on t.StoreId = T4.Id left join dbo.Off_StoreSystem as T5 on T4.Off_StoreSystemId = T5.Id where t.Id = (select top 1 t2.Id from [dbo].[Off_SellerTask] t2 where t5.Off_System_Id = " + user.DefaultSystemId + " and t2.StoreId = t.StoreId order by T2.ApplyDate desc) and t3.StorageCount>0" +
-                " group by t.Id, T4.StoreName, t.ApplyDate having MIN(t3.StorageCount)<50";
+                " group by t.Id, T5.SystemName, T4.StoreName,  t.ApplyDate having MIN(t3.StorageCount)<50";
             var tasklist = offlineDB.Database.SqlQuery<Wx_SellerTaskAlert>(sql);
             return PartialView(tasklist);
         }

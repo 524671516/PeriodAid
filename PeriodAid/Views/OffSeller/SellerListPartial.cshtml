@@ -12,10 +12,13 @@
         <th style="width:15%">
             联系电话
         </th>
+        <th style="width:12%">
+            系统名称
+            </th>
         <th style="width:25%">
             所属店铺
         </th>
-        <th style="width:30%">
+        <th style="width:15%">
             银行名称
         </th>
         <th>操作</th>
@@ -34,7 +37,10 @@
                 @Html.DisplayFor(modelItem => item.Mobile)
             </td>
             <td>
-                @item.Off_Store.StoreName
+                @Html.Encode(item.Off_Store.Off_StoreSystem.SystemName)
+            </td>
+            <td>
+                @Html.Encode(item.Off_Store.StoreName)
             </td>
             <td>@Html.DisplayFor(modelItem => item.CardName)</td>
             <td>

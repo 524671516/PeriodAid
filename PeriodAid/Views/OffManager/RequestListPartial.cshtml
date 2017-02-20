@@ -3,7 +3,8 @@
 @using PeriodAid.Models;
 <table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
     <tr class="offline-table-background">
-        <th style="width:20%;">
+        <th style="width:12%">系统名称</th>
+        <th style="width:15%;">
             店铺
         </th>
         <th style="width:10%;">
@@ -15,10 +16,10 @@
         <th style="width:10%;">
             提报类型
         </th>
-        <th style="width:20%;">
+        <th style="width:18%;">
             内容
         </th>
-        <th style="width:20%;">
+        <th style="width:18%;">
             备注
         </th>
 
@@ -28,26 +29,29 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem=>item.Off_Store.Off_StoreSystem.SystemName)
+            </td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.Encode(Html.ManagerNickName(item.ManagerUserName, (int)ViewBag.SystemId))
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.Encode(Html.ManagerRequestStatus(item.Status))
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.RequestType)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.RequestContent)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.RequestRemark)
             </td>
 
-            <td>
+            <td class="ellipsis">
                 @Html.ActionLink("查看", "EditRequest", new { id = item.Id }, new { @class = "btn btn-info btn-xs offmanager-request-edit" })
                 @if (item.Status == 0)
                 {

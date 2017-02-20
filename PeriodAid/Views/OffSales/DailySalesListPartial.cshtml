@@ -8,6 +8,7 @@
         <th style="width:10%">
             日期
         </th>
+        <th style="width:15%">系统名称</th>
         <th style="width:20%" title="门店名称">
             门店名称
         </th>
@@ -19,7 +20,6 @@
         </th>
         <th style="width:10%">工资</th>
         <th style="width:10%">奖金</th>
-        <th style="width:10%">扣款</th>
         <th></th>
     </tr>
 
@@ -31,6 +31,9 @@
             </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td class="ellipsis">
+                @Html.Encode(item.Off_Store.Off_StoreSystem.SystemName)
             </td>
             <td class="ellipsis">
                 <span title="@Html.Encode(item.Off_Store.StoreName)">
@@ -49,9 +52,7 @@
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Bonus)
             </td>
-            <td class="ellipsis">
-                @Html.DisplayFor(modelItem => item.Debit)
-            </td>
+            
             <td class="ellipsis">
                 @Html.ActionLink("修改", "EditDailySalesPartial", new { id = item.Id }, new { @class = "btn btn-info btn-xs offsales-edit-daily" })
                 @Html.ActionLink("删除", "DeleteSalesDailyAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offsales-del-daily" })

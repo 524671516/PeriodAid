@@ -3,12 +3,13 @@
 
 <table class="table table-condensed table-hover" style="table-layout: fixed;width:100%;">
     <tr class="offline-table-background">
-        <th style="width:15%">
+        <th style="width:10%">
             活动时间
         </th>
-        <th style="width:10%">
+        <th style="width:8%">
             状态
         </th>
+        <th style="width:10%">系统名称</th>
         <th style="width:15%">
             店铺名称
         </th>
@@ -31,6 +32,9 @@
             </td>
             <td class="ellipsis statusvalue">
                 @Html.Encode(Html.CheckinStatus(item.Status))
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem=>item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.SystemName)
             </td>
             <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)

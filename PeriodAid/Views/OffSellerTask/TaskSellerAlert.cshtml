@@ -9,6 +9,7 @@
     <tr class="offline-table-background">
         <th>ID</th>
         <th>日期</th>
+        <th>系统名称</th>
         <th>店铺名称</th>
         <th>库存数量</th>
     </tr>
@@ -20,6 +21,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ApplyDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StoreName)

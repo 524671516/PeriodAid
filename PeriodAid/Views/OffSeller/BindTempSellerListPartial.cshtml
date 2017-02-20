@@ -15,6 +15,9 @@
         <th style="width:15%">
             绑定促销员姓名
         </th>
+        <th style="width:12%">
+            系统名称
+        </th>
         <th style="width:25%">绑定促销员所属门店</th>
         <th></th>
     </tr>
@@ -36,7 +39,9 @@
                 @Html.DisplayFor(modelItem => item.Off_Seller.Name)
             </td>
             <td>
-
+                @Html.Encode(item.Off_Seller == null ? "" : item.Off_Seller.Off_Store.Off_StoreSystem.SystemName)
+            </td>
+            <td>
                 @Html.Encode(item.Off_Seller == null ? "" : item.Off_Seller.Off_Store.StoreName)
             </td>
             <td>
