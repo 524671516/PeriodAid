@@ -386,7 +386,7 @@ namespace PeriodAid.Controllers
                 var list = (from m in _offlineDB.Off_StoreSystem
                             where m.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
-                            select m).ToPagedList(_page, 2);
+                            select m).ToPagedList(_page, 20);
                 return PartialView(list);
             }
             else
