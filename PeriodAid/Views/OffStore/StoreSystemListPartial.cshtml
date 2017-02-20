@@ -60,7 +60,7 @@
         //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
-            var query = $("#offstore-search-query").val();
+            var query = $("#storesystem-search-query").val();
             l = l + "&query=" + query;
             $.ajax({
                 url: l,

@@ -379,14 +379,14 @@ namespace PeriodAid.Controllers
         /// <returns></returns>
         public PartialViewResult StoreSystemListPartial(int? page, string query)
         {
-            var user = UserManager.FindById(User.Identity.GetUserId());
+           var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
             if (query == null || query == "")
             {
                 var list = (from m in _offlineDB.Off_StoreSystem
                             where m.Off_System_Id == user.DefaultSystemId
                             orderby m.Id descending
-                            select m).ToPagedList(_page, 20);
+                            select m).ToPagedList(_page, 2);
                 return PartialView(list);
             }
             else
