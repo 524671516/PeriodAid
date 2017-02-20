@@ -729,7 +729,6 @@ function initAjax() {
             $(partialBox).html(data);
         }
     })
-    this.inAjax()
 }
 function init() {
     this.initAjax();
