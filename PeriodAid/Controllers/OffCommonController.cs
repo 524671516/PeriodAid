@@ -14,6 +14,7 @@ using System.Reflection;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class OffCommonController : Controller
     {
         OfflineSales _offlineDB = new OfflineSales();

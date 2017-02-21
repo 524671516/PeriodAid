@@ -87,7 +87,7 @@ namespace PeriodAid.Controllers
             {
                 var list = (from m in _offlineDB.Off_Checkin
                             where m.Status == _status && m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
-                            && (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query))
+                            && (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query) || m.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.SystemName.Contains(query))
                             orderby m.Off_Checkin_Schedule.Subscribe descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
