@@ -739,16 +739,16 @@ function init() {
             var _querybox = this.obj[item].query
             $(this.obj[item].btn).on("click", function () {
                 var _query = $(_querybox).val()
-                $.ajax({
-                    url: __url,
-                    data: {
-                        query: _query
-                    },
-                    success: function (data) {
-                        $(partialBox).html(data);
-                    }
-                });
-
+                    $.ajax({
+                        url: __url,
+                        data: {
+                            query: _query,
+                        },
+                        success: function (data) {
+                            $(partialBox).html(data);
+                        }
+                    });
+ 
             })
         } else {
             var _url = this.obj[item].url;

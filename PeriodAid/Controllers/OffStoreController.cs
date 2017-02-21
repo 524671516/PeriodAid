@@ -64,6 +64,11 @@ namespace PeriodAid.Controllers
         /// <returns></returns>
         public ActionResult StoreIndex()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var QD = from m in _offlineDB.Off_StoreSystem
+                     where m.Off_System_Id == user.DefaultSystemId
+                     select m;
+            ViewBag.QD = new SelectList(QD, "Id", "SystemName");
             return View();
         }
         // Origin: Off_Store_ajaxlist
@@ -77,23 +82,26 @@ namespace PeriodAid.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
-            if (query == null || query == "")
-            {
-                var list = (from m in _offlineDB.Off_Store
-                            where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
-                            orderby m.Id descending
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
-            }
-            else
-            {
-                var list = (from m in _offlineDB.Off_Store
-                            where (m.StoreName.Contains(query) || m.Address.Contains(query) || m.Off_StoreSystem.SystemName.Contains(query))
-                            && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
-                            orderby m.Id descending
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
-            }
+                if (query == null || query == "")
+                {
+                    var list = (from m in _offlineDB.Off_Store
+                                where m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Id descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+                else
+                {
+
+                    var list = (from m in _offlineDB.Off_Store
+                                where (m.StoreName.Contains(query) || m.Address.Contains(query) || m.Off_StoreSystem.SystemName.Contains(query))
+                                && m.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Id descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+           
+            
         }
         // Origin Off_CreateStore
         public ActionResult CreateStorePartial()

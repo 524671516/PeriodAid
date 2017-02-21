@@ -126,12 +126,16 @@
                     },
                     success: function (data) {
                         if (data.result == "FAIL") {
-                            alert("此员工在" + $("#input-date").val() + "无活动记录");
+                            alert("查询失败", "此员工在" + $("#input-date").val() + "无活动记录", function () {
+                                //after click the confirm button, will run this callback function
+                            }, { type: 'error' });
                             $("#allmap").html("");
                             $(".staff-info div").html("");
                         } else {
                             if (data.router.length == 0) {
-                                alert("此员工在" + $("#input-date").val() + "无活动记录");
+                                alert("查询失败", "此员工在" + $("#input-date").val() + "无活动记录", function () {
+                                    //after click the confirm button, will run this callback function
+                                }, { type: 'error' });
                                 $("#allmap").html("");
                                 $(".staff-info div").html("");
                             }
@@ -142,7 +146,9 @@
                         }
                     },
                     error: function (xhr) {
-                        alert(xhr.status);
+                        alert("查询失败", "错误代码"+":"+xhr.status, function () {
+                            //after click the confirm button, will run this callback function
+                        }, { type: 'error' });
                     }
                 });
             });

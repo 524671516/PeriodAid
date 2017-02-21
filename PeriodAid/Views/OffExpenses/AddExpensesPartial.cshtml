@@ -69,7 +69,9 @@
                 });
             }
             else {
-                $(".modal-con").html(data)
+                alert("添加失败", "请确认信息填写正确", function () {
+                    //after click the confirm button, will run this callback function
+                }, { type: 'error' });
             }
         });
     });
