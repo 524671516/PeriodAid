@@ -82,8 +82,8 @@
                     success: function (data) {
                         $("#offstore-list").html(data);
                     },
-                    error: function () {
-                        alert("修改门店信息失败", "发生未知错误", function () {
+                    error: function (xhr) {
+                        alert("修改门店信息失败", "错误代码"+":"+xhr.status, function () {
                             $("#offstore-store-modify").attr("disabled", false).val("保存");
                         }, { type: 'error' });
                     }
