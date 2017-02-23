@@ -75,20 +75,24 @@
     });
     //设置超级管理员
     $(".offmanager-manager-setup").click(function () {
-        var link = $(this).attr("href");
-        $.ajax({
-            url: link,
-            type:"post",
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    $.ajax({
-                        url: "/OffManager/ManagerListPartial",
-                        success: function (data) {
-                            $("#offmanager-manager-list").html(data)
-                            alert("提升成功");
+        var link = $(this).attr("href")
+        confirm("请管理员选择类型", "<select class=\"form-control\"><option>1</option><option>1</option><option>1</option></select>", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: link,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/OffManager/ManagerListPartial",
+                                success: function (data) {
+                                    $("#offmanager-manager-list").html(data)
+                                    alert("提升成功");
+                                }
+                            })
                         }
-                    })
-                }
+                    }
+                });
             }
         });
         return false;
