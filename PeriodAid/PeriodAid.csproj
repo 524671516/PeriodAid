@@ -977,6 +977,7 @@
     <Content Include="Views\OffCheckin\EditSalesEvent.cshtml" />
     <Content Include="Views\OffCheckin\CreateSalesEvent.cshtml" />
     <Content Include="Views\OffCheckin\CommitSalesEvent.cshtml" />
+    <Content Include="Views\OffManager\EditManagerRoles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

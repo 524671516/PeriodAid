@@ -1,0 +1,48 @@
+﻿@using (Html.BeginForm("EditManagerRoles", "OffManager",  FormMethod.Post,  new { @class = "form-horizontal", role = "form",@id="editroleform" }))
+{
+    @Html.AntiForgeryToken()
+    <input class="hidden" value="@ViewBag.pid" id="id" name="id"/>
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="control-label col-md-3">选择权限</label>
+            <div class="col-md-9">
+                <select id="role" name="role" class="form-control">
+                    <option value="Manager">业务</option>
+                    <option value="Administrator">管理员</option>
+                    <option value="Supervisor">督导</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" id="role-modify" class="btn btn-default" />
+            </div>
+        </div>
+        </div>
+        }
+<script>
+    $("#role-modify").on("click", function () {
+        $("#editroleform").ajaxForm({
+            success: function (data) {
+                if (data == "SUCCESS") {
+                    $('.modal-box').modal('hide');
+                    alert("修改成功");
+                    $.ajax({
+                        url: "/OffManager/ManagerListPartial",
+                        success: function (data) {
+                            $("#offmanager-manager-list").html(data)
+                        }
+                    });
+                }
+                else {
+                    alert("修改失败", "", function () {
+                    }, { type: 'error' });
+                }
+
+            }
+
+        });
+    })
+</script>
+

@@ -683,7 +683,7 @@ if (typeof $ === 'function') {
                 $('.BeAlert_overlay').unbind('click').bind('click', function () {
                     that.close();
                 });
-                confirmBtn.unbind('click').bind('click', function () {
+                confirmBtn.unbind('click').bind('click', function () {              
                     that.close();
                     typeof callback === 'function' && callback(true);
                 });
@@ -696,7 +696,7 @@ if (typeof $ === 'function') {
                     'margin-top': -(Math.max(h, opts.height) / 2 + 100) + 'px'
                 });
             },
-            close: function () {
+            close: function () {              
                 $(".BeAlert_overlay,.BeAlert_box").remove();
             }
         };

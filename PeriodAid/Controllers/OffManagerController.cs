@@ -252,6 +252,7 @@ namespace PeriodAid.Controllers
                     {
                         ViewBag.Roles = "Unknow";
                     }
+                    ViewBag.pid = id;
                     return PartialView();
                 }
                 return PartialView("Error");

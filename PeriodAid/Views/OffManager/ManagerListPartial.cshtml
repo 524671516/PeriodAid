@@ -46,7 +46,7 @@
                 @Html.DisplayFor(modelItem => item.Mobile)
             </td>
             <td>              
-                @Html.ActionLink("设置权限", "EditManagerRoles", new { id = item.Id }, new { @class = "btn btn-xs btn-success offmanager-role-edit" })
+                <a class="btn btn-xs btn-success offmanager-role-edit" href="javascript:;" id="@item.Id">设置权限</a>
                 @Html.ActionLink("设置区域", "AddManagerArea", new { id = item.Id }, new { @class = "btn btn-xs btn-primary" })
                 @Html.ActionLink("删除管理员", "CancelManagerAjax", new { id = item.Id },new { @class = "btn btn-xs btn-danger offmanager-manager-cancel" })
             </td>
@@ -72,27 +72,20 @@
     });
     //设置权限
     $(".offmanager-role-edit").click(function () {
-        var link = $(this).attr("href")
-        confirm("请选择类型", "<select class=\"form-control\"><option>督导</option><option>业务</option><option>管理员</option></select>", function (isConfirm) {
-            if (isConfirm) {
-                $.ajax({
-                    url: link,
-                    type: "post",
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            $.ajax({
-                                url: "/OffManager/ManagerListPartial",
-                                success: function (data) {
-                                    $("#offmanager-manager-list").html(data)
-                                    alert("提升成功");
-                                }
-                            })
-                        }
-                    }
-                });
-            }
-        });
-        return false;
+            var link = $(this).attr("id")
+            var head = "修改管理员权限"
+            $.ajax({
+                url: "/OffManager/EditManagerRoles",
+                data: {
+                    id: link
+                },
+                success: function (data) {
+                    $(".modal-con").html(data);
+                    $(".modal-box").modal();
+                    $(".modal-head").text(head)
+                }
+            });
+            return false;
     });
     //撤销
     $(".offmanager-manager-backout").click(function () {
