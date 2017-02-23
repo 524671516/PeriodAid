@@ -236,21 +236,25 @@ namespace PeriodAid.Controllers
                 if (manager.Off_System_Id == currentuser.DefaultSystemId)
                 {
                     var user = UserManager.FindByName(manager.UserName);
+                    var rolelist = new List<Object>();
+                    rolelist.Add(new { Key = "Supervisor", Value = "督导" });
+                    rolelist.Add(new { Key = "Manager", Value = "业务" });
+                    rolelist.Add(new { Key = "Administrator", Value = "管理员" });
                     if (UserManager.IsInRole(user.Id, "Supervisor"))
                     {
-                        ViewBag.Roles = "Supervisor";
+                        ViewBag.RolesDropDownList = new SelectList(rolelist, "Key", "Value", "Supervisor");
                     }
                     else if (UserManager.IsInRole(user.Id, "Manager"))
                     {
-                        ViewBag.Roles = "Manager";
+                        ViewBag.RolesDropDownList = new SelectList(rolelist, "Key", "Value", "Manager");
                     }
                     else if (UserManager.IsInRole(user.Id, "Administrator"))
                     {
-                        ViewBag.Roles = "Administrator";
+                        ViewBag.RolesDropDownList = new SelectList(rolelist, "Key", "Value", "Administrator");
                     }
                     else
                     {
-                        ViewBag.Roles = "Unknow";
+                        ViewBag.RolesDropDownList = new SelectList(rolelist, "Key", "Value");
                     }
                     ViewBag.pid = id;
                     return PartialView();
