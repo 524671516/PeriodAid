@@ -41,17 +41,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Mobile)
             </td>
-            <td>
-                @if (item.Status == 1)
-                {
-                    @Html.ActionLink("设置超级管理员", "UpdateManagerToSeniorAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-success offmanager-manager-setup" })
-                }
-                else {
-                    @Html.ActionLink("撤销超级管理员", "ReduceManagerAjax", new { id = item.Id }, new { @class = "btn btn-xs btn-warning offmanager-manager-backout" })
-                }
+            <td>              
+                @Html.ActionLink("设置权限", "EditManagerRoles", new { id = item.Id }, new { @class = "btn btn-xs btn-success offmanager-role-edit" })
                 @Html.ActionLink("设置区域", "AddManagerArea", new { id = item.Id }, new { @class = "btn btn-xs btn-primary" })
                 @Html.ActionLink("删除管理员", "CancelManagerAjax", new { id = item.Id },new { @class = "btn btn-xs btn-danger offmanager-manager-cancel" })
-
             </td>
         </tr>
     }
@@ -73,10 +66,10 @@
         });
         return false;
     });
-    //设置超级管理员
-    $(".offmanager-manager-setup").click(function () {
+    //设置权限
+    $(".offmanager-role-edit").click(function () {
         var link = $(this).attr("href")
-        confirm("请管理员选择类型", "<select class=\"form-control\"><option>1</option><option>1</option><option>1</option></select>", function (isConfirm) {
+        confirm("请选择类型", "<select class=\"form-control\"><option>督导</option><option>业务</option><option>管理员</option></select>", function (isConfirm) {
             if (isConfirm) {
                 $.ajax({
                     url: link,
