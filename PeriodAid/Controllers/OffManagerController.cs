@@ -227,6 +227,77 @@ namespace PeriodAid.Controllers
             else
                 return Json(new { result = "FAIL" });
         }
+        public ActionResult EditManagerRoles(int id)
+        {
+            var manager = _offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
+            if (manager != null)
+            {
+                var currentuser = UserManager.FindById(User.Identity.GetUserId());
+                if (manager.Off_System_Id == currentuser.DefaultSystemId)
+                {
+                    var user = UserManager.FindByName(manager.UserName);
+                    if (UserManager.IsInRole(user.Id, "Supervisor"))
+                    {
+                        ViewBag.Roles = "Supervisor";
+                    }
+                    else if (UserManager.IsInRole(user.Id, "Manager"))
+                    {
+                        ViewBag.Roles = "Manager";
+                    }
+                    else if (UserManager.IsInRole(user.Id, "Administrator"))
+                    {
+                        ViewBag.Roles = "Administrator";
+                    }
+                    else
+                    {
+                        ViewBag.Roles = "Unknow";
+                    }
+                    return PartialView();
+                }
+                return PartialView("Error");
+            }
+            return PartialView("Error");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult EditManagerRoles(int id, FormCollection form)
+        {
+            var manager = _offlineDB.Off_StoreManager.SingleOrDefault(m => m.Id == id);
+            if (manager != null)
+            {
+                var currentuser = UserManager.FindById(User.Identity.GetUserId());
+                if (manager.Off_System_Id == currentuser.DefaultSystemId)
+                {
+                    var user = UserManager.FindByName(manager.UserName);
+                    // 删除所有角色
+                    string[] roles = new string[] { "Supervisor", "Manager", "Administrator" };
+                    UserManager.RemoveFromRoles(user.Id, roles);
+                    if (form["role"] == "Supervisor")
+                    {
+                        UserManager.AddToRole(user.Id, "Supervisor");
+                        manager.Status = 1;
+                    }
+                    else if (form["role"] == "Manager")
+                    {
+                        UserManager.AddToRole(user.Id, "Manager");
+                        manager.Status = 2;
+                    }
+                    else if (form["role"] == "Administrator")
+                    {
+                        UserManager.AddToRole(user.Id, "Administrator");
+                        manager.Status = 3;
+                    }
+                    _offlineDB.Entry(manager).State = System.Data.Entity.EntityState.Modified;
+                    _offlineDB.SaveChanges();
+                    return Content("SUCCESS" );
+                }
+                else
+                {
+                    return Content("FAIL");
+                }
+            }
+            return Content("FAIL");
+        }
+
         // 删除管理员
         [HttpPost]
         public JsonResult CancelManagerAjax(int id)

@@ -827,9 +827,9 @@ namespace PeriodAid.Controllers
         public FileResult DownloadSalaryFile(DateTime start, DateTime end)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var sql = "select T3.StoreName, SUM(T4.SalesCount) as SalesCount, T3.StoreSystem, convert(char(10), T3.Date, 120) as SalesDate  from (SELECT T1.Id, convert(char(10), T1.Date, 120) as Date, T2.StoreName, T2.StoreSystem" +
-                " FROM Off_SalesInfo_Daily as T1 left join Off_Store as T2 on T1.StoreId = T2.Id" +
-                " where Date>= '" + start.ToString("yyyy-MM-dd") + "' and Date<= '" + end.ToString("yyyy-MM-dd") + "' and T2.Off_System_Id = " + user.DefaultSystemId + ") as T3 left join Off_Daily_Product as T4" +
+            var sql = "select T3.StoreName, SUM(T4.SalesCount) as SalesCount, T3.StoreSystem, convert(char(10), T3.Date, 120) as SalesDate  from (SELECT T1.Id, convert(char(10), T1.Date, 120) as Date, T2.StoreName, T4.SystemName as StoreSystem" +
+                " FROM Off_SalesInfo_Daily as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_StoreSystem as T4 on T2.Off_StoreSystemId = T4.Id" +
+                " where Date>= '" + start.ToString("yyyy-MM-dd") + "' and Date<= '" + end.ToString("yyyy-MM-dd") + "' and T4.Off_System_Id = " + user.DefaultSystemId + ") as T3 left join Off_Daily_Product as T4" +
                 " on T3.Id = T4.DailyId group by T3.StoreName, T3.StoreSystem, convert(char(10), T3.Date, 120)";
             var list = _offlineDB.Database.SqlQuery<StoreStaticExcel>(sql);
             MemoryStream stream = new MemoryStream();

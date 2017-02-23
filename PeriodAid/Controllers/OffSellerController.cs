@@ -17,6 +17,7 @@ using CsvHelper;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize]
     public class OffSellerController : Controller
     {
         OfflineSales _offlineDB = new OfflineSales();
@@ -610,7 +611,7 @@ namespace PeriodAid.Controllers
                     {
                         var user = UserManager.FindByName(item.UserName);
                         UserManager.RemoveFromRole(user.Id, "Seller");
-                        UserManager.AddToRole(user.Id, "Manager");
+                        UserManager.AddToRole(user.Id, "Supervisor");
                         var manager = _offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == user.UserName && m.Off_System_Id == user.DefaultSystemId);
                         if (manager == null)
                         {
