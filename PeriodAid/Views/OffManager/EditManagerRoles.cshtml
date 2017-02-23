@@ -7,37 +7,10 @@
         <div class="form-group">
             <div>@ViewBag.Roles</div>
             <label class="control-label col-md-3">选择权限</label>
-            @if (@ViewBag.Roles == "Supervisor")
-            {
-                <div class="col-md-9">
-                    <select id="role" name="role" class="form-control">
-                        <option value="Supervisor">督导</option>
-                        <option value="Manager">业务</option>
-                        <option value="Administrator">管理员</option>
-                    </select>
-                </div>
-            }
-            else if (@ViewBag.Roles == "Manager")
-            {
-                <div class="col-md-9">
-                    <select id="role" name="role" class="form-control">
-                        <option value="Administrator">管理员</option>
-                        <option value="Supervisor">督导</option>
-                        <option value="Manager">业务</option>
-                    </select>
-                </div>
-            }
-            else
-            {
-                <div class="col-md-9">
-                    <select id="role" name="role" class="form-control">
-                        <option value="Manager">业务</option>
-                        <option value="Administrator">管理员</option>
-                        <option value="Supervisor">督导</option>
-                    </select>
-                </div>
-            }
 
+                <div class="col-md-9">
+@Html.DropDownList("role",ViewBag.RolesDropDownList as SelectList,new {@class="form-control" })
+                </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-3 col-md-9">
@@ -48,26 +21,27 @@
         }
 <script>
     $("#role-modify").on("click", function () {
-        $("#editroleform").ajaxForm({
-            success: function (data) {
-                if (data == "SUCCESS") {
-                    $('.modal-box').modal('hide');
-                    alert("修改成功");
-                    $.ajax({
-                        url: "/OffManager/ManagerListPartial",
-                        success: function (data) {
-                            $("#offmanager-manager-list").html(data)
-                        }
-                    });
-                }
-                else {
-                    alert("修改失败", "", function () {
-                    }, { type: 'error' });
+            $("#editroleform").ajaxForm({
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        $('.modal-box').modal('hide');
+                        alert("修改成功");
+                        $.ajax({
+                            url: "/OffManager/ManagerListPartial",
+                            success: function (data) {
+                                $("#offmanager-manager-list").html(data)
+                            }
+                        });
+                    }
+                    else {
+                        alert("修改失败", "", function () {
+                        }, { type: 'error' });
+                        $("#role-modify").prop("disabled", false);
+                    }
+
                 }
 
-            }
-
-        });
+            });
     })
 </script>
 
