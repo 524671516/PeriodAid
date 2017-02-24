@@ -275,7 +275,7 @@ namespace PeriodAid.Controllers
                     var user = UserManager.FindByName(manager.UserName);
                     // 删除所有角色
                     string[] roles = new string[] { "Supervisor", "Manager", "Administrator" };
-                    UserManager.RemoveFromRoles(user.Id, roles);
+                        UserManager.RemoveFromRoles(user.Id, roles);
                     if (form["role"] == "Supervisor")
                     {
                         UserManager.AddToRole(user.Id, "Supervisor");
