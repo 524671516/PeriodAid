@@ -68,8 +68,12 @@
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
             var query = $("#offsales-search-query").val();
+            var storesystem = $("#storesystem :selected").text();
             if (query.trim() != "") {
                 l = l + "&query=" + query;
+            }
+            if ($("#storesystem").val() != "") {
+                l = l + "&query=" + query + "&storesystem=" + storesystem;
             }
             $.ajax({
                 url: l,

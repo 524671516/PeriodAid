@@ -7,7 +7,8 @@
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
-            <label>门店名称：</label>
+            <label>渠道选择：</label>
+            @Html.DropDownList("storesystem", ViewBag.QD as SelectList, "- 全部 -", new { @class = "form-control input-sm offline-search-inline" })
             <input class="form-control input-sm offline-search-inline" id="offsales-search-query" placeholder="搜索内容" />
             <a class="btn btn-info btn-sm" id="offsales-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
@@ -51,6 +52,32 @@
 </div>
 <script>
     $(function () {
+        $("#storesystem").on("change", function () {
+            console.log(1);
+            if ($("#storesystem").val() != "") {
+                $.ajax({
+                    url: "/OffSales/DailySalesListPartial",
+                    data: {
+                        storesystem: $("#storesystem :selected").text(),
+                        query: $("#offsales-search-query").val()
+                    },
+                    success: function (data) {
+                        $("#offsales-list").html(data);
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: "/OffSales/DailySalesListPartial",
+                    data: {
+                        storesystem: $("#storesystem").val(),
+                        query: $("#offsales-search-query").val()
+                    },
+                    success: function (data) {
+                        $("#offsales-list").html(data);
+                    }
+                });
+            }
+        })
         $.ajax({
             url: "/OffSales/DailySalesListPartial",
             success: function (data) {
@@ -60,15 +87,30 @@
     });
     //日报表搜索
     $("#offsales-search-btn").click(function () {
-        $.ajax({
-            url: "/OffSales/DailySalesListPartial",
-            data: {
-                query: $("#offsales-search-query").val()
-            },
-            success: function (data) {
-                $("#offsales-list").html(data);
-            }
-        });
+        console.log(1);
+        if ($("#storesystem").val() != "") {
+            $.ajax({
+                url: "/OffSales/DailySalesListPartial",
+                data: {
+                    storesystem: $("#storesystem :selected").text(),
+                    query: $("#offsales-search-query").val()
+                },
+                success: function (data) {
+                    $("#offsales-list").html(data);
+                }
+            });
+        } else {
+            $.ajax({
+                url: "/OffSales/DailySalesListPartial",
+                data: {
+                    storesystem: $("#storesystem").val(),
+                    query: $("#offsales-search-query").val()
+                },
+                success: function (data) {
+                    $("#offsales-list").html(data);
+                }
+            });
+        }
     });
     //新增日报表
     $("#offsales-add-daily").click(function () {
