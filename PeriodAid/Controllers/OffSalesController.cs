@@ -86,7 +86,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var list = (from m in _offlineDB.Off_SalesInfo_Daily
-                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                            where m.Off_Store.Off_StoreSystem.SystemName.Contains(query) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                             orderby m.Date descending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
