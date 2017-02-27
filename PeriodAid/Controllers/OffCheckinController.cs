@@ -815,7 +815,7 @@ namespace PeriodAid.Controllers
                 if (query != null)
                 {
                     var list = (from m in _offlineDB.Off_Checkin_Schedule
-                                where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
+                                where m.Subscribe == day && m.Off_Store.Off_StoreSystem.SystemName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
                                 orderby m.Off_Store.StoreName
                                 select m).ToPagedList(_page, 20);
                     return PartialView(list);
