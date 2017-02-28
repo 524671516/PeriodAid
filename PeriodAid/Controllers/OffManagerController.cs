@@ -71,7 +71,7 @@ namespace PeriodAid.Controllers
             if (query == null || query.Trim() == "")
             {
                 var list = (from m in _offlineDB.Off_StoreManager
-                           where m.Off_System_Id == user.DefaultSystemId
+                           where m.Off_System_Id == user.DefaultSystemId && m.Status>=0
                            orderby m.Id descending
                            select m).ToPagedList(_page, 20);
                 return PartialView(list);
@@ -274,8 +274,10 @@ namespace PeriodAid.Controllers
                 {
                     var user = UserManager.FindByName(manager.UserName);
                     // 删除所有角色
-                    string[] roles = new string[] { "Supervisor", "Manager", "Administrator" };
-                    UserManager.RemoveFromRoles(user.Id, roles);
+                    //string[] roles = new string[] { "Supervisor", "Manager", "Administrator" };
+                    UserManager.RemoveFromRole(user.Id,"Supervisor");
+                    UserManager.RemoveFromRole(user.Id, "Manager");
+                    UserManager.RemoveFromRole(user.Id, "Administrator");
                     if (form["role"] == "Supervisor")
                     {
                         UserManager.AddToRole(user.Id, "Supervisor");
@@ -293,7 +295,7 @@ namespace PeriodAid.Controllers
                     }
                     _offlineDB.Entry(manager).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
-                    return Content("SUCCESS" );
+                    return Content("SUCCESS");
                 }
                 else
                 {
@@ -313,23 +315,8 @@ namespace PeriodAid.Controllers
                 var currentuser = UserManager.FindById(User.Identity.GetUserId());
                 if (manager.Off_System_Id == currentuser.DefaultSystemId)
                 {
-                    var user = UserManager.FindByName(manager.UserName);
-                    UserManager.RemoveFromRole(user.Id, "Senior");
-                    UserManager.RemoveFromRole(user.Id, "Manager");
-                    UserManager.AddToRole(user.Id, "Seller");
-                    Off_Membership_Bind omb = new Off_Membership_Bind()
-                    {
-                        NickName = manager.NickName,
-                        Mobile = manager.Mobile,
-                        UserName = manager.UserName,
-                        Off_System_Id = currentuser.DefaultSystemId,
-                        Bind = false,
-                        ApplicationDate = DateTime.Now,
-                        Recruit = true,
-                        Type = 1
-                    };
-                    _offlineDB.Off_StoreManager.Remove(manager);
-                    _offlineDB.Off_Membership_Bind.Add(omb);
+                    manager.Status = -1;
+                    _offlineDB.Entry(manager).State = System.Data.Entity.EntityState.Modified;
                     _offlineDB.SaveChanges();
                     return Json(new { result = "SUCCESS" });
                 }

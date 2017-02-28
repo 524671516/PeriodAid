@@ -71,26 +71,26 @@ namespace PeriodAid.Controllers
         }
         // Origin: Off_Statistic_StoreSystem_Ajax
         [HttpPost]
-        public JsonResult StoreSystemStatisticAjax(string startdate, string enddate, string storesystem, string type)
+        public JsonResult StoreSystemStatisticAjax(string startdate, string enddate, int storesystemid, string type)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime st = Convert.ToDateTime(startdate);
             DateTime et = Convert.ToDateTime(enddate);
             if (type == "day")
             {
-                string sql = "SELECT T2.StoreSystem,[Date], count([Date]) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
-                    "FROM [Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
-                    "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date < '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "'" +
-                    "and T2.Off_System_Id = " + user.DefaultSystemId + " group by T1.Date, T2.StoreSystem order by T1.Date";
+                string sql = "SELECT T4.StoreSystem,[Date], count([Date]) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
+                    "FROM [Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId left join Off_StoreSystem as T4 on T4.Id=T2.Off_StoreSystemId " +
+                    "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date < '" + et.ToString("yyyy-MM-dd") + "' and T2.Off_StoreSystemId =" + storesystemid + " " +
+                    "and T2.Off_System_Id = " + user.DefaultSystemId + " group by T1.Date, T4.StoreSystem order by T1.Date";
                 var data = _offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);
                 return Json(new { result = "SUCCESS", data = data });
             }
             else if (type == "month")
             {
-                string sql = "SELECT T2.StoreSystem,CONVERT(datetime, CONVERT(char(7), T1.Date, 120)+'-01') as Date, count(CONVERT(char(7), T1.Date, 120)) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
-                    "FROM [Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId " +
-                    "where Date >= '" + st.ToString("yyyy-MM-01") + "' and Date < '" + et.AddMonths(1).ToString("yyyy-MM-01") + "' and T2.StoreSystem like '" + storesystem + "'" +
-                    "and T2.Off_System_Id = " + user.DefaultSystemId + " group by CONVERT(char(7), T1.Date, 120), T2.StoreSystem order by CONVERT(char(7), T1.Date, 120)";
+                string sql = "SELECT T4.StoreSystem,CONVERT(datetime, CONVERT(char(7), T1.Date, 120)+'-01') as Date, count(CONVERT(char(7), T1.Date, 120)) as Count, SUM(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
+                    "FROM [Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId left join Off_StoreSystem as T4 on T4.Id=T2.Off_StoreSystemId " +
+                    "where Date >= '" + st.ToString("yyyy-MM-01") + "' and Date < '" + et.AddMonths(1).ToString("yyyy-MM-01") + "' and T2.Off_StoreSystemId =" + storesystemid + "" +
+                    "and T2.Off_System_Id = " + user.DefaultSystemId + " group by CONVERT(char(7), T1.Date, 120), T4.StoreSystem order by CONVERT(char(7), T1.Date, 120)";
                 var data = _offlineDB.Database.SqlQuery<StoreSystem_Statistic>(sql);
                 return Json(new { result = "SUCCESS", data = data });
             }
@@ -98,21 +98,21 @@ namespace PeriodAid.Controllers
         }
         // Origin: Off_Statistic_StoreSystem_Product_Ajax
         [HttpPost]
-        public JsonResult StoreSystemProductStatisticAjax(string startdate, string enddate, string storesystem)
+        public JsonResult StoreSystemProductStatisticAjax(string startdate, string enddate, int storesystemid)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime st = Convert.ToDateTime(startdate);
             DateTime et = Convert.ToDateTime(enddate);
             string sql = "SELECT T3.ProductId, T4.SimpleName, sum(T3.SalesCount) as SalesCount, SUM(T3.SalesAmount) as SalesAmount, SUM(T3.StorageCount) as StorageCount " +
                 "FROM [Off_SalesInfo_Daily] as T1 left join Off_Store as T2 on T1.StoreId = T2.Id left join Off_Daily_Product as T3 on T1.Id = T3.DailyId left join Off_Product as T4 on T4.Id = T3.ProductId " +
-                "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "'" +
+                "where Date >= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.Off_StoreSystemId =" + storesystemid + " " +
                 "and T2.Off_System_Id = " + user.DefaultSystemId + " and ProductId is not NULL group by T3.ProductId,T4.SimpleName order by T4.SimpleName";
             var data = _offlineDB.Database.SqlQuery<StoreSystem_Product_Statistic>(sql);
             return Json(new { result = "SUCCESS", data = data });
         }
         // Origin: Off_Statistic_StoreSystem_Salary_Ajax
         [HttpPost]
-        public JsonResult StoreSystemSalaryStatisticAjax(string startdate, string enddate, string storesystem, string type)
+        public JsonResult StoreSystemSalaryStatisticAjax(string startdate, string enddate, int storesystemid, string type)
         {
             try
             {
@@ -122,9 +122,10 @@ namespace PeriodAid.Controllers
                 if (type == "month")
                 {
                     et = et.AddMonths(1);
-                    string sql = "SELECT CONVERT(datetime, CONVERT(char(7), T1.Date, 120)+'-01') as Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
-                        "where Date>= '" + st.ToString("yyyy-MM-01") + "' and Date< '" + et.ToString("yyyy-MM-01") + "' and T2.StoreSystem like '" + storesystem + "' and T2.Off_System_Id = " + user.DefaultSystemId + " " +
-                        "group by T2.StoreSystem, CONVERT(char(7), T1.Date, 120) order by CONVERT(char(7), T1.Date, 120)";
+                    string sql = "SELECT CONVERT(datetime, CONVERT(char(7), T1.Date, 120)+'-01') as Date, T4.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id "+
+                        "left join Off_StoreSystem as T4 on T4.Id=T2.Off_StoreSystemId " +
+                        "where Date>= '" + st.ToString("yyyy-MM-01") + "' and Date< '" + et.ToString("yyyy-MM-01") + "' and T2.Off_StoreSystemId =" + storesystemid + " and T2.Off_System_Id = " + user.DefaultSystemId + " " +
+                        "group by T4.StoreSystem, CONVERT(char(7), T1.Date, 120) order by CONVERT(char(7), T1.Date, 120)";
                     var data = _offlineDB.Database.SqlQuery<StoreSystem_Salary_Statistic>(sql);
                     return Json(new { result = "SUCCESS", data = data });
                 }
@@ -132,7 +133,8 @@ namespace PeriodAid.Controllers
                 {
 
                     string sql = "SELECT T1.Date, T2.StoreSystem, SUM(T1.Salary) as Salary, SUM(T1.Debit) as Debit, SUM(T1.Bonus) as Bonus FROM [Off_SalesInfo_Daily] as T1 left join [Off_Store] as T2 on T1.StoreId = T2.Id " +
-                        "where Date>= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.StoreSystem like '" + storesystem + "' and T2.Off_System_Id = " + user.DefaultSystemId + " " +
+                        "left join Off_StoreSystem as T4 on T4.Id = T2.Off_StoreSystemId "+
+                        "where Date>= '" + st.ToString("yyyy-MM-dd") + "' and Date< '" + et.ToString("yyyy-MM-dd") + "' and T2.Off_StoreSystemId =" + storesystemid + " and T2.Off_System_Id = " + user.DefaultSystemId + " " +
                         "group by T2.StoreSystem, T1.Date";
                     var data = _offlineDB.Database.SqlQuery<StoreSystem_Salary_Statistic>(sql);
                     return Json(new { result = "SUCCESS", data = data }, JsonRequestBehavior.AllowGet);

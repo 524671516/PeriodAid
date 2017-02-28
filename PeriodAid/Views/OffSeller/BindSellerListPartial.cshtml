@@ -15,36 +15,36 @@
         <th style="width:10%">
             绑定姓名
         </th>
-        <th style="width:8%">
+        <th style="width:12%">
             系统名称    
         </th>
-        <th style="width:25%">绑定促销员所属门店</th>
+        <th style="width:24%">绑定促销员所属门店</th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
-            <td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.NickName)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Mobile)
             </td>
 
-            <td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.ApplicationDate)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.DisplayFor(modelItem => item.Off_Seller.Name)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.Encode(item.Off_Seller == null ? "" : item.Off_Seller.Off_Store.Off_StoreSystem.SystemName)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.Encode(item.Off_Seller == null ? "" : item.Off_Seller.Off_Store.StoreName)
             </td>
-            <td>
+            <td class="ellipsis">
                 @Html.ActionLink("修改", "BindSellerPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offseller-bindseller-edit" })
                 @if (!item.Bind)
                 {
