@@ -89,7 +89,6 @@ namespace PeriodAid.Controllers
                                 orderby m.Date descending
                                 select m).ToPagedList(_page, 20);
                     return PartialView(list);
-
                 }
                 else
                 {

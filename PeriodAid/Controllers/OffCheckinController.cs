@@ -834,7 +834,7 @@ namespace PeriodAid.Controllers
                 if (query != null)
                 {
                     var list = (from m in _offlineDB.Off_Checkin_Schedule
-                                where m.Subscribe == day && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
+                                where m.Subscribe == day && m.Off_Store.Off_StoreSystem.SystemName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
                                 && m.Off_Checkin.Count==0
                                 orderby m.Off_Store.StoreName
                                 select m).ToPagedList(_page, 20);
@@ -937,13 +937,13 @@ namespace PeriodAid.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = UserManager.FindById(User.Identity.GetUserId());
-                    if (model.StartDate > model.EndDate)
+                    if (model.StartDate==null)
                     {
                         var storesystem = from m in _offlineDB.Off_StoreSystem
                                           where m.Off_System_Id == user.DefaultSystemId
                                           select m;
                         ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
-                        ModelState.AddModelError("", "开始日期不得大于结束日期");
+                        ModelState.AddModelError("", "活动日期不能为空");
                         return View(model);
                     }
                     if (form["StoreList"].ToString().Trim() == "")

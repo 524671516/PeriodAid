@@ -379,6 +379,7 @@
     <Content Include="Content\jedate.css" />
     <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\jquery.fullPage.css" />
+    <Content Include="Content\kalendae.css" />
     <Content Include="Content\PA-Site.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\prettify.css" />
@@ -424,6 +425,7 @@
     <Content Include="Scripts\framework7.js" />
     <Content Include="Scripts\framework7.min.js" />
     <Content Include="Scripts\html5.js" />
+    <Content Include="Scripts\kalendae.standalone.js" />
     <Content Include="Scripts\Manager.js" />
     <Content Include="Scripts\maapp.js" />
     <Content Include="Scripts\manager.min.js" />

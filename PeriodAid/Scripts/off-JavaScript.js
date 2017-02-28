@@ -1,11 +1,29 @@
 ﻿$(function () {
     /*----时间表汉化----*/
-    $.datepicker.regional["zh-CN"] = { closeText: "关闭", prevText: "&#x3c;上月", nextText: "下月&#x3e;", currentText: "今天", monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], monthNamesShort: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"], dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"], weekHeader: "周", dateFormat: "yy-mm-dd", firstDay: 1, isRTL: !1, showMonthAfterYear: !0, yearSuffix: "年" }
+    $.datepicker.regional["zh-CN"] = {
+        closeText: "关闭",
+        prevText: "&#x3c;上月",
+        nextText: "下月&#x3e;",
+        currentText: "今天",
+        monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+        monthNamesShort: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"],
+        dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
+        dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+        dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"],
+        weekHeader: "周",
+        dateFormat: "yy-mm-dd",
+        firstDay: 1, isRTL: !1,
+        showMonthAfterYear: !0,
+        yearSuffix: "年",     
+    }
     $.datepicker.setDefaults($.datepicker.regional["zh-CN"]);
     /*------end--------*/
     $("#start-date").datepicker({ dateFormat: 'yy-mm-dd' });
     $("#end-date").datepicker({ dateFormat: 'yy-mm-dd' });
-    $(".date-time").datepicker();
+    
+    $(".date-time").datepicker({
+        autoSize: true,
+    });
     /*start left navbar*/
     var left_nav = $("#current_page").val();
     $(".panel-collapse").removeClass("in");
@@ -357,7 +375,8 @@
                 },
                 success: function (data) {
                     if (data.data.length == 0) {
-                        alert("该促销员在此时间内无数据")
+                        alert("该促销员在此时间内无数据", "", function () {
+                        }, { type: 'error' });
                     } else {
                         $("#map").show();
                         var resultdata = data.data;
@@ -407,7 +426,7 @@
     $(".offstatistic-store-btn").click(function () {
         var start = $("#start-date").val();
         var end = $("#end-date").val();
-        var storeid = encodeURI(encodeURI($("#StoreList").val()));
+        var storesystem = $("#StoreSystem :selected").text();
         var type = $(this).attr("data-salary");
         var selectvalue = $("#StoreList").val() + "";
         var managerArray = selectvalue.split(',');
@@ -427,12 +446,13 @@
                 data: {
                     startdate: start,
                     enddate: end,
-                    storeid: storeid,
+                    storesystem: storesystemid,
                     type: type
                 },
                 success: function (data) {
                     if (data.data.length == 0) {
-                        alert("该区域门店下的这段时间内没有销售数据");
+                        alert("该区域门店下的这段时间内没有销售数据", "", function () {
+                        }, { type: 'error' });
                     } else {
                         $("#map").show();
                         var resultdata = data.data;
@@ -541,7 +561,8 @@
             },
             success: function (data) {
                 if (data.data.length == 0) {
-                    alert("该区域门店下的这段时间内没有销售数据");
+                    alert("该区域门店下的这段时间内没有销售数据", "", function () {
+                    }, { type: 'error' });
                 } else {
                     var datearray = new Array();
                     var salaryarry = new Array();
