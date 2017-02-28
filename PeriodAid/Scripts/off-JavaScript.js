@@ -426,7 +426,7 @@
     $(".offstatistic-store-btn").click(function () {
         var start = $("#start-date").val();
         var end = $("#end-date").val();
-        var storesystem = $("#StoreSystem :selected").text();
+        var storesystemid = $("#StoreSystem").val();
         var type = $(this).attr("data-salary");
         var selectvalue = $("#StoreList").val() + "";
         var managerArray = selectvalue.split(',');
