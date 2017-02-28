@@ -180,13 +180,7 @@ namespace PeriodAid.Models
     {
         [Required(ErrorMessage ="至少选择一个门店")]
         public string StoreList { get; set; }
-
-        [Required(ErrorMessage="请选择活动开始日期")]
-        public DateTime StartDate { get; set; }
-
-        [Required(ErrorMessage = "请选择活动开始日期")]
-        public DateTime EndDate { get; set; }
-
+       
         [RegularExpression("[012]\\d:[0-6]\\d", ErrorMessage ="格式错误")]
         [Required(ErrorMessage = "标准上班时间不能为空")]
         public string BeginTime { get; set; }

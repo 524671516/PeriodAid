@@ -8,7 +8,8 @@
         <td class="pull-right">
             <label>手工数据:</label>&nbsp;&nbsp;
             <input type="checkbox" id="offchechin-manualbox" />&nbsp;&nbsp;&nbsp;
-            <label>门店名称：</label>
+            <label>渠道选择：</label>
+            @Html.DropDownList("storesystem", ViewBag.QD as SelectList, "- 全部 -", new { @class = "form-control input-sm offline-search-inline" })
             <input class="form-control input-sm offline-search-inline" id="offsalesschedule-search-query" placeholder="搜索内容" />
             <a class="btn btn-info btn-sm" id="offsalesschedule-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
@@ -67,6 +68,21 @@
             }
         })
     });
+    $("#storesystem").on("change", function () {
+        var query = $("#offsalesschedule-search-query").val();
+        $.ajax({
+            url: "/OffCheckin/ViewScheduleDetailsPartial",
+            data: {
+                date: $("#offsalesschedule-current-date").val(),
+                query: query,
+                nonedata: $("#offchechin-manualbox").prop("checked"),
+                storesystemid: $("#storesystem").val()
+            },
+            success: function (data) {
+                $("#offsalesschedule-list").html(data);
+            }
+        });
+    })
     //搜索
     $("#offsalesschedule-search-btn").click(function () {
         var query = $("#offsalesschedule-search-query").val();
@@ -75,11 +91,11 @@
             data: {
                 date: $("#offsalesschedule-current-date").val(),
                 query: query,
-                nonedata: $("#offchechin-manualbox").prop("checked")
+                nonedata: $("#offchechin-manualbox").prop("checked"),
+                storesystemid:$("#storesystem").val()
             },
             success: function (data) {
                 $("#offsalesschedule-list").html(data);
-                $("#offsalesschedule-search-query").val(query);
             }
         });
     });

@@ -107,7 +107,8 @@
     $(".offstatistic-storesystem-btn").click(function () {
         var start = $("#start-date").val();
         var end = $("#end-date").val();
-        var storesystem = $("#StoreSystem").val();
+        var storesystemid = $("#StoreSystem").val();
+        var storesystem = $("#StoreSystem :selected").text();
         var type = $(this).attr("data-salary");
         if (start > end) {
             $("#danger").text("开始时间不能大于结束时间")
@@ -121,12 +122,14 @@
                 data: {
                     startdate: start,
                     enddate: end,
-                    storesystem: storesystem,
+                    storesystemid: storesystemid,
                     type: type
                 },
                 success: function (data) {
                     if (data.data.length == 0) {
-                        alert("该区域在此时间内无数据");
+                        alert("该区域在此时间内无数据", "", function () {
+                            //after click the confirm button, will run this callback function
+                        }, { type: 'error' });
                     } else {
                         $("#map").show();
                         //区域销售折线图
@@ -160,8 +163,8 @@
                                 }
                             }]
                         });
-                        products_statisticsystem(start, end, storesystem, type)
-                        salary_statisticsystem(start, end, storesystem, type)
+                        products_statisticsystem(start, end, storesystemid, type)
+                        salary_statisticsystem(start, end, storesystemid, type)
                     };
 
                 }
@@ -169,14 +172,15 @@
             return false
         }
     });
-    function products_statisticsystem(start, end, storesystem, type) {
+    function products_statisticsystem(start, end, storesystemid, type) {
+        var storesystem = $("#StoreSystem :selected").text();
         $.ajax({
             url: "/OffStatistic/StoreSystemProductStatisticAjax",
             type: "post",
             data: {
                 startdate: start,
                 enddate: end,
-                storesystem: storesystem,
+                storesystemid: storesystemid,
                 type: type
             },
             success: function (data) {
@@ -219,19 +223,22 @@
             }
         })
     }
-    function salary_statisticsystem(start, end, storesystem, type) {
+    function salary_statisticsystem(start, end, storesystemid, type) {
+        var storesystem = $("#StoreSystem :selected").text();
         $.ajax({
             url: "/OffStatistic/StoreSystemSalaryStatisticAjax",
             type: "post",
             data: {
                 startdate: start,
                 enddate: end,
-                storesystem: storesystem,
+                storesystemid: storesystemid,
                 type: type
             },
             success: function (data) {
                 if (data.data.length == 0) {
-                    alert("该区域在此时间内无数据");
+                    alert("该区域在此时间内无数据", "", function () {
+                        //after click the confirm button, will run this callback function
+                    }, { type: 'error' });
                 } else {
                     var datearray = new Array();
                     var salaryarry = new Array();
@@ -426,7 +433,7 @@
     $(".offstatistic-store-btn").click(function () {
         var start = $("#start-date").val();
         var end = $("#end-date").val();
-        var storesystemid = $("#StoreSystem").val();
+        var storeid = $("#StoreList").val();
         var type = $(this).attr("data-salary");
         var selectvalue = $("#StoreList").val() + "";
         var managerArray = selectvalue.split(',');
@@ -446,7 +453,7 @@
                 data: {
                     startdate: start,
                     enddate: end,
-                    storesystem: storesystemid,
+                    storeid: storeid,
                     type: type
                 },
                 success: function (data) {

@@ -53,30 +53,17 @@
 <script>
     $(function () {
         $("#storesystem").on("change", function () {
-            console.log(1);
-            if ($("#storesystem").val() != "") {
                 $.ajax({
                     url: "/OffSales/DailySalesListPartial",
                     data: {
-                        storesystem: $("#storesystem :selected").text(),
+                        storesystemid: $("#storesystem").val(),
                         query: $("#offsales-search-query").val()
                     },
                     success: function (data) {
                         $("#offsales-list").html(data);
                     }
                 });
-            } else {
-                $.ajax({
-                    url: "/OffSales/DailySalesListPartial",
-                    data: {
-                        storesystem: $("#storesystem").val(),
-                        query: $("#offsales-search-query").val()
-                    },
-                    success: function (data) {
-                        $("#offsales-list").html(data);
-                    }
-                });
-            }
+
         })
         $.ajax({
             url: "/OffSales/DailySalesListPartial",
@@ -87,30 +74,16 @@
     });
     //日报表搜索
     $("#offsales-search-btn").click(function () {
-        console.log(1);
-        if ($("#storesystem").val() != "") {
             $.ajax({
                 url: "/OffSales/DailySalesListPartial",
                 data: {
-                    storesystem: $("#storesystem :selected").text(),
+                    storesystemid: $("#storesystem").val(),
                     query: $("#offsales-search-query").val()
                 },
                 success: function (data) {
                     $("#offsales-list").html(data);
                 }
             });
-        } else {
-            $.ajax({
-                url: "/OffSales/DailySalesListPartial",
-                data: {
-                    storesystem: $("#storesystem").val(),
-                    query: $("#offsales-search-query").val()
-                },
-                success: function (data) {
-                    $("#offsales-list").html(data);
-                }
-            });
-        }
     });
     //新增日报表
     $("#offsales-add-daily").click(function () {

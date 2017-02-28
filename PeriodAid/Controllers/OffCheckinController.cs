@@ -65,32 +65,60 @@ namespace PeriodAid.Controllers
         // Origin: Off_CheckIn_List
         public ActionResult CheckinList()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var QD = from m in _offlineDB.Off_StoreSystem
+                     where m.Off_System_Id == user.DefaultSystemId
+                     select m;
+            ViewBag.QD = new SelectList(QD, "Id", "SystemName");
             return View();
         }
 
         // Origin: Off_CheckIn_List_ajax
-        public PartialViewResult CheckinListPartial(int? status, int? page, string query)
+        public PartialViewResult CheckinListPartial(int? status, int? page, string query,int? storesystemid)
         {
             int _page = page ?? 1;
             int _status = status ?? 4;
             var user = UserManager.FindById(User.Identity.GetUserId());
-            // 按照活动日期排序
-            if (query == null)
+            if (storesystemid == null)
             {
-                var list = (from m in _offlineDB.Off_Checkin
-                            where m.Status == _status && m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
-                            orderby m.Off_Checkin_Schedule.Subscribe descending
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
+                if (query == "" || query == null)
+                {
+                    var list = (from m in _offlineDB.Off_Checkin
+                                where m.Status == _status&&m.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Off_Checkin_Schedule.Subscribe descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+                else
+                {
+                    var list = (from m in _offlineDB.Off_Checkin
+                                where m.Status == _status&&(m.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.SystemName.Contains(query) || m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query) || m.ConfirmUser.Contains(query)) &&
+                                m.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Off_Checkin_Schedule.Subscribe descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+
             }
             else
             {
-                var list = (from m in _offlineDB.Off_Checkin
-                            where m.Status == _status && m.Off_Checkin_Schedule.Off_System_Id == user.DefaultSystemId
-                            && (m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query) || m.Off_Seller.Name.Contains(query) || m.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.SystemName.Contains(query))
-                            orderby m.Off_Checkin_Schedule.Subscribe descending
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
+                if (query == "" || query == null)
+                {
+                    var list = (from m in _offlineDB.Off_Checkin
+                                where m.Status == _status&&m.Off_Checkin_Schedule.Off_Store.Off_StoreSystemId == storesystemid && m.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Off_Checkin_Schedule.Subscribe descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+                else
+                {
+                    var list = (from m in _offlineDB.Off_Checkin
+                                where m.Status == _status&&(m.Off_Checkin_Schedule.Off_Store.StoreName.Contains(query)||m.Off_Seller.Name.Contains(query)||m.ConfirmUser.Contains(query)) && m.Off_Checkin_Schedule.Off_Store.Off_StoreSystemId == storesystemid && m.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Off_Checkin_Schedule.Subscribe descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+
             }
         }
 
@@ -799,12 +827,17 @@ namespace PeriodAid.Controllers
             }
         }
         // Origin: Off_ScheduleDetails(原本是单页面，现在做成ajax+partial的形式)
-        public ActionResult ViewScheduleDetails(string date)
+        public ActionResult ViewScheduleDetails(string date)       
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var QD = from m in _offlineDB.Off_StoreSystem
+                     where m.Off_System_Id == user.DefaultSystemId
+                     select m;
+            ViewBag.QD = new SelectList(QD, "Id", "SystemName");
             ViewBag.Date = date;
             return View();
         }
-        public PartialViewResult ViewScheduleDetailsPartial(string date, string query, int? page, bool? nonedata)
+        public PartialViewResult ViewScheduleDetailsPartial(string date, string query, int? page, bool? nonedata,int?storesystemid)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             DateTime day = DateTime.Parse(date);
@@ -812,44 +845,92 @@ namespace PeriodAid.Controllers
             bool _nonedata = nonedata ?? false;
             if (!_nonedata)
             {
-                if (query != null)
+                if (storesystemid == null)
                 {
-                    var list = (from m in _offlineDB.Off_Checkin_Schedule
-                                where m.Subscribe == day && m.Off_Store.Off_StoreSystem.SystemName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
-                                orderby m.Off_Store.StoreName
-                                select m).ToPagedList(_page, 20);
-                    return PartialView(list);
+                    if (query == null || query == "")
+                    {
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+                    }
+                    else
+                    {
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && (m.Off_Store.Off_StoreSystem.SystemName.Contains(query) || m.Off_Store.StoreName.Contains(query)) && m.Off_System_Id == user.DefaultSystemId
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+                    }
                 }
                 else
                 {
-                    var list = (from m in _offlineDB.Off_Checkin_Schedule
-                                where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
-                                orderby m.Off_Store.StoreName
-                                select m).ToPagedList(_page, 20);
-                    return PartialView(list);
+                    if (query == null || query == ""){
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && m.Off_Store.Off_StoreSystemId== storesystemid && m.Off_System_Id == user.DefaultSystemId
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+
+                    }
+                    else
+                    {
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && m.Off_Store.Off_StoreSystemId == storesystemid&&m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+                    }
                 }
+
             }
             else
             {
-                if (query != null)
+                if (storesystemid == null)
                 {
-                    var list = (from m in _offlineDB.Off_Checkin_Schedule
-                                where m.Subscribe == day && m.Off_Store.Off_StoreSystem.SystemName.Contains(query) && m.Off_System_Id == user.DefaultSystemId
-                                && m.Off_Checkin.Count==0
-                                orderby m.Off_Store.StoreName
-                                select m).ToPagedList(_page, 20);
-                    return PartialView(list);
+                    if (query == null || query == "")
+                    {
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId && m.Off_Checkin.Count == 0
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+                    }
+                    else
+                    {
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && (m.Off_Store.Off_StoreSystem.SystemName.Contains(query) || m.Off_Store.StoreName.Contains(query)) && m.Off_System_Id == user.DefaultSystemId && m.Off_Checkin.Count == 0
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+                    }
+
                 }
                 else
                 {
-                    var list = (from m in _offlineDB.Off_Checkin_Schedule
-                                where m.Subscribe == day && m.Off_System_Id == user.DefaultSystemId
-                                && m.Off_Checkin.Count ==0
-                                orderby m.Off_Store.StoreName
-                                select m).ToPagedList(_page, 20);
-                    return PartialView(list);
+                    if (query == null || query == "")
+                    {
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && m.Off_Store.Off_StoreSystemId == storesystemid && m.Off_System_Id == user.DefaultSystemId && m.Off_Checkin.Count == 0
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+                    }
+                    else
+                    {
+                        var list = (from m in _offlineDB.Off_Checkin_Schedule
+                                    where m.Subscribe == day && m.Off_Store.Off_StoreSystemId == storesystemid && m.Off_Store.StoreName.Contains(query) && m.Off_System_Id == user.DefaultSystemId 
+                                    && m.Off_Checkin.Count == 0
+                                    orderby m.Off_Store.StoreName
+                                    select m).ToPagedList(_page, 20);
+                        return PartialView(list);
+                    }
                 }
+
             }
+
+
         }
 
         // Origin: Ajax_EditSchedule
@@ -937,7 +1018,7 @@ namespace PeriodAid.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = UserManager.FindById(User.Identity.GetUserId());
-                    if (model.StartDate==null)
+                    if (form["eventtime"]== null)
                     {
                         var storesystem = from m in _offlineDB.Off_StoreSystem
                                           where m.Off_System_Id == user.DefaultSystemId
@@ -955,20 +1036,17 @@ namespace PeriodAid.Controllers
                         ModelState.AddModelError("", "请至少选择一个店铺");
                         return View(model);
                     }
-                    var datelength = Convert.ToInt32(model.EndDate.Subtract(model.StartDate).TotalDays);
+                    string[] timelist = form["eventtime"].ToString().Split(',');
                     // 每天循环
-                    for (int i = 0; i <= datelength; i++)
+                    for (int i = 0; i < timelist.Length; i++)
                     {
+                        DateTime subscribe = Convert.ToDateTime(timelist[i]);
                         string[] storelist = form["StoreList"].ToString().Split(',');
                         for (int j = 0; j < storelist.Length; j++)
                         {
                             string[] begintime = model.BeginTime.Split(':');
                             string[] finishtime = model.FinishTime.Split(':');
-                            int year = model.StartDate.AddDays(i).Year;
-                            int month = model.StartDate.AddDays(i).Month;
-                            int day = model.StartDate.AddDays(i).Day;
                             int storeid = Convert.ToInt32(storelist[j]);
-                            DateTime subscribe = model.StartDate.AddDays(i);
                             var schedule = _offlineDB.Off_Checkin_Schedule.SingleOrDefault(m => m.Off_Store_Id == storeid && m.Subscribe == subscribe);
                             if (schedule == null)
                             {
@@ -976,8 +1054,8 @@ namespace PeriodAid.Controllers
                                 {
                                     Off_Store_Id = storeid,
                                     Subscribe = subscribe,
-                                    Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
-                                    Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
+                                    Standard_CheckIn = new DateTime(subscribe.Year, subscribe.Month, subscribe.Day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0),
+                                    Standard_CheckOut = new DateTime(subscribe.Year, subscribe.Month, subscribe.Day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0),
                                     Standard_Salary = model.Salary,
                                     Off_System_Id = user.DefaultSystemId
                                 };
@@ -985,8 +1063,8 @@ namespace PeriodAid.Controllers
                             }
                             else
                             {
-                                schedule.Standard_CheckIn = new DateTime(year, month, day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0);
-                                schedule.Standard_CheckOut = new DateTime(year, month, day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0);
+                                schedule.Standard_CheckIn = new DateTime(subscribe.Year, subscribe.Month, subscribe.Day, Convert.ToInt32(begintime[0]), Convert.ToInt32(begintime[1]), 0);
+                                schedule.Standard_CheckOut = new DateTime(subscribe.Year, subscribe.Month, subscribe.Day, Convert.ToInt32(finishtime[0]), Convert.ToInt32(finishtime[1]), 0);
                                 schedule.Standard_Salary = model.Salary;
                                 _offlineDB.Entry(schedule).State = System.Data.Entity.EntityState.Modified;
                             }

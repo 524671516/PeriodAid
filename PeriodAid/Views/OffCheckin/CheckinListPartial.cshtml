@@ -68,7 +68,8 @@
             url: link,
             data: {
                 status: $("#offcheckin-status-val").val(),
-                query: $("#offcheckin-search-query").val()
+                query: $("#offcheckin-search-query").val(),
+                storesystemid: $("#storesystem").val()
             },
             success: function (data) {
                 $("#checkinlist").html(data);

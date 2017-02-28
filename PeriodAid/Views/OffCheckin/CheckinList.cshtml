@@ -8,7 +8,8 @@
     <tbody>
         <tr>
             <td class="pull-right">
-                <label>门店名称：</label>
+                <label>渠道选择：</label>
+                @Html.DropDownList("storesystem", ViewBag.QD as SelectList, "- 全部 -", new { @class = "form-control input-sm offline-search-inline" })
                 <input class="form-control input-sm offline-search-inline" id="offcheckin-search-query" placeholder="搜索内容">
                 <a class="btn btn-info btn-sm" id="offcheckin-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
             </td>
@@ -30,6 +31,19 @@
 <input type="hidden" id="offcheckin-status-val" value="4" />
 <script>
     $(function () {
+        $("#storesystem").on("change", function () {
+            $.ajax({
+                url: "/OffCheckin/CheckinListPartial",
+                data: {
+                    status: $("#offcheckin-status-val").val(),
+                    query: $("#offcheckin-search-query").val(),
+                    storesystemid: $("#storesystem").val()
+                },
+                success: function (data) {
+                    $("#checkinlist").html(data);
+                }
+            });
+        })
         $.ajax({
             url: "/OffCheckin/CheckinListPartial",
             success: function (data) {
@@ -49,7 +63,8 @@
                                     url: "/OffCheckin/CheckinListPartial",
                                     data: {
                                         status: $("#offcheckin-status-val").val(),
-                                        query: $("#offcheckin-search-query").val()
+                                        query: $("#offcheckin-search-query").val(),
+                                        storesystemid: $("#storesystem").val()
                                     },
                                     success: function (data) {
                                         $("#checkinlist").html(data);
@@ -70,7 +85,8 @@
             url: "/OffCheckin/CheckinListPartial",
             data: {
                 status: $("#offcheckin-status-val").val(),
-                query: $("#offcheckin-search-query").val()
+                query: $("#offcheckin-search-query").val(),
+                storesystemid: $("#storesystem").val()
             },
             success: function (data) {
                 $("#checkinlist").html(data);
@@ -83,7 +99,8 @@
             url: "/OffCheckin/CheckinListPartial",
             data: {
                 status: $("#offcheckin-status-val").val(),
-                query: $("#offcheckin-search-query").val()
+                query: $("#offcheckin-search-query").val(),
+                storesystemid: $("#storesystem").val()
             },
             success: function (data) {
                 $("#checkinlist").html(data);

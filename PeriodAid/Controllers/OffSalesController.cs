@@ -76,11 +76,11 @@ namespace PeriodAid.Controllers
         }
 
         // Origin:Off_DailySalesInfo_ajaxlist
-        public ActionResult DailySalesListPartial(int? page, string query, string storesystem)
+        public ActionResult DailySalesListPartial(int? page, string query, int? storesystemid)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
-            if (storesystem == null || storesystem == "")
+            if (storesystemid == null)
             {
                 if (query == "" || query == null)
                 {
@@ -106,7 +106,7 @@ namespace PeriodAid.Controllers
                 if (query == "" || query == null)
                 {
                     var list = (from m in _offlineDB.Off_SalesInfo_Daily
-                                where m.Off_Store.Off_StoreSystem.SystemName.Contains(storesystem) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                where m.Off_Store.Off_StoreSystemId== storesystemid && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                                 orderby m.Date descending
                                 select m).ToPagedList(_page, 20);
                     return PartialView(list);
@@ -114,7 +114,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var list = (from m in _offlineDB.Off_SalesInfo_Daily
-                                where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_StoreSystem.SystemName.Contains(storesystem) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_StoreSystemId== storesystemid && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
                                 orderby m.Date descending
                                 select m).ToPagedList(_page, 20);
                     return PartialView(list);
