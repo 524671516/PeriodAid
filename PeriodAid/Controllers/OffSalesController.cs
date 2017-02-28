@@ -67,29 +67,59 @@ namespace PeriodAid.Controllers
         // Origin:Off_Sales_main
         public ActionResult DailySalesIndex()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var QD = from m in _offlineDB.Off_StoreSystem
+                     where m.Off_System_Id == user.DefaultSystemId
+                     select m;
+            ViewBag.QD = new SelectList(QD, "Id", "SystemName");
             return View();
         }
 
         // Origin:Off_DailySalesInfo_ajaxlist
-        public ActionResult DailySalesListPartial(int? page, string query)
+        public ActionResult DailySalesListPartial(int? page, string query, string storesystem)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             int _page = page ?? 1;
-            if (query == null || query == "")
+            if (storesystem == null || storesystem == "")
             {
-                var list = (from m in _offlineDB.Off_SalesInfo_Daily
-                            where m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
-                            orderby m.Date descending
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
+                if (query == "" || query == null)
+                {
+                    var list = (from m in _offlineDB.Off_SalesInfo_Daily
+                                where m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Date descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+                else
+                {
+                    var list = (from m in _offlineDB.Off_SalesInfo_Daily
+                                where (m.Off_Store.Off_StoreSystem.SystemName.Contains(query) || m.Off_Store.StoreName.Contains(query)) &&
+                                m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Date descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+
             }
             else
             {
-                var list = (from m in _offlineDB.Off_SalesInfo_Daily
-                            where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
-                            orderby m.Date descending
-                            select m).ToPagedList(_page, 20);
-                return PartialView(list);
+                if (query == "" || query == null)
+                {
+                    var list = (from m in _offlineDB.Off_SalesInfo_Daily
+                                where m.Off_Store.Off_StoreSystem.SystemName.Contains(storesystem) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Date descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+                else
+                {
+                    var list = (from m in _offlineDB.Off_SalesInfo_Daily
+                                where m.Off_Store.StoreName.Contains(query) && m.Off_Store.Off_StoreSystem.SystemName.Contains(storesystem) && m.Off_Store.Off_StoreSystem.Off_System_Id == user.DefaultSystemId
+                                orderby m.Date descending
+                                select m).ToPagedList(_page, 20);
+                    return PartialView(list);
+                }
+
             }
         }
         // Origin:Ajax_EditDailyInfo

@@ -46,7 +46,11 @@
         //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
-            var query = $("#offstore-search-query").val();
+            if ($("#storesystem").val() == "") {
+                var query = $("#offstore-search-query").val();
+            } else {
+                var query = $("#offstore-search-query").val() + $("#storesystem :selected").html();
+            }
             l = l + "&query=" + query;
             $.ajax({
                 url: l,

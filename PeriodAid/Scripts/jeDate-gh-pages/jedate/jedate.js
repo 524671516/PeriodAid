@@ -694,7 +694,7 @@
 		});
 	};
 	//选择日
-	jeDt.chooseDays = function(opts, self, lyerCell) {
+	jeDt.chooseDays = function (opts, self, lyerCell) {
 		jeDt.bind(QD(lyerCell + " .jedaul li"), "click", function(ev) { 
 			var that = this, liTms = [], valcell = (opts.isDisplay) ? QD("body "+lyerCell.replace(/\#/g,"."))[0] : self;
 			if (jeDt.hasClass(that, "disabled")) return;
