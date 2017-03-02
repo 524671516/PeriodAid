@@ -219,6 +219,7 @@
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\SellerTaskController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
+    <Compile Include="Controllers\WebContentController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
     <Compile Include="DAL\AliOSSUtilities.cs" />
     <Compile Include="DAL\AppPayUtilities.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Models\PressConference.cs" />
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\TestViewModels.cs" />
+    <Compile Include="Models\WebContentModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -980,6 +982,10 @@
     <Content Include="Views\OffCheckin\CreateSalesEvent.cshtml" />
     <Content Include="Views\OffCheckin\CommitSalesEvent.cshtml" />
     <Content Include="Views\OffManager\EditManagerRoles.cshtml" />
+    <Content Include="Views\Shared\_WebContentLayout.cshtml" />
+    <Content Include="Views\WebContent\WebEventsList_Ajax.cshtml" />
+    <Content Include="Views\WebContent\CreateWebEventPartial.cshtml" />
+    <Content Include="Views\WebContent\WebContentIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
