@@ -29,6 +29,7 @@ namespace PeriodAid.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+           
             modelBuilder.Entity<CheckCode_Group>()
                 .HasMany(e => e.AccessRecords)
                 .WithRequired(e => e.CheckCode_Group)
@@ -266,4 +267,5 @@ namespace PeriodAid.Models
 
         public DateTime AccessTime { get; set; }
     }
+   
 }

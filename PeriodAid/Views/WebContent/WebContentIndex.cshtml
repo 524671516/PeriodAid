@@ -23,6 +23,25 @@
 
 </div>
 <script>
+    $.ajax({
+        url: "/WebContent/WebEventsList_Ajax",
+        success: function (data) {
+            $("#webevents-list").html(data);
+        }
+    });
+    //搜索
+    $("#webevents-search-btn").click(function () {
+        $.ajax({
+            url: "/WebContent/WebEventsList_Ajax",
+            data: {
+                query: $("#webevents-search-query").val()
+            },
+            success: function (data) {
+                $("#webevents-list").html(data);
+            }
+        })
+    });
+    //新增
     $("#webevents-create").on("click", function () {
         var link_url = "/WebContent/CreateWebEventPartial"
         var head = "新增活动"
