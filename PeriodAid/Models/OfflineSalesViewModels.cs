@@ -151,6 +151,7 @@ namespace PeriodAid.Models
     public class SellerSalaryExcel
     {
         public string Name { get; set; }
+        public string SystemName { get; set; }
         public string StoreName { get; set; }
         public string Mobile { get; set; }
         public string IdNumber { get; set; }

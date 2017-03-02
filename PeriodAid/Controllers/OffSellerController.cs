@@ -297,7 +297,7 @@ namespace PeriodAid.Controllers
         public FileResult DownloadSalaryFile(DateTime start, DateTime end)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            var sql = "Select T4.Name, T5.StoreName, T4.Mobile, T4.IdNumber, T4.AccountName, T4.AccountSource, T4.CardName, T4.CardNo, T3.Standard_Salary," +
+            var sql = "Select T4.Name,T6.SystemName, T5.StoreName, T4.Mobile, T4.IdNumber, T4.AccountName, T4.AccountSource, T4.CardName, T4.CardNo, T3.Standard_Salary," +
                 "T3.Salary, T3.Bonus, T3.Debit, T3.Att_All, T3.Att_Delay, T3.Att_Leave, T3.Att_Absence from (select T1.SellerId, SUM(T1.Salary) as Salary, SUM(T1.Bonus) as Bonus, SUM(T1.Debit) as Debit," +
                 "cast(AVG(T2.Standard_Salary) as decimal(10, 2)) as Standard_Salary, " +
                 "SUM(case when T1.Attendance = 0 then 1 else 0 end) as Att_All," +
@@ -308,13 +308,14 @@ namespace PeriodAid.Controllers
                 " T1.Date = T2.Subscribe and T1.StoreId = T2.Off_Store_Id" +
                 " where T1.Date >= '" + start.ToString("yyyy-MM-dd") + "' and T1.Date <= '" + end.ToString("yyyy-MM-dd") + "'" +
                 " group by SellerId) as T3 left join Off_Seller as T4 on T3.SellerId = T4.Id" +
-                " left join Off_Store as T5 on T4.StoreId = T5.Id" +
+                " left join Off_Store as T5 on T4.StoreId = T5.Id left join Off_StoreSystem as T6 on T6.Id = T5.Off_StoreSystemId" +
                 " where T4.Off_System_Id = " + user.DefaultSystemId;
             var list = _offlineDB.Database.SqlQuery<SellerSalaryExcel>(sql);
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);
             CsvWriter csv = new CsvWriter(writer);
             //string[] columname = new string[] {"店铺名称", "经销商", "姓名", "电话号码", "身份证号码", "开户行", "银行卡号", "工资", "奖金", "全勤天数", "迟到天数" };
+            csv.WriteField("系统名称");
             csv.WriteField("店铺名称");
             csv.WriteField("姓名");
             csv.WriteField("电话号码");
@@ -334,6 +335,7 @@ namespace PeriodAid.Controllers
             csv.NextRecord();
             foreach (var item in list)
             {
+                csv.WriteField(item.SystemName);
                 csv.WriteField(item.StoreName);
                 csv.WriteField(item.Name);
                 csv.WriteField("'" + item.Mobile);
