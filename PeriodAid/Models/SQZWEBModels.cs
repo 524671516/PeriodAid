@@ -269,11 +269,9 @@ namespace PeriodAid.Models
     }
     public class CheckCodeStatistics
     {
-        public string  ClickTime { get; set; }
-        public string  ViewTime { get; set; }
-        public int? ViewNum { get; set; }
-        public int? ClickId { get; set; }
-        public int? ClickNum { get; set; }
+        public string  ViewDate { get; set; }
+        public int? ClickCount { get; set; }
+        public int? ViewCount { get; set; }
     }
 
 

@@ -62,14 +62,14 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             if (query == null || query == "")
             {
-                var webewebeventslist = (from m in _sqzwebDB.Web_Event
+                var webewebeventslist = (from m in _db.Web_Event
                                          orderby m.Event_Date
                                          select m).ToPagedList(_page, 20);
                 return PartialView(webewebeventslist);
             }
             else
             {
-                var webewebeventslist = (from m in _sqzwebDB.Web_Event
+                var webewebeventslist = (from m in _db.Web_Event
                                          where (m.Event_Content.Contains(query) || m.Event_Title.Contains(query))
                                          orderby m.Event_Date
                                          select m).ToPagedList(_page, 20);
@@ -94,8 +94,8 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(item))
                 {
                     item.Event_UpdateTime = DateTime.Now;
-                    _sqzwebDB.Web_Event.Add(item);
-                    _sqzwebDB.SaveChanges();
+                    _db.Web_Event.Add(item);
+                    _db.SaveChanges();
                     return Content("SUCCESS");
                 }
                 return Content("FAIL");
@@ -110,7 +110,7 @@ namespace PeriodAid.Controllers
         //修改活动
         public ActionResult EditWebEventPartial(int Eid)
         {
-            var web_event = _sqzwebDB.Web_Event.SingleOrDefault(m => m.Id == Eid);
+            var web_event = _db.Web_Event.SingleOrDefault(m => m.Id == Eid);
             return PartialView(web_event);
         }
 
@@ -124,8 +124,8 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(item))
                 {
                     item.Event_UpdateTime = DateTime.Now;
-                    _sqzwebDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    _sqzwebDB.SaveChanges();
+                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
                     return Content("SUCCESS");
                 }
                 return Content("FAIL");
@@ -142,7 +142,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult DeleteWebEvent(int Eid)
         {
-            var item = _sqzwebDB.Web_Event.SingleOrDefault(m => m.Id == Eid);
+            var item = _db.Web_Event.SingleOrDefault(m => m.Id == Eid);
             if (item == null)
             {
                 return Json(new { result = "FAIL" });
@@ -151,8 +151,8 @@ namespace PeriodAid.Controllers
             {
                 try
                 {
-                    _sqzwebDB.Web_Event.Remove(item);
-                    _sqzwebDB.SaveChanges();
+                    _db.Web_Event.Remove(item);
+                    _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
                 }
                 catch
@@ -175,7 +175,7 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             if (query == "" || query == null)
             {
-                var checkcodelist = (from m in _sqzwebDB.CheckCode_Group
+                var checkcodelist = (from m in _db.CheckCode_Group
                                      orderby m.Id
                                      select m).ToPagedList(_page, 20);
                 return PartialView(checkcodelist);
@@ -183,7 +183,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var checkcodelist = (from m in _sqzwebDB.CheckCode_Group
+                var checkcodelist = (from m in _db.CheckCode_Group
                                      where m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query)
                                      orderby m.Id
                                      select m).ToPagedList(_page, 20);
@@ -206,8 +206,8 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(item))
                 {
                     item.EventStatus = true;
-                    _sqzwebDB.CheckCode_Group.Add(item);
-                    _sqzwebDB.SaveChanges();
+                    _db.CheckCode_Group.Add(item);
+                    _db.SaveChanges();
                     return Content("SUCCESS");
                 }
                 else
@@ -226,7 +226,7 @@ namespace PeriodAid.Controllers
         
         public ActionResult EditCheckCodeGroup(int Cid)
         {
-            var CheckCode_G = _sqzwebDB.CheckCode_Group.SingleOrDefault(m => m.Id == Cid);
+            var CheckCode_G = _db.CheckCode_Group.SingleOrDefault(m => m.Id == Cid);
             return PartialView(CheckCode_G);
         }
 
@@ -238,8 +238,8 @@ namespace PeriodAid.Controllers
                 CheckCode_Group item = new CheckCode_Group();
                 if (TryUpdateModel(item))
                 {
-                    _sqzwebDB.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    _sqzwebDB.SaveChanges();
+                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
                     return Content("SUCCESS");
                 }
                 else
@@ -258,7 +258,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult DelCheckCodeGroup(int Cid)
         {
-            var item = _sqzwebDB.CheckCode_Group.SingleOrDefault(m => m.Id == Cid);
+            var item = _db.CheckCode_Group.SingleOrDefault(m => m.Id == Cid);
             if (item == null)
             {
                 return Json(new { result = "FAIL" });
@@ -267,8 +267,8 @@ namespace PeriodAid.Controllers
             {
                 try
                 {
-                    _sqzwebDB.CheckCode_Group.Remove(item);
-                    _sqzwebDB.SaveChanges();
+                    _db.CheckCode_Group.Remove(item);
+                    _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
                 }
                 catch
@@ -280,7 +280,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult CheckCodeGroupStatistics()
         {
-            var ccglist = from m in _sqzwebDB.CheckCode_Group
+            var ccglist = from m in _db.CheckCode_Group
                           orderby m.GroupName
                           select m;
             ViewBag.ccg = new SelectList(ccglist, "Id", "GroupName");
@@ -298,17 +298,16 @@ namespace PeriodAid.Controllers
             {
                 var _startdate = Convert.ToDateTime(startdate);
                 var _enddate = Convert.ToDateTime(enddate).AddDays(1);
-                string _sql = "SELECT CONVERT(VARCHAR(10),T2.ViewTime,120) AS [ViewTime],COUNT([ViewTime]) AS [ViewNum]" +
-           "FROM [Statistic_PageView] AS T2" +
-           " WHERE T2.CheckCode_Group_Id=" + ccgid + "AND CONVERT(VARCHAR(10),T2.ViewTime,120)>= '" + _startdate.ToString("yyyy-MM-dd") + "'and CONVERT(VARCHAR(10),T2.ViewTime,120)<= '" + _enddate.ToString("yyyy-MM-dd") + "'"
-            + "GROUP BY CONVERT(VARCHAR(10),T2.ViewTime,120)";
-                string sql = "SELECT CONVERT(VARCHAR(10),T1.ClickTime,120) AS [ClickTime],T1.ClickId AS [ClickId],COUNT([ClickId]) AS [ClickNum]" +
-                            "FROM [Statistic_PageClick] AS T1" +
-                            " WHERE T1.CheckCode_Group_Id =" + ccgid + "AND CONVERT(VARCHAR(10), T1.ClickTime, 120)>= '" + _startdate.ToString("yyyy-MM-dd") + "'and CONVERT(VARCHAR(10), T1.ClickTime, 120)<= '" + _enddate.ToString("yyyy-MM-dd") + "'"
-                             + "GROUP BY T1.ClickId,CONVERT(VARCHAR(10), T1.ClickTime, 120)";
-                var data =_sqzwebDB.Database.SqlQuery<CheckCodeStatistics>(sql);
-                var _data = _sqzwebDB.Database.SqlQuery<CheckCodeStatistics>(_sql);
-                return Json(new { result = "SUCCESS", cd=data,vd=_data });
+                string _sql = "SELECT   T2.ViewDate, T1.ClickCount, T2.ViewCount " +
+                    "FROM(SELECT CONVERT(VARCHAR(10), ClickTime, 120) AS ClickDate, COUNT(Id) AS ClickCount " +
+                    "FROM Statistic_PageClick " +
+                    "WHERE(ClickTime > '" + startdate + "') AND(ClickTime < '" + enddate + "') AND(CheckCode_Group_Id = " + ccgid + ") " +
+                    "GROUP BY CONVERT(VARCHAR(10), ClickTime, 120)) AS T1 LEFT OUTER JOIN " +
+                    "(SELECT CONVERT(varchar(10), ViewTime, 120) AS ViewDate, COUNT(Id) AS ViewCount " +
+                    "FROM Statistic_PageView WHERE(ViewTime > '" + startdate + "') AND(ViewTime < '" + enddate + "') AND(CheckCode_Group_Id = " + ccgid + ") " +
+                    "GROUP BY CONVERT(varchar(10), ViewTime, 120)) AS T2 ON T1.ClickDate = T2.ViewDate";
+                var data =_db.Database.SqlQuery<CheckCodeStatistics>(_sql);
+                return Json(new { result = "SUCCESS", cd=data });
             }
         }
     }
