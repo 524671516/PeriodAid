@@ -252,7 +252,6 @@
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
-    <Compile Include="Models\WebContentModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -983,9 +982,15 @@
     <Content Include="Views\OffCheckin\CommitSalesEvent.cshtml" />
     <Content Include="Views\OffManager\EditManagerRoles.cshtml" />
     <Content Include="Views\Shared\_WebContentLayout.cshtml" />
-    <Content Include="Views\WebContent\WebEventsList_Ajax.cshtml" />
     <Content Include="Views\WebContent\CreateWebEventPartial.cshtml" />
     <Content Include="Views\WebContent\WebContentIndex.cshtml" />
+    <Content Include="Views\WebContent\WebEventsList_Ajax.cshtml" />
+    <Content Include="Views\WebContent\EditWebEventPartial.cshtml" />
+    <Content Include="Views\WebContent\CreateCheckCodeGroup.cshtml" />
+    <Content Include="Views\WebContent\EditCheckCodeGroup.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupList.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupListPartial.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupStatistics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

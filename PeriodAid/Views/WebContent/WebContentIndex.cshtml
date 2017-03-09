@@ -4,8 +4,6 @@
     Layout = "~/Views/Shared/_WebContentLayout.cshtml";
     ViewBag.Current = "headingOne";
 }
-
-@Html.Partial("modal")
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
@@ -22,12 +20,35 @@
 <div id="webevents-list">
 
 </div>
+@Html.Partial("modal")
 <script>
+    $.ajax({
+        url: "/WebContent/WebEventsList_Ajax",
+        success: function (data) {
+            $("#webevents-list").html(data);
+        }
+    });
+    //搜索
+    $("#webevents-search-btn").click(function () {
+        $.ajax({
+            url: "/WebContent/WebEventsList_Ajax",
+            data: {
+                query: $("#webevents-search-query").val()
+            },
+            success: function (data) {
+                $("#webevents-list").html(data);
+            }
+        })
+    });
+    //新增
     $("#webevents-create").on("click", function () {
         var link_url = "/WebContent/CreateWebEventPartial"
         var head = "新增活动"
         $.ajax({
             url: link_url,
+            data: {
+                random: Date.now()
+            },
             success: function (data) {
                 $(".modal-con").html(data);
                 $(".modal-box").modal();
