@@ -986,6 +986,11 @@
     <Content Include="Views\WebContent\WebContentIndex.cshtml" />
     <Content Include="Views\WebContent\WebEventsList_Ajax.cshtml" />
     <Content Include="Views\WebContent\EditWebEventPartial.cshtml" />
+    <Content Include="Views\WebContent\CreateCheckCodeGroup.cshtml" />
+    <Content Include="Views\WebContent\EditCheckCodeGroup.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupList.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupListPartial.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupStatistics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

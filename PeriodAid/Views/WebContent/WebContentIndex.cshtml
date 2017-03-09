@@ -4,8 +4,6 @@
     Layout = "~/Views/Shared/_WebContentLayout.cshtml";
     ViewBag.Current = "headingOne";
 }
-
-@Html.Partial("modal")
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
@@ -22,6 +20,7 @@
 <div id="webevents-list">
 
 </div>
+@Html.Partial("modal")
 <script>
     $.ajax({
         url: "/WebContent/WebEventsList_Ajax",
@@ -47,6 +46,9 @@
         var head = "新增活动"
         $.ajax({
             url: link_url,
+            data: {
+                random: Date.now()
+            },
             success: function (data) {
                 $(".modal-con").html(data);
                 $(".modal-box").modal();

@@ -12,7 +12,6 @@
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
-    <link href="~/Content/kalendae.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
@@ -88,8 +87,9 @@
                         <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/WebContent/WebContentStatistics"><i class="fa fa-search"></i>&nbsp;&nbsp;活动</a></li>
-                                    <li class="left-navbar"><a href="/WebContent/WebContentStatistics"><i class="fa fa-search"></i>&nbsp;&nbsp;数据统计</a></li>
+                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupList"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
+                                    <li class="left-navbar"><a href="/WebContent/CheckCodeList"><i class="fa fa-search"></i>&nbsp;&nbsp;查看优惠券</a></li>
+                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupStatistics"><i class="fa fa-search"></i>&nbsp;&nbsp;数据统计</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -113,13 +113,9 @@
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery.form.min.js"></script>
     <script src="~/Scripts/off-JavaScript.js"></script>
-    <script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
-    <script src="~/Scripts/kalendae.standalone.js"></script>
     <script src="~/Scripts/highcharts.js"></script>
     <script src="~/Scripts/prettify.js"></script>
     <script src="~/Scripts/mockjax.js"></script>
-    <script src="~/Scripts/bootstrap-typeahead.js"></script>
-
     @RenderSection("scripts", required: false)
 </body>
 </html>
