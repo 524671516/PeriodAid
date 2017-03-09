@@ -245,6 +245,7 @@ namespace PeriodAid.Controllers
         public ActionResult CheckCodeGroupStatistics()
         {
             var ccglist = from m in _sqzwebDB.CheckCode_Group
+                          where m.Enable_Statistic==true
                           orderby m.GroupName
                           select m;
             ViewBag.ccg = new SelectList(ccglist, "Id", "GroupName");
