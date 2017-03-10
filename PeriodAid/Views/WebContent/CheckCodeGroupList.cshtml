@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "线下门店信息";
+    Layout = "~/Views/Shared/_WebContentLayout.cshtml";
+    ViewBag.Current = "headingEight";
+}
+@Html.Partial("modal")
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>类型选择：</label>
+            <input class="form-control input-sm offline-search-inline" id="ccg-search-query" placeholder="搜索活动" />
+            <a class="btn btn-info btn-sm" id="ccg-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<div>
+    <a class="btn btn-info btn-sm" id="ccg-create"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动</a>
+</div>
+<br />
+<div id="ccg-list"></div>
+<script>
+    $.ajax({
+        url: "/WebContent/CheckCodeGroupListPartial",
+        success: function (data) {
+            $("#ccg-list").html(data);
+        }
+    });
+    //搜索
+    $("#ccg-search-btn").click(function () {
+        $.ajax({
+            url: "/WebContent/CheckCodeGroupListPartial",
+            data: {
+                query: $("#ccg-search-query").val()
+            },
+            success: function (data) {
+                $("#ccg-list").html(data);
+            }
+        })
+    });
+    //新增
+    $("#ccg-create").on("click", function () {
+        var link_url = "/WebContent/CreateCheckCodeGroup"
+        var head = "新增活动"
+        $.ajax({
+            url: link_url,
+            data: {
+                random: Date.now()
+            },
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
+            }
+        })
+        return false;
+    });
+</script>
+
+
+
