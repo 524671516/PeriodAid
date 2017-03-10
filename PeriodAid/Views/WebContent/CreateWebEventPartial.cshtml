@@ -46,10 +46,11 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-3" for="Event_Img">图片地址</label>
+            <label class="control-label col-md-3" for="Event_Img">图片上传</label>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.Event_Img, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Event_Img, "", new { @class = "text-danger" })
+                <div id="checkin-img-list"></div>
+                <a href="javascript:;" class="fileupload-btn text-center" id="upload-btn"><i class="fa fa-plus"></i></a>
+                <input type="file" id="img-input" name="Event_Img" class="" accept=".jpg,.png,.gif" />
             </div>
         </div>
         <div class="form-group">
@@ -61,6 +62,9 @@
 }
 <script>
     $(function () {
+        $("#upload-btn").on("click", function () {
+            $("#img-input").trigger("click");
+        })
         $(".date-time").datepicker({
             autoSize: true,
         });
@@ -77,6 +81,7 @@
         })
         //按钮点击
         $("#webevent-save").click(function () {
+            console.log($("#img-input").val());
             $(".form-group").removeClass("has-error");
             $(this).attr("disabled", "disabled").val("保存中...");
             $('#webeventcreate-form').submit();

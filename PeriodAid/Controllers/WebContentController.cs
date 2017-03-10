@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using PeriodAid.Models;
 using Microsoft.AspNet.Identity.Owin;
+using PeriodAid.DAL;
 
 namespace PeriodAid.Controllers
 {
@@ -88,6 +89,7 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult CreateWebEventPartial(Web_Event model)
         {
+            var files = Request.Files;
             if (ModelState.IsValid)
             {
                 Web_Event item = new Web_Event();
@@ -298,17 +300,55 @@ namespace PeriodAid.Controllers
             {
                 var _startdate = Convert.ToDateTime(startdate);
                 var _enddate = Convert.ToDateTime(enddate).AddDays(1);
-                string _sql = "SELECT   T2.ViewDate, T1.ClickCount, T2.ViewCount " +
-                    "FROM(SELECT CONVERT(VARCHAR(10), ClickTime, 120) AS ClickDate, COUNT(Id) AS ClickCount " +
-                    "FROM Statistic_PageClick " +
-                    "WHERE(ClickTime > '" + startdate + "') AND(ClickTime < '" + enddate + "') AND(CheckCode_Group_Id = " + ccgid + ") " +
-                    "GROUP BY CONVERT(VARCHAR(10), ClickTime, 120)) AS T1 LEFT OUTER JOIN " +
-                    "(SELECT CONVERT(varchar(10), ViewTime, 120) AS ViewDate, COUNT(Id) AS ViewCount " +
-                    "FROM Statistic_PageView WHERE(ViewTime > '" + startdate + "') AND(ViewTime < '" + enddate + "') AND(CheckCode_Group_Id = " + ccgid + ") " +
-                    "GROUP BY CONVERT(varchar(10), ViewTime, 120)) AS T2 ON T1.ClickDate = T2.ViewDate";
-                var data =_db.Database.SqlQuery<CheckCodeStatistics>(_sql);
-                return Json(new { result = "SUCCESS", cd=data });
+                if (_startdate > _enddate)
+                {
+                    return Json(new { result = "开始时间不能大于结束时间" });
+                }
+                else
+                {
+                    string _sql = "SELECT   T2.ViewDate, T1.ClickCount, T2.ViewCount" +
+                                       "FROM(SELECT CONVERT(VARCHAR(10), ClickTime, 120) AS ClickDate, COUNT(Id) AS ClickCount " +
+                                       "FROM Statistic_PageClick " +
+                                       "WHERE(ClickTime > '" + startdate + "') AND(ClickTime < '" + enddate + "') AND(CheckCode_Group_Id = " + ccgid + ") " +
+                                       "GROUP BY CONVERT(VARCHAR(10), ClickTime, 120)) AS T1 LEFT OUTER JOIN " +
+                                       "(SELECT CONVERT(varchar(10), ViewTime, 120) AS ViewDate, COUNT(Id) AS ViewCount " +
+                                       "FROM Statistic_PageView WHERE(ViewTime > '" + startdate + "') AND(ViewTime < '" + enddate + "') AND(CheckCode_Group_Id = " + ccgid + ") " +
+                                       "GROUP BY CONVERT(varchar(10), ViewTime, 120)) AS T2 ON T1.ClickDate = T2.ViewDate";
+                    var data = _db.Database.SqlQuery<CheckCodeStatistics>(_sql);
+                    return Json(new { result = "SUCCESS", cd = data });
+                }          
             }
         }
+
+        [HttpPost]
+        public ActionResult UpLoadImg(FormCollection form)
+        {
+            var files = Request.Files;
+            string msg = string.Empty;
+            string error = string.Empty;
+            string imgurl;
+            if (files.Count > 0)
+            {
+                if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
+                {
+                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                    //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(files[0].InputStream, "/Content/upload/" + filename);
+                    msg = "成功! 文件大小为:" + files[0].ContentLength;
+                    imgurl = filename;
+                    string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
+                    return Content(res);
+                }
+                else
+                {
+                    error = "文件错误";
+                }
+            }
+            string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
+            return Content(err_res);
+
+        }
+       
     }
 }
