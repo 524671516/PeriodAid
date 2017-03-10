@@ -7,7 +7,12 @@
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
-            <label>类型选择：</label>           
+            <label>类型选择:</label> 
+            <select class="form-control input-sm offline-search-inline" id="select-input">
+                <option value="">- 请选择 -</option>
+                <option value="1">事件</option>
+                <option value="2">漫画</option>
+            </select>       
             <input class="form-control input-sm offline-search-inline" id="webevents-search-query" placeholder="搜索活动" />
             <a class="btn btn-info btn-sm" id="webevents-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
@@ -24,15 +29,33 @@
 <script>
     $.ajax({
         url: "/WebContent/WebEventsList_Ajax",
+        data:{
+            eventtypeid:  $("#select-input").val(),
+            query: $("#webevents-search-query").val()
+        },
         success: function (data) {
             $("#webevents-list").html(data);
         }
     });
+    //筛选
+    $("#select-input").on("change", function () {
+            $.ajax({
+                url: "/WebContent/WebEventsList_Ajax",
+                data: {
+                    eventtypeid: $("#select-input").val(),
+                    query: $("#webevents-search-query").val()
+                },
+                success: function (data) {
+                    $("#webevents-list").html(data);
+                }
+            });
+    })
     //搜索
     $("#webevents-search-btn").click(function () {
         $.ajax({
             url: "/WebContent/WebEventsList_Ajax",
             data: {
+                eventtypeid: $("#select-input").val(),
                 query: $("#webevents-search-query").val()
             },
             success: function (data) {

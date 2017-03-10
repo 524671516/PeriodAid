@@ -27,7 +27,14 @@
                 @Html.DisplayFor(modelItem => item.Event_Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Event_Type)
+                @if (item.Event_Type == 1)
+                {
+                    @Html.Encode("事件")
+                }
+                else
+                {
+                   @Html.Encode("漫画")
+                }
             </td>
 
             <td>
