@@ -373,57 +373,35 @@ namespace PeriodAid.Controllers
         **********/
         public ActionResult  CheckCodeList()
         {
-            var ccglist = from m in _db.CheckCode_Group
-                          orderby m.GroupName
-                          select m;
-            ViewBag.ccg = new SelectList(ccglist, "Id", "GroupName");
             return View();
         }
 
-        public ActionResult CheckCodeListPartial(int?page,string query,int? groupid)
+        [HttpPost]
+        public JsonResult  CheckCodeListPartial(string query)
         {
-            int _page = page ?? 1;
-            if (groupid == null)
+            if (query == null || query == "")
             {
-                if (query == "" || query == null)
-                {
-                    var cclist = (from m in _db.CheckCodes
-                                  orderby m.Id
-                                  select m).ToPagedList(_page, 20);
-                    return PartialView(cclist);
-
-                }
-                else
-                {
-                    var cclist = (from m in _db.CheckCodes
-                                  where m.Code.Contains(query)
-                                  orderby m.Id
-                                  select m).ToPagedList(_page, 20);
-                    return PartialView(cclist);
-
-                }
+                return Json(new { result = "FAIL" });
             }
             else
             {
-                if (query == null || query == "")
+                var _code = _db.CheckCodes.SingleOrDefault(m => m.Code == query);
+                if (_code == null)
                 {
-                    var cclist = (from m in _db.CheckCodes
-                                  where m.CheckCode_Group_Id==groupid
-                                  orderby m.Id
-                                  select m).ToPagedList(_page, 20);
-                    return PartialView(cclist);
+                    return Json(new { result = "FAIL" });
                 }
                 else
                 {
-                    var cclist = (from m in _db.CheckCodes
-                                  where m.Code.Contains(query) && m.CheckCode_Group_Id == groupid
-                                  orderby m.Id
-                                  select m).ToPagedList(_page, 20);
-                    return PartialView(cclist);
+                    var cd = new
+                    {
+                        activetime = Convert.ToDateTime(_code.ActivateTime).ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                        codenum=_code.Code,
+                        codename=_code.CheckCode_Group.GroupName
+
+                    };
+                    return Json(new { result = "SUCCESS",code=cd});
                 }
-
             }
-
         }
 
 

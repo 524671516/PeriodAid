@@ -26,7 +26,7 @@
         <div class="form-group">
             <label class="control-label col-md-3" for="Event_Date">活动时间</label>
             <div class="col-md-9">
-                <input class="form-control date-time" name="Event_Date" id="Event_Date" value=@Model.Event_Date  required dateISO="true"/>
+                <input class="form-control date-time" name="Event_Date" id="Event_Date" value=@Convert.ToDateTime(Model.Event_Date).ToString("yyyy-MM-dd") required dateISO="true"/>
                 @Html.ValidationMessageFor(model => model.Event_Date, "", new { @class = "text-danger" })
             </div>
         </div>

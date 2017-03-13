@@ -54,7 +54,8 @@
         var l = $(this).attr("href");
         $.ajax({
             url: l,
-            data:{
+            data: {
+                eventtypeid: $("#select-input").val(),
                 query: $("#webevents-search-query").val()
             },
             success: function (data) {

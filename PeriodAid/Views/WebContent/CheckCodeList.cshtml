@@ -7,59 +7,78 @@
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
-            <label>活动选择:</label>
-            @Html.DropDownList("ccg", ViewBag.ccg as SelectList, new { @class = "form-control input-sm offline-search-inline",@id="select-input" })
+            @*<label>活动选择:</label>
+            @Html.DropDownList("ccg", ViewBag.ccg as SelectList, new { @class = "form-control input-sm offline-search-inline",@id="select-input" })*@
             <input class="form-control input-sm offline-search-inline" id="cc-search-query" placeholder="搜索优惠券" />
             <a class="btn btn-info btn-sm" id="cc-search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
     </tr>
 </table>
-<div>
+@*<div>
     <a class="btn btn-info btn-sm" id="cc-create"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加优惠券</a>
-</div>
+</div>*@
 <br />
-<div id="cc-list"></div>
+<div id="cc-list">
+    <table class="table table-hover table-condensed table-list" style="width:100%;table-layout:fixed">
+        <tr class="offline-table-background">
+            <th style="width:2%">
+                <input type="checkbox" class="allChk" />
+            </th>
+            <th style="width:18%">
+                活动名称
+            </th>
+            <th style="width:20%">
+                使用时间
+            </th>
+            <th style="width:30%">
+                优惠码
+            </th>
+        </tr>
+    </table>
+</div>
 <script>
-    $.ajax({
-        url: "/WebContent/CheckCodeListPartial",
-        data: {
-            query: $("#cc-search-query").val(),
-            groupid: $("#select-input").val()
-        },
-        success: function (data) {
-            $("#cc-list").html(data);
-        }
-    });
+    //$.ajax({
+    //    url: "/WebContent/CheckCodeListPartial",
+    //    data: {
+    //        query: $("#cc-search-query").val(),
+    //        groupid: $("#select-input").val()
+    //    },
+    //    success: function (data) {
+    //        $("#cc-list").html(data);
+    //    }
+    //});
     //活动选择变化
-    $("#select-input").on("change", function () {
-        $.ajax({
-            url: "/WebContent/CheckCodeListPartial",
-            data: {
-                query: $("#cc-search-query").val(),
-                groupid: $("#select-input").val()
-            },
-            success: function (data) {
-                $("#cc-list").html(data);
-            }
-        });
-    });
+    //$("#select-input").on("change", function () {
+    //    $.ajax({
+    //        url: "/WebContent/CheckCodeListPartial",
+    //        data: {
+    //            query: $("#cc-search-query").val(),
+    //            groupid: $("#select-input").val()
+    //        },
+    //        success: function (data) {
+    //            $("#cc-list").html(data);
+    //        }
+    //    });
+    //});
     //搜索
     $("#cc-search-btn").click(function () {
-        alert("加载中.....", "", function () {
-            window.location.reload();
-        }, { type: 'info' });
         $(".BeAlert_button .BeAlert_confirm").html("取消");
         $.ajax({
             url: "/WebContent/CheckCodeListPartial",
+            type:"post",
             data: {
                 query: $("#cc-search-query").val(),
-                groupid: $("#select-input").val()
             },
             success: function (data) {
-                setTimeout(function () {
-                    $(".BeAlert_overlay,.BeAlert_box").remove();
-                    $("#cc-list").html(data);
-                }, 500)
+                if (data.result == "SUCCESS") {
+                    $("#cc-list table .tb-child").remove();
+                    $("#cc-list table").append("<tr class=\"tb-child\"><td><input type=\"checkbox\" name=\"subChk\"/></td><td>"
+                        + data.code.codename + "</td><td>"
+                        + data.code.activetime + "</td><td>" + data.code.codenum + "</td></tr>");
+                } else {
+                    alert("无查询结果", "", function () {
+                    }, { type: 'warning' });
+                }
             }
         })
     });
