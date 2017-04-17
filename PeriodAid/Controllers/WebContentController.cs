@@ -65,7 +65,7 @@ namespace PeriodAid.Controllers
                 if (query == null || query == "")
                 {
                     var webewebeventslist = (from m in _db.Web_Event
-                                             orderby m.Event_Date
+                                             orderby m.Event_Date descending
                                              select m).ToPagedList(_page, 20);
                     return PartialView(webewebeventslist);
                 }
@@ -73,7 +73,7 @@ namespace PeriodAid.Controllers
                 {
                     var webewebeventslist = (from m in _db.Web_Event
                                              where (m.Event_Content.Contains(query) || m.Event_Title.Contains(query))
-                                             orderby m.Event_Date
+                                             orderby m.Event_Date descending
                                              select m).ToPagedList(_page, 20);
                     return PartialView(webewebeventslist);
                 }
@@ -84,7 +84,7 @@ namespace PeriodAid.Controllers
                 {
                     var webewebeventslist = (from m in _db.Web_Event
                                              where m.Event_Type==eventtypeid
-                                             orderby m.Event_Date
+                                             orderby m.Event_Date descending
                                              select m).ToPagedList(_page, 20);
                     return PartialView(webewebeventslist);
                 }
@@ -92,7 +92,7 @@ namespace PeriodAid.Controllers
                 {
                     var webewebeventslist = (from m in _db.Web_Event
                                              where ((m.Event_Content.Contains(query) || m.Event_Title.Contains(query)))&& m.Event_Type == eventtypeid
-                                             orderby m.Event_Date
+                                             orderby m.Event_Date descending
                                              select m).ToPagedList(_page, 20);
                     return PartialView(webewebeventslist);
                 }
@@ -110,14 +110,11 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult CreateWebEventPartial(Web_Event model)
         {
-            var files = Request.Files;
-            var filename = files[0].FileName;
             if (ModelState.IsValid)
             {
                 Web_Event item = new Web_Event();
                 if (TryUpdateModel(item))
                 {
-                    item.Event_Img = "/Content/upload/" + filename;
                     item.Event_UpdateTime = DateTime.Now;
                     _db.Web_Event.Add(item);
                     _db.SaveChanges();
@@ -416,12 +413,13 @@ namespace PeriodAid.Controllers
             {
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
-                    string filename = files[0].FileName;
+                    string filename = files[0].FileName; //改filename公式
+                    string _filename = DateTime.Now.ToFileTime().ToString()+"sqzweb"+ filename.ToString().Substring(filename.ToString().LastIndexOf("."));
                     //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
                     AliOSSUtilities util = new AliOSSUtilities();
-                    util.PutObject(files[0].InputStream, "/Content/upload/" + filename);
+                    util.PutWebObject(files[0].InputStream, "Content/" + _filename);
                     msg = "成功! 文件大小为:" + files[0].ContentLength;
-                    imgurl = filename;
+                    imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
                     string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
                     return Content(res);
                 }

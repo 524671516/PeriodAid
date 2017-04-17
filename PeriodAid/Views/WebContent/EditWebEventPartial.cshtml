@@ -6,6 +6,7 @@
 {
     @Html.HiddenFor(m => m.Id)
     @Html.HiddenFor(m => m.Event_UpdateTime)
+    @Html.HiddenFor(m=>m.Event_Img)
     @Html.AntiForgeryToken()
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -58,11 +59,14 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-3" for="Event_Img">图片地址</label>
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Event_Img, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Event_Img, "", new { @class = "text-danger" })
-            </div>
+                <label class="control-label col-md-3" for="Event_Img">图片上传</label>
+                <div class="col-md-9">
+                    <div id="input-img-list">
+                        <div class="img-list" data-rel="@Model.Event_Img" style="background-image:url(@Model.Event_Img)"><span class="img-close"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-times fa-stack-1x fa-inverse"></i></span></span></div>
+                    </div>
+                    <a href="javascript:;" class="fileupload-btn text-center" id="upload-btn" style="display:none"><i class="fa fa-plus"></i></a>
+                    <input type="file" id="img-input" name="img-file" accept=".jpg,.png,.gif" class="hidden" />
+                </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-3 col-md-9">
@@ -73,6 +77,52 @@
 }
 <script>
     $(function () {
+        $(document).delegate("#img-input", "change", function () {
+            ajaxFileUpload("Event_Img", "input-img-list", "img-input");
+        });
+        $(document).delegate("#upload-btn", "click", function () {
+            $("#img-input").trigger("click");
+        });
+        function ajaxFileUpload(targetname, imglist, fileelment) {
+            $.ajaxFileUpload({
+                url: '/WebContent/UpLoadImg', //用于文件上传的服务器端请求地址
+                type: 'post',
+                secureuri: false, //是否需要安全协议，一般设置为false
+                fileElementId: fileelment, //文件上传域的ID
+                dataType: 'json', //返回值类型 一般设置为json
+                success: function (data, status)  //服务器成功响应处理函数
+                {
+                    if (typeof (data.error) != 'undefined') {
+                        if (data.error != '') {
+                            alert(data.error);
+                        } else {
+                            console.log(data);
+                            alert("上传成功");
+                            $("#" + targetname).val(data.imgurl);
+                            $("#" + imglist).html("<div class=\"img-list\" data-rel= " + data.imgurl + "  style=background-image:url(" + data.imgurl + ")" + "><span class=\"img-close\"><span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");
+                            $("#upload-btn").hide();
+                        }
+                    }
+                },
+                error: function (data, status, e)//服务器响应失败处理函数
+                {
+                    alert(e);
+                }
+            });
+            return false;
+        };
+        //删除图片
+        $("#input-img-list").on("click", ".img-close", function (event) {
+            var that = $(this);
+            confirm("是否删除所选图片?", "", function (isConfirm) {
+                if (isConfirm) {
+                    $(".img-list").remove();
+                    $("#Event_Img").val("");
+                    $("#upload-btn").show();
+                }
+            });
+            event.stopPropagation();
+        });
         $(".date-time").datepicker({
             autoSize: true,
         });
@@ -91,7 +141,14 @@
         $("#webevent-save").click(function () {
             $(".form-group").removeClass("has-error");
             $(this).attr("disabled", "disabled").val("保存中...");
-            $('#webeventcreate-form').submit();
+            if ($("#Event_Img").val() == "") {
+                alert("请上传图片", "", function () {
+                    $("#webevent-save").attr("disabled", false).val("保存");
+                }, { type: 'warning' });
+                $("#webevent-save").attr("disabled", false).val("保存");
+            } else {
+                formsubmit();
+            }
         })
     });
     function formsubmit() {
