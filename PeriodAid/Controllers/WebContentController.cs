@@ -177,7 +177,7 @@ namespace PeriodAid.Controllers
             if (query == "" || query == null)
             {
                 var checkcodelist = (from m in _db.CheckCode_Group
-                                     orderby m.Id
+                                     orderby m.Id descending
                                      select m).ToPagedList(_page, 20);
                 return PartialView(checkcodelist);
 
@@ -186,7 +186,7 @@ namespace PeriodAid.Controllers
             {
                 var checkcodelist = (from m in _db.CheckCode_Group
                                      where m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query)
-                                     orderby m.Id
+                                     orderby m.Id descending
                                      select m).ToPagedList(_page, 20);
                 return PartialView(checkcodelist);
             }
@@ -282,6 +282,7 @@ namespace PeriodAid.Controllers
         public ActionResult CheckCodeGroupStatistics()
         {
             var ccglist = from m in _db.CheckCode_Group
+                          where m.Enable_Statistic
                           orderby m.GroupName
                           select m;
             ViewBag.ccg = new SelectList(ccglist, "Id", "GroupName");
