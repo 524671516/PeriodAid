@@ -30,5 +30,22 @@ namespace PeriodAid.DAL
             OssObject downfile = client.GetObject("offlinesales", filename);
             return downfile.Content;
         }
+        public void PutWebObject(byte[] content, string filename)
+        {
+            MemoryStream ms = new MemoryStream(content);
+            client.PutObject("sqzcontent", filename, ms);
+        }
+        public void PutWebObject(Stream stream, string filename)
+        {
+            client.PutObject("sqzcontent", filename, stream);
+        }
+        public Stream GetWebObject(string filename)
+        {
+            OssObject downfile = client.GetObject("sqzcontent", filename);
+            return downfile.Content;
+        }
+
     }
+    
+
 }

@@ -193,14 +193,17 @@
             $('#myModal').modal();
         });
         $("#report-img-list").on("click", ".img-close", function (event) {
-            if (confirm("是否删除所选图片?")) {
-                $(this).parent(".img-list").remove();
-                var filearray = new Array();
-                $("#report-img-list>.img-list").each(function () {
-                    filearray.push($(this).attr("data-rel"));
-                });
-                $("#Rep_Image").val(filearray);
-            }
+            var that=$(this);
+            confirm("是否删除所选图片?", "", function (isConfirm) {
+                if (isConfirm) {
+                    that.parent(".img-list").remove();
+                    var filearray = new Array();
+                    $("#report-img-list>.img-list").each(function () {
+                        filearray.push($(this).attr("data-rel"));
+                    });
+                    $("#Rep_Image").val(filearray);
+                }
+            });
             event.stopPropagation();
         })
     </script>

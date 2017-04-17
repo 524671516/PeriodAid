@@ -743,6 +743,9 @@ if (typeof $ === 'function') {
     });
 }
 /*结束dialog*/
+
+
+/*******页面按钮*******/
 function PageBtn(obj) {
     this.obj = obj;
     this.init = init;
@@ -798,6 +801,20 @@ function init() {
         }
     }
 }
+/*结束页面按钮*/
+
+
+/********图片上传********/
+if (typeof $ === 'function') {
+    function UpLoadImg(obj) {
+        if (typeof (obj) != "object") {
+
+        }
+    }
+} else {
+    throw new error(msg)
+}
+/*图片上传结束*/
 
 
 

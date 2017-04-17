@@ -275,13 +275,13 @@ li {
     background-size: 60px;
 }
 .BeAlert_box .BeAlert_image.info {
-    background: url("dialog/info.png");
+    background: url('dialog/res.gif');
     background-size: 60px;
 }
-.BeAlert_box .BeAlert_image.question {
-    background: url("dialog/question.png");
-    background-size: 60px;
-}
+    .BeAlert_box .BeAlert_image.question {
+        background: url('dialog/question.png');
+        background-size: 60px;
+    }
 .BeAlert_box .BeAlert_image.success {
     background: url("dialog/success.png");
     background-size: 60px;

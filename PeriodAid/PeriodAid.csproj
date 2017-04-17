@@ -273,6 +273,7 @@
     <Content Include="Content\dialog\info.png" />
     <Content Include="Content\dialog\overlay.png" />
     <Content Include="Content\dialog\question.png" />
+    <Content Include="Content\dialog\res.gif" />
     <Content Include="Content\dialog\success.png" />
     <Content Include="Content\dialog\warning.png" />
     <Content Include="Content\example.css" />
@@ -991,6 +992,9 @@
     <Content Include="Views\WebContent\CheckCodeGroupList.cshtml" />
     <Content Include="Views\WebContent\CheckCodeGroupListPartial.cshtml" />
     <Content Include="Views\WebContent\CheckCodeGroupStatistics.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeList.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeListPartial.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerQueryDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

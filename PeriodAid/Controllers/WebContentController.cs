@@ -57,24 +57,46 @@ namespace PeriodAid.Controllers
         }
 
         //列表模板页
-        public ActionResult WebEventsList_Ajax(int? page, string query)
+        public ActionResult WebEventsList_Ajax(int? page, string query,int? eventtypeid)
         {
             int _page = page ?? 1;
-            if (query == null || query == "")
+            if (eventtypeid == null)
             {
-                var webewebeventslist = (from m in _db.Web_Event
-                                         orderby m.Event_Date
-                                         select m).ToPagedList(_page, 20);
-                return PartialView(webewebeventslist);
+                if (query == null || query == "")
+                {
+                    var webewebeventslist = (from m in _db.Web_Event
+                                             orderby m.Event_Date descending
+                                             select m).ToPagedList(_page, 20);
+                    return PartialView(webewebeventslist);
+                }
+                else
+                {
+                    var webewebeventslist = (from m in _db.Web_Event
+                                             where (m.Event_Content.Contains(query) || m.Event_Title.Contains(query))
+                                             orderby m.Event_Date descending
+                                             select m).ToPagedList(_page, 20);
+                    return PartialView(webewebeventslist);
+                }
             }
             else
             {
-                var webewebeventslist = (from m in _db.Web_Event
-                                         where (m.Event_Content.Contains(query) || m.Event_Title.Contains(query))
-                                         orderby m.Event_Date
-                                         select m).ToPagedList(_page, 20);
-                return PartialView(webewebeventslist);
-            }
+                if (query == null || query == "")
+                {
+                    var webewebeventslist = (from m in _db.Web_Event
+                                             where m.Event_Type==eventtypeid
+                                             orderby m.Event_Date descending
+                                             select m).ToPagedList(_page, 20);
+                    return PartialView(webewebeventslist);
+                }
+                else
+                {
+                    var webewebeventslist = (from m in _db.Web_Event
+                                             where ((m.Event_Content.Contains(query) || m.Event_Title.Contains(query)))&& m.Event_Type == eventtypeid
+                                             orderby m.Event_Date descending
+                                             select m).ToPagedList(_page, 20);
+                    return PartialView(webewebeventslist);
+                }
+            }           
         }
 
         //创建活动页
@@ -88,7 +110,6 @@ namespace PeriodAid.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult CreateWebEventPartial(Web_Event model)
         {
-            var files = Request.Files;
             if (ModelState.IsValid)
             {
                 Web_Event item = new Web_Event();
@@ -171,25 +192,47 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult CheckCodeGroupListPartial(int? page, string query)
+        public ActionResult CheckCodeGroupListPartial(int? page, string query, int? eventtypeid)
         {
             int _page = page ?? 1;
             if (query == "" || query == null)
             {
                 var checkcodelist = (from m in _db.CheckCode_Group
-                                     orderby m.Id descending
+                                     orderby m.Id
                                      select m).ToPagedList(_page, 20);
                 return PartialView(checkcodelist);
 
+                }
+                else
+                {
+                    var checkcodelist = (from m in _db.CheckCode_Group
+                                         where m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query)
+                                         orderby m.Id
+                                         select m).ToPagedList(_page, 20);
+                    return PartialView(checkcodelist);
+                }
             }
             else
             {
-                var checkcodelist = (from m in _db.CheckCode_Group
-                                     where m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query)
-                                     orderby m.Id descending
-                                     select m).ToPagedList(_page, 20);
-                return PartialView(checkcodelist);
-            }
+                if (query == "" || query == null)
+                {
+                    var checkcodelist = (from m in _db.CheckCode_Group
+                                         where m.EventType== eventtypeid
+                                         orderby m.Id
+                                         select m).ToPagedList(_page, 20);
+                    return PartialView(checkcodelist);
+
+                }
+                else
+                {
+                    var checkcodelist = (from m in _db.CheckCode_Group
+                                         where (m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query))&&m.EventType== eventtypeid
+                                         orderby m.Id
+                                         select m).ToPagedList(_page, 20);
+                    return PartialView(checkcodelist);
+                }
+
+            }           
         }
         
         public ActionResult CreateCheckCodeGroup()
@@ -282,7 +325,6 @@ namespace PeriodAid.Controllers
         public ActionResult CheckCodeGroupStatistics()
         {
             var ccglist = from m in _db.CheckCode_Group
-                          where m.Enable_Statistic
                           orderby m.GroupName
                           select m;
             ViewBag.ccg = new SelectList(ccglist, "Id", "GroupName");
@@ -306,7 +348,7 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    string _sql = "SELECT   T2.ViewDate, T1.ClickCount, T2.ViewCount" +
+                    string _sql = "SELECT T2.ViewDate, T1.ClickCount, T2.ViewCount " +
                                        "FROM(SELECT CONVERT(VARCHAR(10), ClickTime, 120) AS ClickDate, COUNT(Id) AS ClickCount " +
                                        "FROM Statistic_PageClick " +
                                        "WHERE(ClickTime > '" + startdate + "') AND(ClickTime < '" + enddate + "') AND(CheckCode_Group_Id = " + ccgid + ") " +
@@ -320,6 +362,43 @@ namespace PeriodAid.Controllers
             }
         }
 
+        /*********
+        优惠券
+        **********/
+        public ActionResult  CheckCodeList()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult  CheckCodeListPartial(string query)
+        {
+            if (query == null || query == "")
+            {
+                return Json(new { result = "FAIL" });
+            }
+            else
+            {
+                var _code = _db.CheckCodes.SingleOrDefault(m => m.Code == query);
+                if (_code == null)
+                {
+                    return Json(new { result = "FAIL" });
+                }
+                else
+                {
+                    var cd = new
+                    {
+                        activetime = Convert.ToDateTime(_code.ActivateTime).ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                        codenum=_code.Code,
+                        codename=_code.CheckCode_Group.GroupName
+
+                    };
+                    return Json(new { result = "SUCCESS",code=cd});
+                }
+            }
+        }
+
+
         [HttpPost]
         public ActionResult UpLoadImg(FormCollection form)
         {
@@ -331,12 +410,13 @@ namespace PeriodAid.Controllers
             {
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
-                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                    string filename = files[0].FileName; //改filename公式
+                    string _filename = DateTime.Now.ToFileTime().ToString()+"sqzweb"+ filename.ToString().Substring(filename.ToString().LastIndexOf("."));
                     //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
                     AliOSSUtilities util = new AliOSSUtilities();
-                    util.PutObject(files[0].InputStream, "/Content/upload/" + filename);
+                    util.PutWebObject(files[0].InputStream, "Content/" + _filename);
                     msg = "成功! 文件大小为:" + files[0].ContentLength;
-                    imgurl = filename;
+                    imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
                     string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
                     return Content(res);
                 }
