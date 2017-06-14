@@ -27,7 +27,7 @@
             @Html.DisplayFor(modelItem => item.Off_Seller.Name)
         </td>
         <td>
-            @Html.Encode(((double)item.AttendanceCount/100)*3*100)
+            @Html.Encode(item.AttendanceCount*100/30)
         </td>
         <td>
             @Html.ActionLink("查看明细", "TaskSellerQueryMonthBySellerPartial", new { sellerid = item.Off_Seller.Id, month=ViewBag.Month }, new { @class="btn btn-xs btn-info offseller-taskpartial-btn"})

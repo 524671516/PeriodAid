@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using PeriodAid.Models;
 using PeriodAid.Filters;
 using PagedList;
+using System.IO;
+using CsvHelper;
 
 namespace PeriodAid.Controllers
 {
@@ -678,5 +680,55 @@ namespace PeriodAid.Controllers
             }
 
         }
+
+        public FileResult DownloadManagerTaskFile(DateTime start, DateTime end)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var list = from m in _offlineDB.Off_Manager_Task
+                       where m.TaskDate >= start && m.TaskDate <= end
+                       select m;
+            //var list = _offlineDB.Database.SqlQuery<SellerSalaryExcel>(sql);
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            CsvWriter csv = new CsvWriter(writer);
+            //string[] columname = new string[] {"店铺名称", "经销商", "姓名", "电话号码", "身份证号码", "开户行", "银行卡号", "工资", "奖金", "全勤天数", "迟到天数" };
+            csv.WriteField("日期");
+            csv.WriteField("督导姓名");
+            csv.WriteField("重点工作");
+            csv.WriteField("主要工作");
+            csv.WriteField("协调工作");
+            csv.WriteField("巡店明细");
+            csv.NextRecord();
+            foreach (var item in list)
+            {
+
+                csv.WriteField(item.TaskDate.ToString("yyyy-MM-dd"));
+                csv.WriteField(item.NickName);
+                csv.WriteField(item.Event_Complete);
+                csv.WriteField(item.Event_UnComplete);
+                csv.WriteField(item.Event_Assistance);
+                string content = "";
+                foreach (var p_item in item.Off_Manager_CheckIn.Where(m => m.Canceled == false))
+                {
+                    content += p_item.CheckIn_Time.ToString("HH:mm:ss") + ": " + p_item.Remark + "\r\n";
+                }
+                csv.WriteField(content);
+                csv.NextRecord();
+            }
+            //csv.WriteRecords(list);
+            writer.Flush();
+            writer.Close();
+            return File(convertCSV(stream.ToArray()), "@text/csv", "督导巡店信息" + start.ToShortDateString() + "-" + end.ToShortDateString() + ".csv");
+        }
+        private byte[] convertCSV(byte[] array)
+        {
+            byte[] outBuffer = new byte[array.Length + 3];
+            outBuffer[0] = (byte)0xEF;//有BOM,解决乱码
+            outBuffer[1] = (byte)0xBB;
+            outBuffer[2] = (byte)0xBF;
+            Array.Copy(array, 0, outBuffer, 3, array.Length);
+            return outBuffer;
+        }
     }
+    
 }

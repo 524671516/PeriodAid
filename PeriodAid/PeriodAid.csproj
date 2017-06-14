@@ -249,6 +249,7 @@
     <Compile Include="Models\PeriodAidDataContext.cs" />
     <Compile Include="Models\PeriodAidViewModels.cs" />
     <Compile Include="Models\PressConference.cs" />
+    <Compile Include="Models\ProjectSchemeMdels.cs" />
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
@@ -995,6 +996,7 @@
     <Content Include="Views\WebContent\CheckCodeList.cshtml" />
     <Content Include="Views\WebContent\CheckCodeListPartial.cshtml" />
     <Content Include="Views\OffSellerTask\TaskSellerQueryDetails.cshtml" />
+    <Content Include="Views\Custom\LittleGingerVoice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -57,7 +57,7 @@ namespace PeriodAid.Controllers
         }
 
         //列表模板页
-        public ActionResult WebEventsList_Ajax(int? page, string query,int? eventtypeid)
+        public ActionResult WebEventsList_Ajax(int? page, string query, int? eventtypeid)
         {
             int _page = page ?? 1;
             if (eventtypeid == null)
@@ -83,7 +83,7 @@ namespace PeriodAid.Controllers
                 if (query == null || query == "")
                 {
                     var webewebeventslist = (from m in _db.Web_Event
-                                             where m.Event_Type==eventtypeid
+                                             where m.Event_Type == eventtypeid
                                              orderby m.Event_Date descending
                                              select m).ToPagedList(_page, 20);
                     return PartialView(webewebeventslist);
@@ -91,12 +91,12 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var webewebeventslist = (from m in _db.Web_Event
-                                             where ((m.Event_Content.Contains(query) || m.Event_Title.Contains(query)))&& m.Event_Type == eventtypeid
+                                             where ((m.Event_Content.Contains(query) || m.Event_Title.Contains(query))) && m.Event_Type == eventtypeid
                                              orderby m.Event_Date descending
                                              select m).ToPagedList(_page, 20);
                     return PartialView(webewebeventslist);
                 }
-            }           
+            }
         }
 
         //创建活动页
@@ -202,46 +202,24 @@ namespace PeriodAid.Controllers
                                      select m).ToPagedList(_page, 20);
                 return PartialView(checkcodelist);
 
-                }
-                else
-                {
-                    var checkcodelist = (from m in _db.CheckCode_Group
-                                         where m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query)
-                                         orderby m.Id
-                                         select m).ToPagedList(_page, 20);
-                    return PartialView(checkcodelist);
-                }
             }
             else
             {
-                if (query == "" || query == null)
-                {
-                    var checkcodelist = (from m in _db.CheckCode_Group
-                                         where m.EventType== eventtypeid
-                                         orderby m.Id
-                                         select m).ToPagedList(_page, 20);
-                    return PartialView(checkcodelist);
-
-                }
-                else
-                {
-                    var checkcodelist = (from m in _db.CheckCode_Group
-                                         where (m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query))&&m.EventType== eventtypeid
-                                         orderby m.Id
-                                         select m).ToPagedList(_page, 20);
-                    return PartialView(checkcodelist);
-                }
-
-            }           
+                var checkcodelist = (from m in _db.CheckCode_Group
+                                     where m.EventDescription.Contains(query) || m.EventTitle.Contains(query) || m.GroupName.Contains(query)
+                                     orderby m.Id
+                                     select m).ToPagedList(_page, 20);
+                return PartialView(checkcodelist);
+            }
         }
-        
+
         public ActionResult CreateCheckCodeGroup()
         {
             var CheckCode_G = new CheckCode_Group();
             return PartialView(CheckCode_G);
         }
 
-        [HttpPost,ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult CreateCheckCodeGroup(CheckCode_Group model)
         {
             if (ModelState.IsValid)
@@ -258,7 +236,7 @@ namespace PeriodAid.Controllers
                 {
                     return Content("FAIL");
                 }
-                
+
 
             }
             else
@@ -267,15 +245,15 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
-        
+
         public ActionResult EditCheckCodeGroup(int Cid)
         {
             var CheckCode_G = _db.CheckCode_Group.SingleOrDefault(m => m.Id == Cid);
             return PartialView(CheckCode_G);
         }
 
-        [HttpPost,ValidateAntiForgeryToken]
-        public ActionResult EditCheckCodeGroup(int id,CheckCode_Group model)
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult EditCheckCodeGroup(int id, CheckCode_Group model)
         {
             if (ModelState.IsValid)
             {
@@ -332,7 +310,7 @@ namespace PeriodAid.Controllers
         }
 
         [HttpPost]
-        public JsonResult SearchCCGStatistics(string startdate,string enddate,int ccgid)
+        public JsonResult SearchCCGStatistics(string startdate, string enddate, int ccgid)
         {
             if (startdate == "" || enddate == "")
             {
@@ -358,20 +336,20 @@ namespace PeriodAid.Controllers
                                        "GROUP BY CONVERT(varchar(10), ViewTime, 120)) AS T2 ON T1.ClickDate = T2.ViewDate";
                     var data = _db.Database.SqlQuery<CheckCodeStatistics>(_sql);
                     return Json(new { result = "SUCCESS", cd = data });
-                }          
+                }
             }
         }
 
         /*********
         优惠券
         **********/
-        public ActionResult  CheckCodeList()
+        public ActionResult CheckCodeList()
         {
             return View();
         }
 
         [HttpPost]
-        public JsonResult  CheckCodeListPartial(string query)
+        public JsonResult CheckCodeListPartial(string query)
         {
             if (query == null || query == "")
             {
@@ -389,11 +367,11 @@ namespace PeriodAid.Controllers
                     var cd = new
                     {
                         activetime = Convert.ToDateTime(_code.ActivateTime).ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                        codenum=_code.Code,
-                        codename=_code.CheckCode_Group.GroupName
+                        codenum = _code.Code,
+                        codename = _code.CheckCode_Group.GroupName
 
                     };
-                    return Json(new { result = "SUCCESS",code=cd});
+                    return Json(new { result = "SUCCESS", code = cd });
                 }
             }
         }
@@ -411,7 +389,7 @@ namespace PeriodAid.Controllers
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
                     string filename = files[0].FileName; //改filename公式
-                    string _filename = DateTime.Now.ToFileTime().ToString()+"sqzweb"+ filename.ToString().Substring(filename.ToString().LastIndexOf("."));
+                    string _filename = DateTime.Now.ToFileTime().ToString() + "sqzweb" + filename.ToString().Substring(filename.ToString().LastIndexOf("."));
                     //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutWebObject(files[0].InputStream, "Content/" + _filename);
@@ -429,6 +407,6 @@ namespace PeriodAid.Controllers
             return Content(err_res);
 
         }
-       
+
     }
 }
