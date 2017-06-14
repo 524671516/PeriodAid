@@ -218,6 +218,7 @@
     <Compile Include="Controllers\OffSalesController.cs" />
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\SellerTaskController.cs" />
+    <Compile Include="Controllers\TaskManagementController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
     <Compile Include="Controllers\WebContentController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
@@ -279,7 +280,9 @@
     <Content Include="Content\dialog\warning.png" />
     <Content Include="Content\example.css" />
     <Content Include="Content\font-awesome-ie7.min.css" />
+    <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\images\banner_mobile_1.jpg" />
     <Content Include="Content\images\img_1.jpg" />
     <Content Include="Content\images\benefits_flow_01.png" />
     <Content Include="Content\images\benefits_flow_02.png" />
@@ -386,6 +389,7 @@
     <Content Include="Content\PA-Site.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\prettify.css" />
+    <Content Include="Content\TaskManagement.css" />
     <Content Include="Content\weui.min.css" />
     <Content Include="Content\framework7.ios.colors.min.css" />
     <Content Include="Content\framework7.ios.min.css" />
@@ -450,6 +454,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\font-awesome.css.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />
@@ -483,6 +488,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\seller.min.js" />
     <Content Include="Scripts\Seller.js" />
+    <Content Include="Scripts\TaskManagement.js" />
     <Content Include="Scripts\zepto.min.js" />
     <None Include="Scripts\_references.js" />
     <Content Include="Views\favicon.ico" />
@@ -997,6 +1003,12 @@
     <Content Include="Views\WebContent\CheckCodeListPartial.cshtml" />
     <Content Include="Views\OffSellerTask\TaskSellerQueryDetails.cshtml" />
     <Content Include="Views\Custom\LittleGingerVoice.cshtml" />
+    <Content Include="Views\TaskManagement\Index.cshtml" />
+    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_StarTaskListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_ActiveTaskListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_FinishTaskListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Task_Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
