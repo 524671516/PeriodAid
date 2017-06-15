@@ -1,0 +1,219 @@
+﻿@{
+    ViewBag.Title = "Task_Detail";
+    Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
+}
+<div class="navbar-default" id="task-navbar">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <ol class="breadcrumb  navbar-breadcrumb">
+                <li><a href="#">主页</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">任务一<span class="caret"></span></a>
+                    <ul class="dropdown-menu dropdown-menu-list">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">One more separated link</a></li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+            <ul class="nav navbar-nav navbar-underline">
+                <li><a href="#" class="active">进度</a></li>
+                <li><a href="#">日程</a></li>
+                <li><a href="#">文件</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="menu-btn"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</div>
+<div class="pannel-warp">
+    <div class="pannel-container">
+        <div class="pannel-item">
+            <div class="pannel-header clear-float">
+                <div class="pannel-header-left float-left">未完成任务</div>
+                <div class="pannel-header-right float-right">
+                    <a class="icon-btn" href="javascript:;">
+                        <i class="fa fa-caret-square-o-down color-blue" aria-hidden="true"></i>
+                    </a>
+
+                </div>
+            </div>
+            <div class="pannel-body">
+                <ul class="tm-list-container">
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item tm-list-add text-center">
+                        <a href="#" class="panel-body add-btn color-gray" id="add-pannel-list"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="pannel-footer clear-float">
+                <div class="pannel-footer-left float-left"></div>
+                <div class="pannel-footer-right float-right"><span class="num color-green">12</span>/<span class="total-num">30</span></div>
+            </div>
+        </div>
+        <div class="pannel-item">
+            <div class="pannel-header clear-float">
+                <div class="pannel-header-left float-left">已完成的任务</div>
+                <div class="pannel-header-right float-right">
+                    <a class="icon-btn" href="javascript:;">
+                        <i class="fa fa-caret-square-o-down color-blue" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="pannel-body">
+                <ul class="tm-list-container">
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                        <div class="tm-list-item_bottom">
+                            <div class="tm-item_left">测试一下</div>
+                            <div class="tm-item_right">更多内容大苏打撒旦撒实打实打算</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                        <div class="tm-list-item_bottom">
+                            <div class="tm-item_left">测试一下</div>
+                            <div class="tm-item_right">更多内容大苏打撒旦撒实打实打算</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                        <div class="tm-list-item_bottom">
+                            <div class="tm-item_left">测试一下</div>
+                            <div class="tm-item_right">更多内容大苏打撒旦撒实打实打算</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item">
+                        <div class="tm-list-item_top">
+                            <div class="tm-item_left"><input type="checkbox" /></div>
+                            <div class="tm-item_right">dadadadasd</div>
+                        </div>
+                        <div class="tm-list-item_bottom">
+                            <div class="tm-item_left">测试一下</div>
+                            <div class="tm-item_right">更多内容大苏打撒旦撒实打实打算</div>
+                        </div>
+                    </li>
+                    <li class="tm-list-item tm-list-add text-center">
+                        <a href="#" class="panel-body add-btn color-gray" id="add-pannel-list"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="pannel-footer clear-float">
+                <div class="pannel-footer-left float-left"></div>
+                <div class="pannel-footer-right float-right"><span class="num color-red">12</span>/<span class="total-num">30</span></div>
+            </div>
+        </div>
+        <div class="pannel-item panel-item-add text-center">
+            <a href="#" class="panel-body add-btn color-gray" id="add-pannel-list"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></a>
+        </div>
+    </div>
+</div>
+<div class="pannel-sidebar" id="user-pannel">
+    <div class="pannel-siderbar-container">
+        <div class="siderbar-header">dasda</div>
+        <div class="siderbar-body">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Panel heading</div>
+                <div class="panel-body">
+                    <p>...</p>
+                </div>
+
+                <!-- List group -->
+                <ul class="list-group">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+            </div>
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Panel heading</div>
+                <div class="panel-body">
+                    <p>...</p>
+                </div>
+
+                <!-- List group -->
+                <ul class="list-group">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+            </div>
+        </div>
+        <div class="siderbar-footer">dsadsa</div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $("#menu-btn").on("click", function () {
+            if($(".pannel-sidebar"))
+            $(".pannel-sidebar").css("right", "365px").css("display", "block");
+        });
+
+    </script>
+}
+
+
+
