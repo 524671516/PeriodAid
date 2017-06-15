@@ -15,23 +15,23 @@ namespace PeriodAid.Controllers
         }
 
         //获取星标任务列表
-        public PartialViewResult Personal_StarTaskListPartial()
+        public PartialViewResult Personal_StarSubjectListPartial()
         {
             return PartialView();
         }
         //获取行动任务列表
-        public PartialViewResult Personal_ActiveTaskListPartial()
+        public PartialViewResult Personal_ActiveSubjectListPartial()
         {
             return PartialView();
         }
         //获取已完成任务列表
-        public PartialViewResult Personal_FinishTaskListPartial()
+        public PartialViewResult Personal_FinishSubjectListPartial()
         {
             return PartialView();
         }
 
         //项目详情
-        public ActionResult Task_Detail(string TaskId)
+        public ActionResult Subject_Detail(string SubjectId)
         {
             return View();
         }

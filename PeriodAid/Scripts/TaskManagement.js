@@ -1,39 +1,41 @@
 ﻿$(function () {
-    GetStarTask("#personal_star_task")
-    GetActiveTask("#personal_active_task")
-    GetFinishTask("#personal_finish_task")
-    console.log(1);
-    $("#personal_active_task").on("click", ".card-item", function () {
+    GetStarSubject("#personal_star_subject")
+    GetActiveSubject("#personal_active_subject")
+    GetFinishSubject("#personal_finish_subject")
+    $("#personal_active_subject").on("click", ".card-item", function () {
         var linkid = $(this).attr("data-link")
         if (linkid) {
-            location.href = "/TaskManagement/Task_Detail?TaskId=" + linkid
+            location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
         }
     })
-    $("#personal_active_task").on("click", ".card-header-right", function () {
+    $("#personal_active_subject").on("click", ".card-header-right", function () {
         alert(1);
         return false;
     })
 
 });
-function GetStarTask(container) {
+
+
+//请求
+function GetStarSubject(container) {
     $.ajax({
-        url: "/TaskManagement/Personal_StarTaskListPartial",
+        url: "/TaskManagement/Personal_StarSubjectListPartial",
         success: function (data) {
             $(container).html(data);
         }
     })
 }
-function GetActiveTask(container) {
+function GetActiveSubject(container) {
     $.ajax({
-        url: "/TaskManagement/Personal_ActiveTaskListPartial",
+        url: "/TaskManagement/Personal_ActiveSubjectListPartial",
         success: function (data) {
             $(container).html(data);
         }
     })
 }
-function GetFinishTask(container) {
+function GetFinishSubject(container) {
     $.ajax({
-        url: "/TaskManagement/Personal_FinishTaskListPartial",
+        url: "/TaskManagement/Personal_FinishSubjectListPartial",
         success: function (data) {
             $(container).html(data);
         }

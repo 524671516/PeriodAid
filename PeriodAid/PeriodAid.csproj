@@ -1005,10 +1005,10 @@
     <Content Include="Views\Custom\LittleGingerVoice.cshtml" />
     <Content Include="Views\TaskManagement\Index.cshtml" />
     <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
-    <Content Include="Views\TaskManagement\Personal_StarTaskListPartial.cshtml" />
-    <Content Include="Views\TaskManagement\Personal_ActiveTaskListPartial.cshtml" />
-    <Content Include="Views\TaskManagement\Personal_FinishTaskListPartial.cshtml" />
-    <Content Include="Views\TaskManagement\Task_Detail.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_Detail.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_FinishSubjectListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_ActiveSubjectListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_StarSubjectListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
