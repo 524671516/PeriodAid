@@ -6,14 +6,14 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class ProjectSchemeMdels : DbContext
+    public class ProjectSchemeModels : DbContext
     {
         //您的上下文已配置为从您的应用程序的配置文件(App.config 或 Web.config)
         //“PeriodAid.Models.ProjectSchemeMdels”数据库。
         // 
         //如果您想要针对其他数据库和/或数据库提供程序，请在应用程序配置文件中修改“ProjectSchemeMdels”
         //连接字符串。
-        public ProjectSchemeMdels()
+        public ProjectSchemeModels()
             : base("name=PROJECTConnection")
         {
         }
@@ -58,12 +58,12 @@
         }
     }
 
-    [Table("Department")]   
+    [Table("Department")]
     public class Department // 部门表
     {
         public int Id { get; set; }
 
-        [Required,StringLength(32)]
+        [Required, StringLength(32)]
         public string DepartmentName { get; set; } // 部门名称
 
         public int? SupervisorId { get; set; } // 主管ID
@@ -262,9 +262,6 @@
 
         [StringLength(256)]
         public string Remarks { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AssignmentComment> AssignmentComment { get; set; }
     }
 
     [Table("AssignmentComment")]
@@ -273,7 +270,7 @@
         public int Id { get; set; }
 
         public int AssignmentId { get; set; } // 任务ID
-        
+
         public virtual Assignment Assignment { get; set; } // 任务实例
 
         public int ComposerId { get; set; } // 撰写人ID
@@ -293,10 +290,13 @@
     {
         public int Id { get; set; }
 
+        [Required, StringLength(32)]
         public string AttachmentTitle { get; set; } //附件标题
 
+        [Required, StringLength(512)]
         public string AttachmentSource { get; set; } // 附件地址
 
+        [Required, StringLength(64)]
         public string ContentType { get; set; } // 文件类型
 
         public int AttachmentType { get; set; } // 文件分类 0：文档 1：图片 2：视频
@@ -313,10 +313,35 @@
 
         public virtual Subject Subject { get; set; } // 项目实例
     }
-
     //public class MyEntity
     //{
     //    public int Id { get; set; }
     //    public string Name { get; set; }
     //}
+
+    public class AAA
+    {
+        public void func()
+        {
+            Employee e = new Employee();
+            e.Status = EmployeeStatus.DEVOICE;
+            e.Status = EmployeeStatus.
+        }
+    }
+
+    public static class EmployeeStatus
+    {
+        /// <summary>
+        /// 离职
+        /// </summary>
+        public static int DEVOICE = -1;
+        /// <summary>
+        ///  普通
+        /// </summary>
+        public static int NOMAL = 0;
+        /// <summary>
+        /// 未知
+        /// </summary>
+        public static int AAA = 1;
+    }
 }

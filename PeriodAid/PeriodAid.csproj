@@ -250,7 +250,7 @@
     <Compile Include="Models\PeriodAidDataContext.cs" />
     <Compile Include="Models\PeriodAidViewModels.cs" />
     <Compile Include="Models\PressConference.cs" />
-    <Compile Include="Models\ProjectSchemeMdels.cs" />
+    <Compile Include="Models\ProjectSchemeModels.cs" />
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
