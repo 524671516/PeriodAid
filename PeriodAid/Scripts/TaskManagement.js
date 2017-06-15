@@ -13,6 +13,42 @@
         return false;
     })
 
+    $("#add_subject_form").validate({
+        debug: false,
+        rules: {
+            SubjectTitle: {
+                required: true,
+                maxlength: 128
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    alert("新建任务成功");
+                    $("#btn_add_subject").removeClass("disabled");
+                    $('#Add-Subject').modal('hide');
+                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
+                } else {
+                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
+                    $("#btn_add_subject").removeClass("disabled");
+                    alert(data);
+                }
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#btn_add_subject").removeClass("disabled");
+        }
+    });
+    $("#btn_add_subject").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#add_subject_form").submit();
+        }
+    })
+
 });
 
 

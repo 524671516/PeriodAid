@@ -26,6 +26,10 @@
 
 
 /*工具样式*/
+.disabled{
+    background-color:#ccc;
+    color:black;
+}
 body,html{
     width:100%;
 }
@@ -56,6 +60,15 @@ ul,li{
 .clear-float:after { clear:both; }/* For IE 6/7 (trigger hasLayout) */
 .clear-float { zoom:1; }
 /*工具样式结束*/
+
+
+/*错误样式*/
+input.has-error,textarea.has-error  {
+    border-color: #b94a48;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+}
+/*错误样式结束*/
 /*dropdown*/
 .dropdown>.dropdown-menu.dropdown-menu-list{
     border:1px solid #fff;

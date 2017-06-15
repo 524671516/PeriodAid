@@ -319,16 +319,6 @@
     //    public string Name { get; set; }
     //}
 
-    public class AAA
-    {
-        public void func()
-        {
-            Employee e = new Employee();
-            e.Status = EmployeeStatus.DEVOICE;
-            e.Status = EmployeeStatus.
-        }
-    }
-
     public static class EmployeeStatus
     {
         /// <summary>

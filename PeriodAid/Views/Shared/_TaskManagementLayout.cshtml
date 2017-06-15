@@ -18,6 +18,7 @@
     @RenderSection("header", required: false)
 </head>
 <body>
+    @model PeriodAid.Models.Subject
     <header id="app-header">
         <nav class="navbar navbar-default bg-white margin-0">
             <div class="container-fluid">
@@ -79,18 +80,19 @@
                     <h4 class="modal-title" id="myModalLabel">新建项目</h4>
                 </div>
                 <div class="modal-body">
-                    @using (Html.BeginForm("CreateSubject", "TaskManagement", FormMethod.Post, new { @id = "add_subject_form" }))
+                    @using (Html.BeginForm("CreateSubject", "TaskManagement", FormMethod.Post, new { @id = "add_subject_form", @class = "validate-form" }))
                     {
-                        <div class="form-group has-success">
-                            <input class="subject-name form-control" placeholder="项目名称">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary()
+                        <div class="form-group">
+                            <input class="subject-name form-control" placeholder="项目名称" name="SubjectTitle">
                         </div>
                         <div class="form-group">
-                            <textarea class="subject-description form-control" placeholder="项目简介（选填）"></textarea>
+                            <textarea class="subject-description form-control" placeholder="项目简介（选填）" name="Remarks"></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-blue" id="btn_add_subject">新建</button>
                         </div>
-
                     }
 
                 </div>
