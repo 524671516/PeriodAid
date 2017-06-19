@@ -1,4 +1,5 @@
-﻿/*颜色*/
+﻿
+/*颜色*/
 .btn-blue{
     color: #fff;
     background-color: #3da8f5;
@@ -26,6 +27,12 @@
 
 
 /*工具样式*/
+.write-box input{
+    padding:25px 5px;
+}
+.padding-10{
+    padding:10px;
+}
 .disabled{
     background-color:#ccc;
     color:black;
@@ -70,15 +77,23 @@ input.has-error,textarea.has-error  {
 }
 /*错误样式结束*/
 /*dropdown*/
-.dropdown>.dropdown-menu.dropdown-menu-list{
+.dropdown .dropdown-menu.dropdown-menu-list{
     border:1px solid #fff;
     margin-top:10px;
 }
-.dropdown>.dropdown-menu.dropdown-menu-list>li>a{
+.dropdown .dropdown-menu.dropdown-menu-list>li>a{
     padding:10px 20px;
 }
 .dropdown>.dropdown-menu.dropdown-menu-list>li>a:hover{
   background-color:rgba(231,231,231,0.9);
+}
+.pannel-header-left .dropdown-menu.dropdown-menu-list>li>a{
+    padding:10px 20px;
+}
+.pannel-header-left .dropdown-menu.procedure-dropdown-list{
+    border:1px solid #fff;
+    width:250px;
+    text-align:left;
 }
 /*header*/
 .icon_btn_add_task{
@@ -123,11 +138,28 @@ input.has-error,textarea.has-error  {
     padding:5px 8px;
     font-weight:700;
 }
+.card-header-left,.card-footer-left{
+        width:70%;
+}
+.card-header-right,.card-footer-right{
+        text-align:right;
+        width:30%;
+}
+.card-header-left,.card-header-right,.card-footer-left,.card-footer-left{
+     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .card-body{
     position:relative;
     color:#000;
     padding:10px 8px;
     z-index:1;
+}
+.card-body{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .card-mask{
     background-image: linear-gradient(to bottom, rgba(56, 56, 56, 0.3) 0%, rgba(56, 56, 56, 0) 100%);
@@ -202,7 +234,7 @@ input.has-error,textarea.has-error  {
 }
 /*任务导航结束*/
 /*面板*/
-.pannel-warp{
+.pannel-wrap{
     position: fixed;
     top: 104px;
     right: 0;
@@ -261,7 +293,7 @@ input.has-error,textarea.has-error  {
 .pannel-header{
     top:0;
 }
-.pannel-header>.pannel-header-left,.pannel-header>.pannel-header-left{
+.pannel-header>.pannel-header-left,.pannel-header>.pannel-header-right{
     font-weight:800;
     font-size:18px;
 }
@@ -292,6 +324,10 @@ input.has-error,textarea.has-error  {
 .tm-list-container{
     height:100%;
     overflow: auto;
+}
+.tm-list-container .tm-list-item:not(:last-child):hover{
+    opacity:0.7;
+    cursor:pointer;
 }
 .tm-list-item{
     border-left:10px solid red;
@@ -369,6 +405,7 @@ input.has-error,textarea.has-error  {
     overflow-y: auto;
     z-index: 1;
 }
+
 
 
 

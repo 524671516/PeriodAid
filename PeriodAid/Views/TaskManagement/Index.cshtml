@@ -15,3 +15,23 @@
         </div>
     </div>
 </div> 
+@section scripts{
+    <script>
+        GetStarSubject("#personal_star_subject")
+        GetActiveSubject("#personal_active_subject")
+        GetFinishSubject("#personal_finish_subject")
+        //项目详细点击
+        $("#personal_active_subject").on("click", ".card-item", function () {
+            var linkid = $(this).attr("data-link")
+            if (linkid) {
+                location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+            }
+        });
+        //星标占位
+        $("#personal_active_subject").on("click", ".card-header-right", function () {
+            ErrorAlert("功能正在开发中.....")
+            return false;
+        })
+    </script>
+    
+}

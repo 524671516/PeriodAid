@@ -1,0 +1,30 @@
+﻿@model PeriodAid.Models.Assignment
+@using (Html.BeginForm("CreateAssignment", "TaskManagement", FormMethod.Post, new { @id = "add_assignment_form", @class = "validate-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+    @Html.HiddenFor(m => m.ProcedureId)
+    @Html.HiddenFor(m => m.SubjectId)
+    <div class="form-group">
+       @Html.TextBoxFor(m => m.AssignmentTitle, new {@class="form-control", @placeholder="任务名称"})
+    </div>
+    <div class="form-group">
+        <textarea class="form-control" rows="3"  placeholder="任务描述"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="HolderId">执行人</label>
+        @Html.DropDownListFor(m=>m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        <label for="HolderId">优先级</label>
+        <select name="Priority" id="Priority" class="form-control">
+            <option value="1">一般</option>
+            <option value="2">急需</option>
+        </select>
+       
+    </div>
+    <div class="text-right">
+        <a class="btn btn-default" id="cancel-create-assignment">取消</a>
+        <a class="btn btn-blue" id="create-assignment">确定</a>
+    </div>
+}

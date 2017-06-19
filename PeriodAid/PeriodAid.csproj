@@ -384,6 +384,8 @@
     <Content Include="Content\Jcrop.gif" />
     <Content Include="Content\Jcrop.min.css" />
     <Content Include="Content\jedate.css" />
+    <Content Include="Content\jquery-confirm.css" />
+    <Content Include="Content\jquery-confirm.min.css" />
     <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\jquery.fullPage.css" />
     <Content Include="Content\PA-Site.css" />
@@ -432,6 +434,9 @@
     <Content Include="Scripts\framework7.js" />
     <Content Include="Scripts\framework7.min.js" />
     <Content Include="Scripts\html5.js" />
+    <Content Include="Scripts\jquery-confirm.js" />
+    <Content Include="Scripts\jquery-confirm.min.js" />
+    <Content Include="Scripts\jquery-sortable.js" />
     <Content Include="Scripts\kalendae.standalone.js" />
     <Content Include="Scripts\Manager.js" />
     <Content Include="Scripts\maapp.js" />
@@ -1009,6 +1014,10 @@
     <Content Include="Views\TaskManagement\Personal_FinishSubjectListPartial.cshtml" />
     <Content Include="Views\TaskManagement\Personal_ActiveSubjectListPartial.cshtml" />
     <Content Include="Views\TaskManagement\Personal_StarSubjectListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectProcedure.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectAssignment.cshtml" />
+    <Content Include="Views\TaskManagement\GetAssignmentForm.cshtml" />
+    <Content Include="Views\TaskManagement\Assignment_Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

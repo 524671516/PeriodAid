@@ -1,59 +1,41 @@
-﻿<div class="content-inner-title">
-    <i class="fa fa-tasks color-blue" aria-hidden="true"></i>&nbsp;
-    正在执行的任务
-</div>
-<div class="card-box row">
-    <div class="col-md-3 card-wrap">
-        <div class="card-item" style="background-image: url('../../Content/images/wx_gambling_background02_01.jpg');" data-link="584848Aasdasdsadsads">
-            <div class="card-header clear-float">
-                <div class="card-header-left float-left">第五个</div>
-                <div class="card-header-right float-right">设置</div>
+﻿@model IEnumerable<PeriodAid.Models.Subject>
+    <div class="content-inner-title">
+        <i class="fa fa-tasks color-blue" aria-hidden="true"></i>&nbsp;
+        正在执行的任务
+    </div>
+    <div class="card-box row">
+        @if (Model.Count() != 0)
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-md-3 card-wrap">
+                    <div class="card-item" style="background-image: url('../../Content/images/wx_gambling_background02_01.jpg');" data-link="@item.Id">
+                        <div class="card-header clear-float">
+                            <div class="card-header-left float-left">@item.SubjectTitle</div>
+                            <div class="card-header-right float-right">设置</div>
+                        </div>
+                        <div class="card-body">
+                            @if (item.Remarks == null)
+                            {
+                                <div class="color-gray">@Html.Encode("无描述")</div>
+                            }
+                            else
+                            {
+                                @Html.Encode(item.Remarks);
+                            }
+                        </div>
+                        <div class="card-footer">@item.CreateTime.ToString("yyyy-MM-dd")</div>
+                        <div class="card-mask"></div>
+                    </div>
+                </div>
+            }
+        }
+        <div class="col-md-3 card-wrap" id="add-task-card">
+            <div class="card-item">
+                <a class="card-body" id="add-task-card-btn" title="添加新项目" data-toggle="modal" data-target="#Add-Subject">
+                    <div id="add-task-card-icon"><i class="fa fa-plus-circle  fa-3x" aria-hidden="true"></i></div>
+                    <div id="add-task-card-word">添加新项目</div>
+                </a>
             </div>
-            <div class="card-body">477</div>
-            <div class="card-footer">dasdas</div>
-            <div class="card-mask"></div>
         </div>
     </div>
-    <div class="col-md-3 card-wrap">
-        <div class="card-item" style="background-image: url('../../Content/images/wx_gambling_background.jpg');">
-            <div class="card-header clear-float">
-                <div class="card-header-left float-left">第一个</div>
-                <div class="card-header-right float-right">设置</div>
-            </div>
-            <div class="card-body">477</div>
-            <div class="card-footer">dasdas</div>
-            <div class="card-mask"></div>
-        </div>
-    </div>
-    <div class="col-md-3 card-wrap">
-        <div class="card-item" style="background-image: url('../../Content/images/img_2.png');">
-            <div class="card-header clear-float">
-                <div class="card-header-left float-left">第一个</div>
-                <div class="card-header-right float-right">设置</div>
-            </div>
-            <div class="card-body">477</div>
-            <div class="card-footer">dasdas</div>
-            <div class="card-mask"></div>
-        </div>
-    </div>
-    <div class="col-md-3 card-wrap">
-        <div class="card-item" style="background-image: url('../../Content/images/banner_mobile_1.jpg');">
-            <div class="card-header clear-float">
-                <div class="card-header-left float-left">第一个</div>
-                <div class="card-header-right float-right">设置</div>
-            </div>
-            <div class="card-body">477</div>
-            <div class="card-footer">dasdas</div>
-            <div class="card-mask"></div>
-        </div>
-    </div>
-    <div class="col-md-3 card-wrap" id="add-task-card">
-        <div class="card-item">
-            <a class="card-body" id="add-task-card-btn" title="添加新任务" data-toggle="modal" data-target="#Add-Subject">
-                <div id="add-task-card-icon"><i class="fa fa-plus-circle  fa-3x" aria-hidden="true"></i></div>
-                <div id="add-task-card-word">添加新任务</div>
-            </a>
-        </div>
-    </div>
-</div>
-
