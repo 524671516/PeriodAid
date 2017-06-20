@@ -228,7 +228,7 @@
         });
         $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function () {
             ComfirmFinishAssignment($(this).parent().parent().find(".tm-item_right").attr("data-aid"), function (data) {
-                GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".pannel-body"));
+                GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".pannel-body"));
             })
         })
         $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
