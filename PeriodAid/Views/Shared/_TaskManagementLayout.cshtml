@@ -8,6 +8,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>任务管理系统</title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/TaskManagement.css" rel="stylesheet" />
@@ -18,6 +20,7 @@
     @RenderSection("header", required: false)
 </head>
 <body>
+    @model PeriodAid.Models.Subject
     <header id="app-header">
         <nav class="navbar navbar-default bg-white margin-0">
             <div class="container-fluid">
@@ -79,18 +82,19 @@
                     <h4 class="modal-title" id="myModalLabel">新建项目</h4>
                 </div>
                 <div class="modal-body">
-                    @using (Html.BeginForm("CreateSubject", "TaskManagement", FormMethod.Post, new { @id = "add_subject_form" }))
+                    @using (Html.BeginForm("CreateSubject", "TaskManagement", FormMethod.Post, new { @id = "add_subject_form", @class = "validate-form" }))
                     {
-                        <div class="form-group has-success">
-                            <input class="subject-name form-control" placeholder="项目名称">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary()
+                        <div class="form-group">
+                            <input class="subject-name form-control" placeholder="项目名称" name="SubjectTitle">
                         </div>
                         <div class="form-group">
-                            <textarea class="subject-description form-control" placeholder="项目简介（选填）"></textarea>
+                            <textarea class="subject-description form-control" placeholder="项目简介（选填）" name="Remarks"></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-blue" id="btn_add_subject">新建</button>
                         </div>
-
                     }
 
                 </div>
@@ -100,7 +104,9 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.form.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
     <script src="~/Scripts/TaskManagement.js"></script>
     @RenderSection("scripts", required: false)
 </body>

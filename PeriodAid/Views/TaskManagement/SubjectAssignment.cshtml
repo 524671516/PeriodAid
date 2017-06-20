@@ -1,0 +1,18 @@
+﻿@model IEnumerable<PeriodAid.Models.Assignment>
+<ul class="tm-list-container">
+
+    @foreach (var item in Model)
+    {
+        <li class="tm-list-item">
+            <div class="tm-list-item_top">
+                <div class="tm-item_left"><input type="checkbox" /></div>
+                <div class="tm-item_right" data-aid="@item.Id">@item.AssignmentTitle</div>
+            </div>
+        </li>
+    }
+    <li class="tm-list-item tm-list-add text-center">
+        <a href="#" class="panel-body add-btn color-gray btn-get-assignmentform" data-pid="@ViewBag.ProcedureId"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i></a>
+        <div id="add-list-write" class="write-assignment-box">
+        </div>
+    </li>
+</ul>

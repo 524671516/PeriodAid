@@ -1,26 +1,87 @@
 ﻿$(function () {
-    GetStarSubject("#personal_star_subject")
-    GetActiveSubject("#personal_active_subject")
-    GetFinishSubject("#personal_finish_subject")
-    $("#personal_active_subject").on("click", ".card-item", function () {
-        var linkid = $(this).attr("data-link")
-        if (linkid) {
-            location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+    //新增项目验证
+    $("#add_subject_form").validate({
+        debug: false,
+        rules: {
+            SubjectTitle: {
+                required: true,
+                maxlength: 128
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    UnimportantAlert("添加项目成功");
+                    $("#btn_add_subject").removeClass("disabled");
+                    $('#Add-Subject').modal('hide');
+                    GetActiveSubject("#personal_active_subject")
+                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
+                } else {
+                    ErrorAlert(data);
+                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
+                    $("#btn_add_subject").removeClass("disabled");                   
+                }
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#btn_add_subject").removeClass("disabled");
         }
-    })
-    $("#personal_active_subject").on("click", ".card-header-right", function () {
-        alert(1);
-        return false;
-    })
+    });
+    //新增项目的提交
+    $("#btn_add_subject").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#add_subject_form").submit();
+        }
+    });
+    //新增任务
+    $("#add_assignment_form").validate({
+        debug: false,
+        rules: {
+            SubjectTitle: {
+                required: true,
+                maxlength: 128
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data == "SUCCESS") {
+                    UnimportantAlert("添加任务成功");
+                    $("#btn_add_assignment").removeClass("disabled");
+                    $('#Add-Assignment').modal('hide');
+                    $('#Add-Assignment').find(".form-group input,.form-group textarea").val("");
+                } else {
+                    ErrorAlert(data);
+                    $('#Add-Assignment').find(".form-group input,.form-group textarea").val("");
+                    $("#btn_add_assignment").removeClass("disabled");
+                }
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#btn_add_assignment").removeClass("disabled");
+        }
+    });
+    //新增任务的提交
+    $("#btn_add_assignment").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#add_assignment_form").submit();
+        }
+    });
 
 });
-
-
 //请求
 function GetStarSubject(container) {
     $.ajax({
         url: "/TaskManagement/Personal_StarSubjectListPartial",
         success: function (data) {
+            
             $(container).html(data);
         }
     })
@@ -40,4 +101,111 @@ function GetFinishSubject(container) {
             $(container).html(data);
         }
     })
+}
+function GetProcedure(ProcedureId,SubjectId,container) {
+    $.ajax({
+        url: "/TaskManagement/SubjectProcedure",
+        data: {
+            ProcedureId: ProcedureId
+        },
+        success: function (data) {
+            container.html(data)
+            GetAssignment(ProcedureId,SubjectId, container.find(".pannel-body"));
+        },
+        error: function () {
+            ErrorAlert("数据传输中断")
+        }
+    });
+}
+function GetAssignmentForm(ProcedureId, SubjectId,container) {
+    $.ajax({
+        url: "/TaskManagement/GetAssignmentForm",
+        data: {
+            ProcedureId: ProcedureId,
+            SubjectId: SubjectId
+        },
+        success: function (data) {
+            container.html(data)
+        },
+        error: function () {
+            ErrorAlert("数据传输中断")
+        }
+    });
+}
+function GetAssignmentDetail(AssignmentId, container,Callback) {
+    $.ajax({
+        url: "/TaskManagement/Assignment_Detail",
+        data: {
+            AssignmentId: AssignmentId,
+        },
+        success: function (data) {
+            container.html(data)
+            if (Callback && typeof Callback == "function") {
+                Callback();
+            }
+        },
+        error: function () {
+            ErrorAlert("数据传输中断")
+        }
+    });
+}
+function GetAssignment(ProcedureId,SubJectId, container) {
+    $.ajax({
+        url: "/TaskManagement/SubjectAssignment",
+        data: {
+            ProcedureId: ProcedureId,
+            SubJectId: SubJectId
+        },
+        success: function (data) {
+            container.html(data)
+        },
+        error: function () {
+            ErrorAlert("数据传输中断")
+        }
+    });
+}
+
+
+
+//插件调用
+/*dialog调用*/
+function UnimportantAlert(text) {
+    $.alert({
+        autoClose: 'cancelAction|2000',
+        backgroundDismiss: true,
+        escapeKey: 'cancelAction',
+        typeAnimated: true,
+        content: text,
+        buttons: {
+            cancelAction: {
+                text: '关闭',
+            }
+        }
+    });
+}
+function ErrorAlert(text) {
+    $.alert({
+        type:"red",
+        autoClose: 'cancelAction|10000',
+        escapeKey: 'cancelAction',
+        typeAnimated: true,
+        content: text,
+        buttons: {
+            cancelAction: {
+                text: '关闭',
+            }
+        }
+    });
+}
+
+/*时间控件调用*/
+function CompleteTimeWidget(cotainer) {
+    $(cotainer).datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        autoclose: false,
+        todayBtn: true,
+        clearBtn: true,
+        pickerPosition: "bottom-right",
+        todayHighlighttodayHighlight: true,
+    });
 }

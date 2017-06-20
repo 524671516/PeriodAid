@@ -1,0 +1,28 @@
+﻿@model PeriodAid.Models.Procedure
+    <div class="pannel-header clear-float">
+        <div class="pannel-header-right float-right">@Html.Encode(Model.ProcedureTitle)</div>
+        <div class="pannel-header-left float-left">          
+            <ul>
+                <li>
+
+                    <a class="icon-btn dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" href="#">
+                        <i class="fa fa-caret-square-o-down color-blue" aria-hidden="true"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-list procedure-dropdown-list">
+                        <li><a href="javascript:;"><strong class="color-red">删除列表</strong></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="javascript:;">功能开发中</a></li>
+                        <li><a href="javascript:;">功能开发中</a></li>
+                        <li><a href="javascript:;">功能开发中</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="pannel-body">
+    </div>
+    <div class="pannel-footer clear-float">
+        <div class="pannel-footer-left float-left"></div>
+        <div class="pannel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Id)</span>/<span class="total-num">@Html.Encode(Model.Sort)</span></div>
+    </div>
+
