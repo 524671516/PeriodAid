@@ -285,6 +285,7 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\banner_mobile_1.jpg" />
+    <Content Include="Content\images\cover-default.jpg" />
     <Content Include="Content\images\img_1.jpg" />
     <Content Include="Content\images\benefits_flow_01.png" />
     <Content Include="Content\images\benefits_flow_02.png" />
@@ -1023,6 +1024,7 @@
     <Content Include="Views\TaskManagement\SubjectAssignment.cshtml" />
     <Content Include="Views\TaskManagement\GetAssignmentForm.cshtml" />
     <Content Include="Views\TaskManagement\Assignment_Detail.cshtml" />
+    <Content Include="Views\TaskManagement\EditSubject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

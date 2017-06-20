@@ -381,27 +381,8 @@
                     if (data.error != '') {
                         alert(data.error);
                     } else {
-                        $("#report-img-list").append("<div class='img-list' data-rel='" + data.imgurl + "' style=\"background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/" + data.imgurl + "')\">" +
-                            "<span class=\"img-close\">\<span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");
-                        var filearray = new Array();
-                        $(".img-list").each(function () {
-                            filearray.push($(this).attr("data-rel"));
-                        });
-                        $.ajax({
-                            url: "/OffCheckin/UpdateCheckinFileAjax",
-                            data: {
-                                id: $("#CheckIn_Id").val(),
-                                filearray: filearray.toString()
-                            },
-                            type: "post",
-                            success: function (data) {
-                                if (data.result == "SUCCESS") {
-                                    alert("上传成功");
-                                }
-                                else
-                                    alert("上传失败");
-                            }
-                        });
+                        $("#PicUrl-img").attr("src", data.imgurl);
+                        $("#PicUrl").val(data.imgurl);
                     }
                 }
             },
