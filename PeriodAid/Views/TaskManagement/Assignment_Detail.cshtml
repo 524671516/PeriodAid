@@ -13,6 +13,7 @@
         @Html.HiddenFor(m=>m.CreateTime)
         @Html.HiddenFor(m=>m.SubjectId)
         @Html.HiddenFor(m=>m.ProcedureId)
+        @Html.HiddenFor(m=>m.Status)
         <div class="form-group">
             @Html.TextBoxFor(m => m.AssignmentTitle, new { @class = "form-control", @placeholder = "任务名称" })
         </div>
@@ -31,7 +32,7 @@
         </div>
         <div class="row">
             <div class="form-group col-md-6">
-                <label for="HolderId">执行人</label>
+                <label for="HolderId">负责人</label>
               @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
             </div>
             <div class="form-group col-md-6">
@@ -40,8 +41,24 @@
                     <option value="1">一般</option>
                     <option value="2">急需</option>
                 </select>
-
             </div>
+        </div>
+        <div class="checkbox">
+                @if (Model.Repeat)
+                {
+                    <label>
+                        @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat, @checked = "checked" })重复
+                        
+                    </label>
+                }
+                else
+                {
+                    <label>
+                        @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat})重复
+                        
+                    </label>
+                }
+
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="btn_edit_assignment">保存</button>
@@ -50,5 +67,48 @@
 
 </div>
     <script type="text/javascript">
-       CompleteTimeWidget(".form_datetime");
+        $("#Repeat").on("click", function () {
+            if ($(this).val().toLowerCase() == "false") {
+                $(this).val("true")
+            } else {
+                $(this).val("false")
+            }
+        })
+        CompleteTimeWidget(".form_datetime");
+        //修改任务验证
+        $("#edit_assignment_form").validate({
+            debug: false,
+            rules: {
+                AssignmentTitle: {
+                    required: true,
+                    maxlength: 128
+                }
+            },
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        UnimportantAlert("任务修改成功");
+                        $("#btn_edit_assignment").removeClass("disabled");
+                        $('#Edit-Assignment').modal('hide');
+                        GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".pannel-body"));
+                    } else {
+                        ErrorAlert(data.result);
+                        $("#btn_edit_assignment").removeClass("disabled");
+                    }
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#btn_add_subject").removeClass("disabled");
+            }
+        });
+        //修改任务的提交
+        $("#btn_edit_assignment").on("click", function () {
+            if (!$(this).hasClass("disabled")) {
+                $(this).addClass("disabled")
+                $("#edit_assignment_form").submit();
+            }
+        });
 </script>  

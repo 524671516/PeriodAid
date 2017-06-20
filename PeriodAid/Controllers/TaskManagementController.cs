@@ -397,6 +397,31 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
+
+        //任务完成状态回传
+        [HttpPost]
+        public JsonResult ComfirmFinishAssignment(int AssignmentId)
+        {
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            if (assignment.Status == AssignmentStatus.UNFINISHED)
+            {
+                assignment.Status = AssignmentStatus.FINISHED;
+            }
+            else
+            {
+                assignment.Status = AssignmentStatus.UNFINISHED;
+            }
+            try
+            {
+                _db.Entry(assignment).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return Json(new { result = "操作失败"});
+            }
+            return Json(new { result = "操作成功",Id=assignment.ProcedureId });
+        }
         //获取任务详情
         public PartialViewResult Assignment_Detail(int AssignmentId)
         {
@@ -409,7 +434,7 @@ namespace PeriodAid.Controllers
         }
         //任务修改
         [HttpPost,ValidateAntiForgeryToken]
-        public ActionResult Edit_Assignment_Detail(FormCollection form,Assignment model)
+        public JsonResult Edit_Assignment_Detail(FormCollection form,Assignment model)
         {
             if (ModelState.IsValid)
             {
@@ -423,18 +448,18 @@ namespace PeriodAid.Controllers
                     }
                     catch (Exception)
                     {
-                        return Content("保存失败。");
+                        return Json(new { result = "数据存储失败。" });
                     }
-                    return Content("SUCCESS");
+                    return Json(new { result = "SUCCESS", id = item.ProcedureId });
                 }
                 else
                 {
-                    return Content("模型同步错误。");
+                    return Json(new { result = "模型同步错误。" });
                 }
             }
             else
             {
-                return Content("模型错误。");
+                return Json(new { result = "模型错误。" });
             }
         }
 

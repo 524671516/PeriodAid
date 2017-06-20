@@ -151,7 +151,7 @@
     <div class="siderbar-footer"></div>
 
 </div>
-<div class="modal fade" id="Add-Assignment" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto">
+<div class="modal fade" id="Edit-Assignment" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
@@ -198,7 +198,6 @@
                 $("#add_procedure_form").submit();
             }
         })
-
         //新增任务
         $("#pannel-wrap").on("click", "#create-assignment", function () {
             if (!$(this).hasClass("disabled")) {
@@ -227,6 +226,11 @@
             var that = $(this);
             GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that)
         });
+        $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function () {
+            ComfirmFinishAssignment($(this).parent().parent().find(".tm-item_right").attr("data-aid"), function (data) {
+                GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".pannel-body"));
+            })
+        })
         $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
             $(this).addClass("hidden");
@@ -238,8 +242,8 @@
             $(".write-assignment-box").html("");
         });
         $("#pannel-wrap").on("click", ".tm-item_right", function () {
-            GetAssignmentDetail($(this).attr("data-aid"), $("#Add-Assignment .modal-content"), function () {
-                $('#Add-Assignment').modal('show');
+            GetAssignmentDetail($(this).attr("data-aid"), $("#Edit-Assignment .modal-content"), function () {
+                $('#Edit-Assignment').modal('show');
             });
         });
         $("#add-pannel-list").on("click", function () {
