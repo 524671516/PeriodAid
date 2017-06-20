@@ -20,7 +20,7 @@
                 } else {
                     ErrorAlert(data);
                     $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
-                    $("#btn_add_subject").removeClass("disabled");                   
+                    $("#btn_add_subject").removeClass("disabled");
                 }
             })
         },
@@ -81,7 +81,7 @@ function GetStarSubject(container) {
     $.ajax({
         url: "/TaskManagement/Personal_StarSubjectListPartial",
         success: function (data) {
-            
+
             $(container).html(data);
         }
     })
@@ -102,7 +102,7 @@ function GetFinishSubject(container) {
         }
     })
 }
-function GetProcedure(ProcedureId,SubjectId,container) {
+function GetProcedure(ProcedureId, SubjectId, container) {
     $.ajax({
         url: "/TaskManagement/SubjectProcedure",
         data: {
@@ -110,14 +110,14 @@ function GetProcedure(ProcedureId,SubjectId,container) {
         },
         success: function (data) {
             container.html(data)
-            GetAssignment(ProcedureId,SubjectId, container.find(".pannel-body"));
+            GetAssignment(ProcedureId, SubjectId, container.find(".pannel-body"));
         },
         error: function () {
             ErrorAlert("操作失败")
         }
     });
 }
-function GetAssignmentForm(ProcedureId, SubjectId,container) {
+function GetAssignmentForm(ProcedureId, SubjectId, container) {
     $.ajax({
         url: "/TaskManagement/GetAssignmentForm",
         data: {
@@ -132,7 +132,7 @@ function GetAssignmentForm(ProcedureId, SubjectId,container) {
         }
     });
 }
-function GetAssignmentDetail(AssignmentId, container,Callback) {
+function GetAssignmentDetail(AssignmentId, container, Callback) {
     $.ajax({
         url: "/TaskManagement/Assignment_Detail",
         data: {
@@ -149,7 +149,7 @@ function GetAssignmentDetail(AssignmentId, container,Callback) {
         }
     });
 }
-function GetAssignment(ProcedureId,SubJectId, container) {
+function GetAssignment(ProcedureId, SubJectId, container) {
     $.ajax({
         url: "/TaskManagement/SubjectAssignment",
         data: {
@@ -164,10 +164,10 @@ function GetAssignment(ProcedureId,SubJectId, container) {
         }
     });
 }
-function ComfirmFinishAssignment(AssignmentId,Callback) {
+function ComfirmFinishAssignment(AssignmentId, Callback) {
     $.ajax({
         url: "/TaskManagement/ComfirmFinishAssignment",
-        type:"post",
+        type: "post",
         data: {
             AssignmentId: AssignmentId,
         },
@@ -177,6 +177,40 @@ function ComfirmFinishAssignment(AssignmentId,Callback) {
             }
         },
         error: function () {
+            ErrorAlert("操作失败")
+        }
+    });
+}
+function Delete_Procedure(ProcedureId, Callback) {
+    $.ajax({
+        url: "/TaskManagement/Delete_Procedure",
+        type: "post",
+        data: {
+            ProcedureId: ProcedureId,
+        },
+        success: function (data) {
+            if (Callback && typeof Callback == "function") {
+                Callback(data);
+            }
+        },
+        error: function (data) {
+            ErrorAlert("操作失败")
+        }
+    });
+}
+function Delete_Assignment(AssignmentId, Callback) {
+    $.ajax({
+        url: "/TaskManagement/Delete_Assignment",
+        type: "post",
+        data: {
+            AssignmentId: AssignmentId,
+        },
+        success: function (data) {
+            if (Callback && typeof Callback == "function") {
+                Callback(data);
+            }
+        },
+        error: function (data) {
             ErrorAlert("操作失败")
         }
     });
@@ -202,7 +236,7 @@ function UnimportantAlert(text) {
 }
 function ErrorAlert(text) {
     $.alert({
-        type:"red",
+        type: "red",
         autoClose: 'cancelAction|10000',
         escapeKey: 'cancelAction',
         typeAnimated: true,
@@ -211,6 +245,29 @@ function ErrorAlert(text) {
             cancelAction: {
                 text: '关闭',
             }
+        }
+    });
+}
+function Confirm(text,callback) {
+    $.confirm({
+        type: "red",
+        alignMiddle: true,
+        typeAnimated: true,
+        content: text,
+        buttons: {
+            info: {
+                text: "取消",
+                action: function () { }
+            },
+            danger: {
+                text:"确定",
+                btnClass: 'btn-red',
+                action: function () {
+                    if (callback && typeof callback == "function") {
+                        callback();
+                    }
+                }
+            },
         }
     });
 }

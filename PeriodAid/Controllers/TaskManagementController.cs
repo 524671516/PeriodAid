@@ -94,17 +94,7 @@ namespace PeriodAid.Controllers
                         item.Status = EmployeeStatus.NORMAL;
                         if (item.TemplateId == 0)
                         {
-                            ProcedureTemplate proceduretemplate = new ProcedureTemplate()
-                            {
-                                Title = "默认模版"
-                            };
-                            _db.ProcedureTemplate.Add(proceduretemplate);
-                            _db.SaveChanges();
-                            var proceduretemplate2 = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == proceduretemplate.Id);
-                            proceduretemplate2.Procedure = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == 1).Procedure;
-                            _db.Entry(proceduretemplate2).State = System.Data.Entity.EntityState.Modified;
-                            _db.SaveChanges();
-                            item.TemplateId = proceduretemplate2.Id;
+                            item.TemplateId = 1;
                         }
                         item.CreateTime = DateTime.Now;
                         try
@@ -265,12 +255,12 @@ namespace PeriodAid.Controllers
         public PartialViewResult GetAssignmentForm(int ProcedureId,int SubjectId)
         {
             var employee = getEmployee(User.Identity.Name);
-            Assignment item = new Assignment(
-             );
-            item.ProcedureId = ProcedureId;
-            item.SubjectId = SubjectId;
+            Assignment item = new Assignment() {
+                ProcedureId= ProcedureId,
+                SubjectId= SubjectId
+            };
             var EmployeeList = from m in _db.Employee
-                               where m.Status >= 0
+                               where m.Status >EmployeeStatus.DEVOICE
                                orderby m.Id descending
                                select m;
             item.HolderId = employee.Id;
@@ -474,6 +464,78 @@ namespace PeriodAid.Controllers
             else
             {
                 return Json(new { result = "模型错误。" });
+            }
+        }
+
+        //删除列表
+        [HttpPost]
+        public JsonResult Delete_Procedure(int ProcedureId)
+        {
+            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId);
+            var assignmentlist = (from m in _db.Assignment
+                                 where m.ProcedureId == ProcedureId
+                                 select m).Count();
+            if (assignmentlist == 0)
+            {
+                try
+                {
+                    procedure.Status = ProcedureStatus.REMOVED;
+                    _db.Entry(procedure).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return Json(new { result = "发生错误。"});
+                }
+                return Json(new { result = "SUCCESS",Id=procedure.Id });
+            }
+            else
+            {
+                return Json(new { result = "请先清空列表中的任务。" });
+            }
+        }
+
+        //删除任务
+        [HttpPost]
+        public JsonResult Delete_Assignment(int AssignmentId)
+        {
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            if (assignment.Status==AssignmentStatus.DELETED)
+            {
+                return Json(new { result = "此任务已不存在。" });
+            }
+            else
+            {
+                var subtasklist = from m in _db.SubTask
+                                  where m.AssignmentId == assignment.Id
+                                  select m;
+                if (subtasklist.Count() != 0)
+                {
+                    foreach(var item in subtasklist)
+                    {
+                        try
+                        {
+                            item.Status = AssignmentStatus.DELETED;
+                            _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        catch (Exception)
+                        {
+                            return Json(new { result = "发生错误。" });
+                        }
+                    }
+                    _db.SaveChanges();
+                }
+                try
+                {
+                    assignment.Status = AssignmentStatus.DELETED;
+                    _db.Entry(assignment).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return Json(new { result = "发生错误。" });
+                }
+                return Json(new { result = "SUCCESS", Id = assignment.ProcedureId });
             }
         }
 

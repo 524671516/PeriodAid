@@ -221,31 +221,51 @@
             }
         })
 
+        //加载procedure
         $(".ajax-procedure").each(function () {
             var ProcedureId = $(this).attr("data-procedureid");
             var that = $(this);
             GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that)
         });
+        //任务完成
         $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function () {
             ComfirmFinishAssignment($(this).parent().parent().find(".tm-item_right").attr("data-aid"), function (data) {
                 GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".pannel-body"));
             })
         })
+
+        //任务添加窗口
         $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
             $(this).addClass("hidden");
             $(".write-assignment-box").html("");
             GetAssignmentForm($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), $(this).parent().find(".write-assignment-box"));
         });
+        //清除任务添加窗口
         $("#pannel-wrap").on("click", "#cancel-create-assignment", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
             $(".write-assignment-box").html("");
         });
+
+        //任务详情弹窗
+        $("#pannel-wrap").on("click", ".btn-del-procedure", function () {
+            Delete_Procedure($(this).attr("data-pid"), function (data) {
+                if (data.result == "SUCCESS") {
+                    $(".ajax-procedure[data-procedureid=" + data.Id + "]").remove();
+                } else {
+                    ErrorAlert(data.result)
+                }
+
+            })
+        });
+
+        //删除procedure
         $("#pannel-wrap").on("click", ".tm-item_right", function () {
             GetAssignmentDetail($(this).attr("data-aid"), $("#Edit-Assignment .modal-content"), function () {
                 $('#Edit-Assignment').modal('show');
             });
         });
+
         $("#add-pannel-list").on("click", function () {
             controlHidden()
         });
@@ -253,6 +273,8 @@
             controlHidden()
         });
       
+
+
         function controlHidden(type) {           
                 if ($("#add-pannel-control").hasClass("hidden")) {
                     $("#add-pannel-control").removeClass("hidden");

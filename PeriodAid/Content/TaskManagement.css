@@ -84,17 +84,61 @@ input.has-error,textarea.has-error  {
 }
 /*错误样式结束*/
 /*dropdown*/
-.dropdown .dropdown-menu.dropdown-menu-list{
+.dropdown-menu-more > li > a {
+    text-align:left;
+    text-decoration:none;
+    display: block;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.428571429;
+    color: #333;
+    white-space: nowrap;
+}
+.dropdown-menu-more .divider {
+    padding:0;
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+}
+.dropdown-menu-more{
+    right:-90px;
+    width:180px;
+    text-decoration:none;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    background-clip: padding-box;
+    width:180px;
+    position: absolute;
+    z-index: 9999;
+    transition:all 300ms;
+    -moz-transition:all 300ms;	/* Firefox 4 */
+   -webkit-transition: all 300ms;	/* Safari 和 Chrome */
+  -o-transition: all 300ms;	/* Opera */
+}
+.dropdown-menu-more li{
+    text-decoration:none;
+    padding:10px;
+}
+.dropdown .dropdown-menu.dropdown-menu-list,.dropdown-menu-more.dropdown-menu-list{
     border:1px solid #fff;
     margin-top:10px;
 }
 .dropdown .dropdown-menu.dropdown-menu-list>li>a{
     padding:10px 20px;
 }
-.dropdown>.dropdown-menu.dropdown-menu-list>li>a:hover{
+.dropdown>.dropdown-menu.dropdown-menu-list>li>a:hover,.dropdown-menu-more.dropdown-menu-list>li>a:hover{
   background-color:rgba(231,231,231,0.9);
 }
-.pannel-header-left .dropdown-menu.dropdown-menu-list>li>a{
+.pannel-header-left .dropdown-menu.dropdown-menu-list>li>a,.dropdown-menu-more.dropdown-menu-list>li>a{
     padding:10px 20px;
 }
 .pannel-header-left .dropdown-menu.procedure-dropdown-list{
@@ -428,6 +472,41 @@ input.has-error,textarea.has-error  {
     overflow-x: hidden;
     overflow-y: auto;
     z-index: 1;
+}
+/*modal更多*/
+a.close{
+    opacity:1;
+    font-size:12px;
+    text-decoration:none;
+    float: right;
+    font-weight: bold;
+    line-height: 2;
+    color: #3da8f5;
+    text-shadow: 0 1px 0 #fff;
+    margin-top: -2px;
+    margin-right:10px;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+/*参与者区域*/
+.participator_area{
+height:100px;
+overflow-y:auto;
+}
+ul.participator_area li{
+    display:inline-block;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background-color:#ccc;
+}
+ul.participator_area li:last-child{
+    background-color:none;
+    line-height:2;
 }
 
 

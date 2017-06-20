@@ -1,7 +1,16 @@
 ﻿@model PeriodAid.Models.Assignment
-<div class="modal-header">
+<div class="modal-header" data-aid="@Model.Id">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <a href="javascript:;" class="close dropdown-more">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="Toggle dropdown menu"></i></a>
     <h4 class="modal-title" id="myModalLabel">@Html.Encode(Model.AssignmentTitle)</h4>
+    <ul class="dropdown-menu-more dropdown-menu-list" style="display:none;">
+        <li class="text-center color-blue"><strong>更多功能</strong></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="javascript:;" class="btn_del_assignment">删除任务</a></li>
+        <li><a href="javascript:;" class="btn_archive_assignment">归档</a></li>
+        <li><a href="javascript:;" class="btn_finish_assignment">完成</a></li>
+        <li><a href="javascript:;">持续更新中</a></li>
+    </ul>
 </div>
 <div class="modal-body">
     @using (Html.BeginForm("Edit_Assignment_Detail", "TaskManagement", FormMethod.Post, new { @id = "edit_assignment_form", @class = "validate-form" }))
@@ -9,31 +18,46 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
         @Html.HiddenFor(m => m.Id)
-        @Html.HiddenFor(m=>m.CompleteDate)
-        @Html.HiddenFor(m=>m.CreateTime)
-        @Html.HiddenFor(m=>m.SubjectId)
-        @Html.HiddenFor(m=>m.ProcedureId)
-        @Html.HiddenFor(m=>m.Status)
+        @Html.HiddenFor(m => m.CompleteDate)
+        @Html.HiddenFor(m => m.CreateTime)
+        @Html.HiddenFor(m => m.SubjectId)
+        @Html.HiddenFor(m => m.ProcedureId)
+        @Html.HiddenFor(m => m.Status)
         <div class="form-group">
             @Html.TextBoxFor(m => m.AssignmentTitle, new { @class = "form-control", @placeholder = "任务名称" })
         </div>
         <div class="form-group">
-            @Html.TextAreaFor(m=>m.Remarks, new { @class="form-control", @rows="3", @placeholder="任务描述"})
+            @Html.TextAreaFor(m => m.Remarks, new { @class = "form-control", @rows = "3", @placeholder = "任务描述" })
         </div>
         <div class="row">
             <div class="form-group col-md-6 input-append date">
                 <label for="RemindDate">提醒时间</label>
-                @Html.TextBoxFor(m => m.RemindDate, new { @type = "text", @readonly="true", @class="form-control form_datetime"})
+                @if (Convert.ToDateTime(Model.RemindDate).ToString("yyyy-MM-dd") == "0001-01-01")
+                {
+                    <input id="RemindDate" name="RemindDate" type="text" readonly class="form-control form_datetime" />
+                }
+                else
+                {
+                    <input id="RemindDate" name="RemindDate" type="text" readonly class="form-control form_datetime" value="@Convert.ToDateTime(Model.RemindDate).ToString("yyyy-MM-dd HH:mm")" />
+                }
+
             </div>
             <div class="form-group col-md-6 input-append date">
                 <label for="Deadline">截止期限</label>
-                @Html.TextBoxFor(m => m.Deadline, new { @type = "text", @readonly = "true", @class = "form-control form_datetime" })
+                @if (Convert.ToDateTime(Model.Deadline).ToString("yyyy-MM-dd") == "0001-01-01")
+                {
+                    <input id="Deadline" name="Deadline" type="text" readonly class="form-control form_datetime" />
+                }
+                else
+                {
+                    <input id="Deadline" name="Deadline" type="text" readonly class="form-control form_datetime" value="@Convert.ToDateTime(Model.Deadline).ToString("yyyy-MM-dd HH:mm")" />
+                }
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="HolderId">负责人</label>
-              @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
+                @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
             </div>
             <div class="form-group col-md-6">
                 <label for="Priority">优先级</label>
@@ -43,21 +67,36 @@
                 </select>
             </div>
         </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="form-group col-md-12">
+                    <label for="HolderId">参与人</label>
+                    <ul class="participator_area">
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus-circle  color-blue icon_btn_add_task" aria-hidden="true"></i></a></li>
+                    </ul>
+                   
+                </div>
+            </div>
+        </div>
         <div class="checkbox">
-                @if (Model.Repeat)
+            @if (Model.Repeat)
                 {
-                    <label>
-                        @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat, @checked = "checked" })重复
-                        
-                    </label>
-                }
-                else
-                {
-                    <label>
-                        @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat})重复
-                        
-                    </label>
-                }
+                <label>
+                    @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat, @checked = "checked" })重复
+
+                </label>
+            }
+            else
+            {
+                <label>
+                    @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat })重复
+
+                </label>
+            }
 
         </div>
         <div class="modal-footer">
@@ -66,49 +105,72 @@
     }
 
 </div>
-    <script type="text/javascript">
-        $("#Repeat").on("click", function () {
-            if ($(this).val().toLowerCase() == "false") {
-                $(this).val("true")
-            } else {
-                $(this).val("false")
+<script type="text/javascript">
+    $(".modal-body").on("click", function () {
+        $(".dropdown-menu-more").hide();
+    })
+    $(".dropdown-more").on("click", function () {
+        $(".dropdown-menu-more").toggle();
+        return false;
+    })
+    $("#Repeat").on("click", function () {
+        if ($(this).val().toLowerCase() == "false") {
+            $(this).val("true")
+        } else {
+            $(this).val("false")
+        }
+    })
+    CompleteTimeWidget(".form_datetime");
+    //修改任务验证
+    $("#edit_assignment_form").validate({
+        debug: false,
+        rules: {
+            AssignmentTitle: {
+                required: true,
+                maxlength: 128
             }
-        })
-        CompleteTimeWidget(".form_datetime");
-        //修改任务验证
-        $("#edit_assignment_form").validate({
-            debug: false,
-            rules: {
-                AssignmentTitle: {
-                    required: true,
-                    maxlength: 128
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data.result == "SUCCESS") {
+                    UnimportantAlert("任务修改成功");
+                    $("#btn_edit_assignment").removeClass("disabled");
+                    $('#Edit-Assignment').modal('hide');
+                    GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".pannel-body"));
+                } else {
+                    ErrorAlert(data.result);
+                    $("#btn_edit_assignment").removeClass("disabled");
                 }
-            },
-            //验证通过的正式提交函数
-            submitHandler: function (form) {
-                $(form).ajaxSubmit(function (data) {
-                    if (data.result == "SUCCESS") {
-                        UnimportantAlert("任务修改成功");
-                        $("#btn_edit_assignment").removeClass("disabled");
-                        $('#Edit-Assignment').modal('hide');
-                        GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".pannel-body"));
-                    } else {
-                        ErrorAlert(data.result);
-                        $("#btn_edit_assignment").removeClass("disabled");
-                    }
-                })
-            },
-            errorClass: "has-error",
-            //验证失败
-            errorPlacement: function (error, element) {
-                $("#btn_add_subject").removeClass("disabled");
-            }
-        });
-        //修改任务的提交
-        $("#btn_edit_assignment").on("click", function () {
-            if (!$(this).hasClass("disabled")) {
-                $(this).addClass("disabled")
-                $("#edit_assignment_form").submit();
-            }
-        });
-</script>  
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#btn_add_subject").removeClass("disabled");
+        }
+    });
+    //修改任务的提交
+    $("#btn_edit_assignment").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#edit_assignment_form").submit();
+        }
+    });
+    //删除任务
+    $(".btn_del_assignment").on("click", function () {
+        var data_aid = $(this).parent().parent().parent().attr("data-aid")
+        Confirm("删除此任务的同时将删除其子任务，请确认是否删除?", function () {
+            Delete_Assignment(data_aid, function (data) {
+                if (data.result == "SUCCESS") {
+                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".pannel-body"));
+                    UnimportantAlert("删除任务成功。")
+                    $('#Edit-Assignment').modal('hide');
+                } else {
+                    UnimportantAlert(data.result)
+                }
+            })
+        })
+    });
+
+</script>
