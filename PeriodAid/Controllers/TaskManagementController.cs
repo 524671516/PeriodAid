@@ -91,10 +91,20 @@ namespace PeriodAid.Controllers
                     {
 
                         item.HolderId = employee.Id;
-                        item.Status = 1;
+                        item.Status = EmployeeStatus.NORMAL;
                         if (item.TemplateId == 0)
                         {
-                            item.TemplateId = 1;
+                            ProcedureTemplate proceduretemplate = new ProcedureTemplate()
+                            {
+                                Title = "默认模版"
+                            };
+                            _db.ProcedureTemplate.Add(proceduretemplate);
+                            _db.SaveChanges();
+                            var proceduretemplate2 = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == proceduretemplate.Id);
+                            proceduretemplate2.Procedure = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == 1).Procedure;
+                            _db.Entry(proceduretemplate2).State = System.Data.Entity.EntityState.Modified;
+                            _db.SaveChanges();
+                            item.TemplateId = proceduretemplate2.Id;
                         }
                         item.CreateTime = DateTime.Now;
                         try
@@ -170,13 +180,13 @@ namespace PeriodAid.Controllers
             {
 
                 // 自己创建的项目
-                var ownSubject = employee.Subject.Where(m => m.Status > 0);
+                var ownSubject = employee.Subject.Where(m => m.Status==SubjectStatus.ACTIVE);
                 // 自己的任务列表
                 var SubjectList = from m in employee.CollaborateAssignment
-                                     where m.Status > 0
-                                     select m.Subject;            
-                var MergeSubject = ownSubject.Union(SubjectList);
-
+                                     where m.Status > AssignmentStatus.DELETED
+                                     select m.Subject;
+                var ActiveSubjectList = SubjectList.Where(m => m.Status==SubjectStatus.ACTIVE);
+                var MergeSubject = ownSubject.Union(ActiveSubjectList);
                 return PartialView(MergeSubject);
 
             }
@@ -202,9 +212,9 @@ namespace PeriodAid.Controllers
                 var ownSubject = employee.Subject.Where(m => m.Status == 0);
                 // 自己的任务列表
                 var SubjectList = from m in employee.CollaborateAssignment
-                                  where m.Status > 0
+                                  where m.Status > AssignmentStatus.DELETED
                                   select m.Subject;
-                var FinsihSubjectList = SubjectList.Where(m => m.Status == 0);
+                var FinsihSubjectList = SubjectList.Where(m => m.Status ==SubjectStatus.ARCHIVED);
                 var MergeSubject = ownSubject.Union(FinsihSubjectList);
 
                 return PartialView(MergeSubject);
@@ -422,6 +432,8 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "操作成功",Id=assignment.ProcedureId });
         }
+
+
         //获取任务详情
         public PartialViewResult Assignment_Detail(int AssignmentId)
         {
@@ -432,6 +444,8 @@ namespace PeriodAid.Controllers
             ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", assignment.HolderId);
             return PartialView(assignment);
         }
+
+
         //任务修改
         [HttpPost,ValidateAntiForgeryToken]
         public JsonResult Edit_Assignment_Detail(FormCollection form,Assignment model)
