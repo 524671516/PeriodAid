@@ -7,6 +7,7 @@ using PeriodAid.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using PeriodAid.DAL;
 
 namespace PeriodAid.Controllers
 {
@@ -118,12 +119,59 @@ namespace PeriodAid.Controllers
             }
             else
             {
-
                 return Content("模型验证失败。");
             }
         }
         #endregion
 
+        #region 编辑项目
+        public ActionResult EditSubject(int id)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == id && m.HolderId == employee.Id);
+            if(subject != null)
+            {
+                var EmployeeList = from m in _db.Employee
+                                   where m.Status >= 0
+                                   orderby m.Id descending
+                                   select m;
+                ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", employee.Id);
+                return PartialView(subject);
+            }
+            return Content("FAIL");
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult EditSubject(Subject model)
+        {
+            if (ModelState.IsValid)
+            {
+                var employee = getEmployee(User.Identity.Name);
+                if (employee == null)
+                {
+                    return Content("职工不存在。");
+                }
+                else
+                {
+                    Subject item = new Subject();
+                    if (TryUpdateModel(item))
+                    {
+                        _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Content("SUCCESS");
+                    }
+                    return Content("模型同步失败。");
+                }
+            }
+            else
+            {
+                return Content("模型验证失败。");
+            }
+        }
+        #endregion
+
+        #region 上传封面
+
+        #endregion
 
         #region  获取星标项目
         /// <summary>
@@ -485,6 +533,35 @@ namespace PeriodAid.Controllers
         {
             var user = _db.Employee.SingleOrDefault(m => m.UserName == username);
             return user;
+        }
+
+        [HttpPost]
+        public ActionResult UploadSubjectCoverFileAjax(FormCollection form)
+        {
+            var files = Request.Files;
+            string msg = string.Empty;
+            string error = string.Empty;
+            string imgurl;
+            if (files.Count > 0)
+            {
+                if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
+                {
+                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                    //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(files[0].InputStream, "Subject/SubjectCover/" + filename);
+                    msg = "成功! 文件大小为:" + files[0].ContentLength;
+                    imgurl = filename;
+                    string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'Subject/SubjectCover/" + imgurl + "'}";
+                    return Content(res);
+                }
+                else
+                {
+                    error = "文件错误";
+                }
+            }
+            string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
+            return Content(err_res);
         }
 
     }

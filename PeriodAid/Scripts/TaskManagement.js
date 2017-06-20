@@ -37,6 +37,8 @@
             $("#add_subject_form").submit();
         }
     });
+    
+
     //新增任务
     $("#add_assignment_form").validate({
         debug: false,
