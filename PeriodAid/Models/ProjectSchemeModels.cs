@@ -318,30 +318,4 @@
     //    public int Id { get; set; }
     //    public string Name { get; set; }
     //}
-
-    public class AAA
-    {
-        public void func()
-        {
-            Employee e = new Employee();
-            e.Status = EmployeeStatus.DEVOICE;
-            e.Status = EmployeeStatus.
-        }
-    }
-
-    public static class EmployeeStatus
-    {
-        /// <summary>
-        /// 离职
-        /// </summary>
-        public static int DEVOICE = -1;
-        /// <summary>
-        ///  普通
-        /// </summary>
-        public static int NOMAL = 0;
-        /// <summary>
-        /// 未知
-        /// </summary>
-        public static int AAA = 1;
-    }
 }
