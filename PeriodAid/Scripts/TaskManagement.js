@@ -76,8 +76,6 @@
     });
 
 });
-
-
 //请求
 function GetStarSubject(container) {
     $.ajax({
@@ -166,6 +164,11 @@ function GetAssignment(ProcedureId,SubJectId, container) {
         }
     });
 }
+
+
+
+//插件调用
+/*dialog调用*/
 function UnimportantAlert(text) {
     $.alert({
         autoClose: 'cancelAction|2000',
@@ -192,5 +195,17 @@ function ErrorAlert(text) {
                 text: '关闭',
             }
         }
+    });
+}
+
+/*时间控件调用*/
+function CompleteTimeWidget(cotainer) {
+    $(cotainer).datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        autoclose: false,
+        todayBtn: true,
+        clearBtn: true,
+        pickerPosition: "bottom-right",
+        todayHighlighttodayHighlight: true,
     });
 }

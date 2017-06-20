@@ -401,6 +401,10 @@ namespace PeriodAid.Controllers
         public PartialViewResult Assignment_Detail(int AssignmentId)
         {
             var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var EmployeeList = from m in _db.Employee
+                               where m.Status > EmployeeStatus.DEVOICE
+                               select m;
+            ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", assignment.HolderId);
             return PartialView(assignment);
         }
         //任务修改
