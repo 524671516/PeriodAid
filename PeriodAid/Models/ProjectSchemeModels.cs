@@ -143,6 +143,9 @@
         [StringLength(256)]
         public string Remarks { get; set; } // 备注信息
 
+        [StringLength(256)]
+        public string PicUrl { get; set; } // 项目封面图片
+
         public virtual ProcedureTemplate ProcedureTemplate { get; set; } // 过程模板实体
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -318,7 +321,6 @@
     //    public int Id { get; set; }
     //    public string Name { get; set; }
     //}
-
     public static class EmployeeStatus
     {
         /// <summary>
@@ -390,4 +392,5 @@
         /// </summary>
         public static int FINISHED = 2;
     }
+
 }

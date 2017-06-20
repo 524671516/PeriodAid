@@ -85,7 +85,7 @@ namespace PeriodAid.Controllers
                     var employee = getEmployee(User.Identity.Name);
                     if (employee == null)
                     {
-                        return Content("职工不存在。");                 
+                        return Content("职工不存在。");
                     }
                     else
                     {
@@ -439,7 +439,7 @@ namespace PeriodAid.Controllers
         {
             var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
             var EmployeeList = from m in _db.Employee
-                               where m.Status > EmployeeStatus.DEVOICE
+                               where m.Status > -1
                                select m;
             ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", assignment.HolderId);
             return PartialView(assignment);
