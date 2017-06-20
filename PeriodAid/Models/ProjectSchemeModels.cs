@@ -319,6 +319,16 @@
     //    public string Name { get; set; }
     //}
 
+    public class AAA
+    {
+        public void func()
+        {
+            Employee e = new Employee();
+            e.Status = EmployeeStatus.DEVOICE;
+            e.Status = EmployeeStatus.
+        }
+    }
+
     public static class EmployeeStatus
     {
         /// <summary>
@@ -328,66 +338,10 @@
         /// <summary>
         ///  普通
         /// </summary>
-        public static int NORMAL = 0;
+        public static int NOMAL = 0;
         /// <summary>
         /// 未知
         /// </summary>
-        public static int UNKNOW = 1;
-    }
-
-    public static class DepartmentStatus
-    {
-        /// <summary>
-        /// 已移除
-        /// </summary>
-        public static int REMOVED = -1;
-        /// <summary>
-        ///  正常
-        /// </summary>
-        public static int NORMAL = 1;
-    }
-
-    public static class SubjectStatus
-    {
-        /// <summary>
-        /// 已归档
-        /// </summary>
-        public static int ARCHIVED =0;
-        /// <summary>
-        ///  进行中
-        /// </summary>
-        public static int ACTIVE = 1;
-    }
-
-    public static class ProcedureStatus
-    {
-        /// <summary>
-        /// 已移除
-        /// </summary>
-        public static int REMOVED = -1;
-        /// <summary>
-        ///  正常
-        /// </summary>
-        public static int NORMAL = 1;
-    }
-
-    public static class AssignmentStatus
-    {
-        /// <summary>
-        /// 已删除
-        /// </summary>
-        public static int DELETED = -1;
-        /// <summary>
-        ///  已归档
-        /// </summary>
-        public static int ARCHIVED = 0;
-        /// <summary>
-        ///  未完成
-        /// </summary>
-        public static int UNFINISHED = 1;
-        /// <summary>
-        ///  已完成
-        /// </summary>
-        public static int FINISHED = 2;
+        public static int AAA = 1;
     }
 }
