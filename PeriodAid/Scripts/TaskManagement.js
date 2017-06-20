@@ -113,7 +113,7 @@ function GetProcedure(ProcedureId,SubjectId,container) {
             GetAssignment(ProcedureId,SubjectId, container.find(".pannel-body"));
         },
         error: function () {
-            ErrorAlert("数据传输中断")
+            ErrorAlert("操作失败")
         }
     });
 }
@@ -128,7 +128,7 @@ function GetAssignmentForm(ProcedureId, SubjectId,container) {
             container.html(data)
         },
         error: function () {
-            ErrorAlert("数据传输中断")
+            ErrorAlert("操作失败")
         }
     });
 }
@@ -145,7 +145,7 @@ function GetAssignmentDetail(AssignmentId, container,Callback) {
             }
         },
         error: function () {
-            ErrorAlert("数据传输中断")
+            ErrorAlert("操作失败")
         }
     });
 }
@@ -160,7 +160,24 @@ function GetAssignment(ProcedureId,SubJectId, container) {
             container.html(data)
         },
         error: function () {
-            ErrorAlert("数据传输中断")
+            ErrorAlert("操作失败")
+        }
+    });
+}
+function ComfirmFinishAssignment(AssignmentId,Callback) {
+    $.ajax({
+        url: "/TaskManagement/ComfirmFinishAssignment",
+        type:"post",
+        data: {
+            AssignmentId: AssignmentId,
+        },
+        success: function (data) {
+            if (Callback && typeof Callback == "function") {
+                Callback(data);
+            }
+        },
+        error: function () {
+            ErrorAlert("操作失败")
         }
     });
 }
