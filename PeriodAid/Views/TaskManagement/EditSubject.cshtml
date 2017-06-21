@@ -10,7 +10,7 @@
     {
         <img id="PicUrl-img" class="img-rounded img-responsive edit-cover-img" src="~/Content/images/cover-default.jpg" style="float:left;margin-right:20px;" />
     }
-    <button class="btn btn-primary" style="float:left; " onclick="javascript:openUpload();"><span class="glyphicon glyphicon-open" aria-hidden="true"></span>上传封面图</button> <br /><br />图片大小建议260px*100px</div>
+    <button class="btn btn-primary float-left"  onclick="javascript:openUpload();"><span class="glyphicon glyphicon-open" aria-hidden="true"></span>上传封面图</button> <br /><br />图片大小建议260px*100px</div>
 
     <input type="file" id="report-file" name="report-file" class="hidden" accept=".jpg,.png,.gif" />
 </div>
@@ -66,11 +66,9 @@
                         $("#btn-edit-subject").removeClass("disabled");
                         $('#Edit-Subject').modal('hide');
                         GetActiveSubject("#personal_active_subject")
-                        $('#Edit-Subject').find(".form-group input,.form-group textarea").val("");
                     } else {
                         ErrorAlert(data);
-                        $('#Edit-Subject').find(".form-group input,.form-group textarea").val("");
-                        $("#btn_edit_subject").removeClass("disabled");
+                        $("#btn-edit-subject").removeClass("disabled");
                     }
                 })
             },
@@ -81,7 +79,7 @@
             }
         });
         //编辑项目的提交
-        $("#Edit-Subject").delegate("#btn-edit-subject", "click", function () {
+        $("#btn-edit-subject").on("click", function () {
             if (!$(this).hasClass("disabled")) {
                 $(this).addClass("disabled")
                 //console.log(33);

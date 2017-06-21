@@ -521,7 +521,7 @@ namespace PeriodAid.Controllers
         {
             var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId);
             var assignmentlist = (from m in _db.Assignment
-                                 where m.ProcedureId == ProcedureId
+                                 where m.ProcedureId == ProcedureId&&m.Status>AssignmentStatus.DELETED
                                  select m).Count();
             if (assignmentlist == 0)
             {
@@ -584,6 +584,68 @@ namespace PeriodAid.Controllers
                     return Json(new { result = "发生错误。" });
                 }
                 return Json(new { result = "SUCCESS", Id = assignment.ProcedureId });
+            }
+        }
+
+        //获取任务的参与者
+        public PartialViewResult Assignment_CollaboratorPartial(int AssignmentId)
+        {
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var departmentlist = from m in _db.Department
+                                 where m.Status == DepartmentStatus.NORMAL
+                                 select m;
+            ViewBag.DepartmentList = departmentlist;
+            return PartialView(assignment);
+        }
+
+        //获取子任务模板
+        public PartialViewResult Assignment_SubtaskPartial(int AssignmentId)
+        {
+            var subtasklist = from m in _db.SubTask
+                              where m.AssignmentId == AssignmentId && m.Status > AssignmentStatus.DELETED
+                              select m;
+            var assignment= _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var collaborator = assignment.Collaborator;
+            var holder = from m in _db.Employee
+                         where m.Id == assignment.HolderId
+                         select m;
+            var MergeEmployee = holder.Union(collaborator);
+            ViewBag.EmployeeDropDown = new SelectList(MergeEmployee, "Id", "NickName", assignment.HolderId);
+            ViewBag.aid = assignment.Id;
+            return PartialView(subtasklist);
+        }
+
+        //创建子任务
+        [HttpPost,ValidateAntiForgeryToken]
+        public JsonResult CreateSubtask(SubTask model)
+        {
+            if (ModelState.IsValid)
+            {
+                SubTask item = new SubTask();
+                if (TryUpdateModel(item))
+                {
+                    item.CreateTime = DateTime.Now;
+                    item.Status = AssignmentStatus.UNFINISHED;
+                    try
+                    {
+                        _db.SubTask.Add(item);
+                        _db.SaveChanges();
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { result = "存储失败。" });
+                    }
+                    return Json(new { result = "SUCCESS" });
+
+                }
+                else
+                {
+                    return Json(new { result = "模型同步错误。" });
+                }
+            }
+            else
+            {
+                return Json(new { result = "模型错误。" });
             }
         }
 

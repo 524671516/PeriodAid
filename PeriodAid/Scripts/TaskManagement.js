@@ -143,7 +143,7 @@ function GetAssignmentDetail(AssignmentId, container, Callback) {
         success: function (data) {
             container.html(data)
             if (Callback && typeof Callback == "function") {
-                Callback();
+                Callback(data);
             }
         },
         error: function () {
@@ -213,6 +213,39 @@ function Delete_Assignment(AssignmentId, Callback) {
             }
         },
         error: function (data) {
+            ErrorAlert("操作失败")
+        }
+    });
+}
+function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
+    $.ajax({
+        url: "/TaskManagement/Assignment_CollaboratorPartial",
+        data: {
+            AssignmentId: AssignmentId,
+        },
+        success: function (data) {
+            if (Callback && typeof Callback == "function") {
+                Callback(data);
+            }
+        },
+        error: function () {
+            ErrorAlert("操作失败")
+        }
+    });
+}
+
+function GetSubTaskListPartial(AssignmentId, Callback) {
+    $.ajax({
+        url: "/TaskManagement/Assignment_SubtaskPartial",
+        data: {
+            AssignmentId: AssignmentId,
+        },
+        success: function (data) {
+            if (Callback && typeof Callback == "function") {
+                Callback(data);
+            }
+        },
+        error: function () {
             ErrorAlert("操作失败")
         }
     });
