@@ -1,35 +1,41 @@
 ﻿@using PeriodAid.Models
 @model IEnumerable<PeriodAid.Models.Assignment>
-<ul class="tm-list-container">
+<div class="tm_list-container">
+    <ul class="tm_list-show">
 
-    @foreach (var item in Model)
-    {
-        if (item.Status == AssignmentStatus.FINISHED)
+        @foreach (var item in Model)
         {
-            <li class="tm-list-item tm-list-finish">
-                <div class="tm-list-item_top clear-float">
-                    <div class="tm-item_left">
-                        <input type="checkbox" class="assignment_comfirm_finish" checked="checked"/>
+            if (item.Status == AssignmentStatus.FINISHED)
+            {
+                <li class="tm_list-item tm_list-finish">
+                    <div class="tm_list-item_top clear-float">
+                        <div class="tm_item_left">
+                            <input type="checkbox" class="assignment_comfirm_finish" checked="checked" />
+                            &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
+                        </div>
+                        <div class="tm_item_right" data-aid="@item.Id">&nbsp;</div>
                     </div>
-                    <div class="tm-item_right" data-aid="@item.Id">@item.AssignmentTitle</div>
-                </div>
-            </li>
-        }
-        else if (item.Status == AssignmentStatus.UNFINISHED)
-        {
-            <li class="tm-list-item">
-                <div class="tm-list-item_top clear-float">
-                    <div class="tm-item_left">
-                        <input type="checkbox" class="assignment_comfirm_finish" />
+                </li>
+            }
+            else if (item.Status == AssignmentStatus.UNFINISHED)
+            {
+                <li class="tm_list-item">
+                    <div class="tm_list-item_top clear-float">
+                        <div class="tm_item_left">
+                            <input type="checkbox" class="assignment_comfirm_finish" />
+                            &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
+                        </div>
+                        <div class="tm_item_right" data-aid="@item.Id">&nbsp;</div>
                     </div>
-                    <div class="tm-item_right" data-aid="@item.Id">@item.AssignmentTitle</div>
-                </div>
-            </li>
+                </li>
+            }
         }
-    }
-    <li class="tm-list-item tm-list-add text-center">
-        <a href="#" class="panel-body add-btn color-gray btn-get-assignmentform" data-pid="@ViewBag.ProcedureId"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i></a>
-        <div id="add-list-write" class="write-assignment-box">
+    </ul>
+    <div class="tm_list-control">
+        <div class="tm_list-item tm_list-add text-center">
+            <a href="#" class="panel-body add-btn color-gray btn-get-assignmentform" data-pid="@ViewBag.ProcedureId"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i></a>
+            <div id="add-list-write" class="write-assignment-box">
+            </div>
         </div>
-    </li>
-</ul>
+    </div>
+    </div>

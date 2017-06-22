@@ -112,7 +112,7 @@ function GetProcedure(ProcedureId, SubjectId, container) {
         },
         success: function (data) {
             container.html(data)
-            GetAssignment(ProcedureId, SubjectId, container.find(".pannel-body"));
+            GetAssignment(ProcedureId, SubjectId, container.find(".tm_pannel-body"));
         },
         error: function () {
             ErrorAlert("操作失败")

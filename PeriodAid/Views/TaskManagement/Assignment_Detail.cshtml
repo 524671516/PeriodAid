@@ -1,16 +1,20 @@
 ﻿@model PeriodAid.Models.Assignment
 <div class="modal-header" data-aid="@Model.Id">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <a href="javascript:;" class="close dropdown-more">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="Toggle dropdown menu"></i></a>
+    <a href="javascript:;" class="close" id="btn_dropdown_more">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="Toggle dropdown menu"></i></a>
     <h4 class="modal-title" id="Edit-AssignmentLabel">@Html.Encode(Model.AssignmentTitle)</h4>
-    <ul class="dropdown-menu-more dropdown-menu-list" style="display:none;">
-        <li class="text-center color-blue"><strong>更多功能</strong></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="javascript:;" class="btn_del_assignment">删除任务</a></li>
-        <li><a href="javascript:;" class="btn_archive_assignment">归档</a></li>
-        <li><a href="javascript:;" class="btn_finish_assignment">完成</a></li>
-        <li><a href="javascript:;">持续更新中</a></li>
-    </ul>
+    <div class="dropdown-menu tm_dropdown" id="tm_more_drop" style="display:none;">
+        <ul>
+            <li class="text-center"><strong class="color-blue">更多功能</strong></li>
+            <li role="separator" class="divider"></li>
+        </ul>
+        <ul class="tm_dropdown_list">
+            <li><a href="javascript:;" class="btn_del_assignment">删除任务</a></li>
+            <li><a href="javascript:;" class="btn_archive_assignment">归档</a></li>
+            <li><a href="javascript:;" class="btn_finish_assignment">完成</a></li>
+            <li><a href="javascript:;">持续更新中</a></li>
+        </ul>
+    </div>
 </div>
 <div class="modal-body">
     @using (Html.BeginForm("Edit_Assignment_Detail", "TaskManagement", FormMethod.Post, new { @id = "edit_assignment_form", @class = "validate-form" }))
@@ -69,23 +73,6 @@
             </select>
         </div>
     </div>
-    <div class="row" style="position:relative;">
-        <div class="form-group col-md-12">
-            <label for="HolderId">参与人</label>
-            <ul class="participator_area" id="modal_collaborator_area">
-                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                <li><a a href="#" data-toggle="modal" class="dropdown-toggle create_user_circle user_circle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-aid="@Model.Id"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
-            </ul>
-        </div>
-    </div>
     <div class="checkbox">
         @if (Model.Repeat)
                 {
@@ -103,18 +90,32 @@
             }
 
     </div>
+    }
+    <div class="row" style="position:relative;">
+        <div class="form-group col-md-12">
+            <label for="HolderId">参与人</label>
+            <ul class="participator_area" id="modal_collaborator_area">
+                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+                <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
+                <li><div class="user_circle"></div></li>
+                <li><div class="user_circle"></div></li>
+                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+                <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
+                <li><div class="user_circle"></div></li>
+                <li><div class="user_circle"></div></li>
+                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+                <li><a a href="#" data-toggle="modal" class="dropdown-toggle create_user_circle user_circle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-aid="@Model.Id"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="">
+        <div class="form-group">
+            <label for="Remarks">关联子任务</label>
+            <ul id="modal_subtask_area"></ul>
+        </div>
+    </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-primary" id="btn_edit_assignment">保存</button>
-    </div>
-    }
-</div>
-<div class="modal-header" data-aid="@Model.Id">
-    <h4 class="modal-title">进阶操作</h4>
-</div>
-<div class="modal-body">
-    <div class="form-group">
-        <label for="Remarks">关联子任务</label>
-        <ul id="modal_subtask_area"></ul>
     </div>
 </div>
 <script type="text/javascript">
@@ -127,10 +128,10 @@
         })
     });
     $(".modal-body").on("click", function () {
-        $(".dropdown-menu-more").hide();
+        $("#tm_more_drop").hide();
     })
-    $(".dropdown-more").on("click", function () {
-        $(".dropdown-menu-more").toggle();
+    $("#btn_dropdown_more").on("click", function () {
+        $("#tm_more_drop").toggle();
         return false;
     })
     $("#Repeat").on("click", function () {
