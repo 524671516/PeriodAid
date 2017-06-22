@@ -89,6 +89,9 @@ input.has-error,textarea.has-error  {
 .write-box input{
     padding:25px 5px; /*非modal表单input样式*/
 }
+.add-btn{
+   cursor:pointer;
+}
 .add-btn:hover{
     color:#3da8f5;     /*争对点击按钮变表单*/
 }
@@ -447,9 +450,30 @@ a.close{
 
 
 /*modal改写*/
+.tm_modal .modal-content{
+    height:600px;
+}
 .tm_modal .modal-body{
     height:500px;
     overflow:auto;
+}
+.tm_modal_list-footer{
+    padding:10px 0px;
+}
+.tm_modal_list-header{
+    background-color:rgba(0,0,0,0.1);
+    border-bottom:1px solid #fff;
+    padding:0 10px;
+}
+.tm_modal_list-left{
+    height:30px;
+    line-height:30px;
+    float:left;
+}
+.tm_modal_list-right{
+    height:30px;
+    line-height:30px;
+    float:right;
 }
 /*modal改写结束*/
 

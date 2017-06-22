@@ -73,45 +73,78 @@
             </select>
         </div>
     </div>
-    <div class="checkbox">
-        @if (Model.Repeat)
-                {
-            <label>
-                @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat, @checked = "checked" })重复
-
-            </label>
-            }
-            else
-            {
-            <label>
-                @Html.TextBoxFor(m => m.Repeat, new { @type = "checkbox", @value = Model.Repeat })重复
-
-            </label>
-            }
-
-    </div>
-    }
-    <div class="row" style="position:relative;">
-        <div class="form-group col-md-12">
-            <label for="HolderId">参与人</label>
-            <ul class="participator_area" id="modal_collaborator_area">
-                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div class="user_circle"></div></li>
-                <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                <li><a a href="#" data-toggle="modal" class="dropdown-toggle create_user_circle user_circle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-aid="@Model.Id"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
-            </ul>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tm_modal_list">
+                <div class="tm_modal_list-header clear-float">
+                    <div class="tm_modal_list-left">是否重复</div>
+                    <div class="tm_modal_list-right">
+                        <input type="checkbox" style="height:20px;width:20px;"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="">
-        <div class="form-group">
-            <label for="Remarks">关联子任务</label>
-            <ul id="modal_subtask_area"></ul>
+    }
+    <div class="row" id="modal_subtask_area">
+        <div class="col-md-12">
+            <div class="tm_modal_list add-btn">
+                <div class="tm_modal_list-header clear-float">
+                    <div class="tm_modal_list-left">添加子任务</div>
+                </div>
+                <div class="tm_modal_body">
+
+                </div>
+                <div class="tm_modal_list-footer">
+                    @using (Html.BeginForm("CreateSubtask", "TaskManagement", FormMethod.Post, new { @id = "add_subtask_form", @class = "validate-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary()
+                        <input type="text" class="form-control hidden" id="AssignmentId" name="AssignmentId">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="TaskTitle" placeholder="标题" name="TaskTitle">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" placeholder="任务描述" id="Remarks" name="Remarks"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="ExecutorId">执行人</label>
+
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <a class="btn btn-default" id="cancel-subtask-write">取消</a>
+                            <a class="btn btn-blue" id="btn_create_subtask">确定</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tm_modal_list">
+                <div class="tm_modal_list-header clear-float">
+                    <div class="tm_modal_list-left">参与人</div>
+                </div>
+                <div class="tm_modal_body">
+                    <ul class="participator_area" id="modal_collaborator_area">
+                        <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+                        <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
+                        <li><div class="user_circle"></div></li>
+                        <li><div class="user_circle"></div></li>
+                        <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+                        <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
+                        <li><div class="user_circle"></div></li>
+                        <li><div class="user_circle"></div></li>
+                        <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+                        <li><a a href="#" data-toggle="modal" class="dropdown-toggle create_user_circle user_circle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-aid="@Model.Id"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+                    </ul>
+
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -158,7 +191,7 @@
                     UnimportantAlert("任务修改成功");
                     $("#btn_edit_assignment").removeClass("disabled");
                     $('#Edit-Assignment').modal('hide');
-                    GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".pannel-body"));
+                    GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_pannel-body"));
                 } else {
                     ErrorAlert(data.result);
                     $("#btn_edit_assignment").removeClass("disabled");
@@ -180,11 +213,11 @@
     });
     //删除任务
     $(".btn_del_assignment").on("click", function () {
-        var data_aid = $(this).parent().parent().parent().attr("data-aid")
+        var data_aid = $(this).parent().parent().parent().parent().attr("data-aid")
         Confirm("删除此任务的同时将删除其子任务，请确认是否删除?", function () {
             Delete_Assignment(data_aid, function (data) {
                 if (data.result == "SUCCESS") {
-                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".pannel-body"));
+                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
                     UnimportantAlert("删除任务成功。")
                     $('#Edit-Assignment').modal('hide');
                 } else {
