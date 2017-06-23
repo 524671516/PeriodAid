@@ -1,57 +1,82 @@
-﻿@model PeriodAid.Models.Subject
+﻿@using PeriodAid.Models;
+@model PeriodAid.Models.Subject
 
-<div class="form-group">
-    <div class="h4">项目封面</div><br />
-    <div>
-    @if (Model.PicUrl != null) {
-        <img id="PicUrl-img" class="img-rounded img-responsive edit-cover-img" src="http://cdn2.shouquanzhai.cn/@Model.PicUrl" style="float:left;margin-right:20px;" />
-    }
-    else
-    {
-        <img id="PicUrl-img" class="img-rounded img-responsive edit-cover-img" src="~/Content/images/cover-default.jpg" style="float:left;margin-right:20px;" />
-    }
-    <button class="btn btn-primary float-left"  onclick="javascript:openUpload();"><span class="glyphicon glyphicon-open" aria-hidden="true"></span>上传封面图</button> <br /><br />图片大小建议260px*100px</div>
-
-    <input type="file" id="report-file" name="report-file" class="hidden" accept=".jpg,.png,.gif" />
+<div class="modal-header">
+    <div class="float-left" style="width:80%"><h4 class="modal-title" id="editModalLabel">项目设置</h4></div>
+    <div class="float-left text-right" style="width:20%">
+        <div class="float-right"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+        <div class="dropdown float-right modal-dropdown">
+            <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="modal-dropdown-button">
+                更多
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
+                <li><a href="#">其他</a></li>
+                <li><a href="#">其他</a></li>
+                <li role="separator" class="divider"></li>
+                @if (Model.Status == SubjectStatus.ACTIVE)
+                {
+                    <li><a href="#" style="color:#0094ff" id="Archive-Subject">归档项目</a></li>
+                    <li><a href="#" style="color:#ff0000" id="Delete-Subject">删除项目</a></li>
+                }
+                else if (Model.Status == SubjectStatus.ARCHIVED)
+                {
+                    <li><a href="#" style="color:#0094ff" id="Reset-Subject">恢复项目</a></li>
+                    <li><a href="#" style="color:#ff0000" id="Delete-Subject">删除项目</a></li>
+                }
+            </ul>
+        </div>
+    </div>
 </div>
-@using (Html.BeginForm("EditSubject", "TaskManagement", FormMethod.Post, new { @id = "edit_subject_form", @class = "validate-form" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary()
-    @Html.HiddenFor(m=>m.Id)
-    @Html.HiddenFor(m=>m.Status)
-    @Html.HiddenFor(m=>m.TemplateId)
-    @Html.HiddenFor(m=>m.CreateTime)
-    @Html.HiddenFor(m => m.PicUrl)
-    
-    <div class="clear-float"></div>
-    <br />
+<div class="modal-body">
     <div class="form-group">
-        <div class="h4">项目名称</div><br />
-        <input class="subject-name form-control" placeholder="项目名称" name="SubjectTitle" value="@Html.Encode(Model.SubjectTitle)">
+        <div class="h4">项目封面</div><br />
+        <div>
+            @if (Model.PicUrl != null)
+            {
+                <img id="PicUrl-img" class="img-rounded img-responsive edit-cover-img" src="http://cdn2.shouquanzhai.cn/@Model.PicUrl" style="float:left;margin-right:20px;" />
+            }
+            else
+            {
+                <img id="PicUrl-img" class="img-rounded img-responsive edit-cover-img" src="~/Content/images/cover-default.jpg" style="float:left;margin-right:20px;" />
+            }
+            <button class="btn btn-primary float-left" onclick="javascript:openUpload();"><span class="glyphicon glyphicon-open" aria-hidden="true"></span>上传封面图</button> <br /><br />图片大小建议260px*100px
+        </div>
+
+        <input type="file" id="report-file" name="report-file" class="hidden" accept=".jpg,.png,.gif" />
+    </div>
+    @using (Html.BeginForm("EditSubject", "TaskManagement", FormMethod.Post, new { @id = "edit_subject_form", @class = "validate-form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.Status)
+        @Html.HiddenFor(m => m.TemplateId)
+        @Html.HiddenFor(m => m.CreateTime)
+        @Html.HiddenFor(m => m.PicUrl)
+
+        <div class="clear-float"></div>
         <br />
-    </div>
-    <div class="form-group">
-        <div class="h4">项目简介(选填)</div><br />
-        <textarea class="subject-description form-control" placeholder="项目简介（选填）" name="Remarks">@Html.Encode(Model.Remarks)</textarea>
-        <br />
-    </div>
-    <div class="form-group">
-        <label for="HolderId" class="h4">项目管理员</label><br />
-        @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="btn-edit-subject">保存</button>
-    </div>
-    <br /><br />
-    <div>
-        <hr />
-        <div class="h4">进阶操作</div><br />
-        <div class="text-right"><a href="javascript:;" class="btn btn-lg btn-warning">归档项目</a>&nbsp;&nbsp;<a href="javascript:;"class="btn btn-lg btn-danger">删除项目</a></div>
-        
-    </div>
-    
-}
+        <div class="form-group">
+            <div class="h4 edit-title">项目名称</div>
+            <input class="subject-name form-control" placeholder="项目名称" name="SubjectTitle" value="@Html.Encode(Model.SubjectTitle)">
+            <br />
+        </div>
+        <div class="form-group">
+            <div class="h4 edit-title">项目简介(选填)</div>
+            <textarea class="subject-description form-control" placeholder="项目简介（选填）" name="Remarks">@Html.Encode(Model.Remarks)</textarea>
+            <br />
+        </div>
+        <div class="form-group">
+            <label for="HolderId" class="h4 edit-title">项目管理员</label>
+            @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-edit-subject">保存</button>
+        </div>
+    }
+</div>
+
 <script>
     //编辑项目验证
     $(function () {
@@ -59,16 +84,19 @@
             debug: true,
             //验证通过的正式提交函数
             submitHandler: function (form) {
-                console.log("3")
                 $(form).ajaxSubmit(function (data) {
                     if (data == "SUCCESS") {
-                        UnimportantAlert("添加项目成功");
+                        UnimportantAlert("修改项目成功");
                         $("#btn-edit-subject").removeClass("disabled");
                         $('#Edit-Subject').modal('hide');
                         GetActiveSubject("#personal_active_subject")
+                        GetStarSubject("#personal_star_subject")
+                        GetActiveSubject("#personal_active_subject")
+                        GetFinishSubject("#personal_finish_subject")
                     } else {
                         ErrorAlert(data);
                         $("#btn-edit-subject").removeClass("disabled");
+
                     }
                 })
             },
@@ -82,10 +110,176 @@
         $("#btn-edit-subject").on("click", function () {
             if (!$(this).hasClass("disabled")) {
                 $(this).addClass("disabled")
-                //console.log(33);
                 $("#edit_subject_form").submit();
             }
         });
+        $("#Archive-Subject").click(function () {
+            CustomConfirm("是否确认归档项目？", function () {
+                $.ajax({
+                    url: "/TaskManagement/ArchiveSubject",
+                    method: "post",
+                    data: {
+                        id: $("#Id").val()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#Edit-Subject").modal("hide");
+                            $.confirm({
+                                type: "green",
+                                alignMiddle: true,
+                                typeAnimated: true,
+                                content: data.errmsg,
+                                buttons: {
+                                    confirm: {
+                                        text: "确定",
+                                        btnClass: 'btn-blue'
+                                    },
+                                }
+                            });
+                            GetStarSubject("#personal_star_subject")
+                            GetActiveSubject("#personal_active_subject")
+                            GetFinishSubject("#personal_finish_subject")
+                        }
+                        else {
+                            $.confirm({
+                                type: "red",
+                                alignMiddle: true,
+                                typeAnimated: true,
+                                content: data.errmsg,
+                                buttons: {
+                                    confirm: {
+                                        text: "确定",
+                                        btnClass: 'btn-red'
+                                    },
+                                }
+                            });
+                        }
+                    }
+                });
+                return false;
+            });
+        });
+        $("#Reset-Subject").click(function () {
+            CustomConfirm("是否确认恢复项目？", function () {
+                $.ajax({
+                    url: "/TaskManagement/ResetSubject",
+                    method: "post",
+                    data: {
+                        id: $("#Id").val()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#Edit-Subject").modal("hide");
+                            $.confirm({
+                                type: "green",
+                                alignMiddle: true,
+                                typeAnimated: true,
+                                content: data.errmsg,
+                                buttons: {
+                                    confirm: {
+                                        text: "确定",
+                                        btnClass: 'btn-blue'
+                                    },
+                                }
+                            });
+                            GetStarSubject("#personal_star_subject")
+                            GetActiveSubject("#personal_active_subject")
+                            GetFinishSubject("#personal_finish_subject")
+                        }
+                        else {
+                            $.confirm({
+                                type: "red",
+                                alignMiddle: true,
+                                typeAnimated: true,
+                                content: data.errmsg,
+                                buttons: {
+                                    confirm: {
+                                        text: "确定",
+                                        btnClass: 'btn-red'
+                                    },
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+        $("#Delete-Subject").click(function () {
+            CustomConfirm("是否确认删除项目？", function () {
+                $.ajax({
+                    url: "/TaskManagement/DeleteSubject",
+                    method: "post",
+                    data: {
+                        id: $("#Id").val()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#Edit-Subject").modal("hide");
+                            $.confirm({
+                                type: "green",
+                                alignMiddle: true,
+                                typeAnimated: true,
+                                content: data.errmsg,
+                                buttons: {
+                                    confirm: {
+                                        text: "确定",
+                                        btnClass: 'btn-blue'
+                                    },
+                                }
+                            });
+                            GetStarSubject("#personal_star_subject")
+                            GetActiveSubject("#personal_active_subject")
+                            GetFinishSubject("#personal_finish_subject")
+                        }
+                        else {
+                            $.confirm({
+                                type: "red",
+                                alignMiddle: true,
+                                typeAnimated: true,
+                                content: data.errmsg,
+                                buttons: {
+                                    confirm: {
+                                        text: "确定",
+                                        btnClass: 'btn-red'
+                                    },
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
     })
-    
+    function openUpload() {
+        $("#report-file").trigger("click");
+    }
+    $(document).delegate("#report-file", "change", function () {
+        Report_ajaxFileUpload();
+    });
+    function Report_ajaxFileUpload() {
+        $.ajaxFileUpload({
+            url: '/TaskManagement/UploadSubjectCoverFileAjax', //用于文件上传的服务器端请求地址
+            type: 'post',
+            secureuri: false, //是否需要安全协议，一般设置为false
+            fileElementId: 'report-file', //文件上传域的ID
+            dataType: 'json', //返回值类型 一般设置为json
+            success: function (data, status)  //服务器成功响应处理函数
+            {
+                if (typeof (data.error) != 'undefined') {
+                    if (data.error != '') {
+                        alert(data.error);
+                    } else {
+                        $("#PicUrl").val(data.imgurl);
+                        $("#PicUrl-img").attr("src", "http://cdn2.shouquanzhai.cn/" + data.imgurl);
+                    }
+                }
+            },
+            error: function (data, status, e)//服务器响应失败处理函数
+            {
+                alert(e);
+            }
+        });
+        return false;
+    }
+
 </script>

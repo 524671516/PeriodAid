@@ -56,6 +56,18 @@ namespace PeriodAid.Controllers
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return RedirectToAction("Index");
         }
+        [AllowAnonymous]
+        public ActionResult TaskManagerLogin()
+        {
+            return Content("");
+        }
+
+        [ValidateAntiForgeryToken, HttpPost]
+        public async Task<ActionResult> TaskManagerLogin(FormCollection form)
+        {
+            return Content("");
+        }
+
         // GET: TaskManagement
         public ActionResult Index()
         {
@@ -92,11 +104,12 @@ namespace PeriodAid.Controllers
                     {
 
                         item.HolderId = employee.Id;
-                        item.Status = EmployeeStatus.NORMAL;
+                        item.Status = SubjectStatus.ACTIVE;
                         if (item.TemplateId == 0)
                         {
                             item.TemplateId = 1;
                         }
+
                         item.CreateTime = DateTime.Now;
                         try
                         {
@@ -165,6 +178,78 @@ namespace PeriodAid.Controllers
             else
             {
                 return Content("模型验证失败。");
+            }
+        }
+        #endregion
+
+        #region 归档项目
+        [HttpPost]
+        public async Task<JsonResult> ArchiveSubject(int id)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "员工不存在" });
+            }
+            else
+            {
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == id && m.HolderId == employee.Id);
+                if (subject != null)
+                {
+                    subject.Status = SubjectStatus.ARCHIVED;
+                    _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                    await _db.SaveChangesAsync();
+                    return Json(new { result = "SUCCESS", errmsg = "归档项目成功" });
+                }
+                return Json(new { result = "FAIL", errmsg = "当前用户没有权限归档项目" });
+            }
+        }
+        #endregion
+
+        #region 删除项目
+        [HttpPost]
+        public async Task<JsonResult> DeleteSubject(int id)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "员工不存在" });
+            }
+            else
+            {
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == id && m.HolderId == employee.Id);
+                if (subject != null)
+                {
+                    subject.Status = SubjectStatus.DELETED;
+                    _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                    await _db.SaveChangesAsync();
+                    return Json(new { result = "SUCCESS", errmsg = "删除项目成功" });
+                }
+                return Json(new { result = "FAIL", errmsg = "当前用户没有权限删除项目" });
+            }
+        }
+        #endregion
+
+        #region 重置项目
+        [HttpPost]
+        public async Task<JsonResult> ResetSubject(int id)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "员工不存在" });
+            }
+            else
+            {
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == id && m.HolderId == employee.Id);
+                if (subject != null)
+                {
+                    subject.Status = SubjectStatus.ACTIVE;
+                    _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                    await _db.SaveChangesAsync();
+                    return Json(new { result = "SUCCESS", errmsg = "恢复项目成功" });
+                }
+                return Json(new { result = "FAIL", errmsg = "当前用户没有权限恢复项目" });
             }
         }
         #endregion

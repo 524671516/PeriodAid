@@ -500,6 +500,17 @@ a.btn_subtask_detail{
     padding:5px;
 }
 
+/* Modal 关联样式 */
+.edit-title{
+    margin-bottom:10px;
+}
+.modal-dropdown{
+    margin-right:10px;
+}
+.modal-dropdown button{
+    background-color:inherit;
+    border:none;
+}
 
 
 
