@@ -158,10 +158,11 @@
             GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that)
         });
         //任务完成
-        $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function () {
+        $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
             ComfirmFinishAssignment($(this).parent().parent().find(".tm_item_right").attr("data-aid"), function (data) {
                 GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
             })
+            return false;
         })
 
         //任务添加窗口
@@ -190,8 +191,8 @@
         });
 
         //显示任务详情
-        $("#pannel-wrap").on("click", ".tm_item_right", function () {
-            var aid = $(this).attr("data-aid");
+        $("#pannel-wrap").on("click", ".tm_pop_assmodal", function () {
+            var aid = $(this).find(".tm_item_right").attr("data-aid");
             GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
                 $('#Edit-Assignment').modal('show');
             });
