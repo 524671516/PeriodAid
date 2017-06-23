@@ -217,9 +217,9 @@ function Delete_Assignment(AssignmentId, Callback) {
         }
     });
 }
-function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
+function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
     $.ajax({
-        url: "/TaskManagement/Assignment_CollaboratorPartial",
+        url: "/TaskManagement/Assignmnet_CollaboratorAddPartial",
         data: {
             AssignmentId: AssignmentId,
         },
@@ -234,6 +234,22 @@ function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
     });
 }
 
+function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
+    $.ajax({
+        url: "/TaskManagement/Assignment_CollaboratorPartial",
+        data: {
+            AssignmentId: AssignmentId
+        },
+        success: function (data) {
+            if (Callback && typeof Callback == "function") {
+                Callback(data);
+            }
+        },
+        error: function () {
+            ErrorAlert("操作失败")
+        }
+    });
+}
 function GetSubTaskListPartial(AssignmentId, Callback) {
     $.ajax({
         url: "/TaskManagement/Assignment_SubtaskPartial",

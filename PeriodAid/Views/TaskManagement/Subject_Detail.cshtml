@@ -194,9 +194,6 @@
             var aid = $(this).attr("data-aid");
             GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
                 $('#Edit-Assignment').modal('show');
-                GetSubTaskListPartial(aid, function (data) {
-                    $("#modal_subtask_area").html(data);
-                })
             });
         });
 

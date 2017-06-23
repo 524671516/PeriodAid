@@ -1,0 +1,122 @@
+﻿@model PeriodAid.Models.Assignment
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title text-center color-blue" id="Add-CollaboratorLabel">参与人选择</h4>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="搜索员工" id="employee_search_area">
+    </div>
+    <div class="panel-group tm_accordion" id="accordion_collaborator" role="tablist" aria-multiselectable="true" data-aid="@Model.Id">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <a role="button" data-toggle="collapse" data-parent="#accordion_collaborator" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    已参与的员工
+                </a>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <ul class="list-group collaborator_area">
+                    <li class="list-group-item clear-float">
+                        <div class="list-group-item_left">@Html.Encode(Model.Holder.NickName)</div>
+                        <div class="list-group-item_right remove-collaborator" data-eid="@Model.HolderId">任务负责人</div>
+                    </li>
+                    @foreach (var col in Model.Collaborator)
+                    {
+                        <li class="list-group-item clear-float">
+                            <div class="list-group-item_left">@Html.Encode(col.NickName)</div>
+                            <div class="list-group-item_right remove-collaborator" data-eid="@col.Id"><i class="fa fa-minus add-btn" aria-hidden="true"></i></div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading margin-bottom-10">可选择的员工</div>
+        <div class="panel-group tm_accordion" id="department" role="tablist" aria-multiselectable="true">
+            @foreach (var depart in ViewBag.DepartmentList)
+            {
+                <div class="panel panel-info">
+                    <div class="panel-heading" role="tab" id="headingDepartment_@depart.Id">
+                        <a role="button" data-toggle="collapse" data-parent="#department" href="#collapseDepartment_@depart.Id" aria-expanded="true" aria-controls="collapseDepartment_@depart.Id">
+                            @Html.Encode(depart.DepartmentName)
+                        </a>
+                    </div>
+                    <div id="collapseDepartment_@depart.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDepartment_@depart.Id">
+                        <ul class="list-group">
+                            @foreach (var straff in depart.Employee)
+                            {
+                                <li class="list-group-item clear-float">
+                                    <div class="list-group-item_left">@Html.Encode(straff.NickName)</div>
+                                    <div class="list-group-item_right add-collaborator" data-eid="@straff.Id"><i class="fa fa-plus add-btn" aria-hidden="true"></i></div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <a href="javascript:;" class="btn btn-default" data-dismiss="modal">取消</a>
+</div>
+<script>
+    $(".add-collaborator").on("click", function () {
+        var eid = $(this).attr("data-eid");
+        var that = $(this);
+        if ($(".remove-collaborator[data-eid="+eid+"]").length == 0) {
+            $.ajax({
+                url: "/TaskManagement/ControlCollaboratorAjax",
+                type:"post",
+                data: {
+                    Remove:false,
+                    EmployeeId: eid,
+                    AssignmentId: $("#accordion_collaborator").attr("data-aid")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $(".collaborator_area").append("<li class=\"list-group-item clear-float\">" +
+                           "<div class=\"list-group-item_left\">" + that.parent().find(".list-group-item_left").html() + "</div>" +
+                           "<div class=\"list-group-item_right remove-collaborator\"data-eid=" + that.attr("data-eid") + "><i class=\"fa fa-minus add-btn\" aria-hidden=\"true\"></i></div>" + "</li>");
+                        GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+                            $("#modal_collaborator_area").html(data);
+                        })
+                    }
+
+                },
+                error: function () {
+                    ErrorAlert("操作失败");
+                }
+            })
+        } else {
+            UnimportantAlert("请勿重复添加！");
+        }
+
+    })
+    $("#accordion_collaborator").on("click",".remove-collaborator", function () {
+        var eid = $(this).attr("data-eid");
+        var that = $(this);
+        $.ajax({
+            url: "/TaskManagement/ControlCollaboratorAjax",
+            type: "post",
+            data: {
+                Remove: true,
+                EmployeeId: eid,
+                AssignmentId: $("#accordion_collaborator").attr("data-aid")
+            },
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    that.parent().remove();
+                    GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+                        $("#modal_collaborator_area").html(data);
+                    })
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败");
+            }
+        })
+
+    })
+</script>

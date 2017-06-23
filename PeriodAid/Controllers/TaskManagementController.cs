@@ -587,8 +587,16 @@ namespace PeriodAid.Controllers
             }
         }
 
-        //获取任务的参与者
+        //获取任务的参与者模板
         public PartialViewResult Assignment_CollaboratorPartial(int AssignmentId)
+        {
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            return PartialView(assignment);
+        }
+
+
+        //添加参与者模板
+        public PartialViewResult Assignmnet_CollaboratorAddPartial(int AssignmentId)
         {
             var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
             var departmentlist = from m in _db.Department
@@ -597,7 +605,6 @@ namespace PeriodAid.Controllers
             ViewBag.DepartmentList = departmentlist;
             return PartialView(assignment);
         }
-
         //获取子任务模板
         public PartialViewResult Assignment_SubtaskPartial(int AssignmentId)
         {
@@ -613,23 +620,26 @@ namespace PeriodAid.Controllers
             int _SubtaskId = SubtaskId ?? 0;
             var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
             var collaborator = assignment.Collaborator;
-            var holder = from m in _db.Employee
-                         where m.Id == assignment.HolderId
-                         select m;
-            var MergeEmployee = holder.Union(collaborator);
+           
+            List<Employee> emlist = new List<Employee>();
+            emlist.Add(assignment.Holder);
+            foreach(var i in collaborator)
+            {
+                emlist.Add(i);
+            }
             if (_SubtaskId == 0)
             {
                 SubTask model = new SubTask()
                 {
                     AssignmentId = AssignmentId
                 };
-                ViewBag.EmployeeDropDown = new SelectList(MergeEmployee, "Id", "NickName", assignment.HolderId);
+                ViewBag.EmployeeDropDown = new SelectList(emlist, "Id", "NickName", assignment.HolderId);
                 return PartialView(model);
             }
             else
             {
                 var subtask = _db.SubTask.SingleOrDefault(m => m.Id == _SubtaskId);
-                ViewBag.EmployeeDropDown = new SelectList(MergeEmployee, "Id", "NickName", subtask.ExecutorId);
+                ViewBag.EmployeeDropDown = new SelectList(emlist, "Id", "NickName", subtask.ExecutorId);
                 return PartialView(subtask);
             }
         }
@@ -676,17 +686,19 @@ namespace PeriodAid.Controllers
             var employee = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId);
             if (Remove)
             {
+                assignment.Collaborator.Remove(employee);
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+               
+            }
+            else
+            {
                 assignment.Collaborator.Add(employee);
                 _db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
             }
-            else
-            {
-                assignment.Collaborator.Remove(employee);
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
         }
+
 
 
 

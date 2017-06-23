@@ -9,6 +9,9 @@ ul,li,a{
     text-decoration:none;
     list-style:none;
 }
+.ver_icon:before{
+    vertical-align:middle;
+}
 ul,li{
     padding:0;
     margin:0;
@@ -423,7 +426,7 @@ a.close{
     height:40px;
     line-height:24px;
     padding:8px 0px;  
-    width:20%;
+    width:10%;
     float:left;
      box-sizing:border-box;
     vertical-align:middle;
@@ -435,7 +438,7 @@ a.close{
 .tm_list-item .tm_item_right{
     height:40px;
     padding:8px 0px;
-    width:80%;
+    width:90%;
     float:right;
     box-sizing:border-box;
     text-align:right;

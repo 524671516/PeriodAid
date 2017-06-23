@@ -1,5 +1,5 @@
 ﻿@model PeriodAid.Models.Assignment
-<div class="modal-header" data-aid="@Model.Id">
+<div class="modal-header" id="modal-header-assignment" data-aid="@Model.Id">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <a href="javascript:;" class="close" id="btn_dropdown_more">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="Toggle dropdown menu"></i></a>
     <h4 class="modal-title" id="Edit-AssignmentLabel">@Html.Encode(Model.AssignmentTitle)</h4>
@@ -79,7 +79,14 @@
                 <div class="tm_modal_list-header clear-float">
                     <div class="tm_modal_list-left">是否重复</div>
                     <div class="tm_modal_list-right">
-                        <input type="checkbox" style="height:20px;width:20px;"/>
+                        @if (Model.Repeat==true)
+                        {
+                            <input type="checkbox" style="height:20px;width:20px;" id="Repeat" name="Repeat" checked value="@Model.Repeat.ToString()"/>
+                        }
+                        else
+                        {
+                            <input type="checkbox" style="height:20px;width:20px;" id="Repeat" name="Repeat"  value="@Model.Repeat.ToString()"/>
+                        }
                     </div>
                 </div>
             </div>
@@ -89,43 +96,20 @@
     <div class="row" id="modal_subtask_area">
         
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tm_modal_list">
-                <div class="tm_modal_list-header clear-float">
-                    <div class="tm_modal_list-left">参与人</div>
-                </div>
-                <div class="tm_modal_body">
-                    <ul class="participator_area" id="modal_collaborator_area">
-                        <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                        <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
-                        <li><div class="user_circle"></div></li>
-                        <li><div class="user_circle"></div></li>
-                        <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                        <li><div class="user_circle" style="background-image:url('http://wx.qlogo.cn/mmopen/ajNVdqHZLLCJrM7r4CCNs9HEL8pK72ZfACttwG8rLiaqPBZf39yVXIGFoNHWM1mXx9G7wm0lD09daAuNS9jTOIwCHyqRzkwBAVdRXxKujzqw/0');"></div></li>
-                        <li><div class="user_circle"></div></li>
-                        <li><div class="user_circle"></div></li>
-                        <li><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
-                        <li><a a href="#" data-toggle="modal" class="dropdown-toggle create_user_circle user_circle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-aid="@Model.Id"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
-                    </ul>
-
-                </div>
-            </div>
-        </div>
+    <div class="row" id="modal_collaborator_area">
+       
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-primary" id="btn_edit_assignment">保存</button>
     </div>
 </div>
 <script type="text/javascript">
-    //添加参与者弹窗
-    $(".create_user_circle").on("click", function () {
-        GetAssignment_CollaboratorPartial($(this).attr("data-aid"), function (data) {
-            $("#Add-Collaborator .modal-content").html(data);
-            $('#Add-Collaborator').modal('show');
-
-        })
-    });
+    GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+        $("#modal_subtask_area").html(data);
+    })
+    GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+        $("#modal_collaborator_area").html(data);
+    })
     $(".modal-body").on("click", function () {
         $("#tm_more_drop").hide();
     })
@@ -134,6 +118,7 @@
         return false;
     })
     $("#Repeat").on("click", function () {
+        console.log($(this).val())
         if ($(this).val().toLowerCase() == "false") {
             $(this).val("true")
         } else {
