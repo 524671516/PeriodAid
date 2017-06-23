@@ -74,6 +74,12 @@ body,html{
 .padding-10{
     padding:10px;
 }
+.margin-bottom-10{
+    margin-bottom:10px;
+}
+.margin-0{
+    margin:0!important;
+}
 /*工具样式结束*/
 
 
@@ -465,10 +471,20 @@ a.close{
     border-bottom:1px solid #fff;
     padding:0 10px;
 }
+.tm_left_icon{
+    padding: 5px 5px 5px 0;
+}
 .tm_modal_list-left{
     height:30px;
     line-height:30px;
     float:left;
+}
+.tm_modal_list-middle{
+    width:80%;
+    box-sizing:border-box;
+    float:left;
+    height:30px;
+    line-height:30px;
 }
 .tm_modal_list-right{
     height:30px;
@@ -477,6 +493,23 @@ a.close{
 }
 /*modal改写结束*/
 
+
+/*改写accordion区块*/
+.tm_accordion .list-group-item{
+    padding-top:0;
+    padding-bottom:0;
+}
+.tm_accordion .list-group-item_left{
+    float:left;
+    padding:10px;
+}
+.tm_accordion .list-group-item_right{
+    float:right;
+    padding:10px;
+}
+
+
+/*改写accordion区块结束*/
 /*参与者区域*/
 ul.participator_area li{
     float:left;

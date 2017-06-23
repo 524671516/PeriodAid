@@ -1027,6 +1027,7 @@
     <Content Include="Views\TaskManagement\EditSubject.cshtml" />
     <Content Include="Views\TaskManagement\Assignment_CollaboratorPartial.cshtml" />
     <Content Include="Views\TaskManagement\Assignment_SubtaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\GetSubtaskForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
