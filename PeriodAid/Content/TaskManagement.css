@@ -74,6 +74,12 @@ body,html{
 .padding-10{
     padding:10px;
 }
+.margin-bottom-10{
+    margin-bottom:10px;
+}
+.margin-0{
+    margin:0!important;
+}
 /*工具样式结束*/
 
 
@@ -88,6 +94,9 @@ input.has-error,textarea.has-error  {
 /*行为样式*/
 .write-box input{
     padding:25px 5px; /*非modal表单input样式*/
+}
+.add-btn{
+   cursor:pointer;
 }
 .add-btn:hover{
     color:#3da8f5;     /*争对点击按钮变表单*/
@@ -447,12 +456,60 @@ a.close{
 
 
 /*modal改写*/
+.tm_modal .modal-content{
+    height:600px;
+}
 .tm_modal .modal-body{
     height:500px;
     overflow:auto;
 }
+.tm_modal_list-footer{
+    padding:10px 0px;
+}
+.tm_modal_list-header{
+    background-color:rgba(0,0,0,0.1);
+    border-bottom:1px solid #fff;
+    padding:0 10px;
+}
+.tm_left_icon{
+    padding: 5px 5px 5px 0;
+}
+.tm_modal_list-left{
+    height:30px;
+    line-height:30px;
+    float:left;
+}
+.tm_modal_list-middle{
+    width:80%;
+    box-sizing:border-box;
+    float:left;
+    height:30px;
+    line-height:30px;
+}
+.tm_modal_list-right{
+    height:30px;
+    line-height:30px;
+    float:right;
+}
 /*modal改写结束*/
 
+
+/*改写accordion区块*/
+.tm_accordion .list-group-item{
+    padding-top:0;
+    padding-bottom:0;
+}
+.tm_accordion .list-group-item_left{
+    float:left;
+    padding:10px;
+}
+.tm_accordion .list-group-item_right{
+    float:right;
+    padding:10px;
+}
+
+
+/*改写accordion区块结束*/
 /*参与者区域*/
 ul.participator_area li{
     float:left;

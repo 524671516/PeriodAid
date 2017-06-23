@@ -689,15 +689,34 @@ namespace PeriodAid.Controllers
             var subtasklist = from m in _db.SubTask
                               where m.AssignmentId == AssignmentId && m.Status > AssignmentStatus.DELETED
                               select m;
-            var assignment= _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            return PartialView(subtasklist);
+        }
+
+        //获取子任务表单
+        public PartialViewResult GetSubtaskForm(int AssignmentId,int? SubtaskId)
+        {
+            int _SubtaskId = SubtaskId ?? 0;
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
             var collaborator = assignment.Collaborator;
             var holder = from m in _db.Employee
                          where m.Id == assignment.HolderId
                          select m;
             var MergeEmployee = holder.Union(collaborator);
-            ViewBag.EmployeeDropDown = new SelectList(MergeEmployee, "Id", "NickName", assignment.HolderId);
-            ViewBag.aid = assignment.Id;
-            return PartialView(subtasklist);
+            if (_SubtaskId == 0)
+            {
+                SubTask model = new SubTask()
+                {
+                    AssignmentId = AssignmentId
+                };
+                ViewBag.EmployeeDropDown = new SelectList(MergeEmployee, "Id", "NickName", assignment.HolderId);
+                return PartialView(model);
+            }
+            else
+            {
+                var subtask = _db.SubTask.SingleOrDefault(m => m.Id == _SubtaskId);
+                ViewBag.EmployeeDropDown = new SelectList(MergeEmployee, "Id", "NickName", subtask.ExecutorId);
+                return PartialView(subtask);
+            }
         }
 
         //创建子任务
@@ -731,6 +750,26 @@ namespace PeriodAid.Controllers
             else
             {
                 return Json(new { result = "模型错误。" });
+            }
+        }
+
+        //添加和删除参与人
+        [HttpPost]
+        public JsonResult ControlCollaboratorAjax(bool Remove,int EmployeeId,int AssignmentId)
+        {
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var employee = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId);
+            if (Remove)
+            {
+                assignment.Collaborator.Add(employee);
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                assignment.Collaborator.Remove(employee);
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
             }
         }
 

@@ -1,104 +1,60 @@
 ﻿@model IEnumerable<PeriodAid.Models.SubTask>
-@foreach (var subt in Model)
-{
-    <li class="tm-list-item">
-        <div class="tm-list-item_top clear-float">
-            <div class="tm-item_left">
-                <input type="checkbox" class="assignment_comfirm_finish" checked="checked">
-                <span>@subt.TaskTitle</span>
-            </div>
-            <div class="tm-item_right" data-stid=@subt.Id>
-                <a href="javascript:;" class="btn_subtask_detail">了解更多>></a>
-            </div>
+<div class="col-md-12 margin-bottom-10">
+    <div class="tm_modal_list">
+        <div class="tm_modal_body">
+            <ul>
+                @foreach (var item in Model)
+                {
+                    <li class="tm_modal_list-header">
+                        <div class="tm-list-item_top clear-float">
+                                <div class="tm_modal_list-left tm_left_icon">
+                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0" />
+                                </div>
+                                <div class="tm_modal_list-middle add-btn" data-sbid="@item.Id">@Html.Encode(item.TaskTitle)</div>
+                                <div class="tm_modal_list-right"><a href="javascript:;">了解详情>></a></div>
+                            </div>
+                        <div class="tm_modal_list-footer hidden add-subtask-write"></div>
+                    </li>
+                }
+            </ul>
         </div>
-    </li>
-}
-<li class="text-center">
-    <div class="pannel-item panel-item-add text-center" style="width:100%;">
-        <div id="add-subtask-control"><a href="javascript:;" class="panel-body add-btn color-gray" id="add-subtask"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建子任务</i></a></div>
-        <div id="add-subtask-write" class="padding-10 write-box hidden">
-            @using (Html.BeginForm("CreateSubtask", "TaskManagement", FormMethod.Post, new { @id = "add_subtask_form", @class = "validate-form" }))
-            {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary()
-                <input type="text" class="form-control hidden" id="AssignmentId" name="AssignmentId" value="@ViewBag.aid">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="TaskTitle" placeholder="标题" name="TaskTitle">
+        <div class="tm_modal_list-header clear-float">
+            <div class="tm-list-item_top clear-float">
+                <div class="tm_modal_list-left tm_left_icon">
+                    <span>
+                        <i class="fa fa-plus-circle  color-blue icon-size" aria-hidden="true"></i>
+                    </span>
                 </div>
-                <div class="form-group">
-                    <textarea class="form-control" rows="3" placeholder="任务描述" id="Remarks" name="Remarks"></textarea>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label for="ExecutorId">执行人</label>
-                        @Html.DropDownList("ExecutorId", ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
-                    </div>
-                </div>
-
-                <div class="text-right">
-                    <a class="btn btn-default" id="cancel-subtask-write">取消</a>
-                    <a class="btn btn-blue" id="btn_create_subtask">确定</a>
-                </div>
-            }
+                <div class="tm_modal_list-middle add-btn" data-sbid="">添加子任务</div>
+                <div class="tm_modal_list-right"></div>
+            </div>
+            <div class="tm_modal_list-footer hidden add-subtask-write"></div>
         </div>
     </div>
-</li>
+</div>
+
 <script>
     //内置子任务弹出处理
-    $("#add-subtask-control").on("click", function () {
-        controlHidden()
-    });
-    $("#cancel-subtask-write").on("click", function () {
-        controlHidden()
-    });
-    function controlHidden(type) {
-        if ($("#add-subtask-control").hasClass("hidden")) {
-            $("#add-subtask-control").removeClass("hidden");
-            $("#add-subtask-write").addClass("hidden");
-        } else {
-            $("#add-subtask-write .form-group input").val("");
-            $("#add-subtask-control").addClass("hidden");
-            $("#add-subtask-write").removeClass("hidden");
-        }
-    }
-    //子任务验证
-    $("#add_subtask_form").validate({
-        debug: false,
-        rules: {
-            TaskTitle: {
-                required: true,
-                maxlength: 128
-            }
-        },
-        //验证通过的正式提交函数
-        submitHandler: function (form) {
-            $(form).ajaxSubmit(function (data) {
-                if (data.result == "SUCCESS") {
-                    UnimportantAlert("子任务添加成功");
-                    $("#btn_create_subtask").removeClass("disabled");
-                    GetSubTaskListPartial($("#AssignmentId").val
-                    (), function (data) {
-                        $("#modal_subtask_area").html(data);
-                    })
-                } else {
-                    ErrorAlert(data.result);
-                    $("#btn_create_subtask").removeClass("disabled");
+    $(".add-btn").on("click", function (event) {
+        var that = $(this);
+        if (that.parent().parent().find(".add-subtask-write").html() == "") {
+            $(".add-subtask-write").html("").addClass("hidden");
+            $.ajax({
+                url: "/TaskManagement/GetSubtaskForm",
+                data: {
+                    AssignmentId: $(".modal-header").attr("data-aid"),
+                    SubtaskId: that.attr("data-sbid")
+                },
+                success: function (data) {
+                    that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
                 }
+
             })
-        },
-        errorClass: "has-error",
-        //验证失败
-        errorPlacement: function (error, element) {
-            console.log(1);
-            $("#btn_create_subtask").removeClass("disabled");
         }
-    });
-    //子任务的提交
-    $("#btn_create_subtask").on("click", function () {
-        if (!$(this).hasClass("disabled")) {
-            $(this).addClass("disabled")
-            $("#add_subtask_form").submit();
-            console.log($("#add_subtask_form").validate);
+        if (that.parent().parent().find(".add-subtask-write").hasClass("hidden")) {
+            that.parent().parent().find(".add-subtask-write").removeClass("hidden")
+        } else {
+            that.parent().parent().find(".add-subtask-write").addClass("hidden")
         }
     });
 </script>

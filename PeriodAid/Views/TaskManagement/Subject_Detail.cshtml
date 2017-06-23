@@ -177,7 +177,7 @@
             $(".write-assignment-box").html("");
         });
 
-        //任务详情弹窗
+        //任务列表删除
         $("#pannel-wrap").on("click", ".btn-del-procedure", function () {
             Delete_Procedure($(this).attr("data-pid"), function (data) {
                 if (data.result == "SUCCESS") {
