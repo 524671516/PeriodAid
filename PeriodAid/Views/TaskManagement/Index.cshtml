@@ -5,7 +5,7 @@
 }
 <div id="app-content">
     <div class="wrapper">
-        <div class="container">
+        <div class="container" id="subject-container">
             <div class="content-inner" id="personal_star_subject">
             </div>
             <div class="content-inner" id="personal_active_subject">
@@ -46,13 +46,9 @@
 <!-- Edit Modal -->
 <div class="modal fade" id="Edit-Subject" role="dialog" aria-labelledby="editModalLabel" style="overflow-y:auto">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="editModalLabel">项目设置</h4>
-            </div>
-            <div class="modal-body" id="Edit-Subject-Content">
-                
+        <div class="modal-content" id="Edit-Subject-Content">
+            
+
             </div>
         </div>
     </div>
@@ -66,14 +62,14 @@
         GetFinishSubject("#personal_finish_subject")
         //项目详细点击
         $(function () {
-            $("#personal_active_subject").on("click", ".card-item", function () {
+            $("#subject-container").on("click", ".card-item", function () {
                 var linkid = $(this).attr("data-link")
                 if (linkid) {
                     location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
                 }
             });
             //星标占位
-            $("#personal_active_subject").on("click", ".card-header-right", function () {
+            $("#subject-container").on("click", ".card-header-right", function () {
                 //ErrorAlert("功能正在开发中.....")
                 $.ajax({
                     url: "/TaskManagement/EditSubject",
@@ -90,44 +86,11 @@
                         }
                     }
                 })
-
                 return false;
             });
             
-
         })
-        function openUpload() {
-            $("#report-file").trigger("click");
-        }
-        $(document).delegate("#report-file", "change", function () {
-            Report_ajaxFileUpload();
-        });
-        function Report_ajaxFileUpload() {
-            $.ajaxFileUpload({
-                url: '/TaskManagement/UploadSubjectCoverFileAjax', //用于文件上传的服务器端请求地址
-                type: 'post',
-                secureuri: false, //是否需要安全协议，一般设置为false
-                fileElementId: 'report-file', //文件上传域的ID
-                dataType: 'json', //返回值类型 一般设置为json
-                success: function (data, status)  //服务器成功响应处理函数
-                {
-                    console.log(data)
-                    if (typeof (data.error) != 'undefined') {
-                        if (data.error != '') {
-                            alert(data.error);
-                        } else {
-                            $("#PicUrl").val(data.imgurl);
-                            $("#PicUrl-img").attr("src", "http://cdn2.shouquanzhai.cn/" + data.imgurl);
-                        }
-                    }
-                },
-                error: function (data, status, e)//服务器响应失败处理函数
-                {
-                    alert(e);
-                }
-            });
-            return false;
-        }
+        
     </script>
-    
+
 }

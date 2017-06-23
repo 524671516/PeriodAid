@@ -352,6 +352,10 @@
     public static class SubjectStatus
     {
         /// <summary>
+        /// 已删除
+        /// </summary>
+        public static int DELETED = -1;
+        /// <summary>
         /// 已归档
         /// </summary>
         public static int ARCHIVED = 0;

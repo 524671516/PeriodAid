@@ -299,18 +299,17 @@ function ErrorAlert(text) {
         }
     });
 }
-function Confirm(text,callback) {
+function CustomConfirm(text,callback) {
     $.confirm({
         type: "red",
         alignMiddle: true,
         typeAnimated: true,
         content: text,
         buttons: {
-            info: {
-                text: "取消",
-                action: function () { }
+            cancel: {
+                text: "取消"
             },
-            danger: {
+            confirm: {
                 text:"确定",
                 btnClass: 'btn-red',
                 action: function () {
