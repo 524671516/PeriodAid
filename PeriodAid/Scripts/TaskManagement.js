@@ -22,6 +22,9 @@
                     $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
                     $("#btn_add_subject").removeClass("disabled");
                 }
+            }, function (data) {
+                ErrorAlert("操作失败");
+                $("#btn_add_subject").removeClass("disabled");
             })
         },
         errorClass: "has-error",
@@ -325,10 +328,12 @@ function CustomConfirm(text,callback) {
 /*时间控件调用*/
 function CompleteTimeWidget(cotainer) {
     $(cotainer).datetimepicker({
-        format: 'yyyy-mm-dd hh:ii',
-        autoclose: false,
+        format: 'yyyy-mm-dd',
+        autoclose: true,
         todayBtn: true,
         clearBtn: true,
+        minView: "2",
+        maxView:"2",
         pickerPosition: "bottom-right",
         todayHighlighttodayHighlight: true,
     });

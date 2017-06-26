@@ -8,13 +8,18 @@
                     <a class="icon-btn dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" href="#">
                         <i class="fa fa-caret-square-o-down color-blue" aria-hidden="true"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-list procedure-dropdown-list">
-                        <li><a href="javascript:;"  data-pid="@Model.Id" class="btn-del-procedure"><strong class="color-red">删除列表</strong></a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="javascript:;">功能开发中</a></li>
-                        <li><a href="javascript:;">功能开发中</a></li>
-                        <li><a href="javascript:;">功能开发中</a></li>
-                    </ul>
+                    <div class="dropdown-menu tm_dropdown tm_procedure-dropdown">
+                        <ul>
+                            <li class="text-center"><strong class="color-blue">更多操作</strong></li>
+                            <li role="separator" class="divider"></li>
+                        </ul>
+                        <ul class="tm_dropdown_list">
+                            <li><a href="javascript:;" data-pid="@Model.Id" class="btn-del-procedure color-red"><span class="color-red">@Html.Encode("删除"+Model.ProcedureTitle)</span></a></li>
+                            <li><a href="javascript:;" class="btn_archive_assignment">归档</a></li>
+                            <li><a href="javascript:;" class="btn_finish_assignment">完成</a></li>
+                            <li><a href="javascript:;">持续更新中</a></li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -23,6 +28,6 @@
     </div>
     <div class="tm_pannel-footer clear-float">
         <div class="tm_pannel-footer-left float-left"></div>
-        <div class="tm_pannel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Id)</span>/<span class="total-num">@Html.Encode(Model.Sort)</span></div>
+        <div class="tm_pannel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Assignment.Count(p=>p.Status==2))</span>/<span class="total-num">@Html.Encode(Model.Assignment.Count())</span></div>
     </div>
 

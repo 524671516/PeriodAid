@@ -10,7 +10,7 @@
         {
             foreach (var item in Model)
             {
-                <div class="col-md-3 card-wrap">
+                <div class="col-md-3 card-wrap" title="@item.SubjectTitle">
                     @if (item.PicUrl != null)
                     {
                         <div class="card-item" style="background-image: url('http://cdn2.shouquanzhai.cn/@item.PicUrl');" data-link="@item.Id">
