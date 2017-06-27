@@ -95,15 +95,13 @@
     });
     //子任务了解详情
     $("#subtask_modal_list").on("click", ".btn_link_subtask", function (event) {
-        $('#Edit-Assignment').modal('hide');
         $.ajax({
             url: "/TaskManagement/Subtask_Detail",
             data: {
                 SubtaskId: $(this).attr("data-stid")
             },
             success: function (data) {
-                $("#Edit-Subtask .modal-content").html(data);
-                $('#Edit-Subtask').modal('show');
+                $("#Edit-Assignment .modal-content").html(data);
             }
         })          
     });

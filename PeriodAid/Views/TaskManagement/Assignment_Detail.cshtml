@@ -154,7 +154,7 @@
                     UnimportantAlert("任务修改成功");
                     $("#btn_edit_assignment").removeClass("disabled");
                     $('#Edit-Assignment').modal('hide');
-                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_pannel-body"));
                 } else {
                     ErrorAlert(data.result);
                     $("#btn_edit_assignment").removeClass("disabled");

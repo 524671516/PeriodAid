@@ -1031,6 +1031,7 @@
     <Content Include="Views\TaskManagement\Assignmnet_CollaboratorAddPartial.cshtml" />
     <Content Include="Views\TaskManagement\GetSubtaskFilledForm.cshtml" />
     <Content Include="Views\TaskManagement\Subtask_Detail.cshtml" />
+    <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
