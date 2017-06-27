@@ -1,31 +1,26 @@
 ﻿@using PeriodAid.Models;
 @model PeriodAid.Models.Subject
-
 <div class="modal-header">
-    <div class="float-left" style="width:80%"><h4 class="modal-title" id="editModalLabel">项目设置</h4></div>
-    <div class="float-left text-right" style="width:20%">
-        <div class="float-right"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
-        <div class="dropdown float-right modal-dropdown">
-            <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="modal-dropdown-button">
-                更多
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
-                <li><a href="#">其他</a></li>
-                <li><a href="#">其他</a></li>
-                <li role="separator" class="divider"></li>
-                @if (Model.Status == SubjectStatus.ACTIVE)
-                {
-                    <li><a href="#" style="color:#0094ff" id="Archive-Subject">归档项目</a></li>
-                    <li><a href="#" style="color:#ff0000" id="Delete-Subject">删除项目</a></li>
-                }
-                else if (Model.Status == SubjectStatus.ARCHIVED)
-                {
-                    <li><a href="#" style="color:#0094ff" id="Reset-Subject">恢复项目</a></li>
-                    <li><a href="#" style="color:#ff0000" id="Delete-Subject">删除项目</a></li>
-                }
-            </ul>
-        </div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <a href="#" class="close dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="更多"></i></a>
+    <h4 class="modal-title" id="Edit-SubjectLabel">项目设置</h4>
+    <div class="dropdown-menu tm_dropdown" id="tm_more_drop">
+        <ul>
+            <li class="text-center"><strong class="color-blue">更多功能</strong></li>
+            <li role="separator" class="divider"></li>
+        </ul>
+        <ul class="tm_dropdown_list">
+            @if (Model.Status == SubjectStatus.ACTIVE)
+            {
+                <li><a href="javascript:;" id="Archive-Subject"><span class="color-blue">归档任务</span></a></li>
+                <li><a href="javascript:;" id="Delete-Subject"><span class="color-red">删除项目</span></a></li>
+            }
+            else if (Model.Status == SubjectStatus.ARCHIVED)
+            {
+                <li><a href="javascript:;"  id="Reset-Subject"><span class="color-blue">恢复项目</span></a></li>
+                <li><a href="javascript:;"  id="Delete-Subject"><span class="color-red">删除项目</span></a></li>
+            }
+        </ul>
     </div>
 </div>
 <div class="modal-body">
@@ -82,6 +77,12 @@
     $(function () {
         $("#edit_subject_form").validate({
             debug: true,
+            rules: {
+                SubjectTitle: {
+                    required: true,
+                    maxlength: 128
+                }
+            },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
@@ -89,14 +90,12 @@
                         UnimportantAlert("修改项目成功");
                         $("#btn-edit-subject").removeClass("disabled");
                         $('#Edit-Subject').modal('hide');
-                        GetActiveSubject("#personal_active_subject")
                         GetStarSubject("#personal_star_subject")
                         GetActiveSubject("#personal_active_subject")
                         GetFinishSubject("#personal_finish_subject")
                     } else {
                         ErrorAlert(data);
                         $("#btn-edit-subject").removeClass("disabled");
-
                     }
                 })
             },
@@ -249,13 +248,17 @@
                 });
             });
         });
-    })
+    });
+
     function openUpload() {
         $("#report-file").trigger("click");
     }
+
     $(document).delegate("#report-file", "change", function () {
         Report_ajaxFileUpload();
     });
+
+
     function Report_ajaxFileUpload() {
         $.ajaxFileUpload({
             url: '/TaskManagement/UploadSubjectCoverFileAjax', //用于文件上传的服务器端请求地址
@@ -276,10 +279,9 @@
             },
             error: function (data, status, e)//服务器响应失败处理函数
             {
-                alert(e);
+                ErrorAlert(e)
             }
         });
         return false;
     }
-
 </script>

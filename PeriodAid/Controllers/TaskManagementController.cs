@@ -87,8 +87,8 @@ namespace PeriodAid.Controllers
         /// 创建项目
         /// </summary>
         /// <returns>ActionResult</returns>
-        [HttpPost,ValidateAntiForgeryToken]
-        public ActionResult CreateSubject(FormCollection form,Subject model)
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult CreateSubject(FormCollection form, Subject model)
         {
             if (ModelState.IsValid)
             {
@@ -105,11 +105,37 @@ namespace PeriodAid.Controllers
 
                         item.HolderId = employee.Id;
                         item.Status = SubjectStatus.ACTIVE;
-                        if (item.TemplateId == 0)
+                        var defaultTemplate = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);         
+                        if (defaultTemplate==null)
                         {
-                            item.TemplateId = 1;
+                            defaultTemplate= _db.ProcedureTemplate.SingleOrDefault(m => m.Id == 1);
+                            item.TemplateId = defaultTemplate.Id;
                         }
-
+                        ProcedureTemplate template = new ProcedureTemplate()
+                        {
+                            Title = defaultTemplate.Title
+                        };
+                        try
+                        {
+                            _db.ProcedureTemplate.Add(template);
+                            _db.SaveChanges();
+                            foreach (var pro in defaultTemplate.Procedure)
+                            {
+                                Procedure procedure = new Procedure()
+                                {
+                                    TemplateId = template.Id,
+                                    Sort = pro.Sort,
+                                    Status = pro.Status,
+                                    ProcedureTitle = pro.ProcedureTitle
+                                };
+                                _db.Procedure.Add(procedure);
+                                _db.SaveChanges();
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            return Content("项目模板建立失败。");
+                        }
                         item.CreateTime = DateTime.Now;
                         try
                         {
@@ -137,12 +163,28 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
+
+        #region  获取创建项目表单 
+        /// <summary>
+        /// 获取创建项目表单
+        /// </summary>
+        /// <returns>partialview</returns>
+        public PartialViewResult GetSubjectForm()
+        {
+            Subject model = new Subject()
+            {
+                TemplateId = 1,
+            };
+            return PartialView(model);
+        }
+        #endregion
+
         #region 编辑项目
         public ActionResult EditSubject(int id)
         {
             var employee = getEmployee(User.Identity.Name);
             var subject = _db.Subject.SingleOrDefault(m => m.Id == id && m.HolderId == employee.Id);
-            if(subject != null)
+            if (subject != null)
             {
                 var EmployeeList = from m in _db.Employee
                                    where m.Status >= 0
@@ -258,7 +300,7 @@ namespace PeriodAid.Controllers
 
         #endregion
 
-        #region  获取星标项目
+        #region  获取星标项目  占时无用
         /// <summary>
         /// 获取星标任务
         /// </summary>
@@ -303,12 +345,12 @@ namespace PeriodAid.Controllers
             {
 
                 // 自己创建的项目
-                var ownSubject = employee.Subject.Where(m => m.Status==SubjectStatus.ACTIVE);
+                var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
                 // 自己的任务列表
                 var SubjectList = from m in employee.CollaborateAssignment
-                                     where m.Status > AssignmentStatus.DELETED
-                                     select m.Subject;
-                var ActiveSubjectList = SubjectList.Where(m => m.Status==SubjectStatus.ACTIVE);
+                                  where m.Status > AssignmentStatus.DELETED
+                                  select m.Subject;
+                var ActiveSubjectList = SubjectList.Where(m => m.Status == SubjectStatus.ACTIVE);
                 var MergeSubject = ownSubject.Union(ActiveSubjectList);
                 return PartialView(MergeSubject);
 
@@ -332,12 +374,12 @@ namespace PeriodAid.Controllers
             {
 
                 // 自己创建的项目
-                var ownSubject = employee.Subject.Where(m => m.Status == 0);
+                var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ARCHIVED);
                 // 自己的任务列表
                 var SubjectList = from m in employee.CollaborateAssignment
                                   where m.Status > AssignmentStatus.DELETED
                                   select m.Subject;
-                var FinsihSubjectList = SubjectList.Where(m => m.Status ==SubjectStatus.ARCHIVED);
+                var FinsihSubjectList = SubjectList.Where(m => m.Status == SubjectStatus.ARCHIVED);
                 var MergeSubject = ownSubject.Union(FinsihSubjectList);
 
                 return PartialView(MergeSubject);
@@ -355,11 +397,6 @@ namespace PeriodAid.Controllers
         public ActionResult Subject_Detail(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
-            var ProcedureIdList = from m in _db.Procedure
-                                      where m.TemplateId == subject.TemplateId && m.Status > 0
-                                      orderby m.Sort ascending
-                                      select m.Id;
-            ViewBag.pid = ProcedureIdList;
             return View(subject);
         }
         #endregion
@@ -372,7 +409,7 @@ namespace PeriodAid.Controllers
         /// <returns>过程</returns>
         public PartialViewResult SubjectProcedure(int ProcedureId)
         {
-            var procedure = _db.Procedure.SingleOrDefault(m=>m.Id==ProcedureId);
+            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId && m.Status == ProcedureStatus.NORMAL);
             return PartialView(procedure);
 
         }
@@ -385,18 +422,19 @@ namespace PeriodAid.Controllers
         /// <param name="ProcedureId"></param>
         /// <param name="SubjectId"></param>
         /// <returns>PartialView</returns>
-        public PartialViewResult GetAssignmentForm(int ProcedureId,int SubjectId)
+        public PartialViewResult GetAssignmentForm(int ProcedureId, int SubjectId)
         {
             var employee = getEmployee(User.Identity.Name);
-            Assignment item = new Assignment() {
-                ProcedureId= ProcedureId,
-                SubjectId= SubjectId
+            Assignment item = new Assignment()
+            {
+                ProcedureId = ProcedureId,
+                SubjectId = SubjectId,
+                HolderId = employee.Id
             };
             var EmployeeList = from m in _db.Employee
-                               where m.Status >EmployeeStatus.DEVOICE
+                               where m.Status > EmployeeStatus.DEVOICE
                                orderby m.Id descending
                                select m;
-            item.HolderId = employee.Id;
             ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", employee.Id);
             return PartialView(item);
         }
@@ -408,10 +446,10 @@ namespace PeriodAid.Controllers
         /// </summary>
         /// <param name="ProcedureId"></param>
         /// <returns>集合</returns>
-        public PartialViewResult SubjectAssignment(int ProcedureId,int SubJectId)
+        public PartialViewResult SubjectAssignment(int ProcedureId, int SubJectId)
         {
             var assignmentlist = from m in _db.Assignment
-                                 where m.ProcedureId == ProcedureId && m.Status >= 0&&m.SubjectId== SubJectId
+                                 where m.ProcedureId == ProcedureId && m.Status >= 0 && m.SubjectId == SubJectId && m.Status > AssignmentStatus.DELETED
                                  orderby m.Status ascending
                                  select m;
             ViewBag.ProcedureId = ProcedureId;
@@ -426,15 +464,15 @@ namespace PeriodAid.Controllers
         /// <param name="form"></param>
         /// <param name="model"></param>
         /// <returns>json</returns>
-        [HttpPost,ValidateAntiForgeryToken]
-        public JsonResult CreateProcedure(FormCollection form,Procedure model)
+        [HttpPost, ValidateAntiForgeryToken]
+        public JsonResult CreateProcedure(FormCollection form, Procedure model)
         {
             if (ModelState.IsValid)
             {
                 Procedure item = new Procedure();
                 if (TryUpdateModel(item))
                 {
-                    item.Status = 1;
+                    item.Status = ProcedureStatus.NORMAL;
                     try
                     {
                         _db.Procedure.Add(item);
@@ -455,7 +493,7 @@ namespace PeriodAid.Controllers
             {
                 return Json(new { result = "模型错误。" });
             }
-                    
+
         }
         #endregion
 
@@ -466,25 +504,29 @@ namespace PeriodAid.Controllers
         /// <param name="ProcedureId"></param>
         /// <returns>Content</returns>
         [HttpPost]
-        public ActionResult DelectProcedure(int ProcedureId)
+        public JsonResult Delete_Procedure(int ProcedureId)
         {
-            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId);
-            if (procedure == null)
-            {
-                return Content("操作的过程已不存在，请刷新页面!");
-            }
-            else
+            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId && m.Status == ProcedureStatus.NORMAL);
+            var assignmentlist = (from m in _db.Assignment
+                                  where m.ProcedureId == ProcedureId && m.Status > AssignmentStatus.DELETED
+                                  select m).Count();
+            if (assignmentlist == 0)
             {
                 try
                 {
-                    _db.Procedure.Remove(procedure);
+                    procedure.Status = ProcedureStatus.REMOVED;
+                    _db.Entry(procedure).State = System.Data.Entity.EntityState.Modified;
                     _db.SaveChanges();
                 }
                 catch (Exception)
                 {
-                    return Content("删除失败，请刷新页面重新尝试。");
+                    return Json(new { result = "发生错误。" });
                 }
-                return Content("SUCCESS");
+                return Json(new { result = "SUCCESS", Id = procedure.Id });
+            }
+            else
+            {
+                return Json(new { result = "请先清空列表中的任务。" });
             }
         }
         #endregion
@@ -496,15 +538,15 @@ namespace PeriodAid.Controllers
         /// <param name="form"></param>
         /// <param name="model"></param>
         /// <returns>Content</returns>
-        [HttpPost,ValidateAntiForgeryToken]
-        public JsonResult CreateAssignment(FormCollection form,Assignment model)
+        [HttpPost, ValidateAntiForgeryToken]
+        public JsonResult CreateAssignment(FormCollection form, Assignment model)
         {
             if (ModelState.IsValid)
             {
                 Assignment item = new Assignment();
                 if (TryUpdateModel(item))
                 {
-                    item.Status = 1;
+                    item.Status = AssignmentStatus.UNFINISHED;
                     item.CreateTime = DateTime.Now;
                     try
                     {
@@ -535,14 +577,16 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult ComfirmFinishAssignment(int AssignmentId)
         {
-            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
             if (assignment.Status == AssignmentStatus.UNFINISHED)
             {
                 assignment.Status = AssignmentStatus.FINISHED;
+                assignment.CompleteDate = DateTime.Now;
             }
             else
             {
                 assignment.Status = AssignmentStatus.UNFINISHED;
+                assignment.CompleteDate = null;
             }
             try
             {
@@ -551,18 +595,18 @@ namespace PeriodAid.Controllers
             }
             catch (Exception)
             {
-                return Json(new { result = "操作失败"});
+                return Json(new { result = "操作失败" });
             }
-            return Json(new { result = "操作成功",Id=assignment.ProcedureId });
+            return Json(new { result = "操作成功", Id = assignment.ProcedureId });
         }
 
 
         //获取任务详情
         public PartialViewResult Assignment_Detail(int AssignmentId)
         {
-            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
             var EmployeeList = from m in _db.Employee
-                               where m.Status > -1
+                               where m.Status > EmployeeStatus.DEVOICE
                                select m;
             ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", assignment.HolderId);
             return PartialView(assignment);
@@ -570,8 +614,8 @@ namespace PeriodAid.Controllers
 
 
         //任务修改
-        [HttpPost,ValidateAntiForgeryToken]
-        public JsonResult Edit_Assignment_Detail(FormCollection form,Assignment model)
+        [HttpPost, ValidateAntiForgeryToken]
+        public JsonResult Edit_Assignment_Detail(FormCollection form, Assignment model)
         {
             if (ModelState.IsValid)
             {
@@ -600,51 +644,24 @@ namespace PeriodAid.Controllers
             }
         }
 
-        //删除列表
-        [HttpPost]
-        public JsonResult Delete_Procedure(int ProcedureId)
-        {
-            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId);
-            var assignmentlist = (from m in _db.Assignment
-                                 where m.ProcedureId == ProcedureId&&m.Status>AssignmentStatus.DELETED
-                                 select m).Count();
-            if (assignmentlist == 0)
-            {
-                try
-                {
-                    procedure.Status = ProcedureStatus.REMOVED;
-                    _db.Entry(procedure).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
-                }
-                catch (Exception)
-                {
-                    return Json(new { result = "发生错误。"});
-                }
-                return Json(new { result = "SUCCESS",Id=procedure.Id });
-            }
-            else
-            {
-                return Json(new { result = "请先清空列表中的任务。" });
-            }
-        }
 
         //删除任务
         [HttpPost]
         public JsonResult Delete_Assignment(int AssignmentId)
         {
-            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
-            if (assignment.Status==AssignmentStatus.DELETED)
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
+            if (assignment == null)
             {
                 return Json(new { result = "此任务已不存在。" });
             }
             else
             {
                 var subtasklist = from m in _db.SubTask
-                                  where m.AssignmentId == assignment.Id
+                                  where m.AssignmentId == assignment.Id && m.Status > AssignmentStatus.DELETED
                                   select m;
                 if (subtasklist.Count() != 0)
                 {
-                    foreach(var item in subtasklist)
+                    foreach (var item in subtasklist)
                     {
                         try
                         {
@@ -675,7 +692,7 @@ namespace PeriodAid.Controllers
         //获取任务的参与者模板
         public PartialViewResult Assignment_CollaboratorPartial(int AssignmentId)
         {
-            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
             return PartialView(assignment);
         }
 
@@ -683,7 +700,7 @@ namespace PeriodAid.Controllers
         //添加参与者模板
         public PartialViewResult Assignmnet_CollaboratorAddPartial(int AssignmentId)
         {
-            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
             var departmentlist = from m in _db.Department
                                  where m.Status == DepartmentStatus.NORMAL
                                  select m;
@@ -695,42 +712,59 @@ namespace PeriodAid.Controllers
         {
             var subtasklist = from m in _db.SubTask
                               where m.AssignmentId == AssignmentId && m.Status > AssignmentStatus.DELETED
+                              orderby m.Status
                               select m;
             return PartialView(subtasklist);
         }
 
         //获取子任务表单
-        public PartialViewResult GetSubtaskForm(int AssignmentId,int? SubtaskId)
+        public PartialViewResult GetSubtaskForm(int AssignmentId)
         {
-            int _SubtaskId = SubtaskId ?? 0;
-            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
+            if (assignment == null)
+            {
+                return PartialView("Error");
+            }
             var collaborator = assignment.Collaborator;
-           
             List<Employee> emlist = new List<Employee>();
             emlist.Add(assignment.Holder);
-            foreach(var i in collaborator)
+            foreach (var i in collaborator)
             {
                 emlist.Add(i);
             }
-            if (_SubtaskId == 0)
+
+            SubTask model = new SubTask()
             {
-                SubTask model = new SubTask()
-                {
-                    AssignmentId = AssignmentId
-                };
-                ViewBag.EmployeeDropDown = new SelectList(emlist, "Id", "NickName", assignment.HolderId);
-                return PartialView(model);
-            }
-            else
+                AssignmentId = AssignmentId
+            };
+            ViewBag.EmployeeDropDown = new SelectList(emlist, "Id", "NickName", assignment.HolderId);
+            return PartialView(model);
+        }
+
+
+        //获取子任务表单已有内容
+        public PartialViewResult GetSubtaskFilledForm(int AssignmentId, int SubtaskId)
+        {
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
+            if (assignment == null)
             {
-                var subtask = _db.SubTask.SingleOrDefault(m => m.Id == _SubtaskId);
-                ViewBag.EmployeeDropDown = new SelectList(emlist, "Id", "NickName", subtask.ExecutorId);
-                return PartialView(subtask);
+                return PartialView("Error");
             }
+            var collaborator = assignment.Collaborator;
+            List<Employee> emlist = new List<Employee>();
+            emlist.Add(assignment.Holder);
+            foreach (var i in collaborator)
+            {
+                emlist.Add(i);
+            }
+
+            var subtask = _db.SubTask.SingleOrDefault(m => m.Id == SubtaskId);
+            ViewBag.EmployeeDropDown = new SelectList(emlist, "Id", "NickName", subtask.ExecutorId);
+            return PartialView(subtask);
         }
 
         //创建子任务
-        [HttpPost,ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult CreateSubtask(SubTask model)
         {
             if (ModelState.IsValid)
@@ -749,7 +783,8 @@ namespace PeriodAid.Controllers
                     {
                         return Json(new { result = "存储失败。" });
                     }
-                    return Json(new { result = "SUCCESS" });
+                    var ProcedureId = _db.Assignment.SingleOrDefault(m => m.Id == item.AssignmentId).ProcedureId;
+                    return Json(new { result = "SUCCESS", Id = ProcedureId });
 
                 }
                 else
@@ -763,18 +798,114 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //修改子任务
+        [HttpPost]
+        public JsonResult EditSubtask(SubTask model)
+        {
+            if (ModelState.IsValid)
+            {
+                SubTask item = new SubTask();
+                if (TryUpdateModel(item))
+                {
+                    try
+                    {
+                        _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { result = "数据存储失败。" });
+                    }
+                    return Json(new { result = "SUCCESS", id = item.AssignmentId });
+                }
+                else
+                {
+                    return Json(new { result = "模型同步错误。" });
+                }
+            }
+            else
+            {
+                return Json(new { result = "模型错误。" });
+            }
+        }
+
+        //子任务详情
+        public PartialViewResult Subtask_Detail(int SubtaskId)
+        {
+            var subtask = _db.SubTask.SingleOrDefault(m => m.Id == SubtaskId && m.Status > AssignmentStatus.DELETED);
+            List<Employee> emlist = new List<Employee>();
+            foreach (var item in subtask.Assignment.Collaborator)
+            {
+                emlist.Add(item);
+            };
+            emlist.Add(subtask.Assignment.Holder);
+            ViewBag.EmployeeDropDown = new SelectList(emlist, "Id", "NickName", subtask.ExecutorId);
+            return PartialView(subtask);
+        }
+
+        //删除子任务
+        [HttpPost]
+        public JsonResult Delete_Subtask(int SubtaskId)
+        {
+            var subtask = _db.SubTask.SingleOrDefault(m => m.Id == SubtaskId && m.Status > AssignmentStatus.DELETED);
+            if (subtask == null)
+            {
+                return Json(new { result = "此任务已不存在。" });
+            }
+            else
+            {
+                try
+                {
+                    subtask.Status = AssignmentStatus.DELETED;
+                    _db.Entry(subtask).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return Json(new { result = "发生错误。" });
+                }
+                return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId });
+            }
+        }
+
+        //子任务完成状态回传
+        [HttpPost]
+        public JsonResult ComfirmFinishSubtask(int SubtaskId)
+        {
+            var subtask = _db.SubTask.SingleOrDefault(m => m.Id == SubtaskId && m.Status > AssignmentStatus.DELETED);
+            if (subtask.Status == AssignmentStatus.UNFINISHED)
+            {
+                subtask.Status = AssignmentStatus.FINISHED;
+                subtask.CompleteDate = DateTime.Now;
+            }
+            else
+            {
+                subtask.Status = AssignmentStatus.UNFINISHED;
+                subtask.CompleteDate = null;
+            }
+            try
+            {
+                _db.Entry(subtask).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return Json(new { result = "操作失败" });
+            }
+            return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId });
+        }
         //添加和删除参与人
         [HttpPost]
-        public JsonResult ControlCollaboratorAjax(bool Remove,int EmployeeId,int AssignmentId)
+        public JsonResult ControlCollaboratorAjax(bool Remove, int EmployeeId, int AssignmentId)
         {
-            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
             var employee = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId);
             if (Remove)
             {
                 assignment.Collaborator.Remove(employee);
                 _db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
-               
+
             }
             else
             {

@@ -1,82 +1,17 @@
 ﻿$(function () {
-    //新增项目验证
-    $("#add_subject_form").validate({
-        debug: false,
-        rules: {
-            SubjectTitle: {
-                required: true,
-                maxlength: 128
+    //请求项目表单
+    $("#my-app").on("click", ".create_subject_target", function () {
+        $.ajax({
+            url: "/TaskManagement/GetSubjectForm",
+            success: function (data) {
+                $("#Add-Subject #Create-Subject-Content").html(data);
+                $("#Add-Subject").modal('show');
+            },
+            error: function () {
+                ErrorAlert("操作失败。")
             }
-        },
-        //验证通过的正式提交函数
-        submitHandler: function (form) {
-            $(form).ajaxSubmit(function (data) {
-                if (data == "SUCCESS") {
-                    UnimportantAlert("添加项目成功");
-                    $("#btn_add_subject").removeClass("disabled");
-                    $('#Add-Subject').modal('hide');
-                    GetActiveSubject("#personal_active_subject")
-                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
-                } else {
-                    ErrorAlert(data);
-                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
-                    $("#btn_add_subject").removeClass("disabled");
-                }
-            })
-        },
-        errorClass: "has-error",
-        //验证失败
-        errorPlacement: function (error, element) {
-            $("#btn_add_subject").removeClass("disabled");
-        }
-    });
-    //新增项目的提交
-    $("#btn_add_subject").on("click", function () {
-        if (!$(this).hasClass("disabled")) {
-            $(this).addClass("disabled")
-            $("#add_subject_form").submit();
-        }
-    });
-    
-
-    //新增任务
-    $("#add_assignment_form").validate({
-        debug: false,
-        rules: {
-            SubjectTitle: {
-                required: true,
-                maxlength: 128
-            }
-        },
-        //验证通过的正式提交函数
-        submitHandler: function (form) {
-            $(form).ajaxSubmit(function (data) {
-                if (data == "SUCCESS") {
-                    UnimportantAlert("添加任务成功");
-                    $("#btn_add_assignment").removeClass("disabled");
-                    $('#Add-Assignment').modal('hide');
-                    $('#Add-Assignment').find(".form-group input,.form-group textarea").val("");
-                } else {
-                    ErrorAlert(data);
-                    $('#Add-Assignment').find(".form-group input,.form-group textarea").val("");
-                    $("#btn_add_assignment").removeClass("disabled");
-                }
-            })
-        },
-        errorClass: "has-error",
-        //验证失败
-        errorPlacement: function (error, element) {
-            $("#btn_add_assignment").removeClass("disabled");
-        }
-    });
-    //新增任务的提交
-    $("#btn_add_assignment").on("click", function () {
-        if (!$(this).hasClass("disabled")) {
-            $(this).addClass("disabled")
-            $("#add_assignment_form").submit();
-        }
-    });
-
+        });
+    })
 });
 //请求
 function GetStarSubject(container) {
@@ -233,7 +168,6 @@ function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
         }
     });
 }
-
 function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
     $.ajax({
         url: "/TaskManagement/Assignment_CollaboratorPartial",
@@ -325,10 +259,12 @@ function CustomConfirm(text,callback) {
 /*时间控件调用*/
 function CompleteTimeWidget(cotainer) {
     $(cotainer).datetimepicker({
-        format: 'yyyy-mm-dd hh:ii',
-        autoclose: false,
+        format: 'yyyy-mm-dd',
+        autoclose: true,
         todayBtn: true,
         clearBtn: true,
+        minView: "2",
+        maxView:"2",
         pickerPosition: "bottom-right",
         todayHighlighttodayHighlight: true,
     });

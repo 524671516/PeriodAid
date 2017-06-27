@@ -3,7 +3,8 @@
     ViewBag.Title = "Task_Detail";
     Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
 }
-<div class="navbar-default" id="task-navbar">
+<!--The Second Nav-->
+<div class="navbar-default tm_task-navbar" >
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -14,7 +15,7 @@
                 <span class="icon-bar"></span>
             </button>
             <ol class="breadcrumb  navbar-breadcrumb">
-                <li><a href="#">主页</a></li>
+                <li><a href="/TaskManagement/Index">主页</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" id="SubjectName" data-id="@Model.Id" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.Encode(Model.SubjectTitle)<span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-list">
@@ -37,7 +38,7 @@
                 <li><a href="#">日程</a></li>
                 <li><a href="#">文件</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right navbar-border">
                 <li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" id="menu-btn"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
@@ -46,14 +47,17 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </div>
+<!--The Second Nav End-->
+
+<!--Procedure Content-->
 <div class="tm_pannel-wrap" id="pannel-wrap" data-sid="@Model.Id">
     <div class="tm_pannel-container">
-        @foreach (var id in ViewBag.pid)
+        @foreach (var procedure in Model.ProcedureTemplate.Procedure)
         {
-        <div class="tm_pannel-item ajax-procedure" data-procedureid="@id">
+        <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
         </div>
         }
-        <div class="tm_pannel-item panel-item-add text-center">
+        <div class="tm_pannel-item text-center tm_pannel-item-add" id="tm_pannel-item-add">
             <div id="add-pannel-control"><a href="javascript:;" class="panel-body add-btn color-gray" id="add-pannel-list"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></a></div>
             <div id="add-pannel-write" class="padding-10 write-box hidden">
                 @using (Html.BeginForm("CreateProcedure", "TaskManagement", FormMethod.Post, new { @id = "add_procedure_form", @class = "validate-form padding-10" }))
@@ -74,21 +78,61 @@
         </div>
     </div>
 </div>
+<!--Procedure Content End-->
+
+
+
+<!-- Modal Edit-Assignment-->
 <div class="modal fade tm_modal" id="Edit-Assignment" role="dialog" aria-labelledby="Edit-AssignmentLabel" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
     </div>
 </div>
-<!-- Modal -->
+<!-- Modal Edit-Assignment End-->
+<!-- Modal Add-Collaborator-->
 <div class="modal fade" id="Add-Collaborator" tabindex="-1" role="dialog" aria-labelledby="Add-CollaboratorLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
         </div>
     </div>
 </div>
+<!-- Modal Add-Collaborator End-->
+<!-- Modal Edit-Assignment-->
+<div class="modal tm_modal fade" id="Edit-Subtask" role="dialog" aria-labelledby="Edit-SubtaskLabel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!-- Modal Edit-Assignment End-->
 @section scripts{
     <script>
+        //加载procedure
+        $(".ajax-procedure").each(function () {
+            var ProcedureId = $(this).attr("data-procedureid");
+            var that = $(this);
+            GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that)
+        });
+        //任务添加窗口
+        $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
+            $(".btn-get-assignmentform").removeClass("hidden");
+            $(".write-assignment-box").html("");
+            GetAssignmentForm($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), $(this).parent().find(".write-assignment-box"));
+            $(this).addClass("hidden");
+        });
+        //清除任务添加窗口
+        $("#pannel-wrap").on("click", "#cancel-create-assignment", function () {
+            $(".btn-get-assignmentform").removeClass("hidden");
+            $(".write-assignment-box").html("");
+        });
+        //任务完成
+        $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
+            ComfirmFinishAssignment($(this).parent().parent().find(".tm_item_right").attr("data-aid"), function (data) {
+                GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+            })
+            return false;
+        });
         //新增过程验证
         $("#add_procedure_form").validate({
             debug: false,
@@ -101,16 +145,14 @@
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
-                    console.log(data);
                     if (data.result == "SUCCESS") {
-                        $(".tm_panel-item-add").before("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
-                        GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));
+                        $("#tm_pannel-item-add").before("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                        GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));                       
                         UnimportantAlert("添加过程成功");
-                        controlHidden()
+                        controlHidden();
                     } else {
                         ErrorAlert(data.result);
                         controlHidden()
-                        $("#create-procedure-pannel").removeClass("disabled");
                     }
                 })
             },
@@ -128,56 +170,6 @@
                 $("#add_procedure_form").submit();
             }
         })
-        //新增任务
-        $("#pannel-wrap").on("click", "#create-assignment", function () {
-            if (!$(this).hasClass("disabled")) {
-                $(this).addClass("disabled")
-                if ($("#pannel-wrap #AssignmentTitle").val() == "") {
-                    $("#pannel-wrap #AssignmentTitle").addClass("has-error");
-                    $("#create-assignment").removeClass("disabled");
-                } else {
-                    $("#add_assignment_form").ajaxSubmit(function (data) {
-                        if (data.result == "SUCCESS") {
-                            UnimportantAlert("任务创建成功。");
-                            $(".btn-get-assignmentform").removeClass("hidden");
-                            $(".write-assignment-box").html("");
-                            GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_pannel-body"));
-                        } else {
-                            ErrorAlert(data.result);
-                            $("#create-assignment").removeClass("disabled");
-                        }
-                    })
-                }
-            }
-        })
-
-        //加载procedure
-        $(".ajax-procedure").each(function () {
-            var ProcedureId = $(this).attr("data-procedureid");
-            var that = $(this);
-            GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that)
-        });
-        //任务完成
-        $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
-            ComfirmFinishAssignment($(this).parent().parent().find(".tm_item_right").attr("data-aid"), function (data) {
-                GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
-            })
-            return false;
-        })
-
-        //任务添加窗口
-        $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
-            $(".btn-get-assignmentform").removeClass("hidden");
-            $(this).addClass("hidden");
-            $(".write-assignment-box").html("");
-            GetAssignmentForm($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), $(this).parent().find(".write-assignment-box"));
-        });
-        //清除任务添加窗口
-        $("#pannel-wrap").on("click", "#cancel-create-assignment", function () {
-            $(".btn-get-assignmentform").removeClass("hidden");
-            $(".write-assignment-box").html("");
-        });
-
         //任务列表删除
         $("#pannel-wrap").on("click", ".btn-del-procedure", function () {
             Delete_Procedure($(this).attr("data-pid"), function (data) {
@@ -186,8 +178,7 @@
                 } else {
                     ErrorAlert(data.result)
                 }
-
-            })
+            });
         });
 
         //显示任务详情
@@ -198,16 +189,15 @@
             });
         });
 
+        //控制新建列表
         $("#add-pannel-list").on("click", function () {
             controlHidden()
         });
         $("#cancel-pannel-write").on("click", function () {
             controlHidden()
         });
-
-
-
         function controlHidden(type) {
+            $("#create-procedure-pannel").removeClass("disabled");
             if ($("#add-pannel-control").hasClass("hidden")) {
                 $("#add-pannel-control").removeClass("hidden");
                 $("#add-pannel-write").addClass("hidden");

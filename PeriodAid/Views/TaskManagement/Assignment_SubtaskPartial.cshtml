@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<PeriodAid.Models.SubTask>
+@using PeriodAid.Models
 <div class="col-md-12 margin-bottom-10">
-    <div class="tm_modal_list">
+    <div class="tm_modal_list" id="subtask_modal_list">
         <div class="tm_modal_body">
             <ul>
                 @foreach (var item in Model)
@@ -8,11 +9,18 @@
                     <li class="tm_modal_list-header">
                         <div class="tm-list-item_top clear-float">
                                 <div class="tm_modal_list-left tm_left_icon">
-                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0" />
+                                   @if (item.Status == AssignmentStatus.FINISHED)
+                                   {
+                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish" checked>
+                                   }
+                                   else
+                                   {
+                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish">
+                                   }
                                 </div>
-                                <div class="tm_modal_list-middle add-btn" data-sbid="@item.Id">@Html.Encode(item.TaskTitle)</div>
-                                <div class="tm_modal_list-right"><a href="javascript:;">了解详情>></a></div>
-                            </div>
+                                <div class="tm_modal_list-middle add-btn btn_edit_subtask" data-sbid="@item.Id">@Html.Encode(item.TaskTitle)</div>
+                                <div class="tm_modal_list-right"><a href="javascript:;" class="btn_link_subtask" data-stid="@item.Id">了解详情>></a></div>
+                         </div>
                         <div class="tm_modal_list-footer hidden add-subtask-write"></div>
                     </li>
                 }
@@ -25,7 +33,7 @@
                         <i class="fa fa-plus-circle  color-blue icon-size" aria-hidden="true"></i>
                     </span>
                 </div>
-                <div class="tm_modal_list-middle add-btn" data-sbid="">添加子任务</div>
+                <div class="tm_modal_list-middle add-btn btn_add_subtask" data-sbid="">添加子任务</div>
                 <div class="tm_modal_list-right"></div>
             </div>
             <div class="tm_modal_list-footer hidden add-subtask-write"></div>
@@ -35,18 +43,46 @@
 
 <script>
     //内置子任务弹出处理
-    $(".add-btn").on("click", function (event) {
+    $("#subtask_modal_list").on("click", ".btn_add_subtask", function (event) {
         var that = $(this);
         if (that.parent().parent().find(".add-subtask-write").html() == "") {
             $(".add-subtask-write").html("").addClass("hidden");
             $.ajax({
                 url: "/TaskManagement/GetSubtaskForm",
                 data: {
-                    AssignmentId: $(".modal-header").attr("data-aid"),
+                    AssignmentId: $("#modal-header-assignment").attr("data-aid"),
+                },
+                success: function (data) {
+                    that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
+                },
+                error:function(data){
+                    ErrorAlert("操作失败");
+            }
+
+            })
+        }
+        if (that.parent().parent().find(".add-subtask-write").hasClass("hidden")) {
+            that.parent().parent().find(".add-subtask-write").removeClass("hidden")
+        } else {
+            that.parent().parent().find(".add-subtask-write").addClass("hidden")
+        }
+    });
+    //已填充
+    $("#subtask_modal_list").on("click",".btn_edit_subtask", function (event) {
+        var that = $(this);
+        if (that.parent().parent().find(".add-subtask-write").html() == "") {
+            $(".add-subtask-write").html("").addClass("hidden");
+            $.ajax({
+                url: "/TaskManagement/GetSubtaskFilledForm",
+                data: {
+                    AssignmentId: $("#modal-header-assignment").attr("data-aid"),
                     SubtaskId: that.attr("data-sbid")
                 },
                 success: function (data) {
                     that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
+                },
+                error: function (data) {
+                    ErrorAlert("操作失败");
                 }
 
             })
@@ -57,5 +93,42 @@
             that.parent().parent().find(".add-subtask-write").addClass("hidden")
         }
     });
+    //子任务了解详情
+    $("#subtask_modal_list").on("click", ".btn_link_subtask", function (event) {
+        $.ajax({
+            url: "/TaskManagement/Subtask_Detail",
+            data: {
+                SubtaskId: $(this).attr("data-stid")
+            },
+            success: function (data) {
+                $("#Edit-Assignment .modal-content").html(data);
+            }
+        })          
+    });
+    //完成
+    $("#subtask_modal_list").on("click", ".subtask_comfirm_finish", function (event) {
+        var stid = $(this).parent().parent().find(".btn_link_subtask").attr("data-stid");
+        $.ajax({
+            url: "/TaskManagement/ComfirmFinishSubtask",
+            type: "post",
+            data: {
+                SubtaskId: stid,
+            },
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+                        $("#modal_subtask_area").html(data);
+                    });
+                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                } else {
+                    ErrorAlert(data.result)
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败")
+            }
+        });
+    });
+
 </script>
 

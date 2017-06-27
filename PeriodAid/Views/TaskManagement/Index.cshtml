@@ -3,6 +3,7 @@
     ViewBag.Title = "Task_Management_Home";
     Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
 }
+<!--Subject Area-->
 <div id="app-content">
     <div class="wrapper">
         <div class="container" id="subject-container">
@@ -15,62 +16,37 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
-<div class="modal fade" id="Add-Subject" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">新建项目</h4>
-            </div>
-            <div class="modal-body">
-                @using (Html.BeginForm("CreateSubject", "TaskManagement", FormMethod.Post, new { @id = "add_subject_form", @class = "validate-form" }))
-                {
-                    @Html.AntiForgeryToken()
-                    @Html.ValidationSummary()
-                    <div class="form-group">
-                        <input class="subject-name form-control" placeholder="项目名称" name="SubjectTitle">
-                    </div>
-                    <div class="form-group">
-                        <textarea class="subject-description form-control" placeholder="项目简介（选填）" name="Remarks"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="btn_add_subject">新建</button>
-                    </div>
-                }
+<!--Subject Area End-->
 
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Edit Modal -->
+<!-- Edit Subject Modal -->
 <div class="modal fade" id="Edit-Subject" role="dialog" aria-labelledby="editModalLabel" style="overflow-y:auto">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="Edit-Subject-Content">
-            
-
-            </div>
         </div>
     </div>
 </div>
+<!-- Edit Subject Modal End-->
 
 @section scripts{
 
     <script>
+        //Ajax获取各类型项目
         GetStarSubject("#personal_star_subject")
         GetActiveSubject("#personal_active_subject")
         GetFinishSubject("#personal_finish_subject")
+
         //项目详细点击
         $(function () {
+            //进入项目详情
             $("#subject-container").on("click", ".card-item", function () {
                 var linkid = $(this).attr("data-link")
                 if (linkid) {
                     location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
                 }
             });
-            //星标占位
-            $("#subject-container").on("click", ".card-header-right", function () {
-                //ErrorAlert("功能正在开发中.....")
+
+            //修改卡片即项目信息
+            $("#subject-container").on("click", ".card-edit-btn", function () {
                 $.ajax({
                     url: "/TaskManagement/EditSubject",
                     data: {
