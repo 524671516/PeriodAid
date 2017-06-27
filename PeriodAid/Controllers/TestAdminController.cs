@@ -350,6 +350,76 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
         }
 
+        /*public JsonResult TestResult()
+        {
+            var list = from m in offlineDB.TestPossible
+                       select m;
+            var singleDate = new DateTime(2017, 5, 28);
+            var item = list.SingleOrDefault(m => m.Date == singleDate);
+            //double[] predictvalues = new double[9];
+
+            DateTime vardate31 = singleDate.AddDays(-31);
+            DateTime vardate11 = singleDate.AddDays(-11);
+            DateTime vardate10 = singleDate.AddDays(-10);
+            DateTime vardate9 = singleDate.AddDays(-9);
+            DateTime vardate8 = singleDate.AddDays(-8);
+            DateTime vardate7 = singleDate.AddDays(-7);
+
+            DateTime vardate6 = singleDate.AddDays(-6);
+            DateTime vardate5 = singleDate.AddDays(-5);
+            DateTime vardate4 = singleDate.AddDays(-4);
+
+            DateTime vardate3 = singleDate.AddDays(-3);
+            DateTime vardate2 = singleDate.AddDays(-2);
+
+            double bestabs = 1;
+            int[] bestpredict = new int[5];
+
+            int count=0;
+            for (int i = 10; i < 80; i += 5)
+            {
+                for (int j = 10; j < 80; j += 5)
+                {
+                    for (int k = 10; k < 80; k += 5)
+                    {
+                        for (int l = 10; l < 80; l += 5)
+                        {
+                            for (int n = 10; n < 80; n += 5)
+                            {
+                                int[] predictvalues = new int[5] { i, j, k, l, n };
+                                var sum = (int)((list.Where(m => m.Date >= vardate31 && m.Date < vardate11).Sum(m => m.P1) * 0.95 +
+                                    list.Where(m => m.Date >= vardate11 && m.Date < vardate9).Sum(m => m.P1) * predictvalues[0] +
+                                    list.Where(m => m.Date >= vardate9 && m.Date < vardate7).Sum(m => m.P1) * predictvalues[1] +
+                                    list.Where(m => m.Date >= vardate7 && m.Date < vardate5).Sum(m => m.P1) * predictvalues[2] +
+                                    list.Where(m => m.Date >= vardate5 && m.Date < vardate3).Sum(m => m.P1) * predictvalues[3] +
+                                    list.Where(m => m.Date >= vardate3 && m.Date < vardate2).Sum(m => m.P1) * predictvalues[4])/100);
+                                var abs = Math.Abs(sum - item.R1??0);
+                                if (abs < bestabs)
+                                {
+                                    bestabs = abs;
+                                    bestpredict = predictvalues;
+                                }
+
+                            }
+                        }
+                        //p.Add(predictvalues);
+                    }
+                }
+            }
+            /var sum = (int)(list.Where(m => m.Date >= vardate31 && m.Date < vardate11).Sum(m => m.P1) * 0.95 +
+                list.Where(m => m.Date >= vardate11 && m.Date < vardate10).Sum(m => m.P1) * predictvalues[0] +
+                list.Where(m => m.Date >= vardate10 && m.Date < vardate9).Sum(m => m.P1) * predictvalues[1] +
+                list.Where(m => m.Date >= vardate9 && m.Date < vardate8).Sum(m => m.P1) * predictvalues[2] +
+                list.Where(m => m.Date >= vardate8 && m.Date < vardate7).Sum(m => m.P1) * predictvalues[3] +
+                list.Where(m => m.Date >= vardate7 && m.Date < vardate6).Sum(m => m.P1) * predictvalues[4] +
+                list.Where(m => m.Date >= vardate6 && m.Date < vardate5).Sum(m => m.P1) * predictvalues[5] +
+                list.Where(m => m.Date >= vardate5 && m.Date < vardate4).Sum(m => m.P1) * predictvalues[6] +=0.1
+                list.Where(m => m.Date >= vardate4 && m.Date < vardate3).Sum(m => m.P1) * predictvalues[7] +
+                list.Where(m => m.Date >= vardate3 && m.Date < vardate2).Sum(m => m.P1) * predictvalues[8]);
+                
+            return Json(new { Abs = bestabs, Predict = bestpredict }, JsonRequestBehavior.AllowGet);
+        }*/
+
         
     }
 }

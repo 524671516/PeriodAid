@@ -101,6 +101,8 @@
         public DateTime SignupDate { get; set; } //注册日期
 
         public DateTime LastLoginDate { get; set; } // 上次登陆时间
+        [StringLength(128)]
+        public string ImgUrl { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Subject> Subject { get; set; } // 所有拥有的项目
@@ -164,7 +166,9 @@
         public virtual ICollection<Subject> Subject { get; set; }
 
         [Required, StringLength(32)]
-        public string Title { get; set; }
+        public string Title { get; set; } // 模板标题
+
+        public bool Default { get; set; } // 默认模板 默认值为False
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procedure> Procedure { get; set; }

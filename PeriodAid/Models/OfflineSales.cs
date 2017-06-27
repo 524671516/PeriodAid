@@ -60,7 +60,6 @@ namespace PeriodAid.Models
         public virtual DbSet<Off_StoreSystem> Off_StoreSystem { get; set; }
         public virtual DbSet<Off_SalesEvent> Off_SalesEvent { get; set; }
 
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TestType>()
