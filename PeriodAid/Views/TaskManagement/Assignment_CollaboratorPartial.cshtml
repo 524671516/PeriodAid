@@ -1,0 +1,27 @@
+﻿@model PeriodAid.Models.Assignment
+<div class="col-md-12 margin-bottom-10">
+    <div class="tm_modal_list">
+        <div class="tm_modal_list-header clear-float">
+            <div class="tm_modal_list-left">参与人</div>
+        </div>
+        <div class="tm_modal_body">
+            <ul class="participator_area clear-float" id="modal_collaborator_area">
+                <li title="@Model.Holder.NickName"><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+               @foreach (var col in Model.Collaborator)
+               {
+                <li title="@col.NickName"><div style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="user_circle"></div></li>
+               }
+                <li title="删减参与人"><a href="javascript:;"  class="create_user_circle user_circle" id="create_user_circle"  data-aid="@Model.Id"><i class="fa fa-plus ver_icon" aria-hidden="true"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    //添加参与者弹窗
+    $("#create_user_circle").on("click", function () {
+        GetAssignmnet_CollaboratorAddPartial($(this).attr("data-aid"), function (data) {
+            $("#Add-Collaborator .modal-content").html(data);
+            $('#Add-Collaborator').modal('show');
+        })
+    });
+</script>
