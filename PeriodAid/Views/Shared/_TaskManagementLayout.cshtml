@@ -68,14 +68,16 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height:30px;width:30px;background-color:red;"><strong style="height:30px;width:30px;background-color:red;"></strong></a>
-                            <ul class="dropdown-menu" id="dropdown-menu-my">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                            </ul>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height:50px;">
+                                <span style="background-image: url('http://wx.qlogo.cn/mmopen/ML1PmFUP4segicxxsgpmHBSK0Y5TYF1ZVBuvQaPpME2EETH4g8sq33aXItl9q4ZrmQzoib7IvVShKyyoo6l61OcDtGHj0zzCJ5/0');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                            </a>
+                            <div class="dropdown-menu tm_dropdown">
+                                <ul class="tm_dropdown_list">                           
+                                        <li><a href="/TaskManagement/PersonalSetting"><span class="color-blue">设置个人信息</span></a></li>
+                                    <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:;"><span class="color-red">退出账号</span></a></li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
@@ -121,6 +123,7 @@
     <script src="~/Scripts/jquery.form.min.js"></script>
     <script src="~/Scripts/ajaxfileupload.js"></script>
     <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/Sortable.min.js"></script>
     <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
     <script src="~/Scripts/TaskManagement.js"></script>
     @RenderSection("scripts", required: false)

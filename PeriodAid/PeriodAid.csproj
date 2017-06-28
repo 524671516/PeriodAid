@@ -251,6 +251,7 @@
     <Compile Include="Models\PeriodAidViewModels.cs" />
     <Compile Include="Models\PressConference.cs" />
     <Compile Include="Models\ProjectSchemeModels.cs" />
+    <Compile Include="Models\ProjectViewModels.cs" />
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
@@ -272,6 +273,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\corppermain.css" />
+    <Content Include="Content\cropper.min.css" />
     <Content Include="Content\CustomSite.css" />
     <Content Include="Content\dialog\error.png" />
     <Content Include="Content\dialog\info.png" />
@@ -437,6 +440,8 @@
     <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
     <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
     <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\cropper.min.js" />
+    <Content Include="Scripts\croppermain.js" />
     <Content Include="Scripts\framework7.js" />
     <Content Include="Scripts\framework7.min.js" />
     <Content Include="Scripts\html5.js" />
@@ -499,7 +504,10 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\seller.min.js" />
     <Content Include="Scripts\Seller.js" />
+    <Content Include="Scripts\Sortable.js" />
+    <Content Include="Scripts\Sortable.min.js" />
     <Content Include="Scripts\TaskManagement.js" />
+    <Content Include="Scripts\validate.expand.js" />
     <Content Include="Scripts\zepto.min.js" />
     <None Include="Scripts\_references.js" />
     <Content Include="Views\favicon.ico" />
@@ -1032,6 +1040,7 @@
     <Content Include="Views\TaskManagement\GetSubtaskFilledForm.cshtml" />
     <Content Include="Views\TaskManagement\Subtask_Detail.cshtml" />
     <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

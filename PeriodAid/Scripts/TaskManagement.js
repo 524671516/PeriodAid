@@ -48,6 +48,7 @@ function GetProcedure(ProcedureId, SubjectId, container) {
         success: function (data) {
             container.html(data)
             GetAssignment(ProcedureId, SubjectId, container.find(".tm_pannel-body"));
+   
         },
         error: function () {
             ErrorAlert("操作失败")
@@ -63,6 +64,7 @@ function GetAssignmentForm(ProcedureId, SubjectId, container) {
         },
         success: function (data) {
             container.html(data)
+
         },
         error: function () {
             ErrorAlert("操作失败")
@@ -93,8 +95,18 @@ function GetAssignment(ProcedureId, SubJectId, container) {
             ProcedureId: ProcedureId,
             SubJectId: SubJectId
         },
-        success: function (data) {
+        success: function (data) {           
             container.html(data)
+            var byId = function (id) { return document.getElementById(id); };
+            [].forEach.call(byId('tm_pannel-container').getElementsByClassName('tm_list-show'), function (el) {
+                Sortable.create(el, {
+                    group: 'item',
+                    animation: 150,
+                    onMove: function (evt, originalEvent) {
+                        
+                    },                  
+                });
+            });
         },
         error: function () {
             ErrorAlert("操作失败")
@@ -269,3 +281,24 @@ function CompleteTimeWidget(cotainer) {
         todayHighlighttodayHighlight: true,
     });
 }
+function GetElementsByClass(className) {
+            var elements;
+
+            if (document.getElementsByClassName) {
+                elements = document.getElementsByClassName(className);
+            }
+            else {
+                var elArray = [];
+                var tmp = document.getElementsByTagName(elements);
+                var regex = new RegExp("(^|\\s)" + className + "(\\s|$)");
+                for (var i = 0; i < tmp.length; i++) {
+
+                    if (regex.test(tmp[i].className)) {
+                        elArray.push(tmp[i]);
+                    }
+                }
+
+                elements = elArray;
+            }
+            return elements
+        }

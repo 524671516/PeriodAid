@@ -51,7 +51,7 @@
 
 <!--Procedure Content-->
 <div class="tm_pannel-wrap" id="pannel-wrap" data-sid="@Model.Id">
-    <div class="tm_pannel-container">
+    <div class="tm_pannel-container" id="tm_pannel-container">
         @foreach (var procedure in Model.ProcedureTemplate.Procedure)
         {
         <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
@@ -112,8 +112,15 @@
         $(".ajax-procedure").each(function () {
             var ProcedureId = $(this).attr("data-procedureid");
             var that = $(this);
-            GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that)
+            GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that);
+            
         });
+        var al = document.getElementById('tm_pannel-container');
+        var sortable = new Sortable(al, {
+            animation: 150,
+            handle: ".tm_pannel-header",
+        });
+        console.log(2);
         //任务添加窗口
         $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
             $(".btn-get-assignmentform").removeClass("hidden");

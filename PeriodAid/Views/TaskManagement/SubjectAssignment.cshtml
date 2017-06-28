@@ -1,7 +1,7 @@
 ﻿@using PeriodAid.Models
 @model IEnumerable<PeriodAid.Models.Assignment>
 <div class="tm_list-container">
-    <ul class="tm_list-show">
+    <ul class="tm_list-show" style="padding:2px 0">
 
         @foreach (var item in Model)
         {
@@ -58,3 +58,15 @@
         </div>
     </div>
     </div>
+@section scripts{
+<script>
+    var byId = function (id) { return document.getElementById(id); };
+    [].forEach.call(byId('tm_pannel-container').getElementsByClassName('tm_list-show'), function (el) {
+        Sortable.create(el, {
+            group: 'photo',
+            animation: 150
+        });
+    });
+</script>
+}
+

@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using PeriodAid.DAL;
+using Newtonsoft.Json;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace PeriodAid.Controllers
 {
@@ -71,7 +76,6 @@ namespace PeriodAid.Controllers
         // GET: TaskManagement
         public ActionResult Index()
         {
-            var a = User.Identity.Name;
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
             {
@@ -80,6 +84,51 @@ namespace PeriodAid.Controllers
             else
             {
                 return View();
+            }
+        }
+
+
+        public ActionResult PersonalSetting()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                return View(employee);
+            }
+        }
+
+        [HttpPost,ValidateAntiForgeryToken]
+        public JsonResult EditPersonalInfo(Employee model)
+        {
+            if (ModelState.IsValid)
+            {
+                Employee item = new Employee();
+                if (TryUpdateModel(item))
+                {
+                    try
+                    {
+                        _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { result = "数据存储失败。" });
+                    }
+                    return Json(new { result = "SUCCESS"});
+
+                }
+                else
+                {
+                    return Json(new { result = "模型同步错误。" });
+                }
+            }
+            else
+            {
+                return Json(new { result = "模型错误。" });
             }
         }
         #region  创建项目
@@ -940,6 +989,44 @@ namespace PeriodAid.Controllers
             return user;
         }
 
+
+        [HttpPost]
+
+        public JsonResult UploadSubjectCutFileAjax(FormCollection form)
+        {
+            var files = Request.Files;
+            string msg = string.Empty;
+            string error = string.Empty;
+            string imgurl;
+
+            if (files.Count > 0)
+            {
+                if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
+                {
+                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+
+                    Stream stream = files[0].InputStream;                
+                   HttpPostedFileBase NeedByteFile = files[0];   //需要转换的文件
+                   var ByteArray = SetFileToByteArray(NeedByteFile);   //转换
+                   var jsonimgsize = JsonConvert.DeserializeObject<CutImgModel>(form["avatar_data"]);  //获取截图参数                      
+                    string strtExtension = Path.GetExtension(files[0].FileName);//图片格式
+                    MemoryStream ms1 = new MemoryStream(ByteArray);
+                    Bitmap sBitmap = (Bitmap)Image.FromStream(ms1);
+                    Rectangle section = new Rectangle(new Point(jsonimgsize.ToInt(jsonimgsize.x), jsonimgsize.ToInt(jsonimgsize.y)), new Size(jsonimgsize.ToInt(jsonimgsize.width), jsonimgsize.ToInt(jsonimgsize.height)));
+                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, section.Width, section.Height, section.Width, section.Height, section.X, section.Y,jsonimgsize.rotate);
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(BitmapByte(CroppedImage), "Subject/SubjectCover/" + filename);
+                    imgurl = filename;                  
+                    return Json(new { result = "SUCCESS",imgurl= "Subject/SubjectCover/"+ imgurl });
+                }
+                else
+                {
+                    error = "文件错误";
+                    return Json(new { result = error });
+                }
+            }
+            return Json(new { result = "FAIL"});
+        }
         [HttpPost]
         public ActionResult UploadSubjectCoverFileAjax(FormCollection form)
         {
@@ -947,11 +1034,13 @@ namespace PeriodAid.Controllers
             string msg = string.Empty;
             string error = string.Empty;
             string imgurl;
+            
             if (files.Count > 0)
             {
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
-                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";                                     
+                    Stream stream = files[0].InputStream;                   
                     //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutObject(files[0].InputStream, "Subject/SubjectCover/" + filename);
@@ -969,5 +1058,102 @@ namespace PeriodAid.Controllers
             return Content(err_res);
         }
 
+
+
+
+        //旋转图片
+        public static Bitmap KiRotate(Image originalImage, float angle)
+        {
+            int w = originalImage.Width + 2;
+            int h = originalImage.Height + 2;         
+            Bitmap tmp = new Bitmap(w, h);
+            Graphics g = Graphics.FromImage(tmp);
+            g.DrawImageUnscaled(originalImage, 1, 1);
+            g.Dispose();
+
+            GraphicsPath path = new GraphicsPath();
+            path.AddRectangle(new RectangleF(0f, 0f, w, h));
+            Matrix mtrx = new Matrix();
+            mtrx.Rotate(angle);
+            RectangleF rct = path.GetBounds(mtrx);
+
+            Bitmap dst = new Bitmap((int)rct.Width, (int)rct.Height);
+            g = Graphics.FromImage(dst);
+            g.TranslateTransform(-rct.X, -rct.Y);
+            g.RotateTransform(angle);
+            g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+            g.DrawImageUnscaled(tmp, 0, 0);
+            g.Dispose();
+
+            tmp.Dispose();
+
+            return dst;
+        }
+        //bitmap转byte[] 
+        public static byte[] BitmapByte(Bitmap bitmap)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                bitmap.Save(stream, ImageFormat.Jpeg);
+                byte[] data = new byte[stream.Length];
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(data, 0, Convert.ToInt32(stream.Length));
+                return data;
+            }
+        }
+
+
+        /// <summary>
+        /// 将From表单file文件转化为byte数组
+        /// </summary>
+        /// <param name="File">from提交文件流</param>
+        /// <returns></returns>
+        private byte[] SetFileToByteArray(HttpPostedFileBase File)
+        {
+            Stream stream = File.InputStream;
+            byte[] ArrayByte = new byte[File.ContentLength];
+            stream.Read(ArrayByte, 0, File.ContentLength);
+            stream.Close();
+            return ArrayByte;
+        }
+
+        /// <summary>
+        /// 裁剪图片并保存
+        /// </summary>
+        /// <param name="Image">图片信息</param>
+        /// <param name="maxWidth">缩略图宽度</param>
+        /// <param name="maxHeight">缩略图高度</param>
+        /// <param name="cropWidth">裁剪宽度</param>
+        /// <param name="cropHeight">裁剪高度</param>
+        /// <param name="X">X轴</param>
+        /// <param name="Y">Y轴</param>
+        public static Bitmap MakeThumbnailImage(Image originalImage, int maxWidth, int maxHeight, int cropWidth, int cropHeight, int X, int Y,float angle)
+        {
+            Bitmap _b = new Bitmap(cropWidth, cropHeight);
+            var b = KiRotate(originalImage, angle);
+            try
+            {
+                using (Graphics g = Graphics.FromImage(_b))
+                {
+                    //清空画布并以透明背景色填充
+                    g.Clear(Color.Transparent);
+                    //在指定位置并且按指定大小绘制原图片的指定部分
+                    g.DrawImage(b, new Rectangle(0, 0, cropWidth, cropHeight), X, Y, cropWidth, cropHeight, GraphicsUnit.Pixel);
+                    Image displayImage = new Bitmap(_b, maxWidth, maxHeight);
+                    Bitmap bit = new Bitmap(_b, maxWidth, maxHeight);                    
+                    return bit;
+                }
+            }
+            catch (System.Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                originalImage.Dispose();
+                b.Dispose();
+            }
+        }
     }
+
 }
