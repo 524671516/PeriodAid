@@ -289,6 +289,7 @@
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\banner_mobile_1.jpg" />
     <Content Include="Content\images\cover-default.jpg" />
+    <Content Include="Content\images\defaultphoto.gif" />
     <Content Include="Content\images\img_1.jpg" />
     <Content Include="Content\images\benefits_flow_01.png" />
     <Content Include="Content\images\benefits_flow_02.png" />
@@ -1041,6 +1042,7 @@
     <Content Include="Views\TaskManagement\Subtask_Detail.cshtml" />
     <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
+    <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

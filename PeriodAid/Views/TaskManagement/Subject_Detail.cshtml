@@ -1,5 +1,7 @@
 ﻿@model PeriodAid.Models.Subject
+@using PeriodAid.Models;
 @{
+    ViewBag.ImgUrl = @ViewBag.img;
     ViewBag.Title = "Task_Detail";
     Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
 }
@@ -41,7 +43,7 @@
             <ul class="nav navbar-nav navbar-right navbar-border">
                 <li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" id="menu-btn"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
+                    <a href="#" class="dropdown-toggle" id="btn_show_subject_pannel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
                 </li>
             </ul>
         </div><!-- /.navbar-collapse -->
@@ -52,7 +54,7 @@
 <!--Procedure Content-->
 <div class="tm_pannel-wrap" id="pannel-wrap" data-sid="@Model.Id">
     <div class="tm_pannel-container" id="tm_pannel-container">
-        @foreach (var procedure in Model.ProcedureTemplate.Procedure)
+        @foreach (var procedure in ViewBag.sortprocedure)
         {
         <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
         </div>
@@ -65,7 +67,6 @@
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary()
                 @Html.HiddenFor(m=>m.TemplateId)
-                <input type="text" class="form-control hidden" id="Sort" name="Sort">
                 <div class="form-group">
                     <input type="text" class="form-control" id="ProcedureTitle" placeholder="标题" name="ProcedureTitle">
                 </div>
@@ -106,8 +107,14 @@
     </div>
 </div>
 <!-- Modal Edit-Assignment End-->
+<div class="tm_subject_pannel">
+    sasassdfffs
+</div>
 @section scripts{
     <script>
+        $("#btn_show_subject_pannel").on("click", function () {
+            $("#my-app").addClass("tm_subject_active")
+        })
         //加载procedure
         $(".ajax-procedure").each(function () {
             var ProcedureId = $(this).attr("data-procedureid");
@@ -119,8 +126,42 @@
         var sortable = new Sortable(al, {
             animation: 150,
             handle: ".tm_pannel-header",
+            filter: ".tm_pannel-item-add",
+            dragClass: "sortable-drag",
+            ghostClass: "sortable-ghost",
+            preventOnFilter: true,
+            scrollSpeed: 10,
+            onEnd: function (evt) {
+                var sortobject = [];
+                $(".ajax-procedure").each(function (index) {
+                    var obj = new Object();
+                    obj.procedureid = parseInt($(this).attr("data-procedureid"));
+                    obj.sort = index;
+                    sortobject.push(obj)
+                });
+                var json = {};
+                for (var i = 0; i < sortobject.length; i++) {
+                    json[i] = sortobject[i];
+                }
+                $.ajax({
+                    url: "/TaskManagement/SortProcedure",
+                    type:"post",
+                    data: {
+                        ProcedureJson: JSON.stringify(sortobject)
+                    },
+                    success: function (data) {
+                        if (data == "SUCCESS") {
+                        } else {
+                            ErrorAlert(data)
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("操作失败。")
+                    }
+                })
+            },
+
         });
-        console.log(2);
         //任务添加窗口
         $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
@@ -137,6 +178,24 @@
         $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
             ComfirmFinishAssignment($(this).parent().parent().find(".tm_item_right").attr("data-aid"), function (data) {
                 GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                $.ajax({
+                    url: "/TaskManagement/GetProcedureJsonInfo",
+                    type: "post",
+                    data: {
+                        SubjectId: $("#pannel-wrap").attr("data-sid")
+                    },
+                    success: function (data) {
+                        var len = data.result.length;
+                        $(".ajax-procedure").each(function () {
+                            for (i = 0; i < len; i++) {
+                                if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {                                  
+                                    $(this).find(".total-num").html(data.result[i].TotalNum)
+                                    $(this).find(".num").html(data.result[i].FinishNum)
+                                }
+                            }
+                        })
+                    }
+                })
             })
             return false;
         });
@@ -153,7 +212,7 @@
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
-                        $("#tm_pannel-item-add").before("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                        $(".ajax-procedure:last").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
                         GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));                       
                         UnimportantAlert("添加过程成功");
                         controlHidden();
@@ -172,7 +231,6 @@
         //新增过程
         $("#create-procedure-pannel").on("click", function () {
             if (!$(this).hasClass("disabled")) {
-                $("#Sort").val(parseInt($(".ajax-procedure").length + 1))
                 $(this).addClass("disabled")
                 $("#add_procedure_form").submit();
             }

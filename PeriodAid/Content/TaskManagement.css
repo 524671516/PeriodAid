@@ -55,17 +55,21 @@ body,html{
 
 
 /*工具样式*/
-.sortable-ghost {
-  opacity: 1;
-  background: red;
+.sortable-ghost div{
+    visibility:hidden;
 }
-.sortable-chosen{
-    opacity:1;
-      background: red;
+.sortable-ghost {
+  border:none!important;
+  font-size:0;
+  opacity:0.8 !important;
+  content:none!important;
+  background-color:#ccc!important;
 }
 .sortable-drag{
-    opacity:1;
-      background: red;
+    cursor: -webkit-grabbing;
+    cursor:move !important;
+    border:2px solid;
+    opacity:1 !important;
 }
 .tm_img-circle{
     border-radius: 50%
@@ -81,6 +85,13 @@ body,html{
     position: relative;
     width: 28px;
     height: 28px;
+}
+.tm_item-avatar {
+    margin-top:-1px;
+    display: inline-block;
+    position: relative;
+    width: 26px;
+    height: 26px;
 }
 .tm_back{
     -webkit-appearance: none;
@@ -436,6 +447,7 @@ a.close{
 }
 .tm_pannel-header:hover{
     cursor:move;
+    cursor: -webkit-grabbing;
 }
 .tm_pannel-body{
     position:absolute;
@@ -466,10 +478,10 @@ a.close{
     overflow:auto;
 }
 .tm_list-show .tm_list-item:hover{
-    opacity:0.4;
+    opacity:0.8;
 }
 .tm_list-container .tm_list-item.tm_list-finish{
-    opacity:0.4;
+    opacity:0.6;
 }
 .tm_list-item.tm_list-add{
     margin-top:0;
@@ -640,6 +652,30 @@ a.btn_subtask_detail{
 .modal-dropdown button{
     background-color:inherit;
     border:none;
+}
+
+/*侧边栏*/
+.tm_subject_pannel{
+    position: fixed;
+    width: 350px;
+    top: 103px;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background-color: #F7F7F7;
+    overflow: hidden;
+    box-shadow: -3px 0 3px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    -webkit-transform: translate3d(360px, 0px, 0px);
+    transform: translate3d(360px, 0px, 0px);
+    transition: 0.25s cubic-bezier(0, 1, 0.39, 1);
+}
+.tm_subject_active .tm_subject_pannel{
+  opacity: 1;
+  -webkit-transform: translate3d(0px, 0px, 0px);
+          transform: translate3d(0px, 0px, 0px);
+  transition: 0.25s cubic-bezier(0, 1, 0.39, 1);
+  overflow: initial;
 }
 
 

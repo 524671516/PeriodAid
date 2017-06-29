@@ -44,6 +44,25 @@
                 if (data.result == "SUCCESS") {
                     UnimportantAlert("任务创建成功。");
                     GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_pannel-body"));
+                    $.ajax({
+                        url: "/TaskManagement/GetProcedureJsonInfo",
+                        type: "post",
+                        data: {
+                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                        },
+                        success: function (data) {
+                            var len = data.result.length;
+                            $(".ajax-procedure").each(function () {
+                                for (i = 0; i < len; i++) {
+                                    if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                        console.log($(this))
+                                        $(this).find(".total-num").html(data.result[i].TotalNum)
+                                        $(this).find(".num").html(data.result[i].FinishNum)
+                                    }
+                                }
+                            })
+                        }
+                    })
                 } else {
                     ErrorAlert(data.result);
                     $("#create-assignment").removeClass("disabled");

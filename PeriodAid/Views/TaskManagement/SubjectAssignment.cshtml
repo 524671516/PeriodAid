@@ -7,13 +7,22 @@
         {
             if (item.Status == AssignmentStatus.FINISHED)
             {
-                <li class="tm_list-item tm_list-finish tm_pop_assmodal" style="border-color:#259B24">
+                <li class="tm_list-item tm_list-finish tm_pop_assmodal" style="border-color:#259B24" data-aid="@item.Id">
                     <div class="tm_list-item_top clear-float">
                         <div class="tm_item_left">
                             <input type="checkbox" class="assignment_comfirm_finish" checked="checked" />
                             &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
                         </div>
-                        <div class="tm_item_right" data-aid="@item.Id">&nbsp;</div>
+                        <div class="tm_item_right" data-aid="@item.Id">
+                            @if (item.Holder.ImgUrl == null)
+                            {
+                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
+                            else
+                            {
+                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
+                        </div>
                     </div>
                     @if (item.SubTask.Count() != 0)
                     {
@@ -28,13 +37,22 @@
             }
             else if (item.Status == AssignmentStatus.UNFINISHED)
             {
-                <li class="tm_list-item tm_pop_assmodal" style="border-color:#3da8f5">
+                <li class="tm_list-item tm_pop_assmodal" style="border-color:#3da8f5" data-aid="@item.Id">
                     <div class="tm_list-item_top clear-float">
                         <div class="tm_item_left">
                             <input type="checkbox" class="assignment_comfirm_finish"/>
                             &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
                         </div>
-                        <div class="tm_item_right" data-aid="@item.Id">&nbsp;</div>
+                        <div class="tm_item_right" data-aid="@item.Id">                           
+                                @if (item.Holder.ImgUrl == null)
+                                {
+                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }
+                                else
+                                {
+                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }
+                        </div>
                     </div>
                     @if (item.SubTask.Count() != 0)
                     {
@@ -58,15 +76,5 @@
         </div>
     </div>
     </div>
-@section scripts{
-<script>
-    var byId = function (id) { return document.getElementById(id); };
-    [].forEach.call(byId('tm_pannel-container').getElementsByClassName('tm_list-show'), function (el) {
-        Sortable.create(el, {
-            group: 'photo',
-            animation: 150
-        });
-    });
-</script>
-}
+
 

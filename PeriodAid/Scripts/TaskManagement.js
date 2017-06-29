@@ -100,11 +100,57 @@ function GetAssignment(ProcedureId, SubJectId, container) {
             var byId = function (id) { return document.getElementById(id); };
             [].forEach.call(byId('tm_pannel-container').getElementsByClassName('tm_list-show'), function (el) {
                 Sortable.create(el, {
+                    filter: ".tm_list-add",
                     group: 'item',
+                    dragClass: "sortable-drag",
+                    ghostClass: "sortable-ghost",
                     animation: 150,
-                    onMove: function (evt, originalEvent) {
-                        
-                    },                  
+                    onEnd: function (evt) {
+                        if (!evt.item.dataset.aid) {
+                            ErrorAlert("操作失败")
+                        } else {
+                            if (!evt.item.offsetParent.offsetParent.dataset.procedureid) {
+                                ErrorAlert("操作失败")
+                            } else {
+                                $.ajax({
+                                    url:"/TaskManagement/DragAssignment",
+                                    type:"post",
+                                    data: {
+                                        aid: evt.item.dataset.aid,
+                                        nowpid: evt.item.offsetParent.offsetParent.dataset.procedureid
+                                    },
+                                    success: function (data) {
+                                        if (data != "SUCCESS") {
+                                            ErrorAlert("操作失败");
+                                        } else {
+                                            $.ajax({                                               
+                                                url: "/TaskManagement/GetProcedureJsonInfo",
+                                                type:"post",
+                                                data: {
+                                                    SubjectId: $("#pannel-wrap").attr("data-sid")
+                                                },
+                                                success: function (data) {
+                                                    var len = data.result.length;
+                                                    $(".ajax-procedure").each(function () {
+                                                        for (i = 0; i < len; i++) {
+                                                            if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                                                
+                                                                $(this).find(".total-num").html(data.result[i].TotalNum)
+                                                                $(this).find(".num").html(data.result[i].FinishNum)
+                                                            }
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    },
+                                    error: function (data) {
+                                        ErrorAlert("操作失败");
+                                    }
+                                })
+                            }
+                        }
+                    },
                 });
             });
         },

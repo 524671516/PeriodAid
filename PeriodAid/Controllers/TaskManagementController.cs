@@ -13,6 +13,8 @@ using System.Drawing;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace PeriodAid.Controllers
 {
@@ -62,9 +64,10 @@ namespace PeriodAid.Controllers
             return RedirectToAction("Index");
         }
         [AllowAnonymous]
-        public ActionResult TaskManagerLogin()
+        public ActionResult TaskManagerLogin(string returnUrl)
         {
-            return Content("");
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
         }
 
         [ValidateAntiForgeryToken, HttpPost]
@@ -79,11 +82,11 @@ namespace PeriodAid.Controllers
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
             {
-                return View("Error");
+                return RedirectToAction("TaskManagement", "TaskManagerLogin");
             }
             else
             {
-                return View();
+                return View(employee);
             }
         }
 
@@ -157,8 +160,7 @@ namespace PeriodAid.Controllers
                         var defaultTemplate = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);         
                         if (defaultTemplate==null)
                         {
-                            defaultTemplate= _db.ProcedureTemplate.SingleOrDefault(m => m.Id == 1);
-                            item.TemplateId = defaultTemplate.Id;
+                            defaultTemplate= _db.ProcedureTemplate.SingleOrDefault(m => m.Default==true);
                         }
                         ProcedureTemplate template = new ProcedureTemplate()
                         {
@@ -185,6 +187,7 @@ namespace PeriodAid.Controllers
                         {
                             return Content("项目模板建立失败。");
                         }
+                        item.TemplateId = template.Id;
                         item.CreateTime = DateTime.Now;
                         try
                         {
@@ -446,6 +449,11 @@ namespace PeriodAid.Controllers
         public ActionResult Subject_Detail(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            ViewBag.sortprocedure = from m in subject.ProcedureTemplate.Procedure
+                                    where m.Status == ProcedureStatus.NORMAL
+                                    orderby m.Sort ascending
+                                    select m;
+            ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
             return View(subject);
         }
         #endregion
@@ -521,6 +529,9 @@ namespace PeriodAid.Controllers
                 Procedure item = new Procedure();
                 if (TryUpdateModel(item))
                 {
+                    var template = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);
+                    var maxsort = template.Procedure.Max(m => m.Sort);
+                    item.Sort = maxsort + 1;
                     item.Status = ProcedureStatus.NORMAL;
                     try
                     {
@@ -965,6 +976,66 @@ namespace PeriodAid.Controllers
         }
 
 
+        [HttpPost]
+        public ActionResult SortProcedure(string ProcedureJson)
+        {
+            JArray ja = (JArray)JsonConvert.DeserializeObject(ProcedureJson);
+            foreach(var item in ja)
+            {
+                try
+                {
+                    var objdata = JsonConvert.DeserializeObject <SortProcedureModel>(item.ToString());
+                    var procedureid = Convert.ToInt32(objdata.procedureid);
+                    var procedure = _db.Procedure.SingleOrDefault(m => m.Id == procedureid);
+                    procedure.Sort = objdata.sort;
+                    _db.Entry(procedure).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return Content("FAIL");
+                }
+            }
+            return Content("SUCCESS");
+        }
+
+        [HttpPost]
+        public ActionResult DragAssignment(int aid,int nowpid)
+        {
+            try
+            {
+                var original = _db.Assignment.SingleOrDefault(m => m.Id == aid);
+                original.ProcedureId = nowpid;
+                _db.Entry(original).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return Content("FAIL");
+            }
+            return Content("SUCCESS");
+
+        }
+
+        [HttpPost]
+        public JsonResult GetProcedureJsonInfo(int SubjectId) {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            List<ProcedureJsonModel> plist = new List<ProcedureJsonModel>();
+            foreach (var item in subject.ProcedureTemplate.Procedure.Where(p=>p.Status==ProcedureStatus.NORMAL))
+            {
+                ProcedureJsonModel pinfo = new ProcedureJsonModel()
+                {
+                    ProcedureName = item.ProcedureTitle,
+                    ProcedureId = item.Id,
+                    FinishNum = item.Assignment.Count(m => m.Status == AssignmentStatus.FINISHED),
+                    TotalNum = item.Assignment.Count(m => m.Status>AssignmentStatus.DELETED)
+                };
+                plist.Add(pinfo);
+            }
+            return Json(new { result = plist });
+        }
+
+
 
 
 
@@ -1005,7 +1076,7 @@ namespace PeriodAid.Controllers
                 {
                     string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
 
-                    Stream stream = files[0].InputStream;                
+                   Stream stream = files[0].InputStream;                
                    HttpPostedFileBase NeedByteFile = files[0];   //需要转换的文件
                    var ByteArray = SetFileToByteArray(NeedByteFile);   //转换
                    var jsonimgsize = JsonConvert.DeserializeObject<CutImgModel>(form["avatar_data"]);  //获取截图参数                      

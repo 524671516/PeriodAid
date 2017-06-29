@@ -1,5 +1,7 @@
 ﻿@using PeriodAid.Models;
+@model PeriodAid.Models.Employee
 @{
+    ViewBag.ImgUrl=Model.ImgUrl;
     ViewBag.Title = "Task_Management_Home";
     Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
 }

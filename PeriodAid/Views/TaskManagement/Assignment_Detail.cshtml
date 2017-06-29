@@ -3,7 +3,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <a class="close dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" href="#">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="更多"></i></a>
     <h4 class="modal-title" id="Edit-AssignmentLabel">@Html.Encode(Model.AssignmentTitle)</h4>
-    <div class="dropdown-menu tm_dropdown tm_dropdown_width" id="tm_more_drop">
+    <div class="dropdown-menu tm_dropdown tm_dropdown_width">
         <ul>
             <li class="text-center"><strong class="color-blue">更多功能</strong></li>
             <li role="separator" class="divider"></li>
@@ -183,6 +183,25 @@
                     GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
                     UnimportantAlert("删除任务成功。")
                     $('#Edit-Assignment').modal('hide');
+                    $.ajax({
+                        url: "/TaskManagement/GetProcedureJsonInfo",
+                        type: "post",
+                        data: {
+                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                        },
+                        success: function (data) {
+                            var len = data.result.length;
+                            $(".ajax-procedure").each(function () {
+                                for (i = 0; i < len; i++) {
+                                    if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                        
+                                        $(this).find(".total-num").html(data.result[i].TotalNum)
+                                        $(this).find(".num").html(data.result[i].FinishNum)
+                                    }
+                                }
+                            })
+                        }
+                    })
                 } else {
                     UnimportantAlert(data.result)
                 }

@@ -3,10 +3,10 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <a class="close dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" href="#">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="更多"></i></a>
     <h4 class="modal-title" id="Edit-SubtaskLabel">
-        <a href="javascript:;" class="color-blue">@Html.Encode(Model.Assignment.AssignmentTitle)</a>
+        <a href="javascript:;" class="color-blue tm_parent_assignment" id="btn_get_parent" data-parent="@Model.AssignmentId">@Html.Encode(Model.Assignment.AssignmentTitle)</a>
     <span class="color-gray">/@Html.Encode(Model.TaskTitle)</span>
     </h4>
-    <div class="dropdown-menu tm_dropdown" id="tm_more_drop">
+    <div class="dropdown-menu tm_dropdown tm_dropdown_width">
         <ul>
             <li class="text-center"><strong class="color-blue">更多功能</strong></li>
             <li role="separator" class="divider"></li>
@@ -141,5 +141,13 @@
             });
         })
     });
+    $("#btn_get_parent").on("click", function () {
+        var aid = $(this).attr("data-parent");
+        if (aid) {
+            GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
+            });
+        }
+        
+    })
 </script>
 

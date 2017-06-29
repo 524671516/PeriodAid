@@ -21,4 +21,20 @@ namespace PeriodAid.Models
             return Convert.ToInt32(doubleValue);
         }
     }
+
+    //过程排序
+    public class SortProcedureModel
+    {
+        public string procedureid { get; set; }
+        public int sort { get; set; }
+    }
+
+    //SubjetJson数据
+    public class ProcedureJsonModel
+    {
+        public string ProcedureName { get; set; }
+        public int ProcedureId { get; set; }
+        public int FinishNum { get; set; }
+        public int TotalNum { get; set; }
+    }
 }
