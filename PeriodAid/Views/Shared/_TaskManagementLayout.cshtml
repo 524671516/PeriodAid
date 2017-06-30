@@ -31,7 +31,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/TaskManagement/Index"><strong class="color-blue">任务管理</strong></a>
+                    <a class="navbar-brand" href="/TaskManagement/Index"><strong class="color-blue">项目管理</strong></a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -39,23 +39,25 @@
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus-circle  color-blue icon-size" aria-hidden="true"></i></a>
-                            <ul class="dropdown-menu" id="dropdown-menu-plus">
-                                <li><a href="javascript:;" class="create_subject_target"><strong class="color-blue">新建项目</strong></a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="javascript:;">功能开发中</a></li>
-                                <li><a href="javascript:;">功能开发中</a></li>
-                                <li><a href="javascript:;">功能开发中</a></li>
-                            </ul>
+                            <div class="dropdown-menu tm_dropdown">
+                                <ul class="tm_dropdown_list">
+                                    <li><a href="javascript:;" class="create_subject_target"><span class="color-blue">新建项目</span></a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="javascript:;">功能开发中</a></li>
+                                    <li><a href="javascript:;">功能开发中</a></li>
+                                    <li><a href="javascript:;">功能开发中</a></li>
+                                </ul>
+                            </div>                        
                         </li>
                     </ul>
-                    <form class="navbar-form navbar-left">
+                    @*<form class="navbar-form navbar-left">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="搜索">
                         </div>
                         <button type="submit" class="btn btn-default">搜索</button>
-                    </form>
+                    </form>*@
                     <ul class="nav navbar-nav navbar-right navbar-border">
-                        <li><a href="javascript:;" id="task_my_btn"><strong>我的任务</strong></a></li>
+                        @*<li><a href="javascript:;" id="task_my_btn"><strong>我的任务</strong></a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><strong>设置</strong></a>
                             <ul class="dropdown-menu" id="dropdown-menu-my">
@@ -65,7 +67,7 @@
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#">Separated link</a></li>
                             </ul>
-                        </li>
+                        </li>*@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height:50px;">
                                 @if (ViewBag.ImgUrl == null)

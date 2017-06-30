@@ -37,11 +37,11 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
             <ul class="nav navbar-nav navbar-underline">
                 <li><a href="#" class="active">进度</a></li>
-                <li><a href="#">日程</a></li>
-                <li><a href="#">文件</a></li>
+                @*<li><a href="#">日程</a></li>
+                <li><a href="#">文件</a></li>*@
             </ul>
             <ul class="nav navbar-nav navbar-right navbar-border">
-                <li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>
+                @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" id="btn_show_subject_pannel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
                 </li>
@@ -212,7 +212,11 @@
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
+                        if($(".ajax-procedure").length==0){
+                            $(".tm_pannel-item-add").before("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                        }else{
                         $(".ajax-procedure:last").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                    }
                         GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));                       
                         UnimportantAlert("添加过程成功");
                         controlHidden();
