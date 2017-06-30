@@ -56,9 +56,9 @@ namespace PeriodAid.Controllers
             }
         }
         [AllowAnonymous]
-        public async Task<ActionResult> TestLogin()
+        public async Task<ActionResult> TestLogin(string tel)
         {
-            var user = UserManager.FindByName("13916209621");
+            var user = UserManager.FindByName(tel);
             //UserManager.Update(user);
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return RedirectToAction("Index");
@@ -399,11 +399,14 @@ namespace PeriodAid.Controllers
                 // 自己创建的项目
                 var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
                 // 自己的任务列表
-                var SubjectList = from m in employee.CollaborateAssignment
+                var SubjectList = (from m in employee.CollaborateAssignment
                                   where m.Status > AssignmentStatus.DELETED
-                                  select m.Subject;
-                var ActiveSubjectList = SubjectList.Where(m => m.Status == SubjectStatus.ACTIVE);
-                var MergeSubject = ownSubject.Union(ActiveSubjectList);
+                                  select m.Subject).Where(p=>p.Status==SubjectStatus.ACTIVE);
+                var HolderSubject = (from m in _db.Assignment
+                                 where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
+                                 select m.Subject).Where(p=>p.Status==SubjectStatus.ACTIVE);
+                var FirstMerge= ownSubject.Union(SubjectList);
+                var MergeSubject = FirstMerge.Union(HolderSubject);
                 return PartialView(MergeSubject);
 
             }
@@ -428,11 +431,14 @@ namespace PeriodAid.Controllers
                 // 自己创建的项目
                 var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ARCHIVED);
                 // 自己的任务列表
-                var SubjectList = from m in employee.CollaborateAssignment
+                var SubjectList = (from m in employee.CollaborateAssignment
                                   where m.Status > AssignmentStatus.DELETED
-                                  select m.Subject;
-                var FinsihSubjectList = SubjectList.Where(m => m.Status == SubjectStatus.ARCHIVED);
-                var MergeSubject = ownSubject.Union(FinsihSubjectList);
+                                  select m.Subject).Where(p=>p.Status==SubjectStatus.ARCHIVED);
+                var HolderSubject = (from m in _db.Assignment
+                                    where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
+                                    select m.Subject).Where(p=>p.Status==SubjectStatus.ARCHIVED);
+                var FirstMerge = ownSubject.Union(SubjectList);
+                var MergeSubject = FirstMerge.Union(HolderSubject);
 
                 return PartialView(MergeSubject);
 
@@ -612,6 +618,14 @@ namespace PeriodAid.Controllers
                     {
                         _db.Assignment.Add(item);
                         _db.SaveChanges();
+                        //var ass = _db.Assignment.SingleOrDefault(m => m.Id == item.Id && m.Status > AssignmentStatus.DELETED);
+                        //var employee = _db.Employee.SingleOrDefault(m => m.Id == item.HolderId);
+                        //List<Employee> clist = new List<Employee>();
+                        //ass.Collaborator = clist;
+                        //ass.Collaborator.Add(employee);
+                        //_db.Entry(ass).State = System.Data.Entity.EntityState.Modified;
+                        //_db.SaveChanges();
+
                     }
                     catch (Exception)
                     {
