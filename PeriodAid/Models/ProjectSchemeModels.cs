@@ -101,8 +101,12 @@
         public DateTime SignupDate { get; set; } //注册日期
 
         public DateTime LastLoginDate { get; set; } // 上次登陆时间
+
         [StringLength(128)]
-        public string ImgUrl { get; set; }
+        public string ImgUrl { get; set; } // 头像地址
+
+        [StringLength(16), RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
+        public string Mobile { get; set; } // 手机号码
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Subject> Subject { get; set; } // 所有拥有的项目
