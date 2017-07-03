@@ -8,30 +8,33 @@
             <ul class="participator_area clear-float" id="modal_collaborator_area">
                 @if (Model.Holder.ImgUrl == null)
                 {
-                    <li title="@Model.Holder.NickName"><div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle"></div></li>
+                    <li title="@Model.Holder.NickName" data-toggle="tooltip" data-placement="top" ><div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle"></div></li>
                 }
                 else
                 {
-                    <li title="@Model.Holder.NickName"><div style="background-image: url('http://cdn2.shouquanzhai.cn/@Model.Holder.ImgUrl');" class="user_circle"></div></li>
+                    <li title="@Model.Holder.NickName" data-toggle="tooltip" data-placement="top"><div style="background-image: url('http://cdn2.shouquanzhai.cn/@Model.Holder.ImgUrl');" class="user_circle"></div></li>
                 }
                
                @foreach (var col in Model.Collaborator)
                {
                    if (col.ImgUrl != null)
                    {
-                    <li title="@col.NickName"><div style="background-image: url('http://cdn2.shouquanzhai.cn/@col.ImgUrl');" class="user_circle"></div></li>
+                    <li title="@col.NickName" data-toggle="tooltip" data-placement="top"><div style="background-image: url('http://cdn2.shouquanzhai.cn/@col.ImgUrl');" class="user_circle"></div></li>
                    }
                    else
                    {
-                    <li title="@col.NickName"><div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle"></div></li>
+                    <li title="@col.NickName" data-toggle="tooltip" data-placement="top"><div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle"></div></li>
                    }
                }
-                <li title="删减参与人"><a href="javascript:;"  class="create_user_circle user_circle" id="create_user_circle"  data-aid="@Model.Id"><i class="fa fa-plus ver_icon" aria-hidden="true"></i></a></li>
+                <li title="删减参与人" data-toggle="tooltip" data-placement="top"><a href="javascript:;"  class="create_user_circle user_circle" id="create_user_circle"  data-aid="@Model.Id"><i class="fa fa-plus ver_icon" aria-hidden="true"></i></a></li>
             </ul>
         </div>
     </div>
 </div>
 <script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
     //添加参与者弹窗
     $("#create_user_circle").on("click", function () {
         GetAssignmnet_CollaboratorAddPartial($(this).attr("data-aid"), function (data) {

@@ -6,7 +6,7 @@
     Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
 }
 <!--The Second Nav-->
-<div class="navbar-default tm_task-navbar" >
+<div class="navbar-default tm_task-navbar">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -38,7 +38,7 @@
             <ul class="nav navbar-nav navbar-underline">
                 <li><a href="#" class="active">进度</a></li>
                 @*<li><a href="#">日程</a></li>
-                <li><a href="#">文件</a></li>*@
+                    <li><a href="#">文件</a></li>*@
             </ul>
             <ul class="nav navbar-nav navbar-right navbar-border">
                 @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
@@ -50,45 +50,42 @@
     </div><!-- /.container-fluid -->
 </div>
 <!--The Second Nav End-->
-
 <!--Procedure Content-->
 <div class="tm_pannel-wrap" id="pannel-wrap" data-sid="@Model.Id">
     <div class="tm_pannel-container" id="tm_pannel-container">
         @foreach (var procedure in ViewBag.sortprocedure)
         {
-        <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
-        </div>
+            <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
+            </div>
         }
         <div class="tm_pannel-item text-center tm_pannel-item-add" id="tm_pannel-item-add">
             <div id="add-pannel-control"><a href="javascript:;" class="panel-body add-btn color-gray" id="add-pannel-list"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></a></div>
             <div id="add-pannel-write" class="padding-10 write-box hidden">
                 @using (Html.BeginForm("CreateProcedure", "TaskManagement", FormMethod.Post, new { @id = "add_procedure_form", @class = "validate-form padding-10" }))
                 {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary()
-                @Html.HiddenFor(m=>m.TemplateId)
-                <div class="form-group">
-                    <input type="text" class="form-control" id="ProcedureTitle" placeholder="标题" name="ProcedureTitle">
-                </div>
-                <div class="text-right">
-                    <a class="btn btn-default" id="cancel-pannel-write">取消</a>
-                    <a class="btn btn-blue" id="create-procedure-pannel">确定</a>
-                </div>
-               }
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary()
+                    @Html.HiddenFor(m => m.TemplateId)
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="ProcedureTitle" placeholder="标题" name="ProcedureTitle">
+                    </div>
+                    <div class="text-right">
+                        <a class="btn btn-default" id="cancel-pannel-write">取消</a>
+                        <a class="btn btn-blue" id="create-procedure-pannel">确定</a>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
 <!--Procedure Content End-->
-
-
-
 <!-- Modal Edit-Assignment-->
 <div class="modal fade tm_modal" id="Edit-Assignment" role="dialog" aria-labelledby="Edit-AssignmentLabel" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
     </div>
+
 </div>
 <!-- Modal Edit-Assignment End-->
 <!-- Modal Add-Collaborator-->
@@ -108,19 +105,62 @@
 </div>
 <!-- Modal Edit-Assignment End-->
 <div class="tm_subject_pannel">
-    sasassdfffs
+    <div class="tm_subject_container">
+        <div class="tm_subject_pannel_header">
+            <strong class="color-blue">项目菜单</strong>
+        </div>
+        <div class="tm_subject_pannel_body">
+            <div class="list-group">               
+                <a href="#" class="list-group-item">
+                   <i class="fa fa-cube" aria-hidden="true"></i>
+                    &nbsp;查看项目操作日志
+                </a>
+                <a href="#" class="list-group-item">
+                    <h4 class="list-group-item-heading">今日动态</h4>
+                    <ul>
+                        <li>
+                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432909242401190.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                        </li>  
+                        <li>
+                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432807538793626.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                        </li> 
+                        <li>
+                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432807538793626.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                        </li> 
+                        <li>
+                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432807538793626.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                        </li>                      
+                    </ul>
+                </a>
+                <a href="#" class="list-group-item">
+                    <h4 class="list-group-item-heading">今日进度</h4>
+                    <p class="list-group-item-text">
+                        <ul>
+                            <li>1</li>
+                            <li>1</li>
+                        </ul>
+                    </p>
+                </a>
+            </div>
+        </div>
+        <div class="tm_subject_pannel_footer">底部占位区</div>
+    </div>
 </div>
 @section scripts{
     <script>
         $("#btn_show_subject_pannel").on("click", function () {
-            $("#my-app").addClass("tm_subject_active")
+            if ($("#my-app").hasClass("tm_subject_active")) {
+                $("#my-app").removeClass("tm_subject_active")
+            } else {
+                $("#my-app").addClass("tm_subject_active")
+            }
         })
         //加载procedure
         $(".ajax-procedure").each(function () {
             var ProcedureId = $(this).attr("data-procedureid");
             var that = $(this);
             GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that);
-            
+
         });
         var al = document.getElementById('tm_pannel-container');
         var sortable = new Sortable(al, {
@@ -145,7 +185,7 @@
                 }
                 $.ajax({
                     url: "/TaskManagement/SortProcedure",
-                    type:"post",
+                    type: "post",
                     data: {
                         ProcedureJson: JSON.stringify(sortobject)
                     },
@@ -188,7 +228,7 @@
                         var len = data.result.length;
                         $(".ajax-procedure").each(function () {
                             for (i = 0; i < len; i++) {
-                                if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {                                  
+                                if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
                                     $(this).find(".total-num").html(data.result[i].TotalNum)
                                     $(this).find(".num").html(data.result[i].FinishNum)
                                 }
@@ -212,12 +252,12 @@
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
-                        if($(".ajax-procedure").length==0){
+                        if ($(".ajax-procedure").length == 0) {
                             $(".tm_pannel-item-add").before("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
-                        }else{
-                        $(".ajax-procedure:last").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
-                    }
-                        GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));                       
+                        } else {
+                            $(".ajax-procedure:last").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                        }
+                        GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));
                         UnimportantAlert("添加过程成功");
                         controlHidden();
                     } else {

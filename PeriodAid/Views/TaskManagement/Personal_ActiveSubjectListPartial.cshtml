@@ -8,7 +8,7 @@
         {
             foreach (var item in Model)
             {
-                <div class="col-md-3 card-wrap" title="@item.SubjectTitle">
+                <div class="col-md-3 card-wrap" title="@item.SubjectTitle" data-toggle="tooltip" data-placement="top">
                     @if (item.PicUrl != null)
                     {
                     <div class="card-item" style="background-image: url('http://cdn2.shouquanzhai.cn/@item.PicUrl');" data-link="@item.Id">
@@ -49,3 +49,8 @@
             </div>
         </div>
     </div>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
