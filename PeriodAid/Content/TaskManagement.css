@@ -210,7 +210,7 @@ a.close{
     outline:none;
     color:#262626;
 }
-.tm_dropdown.dropdown-menu ul li a,.tm_dropdown.dropdown-menu ul li strong{
+.tm_dropdown.dropdown-menu ul li>*{
     text-decoration:none;
     display:block;
     padding:10px;
@@ -237,6 +237,9 @@ a.close{
     background: #E5E5E5;
     transition: all 218ms 100ms;
     right: 0;
+}
+.tm_task-navbar{
+    border-bottom:1px solid #e5e5e5;
 }
 .tm_task-navbar .breadcrumb.navbar-breadcrumb{
     margin:0;
@@ -434,7 +437,6 @@ a.close{
     position:absolute;
     left:0;
     width:100%;
-    line-height:30px;
     height:40px;
     padding:5px 10px;
 }
@@ -541,9 +543,6 @@ a.close{
 
 
 /*modal改写*/
-.tm_modal .modal-content{
-    height:600px;
-}
 .tm_modal .modal-body{
     height:500px;
     overflow:auto;
@@ -657,11 +656,11 @@ a.btn_subtask_detail{
 /*侧边栏*/
 .tm_subject_pannel{
     position: fixed;
+    z-index:-1;
     width: 350px;
     top: 103px;
     right: 0;
     bottom: 0;
-    z-index: 50;
     background-color: #F7F7F7;
     overflow: hidden;
     box-shadow: -3px 0 3px rgba(0, 0, 0, 0.1);
@@ -673,10 +672,49 @@ a.btn_subtask_detail{
 .tm_subject_active .tm_subject_pannel{
   opacity: 1;
   -webkit-transform: translate3d(0px, 0px, 0px);
-          transform: translate3d(0px, 0px, 0px);
+   transform: translate3d(0px, 0px, 0px);
   transition: 0.25s cubic-bezier(0, 1, 0.39, 1);
   overflow: initial;
 }
+.tm_subject_container{
+    position: relative;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+     overflow:hidden;
+}
+.tm_subject_pannel_header,.tm_subject_pannel_footer{
+    text-align:center;
+    width:100%;
+    height:40px;
+    line-height:40px;
+    position:absolute;
+    left:0;
+}
+.tm_subject_pannel_body{
+    width:100%;
+    position:absolute;
+    top:40px;
+    bottom:40px;
+    overflow:auto;
+}
+.tm_subject_pannel_body li{
+    padding-bottom:5px;
+         overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tm_subject_pannel_header{
+    top:0;
+    border-bottom:1px solid #e5e5e5;
+}
+.tm_subject_pannel_footer{
+    bottom:0;
+    border-top:1px solid #e5e5e5;
+}
+
 
 
 

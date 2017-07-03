@@ -63,21 +63,9 @@ namespace PeriodAid.Controllers
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return RedirectToAction("Index");
         }
-        [AllowAnonymous]
-        public ActionResult TaskManagerLogin(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
-        }
-
-        [ValidateAntiForgeryToken, HttpPost]
-        public async Task<ActionResult> TaskManagerLogin(FormCollection form)
-        {
-            return Content("");
-        }
-
+        
         // GET: TaskManagement
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
@@ -86,11 +74,16 @@ namespace PeriodAid.Controllers
             }
             else
             {
+                /* 更新最后刷新时间 */
+                employee.LastLoginDate = DateTime.Now;
+                _db.Entry(employee).State = System.Data.Entity.EntityState.Modified;
+                await _db.SaveChangesAsync();
+
                 return View(employee);
             }
         }
 
-
+        /* 修改个人信息 */
         public ActionResult PersonalSetting()
         {
             var employee = getEmployee(User.Identity.Name);
@@ -105,7 +98,7 @@ namespace PeriodAid.Controllers
         }
 
         [HttpPost,ValidateAntiForgeryToken]
-        public JsonResult EditPersonalInfo(Employee model)
+        public async Task<JsonResult> EditPersonalInfo(Employee model)
         {
             if (ModelState.IsValid)
             {
@@ -115,33 +108,28 @@ namespace PeriodAid.Controllers
                     try
                     {
                         _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
+                         await _db.SaveChangesAsync();
                     }
                     catch (Exception)
                     {
                         return Json(new { result = "数据存储失败。" });
                     }
                     return Json(new { result = "SUCCESS"});
-
                 }
-                else
-                {
-                    return Json(new { result = "模型同步错误。" });
-                }
+                return Json(new { result = "模型同步错误。" });
             }
-            else
-            {
-                return Json(new { result = "模型错误。" });
-            }
+            return Json(new { result = "模型错误。" });
         }
+
         #region  创建项目
         /// <summary>
         /// 创建项目
         /// </summary>
         /// <returns>ActionResult</returns>
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult CreateSubject(FormCollection form, Subject model)
+        public async Task<ActionResult> CreateSubject(FormCollection form, Subject model)
         {
+            /* 为统一，最好返回JSON，然后JS里面统一处理 */
             if (ModelState.IsValid)
             {
                 Subject item = new Subject();
@@ -154,7 +142,6 @@ namespace PeriodAid.Controllers
                     }
                     else
                     {
-
                         item.HolderId = employee.Id;
                         item.Status = SubjectStatus.ACTIVE;
                         var defaultTemplate = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);         
@@ -180,7 +167,7 @@ namespace PeriodAid.Controllers
                                     ProcedureTitle = pro.ProcedureTitle
                                 };
                                 _db.Procedure.Add(procedure);
-                                _db.SaveChanges();
+                                await _db.SaveChangesAsync();
                             }
                         }
                         catch (Exception)
@@ -192,11 +179,10 @@ namespace PeriodAid.Controllers
                         try
                         {
                             _db.Subject.Add(item);
-                            _db.SaveChanges();
+                            await _db.SaveChangesAsync();
                         }
                         catch (Exception)
                         {
-
                             return Content("数据存储失败。");
                         }
                         return Content("SUCCESS");
@@ -204,7 +190,6 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-
                     return Content("模型同步失败。");
                 }
             }
@@ -248,7 +233,7 @@ namespace PeriodAid.Controllers
             return Content("FAIL");
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult EditSubject(Subject model)
+        public async Task<ActionResult> EditSubject(Subject model)
         {
             if (ModelState.IsValid)
             {
@@ -263,7 +248,7 @@ namespace PeriodAid.Controllers
                     if (TryUpdateModel(item))
                     {
                         _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
+                        await _db.SaveChangesAsync();
                         return Content("SUCCESS");
                     }
                     return Content("模型同步失败。");
@@ -1076,7 +1061,6 @@ namespace PeriodAid.Controllers
 
 
         [HttpPost]
-
         public JsonResult UploadSubjectCutFileAjax(FormCollection form)
         {
             var files = Request.Files;

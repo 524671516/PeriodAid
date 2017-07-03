@@ -1,4 +1,5 @@
 ﻿$(function () {
+
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {
         $.ajax({
