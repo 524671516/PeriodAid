@@ -1082,11 +1082,11 @@ namespace PeriodAid.Controllers
                     MemoryStream ms1 = new MemoryStream(ByteArray);
                     Bitmap sBitmap = (Bitmap)Image.FromStream(ms1);
                     Rectangle section = new Rectangle(new Point(jsonimgsize.ToInt(jsonimgsize.x), jsonimgsize.ToInt(jsonimgsize.y)), new Size(jsonimgsize.ToInt(jsonimgsize.width), jsonimgsize.ToInt(jsonimgsize.height)));
-                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, section.Width, section.Height, section.Width, section.Height, section.X, section.Y,jsonimgsize.rotate);
+                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, 200, 200, section.Width, section.Height, section.X, section.Y,jsonimgsize.rotate);
                     AliOSSUtilities util = new AliOSSUtilities();
-                    util.PutObject(BitmapByte(CroppedImage), "Subject/SubjectCover/" + filename);
+                    util.PutObject(BitmapByte(CroppedImage), "Subject/Avatar/" + filename);
                     imgurl = filename;                  
-                    return Json(new { result = "SUCCESS",imgurl= "Subject/SubjectCover/"+ imgurl });
+                    return Json(new { result = "SUCCESS",imgurl= "Subject/Avatar/"+ imgurl });
                 }
                 else
                 {
@@ -1207,7 +1207,7 @@ namespace PeriodAid.Controllers
                     //清空画布并以透明背景色填充
                     g.Clear(Color.Transparent);
                     //在指定位置并且按指定大小绘制原图片的指定部分
-                    g.DrawImage(b, new Rectangle(0, 0, cropWidth, cropHeight), X, Y, cropWidth, cropHeight, GraphicsUnit.Pixel);
+                    g.DrawImage(b, new Rectangle(0, 0, maxWidth, maxHeight), X, Y, cropWidth, cropHeight, GraphicsUnit.Pixel);
                     Image displayImage = new Bitmap(_b, maxWidth, maxHeight);
                     Bitmap bit = new Bitmap(_b, maxWidth, maxHeight);                    
                     return bit;
@@ -1222,6 +1222,53 @@ namespace PeriodAid.Controllers
                 originalImage.Dispose();
                 b.Dispose();
             }
+        }
+
+        private async Task<bool> AddLogAsync(int code, int employeeId, int subjectId, string info)
+        {
+            var employee = _db.Employee.SingleOrDefault(m => m.Id == employeeId);
+            if (employee != null)
+            {
+                bool result = await AddLogAsync(code, employee, subjectId, info);
+                return result;
+            }
+            return false;
+        }
+        private async Task<bool> AddLogAsync(int code, Employee employee, int subjectId, string info)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
+            if (subject != null)
+            {
+                string logContent = "";
+                if (code == LogCode.CREATESUBJECT)
+                {
+                    logContent = employee.NickName + " 添加了项目 " + subject.SubjectTitle;
+                }
+                else if(code == LogCode.EDITSUBJECT)
+                {
+                    logContent = employee.NickName + " 修改了项目 " + subject.SubjectTitle;
+                }
+                else if(code == LogCode.ARCHIVESUBJECT)
+                {
+                    logContent = employee.NickName + " 将项目 " + subject.SubjectTitle +" 进行了归档";
+                }
+                else if(code == LogCode.DELETESUBJECT)
+                {
+                    logContent = employee.NickName + " 删除了项目 " + subject.SubjectTitle;
+                }
+                OperationLogs log = new OperationLogs()
+                {
+                    LogCode = code,
+                    LogContent = logContent,
+                    LogTime = DateTime.Now,
+                    SubjectId = subjectId,
+                    UserId = employee.Id
+                };
+                _db.OperationLogs.Add(log);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 
