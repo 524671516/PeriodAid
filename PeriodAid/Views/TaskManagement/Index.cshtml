@@ -20,14 +20,6 @@
 </div>
 <!--Subject Area End-->
 
-<!-- Edit Subject Modal -->
-<div class="modal fade" id="Edit-Subject" role="dialog" aria-labelledby="editModalLabel" style="overflow-y:auto">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" id="Edit-Subject-Content">
-        </div>
-    </div>
-</div>
-<!-- Edit Subject Modal End-->
 
 @section scripts{ 
     <script>
@@ -54,8 +46,8 @@
                     },
                     success: function (data) {
                         if (data != "FAIL") {
-                            $("#Edit-Subject-Content").html(data);
-                            $("#Edit-Subject").modal();
+                            $("#Create-Subject-Content").html(data);
+                            $("#Add-Subject").modal();
                         }
                         else {
                             ErrorAlert("当前用户没有修改项目信息的权限")
