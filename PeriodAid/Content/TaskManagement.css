@@ -700,7 +700,7 @@ a.btn_subtask_detail{
     overflow:auto;
 }
 .tm_subject_pannel_body li{
-    padding-bottom:5px;
+    margin-top:5px;
          overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -713,6 +713,17 @@ a.btn_subtask_detail{
 .tm_subject_pannel_footer{
     bottom:0;
     border-top:1px solid #e5e5e5;
+}
+.daily_schedule_content{
+    padding:0 40px;
+}
+.subject_task_num{
+    font-size:20px;
+}
+.tm_subject_pannel .tm_personal-avatar{
+    height:25px;
+    width:25px;
+    margin-top:3px;
 }
 
 
