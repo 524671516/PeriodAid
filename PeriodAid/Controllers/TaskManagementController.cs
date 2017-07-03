@@ -56,9 +56,9 @@ namespace PeriodAid.Controllers
             }
         }
         [AllowAnonymous]
-        public async Task<ActionResult> TestLogin(string tel)
+        public async Task<ActionResult> TestLogin()
         {
-            var user = UserManager.FindByName(tel);
+            var user = UserManager.FindByName("1207278908@qq.com");
             //UserManager.Update(user);
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return RedirectToAction("Index");
