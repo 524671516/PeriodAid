@@ -129,7 +129,7 @@
                     if (data.result == "SUCCESS") {
                         UnimportantAlert("删除任务成功。");
                         GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
-                        $('#Edit-Subtask').modal('hide');
+                        $('#Edit-Assignment').modal('hide');
 
                     } else {
                         UnimportantAlert(data.result)

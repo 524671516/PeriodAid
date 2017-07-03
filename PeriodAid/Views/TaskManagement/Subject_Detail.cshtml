@@ -96,62 +96,30 @@
     </div>
 </div>
 <!-- Modal Add-Collaborator End-->
-<!-- Modal Edit-Assignment-->
-<div class="modal tm_modal fade" id="Edit-Subtask" role="dialog" aria-labelledby="Edit-SubtaskLabel" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        </div>
-    </div>
+
+<!--Pannel Menu-->
+<div class="tm_subject_pannel" id="tm_subject_pannel">
+    
 </div>
-<!-- Modal Edit-Assignment End-->
-<div class="tm_subject_pannel">
-    <div class="tm_subject_container">
-        <div class="tm_subject_pannel_header">
-            <strong class="color-blue">项目菜单</strong>
-        </div>
-        <div class="tm_subject_pannel_body">
-            <div class="list-group">               
-                <a href="#" class="list-group-item">
-                   <i class="fa fa-cube" aria-hidden="true"></i>
-                    &nbsp;查看项目操作日志
-                </a>
-                <a href="#" class="list-group-item">
-                    <h4 class="list-group-item-heading">今日动态</h4>
-                    <ul>
-                        <li>
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432909242401190.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
-                        </li>  
-                        <li>
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432807538793626.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
-                        </li> 
-                        <li>
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432807538793626.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
-                        </li> 
-                        <li>
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432807538793626.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
-                        </li>                      
-                    </ul>
-                </a>
-                <a href="#" class="list-group-item">
-                    <h4 class="list-group-item-heading">今日进度</h4>
-                    <p class="list-group-item-text">
-                        <ul>
-                            <li>1</li>
-                            <li>1</li>
-                        </ul>
-                    </p>
-                </a>
-            </div>
-        </div>
-        <div class="tm_subject_pannel_footer">底部占位区</div>
-    </div>
-</div>
+<!--Pannel Menu End-->
 @section scripts{
     <script>
         $("#btn_show_subject_pannel").on("click", function () {
             if ($("#my-app").hasClass("tm_subject_active")) {
                 $("#my-app").removeClass("tm_subject_active")
             } else {
+                $.ajax({
+                    url: "/TaskManagement/SubjectMenuPannelPartial",
+                    data: {
+                        SubjectId: $("#pannel-wrap").attr("data-sid")
+                    },
+                    success: function (data) {
+                        $("#tm_subject_pannel").html(data);
+                    },
+                    error: function (data) {
+                        ErrorAlert("操作失败。");
+                    }
+                })
                 $("#my-app").addClass("tm_subject_active")
             }
         })
@@ -234,6 +202,9 @@
                                 }
                             }
                         })
+                    },
+                    error: function (data) {
+                        ErrorAlert("操作失败。");
                     }
                 })
             })
