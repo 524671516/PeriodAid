@@ -1219,7 +1219,7 @@ namespace PeriodAid.Controllers
                     //清空画布并以透明背景色填充
                     g.Clear(Color.Transparent);
                     //在指定位置并且按指定大小绘制原图片的指定部分
-                    g.DrawImage(b, new Rectangle(0, 0, maxWidth, maxHeight), X, Y, cropWidth, cropHeight, GraphicsUnit.Pixel);
+                    g.DrawImage(b, new Rectangle(0, 0, cropWidth, cropHeight), X, Y, cropWidth, cropHeight, GraphicsUnit.Pixel);
                     Image displayImage = new Bitmap(_b, maxWidth, maxHeight);
                     Bitmap bit = new Bitmap(_b, maxWidth, maxHeight);                    
                     return bit;
