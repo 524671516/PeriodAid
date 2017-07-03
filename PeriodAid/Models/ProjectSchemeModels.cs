@@ -31,6 +31,7 @@
         public virtual DbSet<SubTask> SubTask { get; set; }
         public virtual DbSet<AssignmentComment> AssignmentComment { get; set; }
         public virtual DbSet<SubjectAttachment> SubjectAttachment { get; set; }
+        public virtual DbSet<OperationLogs> OperationLogs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -43,6 +44,7 @@
             modelBuilder.Entity<Employee>().HasMany(e => e.ExecuteTask).WithRequired(e => e.Executor).HasForeignKey(e => e.ExecutorId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Employee>().HasMany(e => e.AssignmentComment).WithRequired(e => e.Composer).HasForeignKey(e => e.ComposerId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Employee>().HasMany(e => e.UploadedAttachment).WithRequired(e => e.Uploader).HasForeignKey(e => e.UploaderId).WillCascadeOnDelete(false);
+            modelBuilder.Entity<Employee>().HasMany(e => e.OperationLogs).WithRequired(e => e.Employee).HasForeignKey(e => e.UserId).WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ProcedureTemplate>().HasMany(m => m.Subject).WithRequired(m => m.ProcedureTemplate).HasForeignKey(e => e.TemplateId).WillCascadeOnDelete(false);
             modelBuilder.Entity<ProcedureTemplate>().HasMany(m => m.Procedure).WithRequired(e => e.ProcedureTemplate).HasForeignKey(e => e.TemplateId).WillCascadeOnDelete(false);
@@ -54,12 +56,13 @@
 
             modelBuilder.Entity<Subject>().HasMany(e => e.SubjectAttachment).WithRequired(e => e.Subject).HasForeignKey(e => e.SubjectId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Subject>().HasMany(e => e.Assignment).WithRequired(e => e.Subject).HasForeignKey(e => e.SubjectId).WillCascadeOnDelete(false);
+            modelBuilder.Entity<Subject>().HasMany(e => e.OperationLogs).WithRequired(e => e.Subject).HasForeignKey(e => e.SubjectId).WillCascadeOnDelete(false);
 
         }
     }
 
     [Table("Department")]
-    public class Department // 部门表
+    public partial class Department // 部门表
     {
         public int Id { get; set; }
 
@@ -77,7 +80,7 @@
     }
 
     [Table("Employee")]
-    public class Employee // 职员表
+    public partial class Employee // 职员表
     {
         public int Id { get; set; }
 
@@ -126,10 +129,13 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubjectAttachment> UploadedAttachment { get; set; } // 上传的附件
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OperationLogs> OperationLogs { get; set; }
+
     }
 
     [Table("Subject")]
-    public class Subject // 项目表
+    public partial class Subject // 项目表
     {
         public int Id { get; set; }
 
@@ -159,10 +165,13 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Assignment> Assignment { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OperationLogs> OperationLogs { get; set; }
     }
 
     [Table("ProcedureTemplate")]
-    public class ProcedureTemplate // 过程模板
+    public partial class ProcedureTemplate // 过程模板
     {
         public int Id { get; set; }
 
@@ -179,7 +188,7 @@
     }
 
     [Table("Procedure")]
-    public class Procedure // 过程组
+    public partial class Procedure // 过程组
     {
         public int Id { get; set; }
 
@@ -199,7 +208,7 @@
     }
 
     [Table("Assignment")]
-    public class Assignment // 任务表
+    public partial class Assignment // 任务表
     {
         public int Id { get; set; }
 
@@ -246,7 +255,7 @@
     }
 
     [Table("SubTask")]
-    public class SubTask // 子任务表 
+    public partial class SubTask // 子任务表 
     {
         public int Id { get; set; }
 
@@ -276,7 +285,7 @@
     }
 
     [Table("AssignmentComment")]
-    public class AssignmentComment // 任务评论信息表
+    public partial class AssignmentComment // 任务评论信息表
     {
         public int Id { get; set; }
 
@@ -297,7 +306,7 @@
     }
 
     [Table("SubjectAttachment")]
-    public class SubjectAttachment // 项目附件（第一阶段不制作）
+    public partial class SubjectAttachment // 项目附件（第一阶段不制作）
     {
         public int Id { get; set; }
 
@@ -324,6 +333,28 @@
 
         public virtual Subject Subject { get; set; } // 项目实例
     }
+
+    [Table("OperationLogs")]
+    public partial class OperationLogs
+    {
+        public int Id { get; set; }
+
+        public int SubjectId { get; set; } // 项目ID
+
+        public int UserId { get; set; } // 用户ID
+        
+        public int LogCode { get; set; } // 日志代码
+
+        [Required, StringLength(256)]
+        public string LogContent { get; set; } // 日志内容
+
+        public DateTime LogTime { get; set; } // 日志记录时间
+
+        public virtual Subject Subject { get; set; } // 项目实例
+
+        public virtual Employee Employee { get; set; } // 员工实例
+    }
+
     //public class MyEntity
     //{
     //    public int Id { get; set; }
@@ -403,6 +434,26 @@
         ///  已完成
         /// </summary>
         public static int FINISHED = 2;
+    }
+
+    public static class LogCode
+    {
+        /// <summary>
+        /// 创建项目
+        /// </summary>
+        public static int CREATESUBJECT = 101;
+        /// <summary>
+        /// 修改项目
+        /// </summary>
+        public static int EDITSUBJECT = 102;
+        /// <summary>
+        /// 归档项目
+        /// </summary>
+        public static int ARCHIVESUBJECT = 103;
+        /// <summary>
+        /// 删除项目
+        /// </summary>
+        public static int DELETESUBJECT = 104;
     }
 
 }
