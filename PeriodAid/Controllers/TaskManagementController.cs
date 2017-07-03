@@ -975,6 +975,7 @@ namespace PeriodAid.Controllers
         }
 
 
+        //列表排序
         [HttpPost]
         public ActionResult SortProcedure(string ProcedureJson)
         {
@@ -998,6 +999,7 @@ namespace PeriodAid.Controllers
             return Content("SUCCESS");
         }
 
+        //任务拖拽改变
         [HttpPost]
         public ActionResult DragAssignment(int aid,int nowpid)
         {
@@ -1016,6 +1018,7 @@ namespace PeriodAid.Controllers
 
         }
 
+        //获取任务数字更新数据
         [HttpPost]
         public JsonResult GetProcedureJsonInfo(int SubjectId) {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
@@ -1033,6 +1036,15 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = plist });
         }
+
+        //获取任务侧边栏
+        public PartialViewResult SubjectMenuPannelPartial(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            return PartialView(subject);
+        }
+
+
 
 
 
