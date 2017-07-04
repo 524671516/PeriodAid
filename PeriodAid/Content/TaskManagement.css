@@ -737,11 +737,51 @@ a.btn_subtask_detail{
     padding:0 5px 0 0 ;
 }
 .subject_task_control{
-    width:60%;
+    width:50%;
         overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+/*侧边栏结束*/
+
+/*模拟导航列表*/
+.modal-nav-pannel{
+    background-color:#F7F7F7;
+    border-bottom:1px solid #e5e5e5;
+    position:relative;
+}
+.tm_modal_ul{
+    margin:0;
+}
+.tm_modal_ul .list-group-item{
+    cursor:pointer;
+    border-radius:0px;
+    border-right:none;
+    border-left:5px solid #fff;
+       transition:  all 300ms ease;
+   -moz-transition:  all 300ms ease;	/* Firefox 4 */
+   -webkit-transition:  all 300ms ease;	/* Safari 和 Chrome */
+   -o-transition:  all 300ms ease;	/* Opera */
+}
+.tm_modal_ul li:first-child{
+    border-top:none;
+}
+.tm_modal_ul_wrap{
+    border-right:1px solid #e5e5e5;
+}
+.modal-nav-pannel .tm_modal_ul_wrap{
+    padding:0 0 10px 0;
+    height:450px;
+    overflow:auto;
+}
+.tm_modal_ul .list-group-item.tm_active{
+    border-left:5px solid #3da8f5;
+}
+.tm_modal_ul .list-group-item:hover{
+    border-left:5px solid #3da8f5;
+    background-color:rgba(0,0,0,0.1)
+}
+
 
 
 

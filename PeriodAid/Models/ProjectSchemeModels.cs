@@ -433,7 +433,7 @@
         /// <summary>
         ///  已完成
         /// </summary>
-        public static int FINISHED = 2;
+        public static int FINISHED = 2;       
     }
 
     public static class LogCode
