@@ -24,9 +24,11 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private ProjectSchemeModels _db;
+        private TaskManagementLogsUtilities _log;
         public TaskManagementController()
         {
             _db = new ProjectSchemeModels();
+            _log = new TaskManagementLogsUtilities();
         }
         public TaskManagementController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
@@ -180,6 +182,8 @@ namespace PeriodAid.Controllers
                         {
                             _db.Subject.Add(item);
                             await _db.SaveChangesAsync();
+                            await _log.CreateSubjectLogAsync(employee, item);
+                           
                         }
                         catch (Exception)
                         {
@@ -249,6 +253,7 @@ namespace PeriodAid.Controllers
                     {
                         _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
                         await _db.SaveChangesAsync();
+                        await _log.EditSubjectLogAsync(employee, item);
                         return Content("SUCCESS");
                     }
                     return Content("模型同步失败。");
@@ -678,11 +683,17 @@ namespace PeriodAid.Controllers
         {
             if (ModelState.IsValid)
             {
-                Assignment item = new Assignment();
+                var item = _db.Assignment.SingleOrDefault(m => m.Id == model.Id);
                 if (TryUpdateModel(item))
                 {
                     try
                     {
+                        var holder = _db.Employee.SingleOrDefault(m => m.Id == item.HolderId);
+                        if (item.Collaborator.Contains(holder))
+                        {
+                            item.Collaborator.Remove(holder);
+                        }  
+                                         
                         _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
                         _db.SaveChanges();
                     }
@@ -961,9 +972,19 @@ namespace PeriodAid.Controllers
             var employee = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId);
             if (Remove)
             {
-                assignment.Collaborator.Remove(employee);
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
+                var colNum = (from m in _db.SubTask
+                           where m.ExecutorId == EmployeeId && m.AssignmentId == AssignmentId&&m.Status>AssignmentStatus.DELETED
+                           select m).Count();
+                if (colNum>0)
+                {
+                    return Json(new { result = "FAIL" });
+                }
+                else
+                {
+                    assignment.Collaborator.Remove(employee);
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
 
             }
             else
@@ -1037,13 +1058,31 @@ namespace PeriodAid.Controllers
             return Json(new { result = plist });
         }
 
-        //获取任务侧边栏
+        //获取项目侧边栏
         public PartialViewResult SubjectMenuPannelPartial(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var loglist = (from m in _db.OperationLogs
+                               where m.SubjectId == SubjectId
+                               orderby m.LogTime descending
+                               select m).Take(6).ToList();
+            ViewBag.RecentEvent = loglist;
+            return PartialView(subject);
+        }
+
+        //获取项目进度
+        public PartialViewResult SubjectProgressPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             return PartialView(subject);
         }
 
+        //获取项目日志
+        public PartialViewResult SubjectLogsPartial(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            return PartialView(subject);
+        }
 
 
 

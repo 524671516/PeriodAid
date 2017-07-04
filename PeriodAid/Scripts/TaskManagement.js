@@ -348,4 +348,20 @@ function GetElementsByClass(className) {
                 elements = elArray;
             }
             return elements
-        }
+}
+
+var FuzzySearch = function () {
+    var Defaults = {
+        InputId:"password",
+    }
+    function Init(Options) {
+        var Options = $.extend({}, Defaults, Options);
+        console.log(Options)
+
+    }
+    return { Init: Init };
+}();
+FuzzySearch.Init({
+    InputId: "Name",
+
+});

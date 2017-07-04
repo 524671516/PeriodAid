@@ -18,13 +18,13 @@
                 <ul class="list-group collaborator_area">
                     <li class="list-group-item clear-float">
                         <div class="list-group-item_left">@Html.Encode(Model.Holder.NickName)</div>
-                        <div class="list-group-item_right remove-collaborator" data-eid="@Model.HolderId">任务负责人</div>
+                        <div class="list-group-item_right task-collaborator" data-eid="@Model.HolderId">任务负责人</div>
                     </li>
                     @foreach (var col in Model.Collaborator)
                     {
                         <li class="list-group-item clear-float">
                             <div class="list-group-item_left">@Html.Encode(col.NickName)</div>
-                            <div class="list-group-item_right remove-collaborator" data-eid="@col.Id"><i class="fa fa-minus add-btn" aria-hidden="true"></i></div>
+                            <div class="list-group-item_right remove-collaborator task-collaborator" data-eid="@col.Id"><i class="fa fa-minus add-btn" aria-hidden="true"></i></div>
                         </li>
                     }
                 </ul>
@@ -65,7 +65,7 @@
     $(".add-collaborator").on("click", function () {
         var eid = $(this).attr("data-eid");
         var that = $(this);
-        if ($(".remove-collaborator[data-eid="+eid+"]").length == 0) {
+        if ($(".task-collaborator[data-eid=" + eid + "]").length == 0) {
             $.ajax({
                 url: "/TaskManagement/ControlCollaboratorAjax",
                 type:"post",
@@ -78,7 +78,7 @@
                     if (data.result == "SUCCESS") {
                         $(".collaborator_area").append("<li class=\"list-group-item clear-float\">" +
                            "<div class=\"list-group-item_left\">" + that.parent().find(".list-group-item_left").html() + "</div>" +
-                           "<div class=\"list-group-item_right remove-collaborator\"data-eid=" + that.attr("data-eid") + "><i class=\"fa fa-minus add-btn\" aria-hidden=\"true\"></i></div>" + "</li>");
+                           "<div class=\"list-group-item_right remove-collaborator task-collaborator\"data-eid=" + that.attr("data-eid") + "><i class=\"fa fa-minus add-btn\" aria-hidden=\"true\"></i></div>" + "</li>");
                         GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
                             $("#modal_collaborator_area").html(data);
                         })
@@ -111,6 +111,8 @@
                     GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
                         $("#modal_collaborator_area").html(data);
                     })
+                } else {
+                    ErrorAlert("操作失败,请先确定参与人不在任何任务中。");
                 }
             },
             error: function () {

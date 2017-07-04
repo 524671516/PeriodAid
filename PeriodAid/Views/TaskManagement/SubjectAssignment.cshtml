@@ -54,7 +54,7 @@
                                 }
                         </div>
                     </div>
-                    @if (item.SubTask.Count() != 0)
+                    @if (item.SubTask.Where(m=>m.Status>AssignmentStatus.DELETED).Count() != 0)
                     {
                         <div class="tm_list-item_bottom clear-float">
                             <div class="tm_item_left">

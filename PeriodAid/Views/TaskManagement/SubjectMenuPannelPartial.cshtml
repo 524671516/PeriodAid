@@ -6,11 +6,11 @@
     </div>
     <div class="tm_subject_pannel_body">
         <div class="list-group">
-            <a href="#" class="list-group-item" id="btn_setting_subject">
+            <a href="javascript:;" class="list-group-item" id="btn_setting_subject">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                 &nbsp;项目设置
             </a>
-            <a href="#" class="list-group-item" id="subject_daily_schedule">
+            <a href="javascript:;" class="list-group-item" id="subject_daily_schedule">
                 <h4 class="list-group-item-heading">今日进度</h4>
                 <div class="daily_schedule_content clear-float">
                     <div class="float-left">
@@ -30,30 +30,21 @@
             <a href="#" class="list-group-item">
                 <h4 class="list-group-item-heading">最近动态</h4>
                 <ul>
-                    <li class="clear-float">
-                        <div class="float-left subject_avatar_box">
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432909242401190.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
-                        </div>
-                        <div class="float-left subject_task_control">
-                            <strong>庄晨:</strong>
-                            <span>添加了一个任务</span>
-                        </div>
-                        <div class="float-right">
-                            <span>2017-6-5</span>
-                        </div>
-                    </li>
-                    <li class="clear-float">
-                        <div class="float-left subject_avatar_box">
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131432909242401190.jpg');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
-                        </div>
-                        <div class="float-left subject_task_control">
-                            <strong>庄晨:</strong>
-                            <span>完成了测试任务A</span>
-                        </div>
-                        <div class="float-right">
-                            <span>2017-6-5</span>
-                        </div>
-                    </li>
+                    @foreach (var log in ViewBag.RecentEvent)
+                    {
+                        <li class="clear-float">
+                            <div class="float-left subject_avatar_box">
+                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@log.Employee.ImgUrl');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                            </div>
+                            <div class="float-left subject_task_control">
+                                <strong>@Html.Encode(log.Employee.NickName)</strong>
+                                <span>@Html.Encode(log.LogContent)</span>
+                            </div>
+                            <div class="float-right">
+                                <span>@Html.Encode(log.LogTime)</span>
+                            </div>
+                        </li>
+                    }
                 </ul>
             </a>
             <a href="#" class="list-group-item">
@@ -86,4 +77,26 @@
         })
         return false;
     })
+    $("#subject_daily_schedule").on("click", function () {
+        $.ajax({
+            url: "/TaskManagement/SubjectProgressPartial",
+            data: {
+                SubjectId: $("#pannel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                if (data != "FAIL") {
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }
+                else {
+                    ErrorAlert("当前用户没有修改项目信息的权限")
+                }
+            },
+            error: function (data) {
+                ErrorAlert("操作失败。");
+            }
+        })
+        return false;
+    })
+
 </script>

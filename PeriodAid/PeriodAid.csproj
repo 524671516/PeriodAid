@@ -230,6 +230,7 @@
     <Compile Include="DAL\KDTUtilites.cs" />
     <Compile Include="DAL\OfflineSalesUtilities.cs" />
     <Compile Include="DAL\PeriodAidUtilities.cs" />
+    <Compile Include="DAL\TaskManagementLogsUtilities.cs" />
     <Compile Include="DAL\ValidateCode.cs" />
     <Compile Include="DAL\WeChatClasses.cs" />
     <Compile Include="DAL\WeChatUtilities.cs" />
@@ -1044,6 +1045,8 @@
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
     <Content Include="Views\TaskManagement\SubjectMenuPannelPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
