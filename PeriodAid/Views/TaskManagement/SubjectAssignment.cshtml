@@ -24,15 +24,22 @@
                             }
                         </div>
                     </div>
-                    @if (item.SubTask.Count() != 0)
-                    {
-                        <div class="tm_list-item_bottom clear-float">
+                    <div class="tm_list-item_bottom clear-float">
+                        @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                        {
                             <div class="tm_item_left">
                                 <i class="fa fa-list-ul" aria-hidden="true"></i>
-                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>                             
+                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
                             </div>
-                        </div>
-                    }
+                        }
+                        @if (item.Deadline != null)
+                        {
+                            <div class="tm_item_left">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                <span class="finish_subtask color-blue">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
+                            </div>
+                        }                 
+                    </div>
                 </li>
             }
             else if (item.Status == AssignmentStatus.UNFINISHED)
@@ -40,29 +47,36 @@
                 <li class="tm_list-item tm_pop_assmodal" style="border-color:#3da8f5" data-aid="@item.Id">
                     <div class="tm_list-item_top clear-float">
                         <div class="tm_item_left">
-                            <input type="checkbox" class="assignment_comfirm_finish"/>
+                            <input type="checkbox" class="assignment_comfirm_finish" />
                             &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
                         </div>
-                        <div class="tm_item_right" data-aid="@item.Id">                           
-                                @if (item.Holder.ImgUrl == null)
-                                {
-                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                                }
-                                else
-                                {
-                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                                }
+                        <div class="tm_item_right" data-aid="@item.Id">
+                            @if (item.Holder.ImgUrl == null)
+                            {
+                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
+                            else
+                            {
+                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
                         </div>
                     </div>
-                    @if (item.SubTask.Where(m=>m.Status>AssignmentStatus.DELETED).Count() != 0)
+                    <div class="tm_list-item_bottom clear-float">
+                        @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
                     {
-                        <div class="tm_list-item_bottom clear-float">
                             <div class="tm_item_left">
                                 <i class="fa fa-list-ul" aria-hidden="true"></i>
-                                <span class="finish_subtask color-green">@item.SubTask.Count(p=>p.Status==AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p=>p.Status>AssignmentStatus.DELETED)</span>
+                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
                             </div>
-                        </div>
-                    }
+                        }
+                        @if (item.Deadline != null)
+                        {
+                            <div class="tm_item_left">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                <span class="finish_subtask color-blue">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
+                            </div>
+                        }       
+                    </div>
                 </li>
 
             }
@@ -75,6 +89,4 @@
             </div>
         </div>
     </div>
-    </div>
-
-
+</div>

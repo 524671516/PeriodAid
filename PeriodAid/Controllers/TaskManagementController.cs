@@ -1066,6 +1066,12 @@ namespace PeriodAid.Controllers
                                where m.SubjectId == SubjectId
                                orderby m.LogTime descending
                                select m).Take(6).ToList();
+            ViewBag.finishnum = (from m in subject.Assignment
+                                 where m.Status == AssignmentStatus.FINISHED && m.CompleteDate >= DateTime.Today && m.CompleteDate < DateTime.Today.AddDays(1)
+                             select m).Count();
+            ViewBag.waitnum = (from m in subject.Assignment
+                                 where m.Status == AssignmentStatus.UNFINISHED && m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1)
+                               select m).Count();
             ViewBag.RecentEvent = loglist;
             return PartialView(subject);
         }

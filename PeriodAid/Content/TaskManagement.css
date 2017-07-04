@@ -509,8 +509,7 @@ a.close{
 .tm_list-item .tm_item_left{
     height:40px;
     line-height:24px;
-    padding:8px 0px;  
-    width:80%;
+    padding:8px 8px;  
     float:left;
      box-sizing:border-box;
     vertical-align:middle;
