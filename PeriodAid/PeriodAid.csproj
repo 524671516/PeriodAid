@@ -1047,6 +1047,8 @@
     <Content Include="Views\TaskManagement\SubjectMenuPannelPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectUntreatedProgressPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -318,12 +318,10 @@ function CustomConfirm(text,callback) {
 /*时间控件调用*/
 function CompleteTimeWidget(cotainer) {
     $(cotainer).datetimepicker({
-        format: 'yyyy-mm-dd',
+        format: 'yyyy-mm-dd hh:ii',
         autoclose: true,
         todayBtn: true,
         clearBtn: true,
-        minView: "2",
-        maxView:"2",
         pickerPosition: "bottom-right",
         todayHighlighttodayHighlight: true,
     });

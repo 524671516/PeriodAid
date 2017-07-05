@@ -78,25 +78,24 @@
         return false;
     })
     $("#subject_daily_schedule").on("click", function () {
-        ErrorAlert("功能开发中。");
-        //$.ajax({
-        //    url: "/TaskManagement/SubjectProgressPartial",
-        //    data: {
-        //        SubjectId: $("#pannel-wrap").attr("data-sid")
-        //    },
-        //    success: function (data) {
-        //        if (data != "FAIL") {
-        //            $("#Create-Subject-Content").html(data);
-        //            $("#Add-Subject").modal();
-        //        }
-        //        else {
-        //            ErrorAlert("当前用户没有修改项目信息的权限")
-        //        }
-        //    },
-        //    error: function (data) {
-        //        ErrorAlert("操作失败。");
-        //    }
-        //})
+        $.ajax({
+           url: "/TaskManagement/SubjectProgressPartial",
+            data: {
+                SubjectId: $("#pannel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                if (data != "FAIL") {
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }
+                else {
+                    ErrorAlert("当前用户没有修改项目信息的权限")
+                }
+            },
+            error: function (data) {
+                ErrorAlert("操作失败。");
+            }
+        })
         return false;
     })
 
