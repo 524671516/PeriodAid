@@ -29,6 +29,9 @@ body,html{
     background-color: #3da8f5;
     border-color: #3da8f5;
 }
+.color-orange{
+    color:#ff8547;
+}
 .color-blue{
     color:#3da8f5;
 }
@@ -460,14 +463,14 @@ a.close{
     overflow-x: visible
 }
 .tm_pannel-footer>.tm_pannel-footer-left,.tm_pannel-footer>.tm_pannel-footer-left,.tm_pannel-header>.tm_pannel-header-left,.tm_pannel-header>.tm_pannel-header-left{
-    width:70%;
+    width:30%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 .tm_pannel-footer>.tm_pannel-footer-right,.tm_pannel-footer>.tm_pannel-footer-right,.tm_pannel-header>.tm_pannel-header-right,.tm_pannel-header>.tm_pannel-header-right{
     text-align:right;
-    width:30%;
+    width:70%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -550,9 +553,12 @@ a.close{
     padding:10px 0px;
 }
 .tm_modal_list-header{
-    background-color:rgba(0,0,0,0.1);
-    border-bottom:1px solid #fff;
+    border:1px solid #ccc;
+    border-radius: 4px;
     padding:0 10px;
+}
+.tm_modal_body ul>.tm_modal_list-header{
+    border-bottom:none;
 }
 .tm_left_icon{
     padding: 5px 5px 5px 0;
@@ -705,14 +711,6 @@ a.btn_subtask_detail{
     bottom:40px;
     overflow:auto;
 }
-.tm_subject_pannel_body li{
-    height:30px;
-    line-height:30px;
-    margin-top:5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 .tm_subject_pannel_header{
     top:0;
     border-bottom:1px solid #e5e5e5;
@@ -749,8 +747,14 @@ a.btn_subtask_detail{
     border-bottom:1px solid #e5e5e5;
     position:relative;
 }
-.tm_modal_ul{
+.tm_modal_ul,.tm_modal_list_ul{
     margin:0;
+}
+.tm_modal_list_ul .list-group-item{
+    cursor:pointer;
+    border-radius:0px;
+    border-right:none;
+    border-left:none;
 }
 .tm_modal_ul .list-group-item{
     cursor:pointer;
@@ -762,7 +766,7 @@ a.btn_subtask_detail{
    -webkit-transition:  all 300ms ease;	/* Safari 和 Chrome */
    -o-transition:  all 300ms ease;	/* Opera */
 }
-.tm_modal_ul li:first-child{
+.tm_modal_ul li:first-child,.tm_modal_list_ul li:first-child{
     border-top:none;
 }
 .tm_modal_ul_wrap{
@@ -780,6 +784,73 @@ a.btn_subtask_detail{
     border-left:5px solid #3da8f5;
     background-color:rgba(0,0,0,0.1)
 }
+.tm_empty_content{
+    text-align:center;
+    line-height:250px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    height:250px;
+    width:250px;
+    transform:translate(-125px,-125px)
+}
+.tm_modal_list_li:hover{
+    background-color:#E5E5E5;
+}
+.tm_modal_list_li{
+    width:100%;
+    cursor:pointer;
+    height:50px;
+    box-sizing:border-box;
+    border-bottom:1px solid #E5E5E5; 
+}
+.tm_item_border{
+    height:50px;
+    width:8px;
+    background-color:#ccc;
+}
+.tm_item_avatar{
+    text-align:center;
+    height:50px;
+    padding:11px 5px;
+}
+.tm_item_avatar .tm_avatar{
+    margin:0;
+}
+.tm_item_right{
+    line-height:39px;
+    height:50px;
+    padding:5px 5px;
+}
+.tm_subject_container .tm_item_avatar{
+    width:15%;
+}
+.tm_subject_container .tm_item_middle{
+    width:85%;
+}
+.tm_item_middle{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height:50px;
+    padding:5px 5px;
+}
+.tm_middle_content{
+    padding:2px;
+}
+.tm_item_left{
+    float:left;
+    padding:0 5px 0 0;
+}
+
+/*修改日志删选样式*/
+.bootstrap-select .btn{
+    border-radius:0px !important;
+}
+.bootstrap-select  .filter-option{
+    text-align:center !important;
+}
+
 
 
 

@@ -13,7 +13,7 @@
                             <input type="checkbox" class="assignment_comfirm_finish" checked="checked" />
                             &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
                         </div>
-                        <div class="tm_item_right" data-aid="@item.Id">
+                        <div class="tm_item_right" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
                             @if (item.Holder.ImgUrl == null)
                             {
                                 <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
@@ -35,8 +35,8 @@
                         @if (item.Deadline != null)
                         {
                             <div class="tm_item_left">
-                                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                <span class="finish_subtask color-blue">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
+                                <span class="color-orange">截止日期:</span>
+                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
                             </div>
                         }                 
                     </div>
@@ -50,7 +50,7 @@
                             <input type="checkbox" class="assignment_comfirm_finish" />
                             &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
                         </div>
-                        <div class="tm_item_right" data-aid="@item.Id">
+                        <div class="tm_item_right" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
                             @if (item.Holder.ImgUrl == null)
                             {
                                 <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
@@ -72,8 +72,8 @@
                         @if (item.Deadline != null)
                         {
                             <div class="tm_item_left">
-                                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                <span class="finish_subtask color-blue">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
+                                <span class="color-orange">截止日期:</span>
+                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
                             </div>
                         }       
                     </div>
@@ -90,3 +90,8 @@
         </div>
     </div>
 </div>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>

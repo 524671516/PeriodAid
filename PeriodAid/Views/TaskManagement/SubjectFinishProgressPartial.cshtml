@@ -1,0 +1,51 @@
+﻿@model IEnumerable<PeriodAid.Models.Assignment>
+@using PeriodAid.Models
+    @if (Model.Count() == 0)
+    {
+        <li class="tm_empty_content">- 没有任何内容 -</li>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+           <li class="clear-float tm_modal_list_li">
+               <div class="tm_item_border float-left"></div>
+               <div class="tm_item_avatar float-left">
+                   @if (item.Holder.ImgUrl == null)
+                   {
+                       <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                   }
+                   else
+                   {
+                       <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                   }
+               </div>
+               <div class="tm_item_middle float-left">
+                   <div class="tm_middle_top tm_middle_content">
+                       <span>@item.AssignmentTitle</span>
+                   </div>
+                   <div class="tm_middle_bottom tm_middle_content clear-float">
+                       @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                       {
+                           <div class="tm_item_left">
+                               <i class="fa fa-list-ul" aria-hidden="true"></i>
+                               <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                           </div>
+                       }
+                       @if (item.CompleteDate != null)
+                       {
+                           <div class="tm_item_left">
+                               <span class="color-gray">完成日期:</span>
+                               <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.CompleteDate).ToString("yyyy-MM-dd"))</span>
+                           </div>
+                       }
+                       
+                   </div>
+               </div>
+               <div class="tm_item_right float-right">
+                   <div class="tm_content_top">                       
+                   </div>
+               </div>
+           </li>
+        }
+    }

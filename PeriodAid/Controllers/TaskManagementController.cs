@@ -446,12 +446,19 @@ namespace PeriodAid.Controllers
         public ActionResult Subject_Detail(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
-            ViewBag.sortprocedure = from m in subject.ProcedureTemplate.Procedure
-                                    where m.Status == ProcedureStatus.NORMAL
-                                    orderby m.Sort ascending
-                                    select m;
-            ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
-            return View(subject);
+            if (subject.Status==SubjectStatus.ARCHIVED|| subject.Status == SubjectStatus.DELETED)
+            {
+                return PartialView("Error");
+            }
+            else
+            {
+                ViewBag.sortprocedure = from m in subject.ProcedureTemplate.Procedure
+                                        where m.Status == ProcedureStatus.NORMAL
+                                        orderby m.Sort ascending
+                                        select m;
+                ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
+                return View(subject);
+            }           
         }
         #endregion
 
@@ -1071,7 +1078,7 @@ namespace PeriodAid.Controllers
                                  where m.Status == AssignmentStatus.FINISHED && m.CompleteDate >= DateTime.Today && m.CompleteDate < DateTime.Today.AddDays(1)
                              select m).Count();
             ViewBag.waitnum = (from m in subject.Assignment
-                                 where m.Status == AssignmentStatus.UNFINISHED && m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1)
+                                 where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1)|| m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
                                select m).Count();
             ViewBag.RecentEvent = loglist;
             return PartialView(subject);
@@ -1083,13 +1090,46 @@ namespace PeriodAid.Controllers
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             return PartialView(subject);
         }
+        
 
+        //获取项目今日完成进度
+        public PartialViewResult SubjectFinishProgressPartial(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var AssignmentList = from m in subject.Assignment
+                                     where m.Status == AssignmentStatus.FINISHED && m.CompleteDate >= DateTime.Today && m.CompleteDate < DateTime.Today.AddDays(1)
+                                     select m;
+            return PartialView(AssignmentList);
+        }
+
+        //获取项目今日待完成进度
+        public PartialViewResult SubjectUntreatedProgressPartial(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var AssignmentList = from m in subject.Assignment
+                                     where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
+                                     select m;
+            return PartialView(AssignmentList);
+        }
         //获取项目日志
         public PartialViewResult SubjectLogsPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             return PartialView(subject);
         }
+
+        //项目日志分页获取
+        public PartialViewResult SubjectLogsAjaxPartial(int? page,int SubjectId)
+        {
+            int _page = page ?? 0;
+            var LogList = (from m in _db.OperationLogs
+                            where m.SubjectId==SubjectId
+                            orderby m.LogTime descending
+                            select m).Skip(_page * 20).Take(20);
+            return PartialView(LogList);
+        }
+
+        
 
 
 
@@ -1280,6 +1320,13 @@ namespace PeriodAid.Controllers
             }
         }
 
+
+
+
+
+
+
+        //日志
         private async Task<bool> AddLogAsync(int code, int employeeId, int subjectId, string info)
         {
             var employee = _db.Employee.SingleOrDefault(m => m.Id == employeeId);

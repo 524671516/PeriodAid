@@ -2,7 +2,7 @@
 @using PeriodAid.Models;
 <div class="tm_subject_container">
     <div class="tm_subject_pannel_header">
-        <strong class="color-blue">项目菜单</strong>
+        <strong class="color-blue">项目菜单</strong>       
     </div>
     <div class="tm_subject_pannel_body">
         <div class="list-group">
@@ -29,25 +29,44 @@
             </a>
             <a href="#" class="list-group-item">
                 <h4 class="list-group-item-heading">最近动态</h4>
-                <ul>
-                    @foreach (var log in ViewBag.RecentEvent)
+                <ul class="list-group tm_modal-list tm_modal_list_ul">
+                   @if (ViewBag.RecentEvent.Count==0)
+                   {
+                       <li>此项目最近没有任何动态更新。</li>
+                   }
+                   else
+                   {
+                    foreach (var log in ViewBag.RecentEvent)
                     {
-                        <li class="clear-float">
-                            <div class="float-left subject_avatar_box">
-                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@log.Employee.ImgUrl');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                        <li class="clear-float tm_modal_list_li">
+                            <div class="tm_item_avatar float-left" title="@log.Employee.NickName" data-toggle="tooltip" data-placement="right">
+                                @if (log.Employee.ImgUrl == null)
+                                {
+                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }
+                                else
+                                {
+                                    <span style="background-image:url('http://cdn2.shouquanzhai.cn/@log.Employee.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }                          
                             </div>
-                            <div class="float-left subject_task_control">
-                                <strong>@Html.Encode(log.Employee.NickName)</strong>
-                                <span>@Html.Encode(log.LogContent)</span>
-                            </div>
-                            <div class="float-right">
-                                <span>@Html.Encode(log.LogTime)</span>
+                            <div class="tm_item_middle float-left">
+                                <div class="tm_middle_top tm_middle_content" title="@log.LogContent" data-toggle="tooltip" data-placement="top">
+                                    <span>@Html.Encode(log.LogContent)</span>
+                                </div>
+                                <div class="tm_middle_bottom tm_middle_content clear-float">
+                                    <div class="tm_item_left">
+                                        <span class="color-gray"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                                        <span class="finish_subtask">@Html.Encode(log.LogTime)</span>
+                                    </div>
+
+                                </div>
                             </div>
                         </li>
                     }
+                   }
                 </ul>
             </a>
-            <a href="#" class="list-group-item">
+            <a href="javascript:;" class="list-group-item" id="subject_logs_more">
                 <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
                 &nbsp;查看更多操作日志
             </a>
@@ -56,6 +75,9 @@
     <div class="tm_subject_pannel_footer">没有更多了</div>
 </div>
 <script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
     $("#btn_setting_subject").on("click", function () {
         $.ajax({
             url: "/TaskManagement/EditSubject",
@@ -78,26 +100,45 @@
         return false;
     })
     $("#subject_daily_schedule").on("click", function () {
-        ErrorAlert("功能开发中。");
-        //$.ajax({
-        //    url: "/TaskManagement/SubjectProgressPartial",
-        //    data: {
-        //        SubjectId: $("#pannel-wrap").attr("data-sid")
-        //    },
-        //    success: function (data) {
-        //        if (data != "FAIL") {
-        //            $("#Create-Subject-Content").html(data);
-        //            $("#Add-Subject").modal();
-        //        }
-        //        else {
-        //            ErrorAlert("当前用户没有修改项目信息的权限")
-        //        }
-        //    },
-        //    error: function (data) {
-        //        ErrorAlert("操作失败。");
-        //    }
-        //})
+        $.ajax({
+           url: "/TaskManagement/SubjectProgressPartial",
+            data: {
+                SubjectId: $("#pannel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                if (data != "FAIL") {
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }
+                else {
+                    ErrorAlert("操作失败。")
+                }
+            },
+            error: function (data) {
+                ErrorAlert("操作失败。");
+            }
+        })
         return false;
     })
-
+    $("#subject_logs_more").on("click", function () {
+        $.ajax({
+            url: "/TaskManagement/SubjectLogsPartial",
+            data: {
+                SubjectId: $("#pannel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                if (data != "FAIL") {
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }
+                else {
+                    ErrorAlert("操作失败。")
+                }
+            },
+            error: function (data) {
+                ErrorAlert("操作失败。");
+            }
+        })
+        return false;
+    })
 </script>
