@@ -843,6 +843,15 @@ a.btn_subtask_detail{
     padding:0 5px 0 0;
 }
 
+/*修改日志删选样式*/
+.bootstrap-select .btn{
+    border-radius:0px !important;
+}
+.bootstrap-select  .filter-option{
+    text-align:center !important;
+}
+
+
 
 
 

@@ -4,26 +4,24 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title">@Html.Encode(Model.SubjectTitle+"的操作日志")</h4>
 </div>
-<div class="btn-group btn-group-justified" role="group" style="margin-top:10px;">
+<div class="btn-group btn-group-justified" role="group" style="padding:10px;">
     <div class="btn-group">
-        <select class="selectpicker" data-width="100%">
-            <option>Mustard</option>
-            <option>Ketchup</option>
-            <option>Relish</option>
+        <select class="selectpicker" id="tm_select_straff" data-width="100%">
+            <option>张三</option>
         </select>
     </div>
     <div class="btn-group">
-        <select class="selectpicker" data-width="100%">
-            <option>Mustard</option>
-            <option>Ketchup</option>
-            <option>Relish</option>
+        <select class="selectpicker" id="tm_select_type" data-width="100%">
+            <option>任务</option>
+            <option>项目</option>
+            <option>子任务</option>
+            <option>文件</option>
         </select>
     </div>
     <div class="btn-group">
-        <select class="selectpicker" data-width="100%">
-            <option>Mustard</option>
-            <option>Ketchup</option>
-            <option>Relish</option>
+        <select class="selectpicker" id="tm_select_time" data-width="100%">
+            <option>全部</option>
+            <option>当日</option>
         </select>
     </div>   
 </div>
@@ -32,8 +30,16 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('.selectpicker').selectpicker({
-            size: 2
+        $('#tm_select_straff').selectpicker({
+            liveSearch: true,
+            liveSearchPlaceholder: "搜索人员",
+            title:"人员选择"
+        });
+        $('#tm_select_type').selectpicker({
+            title: "类型"
+        });
+        $('#tm_select_time').selectpicker({
+            title: "时间"
         });
 
     });
