@@ -800,7 +800,7 @@ a.btn_subtask_detail{
     background-color:#E5E5E5;
 }
 .tm_modal_list_li{
-    line-height:50px;
+    cursor:pointer;
     height:50px;
     box-sizing:border-box;
     border-bottom:1px solid #E5E5E5; 
@@ -808,11 +808,30 @@ a.btn_subtask_detail{
 .tm_item_border{
     height:50px;
     width:8px;
-    background-color:red;
+    background-color:#ccc;
 }
 .tm_item_avatar{
     height:50px;
     padding:11px 5px;
+}
+.tm_item_avatar .tm_avatar{
+    margin:0;
+}
+.tm_item_right{
+    line-height:39px;
+}
+.tm_item_middle,.tm_item_right{
+    height:50px;
+    padding:5px 5px;
+    align-content:center;
+    justify-content:center;
+}
+.tm_middle_content{
+    padding:2px;
+}
+.tm_item_left{
+    float:left;
+    padding:0 5px;
 }
 
 
