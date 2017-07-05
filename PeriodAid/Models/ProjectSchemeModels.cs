@@ -455,7 +455,45 @@
         /// </summary>
         public static int DELETESUBJECT = 104;
 
-        
+        /// <summary>
+        /// 添加任务
+        /// </summary>
+        public static int CREATETASK = 105;
+        /// <summary>
+        /// 修改任务
+        /// </summary>
+        public static int EDITTASK = 106;
+        /// <summary>
+        /// 归档任务
+        /// </summary>
+        public static int ARCHIVETASK = 107;
+        /// <summary>
+        /// 删除任务
+        /// </summary>
+        public static int DELETETASK = 108;
+
+        /// <summary>
+        /// 添加子任务
+        /// </summary>
+        public static int CREATESUBTASK = 109;
+        /// <summary>
+        /// 修改子任务
+        /// </summary>
+        public static int EDITSUBTASK = 110;
+        /// <summary>
+        /// 归档子任务
+        /// </summary>
+        public static int ARCHIVESUBTASK = 111;
+        /// <summary>
+        /// 删除子任务
+        /// </summary>
+        public static int DELETESUBTASK = 112;
+
+        /// <summary>
+        ///更改个人信息
+        /// </summary>
+        public static int EDITPERSONALINFO = 113;
+
     }
 
 

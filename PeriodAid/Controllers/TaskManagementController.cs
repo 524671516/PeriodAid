@@ -1117,6 +1117,17 @@ namespace PeriodAid.Controllers
             return PartialView(subject);
         }
 
+        //项目日志分页获取
+        public PartialViewResult SubjectLogsAjaxPartial(int? page,int SubjectId)
+        {
+            int _page = page ?? 0;
+            var LogList = (from m in _db.OperationLogs
+                            where m.SubjectId==SubjectId
+                            orderby m.LogTime descending
+                            select m).Skip(_page * 20).Take(20);
+            return PartialView(LogList);
+        }
+
         
 
 

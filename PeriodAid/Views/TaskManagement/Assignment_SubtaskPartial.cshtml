@@ -18,7 +18,14 @@
                                     <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish">
                                    }
                                 </div>
-                                <div class="tm_modal_list-middle add-btn btn_edit_subtask" data-sbid="@item.Id">@Html.Encode(item.TaskTitle)</div>
+                                <div class="tm_modal_list-middle add-btn btn_edit_subtask" data-sbid="@item.Id">
+                                    <span>@Html.Encode(item.TaskTitle)</span>&nbsp;&nbsp;&nbsp;
+                                    @if (item.Deadline != null)                                 
+                                    {
+                                        <span>截止日期:@Html.Encode(item.Deadline)</span>
+                                    }
+                                    
+                                </div>
                                 <div class="tm_modal_list-right"><a href="javascript:;" class="btn_link_subtask" data-stid="@item.Id">了解详情>></a></div>
                          </div>
                         <div class="tm_modal_list-footer hidden add-subtask-write"></div>
