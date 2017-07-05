@@ -72,7 +72,8 @@ namespace PeriodAid.Controllers
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
             {
-                return RedirectToAction("TaskManagement", "TaskManagerLogin");
+                //return RedirectToAction("TaskManagement", "TaskManagerLogin");
+                return PartialView("EmployeeError");
             }
             else
             {
@@ -1131,19 +1132,19 @@ namespace PeriodAid.Controllers
                 {
                     string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
 
-                   Stream stream = files[0].InputStream;                
-                   HttpPostedFileBase NeedByteFile = files[0];   //需要转换的文件
-                   var ByteArray = SetFileToByteArray(NeedByteFile);   //转换
-                   var jsonimgsize = JsonConvert.DeserializeObject<CutImgModel>(form["avatar_data"]);  //获取截图参数                      
+                    Stream stream = files[0].InputStream;
+                    HttpPostedFileBase NeedByteFile = files[0];   //需要转换的文件
+                    var ByteArray = SetFileToByteArray(NeedByteFile);   //转换
+                    var jsonimgsize = JsonConvert.DeserializeObject<CutImgModel>(form["avatar_data"]);  //获取截图参数                      
                     string strtExtension = Path.GetExtension(files[0].FileName);//图片格式
                     MemoryStream ms1 = new MemoryStream(ByteArray);
                     Bitmap sBitmap = (Bitmap)Image.FromStream(ms1);
                     Rectangle section = new Rectangle(new Point(jsonimgsize.ToInt(jsonimgsize.x), jsonimgsize.ToInt(jsonimgsize.y)), new Size(jsonimgsize.ToInt(jsonimgsize.width), jsonimgsize.ToInt(jsonimgsize.height)));
-                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, 200, 200, section.Width, section.Height, section.X, section.Y,jsonimgsize.rotate);
+                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, 200, 200, section.X, section.Y, section.Width, section.Height, jsonimgsize.rotate);
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutObject(BitmapByte(CroppedImage), "Subject/Avatar/" + filename);
-                    imgurl = filename;                  
-                    return Json(new { result = "SUCCESS",imgurl= "Subject/Avatar/"+ imgurl });
+                    imgurl = filename;
+                    return Json(new { result = "SUCCESS", imgurl = "Subject/Avatar/" + imgurl });
                 }
                 else
                 {
@@ -1253,9 +1254,9 @@ namespace PeriodAid.Controllers
         /// <param name="cropHeight">裁剪高度</param>
         /// <param name="X">X轴</param>
         /// <param name="Y">Y轴</param>
-        public static Bitmap MakeThumbnailImage(Image originalImage, int maxWidth, int maxHeight, int cropWidth, int cropHeight, int X, int Y,float angle)
+        public static Bitmap MakeThumbnailImage(Image originalImage, int width, int height,  int X, int Y,int cropWidth, int cropHeight,float angle)
         {
-            Bitmap _b = new Bitmap(cropWidth, cropHeight);
+            Bitmap _b = new Bitmap(width,height);
             var b = KiRotate(originalImage, angle);
             try
             {
@@ -1264,10 +1265,8 @@ namespace PeriodAid.Controllers
                     //清空画布并以透明背景色填充
                     g.Clear(Color.Transparent);
                     //在指定位置并且按指定大小绘制原图片的指定部分
-                    g.DrawImage(b, new Rectangle(0, 0, cropWidth, cropHeight), X, Y, cropWidth, cropHeight, GraphicsUnit.Pixel);
-                    Image displayImage = new Bitmap(_b, maxWidth, maxHeight);
-                    Bitmap bit = new Bitmap(_b, maxWidth, maxHeight);                    
-                    return bit;
+                    g.DrawImage(b, new Rectangle(0, 0, width, height), new Rectangle(X,Y,cropWidth,cropHeight), GraphicsUnit.Pixel);
+                    return _b;
                 }
             }
             catch (System.Exception e)
