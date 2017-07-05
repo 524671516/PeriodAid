@@ -1275,17 +1275,19 @@ namespace PeriodAid.Controllers
             }
         }
 
-        private async Task<bool> AddLogAsync(int code, int employeeId, int subjectId, string info)
+        private async Task<bool> AddLogAsync(int code, int employeeId, int subjectId, string info, int? assignmentId, int? subTaskId)
         {
-            var employee = _db.Employee.SingleOrDefault(m => m.Id == employeeId);
+            var employee = _db.Employee.SingleOrDefault(m=>m.Id== employeeId);
             if (employee != null)
             {
-                bool result = await AddLogAsync(code, employee, subjectId, info);
+
+                bool result = await AddLogAsync(code, employee, subjectId, info, assignmentId, subTaskId);
                 return result;
             }
             return false;
         }
-        private async Task<bool> AddLogAsync(int code, Employee employee, int subjectId, string info)
+        
+        private async Task<bool> AddLogAsync(int code, Employee employee, int subjectId, string info,int? assignmentId,int? subTaskId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
             if (subject != null)
@@ -1295,17 +1297,63 @@ namespace PeriodAid.Controllers
                 {
                     logContent = employee.NickName + " 添加了项目 " + subject.SubjectTitle;
                 }
-                else if(code == LogCode.EDITSUBJECT)
+                else if (code == LogCode.EDITSUBJECT)
                 {
                     logContent = employee.NickName + " 修改了项目 " + subject.SubjectTitle;
                 }
-                else if(code == LogCode.ARCHIVESUBJECT)
+                else if (code == LogCode.ARCHIVESUBJECT)
                 {
-                    logContent = employee.NickName + " 将项目 " + subject.SubjectTitle +" 进行了归档";
+                    logContent = employee.NickName + " 将项目 " + subject.SubjectTitle + " 进行了归档";
                 }
-                else if(code == LogCode.DELETESUBJECT)
+                else if (code == LogCode.DELETESUBJECT)
                 {
                     logContent = employee.NickName + " 删除了项目 " + subject.SubjectTitle;
+                }
+                if (assignmentId !=null)
+                {
+                    var assignment = _db.Assignment.SingleOrDefault(m => m.Id == assignmentId);
+                    if (assignment != null)
+                    {
+                        if (code == LogCode.CREATETASK)
+                        {
+                            logContent = employee.NickName + "添加了任务" + assignment.AssignmentTitle;
+                        }
+                        else if (code == LogCode.EDITTASK)
+                        {
+                            logContent = employee.NickName + "修改了任务" + assignment.AssignmentTitle;
+                        }
+                        else if (code == LogCode.ARCHIVETASK)
+                        {
+                            logContent = employee.NickName + " 将项目 " + assignment.AssignmentTitle + " 进行了归档";
+                        }
+                        else if (code == LogCode.DELETETASK)
+                        {
+                            logContent = employee.NickName + "删除了任务" + assignment.AssignmentTitle;
+                        }
+                        if (subTaskId != null)
+                        {
+                            var subTask = _db.SubTask.SingleOrDefault(m => m.Id == subTaskId);
+                            if (subTask != null)
+                            {
+                                if (code == LogCode.CREATESUBTASK)
+                                {
+                                    logContent = employee.NickName + "添加了子任务" + subTask.TaskTitle;
+                                }
+                                else if (code == LogCode.EDITSUBTASK)
+                                {
+                                    logContent = employee.NickName + "修改了子任务" + subTask.TaskTitle;
+                                }
+                                else if (code == LogCode.DELETESUBTASK)
+                                {
+                                    logContent = employee.NickName + "删除了子任务" + subTask.TaskTitle;
+                                }
+                            }
+                        }
+                    }
+                 }
+                else if (code == LogCode.EDITPERSONALINFO)
+                {
+                    logContent = employee.NickName + "修改了个人信息。";
                 }
                 OperationLogs log = new OperationLogs()
                 {

@@ -489,6 +489,10 @@
         /// </summary>
         public static int DELETESUBTASK = 112;
 
+        /// <summary>
+        ///更改个人信息
+        /// </summary>
+        public static int EDITPERSONALINFO = 113;
     }
 
 }
