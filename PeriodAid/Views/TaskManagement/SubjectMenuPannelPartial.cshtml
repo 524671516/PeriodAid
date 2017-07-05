@@ -16,13 +16,13 @@
                     <div class="float-left">
                         <h5>已完成任务</h5>
                         <div class="color-green text-center subject_task_num">
-                            <strong>7</strong>
+                            <strong>@ViewBag.finishnum</strong>
                         </div>
                     </div>
                     <div class="float-right">
                         <h5>待处理任务</h5>
                         <div class="color-red text-center subject_task_num">
-                            <strong>7</strong>
+                            <strong>@ViewBag.waitnum</strong>
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
     })
     $("#subject_daily_schedule").on("click", function () {
         $.ajax({
-            url: "/TaskManagement/SubjectProgressPartial",
+           url: "/TaskManagement/SubjectProgressPartial",
             data: {
                 SubjectId: $("#pannel-wrap").attr("data-sid")
             },

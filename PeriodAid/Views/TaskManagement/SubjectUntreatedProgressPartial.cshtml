@@ -1,0 +1,18 @@
+﻿@model IEnumerable<PeriodAid.Models.Assignment>
+
+@if (Model.Count() == 0)
+{
+    <li class="tm_empty_content">- 没有任何内容 -</li>
+}
+else
+{
+    foreach (var item in Model)
+    {
+        <li class="list-group-item clear-float">
+            <div class="float-left">@item.AssignmentTitle</div>
+            <div class="float-right"><span class="color-gray add-btn">查看更多</span></div>
+        </li>
+    }
+}
+
+

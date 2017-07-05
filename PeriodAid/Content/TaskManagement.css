@@ -460,14 +460,14 @@ a.close{
     overflow-x: visible
 }
 .tm_pannel-footer>.tm_pannel-footer-left,.tm_pannel-footer>.tm_pannel-footer-left,.tm_pannel-header>.tm_pannel-header-left,.tm_pannel-header>.tm_pannel-header-left{
-    width:70%;
+    width:30%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 .tm_pannel-footer>.tm_pannel-footer-right,.tm_pannel-footer>.tm_pannel-footer-right,.tm_pannel-header>.tm_pannel-header-right,.tm_pannel-header>.tm_pannel-header-right{
     text-align:right;
-    width:30%;
+    width:70%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -509,8 +509,7 @@ a.close{
 .tm_list-item .tm_item_left{
     height:40px;
     line-height:24px;
-    padding:8px 0px;  
-    width:80%;
+    padding:8px 8px;  
     float:left;
      box-sizing:border-box;
     vertical-align:middle;
@@ -750,8 +749,14 @@ a.btn_subtask_detail{
     border-bottom:1px solid #e5e5e5;
     position:relative;
 }
-.tm_modal_ul{
+.tm_modal_ul,.tm_modal_list_ul{
     margin:0;
+}
+.tm_modal_list_ul .list-group-item{
+    cursor:pointer;
+    border-radius:0px;
+    border-right:none;
+    border-left:none;
 }
 .tm_modal_ul .list-group-item{
     cursor:pointer;
@@ -763,7 +768,7 @@ a.btn_subtask_detail{
    -webkit-transition:  all 300ms ease;	/* Safari 和 Chrome */
    -o-transition:  all 300ms ease;	/* Opera */
 }
-.tm_modal_ul li:first-child{
+.tm_modal_ul li:first-child,.tm_modal_list_ul li:first-child{
     border-top:none;
 }
 .tm_modal_ul_wrap{
@@ -780,6 +785,34 @@ a.btn_subtask_detail{
 .tm_modal_ul .list-group-item:hover{
     border-left:5px solid #3da8f5;
     background-color:rgba(0,0,0,0.1)
+}
+.tm_empty_content{
+    text-align:center;
+    line-height:250px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    height:250px;
+    width:250px;
+    transform:translate(-125px,-125px)
+}
+.tm_modal_list_li:hover{
+    background-color:#E5E5E5;
+}
+.tm_modal_list_li{
+    line-height:50px;
+    height:50px;
+    box-sizing:border-box;
+    border-bottom:1px solid #E5E5E5; 
+}
+.tm_item_border{
+    height:50px;
+    width:8px;
+    background-color:red;
+}
+.tm_item_avatar{
+    height:50px;
+    padding:11px 5px;
 }
 
 
