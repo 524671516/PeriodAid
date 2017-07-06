@@ -1,7 +1,7 @@
 ﻿@using PeriodAid.Models
 @model IEnumerable<PeriodAid.Models.Assignment>
 <div class="tm_list-container">
-    <ul class="tm_list-show" style="padding:5px 0">
+    <ul class="tm_list-show">
 
         @foreach (var item in Model)
         {
@@ -11,7 +11,7 @@
                     <div class="tm_list-item_top clear-float">
                         <div class="tm_item_left">
                             <input type="checkbox" class="assignment_comfirm_finish" checked="checked" />
-                            &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
+                            &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
                         </div>
                         <div class="tm_item_right" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
                             @if (item.Holder.ImgUrl == null)
@@ -34,11 +34,11 @@
                         }
                         @if (item.Deadline != null)
                         {
-                            <div class="tm_item_left">
+                            <div class="tm_item_left">&nbsp;&nbsp;
                                 <span class="color-orange">截止日期:</span>
                                 <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
                             </div>
-                        }                 
+                        }
                     </div>
                 </li>
             }
@@ -48,7 +48,7 @@
                     <div class="tm_list-item_top clear-float">
                         <div class="tm_item_left">
                             <input type="checkbox" class="assignment_comfirm_finish" />
-                            &nbsp;&nbsp;<span>@Html.Encode(item.AssignmentTitle)</span>
+                            &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
                         </div>
                         <div class="tm_item_right" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
                             @if (item.Holder.ImgUrl == null)
@@ -71,22 +71,22 @@
                         }
                         @if (item.Deadline != null)
                         {
-                            <div class="tm_item_left">
+                            <div class="tm_item_left">&nbsp;&nbsp;
                                 <span class="color-orange">截止日期:</span>
                                 <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
                             </div>
-                        }       
+                        }
                     </div>
                 </li>
 
             }
         }
     </ul>
-    <div class="tm_list-control">
-        <div class="tm_list-item tm_list-add text-center">
-            <a href="#" class="panel-body add-btn color-gray btn-get-assignmentform" data-pid="@ViewBag.ProcedureId"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i></a>
-            <div id="add-list-write" class="write-assignment-box">
-            </div>
+    <div class="tm_list-control text-center">
+        <div class="add-btn color-gray btn-get-assignmentform" data-pid="@ViewBag.ProcedureId">
+            <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i>
+        </div>
+        <div class="tm_assignmentform-area">
         </div>
     </div>
 </div>

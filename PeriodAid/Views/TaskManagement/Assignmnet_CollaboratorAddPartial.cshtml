@@ -3,122 +3,84 @@
     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
     <h4 class="modal-title text-center color-blue" id="Add-CollaboratorLabel">参与人选择</h4>
 </div>
-<div class="modal-body">
-    <div class="form-group">
-        <input type="text" class="form-control" placeholder="搜索员工" id="employee_search_area">
-    </div>
-    <div class="panel-group tm_accordion" id="accordion_collaborator" role="tablist" aria-multiselectable="true" data-aid="@Model.Id">
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingOne">
-                <a role="button" data-toggle="collapse" data-parent="#accordion_collaborator" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    已参与的员工
-                </a>
-            </div>
-            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                <ul class="list-group collaborator_area">
-                    <li class="list-group-item clear-float">
-                        <div class="list-group-item_left">@Html.Encode(Model.Holder.NickName)</div>
-                        <div class="list-group-item_right task-collaborator" data-eid="@Model.HolderId">任务负责人</div>
-                    </li>
-                    @foreach (var col in Model.Collaborator)
-                    {
-                        <li class="list-group-item clear-float">
-                            <div class="list-group-item_left">@Html.Encode(col.NickName)</div>
-                            <div class="list-group-item_right remove-collaborator task-collaborator" data-eid="@col.Id"><i class="fa fa-minus add-btn" aria-hidden="true"></i></div>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading margin-bottom-10">可选择的员工</div>
-        <div class="panel-group tm_accordion" id="department" role="tablist" aria-multiselectable="true">
+    <div class="padding-10">
+        <select class="selectpicker form-control" id="tm_select_straff2" multiple>
             @foreach (var depart in ViewBag.DepartmentList)
             {
-                <div class="panel panel-info">
-                    <div class="panel-heading" role="tab" id="headingDepartment_@depart.Id">
-                        <a role="button" data-toggle="collapse" data-parent="#department" href="#collapseDepartment_@depart.Id" aria-expanded="true" aria-controls="collapseDepartment_@depart.Id">
-                            @Html.Encode(depart.DepartmentName)
-                        </a>
+                <optgroup label="@depart.DepartmentName">
+                    @foreach (var straff in depart.Employee)
+                    {
+                        <option value="@straff.Id">@straff.NickName</option>
+                    }
+                </optgroup>
+            }
+        </select>
+    </div>
+    <div class="tm_modal_ul_wrap modal-list-pannel" style="padding:0 10px">
+        <ul class="list-group tm_modal_list_ul">
+            <li class="clear-float tm_modal_list_li">
+                <div class="tm_item_avatar float-left">
+                    @if (Model.Holder.ImgUrl == null)
+                    {
+                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                    }
+                    else
+                    {
+                        <span style="background-image: url('http://cdn2.shouquanzhai.cn/@Model.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                    }
+                </div>
+                <div class="tm_item_middle float-left">
+                    <div class="tm_middle_top tm_middle_content" title="" data-toggle="tooltip" data-placement="top" data-original-title="修改了项目:项目管理系统">
+                        <span class="color-blue">@Html.Encode(Model.Holder.NickName)</span>
                     </div>
-                    <div id="collapseDepartment_@depart.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDepartment_@depart.Id">
-                        <ul class="list-group">
-                            @foreach (var straff in depart.Employee)
-                            {
-                                <li class="list-group-item clear-float">
-                                    <div class="list-group-item_left">@Html.Encode(straff.NickName)</div>
-                                    <div class="list-group-item_right add-collaborator" data-eid="@straff.Id"><i class="fa fa-plus add-btn" aria-hidden="true"></i></div>
-                                </li>
-                            }
-                        </ul>
+                    <div class="tm_middle_bottom tm_middle_content clear-float">
+                        <div class="tm_item_left">
+                            <span class="color-gray">最后登录日期:</span>
+                            <span class="finish_subtask">@Html.Encode(Model.Holder.LastLoginDate.ToString("yyyy-MM-dd"))</span>
+                        </div>
+
                     </div>
                 </div>
+            </li>
+            @foreach (var col in Model.Collaborator)
+            {
+                <li class="clear-float tm_modal_list_li">
+                    <div class="tm_item_avatar float-left">
+                        @if (col.ImgUrl == null)
+                        {
+                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                        }
+                        else
+                        {
+                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@col.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                        }
+                    </div>
+                    <div class="tm_item_middle float-left">
+                        <div class="tm_middle_top tm_middle_content" title="" data-toggle="tooltip" data-placement="top" data-original-title="修改了项目:项目管理系统">
+                            <span class="color-blue">@Html.Encode(col.NickName)</span>
+                        </div>
+                        <div class="tm_middle_bottom tm_middle_content clear-float">
+                            <div class="tm_item_left">
+                                <span class="color-gray">最后登录日期:</span>
+                                <span class="finish_subtask">@Html.Encode(col.LastLoginDate.ToString("yyyy-MM-dd"))</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </li>
             }
-        </div>
+        </ul>
     </div>
-</div>
 <div class="modal-footer">
     <a href="javascript:;" class="btn btn-default" data-dismiss="modal">取消</a>
+    <a href="javascript:;" class="btn btn-primary">保存</a>
 </div>
 <script>
-    $(".add-collaborator").on("click", function () {
-        var eid = $(this).attr("data-eid");
-        var that = $(this);
-        if ($(".task-collaborator[data-eid=" + eid + "]").length == 0) {
-            $.ajax({
-                url: "/TaskManagement/ControlCollaboratorAjax",
-                type:"post",
-                data: {
-                    Remove:false,
-                    EmployeeId: eid,
-                    AssignmentId: $("#accordion_collaborator").attr("data-aid")
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        $(".collaborator_area").append("<li class=\"list-group-item clear-float\">" +
-                           "<div class=\"list-group-item_left\">" + that.parent().find(".list-group-item_left").html() + "</div>" +
-                           "<div class=\"list-group-item_right remove-collaborator task-collaborator\"data-eid=" + that.attr("data-eid") + "><i class=\"fa fa-minus add-btn\" aria-hidden=\"true\"></i></div>" + "</li>");
-                        GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-                            $("#modal_collaborator_area").html(data);
-                        })
-                    }
-
-                },
-                error: function () {
-                    ErrorAlert("操作失败");
-                }
-            })
-        } else {
-            UnimportantAlert("请勿重复添加！");
-        }
-
-    })
-    $("#accordion_collaborator").on("click",".remove-collaborator", function () {
-        var eid = $(this).attr("data-eid");
-        var that = $(this);
-        $.ajax({
-            url: "/TaskManagement/ControlCollaboratorAjax",
-            type: "post",
-            data: {
-                Remove: true,
-                EmployeeId: eid,
-                AssignmentId: $("#accordion_collaborator").attr("data-aid")
-            },
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    that.parent().remove();
-                    GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-                        $("#modal_collaborator_area").html(data);
-                    })
-                } else {
-                    ErrorAlert("操作失败,请先确定参与人不在任何任务中。");
-                }
-            },
-            error: function () {
-                ErrorAlert("操作失败");
-            }
-        })
-
-    })
+    $('#tm_select_straff2').selectpicker({
+        liveSearch: true,
+        liveSearchPlaceholder: "搜索人员",
+        width: "100%",
+        dropupAuto: false,
+        title:"选择添加人员"
+    });
 </script>

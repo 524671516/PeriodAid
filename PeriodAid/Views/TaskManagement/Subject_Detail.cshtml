@@ -173,14 +173,14 @@
         //任务添加窗口
         $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
-            $(".write-assignment-box").html("");
-            GetAssignmentForm($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), $(this).parent().find(".write-assignment-box"));
+            $(".tm_assignmentform-area").html("");
+            GetAssignmentForm($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), $(this).parent().find(".tm_assignmentform-area"));
             $(this).addClass("hidden");
         });
         //清除任务添加窗口
         $("#pannel-wrap").on("click", "#cancel-create-assignment", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
-            $(".write-assignment-box").html("");
+            $(".tm_assignmentform-area").html("");
         });
         //任务完成
         $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {

@@ -9,11 +9,11 @@
        @Html.TextBoxFor(m => m.AssignmentTitle, new {@class="form-control", @placeholder="任务名称"})
     </div>
     <div class="form-group">
-        <textarea class="form-control" rows="3"  placeholder="任务描述" id="Remarks" name="Remarks"></textarea>
+        <textarea class="form-control" rows="2"  placeholder="任务描述" id="Remarks" name="Remarks"></textarea>
     </div>
     <div class="form-group">
         <label for="HolderId">负责人</label>
-        @Html.DropDownListFor(m=>m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
+        @Html.DropDownListFor(m=>m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropup", @id= "tm_select_straff" })
     </div>
     <div class="form-group">
         <label for="HolderId">优先级</label>
@@ -29,6 +29,12 @@
     </div>
 }
 <script>
+    $('#tm_select_straff').selectpicker({
+        liveSearch: true,
+        liveSearchPlaceholder: "搜索人员",
+        width: "100%",
+        dropupAuto: false,
+    });
     //新增任务验证
     $("#add_assignment_form").validate({
         debug: false,

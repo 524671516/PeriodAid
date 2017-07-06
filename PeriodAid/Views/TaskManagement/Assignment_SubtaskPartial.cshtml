@@ -6,7 +6,7 @@
             <ul>
                 @foreach (var item in Model)
                 {
-                    <li class="tm_modal_list-header">
+                    <li class="tm_modal_list-header tm_subtask_li" data-stid="@item.Id">
                         <div class="tm-list-item_top clear-float">
                                 <div class="tm_modal_list-left tm_left_icon">
                                    @if (item.Status == AssignmentStatus.FINISHED)
@@ -18,15 +18,13 @@
                                     <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish">
                                    }
                                 </div>
-                                <div class="tm_modal_list-middle add-btn btn_edit_subtask" data-sbid="@item.Id">
-                                    <span>@Html.Encode(item.TaskTitle)</span>&nbsp;&nbsp;&nbsp;
-                                    @if (item.Deadline != null)                                 
-                                    {
-                                        <span>截止日期:@Html.Encode(item.Deadline)</span>
-                                    }
-                                    
+                                <div class="tm_modal_list-middle" data-sbid="@item.Id">
+                                    <span>@Html.Encode(item.TaskTitle)</span>&nbsp;&nbsp;&nbsp;                                
                                 </div>
-                                <div class="tm_modal_list-right"><a href="javascript:;" class="btn_link_subtask" data-stid="@item.Id">了解详情>></a></div>
+                                <div class="tm_modal_list-right">@if (item.Deadline != null)
+                                {
+                                    <span class="color-orange">截止日期:</span>@Html.Encode(item.Deadline)
+                                }</div>
                          </div>
                         <div class="tm_modal_list-footer hidden add-subtask-write"></div>
                     </li>
@@ -101,7 +99,7 @@
         }
     });
     //子任务了解详情
-    $("#subtask_modal_list").on("click", ".btn_link_subtask", function (event) {
+    $("#subtask_modal_list").on("click", ".tm_subtask_li", function (event) {
         $.ajax({
             url: "/TaskManagement/Subtask_Detail",
             data: {
@@ -114,7 +112,7 @@
     });
     //完成
     $("#subtask_modal_list").on("click", ".subtask_comfirm_finish", function (event) {
-        var stid = $(this).parent().parent().find(".btn_link_subtask").attr("data-stid");
+        var stid = $(this).parent().parent().parent.find(".btn_link_subtask").attr("data-stid");
         $.ajax({
             url: "/TaskManagement/ComfirmFinishSubtask",
             type: "post",

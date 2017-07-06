@@ -37,4 +37,11 @@ namespace PeriodAid.Models
         public int FinishNum { get; set; }
         public int TotalNum { get; set; }
     }
+
+    //参与人筛选
+    public class CollaboratorModel
+    {
+        public string DepartmentName { get; set; }
+        public List<Employee> EmployeeList { get; set; }
+    }
 }
