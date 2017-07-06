@@ -13,9 +13,6 @@
         </ul>
         <ul class="tm_dropdown_list">
             <li><a href="javascript:;" id="btn_del_subtask" data-stid="@Model.Id"><span class="color-red">删除任务</span></a></li>
-            <li><a href="javascript:;" id="btn_archive_subtask">归档</a></li>
-            <li><a href="javascript:;" id="btn_finish_subtask">完成</a></li>
-            <li><a href="javascript:;">持续更新中</a></li>
         </ul>
     </div>
 </div>
@@ -45,7 +42,7 @@
                 }
                 else
                 {
-                    <input id="RemindDate" name="RemindDate" type="text" readonly class="form-control form_datetime" value="@Convert.ToDateTime(Model.RemindDate).ToString("yyyy-MM-dd")" />
+                    <input id="RemindDate" name="RemindDate" type="text" readonly class="form-control form_datetime" value="@Convert.ToDateTime(Model.RemindDate).ToString("yyyy-MM-dd hh:mm")" />
                 }
 
             </div>
@@ -57,7 +54,7 @@
                 }
                 else
                 {
-                    <input id="Deadline" name="Deadline" type="text" readonly class="form-control form_datetime" value="@Convert.ToDateTime(Model.Deadline).ToString("yyyy-MM-dd")" />
+                    <input id="Deadline" name="Deadline" type="text" readonly class="form-control form_datetime" value="@Convert.ToDateTime(Model.Deadline).ToString("yyyy-MM-dd hh:mm")" />
                 }
             </div>
         </div>
@@ -95,7 +92,7 @@
                 if (data.result == "SUCCESS") {
                     UnimportantAlert("子任务修改成功");
                     $("#btn_edit_subtask").removeClass("disabled");
-                    $('#Edit-Subtask').modal('hide');                   
+                    $('#Edit-Assignment').modal('hide');
                 } else {
                     ErrorAlert(data.result);
                     $("#btn_edit_subtask").removeClass("disabled");

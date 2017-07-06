@@ -458,7 +458,7 @@
         /// <summary>
         /// 添加任务
         /// </summary>
-        public static int CREATETASK= 105;
+        public static int CREATETASK = 105;
         /// <summary>
         /// 修改任务
         /// </summary>
@@ -493,6 +493,9 @@
         ///更改个人信息
         /// </summary>
         public static int EDITPERSONALINFO = 113;
+
     }
+
+
 
 }
