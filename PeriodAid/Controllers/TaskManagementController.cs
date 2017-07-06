@@ -58,14 +58,14 @@ namespace PeriodAid.Controllers
             }
         }
         [AllowAnonymous]
-        public async Task<ActionResult> TestLogin()
+        public async Task<ActionResult> TestLogin(string tel)
         {
-            var user = UserManager.FindByName("1207278908@qq.com");
+            var user = UserManager.FindByName(tel);
             //UserManager.Update(user);
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             return RedirectToAction("Index");
         }
-        
+
         // GET: TaskManagement
         public async Task<ActionResult> Index()
         {
@@ -99,7 +99,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        [HttpPost,ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<JsonResult> EditPersonalInfo(Employee model)
         {
             if (ModelState.IsValid)
@@ -110,13 +110,13 @@ namespace PeriodAid.Controllers
                     try
                     {
                         _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                         await _db.SaveChangesAsync();
+                        await _db.SaveChangesAsync();
                     }
                     catch (Exception)
                     {
                         return Json(new { result = "数据存储失败。" });
                     }
-                    return Json(new { result = "SUCCESS"});
+                    return Json(new { result = "SUCCESS" });
                 }
                 return Json(new { result = "模型同步错误。" });
             }
@@ -146,10 +146,10 @@ namespace PeriodAid.Controllers
                     {
                         item.HolderId = employee.Id;
                         item.Status = SubjectStatus.ACTIVE;
-                        var defaultTemplate = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);         
-                        if (defaultTemplate==null)
+                        var defaultTemplate = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);
+                        if (defaultTemplate == null)
                         {
-                            defaultTemplate= _db.ProcedureTemplate.SingleOrDefault(m => m.Default==true);
+                            defaultTemplate = _db.ProcedureTemplate.SingleOrDefault(m => m.Default == true);
                         }
                         ProcedureTemplate template = new ProcedureTemplate()
                         {
@@ -183,7 +183,7 @@ namespace PeriodAid.Controllers
                             _db.Subject.Add(item);
                             await _db.SaveChangesAsync();
                             await _log.CreateSubjectLogAsync(employee, item);
-                           
+
                         }
                         catch (Exception)
                         {
@@ -390,12 +390,12 @@ namespace PeriodAid.Controllers
                 var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
                 // 自己的任务列表
                 var SubjectList = (from m in employee.CollaborateAssignment
-                                  where m.Status > AssignmentStatus.DELETED
-                                  select m.Subject).Where(p=>p.Status==SubjectStatus.ACTIVE);
+                                   where m.Status > AssignmentStatus.DELETED
+                                   select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
                 var HolderSubject = (from m in _db.Assignment
-                                 where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
-                                 select m.Subject).Where(p=>p.Status==SubjectStatus.ACTIVE);
-                var FirstMerge= ownSubject.Union(SubjectList);
+                                     where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
+                                     select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
+                var FirstMerge = ownSubject.Union(SubjectList);
                 var MergeSubject = FirstMerge.Union(HolderSubject);
                 return PartialView(MergeSubject);
 
@@ -422,11 +422,11 @@ namespace PeriodAid.Controllers
                 var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ARCHIVED);
                 // 自己的任务列表
                 var SubjectList = (from m in employee.CollaborateAssignment
-                                  where m.Status > AssignmentStatus.DELETED
-                                  select m.Subject).Where(p=>p.Status==SubjectStatus.ARCHIVED);
+                                   where m.Status > AssignmentStatus.DELETED
+                                   select m.Subject).Where(p => p.Status == SubjectStatus.ARCHIVED);
                 var HolderSubject = (from m in _db.Assignment
-                                    where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
-                                    select m.Subject).Where(p=>p.Status==SubjectStatus.ARCHIVED);
+                                     where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
+                                     select m.Subject).Where(p => p.Status == SubjectStatus.ARCHIVED);
                 var FirstMerge = ownSubject.Union(SubjectList);
                 var MergeSubject = FirstMerge.Union(HolderSubject);
 
@@ -445,7 +445,7 @@ namespace PeriodAid.Controllers
         public ActionResult Subject_Detail(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
-            if (subject.Status==SubjectStatus.ARCHIVED|| subject.Status == SubjectStatus.DELETED)
+            if (subject.Status == SubjectStatus.ARCHIVED || subject.Status == SubjectStatus.DELETED)
             {
                 return PartialView("Error");
             }
@@ -457,7 +457,7 @@ namespace PeriodAid.Controllers
                                         select m;
                 ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
                 return View(subject);
-            }           
+            }
         }
         #endregion
 
@@ -699,8 +699,8 @@ namespace PeriodAid.Controllers
                         if (item.Collaborator.Contains(holder))
                         {
                             item.Collaborator.Remove(holder);
-                        }  
-                                         
+                        }
+
                         _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
                         _db.SaveChanges();
                     }
@@ -980,9 +980,9 @@ namespace PeriodAid.Controllers
             if (Remove)
             {
                 var colNum = (from m in _db.SubTask
-                           where m.ExecutorId == EmployeeId && m.AssignmentId == AssignmentId&&m.Status>AssignmentStatus.DELETED
-                           select m).Count();
-                if (colNum>0)
+                              where m.ExecutorId == EmployeeId && m.AssignmentId == AssignmentId && m.Status > AssignmentStatus.DELETED
+                              select m).Count();
+                if (colNum > 0)
                 {
                     return Json(new { result = "FAIL" });
                 }
@@ -1008,11 +1008,11 @@ namespace PeriodAid.Controllers
         public ActionResult SortProcedure(string ProcedureJson)
         {
             JArray ja = (JArray)JsonConvert.DeserializeObject(ProcedureJson);
-            foreach(var item in ja)
+            foreach (var item in ja)
             {
                 try
                 {
-                    var objdata = JsonConvert.DeserializeObject <SortProcedureModel>(item.ToString());
+                    var objdata = JsonConvert.DeserializeObject<SortProcedureModel>(item.ToString());
                     var procedureid = Convert.ToInt32(objdata.procedureid);
                     var procedure = _db.Procedure.SingleOrDefault(m => m.Id == procedureid);
                     procedure.Sort = objdata.sort;
@@ -1029,7 +1029,7 @@ namespace PeriodAid.Controllers
 
         //任务拖拽改变
         [HttpPost]
-        public ActionResult DragAssignment(int aid,int nowpid)
+        public ActionResult DragAssignment(int aid, int nowpid)
         {
             try
             {
@@ -1048,17 +1048,18 @@ namespace PeriodAid.Controllers
 
         //获取任务数字更新数据
         [HttpPost]
-        public JsonResult GetProcedureJsonInfo(int SubjectId) {
+        public JsonResult GetProcedureJsonInfo(int SubjectId)
+        {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             List<ProcedureJsonModel> plist = new List<ProcedureJsonModel>();
-            foreach (var item in subject.ProcedureTemplate.Procedure.Where(p=>p.Status==ProcedureStatus.NORMAL))
+            foreach (var item in subject.ProcedureTemplate.Procedure.Where(p => p.Status == ProcedureStatus.NORMAL))
             {
                 ProcedureJsonModel pinfo = new ProcedureJsonModel()
                 {
                     ProcedureName = item.ProcedureTitle,
                     ProcedureId = item.Id,
                     FinishNum = item.Assignment.Count(m => m.Status == AssignmentStatus.FINISHED),
-                    TotalNum = item.Assignment.Count(m => m.Status>AssignmentStatus.DELETED)
+                    TotalNum = item.Assignment.Count(m => m.Status > AssignmentStatus.DELETED)
                 };
                 plist.Add(pinfo);
             }
@@ -1070,14 +1071,14 @@ namespace PeriodAid.Controllers
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var loglist = (from m in _db.OperationLogs
-                               where m.SubjectId == SubjectId
-                               orderby m.LogTime descending
-                               select m).Take(6).ToList();
+                           where m.SubjectId == SubjectId
+                           orderby m.LogTime descending
+                           select m).Take(6).ToList();
             ViewBag.finishnum = (from m in subject.Assignment
                                  where m.Status == AssignmentStatus.FINISHED && m.CompleteDate >= DateTime.Today && m.CompleteDate < DateTime.Today.AddDays(1)
-                             select m).Count();
+                                 select m).Count();
             ViewBag.waitnum = (from m in subject.Assignment
-                                 where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1)|| m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
+                               where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
                                select m).Count();
             ViewBag.RecentEvent = loglist;
             return PartialView(subject);
@@ -1089,15 +1090,15 @@ namespace PeriodAid.Controllers
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             return PartialView(subject);
         }
-        
+
 
         //获取项目今日完成进度
         public PartialViewResult SubjectFinishProgressPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var AssignmentList = from m in subject.Assignment
-                                     where m.Status == AssignmentStatus.FINISHED && m.CompleteDate >= DateTime.Today && m.CompleteDate < DateTime.Today.AddDays(1)
-                                     select m;
+                                 where m.Status == AssignmentStatus.FINISHED && m.CompleteDate >= DateTime.Today && m.CompleteDate < DateTime.Today.AddDays(1)
+                                 select m;
             return PartialView(AssignmentList);
         }
 
@@ -1106,8 +1107,8 @@ namespace PeriodAid.Controllers
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var AssignmentList = from m in subject.Assignment
-                                     where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
-                                     select m;
+                                 where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
+                                 select m;
             return PartialView(AssignmentList);
         }
         //获取项目日志
@@ -1117,7 +1118,7 @@ namespace PeriodAid.Controllers
             return PartialView(subject);
         }
 
-        
+
 
 
 
@@ -1160,19 +1161,19 @@ namespace PeriodAid.Controllers
                 {
                     string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
 
-                   Stream stream = files[0].InputStream;                
-                   HttpPostedFileBase NeedByteFile = files[0];   //需要转换的文件
-                   var ByteArray = SetFileToByteArray(NeedByteFile);   //转换
-                   var jsonimgsize = JsonConvert.DeserializeObject<CutImgModel>(form["avatar_data"]);  //获取截图参数                      
+                    Stream stream = files[0].InputStream;
+                    HttpPostedFileBase NeedByteFile = files[0];   //需要转换的文件
+                    var ByteArray = SetFileToByteArray(NeedByteFile);   //转换
+                    var jsonimgsize = JsonConvert.DeserializeObject<CutImgModel>(form["avatar_data"]);  //获取截图参数                      
                     string strtExtension = Path.GetExtension(files[0].FileName);//图片格式
                     MemoryStream ms1 = new MemoryStream(ByteArray);
                     Bitmap sBitmap = (Bitmap)Image.FromStream(ms1);
                     Rectangle section = new Rectangle(new Point(jsonimgsize.ToInt(jsonimgsize.x), jsonimgsize.ToInt(jsonimgsize.y)), new Size(jsonimgsize.ToInt(jsonimgsize.width), jsonimgsize.ToInt(jsonimgsize.height)));
-                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, 200, 200, section.Width, section.Height, section.X, section.Y,jsonimgsize.rotate);
+                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, 200, 200, section.Width, section.Height, section.X, section.Y, jsonimgsize.rotate);
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutObject(BitmapByte(CroppedImage), "Subject/Avatar/" + filename);
-                    imgurl = filename;                  
-                    return Json(new { result = "SUCCESS",imgurl= "Subject/Avatar/"+ imgurl });
+                    imgurl = filename;
+                    return Json(new { result = "SUCCESS", imgurl = "Subject/Avatar/" + imgurl });
                 }
                 else
                 {
@@ -1180,7 +1181,7 @@ namespace PeriodAid.Controllers
                     return Json(new { result = error });
                 }
             }
-            return Json(new { result = "FAIL"});
+            return Json(new { result = "FAIL" });
         }
         [HttpPost]
         public ActionResult UploadSubjectCoverFileAjax(FormCollection form)
@@ -1189,13 +1190,13 @@ namespace PeriodAid.Controllers
             string msg = string.Empty;
             string error = string.Empty;
             string imgurl;
-            
+
             if (files.Count > 0)
             {
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
-                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";                                     
-                    Stream stream = files[0].InputStream;                   
+                    string filename = DateTime.Now.ToFileTime().ToString() + ".jpg";
+                    Stream stream = files[0].InputStream;
                     //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutObject(files[0].InputStream, "Subject/SubjectCover/" + filename);
@@ -1220,7 +1221,7 @@ namespace PeriodAid.Controllers
         public static Bitmap KiRotate(Image originalImage, float angle)
         {
             int w = originalImage.Width + 2;
-            int h = originalImage.Height + 2;         
+            int h = originalImage.Height + 2;
             Bitmap tmp = new Bitmap(w, h);
             Graphics g = Graphics.FromImage(tmp);
             g.DrawImageUnscaled(originalImage, 1, 1);
@@ -1282,7 +1283,7 @@ namespace PeriodAid.Controllers
         /// <param name="cropHeight">裁剪高度</param>
         /// <param name="X">X轴</param>
         /// <param name="Y">Y轴</param>
-        public static Bitmap MakeThumbnailImage(Image originalImage, int maxWidth, int maxHeight, int cropWidth, int cropHeight, int X, int Y,float angle)
+        public static Bitmap MakeThumbnailImage(Image originalImage, int maxWidth, int maxHeight, int cropWidth, int cropHeight, int X, int Y, float angle)
         {
             Bitmap _b = new Bitmap(cropWidth, cropHeight);
             var b = KiRotate(originalImage, angle);
@@ -1295,7 +1296,7 @@ namespace PeriodAid.Controllers
                     //在指定位置并且按指定大小绘制原图片的指定部分
                     g.DrawImage(b, new Rectangle(0, 0, cropWidth, cropHeight), X, Y, cropWidth, cropHeight, GraphicsUnit.Pixel);
                     Image displayImage = new Bitmap(_b, maxWidth, maxHeight);
-                    Bitmap bit = new Bitmap(_b, maxWidth, maxHeight);                    
+                    Bitmap bit = new Bitmap(_b, maxWidth, maxHeight);
                     return bit;
                 }
             }
@@ -1310,19 +1311,24 @@ namespace PeriodAid.Controllers
             }
         }
 
+
+
+
+
+
+
+        //日志
         private async Task<bool> AddLogAsync(int code, int employeeId, int subjectId, string info)
         {
-            var employee = _db.Employee.SingleOrDefault(m=>m.Id== employeeId);
+            var employee = _db.Employee.SingleOrDefault(m => m.Id == employeeId);
             if (employee != null)
             {
-
-                bool result = await AddLogAsync(code, employee, subjectId, info, assignmentId, subTaskId);
+                bool result = await AddLogAsync(code, employee, subjectId, info);
                 return result;
             }
             return false;
         }
-        
-        private async Task<bool> AddLogAsync(int code, Employee employee, int subjectId, string info,int? assignmentId,int? subTaskId)
+        private async Task<bool> AddLogAsync(int code, Employee employee, int subjectId, string info)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
             if (subject != null)
@@ -1343,52 +1349,6 @@ namespace PeriodAid.Controllers
                 else if (code == LogCode.DELETESUBJECT)
                 {
                     logContent = employee.NickName + " 删除了项目 " + subject.SubjectTitle;
-                }
-                if (assignmentId !=null)
-                {
-                    var assignment = _db.Assignment.SingleOrDefault(m => m.Id == assignmentId);
-                    if (assignment != null)
-                    {
-                        if (code == LogCode.CREATETASK)
-                        {
-                            logContent = employee.NickName + "添加了任务" + assignment.AssignmentTitle;
-                        }
-                        else if (code == LogCode.EDITTASK)
-                        {
-                            logContent = employee.NickName + "修改了任务" + assignment.AssignmentTitle;
-                        }
-                        else if (code == LogCode.ARCHIVETASK)
-                        {
-                            logContent = employee.NickName + " 将项目 " + assignment.AssignmentTitle + " 进行了归档";
-                        }
-                        else if (code == LogCode.DELETETASK)
-                        {
-                            logContent = employee.NickName + "删除了任务" + assignment.AssignmentTitle;
-                        }
-                        if (subTaskId != null)
-                        {
-                            var subTask = _db.SubTask.SingleOrDefault(m => m.Id == subTaskId);
-                            if (subTask != null)
-                            {
-                                if (code == LogCode.CREATESUBTASK)
-                                {
-                                    logContent = employee.NickName + "添加了子任务" + subTask.TaskTitle;
-                                }
-                                else if (code == LogCode.EDITSUBTASK)
-                                {
-                                    logContent = employee.NickName + "修改了子任务" + subTask.TaskTitle;
-                                }
-                                else if (code == LogCode.DELETESUBTASK)
-                                {
-                                    logContent = employee.NickName + "删除了子任务" + subTask.TaskTitle;
-                                }
-                            }
-                        }
-                    }
-                 }
-                else if (code == LogCode.EDITPERSONALINFO)
-                {
-                    logContent = employee.NickName + "修改了个人信息。";
                 }
                 OperationLogs log = new OperationLogs()
                 {
