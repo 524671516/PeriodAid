@@ -61,7 +61,7 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="ExecutorId">执行人</label>
-                @Html.DropDownListFor(m => m.ExecutorId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
+                @Html.DropDownListFor(m => m.ExecutorId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdowm", @id = "tm_select_straff" })
             </div>
             <div class="form-group col-md-6">
                 <label for="AssignmentId">关联任务</label>
@@ -76,6 +76,12 @@
     <button type="button" class="btn btn-primary" id="btn_edit_subtask">保存</button>
 </div>
 <script type="text/javascript">
+    $('#tm_select_straff').selectpicker({
+        liveSearch: true,
+        liveSearchPlaceholder: "搜索人员",
+        width: "100%",
+        dropupAuto: false,
+    });
     CompleteTimeWidget(".form_datetime");
     //修改任务验证
     $("#edit_subtask_form").validate({

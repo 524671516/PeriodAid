@@ -7,7 +7,7 @@
 <div class="container-fluid">
     <div class="row modal-nav-pannel">
         <div class="col-md-3 tm_modal_ul_wrap">
-            <ul class="list-group tm_modal-nav tm_modal_ul">
+            <ul class="list-group tm_modal-nav tm_modal_nav_ul">
                 <li class="list-group-item tm_active" data-href="/TaskManagement/SubjectFinishProgressPartial">已完成</li>
                 <li class="list-group-item" data-href="/TaskManagement/SubjectUntreatedProgressPartial">未完成</li>
             </ul>
@@ -30,7 +30,6 @@
             SubjectId: $("#pannel-wrap").attr("data-sid")
         },
         success: function (data) {
-            console.log(data);
             $("#tm_modal_list_area").html(data);
             $("#loading-p").hide();
         },
