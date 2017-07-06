@@ -1056,6 +1056,7 @@
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectUntreatedProgressPartial.cshtml" />
+    <Content Include="Views\TaskManagement\EmployeeError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

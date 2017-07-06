@@ -55,6 +55,7 @@ namespace PeriodAid.Controllers
             }
         }
         // GET: Common
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View();
