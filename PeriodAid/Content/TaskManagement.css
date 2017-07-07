@@ -589,7 +589,7 @@ a.close{
 .tm_item_left{
     height:40px;
     line-height:40px;
-    max-width:60%;
+    max-width:75%;
     float:left;
     overflow: hidden;
     text-overflow: ellipsis;

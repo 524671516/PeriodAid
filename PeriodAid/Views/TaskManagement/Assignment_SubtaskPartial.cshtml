@@ -8,22 +8,34 @@
                 {
                     <li class="tm_modal_list-header tm_subtask_li" data-stid="@item.Id">
                         <div class="tm-list-item_top clear-float">
-                                <div class="tm_modal_list-left tm_left_icon">
-                                   @if (item.Status == AssignmentStatus.FINISHED)
-                                   {
+                            <div class="tm_modal_list-left tm_left_icon">
+                                @if (item.Status == AssignmentStatus.FINISHED)
+                                {
                                     <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish" checked>
-                                   }
-                                   else
-                                   {
+                                }
+                                else
+                                {
                                     <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish">
-                                   }
+                                }
+                            </div>
+
+                                <div class="tm_modal_list-left" style="padding:0 6px;" title="@item.Executor.NickName" data-toggle="tooltip" data-placement="top">
+                                    @if (item.Executor.ImgUrl == null)
+                                    {
+                                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                    }
+                                    else
+                                    {
+                                        <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Executor.ImgUrl');margin-top:-3px;" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                    }
+                                    
                                 </div>
                                 <div class="tm_modal_list-middle" data-sbid="@item.Id">
                                     <span>@Html.Encode(item.TaskTitle)</span>&nbsp;&nbsp;&nbsp;                                
                                 </div>
                                 <div class="tm_modal_list-right">@if (item.Deadline != null)
                                 {
-                                    <span class="color-orange">截止日期:</span>@Html.Encode(item.Deadline)
+                                    <span class="color-orange">截止日期:</span>@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))
                                 }</div>
                          </div>
                         <div class="tm_modal_list-footer hidden add-subtask-write"></div>
@@ -47,6 +59,9 @@
 </div>
 
 <script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
     //内置子任务弹出处理
     $("#subtask_modal_list").on("click", ".btn_add_subtask", function (event) {
         var that = $(this);
@@ -112,7 +127,7 @@
     });
     //完成
     $("#subtask_modal_list").on("click", ".subtask_comfirm_finish", function (event) {
-        var stid = $(this).parent().parent().parent.find(".btn_link_subtask").attr("data-stid");
+        var stid = $(this).parent().parent().parent().attr("data-stid");
         $.ajax({
             url: "/TaskManagement/ComfirmFinishSubtask",
             type: "post",
@@ -133,6 +148,7 @@
                 ErrorAlert("操作失败")
             }
         });
+        return false;
     });
 
 </script>

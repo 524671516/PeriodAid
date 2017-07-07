@@ -318,7 +318,8 @@ function CustomConfirm(text,callback) {
 /*时间控件调用*/
 function CompleteTimeWidget(cotainer) {
     $(cotainer).datetimepicker({
-        format: 'yyyy-mm-dd hh:ii',
+        format: 'yyyy-mm-dd hh:00',
+        minView:"day",
         autoclose: true,
         todayBtn: true,
         clearBtn: true,
