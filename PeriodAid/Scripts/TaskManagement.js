@@ -278,6 +278,7 @@ function UnimportantAlert(text) {
         }
     });
 }
+
 function ErrorAlert(text) {
     $.alert({
         type: "red",
