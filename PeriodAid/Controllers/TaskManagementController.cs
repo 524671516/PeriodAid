@@ -15,6 +15,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json.Linq;
+using PeriodAid.Filters;
 
 namespace PeriodAid.Controllers
 {
@@ -1320,7 +1321,12 @@ namespace PeriodAid.Controllers
             }
         }
 
-
+        // 测试
+        [AllowAnonymous, HttpPost, OperationJsonAuth(OperationClass =3)]
+        public ActionResult TESTFILTER(int Id)
+        {
+            return Content("321");
+        }
 
 
 
