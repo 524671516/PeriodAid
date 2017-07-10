@@ -637,10 +637,14 @@ a.close{
 .tm_left_icon{
     padding: 5px 5px 5px 0;
 }
-.tm_modal_list-left{
-    height:30px;
-    line-height:30px;
-    float:left;
+.tm_modal_list-left {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 30px;
+    line-height: 30px;
+    float: left;
+    width:80px;
 }
 .tm_modal_list-middle{
     max-width:50%;
