@@ -60,7 +60,7 @@
     <div class="row">
         <div class="form-group col-md-6">
             <label for="HolderId">负责人</label>
-            @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdowm", @id = "tm_select_straff" })
+            @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdowm", @id = "tm_select_straff_assignment" })
         </div>
         <div class="form-group col-md-6">
             <label for="Priority">优先级</label>
@@ -115,7 +115,7 @@
     <button type="button" class="btn btn-primary" id="btn_edit_assignment">保存</button>
 </div>
 <script type="text/javascript">
-    $('#tm_select_straff').selectpicker({
+    $('#tm_select_straff_assignment').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
         width: "100%",
@@ -160,7 +160,7 @@
                     $('#Edit-Assignment').modal('hide');
                     GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_pannel-body"));
                 } else {
-                    ErrorAlert(data.result);
+                    ErrorAlert(data.errmsg);
                     $("#btn_edit_assignment").removeClass("disabled");
                 }
             })
@@ -207,7 +207,7 @@
                         }
                     })
                 } else {
-                    UnimportantAlert(data.result)
+                    UnimportantAlert(data.errmsg)
                 }
             })
         })

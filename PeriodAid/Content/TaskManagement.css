@@ -874,7 +874,7 @@ a.btn_subtask_detail{
     line-height:50px;
 }
 .tm_item_middle{
-    width:60%;
+    width:50%;
 }
 .tm_middle_content{
     max-width:100%;
@@ -914,6 +914,18 @@ a.btn_subtask_detail{
 }
 .form-control.bootstrap-select{
     display:block !important;
+}
+.minus-icon{
+    height:23px;
+    width:23px;
+    text-align:center;
+    line-height:23px;
+    opacity:0.8;
+    font-size:18px;
+    display:none;
+}
+.user_circle:hover .minus-icon{
+    display:block;
 }
 
 

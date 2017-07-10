@@ -22,7 +22,7 @@ else
             </div>
             @if (item.CompleteDate == null && item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() == 0)
             {
-                <div class="tm_item_right float-left">
+                <div class="tm_item_right" style="float:left">
                     <span>@item.AssignmentTitle</span>
                 </div>
             }

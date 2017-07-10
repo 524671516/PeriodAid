@@ -24,7 +24,6 @@
 @section scripts{ 
     <script>
         //Ajax获取各类型项目
-        GetStarSubject("#personal_star_subject")
         GetActiveSubject("#personal_active_subject")
         GetFinishSubject("#personal_finish_subject")
         //项目详细点击
@@ -36,7 +35,6 @@
                     location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
                 }
             });
-
             //修改卡片即项目信息
             $("#subject-container").on("click", ".card-edit-btn", function () {
                 $.ajax({
@@ -50,7 +48,7 @@
                             $("#Add-Subject").modal();
                         }
                         else {
-                            ErrorAlert("当前用户没有修改项目信息的权限")
+                            ErrorAlert("当前用户没有修改项目信息的权限。")
                         }
                     }
                 })

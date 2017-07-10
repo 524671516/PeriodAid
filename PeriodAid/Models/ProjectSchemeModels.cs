@@ -456,6 +456,11 @@
         public static int DELETESUBJECT = 104;
 
         /// <summary>
+        /// 恢复项目
+        /// </summary>
+        public static int RESETSUBJECT = 201;
+
+        /// <summary>
         /// 添加任务
         /// </summary>
         public static int CREATETASK = 105;

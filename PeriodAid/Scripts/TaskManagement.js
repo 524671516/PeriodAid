@@ -1,45 +1,51 @@
 ﻿$(function () {
-
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {
         $.ajax({
             url: "/TaskManagement/GetSubjectForm",
             success: function (data) {
-                $("#Add-Subject #Create-Subject-Content").html(data);
-                $("#Add-Subject").modal('show');
+                if (data == "FAIL") {
+                    ErrorAlert("操作失败。")
+                } else {
+                    $("#Add-Subject #Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal('show');
+                }
             },
             error: function () {
-                ErrorAlert("操作失败。")
+                ErrorAlert("请求失败。")
             }
         });
     })
 });
-//请求
-function GetStarSubject(container) {
-    $.ajax({
-        url: "/TaskManagement/Personal_StarSubjectListPartial",
-        success: function (data) {
 
-            $(container).html(data);
-        }
-    })
-}
+//请求活动中的项目
 function GetActiveSubject(container) {
     $.ajax({
         url: "/TaskManagement/Personal_ActiveSubjectListPartial",
         success: function (data) {
-            $(container).html(data);
+            if (data == "FAIL") {
+                ErrorAlert("读取执行中的项目失败。")
+            } else {
+                $(container).html(data);
+            }
         }
     })
 }
+//请求完成的项目
 function GetFinishSubject(container) {
     $.ajax({
         url: "/TaskManagement/Personal_FinishSubjectListPartial",
         success: function (data) {
-            $(container).html(data);
+            if (data == "FAIL") {
+                ErrorAlert("读取归档的项目失败。")
+            } else {
+                $(container).html(data);
+            }
         }
     })
 }
+
+//获取项目的过程
 function GetProcedure(ProcedureId, SubjectId, container) {
     $.ajax({
         url: "/TaskManagement/SubjectProcedure",
@@ -47,15 +53,20 @@ function GetProcedure(ProcedureId, SubjectId, container) {
             ProcedureId: ProcedureId
         },
         success: function (data) {
-            container.html(data)
-            GetAssignment(ProcedureId, SubjectId, container.find(".tm_pannel-body"));
-   
+            if (data == "FAIL") {
+                ErrorAlert("获取项目阶段失败。")
+            } else {
+                container.html(data)
+                GetAssignment(ProcedureId, SubjectId, container.find(".tm_pannel-body"));
+            }  
         },
         error: function () {
-            ErrorAlert("操作失败")
+            ErrorAlert("操作失败。")
         }
     });
 }
+
+//获取任务表单
 function GetAssignmentForm(ProcedureId, SubjectId, container) {
     $.ajax({
         url: "/TaskManagement/GetAssignmentForm",
@@ -64,14 +75,19 @@ function GetAssignmentForm(ProcedureId, SubjectId, container) {
             SubjectId: SubjectId
         },
         success: function (data) {
-            container.html(data)
-
+            if (data == "FAIL") {
+                ErrorAlert("创建任务失败。")
+            } else {
+                container.html(data)
+            }
         },
         error: function () {
-            ErrorAlert("操作失败")
+            ErrorAlert("请求失败。")
         }
     });
 }
+
+//获取任务详情
 function GetAssignmentDetail(AssignmentId, container, Callback) {
     $.ajax({
         url: "/TaskManagement/Assignment_Detail",
@@ -79,16 +95,22 @@ function GetAssignmentDetail(AssignmentId, container, Callback) {
             AssignmentId: AssignmentId,
         },
         success: function (data) {
-            container.html(data)
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
+            if (data == "FAIL") {
+                ErrorAlert("获取任务详情失败。")
+            } else {
+                container.html(data)
+                if (Callback && typeof Callback == "function") {
+                    Callback(data);
+                }
+            }        
         },
         error: function () {
-            ErrorAlert("操作失败")
+            ErrorAlert("请求失败。")
         }
     });
 }
+
+//获取任务列表
 function GetAssignment(ProcedureId, SubJectId, container) {
     $.ajax({
         url: "/TaskManagement/SubjectAssignment",
@@ -160,6 +182,8 @@ function GetAssignment(ProcedureId, SubJectId, container) {
         }
     });
 }
+
+//确定完成任务
 function ComfirmFinishAssignment(AssignmentId, Callback) {
     $.ajax({
         url: "/TaskManagement/ComfirmFinishAssignment",
@@ -173,7 +197,7 @@ function ComfirmFinishAssignment(AssignmentId, Callback) {
             }
         },
         error: function () {
-            ErrorAlert("操作失败")
+            ErrorAlert("操作失败。")
         }
     });
 }
@@ -207,7 +231,7 @@ function Delete_Assignment(AssignmentId, Callback) {
             }
         },
         error: function (data) {
-            ErrorAlert("操作失败")
+            ErrorAlert("操作失败。")
         }
     });
 }
@@ -223,7 +247,7 @@ function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
             }
         },
         error: function () {
-            ErrorAlert("操作失败")
+            ErrorAlert("操作失败。")
         }
     });
 }
@@ -239,7 +263,7 @@ function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
             }
         },
         error: function () {
-            ErrorAlert("操作失败")
+            ErrorAlert("操作失败。")
         }
     });
 }
@@ -255,7 +279,7 @@ function GetSubTaskListPartial(AssignmentId, Callback) {
             }
         },
         error: function () {
-            ErrorAlert("操作失败")
+            ErrorAlert("操作失败。")
         }
     });
 }
@@ -350,18 +374,18 @@ function GetElementsByClass(className) {
             return elements
 }
 
-var FuzzySearch = function () {
-    var Defaults = {
-        InputId:"password",
-    }
-    function Init(Options) {
-        var Options = $.extend({}, Defaults, Options);
-        console.log(Options)
+//var FuzzySearch = function () {
+//    var Defaults = {
+//        InputId:"password",
+//    }
+//    function Init(Options) {
+//        var Options = $.extend({}, Defaults, Options);
+//        console.log(Options)
 
-    }
-    return { Init: Init };
-}();
-FuzzySearch.Init({
-    InputId: "Name",
+//    }
+//    return { Init: Init };
+//}();
+//FuzzySearch.Init({
+//    InputId: "Name",
 
-});
+//});
