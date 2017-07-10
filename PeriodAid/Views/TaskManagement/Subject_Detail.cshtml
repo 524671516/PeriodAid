@@ -52,30 +52,34 @@
 <!--The Second Nav End-->
 <!--Procedure Content-->
 <div class="tm_pannel-wrap" id="pannel-wrap" data-sid="@Model.Id">
+    <div class="tm_control_pannel_show" id="btn_show_add_pannnel">展开</div>
     <div class="tm_pannel-container" id="tm_pannel-container">
-        @foreach (var procedure in ViewBag.sortprocedure)
-        {
-            <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
-            </div>
-        }
         <div class="tm_pannel-item text-center tm_pannel-item-add" id="tm_pannel-item-add">
-            <div id="add-pannel-control"><a href="javascript:;" class="panel-body add-btn color-gray" id="add-pannel-list"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></a></div>
-            <div id="add-pannel-write" class="padding-10 write-box hidden">
+            <div class="color-gray btn-get-form" id="add-pannel-list">
+                <div class="add-btn" id="btn_add-pannel"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></div>
+                <div class="tm_control_pannel_hide" id="btn_hide_add_pannnel"><span>收起</span></div>
+            </div>
+            <div id="add-pannel-write" class="tm_procedureform-area hidden">
                 @using (Html.BeginForm("CreateProcedure", "TaskManagement", FormMethod.Post, new { @id = "add_procedure_form", @class = "validate-form padding-10" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary()
                     @Html.HiddenFor(m => m.TemplateId)
                     <div class="form-group">
-                        <input type="text" class="form-control" id="ProcedureTitle" placeholder="标题" name="ProcedureTitle">
+                        <input type="text" class="form-control" id="ProcedureTitle" placeholder="过程列表标题" name="ProcedureTitle">
                     </div>
                     <div class="text-right">
                         <a class="btn btn-default" id="cancel-pannel-write">取消</a>
                         <a class="btn btn-blue" id="create-procedure-pannel">确定</a>
                     </div>
                 }
-            </div>
+            </div>            
         </div>
+        @foreach (var procedure in ViewBag.sortprocedure)
+        {
+            <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
+            </div>
+        }
     </div>
 </div>
 <!--Procedure Content End-->
@@ -104,6 +108,14 @@
 <!--Pannel Menu End-->
 @section scripts{
     <script>
+        $("#btn_show_add_pannnel").on("click", function () {
+            $("#pannel-wrap").removeClass("tm_add_pannel_hide");
+        });
+        $("#btn_hide_add_pannnel").on("click", function () {
+            $("#pannel-wrap").addClass("tm_add_pannel_hide");
+        })
+
+        //项目菜单操作
         $("#btn_show_subject_pannel").on("click", function () {
             if ($("#my-app").hasClass("tm_subject_active")) {
                 $("#my-app").removeClass("tm_subject_active")
@@ -128,11 +140,13 @@
             var ProcedureId = $(this).attr("data-procedureid");
             var that = $(this);
             GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that);
-
         });
+
+        //排序
         var al = document.getElementById('tm_pannel-container');
         var sortable = new Sortable(al, {
             animation: 150,
+            draggable: ".ajax-procedure",
             handle: ".tm_pannel-header",
             filter: ".tm_pannel-item-add",
             dragClass: "sortable-drag",
@@ -184,29 +198,37 @@
         });
         //任务完成
         $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
-            ComfirmFinishAssignment($(this).parent().parent().find(".tm_item_right").attr("data-aid"), function (data) {
-                GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
-                $.ajax({
-                    url: "/TaskManagement/GetProcedureJsonInfo",
-                    type: "post",
-                    data: {
-                        SubjectId: $("#pannel-wrap").attr("data-sid")
-                    },
-                    success: function (data) {
-                        var len = data.result.length;
-                        $(".ajax-procedure").each(function () {
-                            for (i = 0; i < len; i++) {
-                                if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                    $(this).find(".total-num").html(data.result[i].TotalNum)
-                                    $(this).find(".num").html(data.result[i].FinishNum)
-                                }
+            ComfirmFinishAssignment($(this).parent().parent().parent().attr("data-aid"), function (data) {
+                if (data.result == "SUCCESS") {
+                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    $.ajax({
+                        url: "/TaskManagement/GetProcedureJsonInfo",
+                        type: "post",
+                        data: {
+                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                var len = data.data.length;
+                                $(".ajax-procedure").each(function () {
+                                    for (i = 0; i < len; i++) {
+                                        if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                            $(this).find(".total-num").html(data.data[i].TotalNum)
+                                            $(this).find(".num").html(data.data[i].FinishNum)
+                                        }
+                                    }
+                                })
+                            } else {
+                                ErrorAlert("请求失败。");
                             }
-                        })
-                    },
-                    error: function (data) {
-                        ErrorAlert("操作失败。");
-                    }
-                })
+                        },
+                        error: function (data) {
+                            ErrorAlert("请求失败。");
+                        }
+                    })
+                } else {
+                    ErrorAlert(data.errmsg);
+                }
             })
             return false;
         });
@@ -224,15 +246,15 @@
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
                         if ($(".ajax-procedure").length == 0) {
-                            $(".tm_pannel-item-add").before("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                            $(".tm_pannel-item-add").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
                         } else {
                             $(".ajax-procedure:last").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
                         }
                         GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));
-                        UnimportantAlert("添加过程成功");
+                        UnimportantAlert("添加过程成功。");
                         controlHidden();
                     } else {
-                        ErrorAlert(data.result);
+                        ErrorAlert(data.errmsg);
                         controlHidden()
                     }
                 })
@@ -256,7 +278,7 @@
                 if (data.result == "SUCCESS") {
                     $(".ajax-procedure[data-procedureid=" + data.Id + "]").remove();
                 } else {
-                    ErrorAlert(data.result)
+                    ErrorAlert(data.errmsg)
                 }
             });
         });
@@ -270,7 +292,7 @@
         });
 
         //控制新建列表
-        $("#add-pannel-list").on("click", function () {
+        $("#btn_add-pannel").on("click", function () {
             controlHidden()
         });
         $("#cancel-pannel-write").on("click", function () {
@@ -278,12 +300,12 @@
         });
         function controlHidden(type) {
             $("#create-procedure-pannel").removeClass("disabled");
-            if ($("#add-pannel-control").hasClass("hidden")) {
-                $("#add-pannel-control").removeClass("hidden");
+            if ($("#add-pannel-list").hasClass("hidden")) {
+                $("#add-pannel-list").removeClass("hidden");
                 $("#add-pannel-write").addClass("hidden");
             } else {
                 $("#add-pannel-write .form-group input").val("");
-                $("#add-pannel-control").addClass("hidden");
+                $("#add-pannel-list").addClass("hidden");
                 $("#add-pannel-write").removeClass("hidden");
             }
         }

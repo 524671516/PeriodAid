@@ -414,6 +414,62 @@ a.close{
 }
 .tm_pannel-item.tm_pannel-item-add{
     height:auto;
+    opacity:1;
+    left:0;
+    transition:  all 300ms ease;
+   -moz-transition:  all 300ms ease;	
+   -webkit-transition:  all 300ms ease;	
+   -o-transition:  all 300ms ease;	
+}
+.tm_add_pannel_hide .tm_pannel-item-add{
+    left:-200px;
+    height:0;
+    width:0;
+    opacity:0;
+}
+.tm_add_pannel_hide .tm_control_pannel_show{
+    opacity:0.8;
+    display:block;
+}
+.tm_control_pannel_show:hover{
+    opacity:1;
+}
+.tm_control_pannel_show{
+    display:none;
+    opacity:0;
+    z-index:999999;
+    position:fixed;
+    left:0;
+    background-color:#3da8f5;
+    width:14px;
+    line-height:30px;
+    top:115px;
+    height:60px;
+    border-top-right-radius:5px;
+    border-bottom-right-radius:5px;
+    word-break:break-word;
+    cursor:pointer;
+    vertical-align:middle;
+    transition:  all 300ms ease;
+   -moz-transition:  all 300ms ease;	
+   -webkit-transition:  all 300ms ease;	
+   -o-transition:  all 300ms ease;	
+}
+.tm_control_pannel_hide{
+    width:60px;
+    position:absolute;
+    right:0;
+    top:0;
+    background-color:#3da8f5;
+    height:100%;
+    text-align:center;
+    color:#fff;
+    padding:10px;
+    cursor:pointer;
+       transition:  all 300ms ease;
+   -moz-transition:  all 300ms ease;	
+   -webkit-transition:  all 300ms ease;
+   -o-transition:  all 300ms ease;
 }
 .tm_pannel-item{
     position: relative;
@@ -432,15 +488,16 @@ a.close{
     vertical-align: top;
     background-color: #EEEEEE;
     border-radius: 3px;
+        transition:  all 300ms ease;
+   -moz-transition:  all 300ms ease;	/* Firefox 4 */
+   -webkit-transition:  all 300ms ease;	/* Safari 和 Chrome */
+   -o-transition:  all 300ms ease;	/* Opera */
 }
 .tm_pannel-item:last-child{
    margin-right: 0px;
 }
 .tm_pannel-header,.tm_pannel-footer{
     font-size:16px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     position:absolute;
     left:0;
     width:100%;
@@ -519,7 +576,7 @@ a.close{
     margin:0 8px 8px 8px;
     padding:8px;
 }
-.btn-get-assignmentform{
+.btn-get-form{
     display:block;
     padding:10px;
 }
@@ -532,7 +589,7 @@ a.close{
 .tm_item_left{
     height:40px;
     line-height:40px;
-    max-width:60%;
+    max-width:75%;
     float:left;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -813,7 +870,7 @@ a.btn_subtask_detail{
     line-height:50px;
 }
 .tm_item_middle{
-    width:60%;
+    width:50%;
 }
 .tm_middle_content{
     max-width:100%;
@@ -853,6 +910,18 @@ a.btn_subtask_detail{
 }
 .form-control.bootstrap-select{
     display:block !important;
+}
+.minus-icon{
+    height:23px;
+    width:23px;
+    text-align:center;
+    line-height:23px;
+    opacity:0.8;
+    font-size:18px;
+    display:none;
+}
+.user_circle:hover .minus-icon{
+    display:block;
 }
 
 

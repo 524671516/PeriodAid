@@ -29,14 +29,14 @@
                         {
                             <div class="tm_item_left">
                                 <i class="fa fa-list-ul" aria-hidden="true"></i>
-                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)&nbsp; &nbsp;</span>
                             </div>
                         }
                         @if (item.Deadline != null)
                         {
-                            <div class="tm_item_left">&nbsp;&nbsp;
+                            <div class="tm_item_left">
                                 <span class="color-orange">截止日期:</span>
-                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
+                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
                             </div>
                         }
                     </div>
@@ -66,14 +66,14 @@
                     {
                             <div class="tm_item_left">
                                 <i class="fa fa-list-ul" aria-hidden="true"></i>
-                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)&nbsp;&nbsp;</span>
                             </div>
                         }
                         @if (item.Deadline != null)
                         {
-                            <div class="tm_item_left">&nbsp;&nbsp;
+                            <div class="tm_item_left">
                                 <span class="color-orange">截止日期:</span>
-                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd"))</span>
+                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
                             </div>
                         }
                     </div>
@@ -83,7 +83,7 @@
         }
     </ul>
     <div class="tm_list-control text-center">
-        <div class="add-btn color-gray btn-get-assignmentform" data-pid="@ViewBag.ProcedureId">
+        <div class="add-btn color-gray btn-get-form btn-get-assignmentform" data-pid="@ViewBag.ProcedureId">
             <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i>
         </div>
         <div class="tm_assignmentform-area">
