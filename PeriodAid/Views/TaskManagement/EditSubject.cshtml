@@ -86,15 +86,14 @@
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
-                    if (data == "SUCCESS") {
-                        UnimportantAlert("修改项目成功");
+                    if (data.result == "SUCCESS") {
+                        UnimportantAlert("修改项目成功。");
                         $("#btn-edit-subject").removeClass("disabled");
                         $('#Add-Subject').modal('hide');
-                        GetStarSubject("#personal_star_subject")
                         GetActiveSubject("#personal_active_subject")
                         GetFinishSubject("#personal_finish_subject")
                     } else {
-                        ErrorAlert(data);
+                        ErrorAlert(data.errmsg);
                         $("#btn-edit-subject").removeClass("disabled");
                     }
                 })
@@ -123,36 +122,16 @@
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $("#Add-Subject").modal("hide");
-                            $.confirm({
-                                type: "green",
-                                alignMiddle: true,
-                                typeAnimated: true,
-                                content: data.errmsg,
-                                buttons: {
-                                    confirm: {
-                                        text: "确定",
-                                        btnClass: 'btn-blue'
-                                    },
-                                }
-                            });
-                            GetStarSubject("#personal_star_subject")
+                            UnimportantAlert("项目归档成功。");
                             GetActiveSubject("#personal_active_subject")
                             GetFinishSubject("#personal_finish_subject")
                         }
                         else {
-                            $.confirm({
-                                type: "red",
-                                alignMiddle: true,
-                                typeAnimated: true,
-                                content: data.errmsg,
-                                buttons: {
-                                    confirm: {
-                                        text: "确定",
-                                        btnClass: 'btn-red'
-                                    },
-                                }
-                            });
+                            ErrorAlert(data.errmsg);
                         }
+                    },
+                    error: function () {
+                        ErrorAlert("请求失败。");
                     }
                 });
                 return false;
@@ -169,37 +148,18 @@
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $("#Add-Subject").modal("hide");
-                            $.confirm({
-                                type: "green",
-                                alignMiddle: true,
-                                typeAnimated: true,
-                                content: data.errmsg,
-                                buttons: {
-                                    confirm: {
-                                        text: "确定",
-                                        btnClass: 'btn-blue'
-                                    },
-                                }
-                            });
-                            GetStarSubject("#personal_star_subject")
+                            UnimportantAlert("项目恢复成功。");
                             GetActiveSubject("#personal_active_subject")
                             GetFinishSubject("#personal_finish_subject")
                         }
                         else {
-                            $.confirm({
-                                type: "red",
-                                alignMiddle: true,
-                                typeAnimated: true,
-                                content: data.errmsg,
-                                buttons: {
-                                    confirm: {
-                                        text: "确定",
-                                        btnClass: 'btn-red'
-                                    },
-                                }
-                            });
+                            ErrorAlert(data.errmsg);
                         }
+                    },
+                    error: function (data) {
+                        ErrorAlert("请求失败。");
                     }
+
                 });
             });
         });
@@ -213,37 +173,17 @@
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
+                            UnimportantAlert("项目删除成功。");
                             $("#Add-Subject").modal("hide");
-                            $.confirm({
-                                type: "green",
-                                alignMiddle: true,
-                                typeAnimated: true,
-                                content: data.errmsg,
-                                buttons: {
-                                    confirm: {
-                                        text: "确定",
-                                        btnClass: 'btn-blue'
-                                    },
-                                }
-                            });
-                            GetStarSubject("#personal_star_subject")
                             GetActiveSubject("#personal_active_subject")
                             GetFinishSubject("#personal_finish_subject")
                         }
                         else {
-                            $.confirm({
-                                type: "red",
-                                alignMiddle: true,
-                                typeAnimated: true,
-                                content: data.errmsg,
-                                buttons: {
-                                    confirm: {
-                                        text: "确定",
-                                        btnClass: 'btn-red'
-                                    },
-                                }
-                            });
+                            ErrorAlert(data.errmsg);
                         }
+                    },
+                    error: function (data) {
+                        ErrorAlert("请求失败。");
                     }
                 });
             });

@@ -34,19 +34,19 @@
         //验证通过的正式提交函数
         submitHandler: function (form) {
             $(form).ajaxSubmit(function (data) {
-                if (data == "SUCCESS") {
-                    UnimportantAlert("添加项目成功");
+                if (data.result == "SUCCESS") {
+                    UnimportantAlert("添加项目成功。");
                     $("#btn_add_subject").removeClass("disabled");
                     $('#Add-Subject').modal('hide');
                     GetActiveSubject("#personal_active_subject")
                     $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
                 } else {
-                    ErrorAlert(data);
+                    ErrorAlert(data.errmsg);
                     $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
                     $("#btn_add_subject").removeClass("disabled");
                 }
             }, function (data) {
-                ErrorAlert("操作失败");
+                ErrorAlert("请求失败。");
                 $("#btn_add_subject").removeClass("disabled");
             })
         },

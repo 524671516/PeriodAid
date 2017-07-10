@@ -114,6 +114,8 @@
         $("#btn_hide_add_pannnel").on("click", function () {
             $("#pannel-wrap").addClass("tm_add_pannel_hide");
         })
+
+        //项目菜单操作
         $("#btn_show_subject_pannel").on("click", function () {
             if ($("#my-app").hasClass("tm_subject_active")) {
                 $("#my-app").removeClass("tm_subject_active")
@@ -138,8 +140,9 @@
             var ProcedureId = $(this).attr("data-procedureid");
             var that = $(this);
             GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that);
-
         });
+
+        //排序
         var al = document.getElementById('tm_pannel-container');
         var sortable = new Sortable(al, {
             animation: 150,
@@ -195,29 +198,37 @@
         });
         //任务完成
         $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
-            ComfirmFinishAssignment($(this).parent().parent().find(".tm_item_right").attr("data-aid"), function (data) {
-                GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
-                $.ajax({
-                    url: "/TaskManagement/GetProcedureJsonInfo",
-                    type: "post",
-                    data: {
-                        SubjectId: $("#pannel-wrap").attr("data-sid")
-                    },
-                    success: function (data) {
-                        var len = data.result.length;
-                        $(".ajax-procedure").each(function () {
-                            for (i = 0; i < len; i++) {
-                                if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                    $(this).find(".total-num").html(data.result[i].TotalNum)
-                                    $(this).find(".num").html(data.result[i].FinishNum)
-                                }
+            ComfirmFinishAssignment($(this).parent().parent().parent().attr("data-aid"), function (data) {
+                if (data.result == "SUCCESS") {
+                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    $.ajax({
+                        url: "/TaskManagement/GetProcedureJsonInfo",
+                        type: "post",
+                        data: {
+                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                var len = data.data.length;
+                                $(".ajax-procedure").each(function () {
+                                    for (i = 0; i < len; i++) {
+                                        if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                            $(this).find(".total-num").html(data.data[i].TotalNum)
+                                            $(this).find(".num").html(data.data[i].FinishNum)
+                                        }
+                                    }
+                                })
+                            } else {
+                                ErrorAlert("请求失败。");
                             }
-                        })
-                    },
-                    error: function (data) {
-                        ErrorAlert("操作失败。");
-                    }
-                })
+                        },
+                        error: function (data) {
+                            ErrorAlert("请求失败。");
+                        }
+                    })
+                } else {
+                    ErrorAlert(data.errmsg);
+                }
             })
             return false;
         });
@@ -240,10 +251,10 @@
                             $(".ajax-procedure:last").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
                         }
                         GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));
-                        UnimportantAlert("添加过程成功");
+                        UnimportantAlert("添加过程成功。");
                         controlHidden();
                     } else {
-                        ErrorAlert(data.result);
+                        ErrorAlert(data.errmsg);
                         controlHidden()
                     }
                 })
@@ -267,7 +278,7 @@
                 if (data.result == "SUCCESS") {
                     $(".ajax-procedure[data-procedureid=" + data.Id + "]").remove();
                 } else {
-                    ErrorAlert(data.result)
+                    ErrorAlert(data.errmsg)
                 }
             });
         });

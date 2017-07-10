@@ -73,10 +73,14 @@
                     AssignmentId: $("#modal-header-assignment").attr("data-aid"),
                 },
                 success: function (data) {
-                    that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
+                    if (data != "FAIL") {
+                        that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
+                    } else {
+                        ErrorAlert("操作失败。");
+                    }
                 },
                 error:function(data){
-                    ErrorAlert("操作失败");
+                    ErrorAlert("操作失败。");
             }
 
             })
