@@ -37,12 +37,7 @@
                                 {
                                     <span class="color-orange">截止日期:</span>@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))
                                 }</div>
-                            <div class="tm_modal_list-left">
-                                @if (item.Remarks!= null)
-                            {
-                                <span class="color-blue">任务描述:</span>@Html.Encode(item.Remarks)
-                            }
-                        </div>
+
 
                          </div>
                         <div class="tm_modal_list-footer hidden add-subtask-write"></div>
