@@ -36,9 +36,9 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
             <ul class="nav navbar-nav navbar-underline">
-                <li><a href="#" class="active">进度</a></li>
-                @*<li><a href="#">日程</a></li>
-                    <li><a href="#">文件</a></li>*@
+                <li><a href="/TaskManagement/Subject_Detail?SubjectId=@Model.Id" class="active">进度</a></li>
+                <li><a href="#">日程</a></li>
+                    <li><a href="/TaskManagement/Subject_Files?SubjectId=@Model.Id">文件</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right navbar-border">
                 @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@

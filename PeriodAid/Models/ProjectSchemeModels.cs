@@ -388,6 +388,18 @@
         public static int NORMAL = 1;
     }
 
+    public static class CommentStatus
+    {
+        /// <summary>
+        /// 已移除
+        /// </summary>
+        public static int REMOVED = -1;
+        /// <summary>
+        ///  正常
+        /// </summary>
+        public static int NORMAL = 1;
+    }
+
     public static class SubjectStatus
     {
         /// <summary>
