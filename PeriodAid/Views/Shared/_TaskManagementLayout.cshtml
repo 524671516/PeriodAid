@@ -96,20 +96,33 @@
     </div>
     <!--Create Subject Modal End-->
     <!--Choose Template Model-->
-    <div class="modal fade" id="Choose-Template" role="dialog" aria-labelledby="Choose-TemplateModalLabel" style="overflow-y:auto">
+    @*<div class="modal fade" id="Choose-Template" role="dialog" aria-labelledby="Choose-TemplateModalLabel" style="overflow-y:auto">
         <div class="modal-dialog" role="document">
             <div class="modal-content" id="Choose-Template-Content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title text-center" id="Choose-TemplateModalLabel">选择项目模板</h4>
+                    <h4 class="modal-title">选择模板</h4>
                 </div>
-                <div class="modal-body" id="Choose-Template-Content">
-                    <div class="col-md-6">1</div>
-                    <div class="col-md-6">2</div>
+                <div class="container-fluid">
+                    <div class="row modal-nav-pannel">
+                        <div class="col-md-3 tm_modal_ul_wrap">
+                            <ul class="list-group tm_modal-nav tm_modal_nav_ul">
+                                <li class="list-group-item tm_active" data-href="/TaskManagement/SubjectFinishProgressPartial">普通项目</li>
+                                <li class="list-group-item" data-href="/TaskManagement/SubjectUntreatedProgressPartial">流程项目</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-9 tm_modal_ul_wrap">
+                            <p class="text-center" style="margin-top:10px;" id="loading-p"><i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom color-gray"></i></p>
+                            <ul class="list-group tm_modal-list tm_modal_list_ul" id="tm_modal_list_area"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border:none;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
             </div>
         </div>
-    </div>
+    </div>*@
     <!--Choose Template Model End-->
     @RenderBody()
     @Scripts.Render("~/bundles/jquery")
