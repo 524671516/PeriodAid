@@ -513,6 +513,89 @@
 
     }
 
+    public static class ContentTypeCode
+    {
+        /// <summary>
+        ///未知类型
+        /// </summary>
+        public static class UNKNOWN
+        {
+            public static int Code = 114;
+            public static string Key = "unknown";
+        }
+
+        /// <summary>
+        ///图片
+        /// </summary>
+        public static class IMAGE
+        {
+            public static int Code = 100;
+            public static string Key = "image";
+        }
+
+        /// <summary>
+        ///表格
+        /// </summary>
+        public static class EXCEL
+        {
+            public static int Code = 101;
+            public static string Key = "sheet";
+        }
+
+        /// <summary>
+        ///幻灯片
+        /// </summary>
+        public static class PPT
+        {
+            public static int Code = 102;
+            public static string Key = "presentation"; 
+        }
+
+        /// <summary>
+        ///文档
+        /// </summary> 
+        public static class WORD
+        {
+            public static int Code = 103;
+            public static string Key = "document";
+        }
+        /// <summary>
+        ///视频
+        /// </summary>
+        public static class VIDEO
+        {
+            public static int Code = 104;
+            public static string Key = "video";
+        }
+
+        /// <summary>
+        ///音频
+        /// </summary>
+        public static class AUDIO
+        {
+            public static int Code = 105;
+            public static string Key = "audio";
+        }
+
+        /// <summary>
+        ///PDF
+        /// </summary>
+        public static class PDF
+        {
+            public static int Code = 106;
+            public static string Key = "pdf";
+        }
+
+        /// <summary>
+        ///文本
+        /// </summary>
+        public static class TEXT
+        {
+            public static int Code = 107;
+            public static string Key = "text";
+        }
+    }
+
 
 
 }
