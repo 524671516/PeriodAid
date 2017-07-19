@@ -8,6 +8,11 @@ namespace PeriodAid.Models
     public class ProjectViewModels
     {
     }
+    public class ContentTypeClass
+    {
+        public int Code { get; set; }
+        public string Key { get; set; }
+    }
     //图片编辑参数
     public class CutImgModel
     {

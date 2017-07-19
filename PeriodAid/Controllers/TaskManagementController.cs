@@ -1378,7 +1378,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        //项目文件
+        //项目文件页
         public ActionResult Subject_Files(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
@@ -1391,6 +1391,55 @@ namespace PeriodAid.Controllers
                 ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
                 return View(subject);
             }
+        }
+
+        //获取项目文件模板
+        public ActionResult Subject_FilesPartial(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            if (subject.Status == SubjectStatus.ARCHIVED || subject.Status == SubjectStatus.DELETED)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                var subjectattachment = from m in _db.SubjectAttachment
+                                        where m.SubjectId == subject.Id
+                                        orderby m.UploadTime descending
+                                        select m;
+                return PartialView(subjectattachment);
+            }
+        }
+
+        //上传文件
+        [HttpPost]
+        public JsonResult TM_UpLoadFile()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "用户不存在。" });
+            }
+            else
+            {
+                var _file = Request.Files[0];
+                var _fileLength = Request.Files[0].ContentLength;
+                var _fileType = Request.Files[0].ContentType;
+                var _fileName = Request.Files[0].FileName;
+                int maxFileLength = 1024 * 1024 * 1000;
+                if (_fileLength <= 0)
+                {
+                    return Json(new { result = "FAIL", errmasg = "文件大小不能为0。" });
+                }
+                if (_fileLength > maxFileLength)
+                {
+                    return Json(new { result = "FAIL", errmasg = "请上传大小少于1G的文件。" });
+                }
+                ContentTypeClass  type = GetContentType(_fileType);
+                var ServerFileName =employee.Id+"1001"+ DateTime.Now.ToFileTime().ToString() +"."+ _fileName.Substring(_fileName.LastIndexOf(".") + 1, (_fileName.Length - _fileName.LastIndexOf(".") - 1));
+                return Json(new { result = "SUCCESS", imgurl = "Subject/Avatar/" + ServerFileName,code=type.Code,key=type.Key });
+            }
+            
         }
 
 
@@ -1559,6 +1608,58 @@ namespace PeriodAid.Controllers
 
 
 
+
+        //文件类型
+        private ContentTypeClass GetContentType(string ContentType)
+        {
+            ContentTypeClass item = new ContentTypeClass()
+            {
+                Code = ContentTypeCode.UNKNOWN.Code,
+                Key = ContentTypeCode.UNKNOWN.Key
+            };
+            int _code = ContentTypeCode.UNKNOWN.Code;
+            if (ContentType.Contains(ContentTypeCode.IMAGE.Key))
+            {
+                item.Code = ContentTypeCode.IMAGE.Code;
+                item.Key = ContentTypeCode.IMAGE.Key;
+            }
+            else if (ContentType.Contains(ContentTypeCode.VIDEO.Key))
+            {
+                item.Code = ContentTypeCode.VIDEO.Code;
+                item.Key = ContentTypeCode.VIDEO.Key;
+            }
+            else if (ContentType.Contains(ContentTypeCode.AUDIO.Key))
+            {
+                item.Code = ContentTypeCode.AUDIO.Code;
+                item.Key = ContentTypeCode.AUDIO.Key;
+            }
+            else if (ContentType.Contains(ContentTypeCode.EXCEL.Key))
+            {
+                item.Code = ContentTypeCode.EXCEL.Code;
+                item.Key = ContentTypeCode.EXCEL.Key;
+            }
+            else if (ContentType.Contains(ContentTypeCode.PPT.Key))
+            {
+                item.Code = ContentTypeCode.PPT.Code;
+                item.Key = ContentTypeCode.PPT.Key;
+            }
+            else if (ContentType.Contains(ContentTypeCode.WORD.Key))
+            {
+                item.Code = ContentTypeCode.WORD.Code;
+                item.Key = ContentTypeCode.WORD.Key;
+            }
+            else if (ContentType.Contains(ContentTypeCode.TEXT.Key))
+            {
+                item.Code = ContentTypeCode.TEXT.Code;
+                item.Key = ContentTypeCode.TEXT.Key;
+            }
+            else if (ContentType.Contains(ContentTypeCode.PDF.Key))
+            {
+                item.Code = ContentTypeCode.PDF.Code;
+                item.Key = ContentTypeCode.PDF.Key;
+            }
+            return item;
+        }
 
 
 

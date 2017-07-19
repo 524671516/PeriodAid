@@ -1,4 +1,5 @@
-﻿html, body{
+﻿
+html, body{
     font-family:微软雅黑, Arial;
     font-size:12px;
     line-height: 20px;
@@ -969,13 +970,13 @@ a.btn_subtask_detail{
     max-width:85%;
     min-width:600px;
     margin:0 auto;
-    height:auto;
+    height:100%;
 }
 .tm_pannel-file{
     background-color:#f8f8f8;
 }
 .tm_files_header,.tm-files_control{
-    height:57px;
+    height:56px;
     font-size:14px;
     border-bottom:1px solid #E5E5E5;
     padding:18px;
@@ -1001,13 +1002,20 @@ a.btn_subtask_detail{
     width:20px;
 }
 .tm_files_info{
-    width:70%;
+    height:20px;
+    width:80%;
 }
 .tm_files_info *{
     display:inline-block;
 }
+.tm_files_body_ul_li .tm_files_middle{
+    padding:18px 0;
+}
+.tm_files_middle{
+    width:90%;
+}
 .tm_files_name{
-     overflow: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width:40%;
@@ -1031,20 +1039,26 @@ a.btn_subtask_detail{
    -webkit-transition:  all 0.5s ease-in-out;	/* Safari 和 Chrome */
    -o-transition:  all 0.5s ease-in-out;	/* Opera */
 }
-.tm_files_link a{
-    font-size:16px;
-    padding:5px;
-}
 .tm-files_ul_item{
     cursor:pointer;
-    height:57px;
+    height:56px;
     font-size:14px;
     padding:18px;
 }
+.tm_files_wrap{
+    height:100%;
+}
 .tm_files_body{
-    min-height:328px;
-    max-height:400px;
+    height:100%;
     overflow:auto;
+}
+.tm_files_link a{
+    padding:10px 5px;
+    font-size:18px;
+}
+.tm_files_body_ul_li{
+    cursor:pointer;
+    padding:0 18px;
 }
 .tm_files_body_ul_li:hover{
     background-color:#e5e5e5;
@@ -1052,40 +1066,27 @@ a.btn_subtask_detail{
 .tm_files_body_ul_li:hover .tm_files_link{
     opacity:1;
 }
-.tm_files_body_ul_li{
-    cursor:pointer;
-    padding:0 18px;
-}
 .tm_files_body_ul_li .tm_files_checkbox{
-    padding:14px 0;
+    padding:13.5px 0;
 }
-.tm_files_body_ul_li .tm_files_type{
+.tm_files_body_ul_li .tm_files_type {
+        padding:15px 0;
+}
+.tm_files_type {
+    width: 4%;
+}
+.tm_files_body_ul_li .tm_files_middle{
+    padding:18px 0px;
+}
+.tm_files_middle.tm_files_text{
+    font-size:16px;
     padding:15px 0;
 }
-.tm_files_body_ul_li .tm_files_info{
-    padding:16px 0;
+.tm_files_text .tm_files_link{
+    font-size:25px;
 }
-.tm_files_body_ul_li  .tm_files_text{
-    padding:15px 0;
-}
-.tm_files_body_ul_li .tm_files_link{
-    padding:18px 0;
-}
-.tm_files_type{
-    width:4%;
-}
-.tm_files_info input{
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-}
+
+
 
 /*文件面板结束*/
 
