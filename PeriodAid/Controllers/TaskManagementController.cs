@@ -13,9 +13,8 @@ using System.Drawing;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json.Linq;
-using PagedList;
+using PeriodAid.Filters;
 
 namespace PeriodAid.Controllers
 {
@@ -222,6 +221,7 @@ namespace PeriodAid.Controllers
         #endregion
 
         #region 编辑项目和提交
+        [OperationAuth(OperationGroup =103)]
         public ActionResult EditSubject(int id)
         {
             var employee = getEmployee(User.Identity.Name);
@@ -231,7 +231,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var subject = _db.Subject.SingleOrDefault(m => m.Id == id && m.HolderId == employee.Id);
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == id);
                 if (subject != null)
                 {
                     var EmployeeList = from m in _db.Employee
@@ -456,6 +456,7 @@ namespace PeriodAid.Controllers
         /// </summary>
         /// <param name="SubjectId"></param>
         /// <returns>项目实例</returns>
+        [OperationAuth(OperationGroup = 102)]
         public ActionResult Subject_Detail(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
