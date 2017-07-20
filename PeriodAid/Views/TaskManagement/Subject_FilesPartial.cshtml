@@ -6,7 +6,7 @@
                 <a href="javascript:;" id="btn_back_menu">文件列表</a>/<span>图片</span>
             </div>
             <div class="tm_files_right float-right">
-                <a href="#" id="btn_upload_file-sub" class="tm_btn color-blue tm_btn">
+                <a href="#" id="btn_upload_file-sub" class="tm_btn color-blue tm_btn" data-code="@ViewBag.typecode">
                     <i class="fa fa-upload" aria-hidden="true"></i>
                     上传文件
                 </a>
@@ -151,6 +151,25 @@
                     success: function (data) {
                                             if (data.result == "SUCCESS") {
                                                 UnimportantAlert("上传成功。");
+                                                var _code = $("#btn_upload_file-sub").attr("data-code");
+                                                $.ajax({
+                                                    url: "/TaskManagement/Subject_FilesPartial",
+                                                    data: {
+                                                        SubjectId: $("#tm_pannel-file").attr("data-sid"),
+                                                        TypeCode: _code
+                                                    },
+                                                    success: function (data) {
+                                                        if (data == "FAIL") {
+                                                            ErrorAlert(data)
+                                                        } else {
+                                                            $("#tm_file_container").remove();
+                                                            $("#tm_pannel-file").append(data);
+                                                        }
+                                                    },
+                                                    error: function () {
+                                                        ErrorAlert("请求失败。")
+                                                    }
+                                                })
                                             } else {
                                                 ErrorAlert(data.errmsg);
                                             }

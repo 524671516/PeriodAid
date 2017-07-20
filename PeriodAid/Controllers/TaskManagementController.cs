@@ -1412,6 +1412,7 @@ namespace PeriodAid.Controllers
                                         where m.SubjectId == subject.Id&&m.AttachmentType==TypeCode
                                         orderby m.UploadTime descending
                                         select m;
+                ViewBag.typecode = TypeCode;
                 return PartialView(subjectattachment);
             }
         }
