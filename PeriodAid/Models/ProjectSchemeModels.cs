@@ -373,7 +373,11 @@
         /// <summary>
         /// 未知
         /// </summary>
-        public static int UNKNOW = 1;
+        public static int UNKNOW = -2;
+        /// <summary>
+        /// 管理员
+        /// </summary>
+        public static int ADMINISTRATOR = 1;
     }
 
     public static class DepartmentStatus
