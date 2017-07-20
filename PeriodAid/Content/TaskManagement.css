@@ -1,6 +1,8 @@
-﻿html, body{
+﻿
+html, body{
     font-family:微软雅黑, Arial;
     font-size:12px;
+    line-height: 20px;
 }
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family:微软雅黑, Arial;
@@ -8,6 +10,9 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 ul,li,a{
     text-decoration:none;
     list-style:none;
+}
+a:hover,a:visited,a:focus{
+    text-decoration:none;
 }
 .ver_icon:before{
     vertical-align:middle;
@@ -619,7 +624,7 @@ a.close{
 
 /*modal改写*/
 .tm_modal .modal-body{
-    height:500px;
+    height:400px;
     overflow:auto;
 }
 .tm_modal_list-footer{
@@ -648,6 +653,9 @@ a.close{
     float:left;
     height:30px;
     line-height:30px;
+            overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .tm_modal_list-right{
     height:30px;
@@ -857,6 +865,9 @@ a.btn_subtask_detail{
 }
 .tm_item_middle{
     max-width:75%;
+        overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .tm_item_border{
     height:50px;
@@ -929,6 +940,151 @@ a.btn_subtask_detail{
     width:23px;
     display:block;
 }
+
+/*任务评论*/
+.tm_modal-comment{
+    padding:5px 15px;
+    background-color:#ccc;
+}
+.tm_modal-comment-input input{
+    padding:6px;
+    width:100%;
+}
+.btn_delete_comment{
+    display:none;
+}
+.tm_modal_list_li:hover .btn_delete_comment{
+    display:block;
+}
+/*任务评论结束*/
+
+
+/*文件面板*/
+.tm_pannel-container-file{
+    top:10px;
+    background-color:#fff;
+    max-width:85%;
+    min-width:600px;
+    margin:0 auto;
+    height:100%;
+}
+.tm_pannel-file{
+    background-color:#f8f8f8;
+}
+.tm_files_header,.tm-files_control{
+    height:56px;
+    font-size:14px;
+    border-bottom:1px solid #E5E5E5;
+    padding:18px;
+}
+.tm_files_titile{
+    font-size:18px;
+}
+.tm_files_header div{
+    max-width:50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tm_btn{
+    padding:0 5px;
+}
+.tm_files_checkbox{
+    text-align:center;
+    width:5%;
+}
+.tm_files_checkbox input{
+    height:20px;
+    width:20px;
+}
+.tm_files_info{
+    height:20px;
+    width:80%;
+}
+.tm_files_info *{
+    display:inline-block;
+}
+.tm_files_body_ul_li .tm_files_middle{
+    padding:18px 0;
+}
+.tm_files_middle{
+    width:90%;
+}
+.tm_files_name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width:40%;
+}
+.tm_files_size,.tm_files_author{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width:20%;
+}
+.tm_files_time{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width:20%;
+}
+.tm_files_link{
+    opacity:0;
+    transition:  all 0.5s ease-in-out;
+   -moz-transition:  all 0.5s ease-in-out;	/* Firefox 4 */
+   -webkit-transition:  all 0.5s ease-in-out;	/* Safari 和 Chrome */
+   -o-transition:  all 0.5s ease-in-out;	/* Opera */
+}
+.tm-files_ul_item{
+    cursor:pointer;
+    height:56px;
+    font-size:14px;
+    padding:18px;
+}
+.tm_files_wrap{
+    height:100%;
+}
+.tm_files_body{
+    height:100%;
+    overflow:auto;
+}
+.tm_files_link a{
+    padding:10px 5px;
+    font-size:18px;
+}
+.tm_files_body_ul_li{
+    cursor:pointer;
+    padding:0 18px;
+}
+.tm_files_body_ul_li:hover{
+    background-color:#e5e5e5;
+}
+.tm_files_body_ul_li:hover .tm_files_link{
+    opacity:1;
+}
+.tm_files_body_ul_li .tm_files_checkbox{
+    padding:13.5px 0;
+}
+.tm_files_body_ul_li .tm_files_type {
+        padding:15px 0;
+}
+.tm_files_type {
+    width: 4%;
+}
+.tm_files_body_ul_li .tm_files_middle{
+    padding:18px 0px;
+}
+.tm_files_middle.tm_files_text{
+    font-size:16px;
+    padding:15px 0;
+}
+.tm_files_text .tm_files_link{
+    font-size:25px;
+}
+
+
+
+/*文件面板结束*/
 
 
 

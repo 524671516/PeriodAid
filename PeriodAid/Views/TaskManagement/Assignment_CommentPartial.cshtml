@@ -1,0 +1,78 @@
+﻿@model IEnumerable<PeriodAid.Models.AssignmentComment>
+<div class="col-md-12 margin-bottom-10">
+    <div class="tm_modal_list">
+        <label for="RemindDate">评论区</label>
+        <div class="tm_modal_body">
+            @if (Model.Count() == 0)
+            {
+                <div class="color-gray">无评论</div>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var item in Model)
+                {
+                        <li class="clear-float tm_modal_list_li">
+                            <div class="tm_item_avatar float-left" title="@item.Composer.NickName" data-toggle="tooltip" data-placement="right">
+                                @if (item.Composer.ImgUrl == null)
+                                {
+                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }
+                                else
+                                {
+                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Composer.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }
+                            </div>
+                            <div class="tm_item_middle float-left">
+                                <div class="tm_middle_top tm_middle_content">
+                                    <span>@item.CommentContent</span>
+                                </div>
+                                <div class="tm_middle_bottom tm_middle_content clear-float">
+                                    <div class="tm_item_left">
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                        <span>@item.CreateTime.ToString("yyyy-MM-dd HH:mm")</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tm_item_right float-right">
+                                <a href="javascript:;" class="btn_delete_comment" data-cid="@item.Id">删除</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+    $(".btn_delete_comment").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled");
+            var cid = $(this).attr("data-cid");
+            $.ajax({
+                url: "/TaskManagement/Delete_AssignmentComment",
+                type: "post",
+                data: {
+                    CommentId: cid
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        UnimportantAlert(data.msg);
+                        GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
+                            $("#modal_comment_area").html(data);
+                        })
+                    } else {
+                        ErrorAlert(data.errmsg);
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。");
+                }
+            })
+        }
+
+    });
+</script>

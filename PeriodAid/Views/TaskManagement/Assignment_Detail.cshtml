@@ -109,12 +109,36 @@
     <div class="row" id="modal_collaborator_area">
        
     </div>
-    <!--Collaborator Area End-->
+    <!--Comment Area End-->
+    <div class="row" id="modal_comment_area">
+        
+    </div>
+    <!--Comment Area End-->
+</div>
+<div class="modal-footer tm_modal-comment">
+    <div class="tm_modal-comment-box row">
+        <div class="col-md-10 tm_modal-comment-input">
+@using (Html.BeginForm("Add_AssignmentComment", "TaskManagement", FormMethod.Post, new { @id = "add_comment_form", @class = "validate-form" }))
+{
+    @Html.AntiForgeryToken();
+    <input type="hidden" name="AssignmentId" id="AssignmentId" value="@Model.Id"/>
+    <input type="text" placeholder="请输入评论内容..." id="CommentContent" name="CommentContent"/>
+}        
+        </div>
+        <div class="col-md-2 tm_modal-comment-control">
+            <button type="button" class="btn btn-blue" id="btn_add_comment">发布</button>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-primary" id="btn_edit_assignment">保存</button>
 </div>
 <script type="text/javascript">
+    $(document).keydown(function (event) {
+        switch (event.keyCode) {
+            case 13: return false;
+        }
+    });
     $('#tm_select_straff_assignment').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
@@ -131,6 +155,11 @@
     //获取合作人
     GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
         $("#modal_collaborator_area").html(data);
+    })
+
+    //获取评论
+    GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
+        $("#modal_comment_area").html(data);
     })
 
     //checkbox
@@ -212,4 +241,40 @@
             })
         })
     });
+    //添加评论
+    $("#btn_add_comment").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled");
+            if ($("#CommentContent").val() != "") {
+                $("#add_comment_form").ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#CommentContent").val("");
+                        $("#btn_add_comment").removeClass("disabled");
+                        GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
+                            $("#modal_comment_area").html(data);
+                        })
+                        UnimportantAlert(data.msg);
+                    } else {
+                        ErrorAlert(data.errmsg);
+                    }
+                })
+            } else {
+                $(this).removeClass("disabled");
+            }
+        }
+    });
+    function GetComment(AssignmentId,Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignment_CommentPartial",
+            data: {
+                AssignmentId: AssignmentId
+            },
+            success: function (data) {
+                typeof Callback && Callback(data);
+            },
+            error: function () {
+                ErrorAlert("请求失败。");
+            }
+        })
+    }
 </script>

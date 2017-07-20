@@ -208,7 +208,6 @@
             dataType: 'json', //返回值类型 一般设置为json
             success: function (data, status)  //服务器成功响应处理函数
             {
-                console.log(data);
                 if (typeof (data.error) != 'undefined') {
                     if (data.error != '') {
                         ErrorAlert(data.error)
