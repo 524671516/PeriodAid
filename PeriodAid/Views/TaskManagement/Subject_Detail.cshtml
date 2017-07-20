@@ -110,6 +110,7 @@
     <script>
         $("#btn_show_add_pannnel").on("click", function () {
             $("#pannel-wrap").removeClass("tm_add_pannel_hide");
+            $("#tm_pannel-container").scrollLeft("0")
         });
         $("#btn_hide_add_pannnel").on("click", function () {
             $("#pannel-wrap").addClass("tm_add_pannel_hide");
@@ -212,7 +213,7 @@
                                 var len = data.data.length;
                                 $(".ajax-procedure").each(function () {
                                     for (i = 0; i < len; i++) {
-                                        if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                        if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
                                             $(this).find(".total-num").html(data.data[i].TotalNum)
                                             $(this).find(".num").html(data.data[i].FinishNum)
                                         }

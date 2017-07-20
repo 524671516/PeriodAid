@@ -1059,6 +1059,7 @@
     <Content Include="Views\TaskManagement\EmployeeError.cshtml" />
     <Content Include="Views\TaskManagement\Assignment_CommentPartial.cshtml" />
     <Content Include="Views\TaskManagement\Subject_Files.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_FilesPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
