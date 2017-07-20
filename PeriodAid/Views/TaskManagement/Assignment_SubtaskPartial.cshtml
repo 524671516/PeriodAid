@@ -144,6 +144,31 @@
                         $("#modal_subtask_area").html(data);
                     });
                     GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    $.ajax({
+                        url: "/TaskManagement/GetProcedureJsonInfo",
+                        type: "post",
+                        data: {
+                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                var len = data.data.length;
+                                $(".ajax-procedure").each(function () {
+                                    for (i = 0; i < len; i++) {
+                                        if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                            $(this).find(".total-num").html(data.data[i].TotalNum)
+                                            $(this).find(".num").html(data.data[i].FinishNum)
+                                        }
+                                    }
+                                })
+                            } else {
+                                ErrorAlert("请求失败。");
+                            }
+                        },
+                        error: function (data) {
+                            ErrorAlert("请求失败。");
+                        }
+                    })
                 } else {
                     ErrorAlert(data.result)
                 }

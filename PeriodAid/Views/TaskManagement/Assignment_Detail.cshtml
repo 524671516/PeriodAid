@@ -223,13 +223,13 @@
                             SubjectId: $("#pannel-wrap").attr("data-sid")
                         },
                         success: function (data) {
-                            var len = data.result.length;
+                            var len = data.data.length;
                             $(".ajax-procedure").each(function () {
                                 for (i = 0; i < len; i++) {
-                                    if (data.result[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                    if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
                                         
-                                        $(this).find(".total-num").html(data.result[i].TotalNum)
-                                        $(this).find(".num").html(data.result[i].FinishNum)
+                                        $(this).find(".total-num").html(data.data[i].TotalNum)
+                                        $(this).find(".num").html(data.data[i].FinishNum)
                                     }
                                 }
                             })

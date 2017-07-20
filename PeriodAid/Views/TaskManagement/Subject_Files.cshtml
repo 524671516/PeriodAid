@@ -52,8 +52,8 @@
     </div>
     <!--The Second Nav End-->
     <!--Files Area-->
-    <div class="tm_pannel-wrap tm_pannel-file" id="tm_pannel-file">
-        <div class="tm_pannel-container tm_pannel-container-file">
+    <div class="tm_pannel-wrap tm_pannel-file" id="tm_pannel-file" data-sid="@Model.Id">
+        <div class="tm_pannel-container tm_pannel-container-file" id="tm_folder_container">
             <div class="tm_files_wrap">
                 <div class="tm_files_header clear-float">
                     <div class="tm_files_left float-left tm_files_titile">
@@ -64,7 +64,7 @@
                             <i class="fa fa-upload" aria-hidden="true"></i>
                             上传文件
                         </a>
-                        <input type="file" id="upload-input" name="upload-input" class="hidden"/>
+                        <input type="file" id="upload-input" name="upload-input" class="hidden">
                         @*<a href="#" id="btn_add_filebox" class="tm_btn color-blue tm_btn">
                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                             新建文件夹
@@ -92,27 +92,8 @@
                     </div>
                 </div>
                 <div class="tm_files_body">
-                    <ul class="tm_files_body_ul">
-                        <li class="clear-float tm_files_body_ul_li">
-                            <div class="tm_files_left float-left tm_files_checkbox">
-                                <a>
-                                    <input type="checkbox" />
-                                </a>
-                            </div>
-                            <div class="tm_files_left float-left tm_files_type">
-                                <span><i class="fa fa-file-excel-o fa-2x color-blue" aria-hidden="true"></i></span>
-                            </div>
-                            <div class="tm_files_middle float-left clear-float tm_files_text">
-                                <div class="float-left">
-                                    <span class="tm_files_name color-gray"><input type="text" /></span>
-                                </div>
-                                <div class="float-right tm_files_link">
-                                    <a href="#" class="color-green"><i class="fa fa-check" aria-hidden="true"></i></a>
-                                    <a href="#" class="color-red"><i class="fa fa-times" aria-hidden="true"></i></a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="clear-float tm_files_body_ul_li">
+                    <ul class="tm_files_body_ul">                      
+                        <li class="clear-float tm_files_body_ul_li" data-code="100">
                             <div class="tm_files_left float-left tm_files_checkbox">
                                 <a>
                                     <input type="checkbox" />
@@ -123,15 +104,82 @@
                             </div>
                             <div class="tm_files_middle float-left clear-float">
                                 <div class="tm_files_info float-left">
-                                    <span class="tm_files_name color-gray">我是一个文件</span>
-                                    <span class="tm_files_size color-gray">1.25M</span>
-                                    <span href="#" class="tm_files_author color-gray">庄晨</span>
-                                    <span href="#" class="tm_files_time color-gray">2017-9-6</span>
+                                    <span class="tm_files_name color-gray">图片</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span href="#" class="tm_files_author color-gray"></span>
+                                    <span href="#" class="tm_files_time color-gray"></span>
                                 </div>
-                                <div class="float-right tm_files_link">
-                                    <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                    <a href="#"><i class="fa fa-download" aria-hidden="true"></i></a>
-                                    <a href="#"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="103">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">文档</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span href="#" class="tm_files_author color-gray"></span>
+                                    <span href="#" class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="101">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">视频</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span href="#" class="tm_files_author color-gray"</span>
+                                    <span href="#" class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="102">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">音频</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span href="#" class="tm_files_author color-gray"></span>
+                                    <span href="#" class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="401">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">其他</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span href="#" class="tm_files_author color-gray"</span>
+                                    <span href="#" class="tm_files_time color-gray"></span>
                                 </div>
                             </div>
                         </li>
@@ -151,31 +199,59 @@
         $("#btn_upload_file").on("click", function () {
             $("#upload-input").trigger("click");
         });
+        //解决chrome延迟
+        $("#upload-input").on("click", function () {
+            $(this).val("");
+        })
         $("#upload-input").on("change", function () {
-            if ($(this).val() != "") {
-                alert($(this).context.files[0])
-                alert("文件名:" + $(this).context.files[0].name + ":" + "大小:" + $(this).context.files[0].size + "字节");
+            var complete = false;
+            if ($(this).val() != "" && !complete) {
+                complete = true;            
                 var fd = new FormData();
                 fd.append("file", $(this).context.files[0]);
-                console.log(fd.get("file"));
-                var xhr = new XMLHttpRequest();
-                xhr.open('post', '/TaskManagement/TM_UpLoadFile', true);
-                xhr.onreadystatechange = function () {
-                    if (this.readyState == 4) {
-                        console.log(this.responseText);
+                fd.append("SubjectId", $("#tm_pannel-file").attr("data-sid"));
+                $.ajax({
+                    url: "/TaskManagement/TM_UpLoadFile",
+                    type: "POST",
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            UnimportantAlert("上传成功。");
+                        } else {
+                            ErrorAlert(data.errmsg);
+                        }
+                    },
+                    error: function (data) {
+                        ErrorAlert("上传失败。")
                     }
-                }
-                xhr.upload.onprogress = function (ev) {
-                    console.log(ev);
-                    if (ev.lengthComputable) {
-                        var precent = 100 * ev.loaded / ev.total;
-                        console.log(precent);
-
-                    }
-                }
-                xhr.send(fd);
+                });
+                complete = false;
             }
 
+        })
+
+        $(".tm_files_body_ul_li").on("click", function () {
+            var _code = $(this).attr("data-code");
+            $.ajax({
+                url: "/TaskManagement/Subject_FilesPartial",
+                data: {
+                    SubjectId: $("#tm_pannel-file").attr("data-sid"),
+                    TypeCode: _code
+                },
+                success: function (data) {
+                    if (data == "FAIL") {
+                        ErrorAlert(data)
+                    } else {
+                        $("#tm_folder_container").addClass("hide");
+                        $("#tm_pannel-file").append(data);
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。")
+                }
+            })
         })
     </script>
 }

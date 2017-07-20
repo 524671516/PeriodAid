@@ -1008,7 +1008,7 @@ a.btn_subtask_detail{
     padding:18px 0;
 }
 .tm_files_middle{
-    width:90%;
+    width:80%;
 }
 .tm_files_name{
     overflow: hidden;
@@ -1066,10 +1066,15 @@ a.btn_subtask_detail{
     padding:13.5px 0;
 }
 .tm_files_body_ul_li .tm_files_type {
-        padding:15px 0;
+    padding:13px 0;
+}
+.tm_files_type img{
+    height:32px;
+    width:32px;
 }
 .tm_files_type {
-    width: 4%;
+    font-size:16px;
+    width: 5%;
 }
 .tm_files_body_ul_li .tm_files_middle{
     padding:18px 0px;

@@ -951,6 +951,10 @@ namespace PeriodAid.Controllers
                     item.Status = AssignmentStatus.UNFINISHED;
                     try
                     {
+
+                        var assignment = _db.Assignment.SingleOrDefault(m => m.Id == item.AssignmentId);
+                        assignment.Status = AssignmentStatus.UNFINISHED;
+                        _db.Entry(assignment).State = System.Data.Entity.EntityState.Modified;
                         _db.SubTask.Add(item);
                         _db.SaveChanges();
                     }
@@ -1048,7 +1052,6 @@ namespace PeriodAid.Controllers
         public JsonResult ComfirmFinishSubtask(int SubtaskId)
         {
             var subtask = _db.SubTask.SingleOrDefault(m => m.Id == SubtaskId && m.Status > AssignmentStatus.DELETED);
-
             if (subtask.Status == AssignmentStatus.UNFINISHED)
             {
                 subtask.Status = AssignmentStatus.FINISHED;
@@ -1056,6 +1059,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
+                subtask.Assignment.Status = AssignmentStatus.UNFINISHED;
                 subtask.Status = AssignmentStatus.UNFINISHED;
                 subtask.CompleteDate = null;
             }
@@ -1368,7 +1372,7 @@ namespace PeriodAid.Controllers
                     }
                     else
                     {
-                        return Json(new { result = "FAIL", msg = "你没有权限操作此评论。" });
+                        return Json(new { result = "FAIL",errmsg = "你没有权限操作此评论。" });
                     }
 
 
@@ -1394,9 +1398,9 @@ namespace PeriodAid.Controllers
         }
 
         //获取项目文件模板
-        public ActionResult Subject_FilesPartial(int SubjectId)
+        public ActionResult Subject_FilesPartial(int SubjectId,int TypeCode)
         {
-            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);           
             if (subject.Status == SubjectStatus.ARCHIVED || subject.Status == SubjectStatus.DELETED)
             {
                 return Content("FAIL");
@@ -1404,7 +1408,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var subjectattachment = from m in _db.SubjectAttachment
-                                        where m.SubjectId == subject.Id
+                                        where m.SubjectId == subject.Id&&m.AttachmentType==TypeCode
                                         orderby m.UploadTime descending
                                         select m;
                 return PartialView(subjectattachment);
@@ -1413,7 +1417,7 @@ namespace PeriodAid.Controllers
 
         //上传文件
         [HttpPost]
-        public JsonResult TM_UpLoadFile()
+        public async Task<JsonResult>TM_UpLoadFile()
         {
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
@@ -1426,18 +1430,43 @@ namespace PeriodAid.Controllers
                 var _fileLength = Request.Files[0].ContentLength;
                 var _fileType = Request.Files[0].ContentType;
                 var _fileName = Request.Files[0].FileName;
+                if (_fileName.Contains("\\")){
+                    _fileName = _fileName.Substring(_fileName.LastIndexOf("\\")+1);
+                }
                 int maxFileLength = 1024 * 1024 * 1000;
                 if (_fileLength <= 0)
                 {
-                    return Json(new { result = "FAIL", errmasg = "文件大小不能为0。" });
+                    return Json(new { result = "FAIL", errmsg = "文件大小不能为0。" });
                 }
                 if (_fileLength > maxFileLength)
                 {
-                    return Json(new { result = "FAIL", errmasg = "请上传大小少于1G的文件。" });
+                    return Json(new { result = "FAIL", errmsg = "请上传大小少于1G的文件。" });
                 }
                 ContentTypeClass  type = GetContentType(_fileType);
-                var ServerFileName =employee.Id+"1001"+ DateTime.Now.ToFileTime().ToString() +"."+ _fileName.Substring(_fileName.LastIndexOf(".") + 1, (_fileName.Length - _fileName.LastIndexOf(".") - 1));
-                return Json(new { result = "SUCCESS", imgurl = "Subject/Avatar/" + ServerFileName,code=type.Code,key=type.Key });
+                var ServerFileName = "Subject/Files/"+employee.Id+"1001"+ DateTime.Now.ToFileTime().ToString() +"."+ _fileName.Substring(_fileName.LastIndexOf(".") + 1, (_fileName.Length - _fileName.LastIndexOf(".") - 1));
+                try
+                {
+                    SubjectAttachment SA = new SubjectAttachment()
+                    {
+                        AttachmentTitle = _fileName,
+                        AttachmentSource = ServerFileName,
+                        AttachmentSize=_fileLength,
+                        ContentType = type.Key.ToLower(),
+                        AttachmentType = type.Code,
+                        UploadTime = DateTime.Now,
+                        UploaderId = employee.Id,
+                        SubjectId = Convert.ToInt32(Request["SubjectId"])
+                    };
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(_file.InputStream, ServerFileName);
+                    _db.SubjectAttachment.Add(SA);
+                    await _db.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+                    return Json(new { result = "FAIL", errmsg="请确认文件标题不超过32个字符。" });
+                }
+                return Json(new { result = "SUCCESS", fileurl = ServerFileName, code=type.Code,key=type.Key });
             }
             
         }
@@ -1633,30 +1662,30 @@ namespace PeriodAid.Controllers
                 item.Code = ContentTypeCode.AUDIO.Code;
                 item.Key = ContentTypeCode.AUDIO.Key;
             }
-            else if (ContentType.Contains(ContentTypeCode.EXCEL.Key))
+            else if (ContentType.Contains(ContentTypeCode.TEXT.EXCEL.Key))
             {
-                item.Code = ContentTypeCode.EXCEL.Code;
-                item.Key = ContentTypeCode.EXCEL.Key;
+                item.Code = ContentTypeCode.TEXT.Code;
+                item.Key = ContentTypeCode.TEXT.Key;
             }
-            else if (ContentType.Contains(ContentTypeCode.PPT.Key))
+            else if (ContentType.Contains(ContentTypeCode.TEXT.PPT.Key))
             {
-                item.Code = ContentTypeCode.PPT.Code;
-                item.Key = ContentTypeCode.PPT.Key;
+                item.Code = ContentTypeCode.TEXT.Code;
+                item.Key = ContentTypeCode.TEXT.Key;
             }
-            else if (ContentType.Contains(ContentTypeCode.WORD.Key))
+            else if (ContentType.Contains(ContentTypeCode.TEXT.WORD.Key))
             {
-                item.Code = ContentTypeCode.WORD.Code;
-                item.Key = ContentTypeCode.WORD.Key;
+                item.Code = ContentTypeCode.TEXT.Code;
+                item.Key = ContentTypeCode.TEXT.Key;
             }
             else if (ContentType.Contains(ContentTypeCode.TEXT.Key))
             {
                 item.Code = ContentTypeCode.TEXT.Code;
                 item.Key = ContentTypeCode.TEXT.Key;
             }
-            else if (ContentType.Contains(ContentTypeCode.PDF.Key))
+            else if (ContentType.Contains(ContentTypeCode.UNKNOWN.PDF.Key))
             {
-                item.Code = ContentTypeCode.PDF.Code;
-                item.Key = ContentTypeCode.PDF.Key;
+                item.Code = ContentTypeCode.UNKNOWN.Code;
+                item.Key = ContentTypeCode.UNKNOWN.Key;
             }
             return item;
         }
