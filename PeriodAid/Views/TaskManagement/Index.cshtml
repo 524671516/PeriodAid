@@ -40,7 +40,7 @@
                 $.ajax({
                     url: "/TaskManagement/EditSubject",
                     data: {
-                        id: $(this).attr("data-link")
+                        SubjectId: $(this).attr("data-link")
                     },
                     success: function (data) {
                         if (data != "FAIL") {
@@ -48,7 +48,7 @@
                             $("#Add-Subject").modal();
                         }
                         else {
-                            ErrorAlert("当前用户没有修改项目信息的权限。")
+                            ErrorAlert("获取项目基本信息失败。")
                         }
                     }
                 })

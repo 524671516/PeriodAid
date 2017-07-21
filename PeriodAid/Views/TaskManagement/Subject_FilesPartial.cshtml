@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<PeriodAid.Models.SubjectAttachment>
+
+
 <div class="tm_pannel-container tm_pannel-container-file" id="tm_file_container">
     <div class="tm_files_wrap">
         <div class="tm_files_header clear-float">
@@ -70,7 +72,7 @@
                             @switch (item.AttachmentType)
                             {
                                 case 100:
-                                    <span><img src="http://cdn2.shouquanzhai.cn/@item.AttachmentSource"/></span>
+                                    <span><img src="http://cdn2.shouquanzhai.cn/@item.AttachmentSource" /></span>
                                     break;
                                 case 101:
                                     <span><i class="fa fa-file-video-o fa-2x" aria-hidden="true"></i></span>
@@ -93,21 +95,22 @@
                             <div class="tm_files_info float-left">
                                 <span class="tm_files_name color-gray">@Html.Encode(item.AttachmentTitle)</span>
                                 <span class="tm_files_size color-gray">
-                                   @if (item.AttachmentSize > 1024*1024*1024)
-                                   {
-                                       @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / (1024 * 1024 * 1024)),2) +"G")
-                                   }else if (item.AttachmentSize > 1024 * 1024)
-                                   {
-@Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / (1024 * 1024)), 2) + "M")
-                                   }
-                                   else if (item.AttachmentSize > 1024)
-                                   {
-                                    @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / 1024), 2) + "KB")
-                                   }
-                                   else
-                                   {
- @Html.Encode(item.AttachmentSize + "字节")
-                                   }
+                                    @if (item.AttachmentSize > 1024 * 1024 * 1024)
+                                    {
+                                        @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / (1024 * 1024 * 1024)), 2) + "G")
+                                    }
+                                    else if (item.AttachmentSize > 1024 * 1024)
+                                    {
+                                        @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / (1024 * 1024)), 2) + "M")
+                                    }
+                                    else if (item.AttachmentSize > 1024)
+                                    {
+                                        @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / 1024), 2) + "KB")
+                                    }
+                                    else
+                                    {
+                                        @Html.Encode(item.AttachmentSize + "字节")
+                                    }
                                 </span>
                                 <span href="#" class="tm_files_author color-gray">@Html.Encode(item.Uploader.NickName)</span>
                                 <span href="#" class="tm_files_time color-gray">@Html.Encode(item.UploadTime.ToString("yyyy-MM-dd HH:mm"))</span>
@@ -124,75 +127,75 @@
         </div>
     </div>
     <script>
-    $("#btn_back_menu").on("click", function () {
-        $("#tm_file_container").remove();
-        $("#tm_folder_container").removeClass("hide");
-                            })
-    $("#btn_upload_file-sub").on("click", function () {
-        $("#upload-input-sub").trigger("click");
-                            });
+        $("#btn_back_menu").on("click", function () {
+            $("#tm_file_container").remove();
+            $("#tm_folder_container").removeClass("hide");
+        })
+        $("#btn_upload_file-sub").on("click", function () {
+            $("#upload-input-sub").trigger("click");
+        });
         //解决chrome延迟
-    $("#upload-input-sub").on("click", function () {
+        $("#upload-input-sub").on("click", function () {
             $(this).val("");
-                            })
-    $("#upload-input-sub").on("change", function () {
-                                var complete = false;
-                                if ($(this).val() != "" && !complete) {
-                                    complete = true;
-                                    var fd = new FormData();
-                                    fd.append("file", $(this).context.files[0]);
-                                    fd.append("SubjectId", $("#tm_pannel-file").attr("data-sid"));
+        })
+        $("#upload-input-sub").on("change", function () {
+            var complete = false;
+            if ($(this).val() != "" && !complete) {
+                complete = true;
+                var fd = new FormData();
+                fd.append("file", $(this).context.files[0]);
+                fd.append("SubjectId", $("#tm_pannel-file").attr("data-sid"));
                 $.ajax({
-                                        url: "/TaskManagement/TM_UpLoadFile",
+                    url: "/TaskManagement/TM_UpLoadFile",
                     type: "POST",
                     data: fd,
                     processData: false,
                     contentType: false,
                     success: function (data) {
-                                            if (data.result == "SUCCESS") {
-                                                UnimportantAlert("上传成功。");
-                                                var _code = $("#btn_upload_file-sub").attr("data-code");
-                                                $.ajax({
-                                                    url: "/TaskManagement/Subject_FilesPartial",
-                                                    data: {
-                                                        SubjectId: $("#tm_pannel-file").attr("data-sid"),
-                                                        TypeCode: _code
-                                                    },
-                                                    success: function (data) {
-                                                        if (data == "FAIL") {
-                                                            ErrorAlert(data)
-                                                        } else {
-                                                            $("#tm_file_container").remove();
-                                                            $("#tm_pannel-file").append(data);
-                                                        }
-                                                    },
-                                                    error: function () {
-                                                        ErrorAlert("请求失败。")
-                                                    }
-                                                })
-                                            } else {
-                                                ErrorAlert(data.errmsg);
-                                            }
-                                        },
+                        if (data.result == "SUCCESS") {
+                            UnimportantAlert("上传成功。");
+                            var _code = $("#btn_upload_file-sub").attr("data-code");
+                            $.ajax({
+                                url: "/TaskManagement/Subject_FilesPartial",
+                                data: {
+                                    SubjectId: $("#tm_pannel-file").attr("data-sid"),
+                                    TypeCode: _code
+                                },
+                                success: function (data) {
+                                    if (data == "FAIL") {
+                                        ErrorAlert(data)
+                                    } else {
+                                        $("#tm_file_container").remove();
+                                        $("#tm_pannel-file").append(data);
+                                    }
+                                },
+                                error: function () {
+                                    ErrorAlert("请求失败。")
+                                }
+                            })
+                        } else {
+                            ErrorAlert(data.errmsg);
+                        }
+                    },
                     error: function (data) {
-                                            ErrorAlert("上传失败。")
+                        ErrorAlert("上传失败。")
                     }
-                                    });
+                });
                 complete = false;
             }
 
-    })
+        })
 
-    $("#tm_file_container").on("click", ".btn_download_file", function () {
-        var url_link = $(this).attr("data-url");
-        if (url_link) {
-            window.open(url_link);
-        }
-    });
-    $("#tm_file_container").on("click", ".btn_eidt_file", function () {
-        var attid = $(this).attr("data-attid");
-        
-    });
+        $("#tm_file_container").on("click", ".btn_download_file", function () {
+            var url_link = $(this).attr("data-url");
+            if (url_link) {
+                window.open(url_link);
+            }
+        });
+        $("#tm_file_container").on("click", ".btn_eidt_file", function () {
+            var attid = $(this).attr("data-attid");
+
+        });
     </script>
 </div>
 

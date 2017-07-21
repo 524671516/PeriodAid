@@ -1045,7 +1045,7 @@ a.btn_subtask_detail{
     height:100%;
 }
 .tm_files_body{
-    height:100%;
+    height:65%;
     overflow:auto;
 }
 .tm_files_link a{

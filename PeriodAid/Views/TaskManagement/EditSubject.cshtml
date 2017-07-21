@@ -49,7 +49,7 @@
     @Html.HiddenFor(m => m.TemplateId)
     @Html.HiddenFor(m => m.CreateTime)
     @Html.HiddenFor(m => m.PicUrl)
-
+    <input type="hidden" id="SubjedtId" name="SubjectId" value="@Model.Id"/>
     <div class="clear-float"></div>
     <br />
     <div class="form-group">
@@ -86,8 +86,9 @@
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
+                    console.log(data);
                     if (data.result == "SUCCESS") {
-                        UnimportantAlert("修改项目成功。");
+                        UnimportantAlert(data.msg);
                         $("#btn-edit-subject").removeClass("disabled");
                         $('#Add-Subject').modal('hide');
                         GetActiveSubject("#personal_active_subject")
@@ -117,12 +118,12 @@
                     url: "/TaskManagement/ArchiveSubject",
                     method: "post",
                     data: {
-                        id: $("#Id").val()
+                        SubjectId: $("#Id").val()
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $("#Add-Subject").modal("hide");
-                            UnimportantAlert("项目归档成功。");
+                            UnimportantAlert(data.msg);
                             GetActiveSubject("#personal_active_subject")
                             GetFinishSubject("#personal_finish_subject")
                         }
@@ -143,12 +144,12 @@
                     url: "/TaskManagement/ResetSubject",
                     method: "post",
                     data: {
-                        id: $("#Id").val()
+                        SubjectId: $("#Id").val()
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $("#Add-Subject").modal("hide");
-                            UnimportantAlert("项目恢复成功。");
+                            UnimportantAlert(data.msg);
                             GetActiveSubject("#personal_active_subject")
                             GetFinishSubject("#personal_finish_subject")
                         }
@@ -169,11 +170,11 @@
                     url: "/TaskManagement/DeleteSubject",
                     method: "post",
                     data: {
-                        id: $("#Id").val()
+                        SubjectId: $("#Id").val()
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            UnimportantAlert("项目删除成功。");
+                            UnimportantAlert(data.msg);
                             $("#Add-Subject").modal("hide");
                             GetActiveSubject("#personal_active_subject")
                             GetFinishSubject("#personal_finish_subject")
