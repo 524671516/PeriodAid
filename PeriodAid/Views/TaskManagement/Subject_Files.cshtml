@@ -57,18 +57,7 @@
             <div class="tm_files_wrap">
                 <div class="tm_files_header clear-float">
                     <div class="tm_files_left float-left tm_files_titile">
-                        <span>文件列表</span>
-                    </div>
-                    <div class="tm_files_right float-right">
-                        <a href="#" id="btn_upload_file" class="tm_btn color-blue tm_btn">
-                            <i class="fa fa-upload" aria-hidden="true"></i>
-                            上传文件
-                        </a>
-                        <input type="file" id="upload-input" name="upload-input" class="hidden">
-                        @*<a href="#" id="btn_add_filebox" class="tm_btn color-blue tm_btn">
-                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                            新建文件夹
-                        </a>*@
+                        <span>文件夹列表</span>
                     </div>
                 </div>
                 <div class="tm-files_control clear-float">
@@ -196,42 +185,6 @@
 <!--Pannel Menu-->
 @section scripts{
     <script>
-        $("#btn_upload_file").on("click", function () {
-            $("#upload-input").trigger("click");
-        });
-        //解决chrome延迟
-        $("#upload-input").on("click", function () {
-            $(this).val("");
-        })
-        $("#upload-input").on("change", function () {
-            var complete = false;
-            if ($(this).val() != "" && !complete) {
-                complete = true;            
-                var fd = new FormData();
-                fd.append("file", $(this).context.files[0]);
-                fd.append("SubjectId", $("#tm_pannel-file").attr("data-sid"));
-                $.ajax({
-                    url: "/TaskManagement/TM_UpLoadFile",
-                    type: "POST",
-                    data: fd,
-                    processData: false,
-                    contentType: false,
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            UnimportantAlert("上传成功。");
-                        } else {
-                            ErrorAlert(data.errmsg);
-                        }
-                    },
-                    error: function (data) {
-                        ErrorAlert("上传失败。")
-                    }
-                });
-                complete = false;
-            }
-
-        })
-
         $(".tm_files_body_ul_li").on("click", function () {
             var _code = $(this).attr("data-code");
             $.ajax({
