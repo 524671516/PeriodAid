@@ -316,7 +316,7 @@
         [Required, StringLength(512)]
         public string AttachmentSource { get; set; } // 附件地址
 
-        [Required, StringLength(64)]
+        [Required, StringLength(256)]
         public string ContentType { get; set; } // 文件类型
 
         public int AttachmentType { get; set; } // 文件分类 0：文档 1：图片 2：视频
@@ -330,6 +330,8 @@
         public DateTime UploadTime { get; set; } // 上传时间
 
         public int SubjectId { get; set; } // 项目ID
+
+        public int Status { get; set; }  //状态 -1:删除 0:正常
 
         public virtual Subject Subject { get; set; } // 项目实例
     }
@@ -360,6 +362,17 @@
     //    public int Id { get; set; }
     //    public string Name { get; set; }
     //}
+    public static class EmployeeType
+    {
+        /// <summary>
+        /// 主管
+        /// </summary>
+        public static int DEPARTMENTMANAGER = 1;
+        /// <summary>
+        /// 普通员工
+        /// </summary>
+        public static int ORDINARYEMPLOYEE = 0;
+    }
     public static class EmployeeStatus
     {
         /// <summary>
@@ -531,6 +544,7 @@
         public string FolderKey { get; set; }
         public string FolderName { get; set; }
         public int FileNum { get; set; }
+        public string LastUpLoadTime { get; set; }
     }
     public static class ContentTypeCode
     {

@@ -201,12 +201,13 @@ function ComfirmFinishAssignment(AssignmentId, Callback) {
         }
     });
 }
-function Delete_Procedure(ProcedureId, Callback) {
+function Delete_Procedure(ProcedureId,SubjectId, Callback) {
     $.ajax({
         url: "/TaskManagement/Delete_Procedure",
         type: "post",
         data: {
             ProcedureId: ProcedureId,
+            SubjectId:SubjectId
         },
         success: function (data) {
             if (Callback && typeof Callback == "function") {

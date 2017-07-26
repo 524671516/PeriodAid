@@ -65,6 +65,7 @@
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary()
                     @Html.HiddenFor(m => m.TemplateId)
+                    <input type="hidden" id="SubjectId" name="SubjectId" value="@Model.Id"/>
                     <div class="form-group">
                         <input type="text" class="form-control" id="ProcedureTitle" placeholder="过程列表标题" name="ProcedureTitle">
                     </div>
@@ -275,7 +276,7 @@
         })
         //任务列表删除
         $("#pannel-wrap").on("click", ".btn-del-procedure", function () {
-            Delete_Procedure($(this).attr("data-pid"), function (data) {
+            Delete_Procedure($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), function (data) {
                 if (data.result == "SUCCESS") {
                     $(".ajax-procedure[data-procedureid=" + data.Id + "]").remove();
                 } else {

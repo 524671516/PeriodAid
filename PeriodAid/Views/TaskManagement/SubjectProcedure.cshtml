@@ -1,7 +1,9 @@
 ﻿@model PeriodAid.Models.Procedure
 @using PeriodAid.Models;
     <div class="tm_pannel-header clear-float">
-        <div class="tm_pannel-header-right float-right">@Html.Encode(Model.ProcedureTitle)</div>
+        <div class="tm_pannel-header-right float-right">
+        <span>@Model.ProcedureTitle</span>
+        </div>
         <div class="tm_pannel-header-left float-left">          
             <ul>
                 <li>
@@ -12,7 +14,11 @@
                         <ul class="tm_dropdown_list">
                             <li class="text-center"><strong class="color-blue">更多操作</strong></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="javascript:;" data-pid="@Model.Id" class="btn-del-procedure color-red"><span class="color-red">@Html.Encode("删除"+Model.ProcedureTitle)</span></a></li>
+                            <li><a href="javascript:;" data-pid="@Model.Id" class="btn-del-procedure"><span class="color-red">@Html.Encode("删除"+Model.ProcedureTitle)</span></a></li>
+                            <li><a href="javascript:;" data-pid="@Model.Id" class="btn-del-procedure">
+                                <span class="color-blue">@Html.Encode("修改名称")</span></a>
+                            
+                            </li>
                             @*<li><a href="javascript:;" class="btn_archive_assignment">归档</a></li>
                             <li><a href="javascript:;" class="btn_finish_assignment">完成</a></li>
                             <li><a href="javascript:;">持续更新中</a></li>*@
