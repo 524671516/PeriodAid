@@ -1097,7 +1097,7 @@ namespace PeriodAid.Controllers
             var employee = getEmployee(User.Identity.Name);
             if (ModelState.IsValid)
             {
-                SubTask item = new SubTask();
+                var item = _db.SubTask.SingleOrDefault(m => m.Id == model.Id);
                 if (TryUpdateModel(item))
                 {
                     try

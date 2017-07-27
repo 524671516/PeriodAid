@@ -100,7 +100,7 @@
                     $("#btn_edit_subtask").removeClass("disabled");
                     $('#Edit-Assignment').modal('hide');
                 } else {
-                    ErrorAlert(data.result);
+                    ErrorAlert(data.errmsg);
                     $("#btn_edit_subtask").removeClass("disabled");
                 }
             })
