@@ -72,8 +72,8 @@
                     <div class="tm_files_middle float-left">
                         <div class="tm_files_info">
                             <a href="#" class="tm_files_name color-gray">名称</a>
-                            <a href="#" class="tm_files_size color-gray">大小</a>
-                            <a href="#" class="tm_files_author color-gray">创建者</a>
+                            <a href="#" class="tm_files_size color-gray">文件数</a>
+                            <a href="#" class="tm_files_author color-gray">最后操作者</a>
                             <a href="#" class="tm_files_time color-gray">更新时间</a>
                         </div>
                     </div>
@@ -91,12 +91,12 @@
                             <div class="tm_files_left float-left tm_files_type">
                                 <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
                             </div>
-                            <div class="tm_files_middle float-left clear-float">
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
                                 <div class="tm_files_info float-left">
                                     <span class="tm_files_name color-gray">图片</span>
                                     <span class="tm_files_size color-gray"></span>
-                                    <span href="#" class="tm_files_author color-gray"></span>
-                                    <span href="#" class="tm_files_time color-gray"></span>
+                                    <span class="tm_files_author color-gray"></span>
+                                    <span  class="tm_files_time color-gray"></span>
                                 </div>
                             </div>
                         </li>
@@ -109,12 +109,12 @@
                             <div class="tm_files_left float-left tm_files_type">
                                 <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
                             </div>
-                            <div class="tm_files_middle float-left clear-float">
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
                                 <div class="tm_files_info float-left">
                                     <span class="tm_files_name color-gray">文档</span>
                                     <span class="tm_files_size color-gray"></span>
-                                    <span href="#" class="tm_files_author color-gray"></span>
-                                    <span href="#" class="tm_files_time color-gray"></span>
+                                    <span  class="tm_files_author color-gray"></span>
+                                    <span  class="tm_files_time color-gray"></span>
                                 </div>
                             </div>
                         </li>
@@ -127,12 +127,12 @@
                             <div class="tm_files_left float-left tm_files_type">
                                 <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
                             </div>
-                            <div class="tm_files_middle float-left clear-float">
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
                                 <div class="tm_files_info float-left">
                                     <span class="tm_files_name color-gray">视频</span>
                                     <span class="tm_files_size color-gray"></span>
-                                    <span href="#" class="tm_files_author color-gray"</span>
-                                    <span href="#" class="tm_files_time color-gray"></span>
+                                    <span class="tm_files_author color-gray"></span>
+                                    <span class="tm_files_time color-gray"></span>
                                 </div>
                             </div>
                         </li>
@@ -145,7 +145,7 @@
                             <div class="tm_files_left float-left tm_files_type">
                                 <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
                             </div>
-                            <div class="tm_files_middle float-left clear-float">
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
                                 <div class="tm_files_info float-left">
                                     <span class="tm_files_name color-gray">音频</span>
                                     <span class="tm_files_size color-gray"></span>
@@ -163,12 +163,12 @@
                             <div class="tm_files_left float-left tm_files_type">
                                 <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
                             </div>
-                            <div class="tm_files_middle float-left clear-float">
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
                                 <div class="tm_files_info float-left">
                                     <span class="tm_files_name color-gray">其他</span>
                                     <span class="tm_files_size color-gray"></span>
-                                    <span href="#" class="tm_files_author color-gray"</span>
-                                    <span href="#" class="tm_files_time color-gray"></span>
+                                    <span class="tm_files_author color-gray"></span>
+                                    <span class="tm_files_time color-gray"></span>
                                 </div>
                             </div>
                         </li>
@@ -185,8 +185,31 @@
 <!--Pannel Menu-->
 @section scripts{
     <script>
-        $(".tm_files_body_ul_li").on("click", function () {
-            var _code = $(this).attr("data-code");
+        $(function () {
+            $.ajax({
+                url: "/TaskManagement/Subject_FilesAjax",
+                type: "post",
+                data: {
+                    SubjectId: $("#tm_pannel-file").attr("data-sid")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        var _len = data.data.length;
+                        for (i = 0; i < _len; i++) {
+                            var self = $("li[data-code=" + data.data[i].FolderCode + "]")
+                            self.find(".tm_files_size").html(data.data[i].FileNum)
+                            self.find(".tm_files_author").html(data.data[i].LastUpLoadUser)
+                            self.find(".tm_files_time").html(data.data[i].LastUpLoadTime)
+                        };
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。")
+                }
+            })
+        })
+        $("#tm_pannel-file").on("click", ".tm_link_sub", function () {
+            var _code = $(this).parent().attr("data-code");
             $.ajax({
                 url: "/TaskManagement/Subject_FilesPartial",
                 data: {
