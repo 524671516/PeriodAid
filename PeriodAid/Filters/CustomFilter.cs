@@ -69,12 +69,13 @@ namespace PeriodAid.Filters
                         else
                         {
                             var assignmentList = from m in subject.Assignment
+                                                 where m.Status > AssignmentStatus.DELETED
                                                  select m.Id;
                             var cooperater = (from m in user.CollaborateAssignment
-                                              where assignmentList.Contains(m.Id)
+                                              where assignmentList.Contains(m.Id)&&m.Status>AssignmentStatus.DELETED
                                               select m).Count();
                             var assignmentHolder = (from m in subject.Assignment
-                                                    where m.HolderId == user.Id
+                                                    where m.HolderId == user.Id && m.Status > AssignmentStatus.DELETED
                                                     select m).Count();
                             if (subject.HolderId != user.Id && cooperater == 0 && assignmentHolder == 0)
                             {
@@ -119,12 +120,13 @@ namespace PeriodAid.Filters
                             else
                             {
                                 var assignmentList = from m in subject.Assignment
+                                                     where m.Status > AssignmentStatus.DELETED
                                                      select m.Id;
                                 var cooperater = (from m in user.CollaborateAssignment
-                                                  where assignmentList.Contains(m.Id)
+                                                  where assignmentList.Contains(m.Id)&& m.Status > AssignmentStatus.DELETED
                                                   select m).Count();
                                 var assignmentHolder = (from m in subject.Assignment
-                                                        where m.HolderId == user.Id
+                                                        where m.HolderId == user.Id&& m.Status > AssignmentStatus.DELETED
                                                         select m).Count();
                                 if (subject.HolderId != user.Id && cooperater == 0 && assignmentHolder == 0)
                                 {
@@ -147,12 +149,13 @@ namespace PeriodAid.Filters
                         else
                         {
                             var assignmentlist = from m in assignment.Subject.Assignment
+                                                 where m.Status > AssignmentStatus.DELETED
                                                  select m.Id;
                             var cooperater_count = (from m in user.CollaborateAssignment
-                                                    where assignmentlist.Contains(m.Id)
+                                                    where assignmentlist.Contains(m.Id)&& m.Status > AssignmentStatus.DELETED
                                                     select m).Count();
                             var holder_count = (from m in assignment.Subject.Assignment
-                                                where m.HolderId == user.Id
+                                                where m.HolderId == user.Id&& m.Status > AssignmentStatus.DELETED
                                                 select m).Count();
                             if (cooperater_count == 0 && holder_count==0 && assignment.Subject.HolderId != user.Id)
                             {
@@ -172,7 +175,7 @@ namespace PeriodAid.Filters
                         else
                         {
                             var cooperater_count = (from m in user.CollaborateAssignment
-                                                    where m.Id == assignmentId
+                                                    where m.Id == assignmentId&& m.Status > AssignmentStatus.DELETED
                                                     select m).Count();
                             if (assignment.HolderId != user.Id && assignment.Subject.HolderId != user.Id && cooperater_count == 0)
                             {
@@ -192,7 +195,7 @@ namespace PeriodAid.Filters
                         else
                         {
                             var cooperater_count = (from m in user.CollaborateAssignment
-                                                    where m.Id == assignmentId
+                                                    where m.Id == assignmentId&& m.Status > AssignmentStatus.DELETED
                                                     select m).Count();
                             if (assignment.HolderId != user.Id && assignment.Subject.HolderId != user.Id && cooperater_count == 0)
                             {
@@ -212,10 +215,10 @@ namespace PeriodAid.Filters
                         else
                         {
                             var cooperater_count = (from m in user.CollaborateAssignment
-                                                    where m.Id == subtask.Assignment.Id
+                                                    where m.Id == subtask.Assignment.Id&& m.Status > AssignmentStatus.DELETED
                                                     select m).Count();
                             var holder_count = (from m in subtask.Assignment.Subject.Assignment
-                                                where m.HolderId == user.Id
+                                                where m.HolderId == user.Id&& m.Status > AssignmentStatus.DELETED
                                                 select m).Count();
                             if (holder_count == 0&& subtask.Assignment.Subject.HolderId != user.Id && cooperater_count == 0)
                             {
@@ -234,10 +237,7 @@ namespace PeriodAid.Filters
                         }
                         else
                         {
-                            var cooperater_count = (from m in user.CollaborateAssignment
-                                                    where m.Id == subtask.Assignment.Id
-                                                    select m).Count();
-                            if (subtask.Assignment.HolderId != user.Id && subtask.Assignment.Subject.HolderId != user.Id && cooperater_count == 0)
+                            if (subtask.Assignment.HolderId != user.Id && subtask.Assignment.Subject.HolderId != user.Id && subtask.ExecutorId!= user.Id)
                             {
                                 setErrorResult(filterContext, "当前用户没有权限编辑子任务。");
                             }

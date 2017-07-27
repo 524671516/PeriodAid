@@ -171,12 +171,14 @@
                     url: "/TaskManagement/SortProcedure",
                     type: "post",
                     data: {
-                        ProcedureJson: JSON.stringify(sortobject)
+                        ProcedureJson: JSON.stringify(sortobject),
+                        SubjectId: $("#pannel-wrap").attr("data-sid")
+
                     },
                     success: function (data) {
-                        if (data == "SUCCESS") {
+                        if (data.result == "SUCCESS") {
                         } else {
-                            ErrorAlert(data)
+                            ErrorAlert(data.errmsg);
                         }
                     },
                     error: function () {
