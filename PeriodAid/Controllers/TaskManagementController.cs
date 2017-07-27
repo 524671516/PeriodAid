@@ -1448,10 +1448,11 @@ namespace PeriodAid.Controllers
             else
             {
                 var subjectattachment = from m in _db.SubjectAttachment
-                                        where m.SubjectId == subject.Id && m.AttachmentType == TypeCode
+                                        where m.SubjectId == subject.Id && m.AttachmentType == TypeCode&&m.Status>AttachmentStatus.DELETE
                                         orderby m.UploadTime descending
-                                        select m;
-                ViewBag.typecode = TypeCode;
+                                        select m;              
+                ContentTypeClass ctc = GetContentType(TypeCode);
+                ViewBag.CTC = ctc;
                 return PartialView(subjectattachment);
             }
         }
@@ -1495,7 +1496,7 @@ namespace PeriodAid.Controllers
                         AttachmentSource = ServerFileName,
                         AttachmentSize = _fileLength,
                         ContentType = _fileType,
-                        AttachmentType = type.Code,
+                        AttachmentType = Convert.ToInt32(Request["AttachmentType"]),
                         UploadTime = DateTime.Now,
                         UploaderId = employee.Id,
                         SubjectId = Convert.ToInt32(Request["SubjectId"])
@@ -1510,10 +1511,79 @@ namespace PeriodAid.Controllers
                 {
                     return Json(new { result = "FAIL", errmsg = "请确认文件标题不超过32个字符。" });
                 }
-                return Json(new { result = "SUCCESS", fileurl = ServerFileName, code = type.Code, key = type.Key });
+                return Json(new { result = "SUCCESS", fileurl = ServerFileName });
             }
 
         }
+
+        //文件删除
+        [HttpPost]
+        public async Task<JsonResult> Subject_DeleteFile(int FileId)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "员工不存在。" });
+            }
+            else
+            {
+                var file = _db.SubjectAttachment.SingleOrDefault(m => m.Id == FileId && m.Status>AttachmentStatus.DELETE);
+                if (file!=null)
+                {
+                    if (file.UploaderId == employee.Id || file.Subject.HolderId == employee.Id)
+                    {
+                        file.Status = AttachmentStatus.DELETE;
+                        _db.Entry(file).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.EDITSUBJECT, employee, file.SubjectId, "删除了文件【" + file.AttachmentTitle + "】。");
+                        return Json(new { result = "SUCCESS", errmsg = "" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL", errmsg = "当前用户没有权限删除此文件。" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL", errmsg = "操作失败，此文件已经被删除。" });
+                }
+            }
+        }
+
+        //文件json数据更新
+        [HttpPost]
+        [OperationAuth(OperationGroup = 102)]
+        public JsonResult Subject_FilesAjax(int SubjectId)
+        {
+            var codelist = (from m in _db.SubjectAttachment
+                            where m.SubjectId == SubjectId && m.Status > AttachmentStatus.DELETE
+                            select m.AttachmentType).Distinct().ToList();
+            List<SubjectFolder> sflist = new List<SubjectFolder>();
+            foreach(var code in codelist)
+            {
+                
+                var filenum = (from m in _db.SubjectAttachment
+                                where m.SubjectId == SubjectId && m.AttachmentType == code && m.Status > AttachmentStatus.DELETE
+                                select m).Count();
+                var lastfile = (from m in _db.SubjectAttachment
+                                where m.SubjectId == SubjectId && m.AttachmentType == code && m.Status > AttachmentStatus.DELETE
+                                orderby m.UploadTime descending
+                                select m).First();
+                var ctc = GetContentType(code);
+                SubjectFolder sf = new SubjectFolder()
+                {
+                    FolderName=ctc.Name,
+                    FolderCode = code,
+                    FileNum = filenum,
+                    LastUpLoadUser = lastfile.Uploader.NickName,
+                    LastUpLoadTime = lastfile.UploadTime.ToString("yyyy-MM-dd HH:ss")
+                };
+                sflist.Add(sf);
+            }
+            return Json(new { result="SUCCESS",data = sflist });
+        }
+
+
 
         //文件类型
         private ContentTypeClass GetContentType(string ContentType)
@@ -1521,49 +1591,93 @@ namespace PeriodAid.Controllers
             ContentTypeClass item = new ContentTypeClass()
             {
                 Code = ContentTypeCode.UNKNOWN.Code,
-                Key = ContentTypeCode.UNKNOWN.Key
+                Key = ContentTypeCode.UNKNOWN.Key,
+                Name= ContentTypeCode.UNKNOWN.TypeName
             };
             int _code = ContentTypeCode.UNKNOWN.Code;
             if (ContentType.Contains(ContentTypeCode.IMAGE.Key))
             {
                 item.Code = ContentTypeCode.IMAGE.Code;
                 item.Key = ContentTypeCode.IMAGE.Key;
+                item.Name = ContentTypeCode.IMAGE.TypeName;
             }
             else if (ContentType.Contains(ContentTypeCode.VIDEO.Key))
             {
                 item.Code = ContentTypeCode.VIDEO.Code;
                 item.Key = ContentTypeCode.VIDEO.Key;
+                item.Name = ContentTypeCode.VIDEO.TypeName;
             }
             else if (ContentType.Contains(ContentTypeCode.AUDIO.Key))
             {
                 item.Code = ContentTypeCode.AUDIO.Code;
                 item.Key = ContentTypeCode.AUDIO.Key;
+                item.Name = ContentTypeCode.AUDIO.TypeName;
             }
             else if (ContentType.Contains(ContentTypeCode.TEXT.EXCEL.Key))
             {
                 item.Code = ContentTypeCode.TEXT.Code;
                 item.Key = ContentTypeCode.TEXT.Key;
+                item.Name = ContentTypeCode.TEXT.TypeName;
             }
             else if (ContentType.Contains(ContentTypeCode.TEXT.PPT.Key))
             {
                 item.Code = ContentTypeCode.TEXT.Code;
                 item.Key = ContentTypeCode.TEXT.Key;
+                item.Name = ContentTypeCode.TEXT.TypeName;
             }
             else if (ContentType.Contains(ContentTypeCode.TEXT.WORD.Key))
             {
                 item.Code = ContentTypeCode.TEXT.Code;
                 item.Key = ContentTypeCode.TEXT.Key;
+                item.Name = ContentTypeCode.TEXT.TypeName;
             }
             else if (ContentType.Contains(ContentTypeCode.TEXT.Key))
             {
                 item.Code = ContentTypeCode.TEXT.Code;
                 item.Key = ContentTypeCode.TEXT.Key;
+                item.Name = ContentTypeCode.TEXT.TypeName;
             }
             else if (ContentType.Contains(ContentTypeCode.UNKNOWN.PDF.Key))
             {
                 item.Code = ContentTypeCode.UNKNOWN.Code;
                 item.Key = ContentTypeCode.UNKNOWN.Key;
+                item.Name = ContentTypeCode.UNKNOWN.TypeName;
             }
+            return item;
+        }
+
+        private ContentTypeClass GetContentType(int Code)
+        {
+            ContentTypeClass item = new ContentTypeClass()
+            {
+                Code = ContentTypeCode.UNKNOWN.Code,
+                Key = ContentTypeCode.UNKNOWN.Key,
+                Name = ContentTypeCode.UNKNOWN.TypeName
+            };
+            if (ContentTypeCode.IMAGE.Code==Code)
+            {
+                item.Code = ContentTypeCode.IMAGE.Code;
+                item.Key = ContentTypeCode.IMAGE.Key;
+                item.Name = ContentTypeCode.IMAGE.TypeName;
+            }
+            else if (ContentTypeCode.VIDEO.Code==Code)
+            {
+                item.Code = ContentTypeCode.VIDEO.Code;
+                item.Key = ContentTypeCode.VIDEO.Key;
+                item.Name = ContentTypeCode.VIDEO.TypeName;
+            }
+            else if (ContentTypeCode.AUDIO.Code==Code)
+            {
+                item.Code = ContentTypeCode.AUDIO.Code;
+                item.Key = ContentTypeCode.AUDIO.Key;
+                item.Name = ContentTypeCode.AUDIO.TypeName;
+            }
+            else if (ContentTypeCode.TEXT.Code==Code)
+            {
+                item.Code = ContentTypeCode.TEXT.Code;
+                item.Key = ContentTypeCode.TEXT.Key;
+                item.Name = ContentTypeCode.TEXT.TypeName;
+            }            
             return item;
         }
         #endregion

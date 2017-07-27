@@ -465,6 +465,18 @@
         public static int FINISHED = 2;       
     }
 
+    public static class AttachmentStatus
+    {
+        /// <summary>
+        /// 已删除
+        /// </summary>
+        public static int DELETE = -1;
+        /// <summary>
+        /// 正常
+        /// </summary>
+        public static int NORMAL = 0;
+    }
+
     public static class LogCode
     {
         /// <summary>
@@ -540,10 +552,18 @@
 
     public class SubjectFolder
     {
-        public int FolderCode { get; set; }
         public string FolderName { get; set; }
+        public int FolderCode { get; set; }
         public int FileNum { get; set; }
+        public string LastUpLoadUser { get; set; }
         public string LastUpLoadTime { get; set; }
+    }
+
+    public class SubjectFolderBase
+    {
+        public int Code { get; set; }
+        public string Key { get; set; }
+        public string TypeName { get; set; }
     }
 
     public class ContentTypeCode
@@ -556,7 +576,7 @@
         {
             public static int Code = 401;
             public static string Key = "unknown";
-            public static string TypeName = "未知";
+            public static string TypeName = "其他";
             public static class PDF
             {
                 public static int Code = 4011;
@@ -601,7 +621,7 @@
         public static class TEXT
         {
             public static int Code = 103;
-            public static string TypeName = "文本";
+            public static string TypeName = "文档";
             public static string Key = "text";
             public static class EXCEL
             {
@@ -620,6 +640,7 @@
             }
         }
     }
+
 
 
 

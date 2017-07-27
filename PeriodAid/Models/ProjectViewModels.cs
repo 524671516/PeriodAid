@@ -12,6 +12,7 @@ namespace PeriodAid.Models
     {
         public int Code { get; set; }
         public string Key { get; set; }
+        public string Name { get; set; }
     }
     //图片编辑参数
     public class CutImgModel
