@@ -139,12 +139,12 @@ function GetAssignment(ProcedureId, SubJectId, container) {
                                     url:"/TaskManagement/DragAssignment",
                                     type:"post",
                                     data: {
-                                        aid: evt.item.dataset.aid,
+                                        AssignmentId: evt.item.dataset.aid,
                                         nowpid: evt.item.offsetParent.offsetParent.dataset.procedureid
                                     },
                                     success: function (data) {
-                                        if (data != "SUCCESS") {
-                                            ErrorAlert("操作失败");
+                                        if (data.result != "SUCCESS") {
+                                            ErrorAlert(data.errmsg);
                                         } else {
                                             $.ajax({                                               
                                                 url: "/TaskManagement/GetProcedureJsonInfo",

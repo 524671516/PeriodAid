@@ -47,7 +47,7 @@
                     });
                     GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
                 } else {
-                    ErrorAlert(data.result);
+                    ErrorAlert(data.errmsg);
                     $("#btn_create_subtask").removeClass("disabled");
                 }
             })
@@ -61,7 +61,7 @@
     //子任务的提交
     $("#btn_create_subtask").on("click", function () {
         if (!$(this).hasClass("disabled")) {
-            $(this).addClass("disabled")
+            $(this).addClass("disabled");
             $("#add_subtask_form").submit();
         }
     });
