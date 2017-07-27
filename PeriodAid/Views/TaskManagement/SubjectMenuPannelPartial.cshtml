@@ -84,7 +84,7 @@
         $.ajax({
             url: "/TaskManagement/EditSubject",
             data: {
-                id: $("#pannel-wrap").attr("data-sid")
+                SubjectId: $("#pannel-wrap").attr("data-sid")
             },
             success: function (data) {
                 if (data != "FAIL") {
