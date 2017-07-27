@@ -1494,7 +1494,7 @@ namespace PeriodAid.Controllers
                         AttachmentTitle = _fileName,
                         AttachmentSource = ServerFileName,
                         AttachmentSize = _fileLength,
-                        ContentType = type.Key.ToLower(),
+                        ContentType = _fileType,
                         AttachmentType = type.Code,
                         UploadTime = DateTime.Now,
                         UploaderId = employee.Id,

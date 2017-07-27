@@ -541,12 +541,12 @@
     public class SubjectFolder
     {
         public int FolderCode { get; set; }
-        public string FolderKey { get; set; }
         public string FolderName { get; set; }
         public int FileNum { get; set; }
         public string LastUpLoadTime { get; set; }
     }
-    public static class ContentTypeCode
+
+    public class ContentTypeCode
     {
 
         /// <summary>
