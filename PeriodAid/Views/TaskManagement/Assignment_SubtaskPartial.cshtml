@@ -114,6 +114,7 @@
             },
             success: function (data) {
                 if (data.result == "SUCCESS") {
+                    $("#Edit-Assignment #Status").val(data.ParentStatus)
                     GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
                         $("#modal_subtask_area").html(data);
                     });
@@ -144,7 +145,7 @@
                         }
                     })
                 } else {
-                    ErrorAlert(data.result)
+                    ErrorAlert(data.errmsg)
                 }
             },
             error: function () {

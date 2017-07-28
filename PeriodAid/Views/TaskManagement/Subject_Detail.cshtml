@@ -150,7 +150,7 @@
             animation: 150,
             draggable: ".ajax-procedure",
             handle: ".tm_pannel-header",
-            filter: ".tm_pannel-item-add",
+            filter: "",
             dragClass: "sortable-drag",
             ghostClass: "sortable-ghost",
             preventOnFilter: true,
@@ -285,6 +285,32 @@
                     ErrorAlert(data.errmsg)
                 }
             });
+        });
+
+        //控制任务列表操作栏
+        $("#pannel-wrap").on("click", ".procedure-dropdown-toggle", function () {
+            alert(1);
+            $(this).parent().find(".dropdown-parent").show();
+        });
+        //修改任务列表名称
+        $("#pannel-wrap").on("click", ".btn-edit-procedure", function () {
+            var _self = $(this);
+            var pid = _self.attr("data-pid");
+            $.ajax({
+                url: "/TaskManagement/GetProcedureForm",
+                type:"post",
+                data: {
+                    ProcedureId: pid,
+                    SubjectId: $("#pannel-wrap").attr("data-sid")
+                },
+                success: function (data) {
+                    _self.parents("li").find(".dropdown-parent").html(data);
+                },
+                error: function (data) {
+                    ErrorAlert("请求失败。")
+                }
+            })
+
         });
 
         //显示任务详情

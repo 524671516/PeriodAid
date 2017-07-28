@@ -566,41 +566,44 @@ namespace PeriodAid.Controllers
             }
         }
 
+
+        //获取任务列表表单
+        public PartialViewResult GetProcedureForm(int ProcedureId,int SubjectId)
+        {
+            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId);
+            ViewBag.sid = SubjectId;
+            return PartialView(procedure);
+        }
         //修改任务列表
         [HttpPost]
         [OperationAuth(OperationGroup = 103)]
-        public async Task<JsonResult> Edit_Procedure(int ProcedureId, int SubjectId, string PName)
+        public async Task<JsonResult> Edit_Procedure(Procedure model,FormCollection form)
         {
-            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId && m.Status == ProcedureStatus.NORMAL);
             var employee = getEmployee(User.Identity.Name);
-            if (employee.Subject.Select(p => p.TemplateId).Contains(procedure.TemplateId))
+            if (ModelState.IsValid)
             {
-                var assignmentlist = (from m in _db.Assignment
-                                      where m.ProcedureId == ProcedureId && m.Status > AssignmentStatus.DELETED
-                                      select m).Count();
-                if (assignmentlist == 0)
+                try
                 {
-                    try
+                    if (TryUpdateModel(model))
                     {
-                        procedure.ProcedureTitle = PName;
-                        _db.Entry(procedure).State = System.Data.Entity.EntityState.Modified;
+                        _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
                         await _db.SaveChangesAsync();
-                        await AddLogAsync(LogCode.EDITSUBJECT, employee, SubjectId, "将任务列表" + "[" + procedure.ProcedureTitle + "]修改为[" + PName + "]。");
+                        await AddLogAsync(LogCode.EDITSUBJECT, employee, Convert.ToInt32(form["SubjectId"]), "将任务列表【" + form["OldTitle"] + "】修改为【" + model.ProcedureTitle + "】。");
+                        return Json(new { result = "SUCCESS", msg = "修改成功。" });
                     }
-                    catch (Exception)
+                    else
                     {
-                        return Json(new { result = "FAIL", errmsg = "修改过程失败。" });
+                        return Json(new { result = "FAIL", errmsg = "模型同步失败。" });
                     }
-                    return Json(new { result = "SUCCESS", Id = procedure.Id });
                 }
-                else
+                catch (Exception)
                 {
-                    return Json(new { result = "FAIL", errmsg = "请先清空列表中的任务。" });
+                    return Json(new { result = "FAIL", errmsg = "内部异常。" });
                 }
             }
             else
             {
-                return Json(new { result = "FAIL", errmsg = "你没有权限修改任务列表。" });
+                return Json(new { result = "FAIL", errmsg = "模型验证失败。" });
             }
         }
 
@@ -1189,7 +1192,7 @@ namespace PeriodAid.Controllers
             {
                 return Json(new { result = "FAIL",errmsg="内部异常。" });
             }
-            return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId });
+            return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId,ParentStatus=subtask.Assignment.Status });
         }
         #endregion
 
