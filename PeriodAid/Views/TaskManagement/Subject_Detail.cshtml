@@ -150,10 +150,10 @@
             animation: 150,
             draggable: ".ajax-procedure",
             handle: ".tm_pannel-header",
-            filter: "",
+            filter: ".tm_pannel-item-add",
             dragClass: "sortable-drag",
             ghostClass: "sortable-ghost",
-            preventOnFilter: true,
+            preventOnFilter: false,
             scrollSpeed: 10,
             onEnd: function (evt) {
                 var sortobject = [];
@@ -289,8 +289,8 @@
 
         //控制任务列表操作栏
         $("#pannel-wrap").on("click", ".procedure-dropdown-toggle", function () {
-            alert(1);
-            $(this).parent().find(".dropdown-parent").show();
+            $(this).parents(".ajax-procedure").find(".dropdown-parent").show();
+            changepostion($(this), $(this).parents(".ajax-procedure").find(".dropdown-parent"))
         });
         //修改任务列表名称
         $("#pannel-wrap").on("click", ".btn-edit-procedure", function () {
@@ -312,7 +312,6 @@
             })
 
         });
-
         //显示任务详情
         $("#pannel-wrap").on("click", ".tm_pop_assmodal", function () {
             var aid = $(this).find(".tm_item_right").attr("data-aid");
@@ -338,6 +337,9 @@
                 $("#add-pannel-list").addClass("hidden");
                 $("#add-pannel-write").removeClass("hidden");
             }
+        }
+        function changepostion(referencebox, movebox) {
+            var 
         }
     </script>
 }

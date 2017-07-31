@@ -195,6 +195,10 @@ a.close{
 
 
 /*dropdown样式改造*/
+.tm-dropdown-area{
+    position:fixed;
+    z-index:9999;
+}
 .tm_dropdown.dropdown-menu.tm_procedure-dropdown{
     left:0;
 }
