@@ -51,13 +51,13 @@
 </div>
 <!--The Second Nav End-->
 <!--Procedure Content-->
-<div class="tm_pannel-wrap" id="pannel-wrap" data-sid="@Model.Id">
-    <div class="tm_control_pannel_show" id="btn_show_add_pannnel">展开</div>
+<div class="tm_pannel-wrap tm_add_pannel_hide" id="pannel-wrap" data-sid="@Model.Id">
+    <div class="tm_control_pannel_show" id="btn_show_add_pannel">展开</div>
     <div class="tm_pannel-container" id="tm_pannel-container">
         <div class="tm_pannel-item text-center tm_pannel-item-add" id="tm_pannel-item-add">
             <div class="color-gray btn-get-form" id="add-pannel-list">
                 <div class="add-btn" id="btn_add-pannel"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></div>
-                <div class="tm_control_pannel_hide" id="btn_hide_add_pannnel"><span>收起</span></div>
+                <div class="tm_control_pannel_hide" id="btn_hide_add_pannel"><span>收起</span></div>
             </div>
             <div id="add-pannel-write" class="tm_procedureform-area hidden">
                 @using (Html.BeginForm("CreateProcedure", "TaskManagement", FormMethod.Post, new { @id = "add_procedure_form", @class = "validate-form padding-10" }))
@@ -109,11 +109,11 @@
 <!--Pannel Menu End-->
 @section scripts{
     <script>
-        $("#btn_show_add_pannnel").on("click", function () {
+        $("#btn_show_add_pannel").on("click", function () {
             $("#pannel-wrap").removeClass("tm_add_pannel_hide");
             $("#tm_pannel-container").scrollLeft("0")
         });
-        $("#btn_hide_add_pannnel").on("click", function () {
+        $("#btn_hide_add_pannel").on("click", function () {
             $("#pannel-wrap").addClass("tm_add_pannel_hide");
         })
 
@@ -287,10 +287,27 @@
             });
         });
 
-        //控制任务列表操作栏
-        $("#pannel-wrap").on("click", ".procedure-dropdown-toggle", function () {
-            $(this).parents(".ajax-procedure").find(".dropdown-parent").show();
-            changepostion($(this), $(this).parents(".ajax-procedure").find(".dropdown-parent"))
+        //控制任务列表操作栏 
+        $("#pannel-wrap").on("click", ".tm-show-listmenu", function () {
+            $(".tm-dropdown-menu").hide();
+            if ($(this).hasClass("open")) {
+                $(this).removeClass("open");
+                $(this).parents(".ajax-procedure").find(".dropdown-parent").hide();
+            } else {
+                $(this).addClass("open");               
+                $(this).parents(".ajax-procedure").find(".dropdown-parent").show();               
+            }
+            changepostion($(this).parents(".ajax-procedure").find(".procedure-dropdown-toggle"), $(this).parents(".ajax-procedure").find(".tm-dropdown-area"))
+        });
+
+        $("#tm_pannel-container").on("click", function (e) {
+            var _target = $(e.target);
+            if (_target.closest(".tm-dropdown-area").length == 0) {
+                $(".tm-dropdown-menu").hide();
+            }
+            if (_target.closest(".tm-dropdown-area").length == 0 && _target.closest(".procedure-dropdown-toggle").length == 0) {
+                $(".tm-show-listmenu").removeClass("open");
+            }
         });
         //修改任务列表名称
         $("#pannel-wrap").on("click", ".btn-edit-procedure", function () {
@@ -304,7 +321,10 @@
                     SubjectId: $("#pannel-wrap").attr("data-sid")
                 },
                 success: function (data) {
-                    _self.parents("li").find(".dropdown-parent").html(data);
+                    $(".tm-dropdown-menu").hide();
+                    $(".dropdown-sub").html("");
+                    _self.parents(".tm-dropdown-area").find(".dropdown-sub").html(data).show();
+                    changepostion(_self.parents(".ajax-procedure").find(".procedure-dropdown-toggle"), _self.parents(".ajax-procedure").find(".tm-dropdown-area"))
                 },
                 error: function (data) {
                     ErrorAlert("请求失败。")
@@ -339,7 +359,14 @@
             }
         }
         function changepostion(referencebox, movebox) {
-            var 
+            var referencepoint = referencebox.offset().left + referencebox.width() / 2;
+            var moveboxhalfwidth = movebox.width() / 2;
+            var moveleft = referencepoint - moveboxhalfwidth;
+            if (moveleft < 0) {
+                movebox.offset({ top: 160, left: referencebox.offset().left });
+            } else {
+                movebox.offset({ top: 160, left: moveleft });
+            }
         }
     </script>
 }

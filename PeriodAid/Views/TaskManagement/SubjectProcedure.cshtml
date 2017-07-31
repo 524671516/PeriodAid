@@ -5,27 +5,26 @@
         <span class="tm_procedure-title">@Model.ProcedureTitle</span>
     </div>
     <div class="tm_pannel-header-left float-left">
-                <a class="icon-btn dropdown-toggle procedure-dropdown-toggle" aria-haspopup="true" aria-expanded="true" href="javascript:;">
+                <a class="icon-btn dropdown-toggle procedure-dropdown-toggle tm-show-listmenu" href="javascript:;">
                     <i class="fa fa-caret-square-o-down color-blue" aria-hidden="true"></i>
                 </a>
     </div>
 </div>
 <div class="tm-dropdown-area">
-    <div class="dropdown-menu tm_dropdown dropdown-parent">
+    <div class="dropdown-menu tm_dropdown dropdown-parent tm-dropdown-menu" style="position:static">
         <ul class="tm_dropdown_list">
             <li class="text-center"><strong class="color-blue">更多操作</strong></li>
             <li role="separator" class="divider">
             </li>
-            <li><a href="javascript:;" data-pid="@Model.Id" class="btn-del-procedure"><span class="color-red">@Html.Encode("删除" + Model.ProcedureTitle)</span></a></li>
+            <li><a href="javascript:;" data-pid="@Model.Id" class="btn-del-procedure"><span class="color-red">@Html.Encode("删除列表")</span></a></li>
             <li>
                 <a href="javascript:;" data-pid="@Model.Id" class="btn-edit-procedure">
                     <span class="color-blue">@Html.Encode("修改名称")</span>
                 </a>
             </li>
-            <li><a href="javascript:;" class="btn_archive_assignment">批量完成</a></li>
         </ul>
     </div>
-    <div class="dropdown-menu tm_dropdown dropdown-sub">
+    <div class="dropdown-menu tm_dropdown dropdown-sub tm-dropdown-menu" style="position:static">
     </div>
 </div>
 <div class="tm_pannel-body">
