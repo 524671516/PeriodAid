@@ -26,7 +26,7 @@
             </select>
         </div>
     </div>
-    <div class="tm_modal_ul_wrap modal-list-pannel">
+    <div class="tm_modal_ul_wrap modal-list-Panel">
         <ul class="list-group tm_modal_list_ul" id="tm_modal_logs_area">
             <li class="clear-float tm_modal_list_li">
                 <div class="tm_item_avatar float-left" title="" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
@@ -64,12 +64,11 @@
         $('#tm_select_time').selectpicker({
             title: "时间"
         });
-
     });
     $.ajax({
         url: $(".tm_active").attr("data-href"),
         data: {
-            SubjectId: $("#pannel-wrap").attr("data-sid")
+            SubjectId: $("#Panel-wrap").attr("data-sid")
         },
         success: function (data) {
             $("#tm_modal_list_area").html(data);
@@ -86,7 +85,7 @@
         $.ajax({
             url: $(this).attr("data-href"),
             data:{
-                SubjectId:$("#pannel-wrap").attr("data-sid")
+                SubjectId:$("#Panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 $("#tm_modal_list_area").html(data);

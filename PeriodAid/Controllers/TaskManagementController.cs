@@ -1720,9 +1720,16 @@ namespace PeriodAid.Controllers
         #endregion
 
 
+        #region 我的任务操作
+        //获取我的任务页面
+        public ActionResult PersonalActionPanel
+
+        #endregion
+
+
         //获取项目侧边栏
         [OperationAuth(OperationGroup = 102)]
-        public PartialViewResult SubjectMenuPannelPartial(int SubjectId)
+        public PartialViewResult SubjectMenuPanelPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var loglist = (from m in _db.OperationLogs

@@ -1,4 +1,8 @@
 ﻿$(function () {
+    //控制我的任务
+    $("#my-app").on("click", ".tm-control-view-Panel", function () {
+            $("#tm-my-view").fadeToggle();
+        })
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {
         $.ajax({
@@ -57,7 +61,7 @@ function GetProcedure(ProcedureId, SubjectId, container) {
                 ErrorAlert("获取项目阶段失败。")
             } else {
                 container.html(data)
-                GetAssignment(ProcedureId, SubjectId, container.find(".tm_pannel-body"));
+                GetAssignment(ProcedureId, SubjectId, container.find(".tm_Panel-body"));
             }  
         },
         error: function () {
@@ -121,7 +125,7 @@ function GetAssignment(ProcedureId, SubJectId, container) {
         success: function (data) {           
             container.html(data)
             var byId = function (id) { return document.getElementById(id); };
-            [].forEach.call(byId('tm_pannel-container').getElementsByClassName('tm_list-show'), function (el) {
+            [].forEach.call(byId('tm_Panel-container').getElementsByClassName('tm_list-show'), function (el) {
                 Sortable.create(el, {
                     filter: ".tm_list-add",
                     group: 'item',
@@ -150,7 +154,7 @@ function GetAssignment(ProcedureId, SubJectId, container) {
                                                 url: "/TaskManagement/GetProcedureJsonInfo",
                                                 type:"post",
                                                 data: {
-                                                    SubjectId: $("#pannel-wrap").attr("data-sid")
+                                                    SubjectId: $("#Panel-wrap").attr("data-sid")
                                                 },
                                                 success: function (data) {
                                                     var len = data.data.length;

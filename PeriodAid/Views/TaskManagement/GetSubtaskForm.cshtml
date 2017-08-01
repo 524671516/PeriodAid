@@ -45,7 +45,7 @@
                     (), function (data) {
                         $("#modal_subtask_area").html(data);
                     });
-                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    GetAssignment(data.Id, $("#Panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_Panel-body"));
                 } else {
                     ErrorAlert(data.errmsg);
                     $("#btn_create_subtask").removeClass("disabled");

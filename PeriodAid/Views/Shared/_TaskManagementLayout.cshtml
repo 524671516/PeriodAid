@@ -14,7 +14,7 @@
     <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
-    <link href="~/Content/TaskManagement.css" rel="stylesheet" />
+    <link href="~/Content/TaskManagement.css?v=1011" rel="stylesheet" />
     <!--[if lt IE 9]>
     <script src="~/Scripts/html5.js"></script>
     <script src="~/Scripts/respond.min.js"></script>
@@ -57,7 +57,7 @@
                             <button type="submit" class="btn btn-default">搜索</button>
                         </form>*@
                     <ul class="nav navbar-nav navbar-right navbar-border">
-                        <li><a href="javascript:;" id="task_my_btn"><strong>我的任务</strong></a></li>
+                        <li><a href="javascript:;" id="task_my_btn" class="tm-control-view-Panel"><strong>我的任务</strong></a></li>
                         @*<li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><strong>设置</strong></a>
                                 <ul class="dropdown-menu" id="dropdown-menu-my">
@@ -112,7 +112,7 @@
                         <h4 class="modal-title">选择模板</h4>
                     </div>
                     <div class="container-fluid">
-                        <div class="row modal-nav-pannel">
+                        <div class="row modal-nav-Panel">
                             <div class="col-md-3 tm_modal_ul_wrap">
                                 <ul class="list-group tm_modal-nav tm_modal_nav_ul">
                                     <li class="list-group-item tm_active" data-href="/TaskManagement/SubjectFinishProgressPartial">普通项目</li>
