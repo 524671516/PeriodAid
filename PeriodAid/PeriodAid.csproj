@@ -1062,6 +1062,9 @@
     <Content Include="Views\TaskManagement\Subject_FilesPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNotFound.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNoAuthority.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogs.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
