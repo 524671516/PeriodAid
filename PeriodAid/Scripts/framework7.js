@@ -88,13 +88,13 @@
             // Tap Navbar or Statusbar to scroll to top
             scrollTopOnNavbarClick: false,
             scrollTopOnStatusbarClick: false,
-            // Panels
-            swipePanel: false, // or 'left' or 'right'
-            swipePanelActiveArea: 0,
-            swipePanelCloseOpposite: true,
-            swipePanelOnlyClose: false,
-            swipePanelNoFollow: false,
-            swipePanelThreshold: 0,
+            // panels
+            swipepanel: false, // or 'left' or 'right'
+            swipepanelActiveArea: 0,
+            swipepanelCloseOpposite: true,
+            swipepanelOnlyClose: false,
+            swipepanelNoFollow: false,
+            swipepanelThreshold: 0,
             panelsCloseByOutside: true,
             // Modals
             modalButtonOk: 'OK',
@@ -416,7 +416,7 @@
                         app.closeModal($('.picker-modal.modal-in'));
                     }
                 }
-                e.f7PreventPanelSwipe = true;
+                e.f7PreventpanelSwipe = true;
                 isMoved = true;
                 e.preventDefault();
         
@@ -3939,15 +3939,15 @@
         };
 
         /*======================================================
-        ************   Panels   ************
+        ************   panels   ************
         ======================================================*/
-        app.allowPanelOpen = true;
-        app.openPanel = function (panelPosition) {
-            if (!app.allowPanelOpen) return false;
+        app.allowpanelOpen = true;
+        app.openpanel = function (panelPosition) {
+            if (!app.allowpanelOpen) return false;
             var panel = $('.panel-' + panelPosition);
             if (panel.length === 0 || panel.hasClass('active')) return false;
-            app.closePanel(); // Close if some panel is opened
-            app.allowPanelOpen = false;
+            app.closepanel(); // Close if some panel is opened
+            app.allowpanelOpen = false;
             var effect = panel.hasClass('panel-reveal') ? 'reveal' : 'cover';
             panel.css({display: 'block'}).addClass('active');
             panel.trigger('open');
@@ -3975,7 +3975,7 @@
                             panel.trigger('closed');
                         }
                         if (app.params.material) $('.panel-overlay').css({display: ''});
-                        app.allowPanelOpen = true;
+                        app.allowpanelOpen = true;
                     }
                     else panelTransitionEnd();
                 });
@@ -3985,22 +3985,22 @@
             $('body').addClass('with-panel-' + panelPosition + '-' + effect);
             return true;
         };
-        app.closePanel = function () {
-            var activePanel = $('.panel.active');
-            if (activePanel.length === 0) return false;
-            var effect = activePanel.hasClass('panel-reveal') ? 'reveal' : 'cover';
-            var panelPosition = activePanel.hasClass('panel-left') ? 'left' : 'right';
-            activePanel.removeClass('active');
-            var transitionEndTarget = effect === 'reveal' ? $('.' + app.params.viewsClass) : activePanel;
-            activePanel.trigger('close');
-            app.allowPanelOpen = false;
+        app.closepanel = function () {
+            var activepanel = $('.panel.active');
+            if (activepanel.length === 0) return false;
+            var effect = activepanel.hasClass('panel-reveal') ? 'reveal' : 'cover';
+            var panelPosition = activepanel.hasClass('panel-left') ? 'left' : 'right';
+            activepanel.removeClass('active');
+            var transitionEndTarget = effect === 'reveal' ? $('.' + app.params.viewsClass) : activepanel;
+            activepanel.trigger('close');
+            app.allowpanelOpen = false;
         
             transitionEndTarget.transitionEnd(function () {
-                if (activePanel.hasClass('active')) return;
-                activePanel.css({display: ''});
-                activePanel.trigger('closed');
+                if (activepanel.hasClass('active')) return;
+                activepanel.css({display: ''});
+                activepanel.trigger('closed');
                 $('body').removeClass('panel-closing');
-                app.allowPanelOpen = true;
+                app.allowpanelOpen = true;
             });
         
             $('body').addClass('panel-closing').removeClass('with-panel-' + panelPosition + '-' + effect);
@@ -4008,15 +4008,15 @@
         /*======================================================
         ************   Swipe panels   ************
         ======================================================*/
-        app.initSwipePanels = function () {
+        app.initSwipepanels = function () {
             var panel, side;
-            if (app.params.swipePanel) {
-                panel = $('.panel.panel-' + app.params.swipePanel);
-                side = app.params.swipePanel;
+            if (app.params.swipepanel) {
+                panel = $('.panel.panel-' + app.params.swipepanel);
+                side = app.params.swipepanel;
                 if (panel.length === 0) return;
             }
             else {
-                if (app.params.swipePanelOnlyClose) {
+                if (app.params.swipepanelOnlyClose) {
                     if ($('.panel').length === 0) return;
                 }
                 else return;
@@ -4027,31 +4027,31 @@
             var views = $('.' + app.params.viewsClass);
         
             function handleTouchStart(e) {
-                if (!app.allowPanelOpen || (!app.params.swipePanel && !app.params.swipePanelOnlyClose) || isTouched) return;
+                if (!app.allowpanelOpen || (!app.params.swipepanel && !app.params.swipepanelOnlyClose) || isTouched) return;
                 if ($('.modal-in, .photo-browser-in').length > 0) return;
-                if (!(app.params.swipePanelCloseOpposite || app.params.swipePanelOnlyClose)) {
+                if (!(app.params.swipepanelCloseOpposite || app.params.swipepanelOnlyClose)) {
                     if ($('.panel.active').length > 0 && !panel.hasClass('active')) return;
                 }
                 touchesStart.x = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
                 touchesStart.y = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
-                if (app.params.swipePanelCloseOpposite || app.params.swipePanelOnlyClose) {
+                if (app.params.swipepanelCloseOpposite || app.params.swipepanelOnlyClose) {
                     if ($('.panel.active').length > 0) {
                         side = $('.panel.active').hasClass('panel-left') ? 'left' : 'right';
                     }
                     else {
-                        if (app.params.swipePanelOnlyClose) return;
-                        side = app.params.swipePanel;
+                        if (app.params.swipepanelOnlyClose) return;
+                        side = app.params.swipepanel;
                     }
                     if (!side) return;
                 }
                 panel = $('.panel.panel-' + side);
                 opened = panel.hasClass('active');
-                if (app.params.swipePanelActiveArea && !opened) {
+                if (app.params.swipepanelActiveArea && !opened) {
                     if (side === 'left') {
-                        if (touchesStart.x > app.params.swipePanelActiveArea) return;
+                        if (touchesStart.x > app.params.swipepanelActiveArea) return;
                     }
                     if (side === 'right') {
-                        if (touchesStart.x < window.innerWidth - app.params.swipePanelActiveArea) return;
+                        if (touchesStart.x < window.innerWidth - app.params.swipepanelActiveArea) return;
                     }
                 }
                 isMoved = false;
@@ -4063,7 +4063,7 @@
             }
             function handleTouchMove(e) {
                 if (!isTouched) return;
-                if (e.f7PreventPanelSwipe) return;
+                if (e.f7PreventpanelSwipe) return;
                 var pageX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
                 var pageY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
                 if (typeof isScrolling === 'undefined') {
@@ -4097,16 +4097,16 @@
                     }
                 }
         
-                if (app.params.swipePanelNoFollow) {
+                if (app.params.swipepanelNoFollow) {
                     var timeDiff = (new Date()).getTime() - touchStartTime;
                     if (timeDiff < 300) {
                         if (direction === 'to-left') {
-                            if (side === 'right') app.openPanel(side);
-                            if (side === 'left' && panel.hasClass('active')) app.closePanel();
+                            if (side === 'right') app.openpanel(side);
+                            if (side === 'left' && panel.hasClass('active')) app.closepanel();
                         }
                         if (direction === 'to-right') {
-                            if (side === 'left') app.openPanel(side);
-                            if (side === 'right' && panel.hasClass('active')) app.closePanel();
+                            if (side === 'left') app.openpanel(side);
+                            if (side === 'right' && panel.hasClass('active')) app.closepanel();
                         }
                     }
                     isTouched = false;
@@ -4130,7 +4130,7 @@
                 isMoved = true;
         
                 e.preventDefault();
-                var threshold = opened ? 0 : -app.params.swipePanelThreshold;
+                var threshold = opened ? 0 : -app.params.swipepanelThreshold;
                 if (side === 'right') threshold = -threshold;
                 
                 touchesDiff = pageX - touchesStart.x + threshold;
@@ -4153,7 +4153,7 @@
                     views.transform('translate3d(' + translate + 'px,0,0)').transition(0);
                     panelOverlay.transform('translate3d(' + translate + 'px,0,0)').transition(0);
                     
-                    app.pluginHook('swipePanelSetTransform', views[0], panel[0], Math.abs(translate / panelWidth));
+                    app.pluginHook('swipepanelSetTransform', views[0], panel[0], Math.abs(translate / panelWidth));
                 }
                 else {
                     panel.transform('translate3d(' + translate + 'px,0,0)').transition(0);
@@ -4162,7 +4162,7 @@
                         overlayOpacity = Math.abs(translate/panelWidth);
                         panelOverlay.css({opacity: overlayOpacity});
                     }
-                    app.pluginHook('swipePanelSetTransform', views[0], panel[0], Math.abs(translate / panelWidth));
+                    app.pluginHook('swipepanelSetTransform', views[0], panel[0], Math.abs(translate / panelWidth));
                 }
             }
             function handleTouchEnd(e) {
@@ -4207,28 +4207,28 @@
                     }
                 }
                 if (action === 'swap') {
-                    app.allowPanelOpen = true;
+                    app.allowpanelOpen = true;
                     if (opened) {
-                        app.closePanel();
+                        app.closepanel();
                         if (edge) {
                             panel.css({display: ''});
                             $('body').removeClass('panel-closing');
                         }
                     }
                     else {
-                        app.openPanel(side);
+                        app.openpanel(side);
                     }
-                    if (edge) app.allowPanelOpen = true;
+                    if (edge) app.allowpanelOpen = true;
                 }
                 if (action === 'reset') {
                     if (opened) {
-                        app.allowPanelOpen = true;
-                        app.openPanel(side);
+                        app.allowpanelOpen = true;
+                        app.openpanel(side);
                     }
                     else {
-                        app.closePanel();
+                        app.closepanel();
                         if (edge) {
-                            app.allowPanelOpen = true;
+                            app.allowpanelOpen = true;
                             panel.css({display: ''});
                         }
                         else {
@@ -4239,7 +4239,7 @@
                                 panel.trigger('closed');
                                 panel.css({display: ''});
                                 $('body').removeClass('panel-closing');
-                                app.allowPanelOpen = true;
+                                app.allowpanelOpen = true;
                             });
                         }
                     }
@@ -4740,7 +4740,7 @@
                 
                 var i, buttonOffset, progress;
                 
-                e.f7PreventPanelSwipe = true;
+                e.f7PreventpanelSwipe = true;
                 if (app.params.swipeoutNoFollow) {
                     if (opened) {
                         if (openedActions === 'right' && touchesDiff > 0) {
@@ -5074,7 +5074,7 @@
                 sortingItems = sortingEl.parent().find('li');
                 sortableContainer = sortingEl.parents('.sortable');
                 e.preventDefault();
-                app.allowPanelOpen = app.allowSwipeout = false;
+                app.allowpanelOpen = app.allowSwipeout = false;
             }
             function handleTouchMove(e) {
                 if (!isTouched || !sortingEl) return;
@@ -5090,7 +5090,7 @@
                 isMoved = true;
         
                 e.preventDefault();
-                e.f7PreventPanelSwipe = true;
+                e.f7PreventpanelSwipe = true;
                 touchesDiff = pageY - touchStartY;
                 var translate = touchesDiff;
                 if (translate < -minTop) translate = -minTop;
@@ -5122,7 +5122,7 @@
                 });
             }
             function handleTouchEnd(e) {
-                app.allowPanelOpen = app.allowSwipeout = true;
+                app.allowpanelOpen = app.allowSwipeout = true;
                 if (!isTouched || !isMoved) {
                     isTouched = false;
                     isMoved = false;
@@ -7353,24 +7353,24 @@
                     if (app.smartSelectOpen) app.smartSelectOpen(clicked);
                 }
         
-                // Open Panel
+                // Open panel
                 if (clicked.hasClass('open-panel')) {
                     if ($('.panel').length === 1) {
-                        if ($('.panel').hasClass('panel-left')) app.openPanel('left');
-                        else app.openPanel('right');
+                        if ($('.panel').hasClass('panel-left')) app.openpanel('left');
+                        else app.openpanel('right');
                     }
                     else {
-                        if (clickedData.panel === 'right') app.openPanel('right');
-                        else app.openPanel('left');
+                        if (clickedData.panel === 'right') app.openpanel('right');
+                        else app.openpanel('left');
                     }
                 }
-                // Close Panel
+                // Close panel
                 if (clicked.hasClass('close-panel')) {
-                    app.closePanel();
+                    app.closepanel();
                 }
         
                 if (clicked.hasClass('panel-overlay') && app.params.panelsCloseByOutside) {
-                    app.closePanel();
+                    app.closepanel();
                 }
                 // Popover
                 if (clicked.hasClass('open-popover')) {
@@ -11282,8 +11282,8 @@
             // Init Live Sortable events
             if (app.initSortable && app.params.sortable) app.initSortable();
         
-            // Init Live Swipe Panels
-            if (app.initSwipePanels && (app.params.swipePanel || app.params.swipePanelOnlyClose)) app.initSwipePanels();
+            // Init Live Swipe panels
+            if (app.initSwipepanels && (app.params.swipepanel || app.params.swipepanelOnlyClose)) app.initSwipepanels();
             
             // Init Material Inputs
             if (app.params.material && app.initMaterialWatchInputs) app.initMaterialWatchInputs();

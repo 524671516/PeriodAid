@@ -37,11 +37,12 @@
             </select>
         </div>
     </div>
-    <div class="tm_modal_ul_wrap modal-list-pannel">
+    <div class="tm_modal_ul_wrap modal-list-panel">
         <ul class="list-group tm_modal_list_ul" id="tm_modal_logs_area"></ul>
     </div>
 </div>
 <div class="modal-footer">
+    <input type="hidden" id="currentpage" name="currentpage" value="0" />
     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 </div>
 <script>
@@ -61,22 +62,24 @@
             url: "/TaskManagement/GetLogs",
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
                 logTime: $("#tm_select_time").val(),
-                logtype: $("#tm_select_type").val()
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
             },
             success: function (data) {
                 $("#tm_modal_logs_area").append(data)
+                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
             }
         })
     });
-  
+
     $(".tm_modal-nav").on("click", ".list-group-item", function () {
         $("#loading-p").show();
         $.ajax({
             url: $(this).attr("data-href"),
             data: {
-                SubjectId: $("#pannel-wrap").attr("data-sid")
+                SubjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 $("#tm_modal_list_area").html(data);
@@ -88,36 +91,42 @@
         })
     })
     $("#tm_select_straff").on("change", function () {
+        $("#currentpage").val("0")
         $("#tm_modal_logs_area").html("");
         $.ajax({
             url: "/TaskManagement/GetLogs",
             type: 'post',
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid")
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                _page: $("#currentpage").val()
             },
             success: function (data) {
                 $("#tm_modal_logs_area").append(data)
+                $("#currentpage").val($("#currentpage").val() + 1);
             }
         })
     })
     $("#tm_select_time").on("change", function () {
+        $("#currentpage").val("0")
         $("#tm_modal_logs_area").html("");
         $.ajax({
             url: "/TaskManagement/GetLogs",
             type: "post",
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
-                logTime: $("#tm_select_time").val()
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logTime: $("#tm_select_time").val(),
+                _page: $("#currentpage").val()
             },
             success: function (data) {
-                $("#tm_modal_logs_area").append(data)
+                $("#tm_modal_logs_area").append(data);
             }
         })
     })
 
     $("#tm_select_type").on("change", function () {
+        $("#currentpage").val("0")
         $("#tm_modal_logs_area").html("");
         console.log($("#tm_select_type").val())
         $.ajax({
@@ -125,11 +134,30 @@
             type: "post",
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
-                logtype: $("#tm_select_type").val()
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
             },
             success: function (data) {
                 $("#tm_modal_logs_area").append(data)
+            }
+        })
+    })
+    $("#Create-Subject-Content").on("click", "#ShowMoreLogs", function () {
+        var _self = $(this);
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            data: {
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logTime: $("#tm_select_time").val(),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#tm_modal_logs_area").append(data)
+                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+                _self.parent().remove()
             }
         })
     })

@@ -1753,7 +1753,7 @@ $$(document).on("pageInit", ".page[data-page='managersellertask-query']", functi
 // 用户模板更新
 function refresh_userpanel() {
     $$.ajax({
-        url: "/Seller/Manager_UserPanel",
+        url: "/Seller/Manager_Userpanel",
         success: function (data) {
             if (data != "Error") $$("#manager_userpanel").html(data);
         }

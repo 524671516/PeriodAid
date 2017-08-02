@@ -2,7 +2,7 @@
 // Initialize app
 var myApp = new Framework7({
     pushState: true,
-    swipePanel: 'left',
+    swipepanel: 'left',
 });
 
 // If we need to use custom DOM library, let's save it to $$ variable:

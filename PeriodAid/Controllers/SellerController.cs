@@ -434,7 +434,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public async Task<PartialViewResult> Wx_Seller_Panel(int? SellerId)
+        public async Task<PartialViewResult> Wx_Seller_panel(int? SellerId)
         {
             ApplicationUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             int storeId = offlineDB.Off_Seller.SingleOrDefault(m => m.Id == SellerId && m.Off_System_Id == user.DefaultSystemId).StoreId;
@@ -2792,7 +2792,7 @@ namespace PeriodAid.Controllers
             ViewBag.Signature = utilities.generateWxJsApiSignature(_nonce, utilities.getJsApiTicket(), _timeStamp, _url);
             return View();
         }
-        public PartialViewResult Manager_UserPanel()
+        public PartialViewResult Manager_Userpanel()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             var manager = offlineDB.Off_StoreManager.SingleOrDefault(m => m.UserName == User.Identity.Name && m.Off_System_Id == user.DefaultSystemId);
@@ -4664,7 +4664,7 @@ namespace PeriodAid.Controllers
         }
 
         // 用户页面
-        public PartialViewResult Seller_Panel()
+        public PartialViewResult Seller_panel()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             ViewBag.ImgUrl = user.ImgUrl;

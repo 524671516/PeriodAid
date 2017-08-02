@@ -1051,7 +1051,6 @@
     <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
-    <Content Include="Views\TaskManagement\SubjectMenuPannelPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
@@ -1065,6 +1064,7 @@
     <Content Include="Views\TaskManagement\GetLogs.cshtml" />
     <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
     <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectMenuPanelPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
