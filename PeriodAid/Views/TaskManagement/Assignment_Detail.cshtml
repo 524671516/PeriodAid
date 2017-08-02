@@ -188,7 +188,7 @@
                     UnimportantAlert("任务修改成功");
                     $("#btn_edit_assignment").removeClass("disabled");
                     $('#Edit-Assignment').modal('hide');
-                    GetAssignment(data.id, $("#Panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_Panel-body"));
+                    GetAssignment(data.id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_panel-body"));
                 } else {
                     ErrorAlert(data.errmsg);
                     $("#btn_edit_assignment").removeClass("disabled");
@@ -214,14 +214,14 @@
         CustomConfirm("删除此任务的同时将删除其子任务，请确认是否删除?", function () {
             Delete_Assignment(data_aid, function (data) {
                 if (data.result == "SUCCESS") {
-                    GetAssignment(data.Id, $("#Panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_Panel-body"));
+                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
                     UnimportantAlert("删除任务成功。")
                     $('#Edit-Assignment').modal('hide');
                     $.ajax({
                         url: "/TaskManagement/GetProcedureJsonInfo",
                         type: "post",
                         data: {
-                            SubjectId: $("#Panel-wrap").attr("data-sid")
+                            SubjectId: $("#panel-wrap").attr("data-sid")
                         },
                         success: function (data) {
                             var len = data.data.length;

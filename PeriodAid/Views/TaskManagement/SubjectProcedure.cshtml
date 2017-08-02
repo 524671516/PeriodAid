@@ -1,10 +1,10 @@
 ﻿@model PeriodAid.Models.Procedure
 @using PeriodAid.Models;
-<div class="tm_Panel-header clear-float">
-    <div class="tm_Panel-header-right float-right">
+<div class="tm_panel-header clear-float">
+    <div class="tm_panel-header-right float-right">
         <span class="tm_procedure-title">@Model.ProcedureTitle</span>
     </div>
-    <div class="tm_Panel-header-left float-left">
+    <div class="tm_panel-header-left float-left">
                 <a class="icon-btn dropdown-toggle procedure-dropdown-toggle tm-show-listmenu" href="javascript:;">
                     <i class="fa fa-caret-square-o-down color-blue" aria-hidden="true"></i>
                 </a>
@@ -27,9 +27,9 @@
     <div class="dropdown-menu tm_dropdown dropdown-sub tm-dropdown-menu" style="position:static">
     </div>
 </div>
-<div class="tm_Panel-body">
+<div class="tm_panel-body">
 </div>
-<div class="tm_Panel-footer clear-float">
-    <div class="tm_Panel-footer-left float-left"></div>
-    <div class="tm_Panel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Assignment.Count(p => p.Status == AssignmentStatus.FINISHED))</span>/<span class="total-num">@Html.Encode(Model.Assignment.Count(p => p.Status > AssignmentStatus.DELETED))</span></div>
+<div class="tm_panel-footer clear-float">
+    <div class="tm_panel-footer-left float-left"></div>
+    <div class="tm_panel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Assignment.Count(p => p.Status == AssignmentStatus.FINISHED))</span>/<span class="total-num">@Html.Encode(Model.Assignment.Count(p => p.Status > AssignmentStatus.DELETED))</span></div>
 </div>

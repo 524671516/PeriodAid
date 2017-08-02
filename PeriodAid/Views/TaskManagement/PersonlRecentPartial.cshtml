@@ -1,32 +1,32 @@
 ﻿<div class="tm-view-header clear-float">
     <div class="tm-view-header-right float-right">
-        <div class="tm-view-control">
+        <div class="tm-view-control" id="tm-view-subcontrol">
             <ul>
                 <li class="tm-view-control-sort dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-progress" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span>最近一周</span>
+                        <span class="tm-select-title">最近一周</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress">
                         <li>
-                            <a href="#" class="selected">最近一周</a>
+                            <a href="javascript:;" class="tm-select-range selected tm-select" data-type="week">最近一周</a>
                         </li>
                         <li>
-                            <a href="#">最近一月</a>
+                            <a href="javascript:;" class="tm-select-range tm-select" data-type="month">最近一月</a>
                         </li>
                         <li>
-                            <a href="#">最近一年</a>
+                            <a href="javascript:;" class="tm-select-range tm-select" data-type="year">最近一年</a>
                         </li>
                     </ul>
                 </li>
                 <li class="tm-view-control-sort tm-has-line dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-undefined" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span>按时间排序</span>
+                        <span class="tm-select-title">按时间排序</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-undefined">
-                        <li><a href="#" class="selected">按时间排序</a></li>
-                        <li><a href="#">按项目排序</a></li>
+                        <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="timesort">按时间排序</a></li>
+                        <li><a href="javascript:;" class="tm-select-sort-type tm-select" date-type="subjectsort">按项目排序</a></li>
                     </ul>
                 </li>
                 <li class="tm-view-control-sort">
@@ -40,4 +40,40 @@
     </div>
 </div>
 <div class="tm-view-content-container  tm-view-container">
+    <div class="tm-view-loading-content" id="tm-view-loading-content">
+        <ul class="list-group tm_modal_list_ul" id="tm_modal_logs_area">
+            <li class="clear-float tm_modal_list_li">
+                <div class="tm_item_avatar float-left" title="" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
+                    <span style="background-image:url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131435362956644032.jpg');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                </div>
+                <div class="tm_item_middle float-left">
+                    <div class="tm_middle_top tm_middle_content" title="" data-toggle="tooltip" data-placement="top" data-original-title="修改了项目:项目管理系统">
+                        <span>修改了项目:项目管理系统</span>
+                    </div>
+                    <div class="tm_middle_bottom tm_middle_content clear-float">
+                        <div class="tm_item_left">
+                            <span class="color-gray"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                            <span class="finish_subtask">2017/7/5 17:02:33</span>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="tm-veiw-loading text-center hidden" id="tm-view-loading">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
+        <span class="sr-only">正在加载...</span>
+    </div>
 </div>
+<script>
+    $("#tm-view-subcontrol").on("click", ".tm-select", function (e) {
+        if (!$(this).hasClass("selected")) {
+            $(this).parent().parent().find(".tm-select.selected").removeClass("selected");
+            $(this).addClass("selected");
+            $(this).parents(".tm-view-control-sort").find(".tm-select-title").html($(this).html())
+        }
+        alert(1);
+
+    });
+</script>

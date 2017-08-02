@@ -1722,7 +1722,7 @@ namespace PeriodAid.Controllers
 
         #region 我的任务操作
         //获取我的任务页面
-        public ActionResult PersonalActionPanel()
+        public ActionResult PersonalActionpanel()
         {
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
@@ -1749,6 +1749,99 @@ namespace PeriodAid.Controllers
                 return PartialView(employee);
             }
         }
+
+        //近期任务获取
+        public ActionResult PersonalRecentAssignmentPartial(int? page, string timerange, string sorttype)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                int _page = page ?? 0;
+                ViewBag.currentpage = _page;
+                if (timerange == null|| timerange =="")
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var recentassignmentlist = (from m in _db.Assignment
+                                                    where m.HolderId == employee.Id&&m.Status==AssignmentStatus.UNFINISHED
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.TIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+                else
+                {
+                    TimeRangeClass _timerange = getTimeRange(timerange);
+                    if (sorttype == null|| sorttype =="")
+                    {
+                        var recentassignmentlist = (from m in _db.Assignment
+                                                    where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED&&m.Deadline>=_timerange.Starttime&&m.Deadline<_timerange.EndTime
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.TIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.Starttime && m.Deadline < _timerange.EndTime
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.Starttime && m.Deadline < _timerange.EndTime
+                                                        orderby m.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.Starttime && m.Deadline < _timerange.EndTime
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+            }
+        }
+        //近期子任务获取
 
         //个人任务
         public ActionResult PersonalTaskPartial()
@@ -1796,7 +1889,7 @@ namespace PeriodAid.Controllers
 
         //获取项目侧边栏
         [OperationAuth(OperationGroup = 102)]
-        public PartialViewResult SubjectMenuPanelPartial(int SubjectId)
+        public PartialViewResult SubjectMenupanelPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var loglist = (from m in _db.OperationLogs
@@ -1868,7 +1961,39 @@ namespace PeriodAid.Controllers
 
 
 
+        public TimeRangeClass getTimeRange(string timetype)
+        {
+            TimeRangeClass item = new TimeRangeClass();
+            var _today = DateTime.Today;
+            if (timetype == GetDataType.WEEKDATA)
+            {
+                var startweek = _today.AddDays(1 - Convert.ToInt32(_today.DayOfWeek.ToString("d")));
+                var endweek = startweek.AddDays(7);
+                item.Starttime = startweek;
+                item.EndTime = endweek;
+            }
+            else if (timetype == GetDataType.MONTHDATA)
+            {
+                var startmonth = _today.AddDays(1 - _today.Day);
+                var endmonth = startmonth.AddMonths(1);
+                item.Starttime = startmonth;
+                item.EndTime = endmonth;
 
+            }
+            else if (timetype == GetDataType.YEARDATA)
+            {
+                var startyear = new DateTime(_today.Year, 1, 1);
+                var endyear = startyear.AddYears(1);
+                item.Starttime = startyear;
+                item.EndTime = endyear;
+            }
+            else if (timetype == GetDataType.DAYDATA)
+            {
+                item.Starttime = _today;
+                item.EndTime = _today.AddDays(1);
+            }
+            return item;
+        }
 
         public Employee getEmployee(string username)
         {

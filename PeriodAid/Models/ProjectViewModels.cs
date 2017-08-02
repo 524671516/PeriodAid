@@ -8,6 +8,11 @@ namespace PeriodAid.Models
     public class ProjectViewModels
     {
     }
+    public class TimeRangeClass
+    {
+        public DateTime Starttime { get; set; }
+        public DateTime EndTime { get; set; }
+    }
     public class ContentTypeClass
     {
         public int Code { get; set; }
