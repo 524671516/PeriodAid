@@ -2160,88 +2160,121 @@ namespace PeriodAid.Controllers
 
         }
 
-        public PartialViewResult GetLogs(int? employeeId, int? SubjectId, int? logType, int? logTime,int _page)
+        public PartialViewResult GetLogs(int? employeeId, int? SubjectId, int? logType, int? logTime)
         {
-            if (logType.ToString() != "")
+            Subject subject = new Subject();
+            if (logType == 5 && logTime == 3)
             {
-                if (logTime.ToString() != "")
+                var getLogsByTime = from m in _db.OperationLogs
+                                    where m.UserId == employeeId
+                                    select m;
+                return PartialView(getLogsByTime);
+            }
+            if (employeeId.ToString() != null && employeeId.ToString() != "")
+            {
+                if (logType == 0)
                 {
-                    var getLogsByTime = (from m in _db.OperationLogs
-                                        where m.UserId == employeeId
-                                        orderby m.Id
-                                        select m).Skip(_page * 9).Take(9);
+                    var logCodeMin = 105;
+                    var logCodeMax = 108;
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                        select m;
                     return PartialView(getLogsByTime);
                 }
-                else {
-                    if (logType == 5)
-                    {
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                            where m.UserId == employeeId
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    if (logType == 0)
-                    {
-                        var logCodeMin = 105;
-                        var logCodeMax = 108;
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                            where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    if (logType == 1)
-                    {
-                        var logCodeMin = 109;
-                        var logCodeMax = 112;
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                            where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    else
-                    {
-                        return PartialView("error");
-                    }
-                }                              
-            }
-            else {
-                if (logTime.ToString() != "")
+                if (logType == 1)
                 {
-                    if (logTime == 4)
-                    {
-                        string d1 = DateTime.Now.ToShortDateString().ToString();
-                        var starttime = Convert.ToDateTime(d1);
-                        var endtime = Convert.ToDateTime(d1).AddDays(1);
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                            where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogTime >= starttime && m.LogTime < endtime
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    if (logTime == 3)
-                    {
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                            where m.UserId == employeeId && m.SubjectId == SubjectId
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    else
-                    {
-                        return PartialView("error");
-                    }
+                    var logCodeMin = 109;
+                    var logCodeMax = 112;
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                        select m;
+                    return PartialView(getLogsByTime);
                 }
                 else
                 {
-                    var getLogsByTime = (from m in _db.OperationLogs
-                                        where m.UserId == employeeId
-                                         orderby m.Id
-                                         select m).Skip(_page * 9).Take(9);
+                    return PartialView("error");
+                }
+
+            }
+            if (employeeId.ToString() == null && employeeId.ToString() == "")
+            {
+                if (logType == 0)
+                {
+                    var logCodeMin = 105;
+                    var logCodeMax = 108;
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                        select m;
                     return PartialView(getLogsByTime);
                 }
+                if (logType == 1)
+                {
+                    var logCodeMin = 109;
+                    var logCodeMax = 112;
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                        select m;
+                    return PartialView(getLogsByTime);
+                }
+                else
+                {
+                    return PartialView("error");
+                }
+            }
+            if (employeeId.ToString() != null && employeeId.ToString() != "")
+            {
+                if (logTime == 4)
+                {
+                    string d1 = DateTime.Now.ToShortDateString().ToString();
+                    var starttime = Convert.ToDateTime(d1);
+                    var endtime = Convert.ToDateTime(d1).AddDays(1);
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogTime >= starttime && m.LogTime < endtime
+                                        select m;
+                    return PartialView(getLogsByTime);
+                }
+                if (logTime == 3)
+                {
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.UserId == employeeId && m.SubjectId == SubjectId
+                                        select m;
+                    return PartialView(getLogsByTime);
+                }
+                else
+                {
+                    return PartialView("error");
+                }
+            }
+            if (employeeId.ToString() == null && employeeId.ToString() == "")
+            {
+                if (logTime == 4)
+                {
+                    string d1 = DateTime.Now.ToShortDateString().ToString();
+                    var starttime = Convert.ToDateTime(d1);
+                    var endtime = Convert.ToDateTime(d1).AddDays(1);
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.SubjectId == SubjectId && m.LogTime >= starttime && m.LogTime < endtime
+                                        select m;
+                    return PartialView(getLogsByTime);
+                }
+                if (logTime == 3)
+                {
+                    var getLogsByTime = from m in _db.OperationLogs
+                                        where m.SubjectId == SubjectId
+                                        select m;
+                    return PartialView(getLogsByTime);
+                }
+                else
+                {
+                    return PartialView("error");
+                }
+
+
+
+
+            }
+            else {
+                return PartialView("error");
             }
         }
     }
