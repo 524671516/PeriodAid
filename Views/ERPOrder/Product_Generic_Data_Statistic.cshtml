@@ -1,0 +1,270 @@
+﻿
+@{
+    ViewBag.Title = "Product_Generic_Data_Statistic";
+    Layout = "~/Views/ERPOrder/_ERPOrder_Layout.cshtml";
+    ViewBag.page = 3;
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <input class="form-control input-sm" id="start-date" name="start-date" placeholder="开始时间" />
+        <span id="danger" class="text-danger h6"></span>
+    </div>
+    <div class="col-md-3"> <input class="form-control input-sm" id="end-date" name="end-date" placeholder="结束时间" /></div>
+    <div class="col-md-3"> <input type="number" class="form-control input-sm" id="itemcode" name="itemcode" placeholder="商品编码" /></div>
+    <div class="col-md-3">
+        <div class="input-group">
+            <select class="form-control input-sm" id="search-query" name="search-query">
+                @{
+                    Html.RenderPartial("ERP_StoreList");
+
+                }
+            </select>
+            @*<input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">*@
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div><br /><br />
+<div id="container" style="min-width:700px;height:400px"></div>
+<script src="~/Scripts/highcharts.js"></script>
+<script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
+<script>
+    $(function () {
+        Date.prototype.Format = function (fmt) { //author: meizz   
+            var o = {
+                "M+": this.getMonth() + 1,                 //月份   
+                "d+": this.getDate(),                    //日   
+                "h+": this.getHours(),                   //小时   
+                "m+": this.getMinutes(),                 //分   
+                "s+": this.getSeconds(),                 //秒   
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度   
+                "S": this.getMilliseconds()             //毫秒   
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        //start------搜索
+        var start = {
+            dateCell: '#start-date',
+            format: 'YYYY-MM',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                end.minDate = datas; //开始日选好后，重置结束日的最小日期
+            }
+        };
+        var end = {
+            dateCell: '#end-date',
+            format: 'YYYY-MM',
+            //minDate: jeDate.now(0), //设定最小日期为当前日期
+            festival: false,
+            //maxDate: '2099-06-16 23:59:59', //最大日期
+            isTime: true,
+            choosefun: function (datas) {
+                start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
+            }
+        };
+        jeDate(start);
+        jeDate(end);
+        $("#search-btn").click(function () {
+            var start = $("#start-date").val();
+            var end = $("#end-date").val();
+            var itemcode = $("#itemcode").val();
+            var query = $("#search-query").val();
+            var link_url = "/ERPOrder/Product_Generic_Data_Statistic_Ajax";
+            if (start > end) {
+                $("#danger").text("开始时间不能大于结束时间")
+            } else if (start == "" || end == "") {
+                $("#danger").text("时间不能为空")
+            } else {
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    data: {
+                        startdate: start,
+                        enddate: end,
+                        itemcode: itemcode,
+                        storename: query
+                    },
+                    success: function (data) {
+                        if (data.data.length == 0) {
+                            $("#danger").addClass("hidden")
+                            alert("该门店在此时间内无数据");
+                        } else {
+                            $("#danger").addClass("hidden")
+                            var resulttotal = data.data;
+                            var datearray = new Array();//时间
+                            var uv = new Array();//访客数
+                            var pv = new Array();//浏览量
+                            var order_count = new Array()//订单数
+                            var order_amount = new Array()//订单金额
+                            var convertion = new Array()//转化率
+                            var product_unit = new Array()//下单件数
+                            for (var i = 0; i < resulttotal.length; i++) {
+                                var date = parseInt(resulttotal[i].date.replace(/\D/igm, ""));
+                                var newdate = new Date(date)
+                                datearray.push(newdate.Format("MM月"));//时间
+                                var num_uv = resulttotal[i].uv
+                                uv.push(num_uv)//访客数
+                                var num_pv = resulttotal[i].pv
+                                pv.push(num_pv)//浏览量
+                                var num_order_count = resulttotal[i].order_count
+                                order_count.push(num_order_count)//订单数
+                                var num_order_amount = resulttotal[i].order_amount
+                                order_amount.push(num_order_amount)//订单金额
+                                var num_convertion = resulttotal[i].convertion
+                                convertion.push(num_convertion)//转化率
+                                var num_product_unit = resulttotal[i].product_unit
+                                product_unit.push(num_product_unit)//下单件数                                                                
+                            }
+                            //绘制图表
+                            $('#container').highcharts({
+                                chart: {
+                                    type: 'spline'
+                                },
+                                title: {
+                                    text: '产品运营数据图表'
+                                },
+                                xAxis: {
+                                    categories: datearray
+                                },
+                                yAxis: [{
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }, {
+                                    title: {
+                                        text: '',
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                }],
+                                tooltip: {
+                                    shared: true,
+                                    enabled: false
+                                },
+                                legend: {
+                                    itemMarginTop: 3,
+                                    itemMarginBottom: 10,
+                                    layout: 'vertical',
+                                    align: 'right',
+                                    verticalAlign: 'middle',
+                                    borderWidth: 0,
+                                    itemWidth:100
+                                },
+                                plotOptions: {
+                                    column: {
+                                        pointPadding: 0.2,
+                                        borderWidth: 0,
+                                    },
+                                    spline: {
+                                        dataLabels: {
+                                            enabled: true
+                                        },
+                                        enableMouseTracking: false
+                                    },
+
+                                    series: {
+                                        showCheckbox: true,
+                                        events: {
+                                            checkboxClick: function (event) {
+                                                if (event.checked == true) {
+                                                    this.show();
+                                                    //alert(this.name)                                                    
+                                                }
+                                                else {
+                                                    this.hide();
+                                                }
+                                            },
+                                            legendItemClick: function (event) {//return false 即可禁用LegendIteml，防止通过点击item显示隐藏系列
+                                                return false;
+                                            }
+                                        }
+                                    },
+                                },
+                                series: [ {
+                                    name: '订单数',
+                                    //color: '#e63333',
+                                    yAxis: 0,
+                                    data: order_count,
+                                    selected: true//默认勾选
+                                }, {
+                                    name: '订单金额',
+                                    //color: '#90e633',
+                                    yAxis: 1,
+                                    data: order_amount,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '访客数',
+                                    //color: '#db33e6',
+                                    yAxis: 2,
+                                    data: uv,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '浏览量',
+                                    //color: '#336ae6',
+                                    yAxis: 3,
+                                    data: pv,
+                                    visible: false//默认不显示
+                                }, {
+                                    name: '转化率',
+                                    //color: '#33e687',
+                                    yAxis: 4,
+                                    data: convertion,
+                                    visible: false//默认不显示
+                                },  {
+                                    name: '下单件数',
+                                    //color: '#336ae6',
+                                    yAxis: 5,
+                                    data: product_unit,
+                                    visible: false//默认不显示
+                                }]
+                            });
+                        }
+                    }
+                })
+            }
+        })
+    })
+</script>
+

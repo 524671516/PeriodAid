@@ -1,0 +1,138 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Daily>
+@using PagedList.Mvc;
+<ul class="list-inline list-unstyled">
+    <li><a class="btn btn-danger btn-xs" id="DelSel">删除信息</a></li>
+</ul>
+<table class="table table-condensed table-hover" style="table-layout: fixed;width:100%;">
+    <tr style="background-color:#f9f9f9">
+        <th style="width:5%" class="check-show">
+            <input type="checkbox" id="allChk" />
+        </th>
+        <th style="width:10%">
+            日期
+        </th>
+        <th style="width:20%" title="门店名称">
+            门店名称
+        </th>
+        <th style="width:10%">
+            累计销量
+        </th>
+        <th style="width:10%">
+            销售员姓名
+        </th>
+        <th style="width:10%">工资</th>
+        <th style="width:10%">奖金</th>
+        <th style="width:10%">扣款</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td class="check-show ">
+            <input type="checkbox" name="subChk" value="@item.Id" data-sellename="@item.Off_Seller.Name" data-salary="@item.Salary" data-storename="@item.Off_Store.StoreName"/>
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td class="ellipsis">
+            <span title="@Html.Encode(item.Off_Store.StoreName)">
+                @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+            </span>
+        </td>
+        <td class="ellipsis">
+            @item.Off_Daily_Product.Sum(m => m.SalesCount)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Salary)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Bonus)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Debit)
+        </td>
+        <td class="ellipsis">
+            @Html.ActionLink("修改","Ajax_EditDailyInfo", new { id= item.Id}, new { @class="btn btn-info btn-sm edit-button"})
+            <a class="btn btn-danger btn-sm btn-lg del-btn" href="/OfflineSales/Off_DeleteSalesDaily?id=@item.Id">删除</a>
+        </td>
+    </tr>
+}
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_DailySalesInfo_ajaxlist", new { page }))</div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改报表</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">新增报表</h4>
+            </div>
+            <div class="modal-body" id="addcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    $(function () {
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#search-query").val();
+            if (query.trim() != "") {
+                l = l + "&query=" + query;
+            }
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            return false;
+        });
+        $(".edit-button").click(function () {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#editcontent").html(data);
+                    $('#myModal').modal()
+                }
+            });
+            return false;
+        });
+        $(".del-btn").click(function () {
+            var result = confirm("确定删除吗？")
+            if (result) {
+                var url = $(this).attr("href")
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data == "SUCCESS") {
+                            window.location.reload();
+                        }
+                    }
+                });
+               
+            }
+            return false;
+        })
+    });
+</script>

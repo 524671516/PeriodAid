@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "Off_Statistic_StoreSystem";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSeven";
+}
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>开始时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="start-date" placeholder="开始时间" />
+        </td>
+        <td>
+            <label>结束时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="end-date" placeholder="结束时间" />
+        </td>
+        <td>
+            <label>销售系统：</label>
+            @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control input-sm offline-search-inline" })
+        </td>
+        <td>
+            <ul class="list-inline list-unstyled offline-search-btn">
+                <li><a class="btn btn-info btn-sm offstatistic-storesystem-btn" data-salary="day"><i class="fa fa-search"></i>&nbsp;&nbsp;日数据</a></li>
+                <li><a class="btn btn-info btn-sm offstatistic-storesystem-btn" data-salary="month"><i class="fa fa-search"></i>&nbsp;&nbsp;月数据</a></li>
+            </ul>
+        </td>
+    </tr>
+    <tr><td id="danger" class="text-danger h5"></td></tr>
+</table>
+<br />
+<div id="map" class="row" style="display:none">
+    <div class="col-md-6">
+        <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <div id="myChart_Pie" style="min-width:500px;height:400px"></div>
+    </div>
+</div>
+<div id="myChart_Column" style="min-width:500px;height:400px"></div>
+
+

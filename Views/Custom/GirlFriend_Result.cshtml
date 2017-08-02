@@ -1,0 +1,69 @@
+﻿@model PeriodAid.Models.P_Presents
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <title>订单状态</title>
+    <style>
+        body{
+            background-color:#fe8594;
+        }
+        .white-text{
+            color:#fff;
+        }
+        p{
+            line-height:24px;
+            padding:5px 0;
+        }
+        .white-bg{
+            background-color:#fff;
+            border-radius:5px;
+            color:#333;
+            padding:10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center" style="padding:10% 0;">
+        <img class="img-responsive" src="~/Content/images/logo.png" style="margin-left: auto;margin-right: auto; width:50px;" />
+        @if (Model.status == 1)
+        {
+            <h3 class="white-text">订单已生成，等待发货</h3>
+        }
+        else
+        {
+            <h3 class="white-text">订单已发货</h3>
+        }
+    </div>
+    <div class="container white-text">
+        <div class="col-xs-12 white-bg">
+            <p>收件人:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.Encode(Model.target_ReceiverName)</p>
+            <p>联系电话:&nbsp;@Html.Encode(Model.target_ReceiverMobile)</p>
+            <p>发货地址:&nbsp;@Html.Encode(Model.target_ReceiverState + " " + Model.target_ReceiverCity + " " + " " + Model.target_ReceiverDistrict + " " + Model.target_ReceiverAddress)</p>
+            <p>快递公司:&nbsp;@Html.Encode(Model.express_name)</p>
+            <p>物流单号:&nbsp;@Html.Encode(Model.mail_no)</p>
+        </div>
+    </div>
+    <br />
+    <br />
+    @if (Model.status == 2)
+    {
+        <div class="container text-center">
+            <a href="//m.kuaidi100.com/result.jsp?nu=@Model.mail_no" class="btn btn-default btn-lg">&nbsp;&nbsp;查询快递&nbsp;&nbsp;</a>
+        </div>
+    }
+<br /><br />
+</body>
+</html>

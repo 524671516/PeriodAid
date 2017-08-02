@@ -1,0 +1,113 @@
+﻿@model PeriodAid.Models.Off_Seller
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>促销员详情</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-sellerdetails">
+        <div class="page-content">
+            <div class="list-block media-list">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">姓名</div>
+                                    <div class="item-after">@Html.Encode(Model.Name)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">电话</div>
+                                    <div class="item-after">@Html.Encode(Model.Mobile)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">所属门店</div>
+                                    <div class="item-after">@Html.Encode(Model.Off_Store.StoreName)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">开户人姓名</div>
+                                    <div class="item-after">@Html.Encode(Model.AccountName)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">身份证号码</div>
+                                    <div class="item-after">@Html.Encode(Model.IdNumber)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">银行</div>
+                                    <div class="item-after">@Html.Encode(Model.CardName)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">银行卡号</div>
+                                    <div class="item-after">@Html.Encode(Model.CardNo)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">开户行</div>
+                                    <div class="item-after">@Html.Encode(Model.AccountSource)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title label">暗促工资</div>
+                                    <div class="item-after">@Html.Encode(Model.StandardSalary)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

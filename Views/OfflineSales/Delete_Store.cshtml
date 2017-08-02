@@ -1,0 +1,50 @@
+﻿@model PeriodAid.Models.Store
+
+@{
+    ViewBag.Title = "删除门店";
+    Layout = "~/Views/Shared/_OfflineSalesLayout.cshtml";
+}
+
+<h4>是否删除此门店信息?</h4>
+<hr />
+<div>
+    <dl class="dl-horizontal table table-striped">
+        <dt>
+            门店系统
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Store_System.System_Name)
+        </dd>
+        <dt>
+            门店名称
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Store_Name)
+        </dd>
+        
+        <dt>
+            门店地址
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        <dt>
+            联系方式
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Contact)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="删除门店" class="btn btn-danger" />
+            <a class="btn btn-default" href="/OfflineSales/List_Store">返回列表</a>
+        </div>
+    }
+</div>

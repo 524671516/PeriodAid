@@ -1,0 +1,146 @@
+﻿@model PeriodAid.Models.Off_StoreManager
+@{
+    ViewBag.Title = "修改管辖门店";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSix";
+}
+@if (Model != null)
+{
+   <div class="col-md-12">
+       <h3 class="page-title">
+           修改管辖范围 <small>管理员姓名：@Html.Encode(Html.ManagerNickName(Model.NickName, Model.Off_System_Id))</small>
+       </h3>
+   </div>
+   <br />
+<br />
+<br />
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <input type="hidden" value="@Model.Id" id="managerid" />
+        <div>
+            <div class="col-md-3">
+                @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control", id = "StoreSystem" })<br />
+                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px;"></select>
+            </div>
+            <div class="col-md-2 text-center" style="height:454px;">
+                <ul class="list-unstyled text-center offline-box-margin">
+                    <li><a class="btn btn-default btn-sm btn-info" href="javascript:;" id="add-btn">添加</a></li><br />
+                    <li><a class="btn btn-default btn-warning btn-sm" href="javascript:;" id="remove-btn">移除</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <select multiple id="selectList" name="selectList" class="form-control input-sm" style="height:454px;">
+                    @foreach (var item in ViewBag.StoreList)
+                    {
+                        <option value="@item.Id">@item.StoreName</option>
+                    }
+                </select>
+            </div>
+        </div><br />
+        <div class="row">
+            <button class="btn btn-primary" id="submit-btn">修改</button>
+        </div>
+    }
+}
+else
+{
+    <h4>
+        错误未找到管理员
+    </h4>
+}
+<script>
+    $(function () {
+        refresh_list();
+    });
+    $("#StoreSystem").change(function () {
+        refresh_list();
+    });
+    $("#add-btn").click(function () {
+        var addlist = $("#StoreList").val() + "";
+        var currentlist = $("#selectList").val() + "";
+        var arr_add = addlist.split(",");
+        var arr_current = currentlist.split(",");
+        for (var i = 0; i < arr_add.length; i++) {
+            if (arr_current.indexOf(arr_add[i]) == -1) {
+                $.ajax({
+                    url: "/OffManager/GetStoreNameAjax",
+                    data:{
+                        id:arr_add[i]
+                    },
+                    type:"post",
+                    success: function (data) {
+                        if (data.result = "SUCCESS") {
+                            $("#selectList").append("<option value='" + data.data.id + "' >" + data.data.name + "</option>");
+                            refresh_list();
+                        }
+                    }
+                });
+
+            }
+        }
+    });
+    $("#remove-btn").click(function () {
+        var selectlist = $("#selectList").children("option");
+        var removelist = ($("#selectList").val() + "").split(",");
+
+
+        selectlist.each(function () {
+            if (removelist.indexOf($(this).attr("value")) != -1) {
+                var v = $(this).attr("value");
+                $("option[value='" + v + "']").remove();
+            }
+        });
+        refresh_list();
+        selectlist = $("#selectList").children("option");
+        var arr_list = new Array();
+        selectlist.each(function () {
+            arr_list.push($(this).attr("value"));
+        });
+    });
+    $("#submit-btn").click(function () {
+        var selectlist = $("#selectList").children("option");
+        var arr_list = new Array();
+        selectlist.each(function () {
+            arr_list.push($(this).attr("value"));
+        });
+        $.ajax({
+            url: "/OffManager/AddManagerAreaAjax",
+            type:"post",
+            data: {
+                id: $("#managerid").val(),
+                arr_list: arr_list.join(","),
+            },
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    alert("修改完成")
+                    window.location.href = "/OffManager/ManagerList"
+                }
+            }
+        })
+        return false;
+    });
+    function refresh_list() {
+        $.ajax({
+            url: "/OffCommon/StoreListAjax",
+            type: "post",
+            data: {
+                storesystemId: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                var selectlist = $("#selectList").children("option");
+                var arr_list = new Array();
+                selectlist.each(function () {
+                    arr_list.push($(this).attr("value"));
+                });
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    if (arr_list.indexOf(data.StoreList[i].ID + "") == -1) {
+                        $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                    }
+                }
+            }
+        });
+    }
+</script>

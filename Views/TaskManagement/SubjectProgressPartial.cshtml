@@ -1,0 +1,58 @@
+﻿@using PeriodAid.Models;
+@model PeriodAid.Models.Subject
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">今日进度</h4>
+</div>
+<div class="container-fluid">
+    <div class="row modal-nav-pannel">
+        <div class="col-md-3 tm_modal_ul_wrap">
+            <ul class="list-group tm_modal-nav tm_modal_nav_ul">
+                <li class="list-group-item tm_active" data-href="/TaskManagement/SubjectFinishProgressPartial">已完成</li>
+                <li class="list-group-item" data-href="/TaskManagement/SubjectUntreatedProgressPartial">未完成</li>
+            </ul>
+        </div>
+        <div class="col-md-9 tm_modal_ul_wrap">
+            <p class="text-center" style="margin-top:10px;" id="loading-p"><i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom color-gray"></i></p>
+            <ul class="list-group tm_modal-list tm_modal_list_ul" id="tm_modal_list_area">
+                
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="modal-footer" style="border:none;">
+    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+<script>
+    $.ajax({
+        url: $(".tm_active").attr("data-href"),
+        data: {
+            SubjectId: $("#pannel-wrap").attr("data-sid")
+        },
+        success: function (data) {
+            $("#tm_modal_list_area").html(data);
+            $("#loading-p").hide();
+        },
+        error: function () {
+            ErrorAlert("操作失败。");
+        }
+    })
+    $(".tm_modal-nav").on("click", ".list-group-item", function () {
+        $(".list-group-item").removeClass("tm_active");
+        $(this).addClass("tm_active");
+        $("#loading-p").show();
+        $.ajax({
+            url: $(this).attr("data-href"),
+            data:{
+                SubjectId:$("#pannel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                $("#tm_modal_list_area").html(data);
+                $("#loading-p").hide();
+            },
+            error: function () {
+                ErrorAlert("操作失败。");
+            }
+        })
+    })
+</script>

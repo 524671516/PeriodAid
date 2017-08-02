@@ -1,0 +1,338 @@
+﻿@model PeriodAid.Models.ConfirmCheckIn_ViewModel
+@{
+    ViewBag.Title = "Off_ConfirmCheckIn";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingFive";
+}
+@section header{
+    <style>
+        .img-list {
+            width: 120px;
+            height: 120px;
+            margin: 10px;
+            border: 1px solid #eee;
+            float: left;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+}
+<h5><b>基本信息</b></h5>
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>时间</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd")" readonly />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <div class="input-group-addon"><small>店铺名称</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Off_Store.StoreName" readonly />
+                <span class="input-group-btn">
+                    <a class="btn btn-default btn-sm" href="/OfflineSales/Off_ConfirmCheckIn_Map?trans=false&lbs=@(ViewBag.CheckItem.Off_Checkin_Schedule.Off_Store.Longitude),@(ViewBag.CheckItem.Off_Checkin_Schedule.Off_Store.Latitude)" target="_blank"><i class="fa fa-search"></i></a>
+                </span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>促销员</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Seller.Name" readonly />
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<h5><b>签到信息</b></h5>
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>标准签到</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Standard_CheckIn" readonly />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>签到时间</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.CheckinTime" readonly />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>签到位置</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.CheckinLocation" readonly />
+                <span class="input-group-btn">
+                    <a class="btn btn-default btn-sm" href="/OfflineSales/Off_ConfirmCheckIn_Map?trans=true&lbs=@ViewBag.CheckItem.CheckinLocation" target="_blank"><i class="fa fa-search"></i></a>
+                </span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>签到图片</small></div>
+                <input type="text" class="input-sm form-control" value="" readonly />
+                <span class="input-group-btn">
+                    <a class="btn btn-default btn-sm photo_btn" href="http://cdn2.shouquanzhai.cn/checkin-img/@ViewBag.CheckItem.CheckinPhoto"><i class="fa fa-search"></i></a>
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div><br />
+<h5><b>签退信息</b></h5>
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>标准签退</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Off_Checkin_Schedule.Standard_CheckOut" readonly />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>签退时间</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.CheckoutTime" readonly />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>签退位置</small></div>
+                <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.CheckoutLocation" readonly />
+                <span class="input-group-btn">
+                    <a class="btn btn-default btn-sm" href="/OfflineSales/Off_ConfirmCheckIn_Map?trans=true&lbs=@ViewBag.CheckItem.CheckoutLocation" target="_blank"><i class="fa fa-search"></i></a>
+                </span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <div class="input-group-addon"><small>签退图片</small></div>
+                <input type="text" class="input-sm form-control" value="" readonly />
+                <span class="input-group-btn">
+                    <a class="btn btn-default btn-sm photo_btn" href="http://cdn2.shouquanzhai.cn/checkin-img/@ViewBag.CheckItem.CheckoutPhoto"><i class="fa fa-search"></i></a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<h5><b>销量数据</b></h5>
+<br />
+@using (Html.BeginForm("Off_ConfirmCheckIn","OfflineSales", FormMethod.Post, new { @id= "confirm-form", @class= "form-inline" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CheckIn_Id)
+    {
+        Html.RenderAction("Off_ConfirmProductList", new { CheckId = Model.CheckIn_Id });
+    }
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>提报时间</small></div>
+                    <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Report_Time" readonly />
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>备注</small></div>
+                    <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.Remark" readonly />
+                </div>
+            </div><br /><br />
+            <div class="col-md-12">
+                @{
+                    string[] imglist = new string[] { };
+                    if (ViewBag.CheckItem.Rep_Image != null)
+                    {
+                        imglist = ViewBag.CheckItem.Rep_Image.Split(',');
+                    }
+                }
+                @foreach (var item in imglist)
+                {
+                    <div class="img-list" data-rel="@item" style="background-image:url('http://cdn2.shouquanzhai.cn/checkin-img/@item')"></div>
+                }
+            </div>
+        </div>
+    </div>
+    <h5><b>结算数据</b></h5>
+    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>状态</small></div>
+                    <input type="text" class="input-sm form-control" value="@(Html.CheckinStatus((int)ViewBag.CheckItem.Status))" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>督导代签</small></div>
+                    <input type="text" class="input-sm form-control" value="@(ViewBag.CheckItem.Proxy?"是":"否")" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>确认人</small></div>
+                    <input type="text" class="input-sm form-control" value="@Html.ManagerNickName((string)ViewBag.CheckItem.ConfirmUser,(int)ViewBag.SystemId)" readonly />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>确认时间</small></div>
+                    <input type="text" class="input-sm form-control" value="@ViewBag.CheckItem.ConfirmTime" readonly />
+                </div>
+            </div><br /><br />
+            @if (ViewBag.CheckItem.Status <=3&& ViewBag.CheckItem.Status>=0)
+            {
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>确认备注</small></div>
+                        @Html.EditorFor(m => m.Confirm_Remark, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>确认备注</small></div>
+                        @Html.EditorFor(m => m.Confirm_Remark, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                    </div>
+                </div>
+            }
+            <br />
+            @if (ViewBag.CheckItem.Status == 4)
+            {
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>考勤</small></div>
+                        @Html.DropDownListFor(m => m.AttendanceStatus, ViewBag.Attendancelist as SelectList, new { @class = "input-sm form-control" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>工资</small></div>
+                        @Html.EditorFor(m => m.Salary, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>扣款</small></div>
+                        @Html.EditorFor(m => m.Debits, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>奖金</small></div>
+                        @Html.EditorFor(m => m.Bonus, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>奖金说明</small></div>
+                        @Html.EditorFor(m => m.Bonus_Remark, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    </div>
+                </div>
+                <br /><br />
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>备注</small></div>
+                        @Html.EditorFor(m => m.Remark, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>考勤</small></div>
+                        @Html.HiddenFor(m => m.AttendanceStatus)
+                        <input class="input-sm  form-control" value="@Html.AttendanceStatus(Model.AttendanceStatus)" readonly />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>工资</small></div>
+                        @Html.EditorFor(m => m.Salary, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>扣款</small></div>
+                        @Html.EditorFor(m => m.Debits, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>奖金</small></div>
+                        @Html.EditorFor(m => m.Bonus, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>奖金说明</small></div>
+                        @Html.EditorFor(m => m.Bonus_Remark, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <br /><br />
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>备注</small></div>
+                        @Html.EditorFor(m => m.Confirm_Remark, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                    </div>
+                </div>
+            }
+            <br />
+            @if (ViewBag.CheckItem.Status == 4)
+            {
+                <button class="btn btn-success btn-sm">确认结算</button> <a href="/OfflineSales/Off_CheckIn_List" class="btn btn-default btn-sm">返回</a>
+            }
+            else if (ViewBag.CheckItem.Status<=3&&ViewBag.CheckItem.Status>=0)
+            {
+                <button class="btn btn-success btn-sm">确认销售</button> <a href="/OfflineSales/Off_CheckIn_List" class="btn btn-default btn-sm">返回</a>
+            }
+            else
+            {
+                <a href="/OfflineSales/Off_CheckIn_List" class="btn btn-default btn-sm">返回</a>
+            }
+        </div>
+    </div>
+                    }
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="javascript:;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+                <h4 class="modal-title">查看图片</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+                <img id="img-view" href="#" class="img-thumbnail img-responsive" />
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script>
+    $(".photo_btn").click(function () {
+        var link_url = $(this).attr("href");
+        $("#img-view").attr("src", link_url);
+        $('#myModal').modal();
+        return false;
+    });
+    $(".img-list").click(function () {
+        var link_url = "http://cdn2.shouquanzhai.cn/checkin-img/" + $(this).attr("data-rel");
+        $("#img-view").attr("src", link_url);
+        $('#myModal').modal();
+        return false;
+    });
+    $("button").click(function () {
+        $(this).text("提交中...").attr("disabled", "disabled");
+        setTimeout(3000);
+        $("#confirm-form").submit();
+        return false;
+    });
+</script>

@@ -1,0 +1,126 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Expenses>
+@using PagedList.Mvc;
+<table class="table table-condensed table-hover" style="table-layout: fixed;width:100%;">
+    <tr class="offline-table-background">
+        <th style="width:10%">
+            申请日期
+        </th>
+        <th style="width:10%">
+            状态
+        </th>
+        <th style="width:10%">
+            渠道名称
+        </th>
+        <th style="width:10%">
+            经销商名称
+        </th>
+        <th style="width:10%">
+            费用类型
+        </th>
+        <th style="width:10%">
+            预算金额
+        </th>
+        <th style="width:10%">
+            结算金额
+        </th>
+        <th style="width:10%">
+            核销金额
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ApplicationDate)
+            </td>
+            <td class="ellipsis">
+                @Html.Raw(Html.ExpensesStatusSpan(item.Status))
+            </td>
+            <td class="ellipsis">
+                <span title="@Html.Encode(item.StoreSystem)">
+                    @Html.DisplayFor(modelItem => item.StoreSystem)
+                </span>
+            </td>
+            <td class="ellipsis">
+                <span title="@Html.Encode(item.Distributor)">
+                    @Html.DisplayFor(modelItem => item.Distributor)
+                </span>
+            </td>
+            <td class="ellipsis">
+                @Html.ExpensesPaymentType(item.PaymentType)
+            </td>
+            <td class="ellipsis">
+                @item.Off_Expenses_Details.Where(m => m.ExpensesType == 0).Sum(m => m.DetailsFee)
+            </td>
+            <td class="ellipsis">
+                @item.Off_Expenses_Details.Where(m => m.ExpensesType == 1).Sum(m => m.DetailsFee)
+            </td>
+            <td class="ellipsis">
+                @item.Off_Expenses_Payment.Sum(m => m.VerifyCost)
+            </td>
+
+            <td class="ellipsis">
+                @Html.ActionLink("查看", "ViewExpenses", new { id = item.Id }, new { @class = "btn btn-info btn-xs" })
+                @if (item.Status == 0)
+                {
+                    @Html.ActionLink("添加预算", "EditExpenses", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                    @Html.Encode(" ")
+                    @Html.ActionLink("删除", "CancelExpensesAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offexpenses-del"})
+                }
+                else if (item.Status == 1)
+                {
+                    @Html.ActionLink("编辑结算", "BalanceExpenses", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                }
+                else if (item.Status == 2)
+                {
+                    @Html.ActionLink("编辑核销", "VerifyExpenses", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                }
+
+            </td>
+        </tr>
+    }
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ExpensesListPartial", new { page }))</div>
+<input type="hidden" id="offexpenses-label-status" />
+<script>
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            success: function (data) {
+                $("#offexpenses-list").html(data);
+            }
+        });
+        return false;
+    });
+    //作废
+    $(".offexpenses-del").click(function () {
+        var url = $(this).attr("href");
+        confirm("确定要删除吗?", "你将把此条信息从费用列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffExpenses/ExpensesListPartial",
+                                    success: function (data) {
+                                        $("#offexpenses-list").html(data);
+                                    }
+                                });
+                                alert("删除成功")
+                            }, 1000);
+                        }
+                    }
+                })
+            }
+        });
+        return false
+    });
+</script>
+

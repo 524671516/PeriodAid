@@ -1,0 +1,18 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_BonusRequest>
+@foreach (var item in Model)
+{
+<li>
+    <div class="item-content">
+        <div class="item-inner">
+            <div class="item-title-row">
+                <div class="item-title">
+                    <span>@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd"))</span>:@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)
+                </div>
+            </div>
+            <div class="subtitle color-gray margin-top-7 text-font-1">
+                红包金额：<span>@Html.Encode(item.ReceiveAmount/100)</span>元&nbsp;&nbsp;|&nbsp;&nbsp;红包状态：<span>@Html.Encode(Html.BonusStatus(item.Status))</span>
+            </div>
+        </div>
+    </div>
+</li>
+}

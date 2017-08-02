@@ -1,0 +1,249 @@
+﻿@model IEnumerable<PeriodAid.Models.SubjectAttachment>
+<div class="tm_pannel-container tm_pannel-container-file" id="tm_file_container">
+    <div class="tm_files_wrap">
+        <div class="tm_files_header clear-float">
+            <div class="tm_files_left float-left tm_files_titile">
+                <a href="javascript:;" id="btn_back_menu">文件夹列表</a>/<span>@Html.Encode(ViewBag.CTC.Name)</span>
+            </div>
+            <div class="tm_files_right float-right">
+                <a href="#" id="btn_upload_file-sub" class="tm_btn color-blue tm_btn" data-code="@ViewBag.CTC.Code">
+                    <i class="fa fa-upload" aria-hidden="true"></i>
+                    上传文件
+                </a>
+                <input type="file" id="upload-input-sub" name="upload-input-sub" class="hidden">
+            </div>
+        </div>
+        <div class="tm-files_control clear-float">
+            <div class="tm_files_left float-left tm_files_checkbox">
+                <a>
+                    <input type="checkbox" style="margin:0" />
+                </a>
+            </div>
+            <div class="tm_files_left float-left tm_files_type">
+                &nbsp;
+            </div>
+            <div class="tm_files_middle float-left">
+                <div class="tm_files_info">
+                    <a href="#" class="tm_files_name color-gray">名称</a>
+                    <a href="#" class="tm_files_size color-gray">大小</a>
+                    <a href="#" class="tm_files_author color-gray">创建者</a>
+                    <a href="#" class="tm_files_time color-gray">更新时间</a>
+                </div>
+            </div>
+            <div>
+            </div>
+        </div>
+        <div class="tm_files_body">
+            <ul class="tm_files_body_ul">
+                @foreach (var item in Model)
+                {
+                    <li class="clear-float tm_files_body_ul_li">
+                        <div class="tm_files_left float-left tm_files_checkbox">
+                            <a>
+                                <input type="checkbox" />
+                            </a>
+                        </div>
+                        <div class="tm_files_left float-left tm_files_type">
+                            @switch (item.AttachmentType)
+                            {
+                                case 100:
+                                    <span><img src="http://cdn2.shouquanzhai.cn/@item.AttachmentSource" /></span>
+                                    break;
+                                case 101:
+                                    <span><i class="fa fa-file-video-o fa-2x" aria-hidden="true"></i></span>
+                                    break;
+                                case 102:
+                                    <span><i class="fa fa-file-audio-o fa-2x" aria-hidden="true"></i></span>
+                                    break;
+                                case 103:
+                                    <span><i class="fa fa-file-text-o fa-2x" aria-hidden="true"></i></span>
+                                    break;
+                                default:
+                                    <span><i class="fa fa-file-o fa-2x" aria-hidden="true"></i></span>
+                                    break;
+
+                            }
+
+
+                        </div>
+                        <div class="tm_files_middle float-left clear-float">
+                            <div class="tm_files_info float-left">
+                                <span class="tm_files_name color-gray">@Html.Encode(item.AttachmentTitle)</span>
+                                <span class="tm_files_name color-gray hidden"><input type="text" id="edit_input_@item.Id"/></span>
+                                <span class="tm_files_size color-gray">
+                                    @if (item.AttachmentSize > 1024 * 1024 * 1024)
+                                    {
+                                        @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / (1024 * 1024 * 1024)), 2) + "G")
+                                    }
+                                    else if (item.AttachmentSize > 1024 * 1024)
+                                    {
+                                        @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / (1024 * 1024)), 2) + "M")
+                                    }
+                                    else if (item.AttachmentSize > 1024)
+                                    {
+                                        @Html.Encode(Math.Round((Convert.ToDecimal(item.AttachmentSize) / 1024), 2) + "KB")
+                                    }
+                                    else
+                                    {
+                                        @Html.Encode(item.AttachmentSize + "字节")
+                                    }
+                                </span>
+                                <span href="#" class="tm_files_author color-gray">@Html.Encode(item.Uploader.NickName)</span>
+                                <span href="#" class="tm_files_time color-gray">@Html.Encode(item.UploadTime.ToString("yyyy-MM-dd HH:mm"))</span>
+                            </div>
+                            <div class="float-right tm_files_link">
+                                <a href="javascript:;" data-attid="@item.Id" class="btn_delete_file"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                <a href="javascript:;" data-url="http://cdn2.shouquanzhai.cn/@item.AttachmentSource" class="btn_download_file"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                <a href="javascript:;" data-attid="@item.Id" class="btn_edit_file"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a href="javascript:;" class="color-green btn_confirm_edit hidden"><i class="fa fa-check" aria-hidden="true"></i></a>
+                                <a href="javascript:;" class="color-red  btn_cancel_edit hidden"><i class="fa fa-times" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <script>
+        $("#btn_back_menu").on("click", function () {
+            $("#tm_file_container").remove();
+            $("#tm_folder_container").removeClass("hide");
+        })
+        $("#btn_upload_file-sub").on("click", function () {
+            $("#upload-input-sub").trigger("click");
+        });
+        //解决chrome延迟
+        $("#upload-input-sub").on("click", function () {
+            $(this).val("");
+        })
+        $("#upload-input-sub").on("change", function () {
+            var complete = false;
+            if ($(this).val() != "" && !complete) {
+                complete = true;
+                var fd = new FormData();
+                fd.append("file", $(this).context.files[0]);
+                fd.append("SubjectId", $("#tm_pannel-file").attr("data-sid"));
+                fd.append("AttachmentType", $("#btn_upload_file-sub").attr("data-code"));
+                $.ajax({
+                    url: "/TaskManagement/TM_UpLoadFile",
+                    type: "POST",
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            complete = false;
+                            UnimportantAlert("上传成功。");
+                            var _code = $("#btn_upload_file-sub").attr("data-code");
+                            $.ajax({
+                                url: "/TaskManagement/Subject_FilesPartial",
+                                data: {
+                                    SubjectId: $("#tm_pannel-file").attr("data-sid"),
+                                    TypeCode: _code
+                                },
+                                success: function (data) {
+                                    if (data == "FAIL") {
+                                        ErrorAlert(data)
+                                    } else {
+                                        $("#tm_file_container").remove();
+                                        $("#tm_pannel-file").append(data);
+                                    }
+                                },
+                                error: function () {
+                                    ErrorAlert("请求失败。")
+                                }
+                            })
+                            $.ajax({
+                                url: "/TaskManagement/Subject_FilesAjax",
+                                type: "post",
+                                data: {
+                                    SubjectId: $("#tm_pannel-file").attr("data-sid")
+                                },
+                                success: function (data) {
+                                    if (data.result == "SUCCESS") {
+                                        var _len = data.data.length;
+                                        for (i = 0; i < _len; i++) {
+                                            var self = $("li[data-code=" + data.data[i].FolderCode + "]")
+                                            self.find(".tm_files_size").html(data.data[i].FileNum)
+                                            self.find(".tm_files_author").html(data.data[i].LastUpLoadUser)
+                                            self.find(".tm_files_time").html(data.data[i].LastUpLoadTime)
+                                        };
+                                    }
+                                },
+                                error: function () {
+                                    ErrorAlert("请求失败。")
+                                }
+                            })
+                        } else {
+                            ErrorAlert(data.errmsg);
+                        }
+                    },
+                    error: function (data) {
+                        ErrorAlert("上传失败。")
+                    }
+                });               
+            }
+
+        })
+
+        $("#tm_file_container").on("click", ".btn_download_file", function () {
+            var url_link = $(this).attr("data-url");
+            if (url_link) {
+                window.open(url_link);
+            }
+        });
+        $("#tm_file_container").on("click", ".btn_delete_file", function () {
+            var _link = $(this).attr("data-attid");
+            var _self = $(this);
+            if (_link) {
+                $.ajax({
+                    url: "/TaskManagement/Subject_DeleteFile",
+                    type: "post",
+                    data: {
+                        FileId: _link
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            UnimportantAlert("文件删除成功。");
+                            _self.parent().parent().parent().remove();
+                            $.ajax({
+                                url: "/TaskManagement/Subject_FilesAjax",
+                                type: "post",
+                                data: {
+                                    SubjectId: $("#tm_pannel-file").attr("data-sid")
+                                },
+                                success: function (data) {
+                                    if (data.result == "SUCCESS") {
+                                        var _len = data.data.length;
+                                        $("#tm_folder_container .tm_files_size").html("");
+                                        $("#tm_folder_container .tm_files_author").html("");
+                                        $("#tm_folder_container .tm_files_time").html("");
+                                        for (i = 0; i < _len; i++) {
+                                            var self = $("li[data-code=" + data.data[i].FolderCode + "]")
+                                            self.find(".tm_files_size").html(data.data[i].FileNum)
+                                            self.find(".tm_files_author").html(data.data[i].LastUpLoadUser)
+                                            self.find(".tm_files_time").html(data.data[i].LastUpLoadTime)
+                                        };
+                                    }
+                                },
+                                error: function () {
+                                    ErrorAlert("请求失败。")
+                                }
+                            })
+                        } else {
+                            ErrorAlert(data.errmsg)
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("请求失败。")
+                    }
+                })
+            }
+        });
+        $("#tm_file_container").on("click", ".btn_eidt_file", function () {
+            var attid = $(this).attr("data-attid");
+
+        });
+    </script>
+</div>
+

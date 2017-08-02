@@ -1,0 +1,231 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Store>
+@using PagedList.Mvc;
+    <table class="table table-hover table-condensed table-list" style="width:100%;table-layout:fixed">
+        <tr class="offline-table-background">
+            <th style="width:2%">
+                <input type="checkbox" class="allChk" />
+            </th>
+            <th style="width:15%">
+                门店名称
+            </th>
+            <th style="width:5%">
+                区域
+            </th>
+            <th style="width:12%">
+                经销商
+            </th>
+            <th style="width:30%">
+                地址
+            </th>
+            <th style="width:12%">
+                经度
+            </th>
+            <th style="width:12%">
+                纬度
+            </th>
+            <th style="width:12%"></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Region" />
+                </td>
+                <td class="ellipsis ">
+                    @Html.DisplayFor(modelItem => item.StoreName)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Region)
+                </td>
+                <td class="ellipsis ">
+                    @Html.DisplayFor(modelItem => item.Distributor)
+                </td>
+                <td class="ellipsis ">
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td class="ellipsis ">
+                    @Html.DisplayFor(modelItem => item.Longitude)
+                </td>
+                <td class="ellipsis ">
+                    @Html.DisplayFor(modelItem => item.Latitude)
+                </td>
+                <td>
+                    @Html.ActionLink("修改", "Ajax_EditStore", new { id = item.Id }, new { @class = "btn btn-xs btn-info edit-button" })
+                    <a class="btn btn-xs btn-danger del-btn" href="/OfflineSales/Off_DeleteStore?id=@item.Id">删除</a>
+                </td>
+
+            </tr>
+        }
+
+    </table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Store_ajaxlist", new { page }))</div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改店铺信息</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">门店信息</h4>
+            </div>
+            <div class="modal-body" id="addcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="Mod">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改区域</h4>
+            </div>
+            <div class="modal-body" id="Modcontent">
+                <div class='row'>
+                    <div class='col-md-6'><input class='form-control' id="check-region" type='text' /></div>
+                    <div class='col-md-6'><input class='form-control' id='change-content' type='text' placeholder='替换' /></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top:-5px;">
+                <button type="button" class="btn btn-success check-sure">确定</button>
+                <button type="button" class="btn btn-danger check-fail">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    $(function () {
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#search-query").val();
+            l = l + "&query=" + query;
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            return false;
+        });
+        $(".edit-button").click(function () {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#editcontent").html(data);
+                    $('#myModal').modal()
+                }
+            });
+            return false;
+        });
+        
+        $(".del-btn").click(function () {
+            var result = confirm("确定删除吗？");
+            if (result) {
+                var url = $(this).attr("href");
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data == "SUCCESS") {
+                            window.location.reload();
+                        }
+                    }
+                });
+                
+            }
+            return false;
+            
+        })
+       
+    });
+    //全选
+    //$("#allChk").click(function () {
+    //    $("input[name='subChk']").prop("checked", this.checked);
+    //});
+    ////单选
+    //$(".table-list tr").slice(1).each(function () {
+    //    var p = this;
+    //    $(this).children().slice(1).click(function () {
+    //        $($(p).children()[0]).children().each(function () {
+    //            if (this.type == "checkbox") {
+    //                if (!this.checked) {
+    //                    this.checked = true;
+    //                } else {
+    //                    this.checked = false;
+    //                }
+    //            }
+    //        });
+    //    });
+    //});
+    //// 单选 
+    ////var subChk = $("input[name='subChk']")
+    ////subChk.click(function () {
+    ////    $("#allChk").prop("checked", subChk.length == subChk.filter(":checked").length ? true : false);
+    ////});
+    ////批量修改区域
+    $("#Modregion").click(function () {
+        var checkedNum = $("input[name='subChk']:checked").length;
+        if (checkedNum == 0) {
+            alert("请选择至少一项！");
+            return;
+        } else {
+            var checkedList = new Array();
+            var checkedRegion = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+                checkedRegion.push($(this).attr("data-region"));
+            });
+            for (var i = 0; i < checkedRegion.length; i++) {
+                $("#check-region").val(checkedRegion[0])
+            }
+            $("#Mod").modal('show');
+        }
+    });
+    $(".check-sure").click(function () {
+        if (confirm("确定要修改所选门店区域？")) {
+            var link_url = "/OfflineSales/Off_Store_AreaChange_batch";
+            var modify_area = $("#change-content").val();
+            var checkedList = new Array();
+            $("input[name='subChk']:checked").each(function () {
+                checkedList.push($(this).val());
+            });
+            $.ajax({
+                url: link_url,
+                type: "post",
+                data: {
+                    ids: checkedList.toString(),
+                    modify_area: modify_area
+                },
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        $("#Mod").modal('hide');
+                        $.ajax({
+                            url: "/OfflineSales/Off_Store_ajaxlist",
+                            success: function (data) {
+                                $("#list-container").html(data);
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    });
+    $(".check-fail").click(function () {
+        $("#Mod").modal('hide')
+    })
+</script>

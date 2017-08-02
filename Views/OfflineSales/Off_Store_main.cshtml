@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "线下门店信息";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingOne";
+}
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>门店名称：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="search-query" placeholder="门店名称" />
+        </td>
+        <td>
+            <label>区域：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="区域" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>详细地址：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="详细地址" />
+        </td>
+        <td>
+            <label>渠道：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="渠道" />
+        </td>
+        <td>
+            <a class="btn btn-info btn-sm" id="search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<div class="container">
+    <ul class="list-inline list-unstyled row">
+        <li><a class="btn btn-info btn-sm" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增门店信息</a></li>
+        <li><a class="btn btn-info btn-sm" href="/OfflineSales/UploadStore"><i class="fa fa-plus"></i>&nbsp;&nbsp;上传数据</a></li>
+        <li><a class="btn btn-warning btn-sm" id="Modregion">修改区域</a></li>
+    </ul>
+</div>
+<div id="list-container">
+
+</div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            ...
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_Store_ajaxlist",
+            success: function (data) {
+                $("#list-container").html(data);
+            }
+        });
+
+    });
+    $("#search-btn").click(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_Store_ajaxlist",
+            data: {
+                query: $("#search-query").val()
+            },
+            success: function (data) {
+                $("#list-container").html(data);
+            }
+        });
+    });
+    $("#add-btn").click(function () {
+        var link_url = "/OfflineSales/Off_CreateStore";
+        $.ajax({
+            url: link_url,
+            success: function (data) {
+                $("#addcontent").html(data);
+                $('#addModal').modal()
+            }
+        });
+        return false;
+    });
+ </script>
+

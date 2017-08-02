@@ -1,0 +1,214 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=0">
+    <title>寿全斋 文件上传</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/Jcrop.min.css" rel="stylesheet" />
+    <link href="~/Content/PA-Site.css" rel="stylesheet" />
+    <style type="text/css">
+                /* Apply these styles only when #preview-pane has
+           been placed within the Jcrop widget */
+                .jcrop-holder #preview-pane {
+                    display: block;
+                    position: absolute;
+                    z-index: 2000;
+                    top: 0;
+                    right: -280px;
+                    padding: 6px;
+                    border: 1px rgba(0,0,0,.4) solid;
+                    border-radius: 6px;
+                    background-color: white;
+                    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+                }
+
+                /* The Javascript code will set the aspect ratio of the crop
+        area based on the size of the thumbnail preview,
+        specified here */
+                #preview-pane .preview-container {
+                    width: 250px;
+                    height: 170px;
+                    overflow: hidden;
+                }
+    </style>
+</head>
+<body>
+    <div class="hidden">
+        <span id="appId">@ViewBag.AppId</span>
+        <span id="timeStamp">@ViewBag.TimeStamp</span>
+        <span id="nonce">@ViewBag.Nonce</span>
+        <span id="signature">@ViewBag.Signature</span>
+        <span id="filename">130897086702542143.jpg</span>
+        <span id="crop-x" class="hidden">0</span>
+        <span id="crop-y" class="hidden">0</span>
+        <span id="crop-w" class="hidden">0</span>
+        <span id="crop-h" class="hidden">0</span>
+    </div>
+    <div>
+        <button class="btn btn-default" id="image-upload">文件上传</button>
+        <!--<img src="#" id="preview" style="width:200px;" class="img-responsive" />
+        
+        <div class="container">
+            <div class="col-xs-12">
+                <img class="img-responsive" width="200" height="300" id="target" src="http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=olr2ER358Q_txXxzjuLGxGsPQLkoCZyC-J3MZPv8lTddKzuVNFI2g_IQe96DFsvFVATdHdjy2aNZn4DAssLAgqo8MQIEL8wDN_5waf5_vio&media_id=OK6BPh3SmJvvud3T8nDdGcgPnqDQ8XghIU7Zh6OjzWWZY3182SBT6wXQyyELFP6I" />
+            </div>
+            <div id="preview-pane">
+                <div class="preview-container col-xs-6">
+                    <img src="http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=olr2ER358Q_txXxzjuLGxGsPQLkoCZyC-J3MZPv8lTddKzuVNFI2g_IQe96DFsvFVATdHdjy2aNZn4DAssLAgqo8MQIEL8wDN_5waf5_vio&media_id=OK6BPh3SmJvvud3T8nDdGcgPnqDQ8XghIU7Zh6OjzWWZY3182SBT6wXQyyELFP6I" class="jcrop-preview img-responsive" alt="Preview">
+                </div>
+            </div>
+        </div>
+            -->
+
+        <div class="container" id="crop-container">
+            <div class="row">
+                <div class="col-xs-12" id="col-width">
+                    <div class="jc-demo-box">
+                        <div id="interface" class="page-interface"><img src="~/Content/downloads/130897086702542143.jpg" id="target" class="img-responsive img-thumbnail"></div>
+                        
+                        <div class="clearfix"></div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-success" id="upload-button">开始上传</button>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+<script src="~/Scripts/Jcrop.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+
+<script>
+        // // 微信API
+        wx.config({
+            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: $("#appId").text(), // 必填，公众号的唯一标识
+            timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
+            nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
+            signature: $("#signature").text(),// 必填，签名，见附录1
+            jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone', 'chooseImage', 'previewImage', 'uploadImage', 'downloadImage']
+            //必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+        wx.ready(function () {
+
+            // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+        });
+        $(function () {
+            $("#image-upload").click(function () {
+                var localIds
+                wx.chooseImage({
+                    count: 1, // 默认9
+                    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                    success: function (res) {
+                        localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                        alert(localIds);
+                        $("#preview").attr("src", localIds);
+                        wx.uploadImage({
+                            localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                            isShowProgressTips: 1, // 默认为1，显示进度提示
+                            success: function (res) {
+                                var serverId = res.serverId; // 返回图片的服务器端ID
+                                $.ajax({
+                                    url: "/WxAccount/SaveOrignalImage",
+                                    data: {
+                                        serverId : serverId
+                                    },
+                                    success: function (data) {
+                                        if (data.result == "SUCCESS") {
+                                            //alert("333");
+                                            $("#target").attr("src", "/Content/downloads/" + data.filename);
+                                            $("#filename").text(data.filename);
+                                            $('#target').Jcrop({
+                                                // 设置框的最大宽度
+                                                boxWidth: $("#col-width").width(),
+                                                aspectRatio: 1.33,
+                                                setSelect: [50, 50, 400, 300]
+                                            });
+                                            $("#crop-container").removeClass("hidden");
+                                            
+                                        }
+                                    }
+                                });
+
+                            }
+                        });
+                    }
+                });
+
+            });
+
+            $("#upload-button").click(function () {
+                alert("33");
+                $.ajax({
+                    url: "/WxAccount/CutImage",
+                    data: {
+                        url: $("#filename").text(),
+                        beginX: parseInt($("#crop-x").text()),
+                        beginY: parseInt($("#crop-y").text()),
+                        getX: parseInt($("#crop-w").text()),
+                        getY: parseInt($("#crop-h").text()),
+                        fileName: "cut-" + $("#filename").text()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            alert("上传成功");
+                        }
+                        else {
+                            alert("失败");
+                        }
+                    }
+                });
+            });
+            
+            
+            // cropmove事件是指拖动、拖拽框的动作
+            // 本函数的作用是每次对于框的变化，都记录其坐标变化，并记录下来
+            $('#interface').on('cropmove', function (e, s, c) {
+                $("#crop-x").text(c.x);
+                $("#crop-y").text(c.y);
+                $("#crop-w").text(c.w);
+                $("#crop-h").text(c.h);
+            });
+
+            // cropend事件是指拖动、拖拽框的动作结束
+            // 当拖拽或拉伸框的动作结束，松开鼠标时，弹出提示框显示最终坐标
+            $('#interface').on('cropend', function (e, s, c) {
+                $("#crop-x").text(c.x);
+                $("#crop-y").text(c.y);
+                $("#crop-w").text(c.w);
+                $("#crop-h").text(c.h);
+                //alert("x : " + parseInt(c.x) + ", y : " + parseInt(c.y) + ", w : " + parseInt(c.w) + ", h : " + parseInt(c.h));
+            });
+
+            // Most basic attachment example
+            $('#target').Jcrop({
+                // 设置框的最大宽度
+                boxWidth: $("#col-width").width(),
+                aspectRatio: 1.33,
+                setSelect: [50, 50, 400, 300]
+            });
+
+            /*$('#text-inputs').on('change', 'input', function (e) {
+                $('#target').Jcrop('api').animateTo([
+                  parseInt(d[ge]('crop-x').value),
+                  parseInt(d[ge]('crop-y').value),
+                  parseInt(d[ge]('crop-w').value),
+                  parseInt(d[ge]('crop-h').value)
+                ]);
+            });*/
+        });
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+﻿@model PeriodAid.Models.Off_Store
+
+
+@using (Html.BeginForm("CreateStorePartial", "OffStore", FormMethod.Post, new { @id = "offstore-store-form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            <label class="control-label col-md-3">渠道</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.Off_StoreSystemId, ViewBag.QD as SelectList, "- 请选择 -", new { @class = "form-control",@required="required" })
+                @Html.ValidationMessageFor(model => model.Off_StoreSystemId, "", new { @class = "text-danger" })
+            </div>
+        </div>  
+        <div class="form-group">
+            <label class="control-label col-md-3">门店名称</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "form-control", @required = "required",@maxlength="20" } })
+                @Html.ValidationMessageFor(model => model.StoreName, "", new { @class = "text-danger" })
+            </div>
+        </div>      
+        <div class="form-group">
+            <label class="control-label col-md-3">地址</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">经度</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control", @maxlength = "20" } })
+                @Html.ValidationMessageFor(model => model.Longitude, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">纬度</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control", @maxlength = "20" } })
+                @Html.ValidationMessageFor(model => model.Latitude, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" id="offstore-store-save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        //表单验证
+        $('#offstore-store-form').validate({
+            focusCleanup: true,
+            errorPlacement: function (error, element) {
+                $("#offstore-store-save").attr("disabled", false).val("保存");
+                element.parent().parent().addClass("has-error");
+            },
+            submitHandler: function (form) {
+                setTimeout(formsubmit, 1000);
+            },
+        })
+        //按钮点击
+        $("#offstore-store-save").click(function () {
+            $(".form-group").removeClass("has-error");
+            $(this).attr("disabled", "disabled").val("保存中...");
+            $('#offstore-store-form').submit();
+        })
+    });
+    function formsubmit() {
+        $('#offstore-store-form').ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                $('.modal-box').modal('hide');
+                alert("添加成功");
+                $.ajax({
+                    url: "/OffStore/StoreListPartial",
+                    success: function (data) {
+                        $("#offstore-list").html(data);
+                    },
+                    error: function () {
+                        alert("添加门店信息失败", "发生未知错误", function () {
+                            $("#offstore-store-save").attr("disabled", false).val("保存");
+                        }, { type: 'error' });
+                    }
+                })
+            }
+            else {
+                alert("添加门店信息失败", "请刷新重新填写后再尝试提交一下!", function () {
+                    $("#offstore-store-save").attr("disabled", false).val("保存");
+                }, { type: 'error' });
+            }           
+        });
+    }
+</script>
+

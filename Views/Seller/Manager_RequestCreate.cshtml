@@ -1,0 +1,81 @@
+﻿@model PeriodAid.Models.Off_Manager_Request
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">店铺需求提交</div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-task-requestcreate" id="manager-task-requestcreate">
+        <div class="page-content">
+            @using (Html.BeginForm("Mananger_RequestCreate", "Seller", FormMethod.Post, new { @class = "validate-form", id = "requestcreate-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Status)
+                @Html.HiddenFor(m => m.ManagerUserName)
+                @Html.HiddenFor(m => m.Id)
+                <div class="content-block-title">添加需求信息</div>
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="店铺名称" data-searchbar-cancel="取消">
+                                @Html.DropDownListFor(m => m.StoreId, ViewBag.StoreList as SelectList)
+
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">店铺选择</div>
+                                        <div class="item-after smart-select-value">@Html.Encode((ViewBag.StoreList as SelectList).FirstOrDefault().Text)</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="需求类型" data-searchbar-cancel="取消">
+
+                                @Html.DropDownListFor(m => m.RequestType, ViewBag.TypeList as SelectList)
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">需求类型</div>
+                                        <div class="item-after smart-select-value">@Html.Encode((ViewBag.TypeList as SelectList).FirstOrDefault().Text)</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">需求标题</div>
+                                    <div class="item-input">
+                                        @Html.TextBoxFor(m => m.RequestRemark, new { placeholder = "请输入需求标题", @class= "{required:true,maxlength:20}" })
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                @Html.TextAreaFor(m => m.RequestContent, new { placeholder = "请输入需求详细信息", @class= "{required:true, maxlength:500}" })
+                            </div>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title"></div>
+                                    <div class="item-after">
+                                        <span id="requestcontent_length">0</span>/500
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="content-block">
+                    <a href="javascript:;" class="button button-big button-fill" id="requestcreate-btn">提交</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

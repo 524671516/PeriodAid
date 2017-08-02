@@ -1,0 +1,76 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Sales_Template>
+@using PagedList.Mvc;
+<br />
+<table class="table table-striped">
+    <tr>
+        <th>
+            模板名称
+        </th>
+        <th>
+            状态
+        </th>
+        <th>
+            库存
+        </th>
+        <th>
+            销售金额
+        </th>
+        <th>
+            产品列表
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TemplateName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequiredStorage)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RequiredAmount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductList)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Off_Template_Edit", new { id=item.Id }, new { @class = "btn btn-info btn-edit" })
+            @Html.ActionLink("删除", "Off_Template_Delete_Ajax", new { id=item.Id }, new { @class = "btn btn-danger btn-del" })
+        </td>
+    </tr>
+}
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_Template_List_Ajax", new { page }))</div>
+<script>
+    $(".btn-del").click(function () {
+        var result = confirm("确定删除该信息吗？");
+        if (result) {
+            var url = $(this).attr("href");
+            $.ajax({
+                url: url,
+                type: "post",
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        var link_url = "/OfflineSales/Off_Template_List_Ajax"
+                        $.ajax({
+                            url: link_url,
+                            success: function (data) {
+                                $("#templateList").html(data)
+                            }
+                        })
+                    }
+                    else if (data.result == "FAIL") {
+                        alert("删除失败")
+                    }
+                }
+            });
+        }
+        return false;
+    })
+</script>
