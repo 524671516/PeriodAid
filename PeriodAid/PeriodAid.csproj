@@ -1065,6 +1065,7 @@
     <Content Include="Views\TaskManagement\GetLogs.cshtml" />
     <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
     <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
