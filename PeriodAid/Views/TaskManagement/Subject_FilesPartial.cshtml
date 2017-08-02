@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<PeriodAid.Models.SubjectAttachment>
-<div class="tm_pannel-container tm_pannel-container-file" id="tm_file_container">
+<div class="tm_panel-container tm_panel-container-file" id="tm_file_container">
     <div class="tm_files_wrap">
         <div class="tm_files_header clear-float">
             <div class="tm_files_left float-left tm_files_titile">
@@ -122,7 +122,7 @@
                 complete = true;
                 var fd = new FormData();
                 fd.append("file", $(this).context.files[0]);
-                fd.append("SubjectId", $("#tm_pannel-file").attr("data-sid"));
+                fd.append("SubjectId", $("#tm_panel-file").attr("data-sid"));
                 fd.append("AttachmentType", $("#btn_upload_file-sub").attr("data-code"));
                 $.ajax({
                     url: "/TaskManagement/TM_UpLoadFile",
@@ -138,7 +138,7 @@
                             $.ajax({
                                 url: "/TaskManagement/Subject_FilesPartial",
                                 data: {
-                                    SubjectId: $("#tm_pannel-file").attr("data-sid"),
+                                    SubjectId: $("#tm_panel-file").attr("data-sid"),
                                     TypeCode: _code
                                 },
                                 success: function (data) {
@@ -146,7 +146,7 @@
                                         ErrorAlert(data)
                                     } else {
                                         $("#tm_file_container").remove();
-                                        $("#tm_pannel-file").append(data);
+                                        $("#tm_panel-file").append(data);
                                     }
                                 },
                                 error: function () {
@@ -157,7 +157,7 @@
                                 url: "/TaskManagement/Subject_FilesAjax",
                                 type: "post",
                                 data: {
-                                    SubjectId: $("#tm_pannel-file").attr("data-sid")
+                                    SubjectId: $("#tm_panel-file").attr("data-sid")
                                 },
                                 success: function (data) {
                                     if (data.result == "SUCCESS") {
@@ -210,7 +210,7 @@
                                 url: "/TaskManagement/Subject_FilesAjax",
                                 type: "post",
                                 data: {
-                                    SubjectId: $("#tm_pannel-file").attr("data-sid")
+                                    SubjectId: $("#tm_panel-file").attr("data-sid")
                                 },
                                 success: function (data) {
                                     if (data.result == "SUCCESS") {
