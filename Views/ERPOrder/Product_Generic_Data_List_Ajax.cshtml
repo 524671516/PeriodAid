@@ -1,0 +1,95 @@
+﻿@model IEnumerable<PeriodAid.Models.product_generic_data>
+
+<table class="table">
+    <tr>
+        <th>
+            日期
+        </th>
+        <th>
+            店铺名称
+        </th>
+        <th>
+            商品编码
+        </th>
+        <th>
+            商品简称
+        </th>
+        <th>
+            访客数
+        </th>
+        <th>
+            浏览量
+        </th>
+        <th>
+            订单数
+        </th>
+        <th>
+            订单金额
+        </th>
+        <th>
+            转化率
+        </th>
+        <th>下单件数</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.storename)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.item_code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.simple_name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.uv)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.pv)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.order_count)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.order_amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.convertion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.product_unit)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Product_Generic_Data_Edit", new { id=item.id }, new { @class="btn btn-info"}) 
+            @Html.ActionLink("删除", "Product_Generic_Data_Delete", new { id=item.id }, new { @class = "btn btn-danger del-btn" })
+        </td>
+    </tr>
+}
+
+</table>
+<script>
+    $(function () {
+        $(".del-btn").click(function () {
+            var result = confirm("确定删除吗？");
+            if (result) {
+                var url = $(this).attr("href");
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+            return false;
+        });
+    })
+</script>

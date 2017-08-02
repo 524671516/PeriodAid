@@ -1,0 +1,304 @@
+﻿@model PeriodAid.Models.Off_Expenses
+@{
+    ViewBag.Title = "修改费用信息";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingThree";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.Off_System_Id)
+    <table class="offline-table-margin-01">
+        <tr>
+            <td class="col-md-12">
+                <input type="submit" value="保存" class="btn btn-sm btn-primary" />&nbsp;&nbsp;<a href="/OffExpenses/ExpensesIndex" class="btn btn-sm btn-default">返回</a>&nbsp;&nbsp;
+                @Html.ActionLink("审核", "SubmitExpensesAjax", new { id = Model.Id }, new { @class = "btn btn-success btn-sm",@id="offexpenses-audit" })
+            </td>
+        </tr>
+    </table>
+    <table class="offline-table-margin-01">
+        <tr>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>申请日期</small></div>
+                    @Html.EditorFor(model => model.ApplicationDate, new { htmlAttributes = new { @class = "form-control input-sm date-select" } })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>渠道名称</small></div>
+                    @Html.EditorFor(model => model.StoreSystem, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.StoreSystem, "", new { @class = "text-danger" })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>经销商</small></div>
+                    @Html.EditorFor(model => model.Distributor, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="offline-table-margin-01">
+        <tr>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>费用类别</small></div>
+                    @Html.DropDownListFor(model => model.PaymentType, ViewBag.PayType as SelectList, "- 请选择费用类别 -", new { @class = "form-control input-sm" })
+                    @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>审核时间</small></div>
+                    @Html.EditorFor(model => model.CheckTime, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>结算时间</small></div>
+                    @Html.EditorFor(model => model.BalanceTime, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="offline-table-margin-01">
+        <tr>
+            <td class="col-md-12">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>备注信息</small></div>
+                    @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                    @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="offline-table-margin-01">
+        <tr>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>预算金额</small></div>
+                    <input type="text" id="check-amt" class="form-control input-sm" readonly value="@Model.Off_Expenses_Details.Sum(m=>m.DetailsFee)" />
+                </div>
+            </td>
+            <td class="col-md-4"></td>
+            <td class="col-md-4"></td>
+        </tr>
+    </table>
+    <br />
+    <table class="offline-table-margin-01">
+        <tr>
+            <td class="col-md-12">
+                <a class="btn btn-primary btn-sm" id="offexpenses-add-costdetail">添加费用明细</a>
+            </td>
+        </tr>
+    </table>
+    <div class="offline-table-margin-01" id="offexpenses-list-table">
+        @foreach (var item in Model.Off_Expenses_Details)
+        {
+            <ul class="list-inline list-unstyled offline-table-margin-03">
+                <li class="col-md-3">
+                    <input type="hidden" name="detailid" value="@item.Id">
+                    <div class="input-group">
+
+                        <div class="input-group-addon"><small>费用名称</small></div>
+                        <select class="form-control input-sm valid" id="detaillist" name="detaillist">
+                            @if (item.DetailsName == "进场费")
+                            {
+                                <option value="进场费" selected>进场费</option>
+                            }
+                            else
+                            {
+                                <option value="进场费">进场费</option>
+                            }
+                            @if (item.DetailsName == "促销员工资")
+                            {
+                                <option value="促销员工资" selected>促销员工资</option>
+                            }
+                            else
+                            {
+                                <option value="促销员工资">促销员工资</option>
+                            }
+                            @if (item.DetailsName == "促销员奖金")
+                            {
+                                <option value="促销员奖金" selected>促销员奖金</option>
+                            }
+                            else
+                            {
+                                <option value="促销员奖金">促销员奖金</option>
+                            }
+                            @if (item.DetailsName == "海报费")
+                            {
+                                <option value="海报费" selected>海报费</option>
+                            }
+                            else
+                            {
+                                <option value="海报费">海报费</option>
+                            }
+                            @if (item.DetailsName == "端架费用")
+                            {
+                                <option value="端架费用" selected>端架费用</option>
+                            }
+                            else
+                            {
+                                <option value="端架费用">端架费用</option>
+                            }
+
+                            @if (item.DetailsName == "TG费用")
+                            {
+                                <option value="TG费用" selected>TG费用</option>
+                            }
+                            else
+                            {
+                                <option value="TG费用">TG费用</option>
+                            }
+                            @if (item.DetailsName == "地堆费用")
+                            {
+                                <option value="地堆费用" selected>地堆费用</option>
+                            }
+                            else
+                            {
+                                <option value="地堆费用">地堆费用</option>
+                            }
+                            @if (item.DetailsName == "运输费")
+                            {
+                                <option value="运输费" selected>运输费</option>
+                            }
+                            else
+                            {
+                                <option value="运输费">运输费</option>
+                            }
+                            @if (item.DetailsName == "试吃物料")
+                            {
+                                <option value="试吃物料" selected>试吃物料</option>
+                            }
+                            else
+                            {
+                                <option value="试吃物料">试吃物料</option>
+                            }
+                            @if (item.DetailsName == "其他赠品")
+                            {
+                                <option value="其他赠品" selected>其他赠品</option>
+                            }
+                            else
+                            {
+                                <option value="其他赠品">其他赠品</option>
+                            }
+
+                            @if (item.DetailsName == "公司赠品")
+                            {
+                                <option value="公司赠品" selected>公司赠品</option>
+                            }
+                            else
+                            {
+                                <option value="公司赠品">公司赠品</option>
+                            }
+
+                            @if (item.DetailsName == "POSM")
+                            {
+                                <option value="POSM" selected>POSM</option>
+                            }
+                            else
+                            {
+                                <option value="POSM">POSM</option>
+                            }
+                            @if (item.DetailsName == "其他费用")
+                            {
+                                <option value="其他费用" selected>其他费用</option>
+                            }
+                            else
+                            {
+                                <option value="其他费用">其他费用</option>
+                            }
+                        </select>
+                    </div>
+                </li>
+                <li class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>费用</small></div>
+                        <input class="form-control input-sm" name="detailfee" type="number" value="@item.DetailsFee">
+                    </div>
+                </li>
+                <li class="col-md-6">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>备注</small></div>
+                        <input class="form-control input-sm" name="detailremarks" value="@item.Remarks">
+                    </div>
+                </li>
+                <li class="col-md-1">
+                    <a class="btn btn-danger btn-sm" onClick="getDel(this, @item.Id)"><i class="fa fa-times"></i></a>
+                </li>
+            </ul>
+        }
+
+    </div>
+}
+<script>
+    $(function () {
+        $("#offexpenses-add-costdetail").click(function () {
+            $html = "<ul class=\"list-inline list-unstyled offline-table-margin-03\"><li class=\"col-md-3\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用名称</small></div>" +
+                "<select class=\"form-control input-sm valid\" id=\"detaillist\" name=\"detaillist\"><option value=\"进场费\">进场费</option>" +
+                "<option value=\"促销员工资\">促销员工资</option><option value=\"促销员奖金\">促销员奖金</option><option value=\"海报费\">海报费</option>" +
+                "<option value=\"端架费用\">端架费用</option><option value=\"TG费用\">TG费用</option><option value=\"地堆费用\">地堆费用</option>" +
+                "<option value=\"运输费\">运输费</option><option value=\"试吃物料\">试吃物料</option><option value=\"其他赠品\">其他赠品</option>" +
+                "<option value=\"公司赠品\">公司赠品</option><option value=\"POSM\">POSM</option><option value=\"其他费用\">其他费用</option></select>" +
+                "</div></li><li class=\"col-md-2\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用</small></div><input class=\"form-control input-sm\" name=\"detailfee\" type=\"number\" value=\"0\">" +
+                "</div></li><li class=\"col-md-6\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
+                "</div></li><li class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></li></ul>";
+            $("#offexpenses-list-table").append($html);
+        });
+        $(document).on("change", "input[name=detailfee]", function () {
+            var amount = 0;
+            $("input[name=detailfee]").each(function () {
+                amount += parseFloat($(this).val());
+            });
+            $("#check-amt").val(parseFloat(amount));
+        });
+        $(".date-select").datepicker();
+    });
+    function getDel(k, d_id) {
+        confirm("确认要删除记录吗?", "你将把此条记录删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: "/OffExpenses/DeleteExpensesDetailsAjax",
+                    type: "post",
+                    data: {
+                        id: d_id
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $(k).closest("ul").remove();
+                        }
+                        else {
+                            alert("删除失败", "", function () {
+                                //after click the confirm button, will run this callback function
+                            }, { type: 'error' });
+                        }
+                    }
+                })
+            }
+        });
+
+    }
+    $("#offexpenses-audit").click(function(){
+        var url=$(this).attr("href")
+        $.ajax({
+            url: url,
+            type: "post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    window.location.href = "/OffExpenses/ExpensesIndex";
+                }
+            }
+        })
+        return false
+    })
+</script>
+
+
+
+
+

@@ -1,0 +1,18 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
+
+@foreach (PeriodAid.Models.Off_Checkin_Schedule item in Model)
+{
+    <li class="swipeout">
+        <div class="swipeout-content">
+            <a href="/Seller/Manager_ScheduleSeller/@item.Id" class="item-content item-link">
+                <div class="item-inner">
+                    <div class="item-title">@Html.Encode(item.Off_Store.StoreName)</div>
+                    <div class="item-after">查看促销员</div>
+                </div>
+            </a>
+        </div>
+        <div class="swipeout-actions-right">
+            <a href="/Seller/Manager_CreateCheckIn/@item.Id" class="bg-blue">代签到</a>
+        </div>
+    </li>
+}

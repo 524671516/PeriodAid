@@ -1,0 +1,97 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Checkin>
+@using PagedList.Mvc;
+
+<table class="table table-condensed table-hover" style="table-layout: fixed;width:100%;">
+    <tr class="offline-table-background">
+        <th style="width:10%">
+            活动时间
+        </th>
+        <th style="width:8%">
+            状态
+        </th>
+        <th style="width:10%">系统名称</th>
+        <th style="width:15%">
+            店铺名称
+        </th>
+        <th style="width:15%">
+            促销员姓名
+        </th>
+        <th style="width:15%">
+            确认人
+        </th>
+        <th style="width:15%">
+            确认时间
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="ellipsis">
+                @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td class="ellipsis statusvalue">
+                @Html.Encode(Html.CheckinStatus(item.Status))
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem=>item.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.SystemName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ConfirmUser)
+            </td>
+            <td class="ellipsis"> 
+                @Html.DisplayFor(modelItem => item.ConfirmTime)
+            </td>
+
+            <td class="ellipsis">
+                @Html.ActionLink("查看", "ConfirmCheckin", new { id = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                @if (item.Status == 0)
+                {
+                    @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                }
+                else if (item.Status > 0 && item.Status < 5)
+                {
+                    @Html.ActionLink("作废", "CancelCheckinAjax", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs offcheckin-querycheckin-delbtn" })
+                }
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("QueryCheckinPartial", new { page }))</div>
+<script>
+    $(function () {
+        $(".statusvalue").each(function () {
+            var $item = $(this);
+            //alert($item.text());
+            if ($item.text().trim() == "已作废") {
+                $item.parent("tr").addClass("text-danger");
+            }
+            else if ($item.text().trim()=="已结算") {
+                $item.parent("tr").addClass("text-success");
+            }
+        });
+    });
+    
+    $(".pagination > li > a").click(function () {
+        var link = $(this).attr("href");
+        $.ajax({
+            url: link,
+            data: {
+                start: $("#offcheckin-starttime").val(),
+                end: $("#offcheckin-endtime").val(),
+                query: $("#offcheckin-query").val(),
+                canceled: $("#offcheckin-cancelcheckbox").prop("checked")
+            },
+            success: function (data) {
+                $("#offcheckin-querycheckin-list").html(data);
+            }
+        });
+        return false;
+    });
+</script>

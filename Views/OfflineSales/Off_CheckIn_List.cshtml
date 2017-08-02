@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewBag.Title = "Off_CheckIn_List";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingFive";
+}
+@model PagedList.IPagedList<PeriodAid.Models.Off_Checkin>
+@using PagedList.Mvc;
+@using PeriodAid.Models
+<div class="row">
+    <ul class="nav nav-tabs">
+        <li><a class="btn-filter btn" data-rel="0">无数据</a></li>
+        <li><a class="btn-filter btn" data-rel="1">已签到</a></li>
+        <li><a class="btn-filter btn" data-rel="2">已签退</a></li>
+        <li><a class="btn-filter btn" data-rel="3">已提报</a></li>
+        <li class="active"><a class="btn-filter btn" data-rel="4">已确认</a></li>
+        <li><a class="btn-filter btn" data-rel="5">已结算</a></li>
+        <li><a class="btn-filter btn" data-rel="-1">作废</a></li>
+    </ul>
+</div>
+<br />
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>开始时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="data-startTime" placeholder="开始时间" />
+        </td>
+        <td>
+            <label>结束时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="data-endTime" placeholder="结束时间" />
+        </td>
+        <td>
+            <label>店铺名称：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="search-query" placeholder="销售查询">
+        </td>
+        <td>
+            <a class="btn btn-info btn-sm" id="search-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;查询</a>
+        </td>
+    </tr>
+    @*<tr><td id="danger" class="text-danger h5"></td></tr>*@
+</table>
+<div class="container-fluid" id="expenseslist">
+    
+</div>
+<input type="hidden" id="status-val" />
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_CheckIn_List_ajax",
+            success: function (data) {
+                $("#expenseslist").html(data);
+            }
+        });
+        $(document).delegate(".cancel-btn", "click", function () {
+            var cfm = confirm("确认要删除信息吗？");
+            if (cfm) {
+                var link_url = $(this).attr("href");
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    success: function (data) {
+                        if (data == "SUCCESS") {
+                            $.ajax({
+                                url: "/OfflineSales/Off_CheckIn_List_ajax",
+                                data: {
+                                    status: $("#status-val").val(),
+                                    query: $("#search-query").val()
+                                },
+                                success: function (data) {
+                                    $("#expenseslist").html(data);
+                                }
+                            });
+                        }
+                        else if (data == "FAIL") {
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+    });
+    $(".btn-filter").click(function () {
+        $("#status-val").val($(this).attr("data-rel"));
+        $(this).parent("li").addClass("active").siblings().removeClass("active");
+        $.ajax({
+            url: "/OfflineSales/Off_CheckIn_List_ajax?status=" + $("#status-val").val(),
+            success: function (data) {
+                $("#expenseslist").html(data);
+                $(".btn-sure").hide();
+                $(".check-show").hide();
+            }
+        });
+        return false;
+    });
+    $("#search-btn").click(function () {
+        var url = "/OfflineSales/Off_CheckIn_List_ajax"
+        $.ajax({
+            url: url,
+            data: {
+                status: $("#status-val").val(),
+                query: $("#search-query").val()
+            },
+            success: function (data) {
+                $("#expenseslist").html(data);
+            }
+        })
+    });
+</script>

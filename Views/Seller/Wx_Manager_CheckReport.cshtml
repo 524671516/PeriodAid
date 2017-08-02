@@ -1,0 +1,458 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+@{
+    ViewBag.Title = "督导管理 巡店";
+    ViewBag.Current = 1;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+}
+@section header{
+    <style>
+        .weui_dialog_01 {
+        position:fixed;
+        top: 50%;
+        left: 50%;
+        z-index:13;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        border:1px solid #eee;
+        background-color:#333;
+        border-radius:50%;
+        width:220px;
+        height:220px;
+        }
+        .voice_con {
+        position:relative;
+        line-height:1px;
+        }
+        .voice_con .microphone {
+        font-size:100px;
+        color:#777;
+        }
+    </style>
+    }
+<div class="hidden">
+    <span id="appId">@ViewBag.AppId</span>
+    <span id="timeStamp">@ViewBag.TimeStamp</span>
+    <span id="nonce">@ViewBag.Nonce</span>
+    <span id="url">@ViewBag.Url</span>
+    <span id="signature">@ViewBag.Signature</span>
+</div>
+<div class="hd">
+    <h3 class="page_title text-center">销售数据确认</h3>
+</div>
+<div class="weui_cells_title">签到信息</div>
+<div class="weui_cells weui_cells_access">
+    <a class="weui_cell" href="javascript:;" id="storelbs" latitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Latitude" longitude="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Longitude" address="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.Address" storename="@ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>@Html.Encode(ViewBag.CheckIn.Off_Checkin_Schedule.Off_Store.StoreName)</p>
+        </div>
+        <div class="weui_cell_ft">@Html.Encode(ViewBag.CheckIn.Off_Seller.Name)</div>
+    </a>
+    @if (Model.CheckinLocation != "" && Model.CheckinLocation != "N/A")
+    {
+        <a class="weui_cell" href="javascript:;" id="checkinlbs" location="@Model.CheckinLocation">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到时间</p>
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(Model.CheckinTime)</div>
+        </a>
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到时间</p>
+            </div>
+            <div class="weui_cell_ft_none">代签</div>
+        </a>
+    }
+    @if (Model.CheckinPhoto != "")
+    {
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckinPhoto">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到图片</p>
+            </div>
+            <div class="weui_cell_ft">点击查看</div>
+        </a>
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签到图片</p>
+            </div>
+            <div class="weui_cell_ft_none">无</div>
+        </a>
+    }
+    @if (Model.CheckoutLocation != "" && Model.CheckoutLocation != "N/A")
+    {
+        <a class="weui_cell" href="javascript:;" id="checkoutlbs" location="@Model.CheckoutLocation">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退时间</p>
+            </div>
+            <div class="weui_cell_ft">@Html.Encode(Model.CheckoutTime)</div>
+        </a>
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退时间</p>
+            </div>
+            <div class="weui_cell_ft_none">代签</div>
+        </a>
+    }
+    @if (Model.CheckinPhoto != "")
+    {
+        <a class="weui_cell singlepreview" href="javascript:;" data-target="@Model.CheckoutPhoto">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退图片</p>
+            </div>
+            <div class="weui_cell_ft">点击查看</div>
+        </a>
+    }
+    else
+    {
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>签退图片</p>
+            </div>
+            <div class="weui_cell_ft_none">无</div>
+        </a>
+    }
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>提报时间</p>
+        </div>
+        <div class="weui_cell_ft_none">@Html.Encode(Model.Report_Time)</div>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Off_Seller_Id)
+    @Html.HiddenFor(m => m.Off_Schedule_Id)
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.CheckinTime)
+    @Html.HiddenFor(m => m.CheckinPhoto)
+    @Html.HiddenFor(m => m.CheckinLocation)
+    @Html.HiddenFor(m => m.CheckoutTime)
+    @Html.HiddenFor(m => m.CheckoutLocation)
+    @Html.HiddenFor(m => m.Report_Time)
+    <div class="weui_cells_title">提报信息</div>
+    <div class="weui_cells weui_cells_form">
+        @{
+            Html.RenderAction("Wx_Seller_EditReport_Item", new { CheckId = Model.Id });
+        }
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.TextAreaFor(m => m.Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入简报", @readonly ="readonly" })
+                <div class="weui_textarea_counter"><abbr id="current_length">0</abbr>/500</div>
+            </div>
+        </div>
+    </div>
+        @Html.HiddenFor(m => m.Rep_Image)
+        <div class="weui_cells weui_cells_access">
+            <a class="weui_cell" href="javascript:;" id="preview-btn">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>图片信息</p>
+                </div>
+                <div class="weui_cell_ft">点击查看</div>
+            </a>
+        </div>
+        <div class="weui_cells_title">审核备注</div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.TextAreaFor(m => m.Confirm_Remark, new { @class = "weui_textarea", rows = "3", placeholder = "请输入审核备注" })
+                    <div class="weui_textarea_counter"><abbr id="current_length_2">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog1"><i class="fa fa-microphone"></i></a></div>
+                    
+                </div>
+            </div>
+        </div><br />
+        <div class="container">
+            <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
+                确认并审核
+            </button>
+            <a href="/Seller/Wx_Manager_Home" class="weui_btn weui_btn_default" style="margin-top:5px;">
+                返回首页
+            </a>
+            <a href="javascript:;" class="weui_btn weui_btn_warn" id="delete-btn" style="margin-top:5px; margin-left:30%; margin-right:30%;">
+                作废
+            </a>
+
+        </div>
+}
+<div class="weui_dialog_confirm" id="diaLg" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        @*<div class="weui_dialog_hd">
+            <h5 class="weui_dialog_title" style="color:#777; display:none;">正在识别语音...</h5>
+        </div>*@
+        <div class="voice_con">
+            <a id="startRecord" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stopRecord" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
+<div class="error-label container" style="display:none;">
+    <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+    <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+</div>
+<div class="weui_dialog_confirm" style="display:none;" id="dialog_confirm">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">确认操作</strong></div>
+        <div class="weui_dialog_bd">是否要删除当前签到记录？</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog default" id="dialog_cancel_btn">取消</a>
+            <a href="javascript:;" class="weui_btn_dialog primary" id="dialog_confirm_btn">确定</a>
+        </div>
+    </div>
+</div>
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd">提示</div>
+        <div class="weui_dialog_bd" id="dialog_text">当前无可查看图片</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog primary" id="alert-btn">确定</a>
+        </div>
+    </div>
+</div>
+<br /><br />
+@section scripts{
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+    <script>
+        //parseFloat
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: $("#appId").text(), // 必填，公众号的唯一标识
+            timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
+            nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
+            signature: $("#signature").text(),// 必填，签名，见附录1
+            jsApiList: ['previewImage', 'openLocation', 'startRecord',
+                'stopRecord', 'translateVoice' ]
+            //必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+        $(function () {
+            var tl = cal_textlength("Remark");
+            $("#current_length").text(tl);
+            var tl2 = cal_textlength("Confirm_Remark");
+            $("#current_length_2").text(tl2);
+            if ($(".input-validation-error").length > 0) {
+                $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+                $(".error-label").show();
+                setTimeout(function () {
+                    $(".error-label").fadeOut(1000)
+                }, 3000);
+            }
+        });
+        function cal_textlength(name) {
+            return $("#" + name).val().length;
+        }
+        $("#Remark").change(function () {
+            var tl = cal_textlength("Remark");
+            $("#current_length").text(tl);
+        });
+        $("#Confirm_Remark").change(function () {
+            var tl = cal_textlength("Confirm_Remark");
+            $("#current_length_2").text(tl);
+        });
+        $("#preview-btn").click(function () {
+            if ($("#Rep_Image").val().trim() != "") {
+                var images = $("#Rep_Image").val().split(',');
+                for (var i = 0; i < images.length; i++) {
+                    images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
+                }
+                wx.previewImage({
+                    current: images[0], // 当前显示图片的http链接
+                    urls: images // 需要预览的图片http链接列表
+                });
+            }
+            else {
+                $("#dialog_alert").show();
+            }
+        });
+        $("#alert-btn").click(function () {
+            $("#dialog_alert").hide();
+        })
+        $(".singlepreview").click(function () {
+            var photos = $(this).attr("data-target");
+            if (photos.trim() != "") {
+                var images = photos.split(',');
+                for (var i = 0; i < images.length; i++) {
+                    images[i] = "http://cdn2.shouquanzhai.cn/checkin-img/" + images[i];
+                }
+                wx.previewImage({
+                    current: images[0], // 当前显示图片的http链接
+                    urls: images // 需要预览的图片http链接列表
+                });
+            }
+            else {
+                $("#dialog_alert").show();
+            }
+        });
+        $("#checkinlbs").click(function () {
+            var lbs = $(this).attr("location").split(',');
+            var translbs = lbs[1] + "," + lbs[0];
+            var click_btn = $(this);
+            $.ajax({
+                url: "http://apis.map.qq.com/ws/coord/v1/translate",
+                type: "get",
+                dataType: "jsonp",
+                data: {
+                    locations: translbs,
+                    type: 1,
+                    output: "jsonp",
+                    key: "WRRBZ-PHV3K-KWOJ5-AMKPV-PASC3-GSFQU"
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        wx.openLocation({
+                            latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                            longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                            name: "签到地点", // 位置名
+                            address: "", // 地址详情说明
+                            scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                            infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        });
+                    }
+                }
+            });
+        });
+        $("#checkoutlbs").click(function () {
+            var lbs = $(this).attr("location").split(',');
+            var translbs = lbs[1] + "," + lbs[0];
+            var click_btn = $(this);
+            $.ajax({
+                url: "http://apis.map.qq.com/ws/coord/v1/translate",
+                type: "get",
+                dataType: "jsonp",
+                data: {
+                    locations: translbs,
+                    type: 1,
+                    output: "jsonp",
+                    key: "WRRBZ-PHV3K-KWOJ5-AMKPV-PASC3-GSFQU"
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        wx.openLocation({
+                            latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                            longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                            name: "签到地点", // 位置名
+                            address: "", // 地址详情说明
+                            scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                            infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        });
+                    }
+                }
+            });
+        });
+        $("#delete-btn").click(function () {
+            $("#dialog_confirm").show();
+        });
+        $("#dialog_cancel_btn").click(function () {
+            $("#dialog_confirm").hide();
+        });
+        $("#dialog_confirm_btn").click(function () {
+            $("#dialog_confirm_btn").attr("disabled", "disabled").text("删除中...").removeClass("primary").addClass("default");
+            $.ajax({
+                url: "/Seller/Wx_Manager_DeleteCheckin",
+                type: "post",
+                data: {
+                    checkid: $("#Id").val()
+                },
+                success: function (data) {
+                    if (data == "SUCCESS") {
+                        window.location.href = "/Seller/Wx_Manager_Home";
+                    }
+                    else {
+                        alert("删除失败");
+                        window.location.href = "/Seller/Wx_Manager_Home";
+                    }
+                }
+            });
+        });
+        $("#storelbs").click(function () {
+            var click_btn = $(this);
+            $.ajax({
+                url: "http://apis.map.qq.com/ws/coord/v1/translate",
+                type: "get",
+                dataType: "jsonp",
+                data: {
+                    locations: $(click_btn).attr("latitude") + "," + $(click_btn).attr("longitude"),
+                    type: 3,
+                    output: "jsonp",
+                    key: "WRRBZ-PHV3K-KWOJ5-AMKPV-PASC3-GSFQU"
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        wx.openLocation({
+                            latitude: data.locations[0].lat, // 纬度，浮点数，范围为90 ~ -90
+                            longitude: data.locations[0].lng, // 经度，浮点数，范围为180 ~ -180。
+                            name: $(click_btn).attr("storename"), // 位置名
+                            address: $(click_btn).attr("address"), // 地址详情说明
+                            scale: 25, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                            infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+                        });
+                    }
+                }
+            });
+        });
+        //录音功能
+        $(".weui_mask").click(function () {
+            $("#diaLg").hide();
+            wx.stopRecord();
+            $("#startRecord").show();
+            $("#stopRecord").hide();
+            $(".weui_dialog_title").hide();
+        });
+        $("#close_btn").click(function () {
+            $("#diaLg").hide();
+            wx.stopRecord();
+            $("#stopRecord").hide();
+            $(".weui_dialog_title").hide();
+            $("#startRecord").show();
+            
+        });
+        $("#showDialog1").click(function () {
+            $("#diaLg").show();
+        })
+        $("#startRecord").click(function () {
+            wx.startRecord();
+            $(this).hide();
+            $("#stopRecord").show();
+            $(".weui_dialog_title").show();
+        });
+        $("#stopRecord").click(function () {
+            $("#startRecord").show();
+            $(this).hide();
+            $("#diaLg").hide();
+            $(".weui_dialog_title").hide();
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            $("#Confirm_Remark").val($("#Confirm_Remark").val() + res.translateResult);
+                            //alert(res.translateResult); // 语音识别的结果
+                            $("#current_length_2").text(cal_textlength("Confirm_Remark"));//weui_textarea_counter的数字计算
+                            //获取焦点后光标在字符串后 
+                            //其原理就是获得焦点后重新把自己复制粘帖一下 
+                            var t = $("#Confirm_Remark").val();
+                            $("#Confirm_Remark").val("").focus().val(t);
+                        }
+                    });
+                }
+            });//结束录音
+        });
+    </script>
+}

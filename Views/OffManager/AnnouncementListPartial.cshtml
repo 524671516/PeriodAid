@@ -1,0 +1,98 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Announcement>
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:10%;">
+            联系人
+        </th>
+        <th style="width:15%;">
+            开始时间
+        </th>
+        <th style="width:15%;">
+            结束时间
+        </th>
+        <th style="width:15%;">
+            活动等级
+        </th>
+        <th style="width:10%;">
+            标题
+        </th>
+        <th style="width:25%;">
+            内容
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.Encode(item.ManagerUserName)
+            </td>
+            <td>
+                @Html.Encode(item.StartTime.ToString("yyyy-MM-dd"))
+            </td>
+            <td>
+                @Html.Encode(item.FinishTime.ToString("yyyy-MM-dd"))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "EditAnnouncement", new { id = item.Id }, new { @class = "btn btn-info btn-xs offmanager-announcement-edit", target = "_blank" })
+                @Html.ActionLink("删除", "DeleteAnnouncementAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offmanager-announcement-del", target = "_blank" })
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("AnnouncementListPartial", new { page }))</div>
+<script>
+    //页码切换
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href")
+        $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#offmanager-announcement-list").html(data)
+                }
+            });
+        return false;
+    });
+    //删除
+    $(".offmanager-announcement-del").click(function () {
+        var url = $(this).attr("href")
+        confirm("确定要删除该信息吗?", "你将把此条信息从督导日报列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffManager/AnnouncementListPartial",
+                                    success: function (list) {
+                                        $("#offmanager-announcement-list").html(list);
+                                    }
+                                });
+                                alert("删除成功")
+                            }, 1000);
+                        } else {
+                            alert("删除失败")
+                        }
+                    }
+                });
+            }
+        });
+        return false;
+    });
+</script>
+
+

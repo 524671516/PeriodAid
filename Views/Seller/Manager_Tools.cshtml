@@ -1,0 +1,65 @@
+﻿
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="center sliding"><strong>督导管理系统</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-tools">
+        <div class="page-content">
+            <div class="content-block-title">管理工具</div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <a href="/Seller/Manager_ReportList" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">销量排名</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Seller/Manager_EventList" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">活动门店列表</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Seller/Manager_StoreList" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">管辖门店列表</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Seller/Manager_SellerList" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">查询促销员</div>
+                            </div>
+                        </a>
+                    </li>
+                    @if (User.IsInRole("Senior"))
+                    {
+                    <li>
+                        <a href="/Seller/Manager_BonusList" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">确认促销员奖励</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Seller/Manager_CompetitionInfoList" class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title">确认竞品信息</div>
+                            </div>
+                        </a>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

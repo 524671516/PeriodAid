@@ -1,0 +1,96 @@
+﻿@model PeriodAid.Models.Off_SalesEvent
+
+@using (Html.BeginForm("ConmmitSalesEvent", "OffCheckin", FormMethod.Post, new { id = "commit-saleevent-ajaxform" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.CommitDateTime)
+    @Html.HiddenFor(m => m.CommitUserName)
+    @Html.HiddenFor(m => m.CreateDateTime)
+    @Html.HiddenFor(m => m.EventTypeName)
+    @Html.HiddenFor(m => m.EventType)
+    @Html.HiddenFor(m => m.CreateUserName)
+    @Html.HiddenFor(m => m.OrderDetails)
+    @Html.HiddenFor(m=>m.EndDate)
+    @Html.HiddenFor(m=>m.StartDate)
+    @Html.HiddenFor(m=>m.EventTitle)
+    @Html.HiddenFor(m=>m.Off_StoreSystem_Id)
+    @Html.HiddenFor(m=>m.EventDetails)
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="control-label col-md-3">活动编号</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.SerialNo, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20", @number=true } })
+                    @Html.ValidationMessageFor(model => model.SerialNo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">活动经费</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.CostAmount, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20",@number = true } })
+                    @Html.ValidationMessageFor(model => model.CostAmount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">订单数量</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.OrderAmount, new { htmlAttributes = new { @class = "form-control", @required = "required", @maxlength = "20", @number = true } })
+                    @Html.ValidationMessageFor(model => model.OrderAmount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="保存" class="btn btn-default" id="saleevent-commit" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        //表单验证
+        $('#commit-saleevent-ajaxform').validate({
+            focusCleanup: true,
+            errorPlacement: function (error, element) {
+                $("#saleevent-commit").attr("disabled", false).val("保存");
+                element.parent().parent().addClass("has-error");
+            },
+            submitHandler: function (form) {
+                    setTimeout(formsubmit, 1000);
+            },
+        });
+        //按钮点击
+        $("#saleevent-commit").click(function () {
+            $(".form-group").removeClass("has-error");
+            $(this).attr("disabled", "disabled").val("提交中...");
+            $("#commit-saleevent-ajaxform").submit();
+        })
+    });
+    function formsubmit() {
+        $('#commit-saleevent-ajaxform').ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                $('.modal-box').modal('hide');
+                alert("审核成功");
+                $.ajax({
+                    url: "/OffCheckin/SalesEventListPartial",
+                    success: function (data) {
+                        $("#saleevent-list").html(data);
+                    },
+                    error: function (e) {
+                        alert("审核失败", "发生未知错误", function () {
+                            $("#saleevent-commit").attr("disabled", false).val("保存");
+                        }, { type: 'error' });
+                    }
+                })
+            }
+            else {
+                alert("审核失败", "请刷新页面重新填写后再尝试提交一下!", function () {
+                    $("#saleevent-commit").attr("disabled", false).val("保存");
+                }, { type: 'error' });
+            }
+        });
+    }
+</script>
+
+

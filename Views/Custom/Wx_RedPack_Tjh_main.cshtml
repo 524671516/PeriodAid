@@ -1,0 +1,72 @@
+﻿@model PeriodAid.Models.Promotion_TJH_ViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>糖酒会红包</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <style type="text/css">
+        body {
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid text-center" style="margin:auto;">
+        <img src="//cdn.shouquanzhai.cn/Content/wx_redpack_tjh_720_400.jpg" class="img-responsive" style="width:100%; height:100%; max-width:720px; max-height:400px;" />
+    </div>
+    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-8">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.HiddenFor(model => model.openId)
+                        <div class="form-group">
+
+                            @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control input-lg", placeholder = "请输入姓名" } })
+                            @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.EditorFor(model => model.mobile, new { htmlAttributes = new { @class = "form-control input-lg", placeholder = "请输入手机号码" } })
+                            @Html.ValidationMessageFor(model => model.mobile, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.DropDownListFor(model => model.branch, ViewBag.Industry as SelectList, "- 请选择职业 -", new { @class = "form-control input-lg" })
+                        </div>
+                        <br />
+                        <div class="form-group text-center">
+                            <input type="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;立&nbsp;即&nbsp;领&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;" class="btn btn-default btn-danger btn-pr btn-lg" id="submit-btn" />
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+    </div>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/JavaScript.js"></script>
+    <script>
+        $("#submit-btn").click(function () {
+            $(this).attr("disabled", "disabled").addClass("disabled").val("发送中...");
+            $("form").submit();
+            return false;
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+﻿@model PeriodAid.Models.StoreSchedule_ViewModel
+@{
+    ViewBag.Title = "Off_Add_Schedule";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
+}
+@section header{
+    <style>
+        .input-validation-error{
+            border-color: #a94442;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        }
+    </style>    
+}
+@using (Html.BeginForm("Off_Add_Schedule", "OfflineSales", FormMethod.Post, new { @id = "ajaxAdd_Schedule" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <row>
+        <div class="col-md-3">
+            @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control", id = "StoreSystem" })<br />
+            <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px; font-size:1em;"></select>
+        </div>
+        <div class="col-md-9">
+            <div class="container">
+                <div class="row">
+                    <label class="col-md-2 control-label">活动开始时间</label>
+                    <div class="col-md-4">@Html.EditorFor(m => m.StartDate, new { htmlAttributes = new { @class = "form-control input-sm input-date", @readonly = "readonly" } })</div>
+                    <label class="col-md-2 control-label">活动结束时间</label>
+                    <div class="col-md-4">@Html.EditorFor(m => m.EndDate, new { htmlAttributes = new { @class = "form-control input-sm input-date", @readonly = "readonly" } })</div>
+                </div><br />
+                <div class="row">
+                    <label class="col-md-2 control-label">标准上班时间</label>
+                    <div class="col-md-4">@Html.EditorFor(m => m.BeginTime, new { htmlAttributes = new { @class = "form-control input-sm", type = "time" } })</div>
+                    <label class="col-md-2 control-label">标准下班时间</label>
+                    <div class="col-md-4">@Html.EditorFor(m => m.FinishTime, new { htmlAttributes = new { @class = "form-control input-sm", type = "time" } })</div>
+                </div><br />
+                <div class="row">
+                    <label class="col-md-2 control-label">提报模板</label>
+                    <div class="col-md-4">@Html.DropDownList("TemplateId", ViewBag.TemplateList as SelectList, "- 请选择模板 -", new { @class="form-control input-sm" })</div>
+                    <label class="col-md-2 control-label">标准薪资</label>
+                    <div class="col-md-4">@Html.EditorFor(m => m.Salary, new { htmlAttributes = new { @class = "form-control input-sm", type = "number" } })</div>
+                </div><br />
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-2">
+                        <input type="submit" class="btn btn-success" id="submit_btn" value="提交" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </row>
+}
+<script>
+    $(function () {
+        $(".input-date").datepicker();
+
+        //alert("3");
+        $.ajax({
+            url: "/OfflineSales/Off_Add_Schedule_StoreList",
+            type: "post",
+            data: {
+                storesystem: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                }
+            }
+        });
+    });
+    $("#StoreSystem").change(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_Add_Schedule_StoreList",
+            type: "post",
+            data: {
+                storesystem: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                }
+            }
+        });
+    });
+    $(function () {
+        $("#submit_btn").click(function () {
+            $(this).attr("disabled", "disabled").val("提交中...");
+            //setTimeout(formsubmit, 3000);
+            //formsubmit();
+            $("#ajaxAdd_Schedule").submit();
+            $(this).removeAttr("disabled").val("提交");
+            return false;
+        })
+
+    });
+    //function formsubmit() {
+        //$('#ajaxAdd_Schedule').ajaxSubmit(function (data) {
+        //    if (data == "SUCCESS") {
+        //        alert("添加成功");
+        //        $('#addModal').modal('hide');
+        //        //$.ajax({
+        //        //    url: "/OfflineSales/Off_Store_ajaxlist",
+        //        //    success: function (data) {
+        //        //        ///setTimeout(3000);
+        //        //        $("#list-container").html(data);
+        //        //    }
+        //        //});
+        //        window.location.href = "/OfflineSales/Off_ScheduleList";
+        //    }
+        //    else {
+        //        $("#addcontent").html(data);
+        //    }
+        //});
+        //$("#ajaxAdd_Schedule").submit();
+    //}
+    function refresh_page() {
+
+    }
+
+</script>

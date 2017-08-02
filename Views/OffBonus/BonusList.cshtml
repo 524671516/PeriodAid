@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "BonusList";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingNine";
+}
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>店铺/姓名：</label>
+            <input class="form-control input-sm offline-search-inline" id="bonus-redpack-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="bonus-redpack-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<br />
+<div id="bonus-list">
+
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OffBonus/BonusListPartial",
+            success: function (data) {
+                $("#bonus-list").html(data)
+            }
+        });
+        $("#bonus-redpack-search").click(function () {
+            var query = $("#bonus-redpack-query").val();
+            var link_url = "/OffBonus/BonusListPartial"
+            $.ajax({
+                url: link_url,
+                data: {
+                    query:query
+                },
+                success: function (data) {
+                    $("#bonus-list").html(data)
+                }
+            })
+        })
+    });
+</script>

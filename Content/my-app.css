@@ -1,0 +1,134 @@
+.left-nav ul {
+    background-color: #111;
+    color: lightgrey;
+}
+.img-center {
+    margin: auto auto;
+    padding: 20px;
+    font-size:16px;
+    color:lightgray;
+}
+.img-sircle {
+    border-radius: 50%;
+}
+.img-box {
+    font-size: 60px;
+}
+.infinite-scroll-preloader {
+    margin-bottom: 10px;
+    text-align: center;
+}
+.infinite-scroll-preloader .preloader {
+        width: 34px;
+        height: 34px;
+    }
+.demo-card-header-pic .card-header {
+    height: 40vw;
+    background-size: cover;
+    background-position: center;
+}
+.list-unstyled {
+    list-style: none;
+    padding:0;
+}
+.list-inline {
+   list-style:none;
+   padding-left:15px;
+}
+.hidden {
+    display: none;
+}
+.preloader-text {
+    text-align: center;
+}
+.picker-modal-bg ul {
+    background-color:#cfd5da;
+    padding-left:7.5%;
+    padding-right:7.5%;
+}
+.img-responsive {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+.h5{
+    font-size:1em;
+}
+.h4{
+    font-size:1.2em;
+}
+.h6{
+    font-size:0.8em;
+}
+.validate-form input.custom-error{
+    background:#d76a67;
+}
+
+.list-block ul.rep-imglist{
+    padding:0; margin:-15px 0 0 0;
+}
+.list-block ul.rep-imglist li{
+    float:left;
+}
+.rep-imgitem{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:60px; height:60px; 
+    border:solid #ccc 1px; 
+    margin:10px;
+    font-size:48px; line-height:60px; text-align:center;
+    color:#ccc;
+    display:block;
+}
+.rep-imgitem-selected{
+    opacity:0.5;
+    color:#fff;
+    background-color:#000;
+}
+.rep-imgitem-btn{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:60px; height:60px; 
+    border:solid #ccc 1px; 
+    margin:10px;
+    font-size:48px; line-height:60px; text-align:center;
+    color:#ccc;
+    display:block;
+}
+.sellertasklist-photo{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:44px; height:44px; 
+    border-radius:5px;
+}
+/* A bit of demo styles */
+.swiper-container {
+  height: 100%;
+}
+.swiper-slide {
+  background:#fff;
+}
+.swiper-slide span {
+  text-align:center;
+  display:block;
+  margin:20px;
+  font-size:21px;
+}
+sup.notify {
+    font-size:0.5em;
+    color:#ff0000;
+}
+
+div.link-back {
+    background:url(/fonts/right.svg);
+}
+.padding-top-2 {
+    padding-top: 2px;
+}
+.padding-bottom-2 {
+    padding-bottom: 2px;
+}
+

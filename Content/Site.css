@@ -1,0 +1,592 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    font-size:12px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+/*input,
+select,
+textarea {
+    max-width: 280px;
+}*/
+
+.reset {
+    padding: 30px 0 80px 0;
+    margin: 0;
+}
+
+.panel-title{
+            font-size:1em;
+        }
+.panel-title a{
+            text-decoration:none;
+        }
+.left-navbar {
+    text-indent: 0.5em;
+}
+.fa.pull-right {
+    margin-top: 1px;
+}
+.panel-animate{
+    -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        margin-right:3px;
+}
+/*fixed scroll*/
+.scroll-fixed {
+    position: fixed;
+    bottom: 20px;
+    right: 2%;
+}
+.offline-navbar-bottom {
+    background-color: #0094ff;
+    opacity: 0.8;
+    color: #fff;
+    font-size: 1.1em;
+    line-height: 1.2em;
+}
+
+.nav-button {
+    font-size: 2em;
+    line-height: 2em;
+}
+
+.offline-navbar-bottom a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#l-map {
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+#result {
+    width: 100%;
+}
+
+li {
+    line-height: 28px;
+}
+
+.cityList {
+    height: 320px;
+    width: 372px;
+    overflow-y: auto;
+}
+
+.sel_container {
+    z-index: 9999;
+    font-size: 12px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 140px;
+    background: rgba(255,255,255,0.8);
+    height: 30px;
+    line-height: 30px;
+    padding: 5px;
+}
+
+.map_popup {
+    position: absolute;
+    z-index: 200000;
+    width: 382px;
+    height: 344px;
+    right: 0px;
+    top: 40px;
+}
+
+    .map_popup .popup_main {
+        background: #fff;
+        border: 1px solid #8BA4D8;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        width: 100%;
+        z-index: 2;
+    }
+
+    .map_popup .title {
+        background: url("http://map.baidu.com/img/popup_title.gif") repeat scroll 0 0 transparent;
+        color: #6688CC;
+        font-weight: bold;
+        height: 24px;
+        line-height: 25px;
+        padding-left: 7px;
+    }
+
+    .map_popup button {
+        background: url("http://map.baidu.com/img/popup_close.gif") no-repeat scroll 0 0 transparent;
+        cursor: pointer;
+        height: 12px;
+        position: absolute;
+        right: 4px;
+        top: 6px;
+        width: 12px;
+    }
+    .input-validation-error {
+            border-color: #a94442;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        }
+/*-----搜索块-------*/
+.offline-search-inline {
+    width:auto;
+    display:inline-block
+}
+.offline-search-inline-01 {
+    width:50%;
+    display:inline-block
+}
+.offline-search-box {
+    width: 100%;
+    margin-bottom: 20px
+}
+.offline-search-btn {
+    margin: auto;
+}
+/*-----表格块--------*/
+.offline-table-background {
+    background-color: #f9f9f9;
+}
+/*--------内容块---------*/
+.offline-table-margin-01 {
+    margin: 10px 0;
+    width:100%
+}
+.offline-table-margin-02 td{
+    padding:10px 0;
+}
+.offline-table-margin-03 {
+    padding: 20px 12px;
+}
+.img-list {
+    width: 120px;
+    height: 120px;
+    margin: 10px;
+    border: 1px solid #eee;
+    float: left;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.img-close{
+    text-align:right;
+    left:14px;
+    top:-14px;
+    float:right;
+    position:relative;
+}
+.fileupload-btn{
+            width:120px;
+            height:120px;
+            margin:10px;
+            border:1px solid #eee;
+            float:left;
+            background-color:#fff;
+            line-height:120px;
+            color:#666;
+            font-size:4em;
+        }
+.offline-list-padding {
+    padding: 10px 0;
+}
+.offline-error {
+    background-color: white;
+    color: #b94a48;
+}
+.offline-box-margin {
+    margin-top: 200px;
+}
+.offline-input {
+    font-size:16px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right:5px
+}
+.offline-input-con {
+    position: relative;
+}
+.offline-input-close {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+/*对话框*/
+.BeAlert_overlay {
+    overflow: hidden;
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    z-index: 9999;
+    background: url("dialog/overlay.png");
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+}
+.BeAlert_box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    z-index: 10000;
+    font-family: 微软雅黑;
+    font-size: 12px;
+    text-align: center;
+}
+.BeAlert_box .BeAlert_image {
+    background: #fff;
+    width: 60px;
+    height: 60px;
+    margin: 10px auto;
+}
+.BeAlert_box .BeAlert_image.warning {
+    background: url("dialog/warning.png");
+    background-size: 60px;
+}
+.BeAlert_box .BeAlert_image.error {
+    background: url("dialog/error.png");
+    background-size: 60px;
+}
+.BeAlert_box .BeAlert_image.info {
+    background: url('dialog/res.gif');
+    background-size: 60px;
+}
+    .BeAlert_box .BeAlert_image.question {
+        background: url('dialog/question.png');
+        background-size: 60px;
+    }
+.BeAlert_box .BeAlert_image.success {
+    background: url("dialog/success.png");
+    background-size: 60px;
+}
+.BeAlert_box .BeAlert_title {
+    font-size: 20px;
+    margin: 5px auto;
+}
+.BeAlert_box .BeAlert_message {
+    font-size: 14px;
+    margin: 5px auto;
+}
+.BeAlert_box .BeAlert_button {
+    margin-top: 20px;
+}
+.BeAlert_box .BeAlert_button button {
+    display: none;
+    background-color: #8CD4F5;
+    color: #fff;
+    border: none;
+    box-shadow: none;
+    font-size: 17px;
+    font-weight: 500;
+    -webkit-border-radius: 4px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin: 0 10px;
+    outline: none;
+}
+.BeAlert_box .BeAlert_button button.BeAlert_cancel {
+    background-color: #c1c1c1;
+}
+.BeAlert_box .BeAlert_button button.BeAlert_cancel:hover {
+    background-color: #b9b9b9;
+}
+.BeAlert_box .BeAlert_button button.BeAlert_confirm:hover {
+    background-color: #86CCEB;
+}
+/** Base container **/
+.kalendae {
+	display: inline-block;zoom:1;*display:inline;
+	background:#eee;
+	padding:15px;
+	margin:5px;
+	border-radius:5px;
+	font-size:11px;
+	font-family:'Helvetica Neue', 'Helvetica';
+	cursor:default;
+	position:relative;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.kalendae * {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/** Popup Container for Kalendae.Input **/
+.kalendae.k-floating {
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:100000;
+	margin:0;
+	box-shadow:0 1px 3px rgba(0,0,0,0.75);
+}
+
+/** Kalendae.Input's popup close button **/
+.kalendae .k-btn-close {
+    display:none;
+	position:absolute;
+	top:-8px;
+	right:-8px;
+	width:20px;
+	height:20px;
+	background:white;
+	border:2px solid #ccc;
+	color:#999;
+	line-height:17px;
+	text-align:center;
+	font-size:13px;
+	border-radius:10px;
+	box-shadow:0 1px 3px rgba(0,0,0,0.75);
+	cursor:pointer;
+	text-decoration:none;
+}
+.kalendae .k-btn-close:after {content:"\2716";}
+.kalendae .k-btn-close:hover {
+	color:#7EA0E2;
+	background:white;
+	border-color:#7EA0E2;
+}
+
+/** Month Container **/
+.kalendae .k-calendar {display: inline-block;zoom:1;*display:inline;width:155px;vertical-align:top;}
+
+/** Month Separator **/
+.kalendae .k-separator {
+	display: inline-block;zoom:1;*display:inline;
+	width:2px;
+	vertical-align:top;
+	background:#ddd;
+	height:155px;
+	margin:0px 10px;
+}
+
+/** Month Title Row **/
+.kalendae .k-title {text-align:center;white-space:nowrap;position:relative;height:18px;}
+.kalendae .k-caption {font-size:12px;line-height:18px;}
+
+
+/** Month and Year Buttons **/
+.kalendae .k-btn-previous-month,
+.kalendae .k-btn-next-month,
+.kalendae .k-btn-previous-year,
+.kalendae .k-btn-next-year {
+	width:16px;
+	height:23px;
+	cursor:pointer;
+	position:absolute;
+	top:-3px;
+	color:#777;
+	font-size:32px;
+	line-height: 18px;
+	font-weight: bold;
+	font-family: arial;
+	text-decoration:none;
+}
+
+.kalendae .k-btn-previous-year {left:0;}
+.kalendae .k-btn-previous-month {left:16px;}
+.kalendae .k-btn-next-month {right:16px;}
+.kalendae .k-btn-next-year {right:0;}
+
+.kalendae .k-btn-previous-month:after {content:"\2039";}
+.kalendae .k-btn-next-month:after {content:"\203A";}
+
+.kalendae .k-btn-previous-year:after {content:"\00AB";}
+.kalendae .k-btn-next-year:after {content:"\00BB";}
+
+.kalendae .k-btn-previous-month:hover,
+.kalendae .k-btn-next-month:hover {color:#7EA0E2;}
+
+.kalendae .k-btn-previous-year:hover,
+.kalendae .k-btn-next-year:hover {color:#6FDF81;}
+
+/** Remove extra buttons when calendar shows multiple months **/
+.kalendae .k-first-month .k-btn-next-month,
+.kalendae .k-middle-month .k-btn-next-month,
+.kalendae .k-middle-month .k-btn-previous-month,
+.kalendae .k-last-month .k-btn-previous-month,
+.kalendae .k-first-month .k-btn-next-year,
+.kalendae .k-middle-month .k-btn-next-year,
+.kalendae .k-middle-month .k-btn-previous-year,
+.kalendae .k-last-month .k-btn-previous-year {display:none;}
+
+/** Disable year nav option **/
+.kalendae .k-title.k-disable-year-nav .k-btn-next-year,
+.kalendae .k-title.k-disable-year-nav .k-btn-previous-year { display: none; }
+.kalendae .k-title.k-disable-year-nav .k-btn-next-month { right: 0; }
+.kalendae .k-title.k-disable-year-nav .k-btn-previous-month { left: 0; }
+
+/** Force specific width for month container contents **/
+.kalendae .k-title,
+.kalendae .k-header,
+.kalendae .k-days {
+	width:154px;
+	display:block;
+	overflow:hidden;
+}
+
+
+/** Hide unusable buttons **/
+.kalendae.k-disable-next-month-btn .k-btn-next-month,
+.kalendae.k-disable-previous-month-btn .k-btn-previous-month,
+.kalendae.k-disable-next-year-btn .k-btn-next-year,
+.kalendae.k-disable-previous-year-btn .k-btn-previous-year {
+	display:none;
+}
+
+
+/** Week columns and day cells **/
+.kalendae .k-header span,
+.kalendae .k-days span {
+	float:left;
+	margin:1px 1px 2px 1px;
+}
+
+.kalendae .k-header span {
+	text-align:center;
+	font-weight:bold;
+	width:20px;
+	padding:1px 0;
+	color:#666;
+}
+
+.kalendae .k-header.k-active span {
+	cursor: pointer;
+	border-radius:3px;
+}
+
+.kalendae .k-days span {
+	text-align:right;
+	width:20px;
+	height:1.5em;
+	line-height:1em;
+	padding:2px 3px 2px 2px;
+	border:1px solid transparent;
+	border-radius:3px;
+	color:#999;
+}
+
+/** Today **/
+.kalendae .k-today {
+	text-decoration:underline;
+}
+
+/** Days inside of the month view **/
+.kalendae .k-days span.k-in-month.k-active {
+	border-color:#ddd;
+	background-color:#fff;
+	color:#333;
+}
+/** Days outside of the month view (before the first day of the month, after the last day of the month) **/
+.kalendae .k-days span.k-out-of-month {color:#ddd;}
+
+/** Selectable  **/
+.kalendae .k-days span.k-active {
+	cursor:pointer;
+}
+
+/** Selected day, when outside the selectable area **/
+.kalendae .k-days span.k-selected {
+	border-color:#1072A5;
+	color:#1072A5;
+}
+
+/** Selected day, when inside the selectable area **/
+.kalendae .k-days span.k-selected.k-active,
+.kalendae .k-header.k-active span.k-selected {
+	background:#7EA0E2;
+	color:white;
+}
+
+/** Days between the start and end points on a range, outside of the selectable area **/
+.kalendae .k-days span.k-range {
+	background:none;
+	border-color:#6DD4FE;
+}
+
+/** Days between the start and end points on a range, inside of the selectable area **/
+.kalendae .k-days span.k-range.k-in-month {
+	background:#C4D4F1;
+	border-color:#19AEFE;
+	color:#333;
+}
+
+/** Selectable day, hovered **/
+.kalendae .k-days span.k-active:hover,
+.kalendae .k-days span.k-active.k-day-hover-active {
+	border-color:#666;
+}
+
+/** Selectable week, hovered **/
+.kalendae .k-week:hover span.k-active {
+	border-color:#666;
+}
+
+.clearfix:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
+
+/*-------------------------------------IE8 ONLY CODE BELOW THIS LINE--------------------------------------------*/
+
+.kalendae.ie8.k-floating {
+	border:1px solid #ccc;
+}
+
+.kalendae.ie8 .k-btn-close {
+	width:20px;
+	height:20px;
+	border:none;
+	background:url('close.png') no-repeat top left;
+}
+.kalendae.ie8 .k-btn-close:after {display:none;}
+
+.kalendae.ie8 .k-btn-previous-month,
+.kalendae.ie8 .k-btn-next-month,
+.kalendae.ie8 .k-btn-previous-year,
+.kalendae.ie8 .k-btn-next-year {width:16px;height:16px;cursor:pointer;background:#777 url('arrows.png') no-repeat center left;position:absolute;top:0;}
+
+.kalendae.ie8 .k-btn-next-month,
+.kalendae.ie8 .k-btn-next-year {background-position:center right;}
+
+.kalendae.ie8 .k-btn-previous-month:hover,
+.kalendae.ie8 .k-btn-next-month:hover {background-color:#7EA0E2;}
+
+.kalendae.ie8 .k-btn-previous-year,
+.kalendae.ie8 .k-btn-next-year {background-color:#333;}
+
+.kalendae.ie8 .k-btn-previous-year:hover,
+.kalendae.ie8 .k-btn-next-year:hover {background-color:#6FDF81;}
+
+.kalendae.ie8 .k-btn-previous-month:after,
+.kalendae.ie8 .k-btn-next-month:after,
+.kalendae.ie8 .k-btn-previous-year:after,
+.kalendae.ie8 .k-btn-next-year:after {display:none;}
+

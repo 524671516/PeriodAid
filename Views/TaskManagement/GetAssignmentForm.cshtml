@@ -1,0 +1,91 @@
+﻿@model PeriodAid.Models.Assignment
+@using (Html.BeginForm("CreateAssignment", "TaskManagement", FormMethod.Post, new { @id = "add_assignment_form", @class = "validate-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+    @Html.HiddenFor(m => m.ProcedureId)
+    @Html.HiddenFor(m => m.SubjectId)
+    <div class="form-group">
+       @Html.TextBoxFor(m => m.AssignmentTitle, new {@class="form-control", @placeholder="任务名称"})
+    </div>
+    <div class="form-group">
+        <textarea class="form-control" rows="2"  placeholder="任务描述" id="Remarks" name="Remarks"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="HolderId">负责人</label>
+        @Html.DropDownListFor(m=>m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdown", @id= "tm_select_straff" })
+    </div>
+    <div class="form-group">
+        <label for="HolderId">优先级</label>
+        <select name="Priority" id="Priority" class="form-control">
+            <option value="1">一般</option>
+            <option value="2">急需</option>
+        </select>
+       
+    </div>
+    <div class="text-right">
+        <a class="btn btn-default" id="cancel-create-assignment">取消</a>
+        <a class="btn btn-primary" id="create-assignment">确定</a>
+    </div>
+}
+<script>
+    $('#tm_select_straff').selectpicker({
+        liveSearch: true,
+        liveSearchPlaceholder: "搜索人员",
+        width: "100%",
+        dropupAuto: false,
+    });
+    //新增任务验证
+    $("#add_assignment_form").validate({
+        debug: false,
+        rules: {
+            AssignmentTitle: {
+                required: true,
+                maxlength: 64
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data.result == "SUCCESS") {
+                    UnimportantAlert("任务创建成功。");
+                    GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_pannel-body"));
+                    $.ajax({
+                        url: "/TaskManagement/GetProcedureJsonInfo",
+                        type: "post",
+                        data: {
+                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                        },
+                        success: function (data) {
+                            var len = data.data.length;
+                            $(".ajax-procedure").each(function () {
+                                for (i = 0; i < len; i++) {
+                                    if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                        $(this).find(".total-num").html(data.data[i].TotalNum)
+                                        $(this).find(".num").html(data.data[i].FinishNum)
+                                    }
+                                }
+                            })
+                        }
+                    })
+                } else {
+                    ErrorAlert(data.result);
+                    $("#create-assignment").removeClass("disabled");
+                }
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#create-assignment").removeClass("disabled");
+        }
+    });
+
+    //新增任务
+    $("#create-assignment").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled");
+            $("#add_assignment_form").submit();
+        }
+    })
+</script>

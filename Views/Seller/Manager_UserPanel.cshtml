@@ -1,0 +1,61 @@
+﻿@model PeriodAid.Models.Off_StoreManager
+
+<div class="img-center">
+    <div class="row">
+        <!-- Each "cell" has col-[widht in percents] class -->
+        <div class="col-40">
+            @if (ViewBag.ImgUrl == null)
+            {
+                <img src="/Content/images/logo_new.png" class="img-circle img-responsive" id="user-imgurl" />
+            }
+            else
+            {
+                <img src="@ViewBag.ImgUrl" class="img-circle img-responsive" id="user-imgurl" />
+            }
+        </div>
+        <div class="col-40">
+            <div style="margin:10px 0;"><span id="user-nickname" class="h4">@Html.Encode(ViewBag.NickName)</span></div>
+            <a href="javascript:window.location.href='/Seller/UpdateUserInfo';" class="button active h6">更新头像</a>
+        </div>
+        <div class="col-20"></div>
+    </div>
+</div>
+
+<div class="list-block">
+    <div class="list-group">
+        <ul>
+            <li class="item-content list-panel-all">
+                <div class="item-inner">
+                    <div class="item-title">真实姓名</div>
+                    <div class="item-after">@Html.Encode(Model.NickName == null ? "N/A" : Model.NickName)</div>
+                </div>
+            </li>
+            <li class="item-content list-panel-all">
+                <div class="item-inner">
+                    <div class="item-title">类别</div>
+                    <div class="item-after">@Html.Encode(Model.Status == 1? "普通管理员" : "高级管理员")</div>
+                </div>
+            </li>
+            <li class="item-content list-panel-favorites">
+                <div class="item-inner">
+                    <div class="item-title">管辖门店数</div>
+                    <div class="item-after">@Html.Encode(Model.Off_Store.Count)</div>
+                </div>
+            </li>
+            <li>
+                <a href="javascript:;" class="item-content item-link manager-photolist">
+                    <div class="item-inner">
+                        <div class="item-title">使用指南</div>
+                        <div class="item-after"></div>
+                    </div>
+                </a>
+            </li>
+            <li class="item-content">
+                <div class="item-inner">
+                    <div class="item-title">当前版本</div>
+                    <div class="item-after">v1.6.0</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

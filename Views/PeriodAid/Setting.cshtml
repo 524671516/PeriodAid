@@ -1,0 +1,123 @@
+﻿@using PeriodAid.Models;
+@using PeriodAid.Controllers;
+@model PeriodAid.Models.PeriodUserInfoViewModel
+@{
+    ViewBag.Title = "个人设置";
+    Layout = "~/Views/Shared/_PeriodAidLayout.cshtml";
+}
+@section header{
+    <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="navbar navbar-fixed-top setting-nav">
+        <div class="container container-body ">
+            <div class="row">
+                <div class="col-xs-6">
+                    <h5><i class="fa fa-cogs fa-lg"></i>&nbsp;&nbsp;<b>个人设置</b></h5>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <button class="btn btn-success" type="submit">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container container-body" style="margin-top:80px;">
+        <div class="container hidden" id="error-hint">
+            <div class="row">
+                <div class="col-xs-1">
+
+                </div>
+                <div class="col-xs-10 text-center">
+                    <span id="error-hint-body"></span>
+                </div>
+                <div class="col-xs-1"></div>
+            </div>
+        </div>
+        <table class="table setting-table">
+            <tbody>
+                <tr>
+                    <td class="col-xs-6">昵称</td>
+                    <td class="col-xs-6 text-right">
+                        @((ViewBag.User as ApplicationUser).NickName)
+                    @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control input-group-sm setting-input hidden disabled", @type = "Text" } })
+                    @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">头像</td>
+                <td class="col-xs-6 text-right"><img src="@((ViewBag.User as ApplicationUser).ImgUrl)" class="img-circle img-responsive" style="max-width:50px; max-height:50px; float:right;" /></td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">绑定手机</td>
+                <td class="col-xs-6 text-right">@((ViewBag.User as ApplicationUser).PhoneNumber)</td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">年龄</td>
+                <td class="col-xs-6 text-right form-group">
+                    @Html.DropDownList("UserAge", ViewBag.Age as SelectList, new { @class = "form-control input-sm setting-input" })
+                    @Html.ValidationMessageFor(model => model.UserAge, "", new { @class = "text-danger hidden" })
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">上次经期开始</td>
+                <td class="col-xs-6 text-right form-group">
+                    @Html.EditorFor(m => m.Last_MC_Begin, new { htmlAttributes = new { @class = "form-control input-group-sm setting-input", @type = "Date" } })
+                    @Html.ValidationMessageFor(model => model.Last_MC_Begin, "", new { @class = "text-danger hidden" })
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">经期时间</td>
+                <td class="col-xs-6 text-right form-group">
+                    @Html.DropDownList("MC_Days", ViewBag.PeriodDay as SelectList, new { @class = "form-control input-sm setting-input" })
+                    @Html.ValidationMessageFor(model => model.MC_days, "", new { @class = "text-danger hidden" })
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">平均周期</td>
+                <td class="col-xs-6 text-right form-group">
+                    @Html.DropDownList("MC_Cycle", ViewBag.Cycle as SelectList, new { @class = "form-control input-sm setting-input" })
+                    @Html.ValidationMessageFor(model => model.MC_Cycle, "", new { @class = "text-danger hidden" })
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">怀孕期</td>
+                <td class="col-xs-6 text-right">
+                    @Html.CheckBoxFor(m => m.Pregnancy)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-6">已生育</td>
+                <td class="col-xs-6 text-right">
+                    @Html.CheckBoxFor(m => m.Pre_Pregnancy)
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+}
+@section scripts{
+    <span id="nav-name" class="hidden">User</span>
+    <script src="~/Scripts/bootstrap-switch.min.js"></script>
+    <script>
+        $.fn.bootstrapSwitch.defaults.size = 'mini';
+        $.fn.bootstrapSwitch.defaults.onColor = 'success';
+        $.fn.bootstrapSwitch.defaults.onText = "&nbsp;是&nbsp;";
+        $.fn.bootstrapSwitch.defaults.offText = "&nbsp;否&nbsp;";
+        $(function () {
+            $("[name='Pregnancy'][type='checkbox']").bootstrapSwitch();
+            $("[name='Pre_Pregnancy'][type='checkbox']").bootstrapSwitch();
+            //$(".input-validation-error").closest(".form-group").addClass("has-error");
+            var list = $(".input-validation-error").length;
+            if (list > 0) {
+                $("#error-hint-body").html($(".input-validation-error").next().text() + " <i class='fa fa-times-circle fa-lg'></i> ");
+                $("#error-hint").removeClass("hidden");
+            }
+            //$("#error-hint-body").text($(".input-validation-error").text());
+            $(".fa-times-circle").click(function () {
+                $("#error-hint").addClass("hidden");
+            });
+        });
+    </script>
+}

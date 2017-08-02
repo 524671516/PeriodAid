@@ -1,0 +1,51 @@
+﻿@model PeriodAid.Models.Wx_ManagerReportListViewModel
+
+
+@if (Model.Status == 4)
+{
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.Status)
+        @Html.HiddenFor(m => m.Rep_Total)
+        @Html.HiddenFor(m => m.SellerName)
+        @Html.HiddenFor(m => m.StoreName)
+        <div class="weui_cells_title">红包金额提交</div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">奖金</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Bonus, new { htmlAttributes = new { @class = "weui_input", type = "number", placeholder = "请输入金额" } })
+                </div>
+                <div class="weui_cell_ft">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.TextAreaFor(m => m.Bonus_Remark, new { @class = "weui_textarea", rows = "2", placeholder = "请输入红包理由" })
+                </div>
+            </div>
+        </div>
+        <div class="weui_actionsheet_action">
+            <div class="weui_actionsheet_cell action_sheet_cell_primary" id="bonus-submit" onclick="javascript:formpost();">提交</div>
+        </div>
+    }
+}
+else
+{
+    <div class="weui_actionsheet_action">
+        @Html.HiddenFor(m=>m.Bonus_Remark)
+        @Html.HiddenFor(m=>m.Bonus)
+        <div class="weui_actionsheet_cell" id="bonus-submit" onclick="javascript: cancelpost();">取消</div>
+    </div>
+}
+<br /><br /><br />
+<script>
+    $(function () {
+        var tl = cal_textlength();
+        $("#current_length").text(tl);
+    });
+    
+</script>
+
