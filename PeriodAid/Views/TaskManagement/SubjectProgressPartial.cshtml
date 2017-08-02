@@ -5,7 +5,7 @@
     <h4 class="modal-title">今日进度</h4>
 </div>
 <div class="container-fluid">
-    <div class="row modal-nav-pannel">
+    <div class="row modal-nav-Panel">
         <div class="col-md-3 tm_modal_ul_wrap">
             <ul class="list-group tm_modal-nav tm_modal_nav_ul">
                 <li class="list-group-item tm_active" data-href="/TaskManagement/SubjectFinishProgressPartial">已完成</li>
@@ -27,7 +27,7 @@
     $.ajax({
         url: $(".tm_active").attr("data-href"),
         data: {
-            SubjectId: $("#pannel-wrap").attr("data-sid")
+            SubjectId: $("#Panel-wrap").attr("data-sid")
         },
         success: function (data) {
             $("#tm_modal_list_area").html(data);
@@ -44,7 +44,7 @@
         $.ajax({
             url: $(this).attr("data-href"),
             data:{
-                SubjectId:$("#pannel-wrap").attr("data-sid")
+                SubjectId:$("#Panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 $("#tm_modal_list_area").html(data);

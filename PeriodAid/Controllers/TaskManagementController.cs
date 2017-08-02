@@ -579,41 +579,44 @@ namespace PeriodAid.Controllers
             }
         }
 
+
+        //获取任务列表表单
+        public PartialViewResult GetProcedureForm(int ProcedureId,int SubjectId)
+        {
+            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId);
+            ViewBag.sid = SubjectId;
+            return PartialView(procedure);
+        }
         //修改任务列表
         [HttpPost]
         [OperationAuth(OperationGroup = 103)]
-        public async Task<JsonResult> Edit_Procedure(int ProcedureId, int SubjectId, string PName)
+        public async Task<JsonResult> Edit_Procedure(Procedure model,FormCollection form)
         {
-            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId && m.Status == ProcedureStatus.NORMAL);
             var employee = getEmployee(User.Identity.Name);
-            if (employee.Subject.Select(p => p.TemplateId).Contains(procedure.TemplateId))
+            if (ModelState.IsValid)
             {
-                var assignmentlist = (from m in _db.Assignment
-                                      where m.ProcedureId == ProcedureId && m.Status > AssignmentStatus.DELETED
-                                      select m).Count();
-                if (assignmentlist == 0)
+                try
                 {
-                    try
+                    if (TryUpdateModel(model))
                     {
-                        procedure.ProcedureTitle = PName;
-                        _db.Entry(procedure).State = System.Data.Entity.EntityState.Modified;
+                        _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
                         await _db.SaveChangesAsync();
-                        await AddLogAsync(LogCode.EDITSUBJECT, employee, SubjectId, "将任务列表" + "[" + procedure.ProcedureTitle + "]修改为[" + PName + "]。");
+                        await AddLogAsync(LogCode.EDITSUBJECT, employee, Convert.ToInt32(form["SubjectId"]), "将任务列表【" + form["OldTitle"] + "】修改为【" + model.ProcedureTitle + "】。");
+                        return Json(new { result = "SUCCESS", msg = "修改成功。" });
                     }
-                    catch (Exception)
+                    else
                     {
-                        return Json(new { result = "FAIL", errmsg = "修改过程失败。" });
+                        return Json(new { result = "FAIL", errmsg = "模型同步失败。" });
                     }
-                    return Json(new { result = "SUCCESS", Id = procedure.Id });
                 }
-                else
+                catch (Exception)
                 {
-                    return Json(new { result = "FAIL", errmsg = "请先清空列表中的任务。" });
+                    return Json(new { result = "FAIL", errmsg = "内部异常。" });
                 }
             }
             else
             {
-                return Json(new { result = "FAIL", errmsg = "你没有权限修改任务列表。" });
+                return Json(new { result = "FAIL", errmsg = "模型验证失败。" });
             }
         }
 
@@ -1202,7 +1205,7 @@ namespace PeriodAid.Controllers
             {
                 return Json(new { result = "FAIL", errmsg = "内部异常。" });
             }
-            return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId });
+            return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId,ParentStatus=subtask.Assignment.Status });
         }
         #endregion
 
@@ -1475,6 +1478,40 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //修改文件
+        [HttpPost]
+        public async Task<JsonResult> Subject_EditFile(int FileId,string Filename)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "员工不存在。" });
+            }
+            else
+            {
+                var file = _db.SubjectAttachment.SingleOrDefault(m => m.Id == FileId && m.Status > AttachmentStatus.DELETE);
+                if (file != null)
+                {
+                    if (file.UploaderId == employee.Id || file.Subject.HolderId == employee.Id)
+                    {
+                        file.AttachmentTitle = Filename;
+                        _db.Entry(file).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.EDITSUBJECT, employee, file.SubjectId, "把文件【" + file.AttachmentTitle + "】的名称修改为【"+Filename+"】。");
+                        return Json(new { result = "SUCCESS", errmsg = "" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL", errmsg = "当前用户没有权限修改此文件。" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL", errmsg = "操作失败，此文件已经被删除。" });
+                }
+            }
+        }
+
         //上传文件
         [HttpPost]
         [OperationAuth(OperationGroup = 102)]
@@ -1701,9 +1738,83 @@ namespace PeriodAid.Controllers
         #endregion
 
 
+        #region 我的任务操作
+        //获取我的任务页面
+        public ActionResult PersonalActionPanel()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+
+        }
+
+        //个人近期的事情
+        public ActionResult PersonlRecentPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人任务
+        public ActionResult PersonalTaskPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人文件
+        public ActionResult PersonalFilePartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人收藏
+        public ActionResult PersonalCollectionPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+        #endregion
+
+
         //获取项目侧边栏
         [OperationAuth(OperationGroup = 102)]
-        public PartialViewResult SubjectMenuPannelPartial(int SubjectId)
+        public PartialViewResult SubjectMenuPanelPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var loglist = (from m in _db.OperationLogs
