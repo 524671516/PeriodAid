@@ -1,7 +1,25 @@
 ﻿$(function () {
     //控制我的任务
     $("#my-app").on("click", ".tm-control-view-Panel", function () {
+        if ($("#tm-my-view").length > 0) {
             $("#tm-my-view").fadeToggle();
+            $("#my-app").removeClass(".tm-open-view");
+        } else {
+            $.ajax({
+                url: "/TaskManagement/PersonalActionPanel",
+                success: function (data) {
+                    if (data =="FAIL") {
+                        ErrorAlert("获取我的任务失败。")
+                    } else {
+                        $("#my-app").append(data).addClass(".tm-open-view");
+                        $("#tm-my-view").fadeToggle();
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。");
+                }
+            });
+        }       
         })
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {

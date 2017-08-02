@@ -1722,8 +1722,75 @@ namespace PeriodAid.Controllers
 
         #region 我的任务操作
         //获取我的任务页面
-        public ActionResult PersonalActionPanel
+        public ActionResult PersonalActionPanel()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
 
+        }
+
+        //个人近期的事情
+        public ActionResult PersonlRecentPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人任务
+        public ActionResult PersonalTaskPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人文件
+        public ActionResult PersonalFilePartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人收藏
+        public ActionResult PersonalCollectionPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
         #endregion
 
 
