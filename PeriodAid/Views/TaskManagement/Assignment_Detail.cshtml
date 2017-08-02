@@ -255,6 +255,7 @@
                         })
                         UnimportantAlert(data.msg);
                     } else {
+                        $("#btn_add_comment").removeClass("disabled");
                         ErrorAlert(data.errmsg);
                     }
                 })

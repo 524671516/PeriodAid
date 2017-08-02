@@ -566,41 +566,44 @@ namespace PeriodAid.Controllers
             }
         }
 
+
+        //获取任务列表表单
+        public PartialViewResult GetProcedureForm(int ProcedureId,int SubjectId)
+        {
+            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId);
+            ViewBag.sid = SubjectId;
+            return PartialView(procedure);
+        }
         //修改任务列表
         [HttpPost]
         [OperationAuth(OperationGroup = 103)]
-        public async Task<JsonResult> Edit_Procedure(int ProcedureId, int SubjectId, string PName)
+        public async Task<JsonResult> Edit_Procedure(Procedure model,FormCollection form)
         {
-            var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId && m.Status == ProcedureStatus.NORMAL);
             var employee = getEmployee(User.Identity.Name);
-            if (employee.Subject.Select(p => p.TemplateId).Contains(procedure.TemplateId))
+            if (ModelState.IsValid)
             {
-                var assignmentlist = (from m in _db.Assignment
-                                      where m.ProcedureId == ProcedureId && m.Status > AssignmentStatus.DELETED
-                                      select m).Count();
-                if (assignmentlist == 0)
+                try
                 {
-                    try
+                    if (TryUpdateModel(model))
                     {
-                        procedure.ProcedureTitle = PName;
-                        _db.Entry(procedure).State = System.Data.Entity.EntityState.Modified;
+                        _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
                         await _db.SaveChangesAsync();
-                        await AddLogAsync(LogCode.EDITSUBJECT, employee, SubjectId, "将任务列表" + "[" + procedure.ProcedureTitle + "]修改为[" + PName + "]。");
+                        await AddLogAsync(LogCode.EDITSUBJECT, employee, Convert.ToInt32(form["SubjectId"]), "将任务列表【" + form["OldTitle"] + "】修改为【" + model.ProcedureTitle + "】。");
+                        return Json(new { result = "SUCCESS", msg = "修改成功。" });
                     }
-                    catch (Exception)
+                    else
                     {
-                        return Json(new { result = "FAIL", errmsg = "修改过程失败。" });
+                        return Json(new { result = "FAIL", errmsg = "模型同步失败。" });
                     }
-                    return Json(new { result = "SUCCESS", Id = procedure.Id });
                 }
-                else
+                catch (Exception)
                 {
-                    return Json(new { result = "FAIL", errmsg = "请先清空列表中的任务。" });
+                    return Json(new { result = "FAIL", errmsg = "内部异常。" });
                 }
             }
             else
             {
-                return Json(new { result = "FAIL", errmsg = "你没有权限修改任务列表。" });
+                return Json(new { result = "FAIL", errmsg = "模型验证失败。" });
             }
         }
 
@@ -1189,7 +1192,7 @@ namespace PeriodAid.Controllers
             {
                 return Json(new { result = "FAIL",errmsg="内部异常。" });
             }
-            return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId });
+            return Json(new { result = "SUCCESS", Id = subtask.Assignment.ProcedureId,ParentStatus=subtask.Assignment.Status });
         }
         #endregion
 
@@ -1327,6 +1330,10 @@ namespace PeriodAid.Controllers
         public PartialViewResult SubjectLogsPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var EmployeeList = from m in _db.Employee
+                               where m.Status > EmployeeStatus.DEVOICE
+                               select m;
+            ViewBag.EmployeeDropDown = EmployeeList;
             return PartialView(subject);
         }
 
@@ -1454,6 +1461,40 @@ namespace PeriodAid.Controllers
                 ContentTypeClass ctc = GetContentType(TypeCode);
                 ViewBag.CTC = ctc;
                 return PartialView(subjectattachment);
+            }
+        }
+
+        //修改文件
+        [HttpPost]
+        public async Task<JsonResult> Subject_EditFile(int FileId,string Filename)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "员工不存在。" });
+            }
+            else
+            {
+                var file = _db.SubjectAttachment.SingleOrDefault(m => m.Id == FileId && m.Status > AttachmentStatus.DELETE);
+                if (file != null)
+                {
+                    if (file.UploaderId == employee.Id || file.Subject.HolderId == employee.Id)
+                    {
+                        file.AttachmentTitle = Filename;
+                        _db.Entry(file).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.EDITSUBJECT, employee, file.SubjectId, "把文件【" + file.AttachmentTitle + "】的名称修改为【"+Filename+"】。");
+                        return Json(new { result = "SUCCESS", errmsg = "" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL", errmsg = "当前用户没有权限修改此文件。" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL", errmsg = "操作失败，此文件已经被删除。" });
+                }
             }
         }
 
@@ -1683,6 +1724,173 @@ namespace PeriodAid.Controllers
         #endregion
 
 
+        #region 我的任务操作
+        //获取我的任务页面
+        public ActionResult PersonalActionPannel()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+
+        }
+
+        //个人近期的事情
+        public ActionResult PersonlRecentPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //近期任务获取
+        public ActionResult PersonalRecentAssignmentPartial(int? page, string timerange, string sorttype)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                int _page = page ?? 0;
+                ViewBag.currentpage = _page;
+                if (timerange == null|| timerange =="")
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var recentassignmentlist = (from m in _db.Assignment
+                                                    where m.HolderId == employee.Id&&m.Status==AssignmentStatus.UNFINISHED
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.TIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+                else
+                {
+                    TimeRangeClass _timerange = getTimeRange(timerange);
+                    if (sorttype == null|| sorttype =="")
+                    {
+                        var recentassignmentlist = (from m in _db.Assignment
+                                                    where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED&&m.Deadline>=_timerange.StartTime&&m.Deadline<_timerange.EndTime
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.TIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.StartTime && m.Deadline < _timerange.EndTime
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.StartTime && m.Deadline < _timerange.EndTime
+                                                        orderby m.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.StartTime && m.Deadline < _timerange.EndTime
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+            }
+        }
+        //近期子任务获取
+
+        //个人任务
+        public ActionResult PersonalTaskPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人文件
+        public ActionResult PersonalFilePartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人收藏
+        public ActionResult PersonalCollectionPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+        #endregion
+
+
         //获取项目侧边栏
         [OperationAuth(OperationGroup = 102)]
         public PartialViewResult SubjectMenuPannelPartial(int SubjectId)
@@ -1756,8 +1964,126 @@ namespace PeriodAid.Controllers
 
 
 
+        public PartialViewResult GetLogs(int? employeeId, int? SubjectId, int? logType, int? logTime, int _page)
+        {
+            if (logType.ToString() != "")
+            {
+                if (logTime.ToString() != "")
+                {
+                    var getLogsByTime = (from m in _db.OperationLogs
+                                         where m.UserId == employeeId
+                                         orderby m.Id
+                                         select m).Skip(_page * 9).Take(9);
+                    return PartialView(getLogsByTime);
+                }
+                else
+                {
+                    if (logType == 5)
+                    {
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    if (logType == 0)
+                    {
+                        var logCodeMin = 105;
+                        var logCodeMax = 108;
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    if (logType == 1)
+                    {
+                        var logCodeMin = 109;
+                        var logCodeMax = 112;
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    else
+                    {
+                        return PartialView("error");
+                    }
+                }
+            }
+            else
+            {
+                if (logTime.ToString() != "")
+                {
+                    if (logTime == 4)
+                    {
+                        string d1 = DateTime.Now.ToShortDateString().ToString();
+                        var starttime = Convert.ToDateTime(d1);
+                        var endtime = Convert.ToDateTime(d1).AddDays(1);
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogTime >= starttime && m.LogTime < endtime
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    if (logTime == 3)
+                    {
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    else
+                    {
+                        return PartialView("error");
+                    }
+                }
+                else
+                {
+                    var getLogsByTime = (from m in _db.OperationLogs
+                                         where m.UserId == employeeId
+                                         orderby m.Id
+                                         select m).Skip(_page * 9).Take(9);
+                    return PartialView(getLogsByTime);
+                }
+            }
+        }
 
+        public TimeRangeClass getTimeRange(string timetype)
+        {
+            TimeRangeClass item = new TimeRangeClass();
+            var _today = DateTime.Today;
+            if (timetype == GetDataType.WEEKDATA)
+            {
+                var startweek = _today.AddDays(1 - Convert.ToInt32(_today.DayOfWeek.ToString("d")));
+                var endweek = startweek.AddDays(7);
+                item.StartTime = startweek;
+                item.EndTime = endweek;
+            }
+            else if (timetype == GetDataType.MONTHDATA)
+            {
+                var startmonth = _today.AddDays(1 - _today.Day);
+                var endmonth = startmonth.AddMonths(1);
+                item.StartTime = startmonth;
+                item.EndTime = endmonth;
 
+            }
+            else if (timetype == GetDataType.YEARDATA)
+            {
+                var startyear = new DateTime(_today.Year, 1, 1);
+                var endyear = startyear.AddYears(1);
+                item.StartTime = startyear;
+                item.EndTime = endyear;
+            }
+            else if (timetype == GetDataType.DAYDATA)
+            {
+                item.StartTime = _today;
+                item.EndTime = _today.AddDays(1);
+            }
+            return item;
+        }
 
         public Employee getEmployee(string username)
         {

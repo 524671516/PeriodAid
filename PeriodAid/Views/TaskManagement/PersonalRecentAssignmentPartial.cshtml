@@ -1,0 +1,22 @@
+﻿@model IEnumerable<PeriodAid.Models.Assignment>
+@if (ViewBag.currentpage == 0)
+{
+    <div class="tm-view-loading-empty">
+        <i class="fa fa-sticky-note-o color-blue fa-4x" aria-hidden="true"></i><br />
+        <strong class="color-blue">没有任何数据</strong>
+    </div>
+}
+else
+{
+    if (Model.Count() >= 20)
+    {
+        foreach (var item in Model)
+        {
+            <li></li>
+        }
+    }
+    else
+    {
+
+    }
+}

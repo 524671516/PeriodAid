@@ -147,6 +147,12 @@ body,html{
 .margin-0{
     margin:0!important;
 }
+.show{
+    display:block !important;
+}
+.hide{
+    display:none !important;
+}
 /*工具样式结束*/
 
 
@@ -189,6 +195,13 @@ a.close{
 
 
 /*dropdown样式改造*/
+.procedure-dropdown-toggle{
+    padding:5px 5px 5px 0;
+}
+.tm-dropdown-area{
+    position:absolute;
+    z-index:9999;
+}
 .tm_dropdown.dropdown-menu.tm_procedure-dropdown{
     left:0;
 }
@@ -218,7 +231,7 @@ a.close{
     outline:none;
     color:#262626;
 }
-.tm_dropdown.dropdown-menu ul li>*{
+.tm_dropdown.dropdown-menu ul li>*,.tm_dropdown.dropdown-menu li>*{
     text-decoration:none;
     display:block;
     padding:10px;
@@ -233,6 +246,8 @@ a.close{
 /*导航改造*/
 #app-header .navbar{
     margin-bottom:0;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
 }
 .navbar-right.navbar-border>li:not(:last-child)>a:after{
     content: ' ';
@@ -427,19 +442,16 @@ a.close{
    -o-transition:  all 300ms ease;	
 }
 .tm_add_pannel_hide .tm_pannel-item-add{
-    left:-200px;
     height:0;
     width:0;
     opacity:0;
 }
 .tm_add_pannel_hide .tm_control_pannel_show{
-    opacity:0.8;
+    opacity:1;
     display:block;
 }
-.tm_control_pannel_show:hover{
-    opacity:1;
-}
 .tm_control_pannel_show{
+    color:#fff;
     display:none;
     opacity:0;
     z-index:999999;
@@ -447,9 +459,9 @@ a.close{
     left:0;
     background-color:#3da8f5;
     width:14px;
-    line-height:30px;
+    line-height:40px;
     top:115px;
-    height:60px;
+    height:80px;
     border-top-right-radius:5px;
     border-bottom-right-radius:5px;
     word-break:break-word;
@@ -642,14 +654,10 @@ a.close{
 .tm_left_icon{
     padding: 5px 5px 5px 0;
 }
-.tm_modal_list-left {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    height: 30px;
-    line-height: 30px;
-    float: left;
-    width:80px;
+.tm_modal_list-left{
+    height:30px;
+    line-height:30px;
+    float:left;
 }
 .tm_modal_list-middle{
     max-width:50%;
@@ -1009,6 +1017,8 @@ a.btn_subtask_detail{
     display:inline-block;
 }
 .tm_files_body_ul_li .tm_files_middle{
+    line-height:30px;
+    height:58px;
     padding:18px 0;
 }
 .tm_files_middle{
@@ -1019,6 +1029,9 @@ a.btn_subtask_detail{
     text-overflow: ellipsis;
     white-space: nowrap;
     width:40%;
+}
+.tm_files_name input{
+    height:30px;
 }
 .tm_files_size,.tm_files_author{
     overflow: hidden;
@@ -1090,10 +1103,181 @@ a.btn_subtask_detail{
 .tm_files_text .tm_files_link{
     font-size:25px;
 }
-
-
-
 /*文件面板结束*/
+
+/*我的任务样式*/
+.tm-open-view{
+    overflow:hidden;
+}
+.tm-view{
+   position: fixed;
+   z-index: 51;
+   top: 53px;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-size: cover;
+   background-position: center;
+   background-color: rgba(238, 238, 238, 0.98);
+   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
+   overflow:auto;
+   display:none;
+}
+.tm-view-header{
+    position:relative;
+    height:47px;
+    border-bottom: 1px solid #E5E5E5;
+    min-width:550px;
+}
+.tm-view-control{
+    width:100%;
+    left:0;
+    right:0;
+    text-align:center;
+}
+.tm-my-view-close button{
+    outline:none;
+}
+.tm-my-view-close{  
+    text-align:center;
+    position:absolute;
+    right:15px;
+    top:0;
+    bottom:0;
+    padding:11px 22px 12px 25px;
+}
+.tm-view-control .tm-view-control-link{
+    display:inline-block;
+    float:none;
+}
+.tm-view-control-link,.tm-view-control-sort{
+    position:relative;
+    color: #777;
+    display:block;
+    float:left;
+    padding:15px 15px 12px 15px;
+    margin:0 15px;
+}
+.tm-view-control-link:hover:after,.tm-view-control-link.active:after{
+    opacity:1;
+    border-width:2px;
+}
+.tm-view-control-link:after{
+    opacity:0;
+    width:100%;
+    content:'';
+    position:absolute;
+    height:1px;
+    left:0;
+    bottom:0;
+    border-bottom: 0px solid #3da8f5;
+    background-color:#3da8f5;
+    transition:  all 0.3s ease-out;
+   -moz-transition:  all 0.3s ease-out;	/* Firefox 4 */
+   -webkit-transition:  all 0.3s ease-out;	/* Safari 和 Chrome */
+   -o-transition:  all 0.3s ease-out;
+}
+.tm-view-content {
+    padding-top:20px;
+    position:absolute;
+    bottom:0;
+    top:47px;
+    width:100%;
+    overflow:hidden;
+}
+.tm-view-content-wrap{
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
+    background-color:#FFFFFF;
+    position: relative;
+    margin: 0 auto;
+    width: 960px;
+    height: 100%;
+
+}
+.tm-view-content-container{
+    width:100%;
+    height:100%;
+    overflow-y:scroll;
+}
+.tm-view-content .tm-view-header{
+    margin:0 20px;
+}
+.tm-view-content .tm-view-header .tm-view-control-link,.tm-view-content .tm-view-header .tm-view-control-sort{
+    margin:0px;
+    font-size:14px;
+    padding-left:10px;
+    padding-right:10px;
+}
+.tm-view-content .tm-view-header .tm-view-control-link:first-child,.tm-view-content .tm-view-header .tm-view-control-sort:first-child{
+    margin-left:0;
+}
+.tm-has-line:after{
+    content: ' ';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    height: 22px;
+    width: 1px;
+    margin: 13px 0;
+    background: #E5E5E5;
+    transition: all 218ms 100ms;
+    right: 0
+}
+.tm-view-content .tm_dropdown a{
+    position:relative;
+}
+.tm-view-content .tm_dropdown a.selected:after{
+    font: normal normal normal 14px/1 FontAwesome;
+    position:absolute;
+    top:0;
+    right:0;
+    content: "\f00c";
+    display:inline-block;
+    margin:15px 0;
+    padding:0 10px;
+}
+.tm-veiw-loading{
+    padding:10px;
+}
+.tm-view-loading-empty{
+    text-align:center;
+    padding:50px 0;
+}
+.tm-view-li{
+    padding:0 20px;
+    width:100%;
+    cursor:pointer;
+    border-bottom:1px solid #E5E5E5; 
+}
+.tm-view-li:hover{
+    background-color:rgba(229,229,229,.5);
+}
+.tm-view-avatar{
+    width:35px;
+    padding:12px 5px 12px 0;
+}
+.tm-view-checkbox{
+    width:50px;
+    vertical-align:middle;
+    text-align:center;
+    padding:10px;
+}
+.tm-checkbox-input{
+    height:20px;
+    width:20px;
+}
+.tm-view-info{
+    width:80%;
+    padding:5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tm-view-nomore{
+    padding:10px;
+    text-align:center;
+}
+/*我的任务样式结束*/
 
 
 

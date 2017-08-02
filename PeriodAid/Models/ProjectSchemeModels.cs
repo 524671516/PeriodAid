@@ -541,7 +541,43 @@
         public static int EDITPERSONALINFO = 113;
 
     }
+    public static class GetDataType
+    {
+        /// <summary>
+        /// 日数据
+        /// </summary>
+        public static string DAYDATA = "day";
+        /// <summary>
+        ///周数据
+        /// </summary>
+        public static string WEEKDATA = "week";
+        /// <summary>
+        /// 日数据
+        /// </summary>
+        public static string MONTHDATA = "month";
+        /// <summary>
+        /// 日数据
+        /// </summary>
+        public static string YEARDATA = "year";
+        /// <summary>
+        /// 时间排序
+        /// </summary>
+        public static string TIMESORTDATA = "timesort";
+        /// <summary>
+        /// 项目排序
+        /// </summary>
+        public static string SUBJECTSORTDATA = "subjectsort";
+        /// <summary>
+        /// 已完成
+        /// </summary>
+        public static string FINISHDATA = "finish";
+        /// <summary>
+        /// 未完成
+        /// </summary>
+        public static string UNFINISHDATA = "unfinish";
 
+
+    }
 
     public class SubjectFileArea
     {

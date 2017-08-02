@@ -1062,6 +1062,15 @@
     <Content Include="Views\TaskManagement\Subject_FilesPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNotFound.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNoAuthority.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogs.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonlRecentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalActionPannel.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalCollectionPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalFilePartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalTaskPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
