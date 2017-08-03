@@ -1966,91 +1966,142 @@ namespace PeriodAid.Controllers
 
 
 
-        public PartialViewResult GetLogs(int? employeeId, int? SubjectId, int? logType, int? logTime, int _page)
+        public ActionResult GetLogs(int? employeeId, int? SubjectId, string logType, string logTime, int _page)
         {
-            if (logType.ToString() != "")
+            int _subjectId = SubjectId ?? 0;
+            int _employeeId = employeeId ?? 0;
+            if (_employeeId!=0)
             {
-                if (logTime.ToString() != "")
+                if (_subjectId!=0)
                 {
-                    var getLogsByTime = (from m in _db.OperationLogs
-                                         where m.UserId == employeeId
-                                         orderby m.Id
-                                         select m).Skip(_page * 9).Take(9);
-                    return PartialView(getLogsByTime);
-                }
-                else
-                {
-                    if (logType == 5)
+                    if (logType != "")
                     {
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                             where m.UserId == employeeId
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    if (logType == 0)
-                    {
-                        var logCodeMin = 105;
-                        var logCodeMax = 108;
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    if (logType == 1)
-                    {
-                        var logCodeMin = 109;
-                        var logCodeMax = 112;
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
+                        if (logTime != "")
+                        {
+                            var getLogsByTime = (from m in _db.OperationLogs
+                                                 where m.UserId == _employeeId
+                                                 orderby m.Id
+                                                 select m).Skip(_page * 9).Take(9);
+                            return PartialView(getLogsByTime);
+                        }
+                        else
+                        {
+                            if (logType == "all")
+                            {
+                                var getLogsByTime = (from m in _db.OperationLogs
+                                                     where m.UserId == _employeeId
+                                                     orderby m.Id
+                                                     select m).Skip(_page * 9).Take(9);
+                                return PartialView(getLogsByTime);
+                            }
+                            if (logType == "mission")
+                            {
+                                var a = getTypeRange(logType);
+                                var getLogsByTime = (from m in _db.OperationLogs
+                                                     where m.UserId == _employeeId && m.SubjectId == _subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue
+                                                     orderby m.Id
+                                                     select m).Skip(_page * 9).Take(9);
+                                return PartialView(getLogsByTime);
+                            }
+                            if (logType == "submission")
+                            {
+                                var a = getTypeRange(logType);
+                                var getLogsByTime = (from m in _db.OperationLogs
+                                                     where m.UserId == _employeeId && m.SubjectId == _subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue
+                                                     orderby m.Id
+                                                     select m).Skip(_page * 9).Take(9);
+                                return PartialView(getLogsByTime);
+                            }
+                            else
+                            {
+                                return PartialView("error");
+                            }
+                        }
                     }
                     else
                     {
-                        return PartialView("error");
+
+                        if (logTime != "")
+                        {
+                            if (logTime == "all")
+                            {
+                                var getLogsByTime = (from m in _db.OperationLogs
+                                                     where m.UserId == _employeeId && m.SubjectId == _subjectId
+                                                     orderby m.Id
+                                                     select m).Skip(_page * 9).Take(9);
+                                return PartialView(getLogsByTime);
+                            }
+                            if (logTime == "month")
+                            {
+                                var a = getTimeRange(logTime);
+                                var getLogsByTime = (from m in _db.OperationLogs
+                                                     where m.UserId == _employeeId && m.SubjectId == _subjectId && m.LogTime >= a.StartTime && m.LogTime < a.EndTime
+                                                     orderby m.Id
+                                                     select m).Skip(_page * 9).Take(9);
+                                return PartialView(getLogsByTime);
+
+                            }
+                            if (logTime == "week")
+                            {
+                                var a = getTimeRange(logTime);
+                                var getLogsByTime = (from m in _db.OperationLogs
+                                                     where m.UserId == _employeeId && m.SubjectId == _subjectId && m.LogTime >= a.StartTime && m.LogTime < a.EndTime
+                                                     orderby m.Id
+                                                     select m).Skip(_page * 9).Take(9);
+                                return PartialView(getLogsByTime);
+                            }
+                            if (logTime == "day")
+                            {
+                                var a = getTimeRange(logTime);
+                                var getLogsByTime = (from m in _db.OperationLogs
+                                                     where m.UserId == _employeeId && m.SubjectId == _subjectId && m.LogTime >= a.StartTime && m.LogTime < a.EndTime
+                                                     orderby m.Id
+                                                     select m).Skip(_page * 9).Take(9);
+                                return PartialView(getLogsByTime);
+                            }
+                            else
+                            {
+                                return PartialView("error");
+                            }
+                        }
+                        else
+                        {
+                            var getLogsByTime = (from m in _db.OperationLogs
+                                                 where m.UserId == _employeeId
+                                                 orderby m.Id
+                                                 select m).Skip(_page * 9).Take(9);
+                            return PartialView(getLogsByTime);
+                        }
                     }
                 }
+                else {
+                    return Content("项目不明确！");
+                }
             }
-            else
+            else {
+                return Content("负责人不明确！");
+            }
+            
+
+        }
+
+        public TypeRangeClass getTypeRange(string type) {
+            TypeRangeClass item = new TypeRangeClass();
+            if (type == GetDataType.SUBJECTDATA)
             {
-                if (logTime.ToString() != "")
-                {
-                    if (logTime == 4)
-                    {
-                        string d1 = DateTime.Now.ToShortDateString().ToString();
-                        var starttime = Convert.ToDateTime(d1);
-                        var endtime = Convert.ToDateTime(d1).AddDays(1);
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogTime >= starttime && m.LogTime < endtime
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    if (logTime == 3)
-                    {
-                        var getLogsByTime = (from m in _db.OperationLogs
-                                             where m.UserId == employeeId && m.SubjectId == SubjectId
-                                             orderby m.Id
-                                             select m).Skip(_page * 9).Take(9);
-                        return PartialView(getLogsByTime);
-                    }
-                    else
-                    {
-                        return PartialView("error");
-                    }
-                }
-                else
-                {
-                    var getLogsByTime = (from m in _db.OperationLogs
-                                         where m.UserId == employeeId
-                                         orderby m.Id
-                                         select m).Skip(_page * 9).Take(9);
-                    return PartialView(getLogsByTime);
-                }
+                item.MinValue = 101;
+                item.MaxValue = 104;
             }
+            else if (type == GetDataType.MISSIONTDATA)
+            {
+                item.MinValue = 105;
+                item.MaxValue = 108;
+            }
+            else if (type == GetDataType.SUBMISSIONDATA) {
+                item.MinValue = 109;
+                item.MaxValue = 112;
+            }
+            return item;
         }
 
         public TimeRangeClass getTimeRange(string timetype)
@@ -2083,6 +2134,12 @@ namespace PeriodAid.Controllers
             {
                 item.StartTime = _today;
                 item.EndTime = _today.AddDays(1);
+            }
+            else if(timetype == GetDataType.ALLDATA)
+            {
+                var startyear = new DateTime(2016, 1, 1);
+                var currentyear = new DateTime(_today.Year, 1, 1);           
+                var endyear = currentyear.AddYears(1);
             }
             return item;
         }

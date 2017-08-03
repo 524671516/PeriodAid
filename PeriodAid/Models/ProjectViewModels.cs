@@ -8,6 +8,11 @@ namespace PeriodAid.Models
     public class ProjectViewModels
     {
     }
+    public class TypeRangeClass
+    {
+        public int MinValue { get; set; }
+        public int MaxValue { get; set; }
+    }
     public class TimeRangeClass
     {
         public DateTime StartTime { get; set; }

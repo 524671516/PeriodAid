@@ -552,11 +552,11 @@
         /// </summary>
         public static string WEEKDATA = "week";
         /// <summary>
-        /// 日数据
+        /// 月数据
         /// </summary>
         public static string MONTHDATA = "month";
         /// <summary>
-        /// 日数据
+        /// 年数据
         /// </summary>
         public static string YEARDATA = "year";
         /// <summary>
@@ -575,8 +575,26 @@
         /// 未完成
         /// </summary>
         public static string UNFINISHDATA = "unfinish";
-
-
+        /// <summary>
+        ///所有
+        /// </summary>
+        public static string ALLDATA = "all";
+        /// <summary>
+        ///项目
+        /// </summary>
+        public static string SUBJECTDATA = "subject";
+        /// <summary>
+        ///任务
+        /// </summary>
+        public static string MISSIONTDATA = "mission";
+        /// <summary>
+        ///子任务
+        /// </summary>
+        public static string SUBMISSIONDATA = "submission";
+        /// <summary>
+        ///文件
+        /// </summary>
+        public static string FILEDATA = "file";
 
     }
 

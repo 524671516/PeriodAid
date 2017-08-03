@@ -24,16 +24,18 @@
         </div>
         <div class="btn-group">
             <select class="selectpicker" id="tm_select_type" data-width="100%">
-                <option value="5" selected>全部</option>
-                <option value="0">任务</option>
-                <option value="1">子任务</option>
-                <option value="2">文件</option>
+                <option value="all" selected>全部</option>
+                <option value="mission">任务</option>
+                <option value="submission">子任务</option>
+                <option value="file">文件</option>
             </select>
         </div>
         <div class="btn-group">
             <select class="selectpicker" id="tm_select_time" data-width="100%">
-                <option value="3" selected>全部</option>
-                <option value="4">当日</option>
+                <option value="all" selected>全部</option>
+                <option value="day">当日</option>
+                <option value="week">本周</option>
+                <option value="month">本月</option>
             </select>
         </div>
     </div>
@@ -121,6 +123,24 @@
             },
             success: function (data) {
                 $("#tm_modal_logs_area").append(data);
+                $("#Create-Subject-Content").on("click", "#ShowMoreLogs", function () {
+                    var _self = $(this);
+                    $.ajax({
+                        url: "/TaskManagement/GetLogs",
+                        data: {
+                            employeeId: $("#tm_select_straff").val(),
+                            SubjectId: $("#panel-wrap").attr("data-sid"),
+                            logTime: $("#tm_select_time").val(),
+                            logtype: $("#tm_select_type").val(),
+                            _page: $("#currentpage").val()
+                        },
+                        success: function (data) {
+                            $("#tm_modal_logs_area").append(data)
+                            $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+                            _self.parent().remove()
+                        }
+                    })
+                })
             }
         })
     })
@@ -142,24 +162,7 @@
             }
         })
     })
-    $("#Create-Subject-Content").on("click", "#ShowMoreLogs", function () {
-        var _self = $(this);
-        $.ajax({
-            url: "/TaskManagement/GetLogs",
-            data: {
-                employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#panel-wrap").attr("data-sid"),
-                logTime: $("#tm_select_time").val(),
-                logtype: $("#tm_select_type").val(),
-                _page: $("#currentpage").val()
-            },
-            success: function (data) {
-                $("#tm_modal_logs_area").append(data)
-                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
-                _self.parent().remove()
-            }
-        })
-    })
+
 
 </script>
 
