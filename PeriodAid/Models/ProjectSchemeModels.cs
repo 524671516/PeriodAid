@@ -541,6 +541,8 @@
         public static int EDITPERSONALINFO = 113;
 
     }
+
+
     public static class GetDataType
     {
         /// <summary>
@@ -552,7 +554,7 @@
         /// </summary>
         public static string WEEKDATA = "week";
         /// <summary>
-        /// 日数据
+        /// 月数据
         /// </summary>
         public static string MONTHDATA = "month";
         /// <summary>
