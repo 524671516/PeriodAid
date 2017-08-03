@@ -37,7 +37,7 @@
             </select>
         </div>
     </div>
-    <div class="tm_modal_ul_wrap modal-list-pannel">
+    <div class="tm_modal_ul_wrap modal-list-panel">
         <ul class="list-group tm_modal_list_ul" id="tm_modal_logs_area"></ul>
     </div>
 </div>
@@ -62,7 +62,7 @@
             url: "/TaskManagement/GetLogs",
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
                 logTime: $("#tm_select_time").val(),
                 logtype: $("#tm_select_type").val(),
                 _page: $("#currentpage").val()
@@ -79,7 +79,7 @@
         $.ajax({
             url: $(this).attr("data-href"),
             data: {
-                SubjectId: $("#pannel-wrap").attr("data-sid")
+                SubjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 $("#tm_modal_list_area").html(data);
@@ -98,7 +98,7 @@
             type: 'post',
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
                 _page: $("#currentpage").val()
             },
             success: function (data) {
@@ -115,7 +115,7 @@
             type: "post",
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
                 logTime: $("#tm_select_time").val(),
                 _page: $("#currentpage").val()
             },
@@ -134,7 +134,7 @@
             type: "post",
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
                 logtype: $("#tm_select_type").val(),
                 _page: $("#currentpage").val()
             },
@@ -149,7 +149,7 @@
             url: "/TaskManagement/GetLogs",
             data: {
                 employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#pannel-wrap").attr("data-sid"),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
                 logTime: $("#tm_select_time").val(),
                 logtype: $("#tm_select_type").val(),
                 _page: $("#currentpage").val()

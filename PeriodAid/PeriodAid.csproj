@@ -1051,7 +1051,7 @@
     <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
-    <Content Include="Views\TaskManagement\SubjectMenuPannelPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectMenuPanelPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
@@ -1067,7 +1067,7 @@
     <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
     <Content Include="Views\TaskManagement\PersonalRecentAssignmentPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonlRecentPartial.cshtml" />
-    <Content Include="Views\TaskManagement\PersonalActionPannel.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalActionPanel.cshtml" />
     <Content Include="Views\TaskManagement\PersonalCollectionPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalFilePartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalTaskPartial.cshtml" />

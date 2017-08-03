@@ -43,7 +43,7 @@
             <ul class="nav navbar-nav navbar-right navbar-border">
                 @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" id="btn_show_subject_pannel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
+                    <a href="#" class="dropdown-toggle" id="btn_show_subject_panel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
                 </li>
             </ul>
         </div><!-- /.navbar-collapse -->
@@ -51,15 +51,15 @@
 </div>
 <!--The Second Nav End-->
 <!--Procedure Content-->
-<div class="tm_pannel-wrap tm_add_pannel_hide" id="pannel-wrap" data-sid="@Model.Id">
-    <div class="tm_control_pannel_show" id="btn_show_add_pannel">展开</div>
-    <div class="tm_pannel-container" id="tm_pannel-container">
-        <div class="tm_pannel-item text-center tm_pannel-item-add" id="tm_pannel-item-add">
-            <div class="color-gray btn-get-form" id="add-pannel-list">
-                <div class="add-btn" id="btn_add-pannel"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></div>
-                <div class="tm_control_pannel_hide" id="btn_hide_add_pannel"><span>收起</span></div>
+<div class="tm_panel-wrap tm_add_panel_hide" id="panel-wrap" data-sid="@Model.Id">
+    <div class="tm_control_panel_show" id="btn_show_add_panel">展开</div>
+    <div class="tm_panel-container" id="tm_panel-container">
+        <div class="tm_panel-item text-center tm_panel-item-add" id="tm_panel-item-add">
+            <div class="color-gray btn-get-form" id="add-panel-list">
+                <div class="add-btn" id="btn_add-panel"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></div>
+                <div class="tm_control_panel_hide" id="btn_hide_add_panel"><span>收起</span></div>
             </div>
-            <div id="add-pannel-write" class="tm_procedureform-area hidden">
+            <div id="add-panel-write" class="tm_procedureform-area hidden">
                 @using (Html.BeginForm("CreateProcedure", "TaskManagement", FormMethod.Post, new { @id = "add_procedure_form", @class = "validate-form padding-10" }))
                 {
                     @Html.AntiForgeryToken()
@@ -70,15 +70,15 @@
                         <input type="text" class="form-control" id="ProcedureTitle" placeholder="过程列表标题" name="ProcedureTitle">
                     </div>
                     <div class="text-right">
-                        <a class="btn btn-default" id="cancel-pannel-write">取消</a>
-                        <a class="btn btn-blue" id="create-procedure-pannel">确定</a>
+                        <a class="btn btn-default" id="cancel-panel-write">取消</a>
+                        <a class="btn btn-blue" id="create-procedure-panel">确定</a>
                     </div>
                 }
             </div>            
         </div>
         @foreach (var procedure in ViewBag.sortprocedure)
         {
-            <div class="tm_pannel-item ajax-procedure" data-procedureid="@procedure.Id">
+            <div class="tm_panel-item ajax-procedure" data-procedureid="@procedure.Id">
             </div>
         }
     </div>
@@ -102,33 +102,33 @@
 </div>
 <!-- Modal Add-Collaborator End-->
 
-<!--Pannel Menu-->
-<div class="tm_subject_pannel" id="tm_subject_pannel">
+<!--panel Menu-->
+<div class="tm_subject_panel" id="tm_subject_panel">
     
 </div>
-<!--Pannel Menu End-->
+<!--panel Menu End-->
 @section scripts{
     <script>
-        $("#btn_show_add_pannel").on("click", function () {
-            $("#pannel-wrap").removeClass("tm_add_pannel_hide");
-            $("#tm_pannel-container").scrollLeft("0")
+        $("#btn_show_add_panel").on("click", function () {
+            $("#panel-wrap").removeClass("tm_add_panel_hide");
+            $("#tm_panel-container").scrollLeft("0")
         });
-        $("#btn_hide_add_pannel").on("click", function () {
-            $("#pannel-wrap").addClass("tm_add_pannel_hide");
+        $("#btn_hide_add_panel").on("click", function () {
+            $("#panel-wrap").addClass("tm_add_panel_hide");
         })
 
         //项目菜单操作
-        $("#btn_show_subject_pannel").on("click", function () {
+        $("#btn_show_subject_panel").on("click", function () {
             if ($("#my-app").hasClass("tm_subject_active")) {
                 $("#my-app").removeClass("tm_subject_active")
             } else {
                 $.ajax({
-                    url: "/TaskManagement/SubjectMenuPannelPartial",
+                    url: "/TaskManagement/SubjectMenupanelPartial",
                     data: {
-                        SubjectId: $("#pannel-wrap").attr("data-sid")
+                        SubjectId: $("#panel-wrap").attr("data-sid")
                     },
                     success: function (data) {
-                        $("#tm_subject_pannel").html(data);
+                        $("#tm_subject_panel").html(data);
                     },
                     error: function (data) {
                         ErrorAlert("操作失败。");
@@ -141,16 +141,16 @@
         $(".ajax-procedure").each(function () {
             var ProcedureId = $(this).attr("data-procedureid");
             var that = $(this);
-            GetProcedure(ProcedureId, $("#pannel-wrap").attr("data-sid"), that);
+            GetProcedure(ProcedureId, $("#panel-wrap").attr("data-sid"), that);
         });
 
         //排序
-        var al = document.getElementById('tm_pannel-container');
+        var al = document.getElementById('tm_panel-container');
         var sortable = new Sortable(al, {
             animation: 150,
             draggable: ".ajax-procedure",
-            handle: ".tm_pannel-header",
-            filter: ".tm_pannel-item-add",
+            handle: ".tm_panel-header",
+            filter: ".tm_panel-item-add",
             dragClass: "sortable-drag",
             ghostClass: "sortable-ghost",
             preventOnFilter: false,
@@ -172,7 +172,7 @@
                     type: "post",
                     data: {
                         ProcedureJson: JSON.stringify(sortobject),
-                        SubjectId: $("#pannel-wrap").attr("data-sid")
+                        SubjectId: $("#panel-wrap").attr("data-sid")
 
                     },
                     success: function (data) {
@@ -189,27 +189,27 @@
 
         });
         //任务添加窗口
-        $("#pannel-wrap").on("click", ".btn-get-assignmentform", function () {
+        $("#panel-wrap").on("click", ".btn-get-assignmentform", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
             $(".tm_assignmentform-area").html("");
-            GetAssignmentForm($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), $(this).parent().find(".tm_assignmentform-area"));
+            GetAssignmentForm($(this).attr("data-pid"), $("#panel-wrap").attr("data-sid"), $(this).parent().find(".tm_assignmentform-area"));
             $(this).addClass("hidden");
         });
         //清除任务添加窗口
-        $("#pannel-wrap").on("click", "#cancel-create-assignment", function () {
+        $("#panel-wrap").on("click", "#cancel-create-assignment", function () {
             $(".btn-get-assignmentform").removeClass("hidden");
             $(".tm_assignmentform-area").html("");
         });
         //任务完成
-        $("#pannel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
+        $("#panel-wrap").on("click", ".assignment_comfirm_finish", function (event) {
             ComfirmFinishAssignment($(this).parent().parent().parent().attr("data-aid"), function (data) {
                 if (data.result == "SUCCESS") {
-                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
                     $.ajax({
                         url: "/TaskManagement/GetProcedureJsonInfo",
                         type: "post",
                         data: {
-                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                            SubjectId: $("#panel-wrap").attr("data-sid")
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
@@ -250,11 +250,11 @@
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
                         if ($(".ajax-procedure").length == 0) {
-                            $(".tm_pannel-item-add").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                            $(".tm_panel-item-add").after("<div class=\"tm_panel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
                         } else {
-                            $(".ajax-procedure:last").after("<div class=\"tm_pannel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
+                            $(".ajax-procedure:last").after("<div class=\"tm_panel-item ajax-procedure\"" + "data-procedureid=" + data.id + "></div>");
                         }
-                        GetProcedure(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure:last"));
+                        GetProcedure(data.id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure:last"));
                         UnimportantAlert("添加过程成功。");
                         controlHidden();
                     } else {
@@ -266,19 +266,19 @@
             errorClass: "has-error",
             //验证失败
             errorPlacement: function (error, element) {
-                $("#create-procedure-pannel").removeClass("disabled");
+                $("#create-procedure-panel").removeClass("disabled");
             }
         });
         //新增过程
-        $("#create-procedure-pannel").on("click", function () {
+        $("#create-procedure-panel").on("click", function () {
             if (!$(this).hasClass("disabled")) {
                 $(this).addClass("disabled")
                 $("#add_procedure_form").submit();
             }
         })
         //任务列表删除
-        $("#pannel-wrap").on("click", ".btn-del-procedure", function () {
-            Delete_Procedure($(this).attr("data-pid"), $("#pannel-wrap").attr("data-sid"), function (data) {
+        $("#panel-wrap").on("click", ".btn-del-procedure", function () {
+            Delete_Procedure($(this).attr("data-pid"), $("#panel-wrap").attr("data-sid"), function (data) {
                 if (data.result == "SUCCESS") {
                     $(".ajax-procedure[data-procedureid=" + data.Id + "]").remove();
                 } else {
@@ -288,7 +288,7 @@
         });
 
         //控制任务列表操作栏 
-        $("#pannel-wrap").on("click", ".tm-show-listmenu", function () {
+        $("#panel-wrap").on("click", ".tm-show-listmenu", function () {
             $(".tm-dropdown-menu").hide();
             if ($(this).hasClass("open")) {
                 $(this).removeClass("open");
@@ -300,7 +300,7 @@
             changepostion($(this).parents(".ajax-procedure").find(".procedure-dropdown-toggle"), $(this).parents(".ajax-procedure").find(".tm-dropdown-area"))
         });
 
-        $("#tm_pannel-container").on("click", function (e) {
+        $("#tm_panel-container").on("click", function (e) {
             var _target = $(e.target);
             if (_target.closest(".tm-dropdown-area").length == 0) {
                 $(".tm-dropdown-menu").hide();
@@ -310,7 +310,7 @@
             }
         });
         //修改任务列表名称
-        $("#pannel-wrap").on("click", ".btn-edit-procedure", function () {
+        $("#panel-wrap").on("click", ".btn-edit-procedure", function () {
             var _self = $(this);
             var pid = _self.attr("data-pid");
             $.ajax({
@@ -318,7 +318,7 @@
                 type:"post",
                 data: {
                     ProcedureId: pid,
-                    SubjectId: $("#pannel-wrap").attr("data-sid")
+                    SubjectId: $("#panel-wrap").attr("data-sid")
                 },
                 success: function (data) {
                     $(".tm-dropdown-menu").hide();
@@ -333,7 +333,7 @@
 
         });
         //显示任务详情
-        $("#pannel-wrap").on("click", ".tm_pop_assmodal", function () {
+        $("#panel-wrap").on("click", ".tm_pop_assmodal", function () {
             var aid = $(this).find(".tm_item_right").attr("data-aid");
             GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
                 $('#Edit-Assignment').modal('show');
@@ -341,21 +341,21 @@
         });
 
         //控制新建列表
-        $("#btn_add-pannel").on("click", function () {
+        $("#btn_add-panel").on("click", function () {
             controlHidden()
         });
-        $("#cancel-pannel-write").on("click", function () {
+        $("#cancel-panel-write").on("click", function () {
             controlHidden()
         });
         function controlHidden(type) {
-            $("#create-procedure-pannel").removeClass("disabled");
-            if ($("#add-pannel-list").hasClass("hidden")) {
-                $("#add-pannel-list").removeClass("hidden");
-                $("#add-pannel-write").addClass("hidden");
+            $("#create-procedure-panel").removeClass("disabled");
+            if ($("#add-panel-list").hasClass("hidden")) {
+                $("#add-panel-list").removeClass("hidden");
+                $("#add-panel-write").addClass("hidden");
             } else {
-                $("#add-pannel-write .form-group input").val("");
-                $("#add-pannel-list").addClass("hidden");
-                $("#add-pannel-write").removeClass("hidden");
+                $("#add-panel-write .form-group input").val("");
+                $("#add-panel-list").addClass("hidden");
+                $("#add-panel-write").removeClass("hidden");
             }
         }
         function changepostion(referencebox, movebox) {
