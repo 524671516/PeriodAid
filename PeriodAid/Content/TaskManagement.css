@@ -1273,7 +1273,10 @@ a.btn_subtask_detail{
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.tm-view-nomore{
+.tm-view-more{
+    cursor:pointer;
+}
+.tm-view-nomore,.tm-view-more{
     padding:10px;
     text-align:center;
 }

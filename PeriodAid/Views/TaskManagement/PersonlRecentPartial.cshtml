@@ -45,7 +45,7 @@
         </div>
     </div>
 </div>
-<div class="tm-view-content-container  tm-view-container">
+<div class="tm-view-content-container  tm-view-container" id="tm-view-scroll-container">
     <input type="hidden" id="tm-view-page" name="tm-view-page" value="0"/> 
     <div class="tm-view-loading-content" id="tm-view-loading-content"> 
     </div>
@@ -56,8 +56,6 @@
 </div>
 <script>
     $(function () {
-        setTimeout(
-            function(){
                 var _initlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
                 $.ajax({
                     url: _initlink,
@@ -70,16 +68,17 @@
                         if (data == "FAIL") {
                             ErrorAlert("获取数据失败。");
                         } else {
-                            $("#tm-view-loading-content").append(data);
-                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                            setTimeout(function () {
+                                $("#tm-view-loading-content").append(data);
+                                $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                                $("#tm-view-loading").hide();
+                            },500)
                         }
                     },
                     error: function () {
                         ErrorAlert("请求失败。");
                     }
                 })
-
-            }, 500)
     })
     $("#tm-view-subcontrol").on("click", ".tm-view-control-link", function () {
         if (!$(this).hasClass("active")) {
@@ -93,6 +92,45 @@
             $(this).addClass("selected");
             $(this).parents(".tm-view-control-sort").find(".tm-select-title").html($(this).html())
         }
-
     });
+    var _loading = false;
+    $("#tm-view-scroll-container").scroll(function (e) {
+        var _dis = parseInt($("#tm-view-loading-content").height()) - parseInt($("#tm-view-scroll-container").height());
+        if ($(this).scrollTop() >= _dis) {
+            if (_loading) {
+                console.log(1);
+                return false;
+            } else {
+                _loading = !_loading;
+                $(".tm-view-more").remove();
+                $("#tm-view-loading").show();
+                var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+                $.ajax({
+                    url: _link,
+                    data: {
+                        page: parseInt($("#tm-view-page").val()),
+                        timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                        sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+                    },
+                    success: function (data) {
+                        if (data == "FAIL") {
+                            ErrorAlert("获取数据失败。");
+                        } else {
+                            setTimeout(function () {
+                                $("#tm-view-loading-content").append(data);
+                                $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                                $("#tm-view-loading").hide();
+                                if ($(".tm-view-nomore").length > 0) {
+                                    $("#tm-view-scroll-container").unbind("scroll");
+                                }
+                            },500)
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("请求失败。");
+                    }
+                })
+            }
+        }
+    })
 </script>
