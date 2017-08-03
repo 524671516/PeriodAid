@@ -98,17 +98,20 @@
                     sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
                 },
                 success: function (data) {
-                    console.log(data);
                     if (data == "FAIL") {
                         ErrorAlert("获取数据失败。");
                     } else {
                         setTimeout(function () {
-                            $("#tm-view-loading-content").html("");
                             $("#tm-view-loading-content").append(data);
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
                             var _loading = false;
-                            controlscroll(_loading,true);
+                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {                               
+                                $("#tm-view-scroll-container").unbind("scroll");
+                                $("#tm-view-page").val("0");
+                            } else {
+                                controlscroll(_loading, true);
+                            }
                         }, 500);
                     }
                 },
@@ -116,8 +119,6 @@
                     ErrorAlert("请求失败。");
                 }
             })
-            var _loading = false;
-            controlscroll(_loading,true);
         }
     })
     $("#tm-view-thirdcontrol").on("click", ".tm-select", function (e) {
@@ -145,7 +146,12 @@
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
                             var _loading = false;
-                            controlscroll(_loading, true);
+                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {
+                                $("#tm-view-scroll-container").unbind("scroll");
+                                $("#tm-view-page").val("0");
+                            } else {
+                                controlscroll(_loading, true);
+                            }
                         }, 500)
                     }
                 },
@@ -155,7 +161,7 @@
             })
         }
     });
-    function controlscroll(_loading,newscroll) {
+    function controlscroll(_loading, newscroll) {
         if (newscroll) {
             $("#tm-view-scroll-container").unbind("scroll");
         }

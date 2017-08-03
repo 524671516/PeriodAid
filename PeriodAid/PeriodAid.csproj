@@ -1091,6 +1091,7 @@
     <Content Include="Views\TaskManagement\PersonalCollectionPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalFilePartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalTaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentSubtaskPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

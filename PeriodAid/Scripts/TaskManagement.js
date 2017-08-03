@@ -1,7 +1,6 @@
 ﻿$(function () {
     //控制我的任务
     $("#my-app").on("click", ".tm-control-view-panel", function () {
-        console.log(1);
         if ($("#tm-my-view").length > 0) {
             $("#tm-my-view").fadeToggle("show");
             $("#my-app").removeClass("tm-open-view");
@@ -9,7 +8,6 @@
             $.ajax({
                 url: "/TaskManagement/PersonalActionPanel",
                 success: function (data) {
-                    console.log(data);
                     if (data =="FAIL") {
                         ErrorAlert("获取我的任务失败。");
                     } else {
