@@ -21,10 +21,12 @@
                     </div>
                     <div class="tm-view-info float-left">
                         <div class="tm-view-info-top">
-                            <span>创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd"))</span>&nbsp;
+                            <span>任务名称:@Html.Encode(item.AssignmentTitle)</span>&nbsp;
+                            <span>归属项目:@Html.Encode(item.Subject.SubjectTitle)</span>&nbsp;
                         </div>
                         <div class="tm-view-info-bottom">
-                            <span>创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd"))</span>&nbsp;
+                            <span class="color-gray">创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd HH:ss"))</span>&nbsp;
+                            <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
                         </div>
                     </div>
 
@@ -64,10 +66,12 @@
                         </div>
                         <div class="tm-view-info float-left">
                             <div class="tm-view-info-top">
-                                <span>创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd"))</span>&nbsp;
+                                <span>任务名称:@Html.Encode(item.AssignmentTitle)</span>&nbsp;
+                                <span>归属项目:@Html.Encode(item.Subject.SubjectTitle)</span>&nbsp;
                             </div>
                             <div class="tm-view-info-bottom">
-                                <span>创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd"))</span>&nbsp;
+                                <span class="color-gray">创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd HH:ss"))</span>&nbsp;
+                                <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
                             </div>
                         </div>
 
