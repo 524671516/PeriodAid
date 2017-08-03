@@ -1807,10 +1807,12 @@ namespace PeriodAid.Controllers
                 else
                 {
                     TimeRangeClass _timerange = getTimeRange(timerange);
+                    var starttime = _timerange.StartTime;
+                    var endtime = _timerange.EndTime;
                     if (sorttype == null|| sorttype =="")
                     {
                         var recentassignmentlist = (from m in _db.Assignment
-                                                    where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED&&m.Deadline>=_timerange.StartTime&&m.Deadline<_timerange.EndTime
+                                                    where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED&&m.Deadline>= starttime && m.Deadline<endtime
                                                     orderby m.CreateTime descending
                                                     select m).Skip(_page * 20).Take(20);
                         return PartialView(recentassignmentlist);
@@ -1820,7 +1822,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.TIMESORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.StartTime && m.Deadline < _timerange.EndTime
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED &&m.Deadline >= starttime && m.Deadline < endtime
                                                         orderby m.Deadline ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1828,7 +1830,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.StartTime && m.Deadline < _timerange.EndTime
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
                                                         orderby m.SubjectId ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1836,7 +1838,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= _timerange.StartTime && m.Deadline < _timerange.EndTime
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
                                                         orderby m.CreateTime descending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
