@@ -1974,9 +1974,9 @@ namespace PeriodAid.Controllers
             {
                 if (_subjectId!=0)
                 {
-                    if (logType != "")
+                    if (logType != "" && logType!=null)
                     {
-                        if (logTime != "")
+                        if (logTime != "" && logTime!=null)
                         {
                             var getLogsByTime = (from m in _db.OperationLogs
                                                  where m.UserId == _employeeId
@@ -2021,7 +2021,7 @@ namespace PeriodAid.Controllers
                     else
                     {
 
-                        if (logTime != "")
+                        if (logTime != "" && logTime!=null)
                         {
                             if (logTime == "all")
                             {

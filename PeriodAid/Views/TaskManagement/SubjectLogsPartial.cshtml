@@ -60,20 +60,7 @@
         $('#tm_select_time').selectpicker({
             title: "时间"
         });
-        $.ajax({
-            url: "/TaskManagement/GetLogs",
-            data: {
-                employeeId: $("#tm_select_straff").val(),
-                SubjectId: $("#panel-wrap").attr("data-sid"),
-                logTime: $("#tm_select_time").val(),
-                logtype: $("#tm_select_type").val(),
-                _page: $("#currentpage").val()
-            },
-            success: function (data) {
-                $("#tm_modal_logs_area").append(data)
-                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
-            }
-        })
+        
     });
 
     $(".tm_modal-nav").on("click", ".list-group-item", function () {
@@ -122,25 +109,7 @@
                 _page: $("#currentpage").val()
             },
             success: function (data) {
-                $("#tm_modal_logs_area").append(data);
-                $("#Create-Subject-Content").on("click", "#ShowMoreLogs", function () {
-                    var _self = $(this);
-                    $.ajax({
-                        url: "/TaskManagement/GetLogs",
-                        data: {
-                            employeeId: $("#tm_select_straff").val(),
-                            SubjectId: $("#panel-wrap").attr("data-sid"),
-                            logTime: $("#tm_select_time").val(),
-                            logtype: $("#tm_select_type").val(),
-                            _page: $("#currentpage").val()
-                        },
-                        success: function (data) {
-                            $("#tm_modal_logs_area").append(data)
-                            $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
-                            _self.parent().remove()
-                        }
-                    })
-                })
+                $("#tm_modal_logs_area").append(data);              
             }
         })
     })
@@ -162,7 +131,24 @@
             }
         })
     })
-
+    $("#Create-Subject-Content").on("click", "#ShowMoreLogs", function () {
+        var _self = $(this);
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            data: {
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logTime: $("#tm_select_time").val(),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#tm_modal_logs_area").append(data)
+                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+                _self.parent().remove()
+            }
+        })
+    })
 
 </script>
 
