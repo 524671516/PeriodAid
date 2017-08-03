@@ -1,6 +1,12 @@
 ﻿<div class="tm-view-header clear-float">
+    <div class="tm-view-header-left float-left">
+        <div class="tm-my-view-control tm-view-control" id="tm-view-subcontrol">
+            <a href="javascript:;" class="tm-view-control-link active" data-href="/TaskManagement/PersonalRecentAssignmentPartial">任务</a>
+            <a href="javascript:;" class="tm-view-control-link">子任务</a>
+        </div>
+    </div>
     <div class="tm-view-header-right float-right">
-        <div class="tm-view-control" id="tm-view-subcontrol">
+        <div class="tm-view-control" id="tm-view-thirdcontrol">
             <ul>
                 <li class="tm-view-control-sort dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-progress" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -26,7 +32,7 @@
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-undefined">
                         <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="timesort">按时间排序</a></li>
-                        <li><a href="javascript:;" class="tm-select-sort-type tm-select" date-type="subjectsort">按项目排序</a></li>
+                        <li><a href="javascript:;" class="tm-select-sort-type tm-select" data-type="subjectsort">按项目排序</a></li>
                     </ul>
                 </li>
                 <li class="tm-view-control-sort">
@@ -40,31 +46,48 @@
     </div>
 </div>
 <div class="tm-view-content-container  tm-view-container">
-    <div class="tm-view-loading-content" id="tm-view-loading-content">
-        <ul>
-    <li class="clear-float tm-view-li">
-        <div class="float-left tm-view-avatar" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
-            <span style="background-image:url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131435362956644032.jpg');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-        </div>
-        <div class="tm-view-checkbox float-left">
-            <input type="checkbox" class="tm-checkbox-input" />
-        </div>
-        <div class="tm-view-info float-left">
-            <div class="tm-view-info-top">sadad</div>
-            <div class="tm-view-info-bottom">dadas</div>
-        </div>
-
-    </li>
-</ul>
-        <div class="tm-view-nomore color-blue">-&nbsp;没有更多数据&nbsp;-</div>     
+    <input type="hidden" id="tm-view-page" name="tm-view-page" value="0"/> 
+    <div class="tm-view-loading-content" id="tm-view-loading-content"> 
     </div>
-    <div class="tm-veiw-loading text-center hidden" id="tm-view-loading">
+    <div class="tm-veiw-loading text-center" id="tm-view-loading">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
         <span class="sr-only">正在加载...</span>
     </div>
 </div>
 <script>
-    $("#tm-view-subcontrol").on("click", ".tm-select", function (e) {
+    $(function () {
+        setTimeout(
+            function(){
+                var _initlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+                $.ajax({
+                    url: _initlink,
+                    data: {
+                        page: parseInt($("#tm-view-page").val()),
+                        timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                        sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+                    },
+                    success: function (data) {
+                        if (data == "FAIL") {
+                            ErrorAlert("获取数据失败。");
+                        } else {
+                            $("#tm-view-loading-content").append(data);
+                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("请求失败。");
+                    }
+                })
+
+            }, 500)
+    })
+    $("#tm-view-subcontrol").on("click", ".tm-view-control-link", function () {
+        if (!$(this).hasClass("active")) {
+            $(this).parent().find(".tm-view-control-link.active").removeClass("active");
+            $(this).addClass("active");
+        }
+    })
+    $("#tm-view-thirdcontrol").on("click", ".tm-select", function (e) {
         if (!$(this).hasClass("selected")) {
             $(this).parent().parent().find(".tm-select.selected").removeClass("selected");
             $(this).addClass("selected");
