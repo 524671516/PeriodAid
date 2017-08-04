@@ -1,0 +1,235 @@
+﻿@model PeriodAid.Models.Off_Expenses
+@{
+    ViewBag.Title = "修改结算信息";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingThree";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model=>model.Off_System_Id)
+    <table style="width:100%; margin:5px 0;">
+        <tr>
+            <td class="col-md-12">
+                <input type="submit" value="保存结算信息" class="btn btn-sm btn-primary" />&nbsp;&nbsp;<a href="/OfflineSales/Off_Expenses_List" class="btn btn-sm btn-default" >返回</a>&nbsp;&nbsp;
+                @Html.ActionLink("审核结算信息", "Off_Expenses_Verify_Submit", new { id = Model.Id }, new { @class = "btn btn-success btn-sm" })
+            </td>
+        </tr>
+    </table>
+    <table style="width:100%; margin:5px 0;">
+        <tr>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>申请日期</small></div>
+                    @Html.EditorFor(model => model.ApplicationDate, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>渠道名称</small></div>
+                    @Html.EditorFor(model => model.StoreSystem, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>经销商</small></div>
+                    @Html.EditorFor(model => model.Distributor, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="width:100%; margin:5px 0;">
+        <tr>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>费用类别</small></div>
+                    @Html.DropDownListFor(model => model.PaymentType, ViewBag.PayType as SelectList, "- 请选择费用类别 -", new { @class = "form-control input-sm", @readonly = "readonly" })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>审核时间</small></div>
+                    @Html.EditorFor(model => model.CheckTime, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>结算时间</small></div>
+                    @Html.EditorFor(model => model.BalanceTime, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="width:100%; margin:5px 0;">
+        <tr>
+            <td class="col-md-12">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>备注信息</small></div>
+                    @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control input-sm", @readonly = "readonly" } })
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="width:100%; margin:5px 0;">
+        <tr>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>预算金额</small></div>
+                    <input type="text" id="check-amt" class="form-control input-sm" readonly value="@Model.Off_Expenses_Details.Where(m=>m.ExpensesType == 0).Sum(m=>m.DetailsFee)" />
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>结算金额</small></div>
+                    <input type="text" id="balance-amt" class="form-control input-sm" readonly value="@Model.Off_Expenses_Details.Where(m=>m.ExpensesType == 1).Sum(m=>m.DetailsFee)" />
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-addon"><small>核销</small></div>
+                    <input type="text" id="verify-amt" class="form-control input-sm" readonly value="@Model.Off_Expenses_Payment.Sum(m=>m.VerifyCost)" />
+                </div>
+            </td>
+        </tr>
+    </table>
+    <span class="col-md-12"><small>结算费用明细：</small></span><br />
+    <table style="width:100%; margin:5px 0;">
+        @foreach (var item in Model.Off_Expenses_Details.Where(m => m.ExpensesType == 1))
+        {
+            <tr>
+                <td class="col-md-3">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>费用名称</small></div>
+                        <input class="form-control input-sm" readonly value="@item.DetailsName">
+                    </div>
+                </td>
+                <td class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>费用</small></div>
+                        <input class="form-control input-sm" readonly type="number" value="@item.DetailsFee">
+                    </div>
+                </td>
+                <td class="col-md-7">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>备注</small></div>
+                        <input class="form-control input-sm" readonly value="@item.Remarks">
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+    <br />
+    <table style="width:100%; margin:5px 0;">
+        <tr>
+            <td class="col-md-12">
+                <a class="btn btn-primary btn-sm" id="add-details-btn">添加核销费用明细</a>
+            </td>
+        </tr>
+    </table>
+    <table style="width:100%; margin:5px 0;" id="list-table">
+        @foreach (var item in Model.Off_Expenses_Payment)
+        {
+            <tr>
+                <td class="col-md-3">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>日期</small></div>
+                        <input class="form-control input-sm date-select" name="apdate" value="@Convert.ToDateTime(item.ApplicationDate).ToString("yyyy-MM-dd")">
+                    </div>
+                </td>
+                <td class="col-md-3">
+                    <input type="hidden" name="detailid" value="@item.Id">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>核销类型</small></div>
+                        <select class="form-control input-sm valid" name="detaillist">
+                            @if (item.VerifyType == 0)
+                            {
+                                <option value="0" selected>现金</option>
+                            }
+                            else
+                            {
+                                <option value="0">现金</option>
+                            }
+                            @if (item.VerifyType == 1)
+                            {
+                                <option value="1" selected>货抵</option>
+                            }
+                            else
+                            {
+                                <option value="1">货抵</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+                <td class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>费用</small></div>
+                        <input class="form-control input-sm" name="detailfee" type="number" value="@item.VerifyCost">
+                    </div>
+                </td>
+                <td class="col-md-3">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>备注</small></div>
+                        <input class="form-control input-sm" name="detailremarks" value="@item.Remarks">
+                    </div>
+                </td>
+                <td class="col-md-1">
+                    <a class="btn btn-danger btn-sm" onClick="getDel(this, @item.Id)"><i class="fa fa-times"></i></a>
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+@section scripts{
+    <script>
+        $(function () {
+            $(".date-select").datepicker();
+            $("#add-details-btn").click(function () {
+                $html = "<tr><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>日期</small></div><input class=\"form-control input-sm date-select\" name=\"apdate\"></div>" +
+                    "</td><td class=\"col-md-3\"><input type=\"hidden\" name=\"detailid\" value=\"0\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>核销类型</small></div>" +
+                    "<select class=\"form-control input-sm valid\" name=\"detaillist\"><option value=\"0\">现金</option>" +
+                    "<option value=\"1\">货抵</option></select>" +
+                    "</div></td><td class=\"col-md-2\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>费用</small></div><input class=\"form-control input-sm\" name=\"detailfee\" type=\"number\" value=\"0\">" +
+                    "</div></td><td class=\"col-md-3\"><div class=\"input-group\"><div class=\"input-group-addon\"><small>备注</small></div>\<input class=\"form-control input-sm\" name=\"detailremarks\">" +
+                    "</div></td><td class=\"col-md-1\"><a onClick=\"getDel(this, 0)\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-times\"></i></a></td></tr>";
+                $("#list-table").append($html);
+                $(".date-select").datepicker();
+            });
+            $(document).on("change","input[name=detailfee]",function(){
+                cal_amount();
+            });
+            
+        });
+        function getDel(k, d_id) {
+            var del_confirm = confirm("确认要删除记录吗?");
+            if (del_confirm) {
+                $.ajax({
+                    url: "/OfflineSales/Off_Expenses_Payment_Del",
+                    type: "post",
+                    data: {
+                        id:d_id
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $(k).closest("tr").remove();
+                            cal_amount();
+                        }
+                        else {
+                            alert("删除失败");
+                        }
+                    }
+                })
+            }
+        }
+        function cal_amount(){
+            var amount = 0;
+            $("input[name=detailfee]").each(function(){
+                amount += parseFloat($(this).val());
+            });
+            $("#verify-amt").val(parseFloat(amount));
+        }
+        
+    </script>
+}

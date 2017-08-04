@@ -1,0 +1,100 @@
+﻿@model PeriodAid.Models.Off_Manager_Task
+@using PeriodAid.DAL;
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">查看签到信息</div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page no-toolbar" data-page="manager-checkindetails" id="manager-checkindetails">
+        <div class="page-content">
+            <div class="content-block-title">基本信息</div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">@Html.Encode(Model.NickName)</div>
+                                <div class="item-after">@Html.Encode(Model.TaskDate.ToString("yyyy-MM-dd"))</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-block-title">签到数据列表（@Html.Encode(Model.Off_Manager_CheckIn.Count(m => m.Canceled == false))）</div>
+            <div class="list-block media-list">
+                <ul>
+                    @foreach (var item in Model.Off_Manager_CheckIn.Where(m => m.Canceled == false))
+                    {
+                        <li class="swipeout">
+                            <div class="swipeout-content">
+                                <a href="javascript:;" class="item-content item-link checkin-photos" data-photos="@item.Photo">
+                                    <div class="item-media"><img src="/Seller/ThumbnailImage_box?filename=@CommonUtilities.getFirst(item.Photo)" class="img-responsive img-rounded" width="65" /></div>
+                                    <div class="item-inner" style="background: url('../../fonts/right.svg') no-repeat; background-position:calc(100% - 15px) center;background-size:10px 20px">
+                                        <div class="item-title">@Html.Encode(item.Remark)</div>
+                                        <div class="item-subtitle color-gray padding-right-20">@Html.Encode(item.Location_Desc)</div>
+                                        <div class="item-subtitle color-gray">签到时间：@Html.Encode(item.CheckIn_Time.ToString("HH:mm:ss"))</div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="swipeout-actions-right">
+                                <a href="javascript:;" class="bg-green checkin-lbs" data-location="@item.Location" data-desc="@item.Location_Desc">位置</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="content-block-title">提报信息</div>
+            <div class="list-block media-list">
+                <ul>
+                    <li>
+                        <a href="#" class="item-content item-link checkin-photos" data-photos="@Model.Photo">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">提报图片</div>
+                                    <div class="item-after">点击查看</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title text-font-1">重点工作内容</div>
+                                </div>
+                                <p class="color-gray text-font-1">@Html.Raw(@Html.Encode(Model.Event_Complete == null ? "无" : Model.Event_Complete).Replace("\n", "<br />"))</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title text-font-1">普通工作内容</div>
+                                </div>
+                                <p class="color-gray text-font-1">@Html.Raw(Html.Encode(Model.Event_UnComplete == null ? "无" : Model.Event_UnComplete).Replace("\n", "<br />"))</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title text-font-1">须协调工作</div>
+                                </div>
+                                <p class="color-gray text-font-1">@Html.Raw(Html.Encode(Model.Event_Assistance == null ? "无" : Model.Event_Assistance).Replace("\n", "<br />"))</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "DarkSellerList";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingEight";
+}
+<table class="offline-search-box">
+    <tbody>
+        <tr>
+            <td class="pull-right">
+                <label>选择产品:</label>
+                <select class="form-control input-sm offline-search-inline" id="offproduct-darkseller-productlist"><option value="">请选择</option></select>
+                <a class="btn btn-info btn-sm" id="offproduct-darkseller-add"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加</a>
+                <a class="btn btn-success btn-sm" id="offproduct-darkseller-sure">确定</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="offproduct-darkseller-list">
+    <table class="table table-condensed table-hover" style="table-layout:fixed;width:100%" id="offproduct-darkseller-tablelist">
+        <tr class="offline-table-background">
+            <th style="width:30%">
+                产品名称
+            </th>
+            <th style="width:15%">
+                产品简称
+            </th>
+            <th style="width:15%">
+                产品规格
+            </th>
+            <th style="width:15%">
+                产品编码
+            </th>
+            <th style="width:15%">
+                销售单价
+            </th>
+            <th></th>
+        </tr>
+    </table>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <input class="hidden" id="offproduct-darkseller-product" name="offproduct-darkseller-product" value="@ViewBag.ProductList" />
+}
+<script>
+    $(function () {
+        var url = "/OffProduct/TemplateProductListAjax"
+        $.ajax({
+            url: url,
+            type: "post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    var list = data.list;
+                    for (var i = 0; i < list.length; i++) {
+                        var iN_arry = list[i].ItemName
+                        var iD_arry = list[i].Id
+                        var iC_arry = list[i].ItemCode
+                        var sP_arry = list[i].SalesPrice
+                        var sC_arry = list[i].Spec
+                        var sN_arry = list[i].SimpleName
+                        if (list[i].Status >= 0) {
+                            $("#offproduct-darkseller-productlist").append("<option target-id='" + iD_arry + "' target-ic='" + iC_arry + "' target-sp='" + sP_arry + "' target-sc='" + sC_arry + "' target-sn='" + sN_arry + "'>" + iN_arry + "</option>");
+                        }
+                        else {
+                            $("#offproduct-darkseller-productlist").append("<option class='hidden' target-id='" + iD_arry + "' target-ic='" + iC_arry + "' target-sp='" + sP_arry + "' target-sc='" + sC_arry + "' target-sn='" + sN_arry + "'>" + iN_arry + "</option>");
+                        }
+                    }
+                    if ($("#offproduct-darkseller-product").val().trim() != "") {
+                        var L = $("#offproduct-darkseller-product").val().split(",");
+                        for (var i = 0; i < L.length; i++) {
+                            var $item = $("#offproduct-darkseller-productlist option[target-id='" + L[i] + "']");
+                            $("#offproduct-darkseller-tablelist").append("<tr id='ptr_" + L[i] + "'><td class='iN'>" + $item.text() + "</td><td class='sN'>" + $item.attr("target-sn") + "</td><td class='iC'>" + $item.attr("target-ic") + "</td><td class='sP'>" + $item.attr("target-sp") + "</td><td class='sC'>" + $item.attr("target-sc") + "</td><td><a class='btn btn-danger btn-xs offproduct-darkseller-del' target-id='" + L[i] + "'>删除</a></td></tr>");
+                            $item.remove();
+                        }
+                    }
+                }
+            }
+        });
+        //添加产品
+        $("#offproduct-darkseller-add").click(function () {
+            var proList_iN = $("#offproduct-darkseller-productlist").val();
+            var proList_iC = $("#offproduct-darkseller-productlist").find("option:selected").attr("target-ic");
+            var proList_sP = $("#offproduct-darkseller-productlist").find("option:selected").attr("target-sp");
+            var proList_sC = $("#offproduct-darkseller-productlist").find("option:selected").attr("target-sc");
+            var proList_sN = $("#offproduct-darkseller-productlist").find("option:selected").attr("target-sn");
+            var id = $("#offproduct-darkseller-productlist").find("option:selected").attr("target-id");
+            if (proList_iN == '') {
+                alert("不存在产品")
+            } else {
+                $("#offproduct-darkseller-productlist").find("option:selected").remove();
+                $("#offproduct-darkseller-tablelist").append("<tr id='ptr_" + id + "'><td class='iN'>" + proList_iN + "</td><td class='sN'>" + proList_sN + "</td><td class='iC'>" + proList_iC + "</td><td class='sP'>" + proList_sP + "</td><td class='sC'>" + proList_sC + "</td><td><a class='btn btn-danger btn-xs offproduct-darkseller-del' target-id='" + id + "'>删除</a></td></tr>");
+                test();
+            }
+        });
+        //删除产品
+        $(document).delegate(".offproduct-darkseller-del", "click", function () {
+            var id = $(this).attr("target-id");
+            var pl_iN = $("#ptr_" + id).find(".iN").text();
+            var pl_sN = $("#ptr_" + id).find(".sN").text();
+            var pl_iC = $("#ptr_" + id).find(".iC").text();
+            var pl_sP = $("#ptr_" + id).find(".sP").text();
+            var pl_sC = $("#ptr_" + id).find(".sC").text();
+            $("#ptr_" + id).remove();
+            $("#offproduct-darkseller-productlist").append("<option target-id=" + id + " target-ic=" + pl_iC + " target-sp=" + pl_sP + " target-sc=" + pl_sC + " target-sn=" + pl_sN + ">" + pl_iN + "</option>")
+            test();
+        });
+        function test() {
+            var l = new Array();
+            $(".offproduct-darkseller-del").each(function () {
+                l.push($(this).attr("target-id"));
+            });
+            $("#offproduct-darkseller-product").val(l);
+            //alert($("#offproduct-darkseller-product").val())
+        }
+        //确定
+        $("#offproduct-darkseller-sure").click(function () {
+            $("form").submit();
+        })
+    });
+</script>
+

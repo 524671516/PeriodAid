@@ -1,0 +1,121 @@
+﻿
+@{
+    ViewBag.Title = "Statistic";
+    Layout = "~/Views/Shared/_WebContentLayout.cshtml";
+    ViewBag.Current = "headingEight";
+}
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>开始时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="start-date" placeholder="开始时间" />
+        </td>
+        <td>
+            <label>结束时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" id="end-date" placeholder="结束时间" />
+        </td>
+        <td>
+            <label>活动：</label>
+            @Html.DropDownList("ccg", ViewBag.ccg as SelectList, new { @class = "form-control input-sm offline-search-inline" })
+        </td>
+        <td>
+            <ul class="list-inline list-unstyled offline-search-btn">
+                <li><a class="btn btn-info btn-sm ccg-Statistics-btn" data-salary="day"><i class="fa fa-search"></i>&nbsp;&nbsp;查询</a></li>            
+            </ul>
+        </td>
+    </tr>
+    <tr><td id="danger" class="text-danger h5"></td></tr>
+</table>
+<br />
+<div id="map" class="row" style="display:none">
+    <div class="col-md-6">
+        <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <div id="myChart_Pie" style="min-width:500px;height:400px"></div>
+    </div>
+</div>
+<div id="myChart_Column" style="min-width:500px;height:400px"></div>
+<script>
+    $(".ccg-Statistics-btn").on("click", function () {
+        var start = $("#start-date").val();
+        var end = $("#end-date").val();
+        var ccgid = $("#ccg").val();
+        var ccg = $("#ccg :selected").text();
+        if (start > end) {
+            $("#danger").text("开始时间不能大于结束时间")
+        } else if (start == "" || end == "") {
+            $("#danger").text("时间不能为空")
+        } else {
+            $("#danger").addClass("hidden")
+            $.ajax({
+                url: "/WebContent/SearchCCGStatistics",
+                type: "post",
+                data: {
+                    startdate: start,
+                    enddate: end,
+                    ccgid: ccgid,
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.result=="FAIL") {
+                        alert("该区域在此时间内无数据", "", function () {
+                            //after click the confirm button, will run this callback function
+                        }, { type: 'error' });
+                    } else {
+                        $("#map").show();
+                        var clickdatearray = [];
+                        var datearray = [];
+                        var viewarray = [];
+                        var clickarray = [];
+                        for (i = 0; i < data.cd.length; i++) {
+                            datearray.push(data.cd[i].ViewDate);
+                            viewarray.push(data.cd[i].ViewCount);
+                            clickarray.push(data.cd[i].ClickCount);
+                        };
+                        $("#myChart_Bar").highcharts({
+                            chart: {
+                                type: 'spline'
+                            },
+                            title: {
+                                text: '页面日常访问量'
+                            },
+                            subtitle: {
+                                text: '数据来源:'
+                            },
+                            xAxis: {
+                                categories: datearray
+                            },
+                            plotOptions: {
+                                spline: {
+                                    marker: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+                            series: [{
+                                cursor: 'pointer',
+                                name: '页面访问量(PV)',
+                                data: viewarray
+                            },
+                            {
+                                cursor: 'pointer',
+                                name: '按钮点击量',
+                                data: clickarray
+                            }
+                            ]
+                        });
+
+                    };
+
+                }
+            });
+            return false
+        }
+    });
+        
+</script>
+
+
+

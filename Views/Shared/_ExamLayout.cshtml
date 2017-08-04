@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>考试系统系统</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    <style type="text/css">
+        .answer-item {
+            display: block;
+            width: 100%;
+            border: solid 1px #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            margin: 10px 0;
+            padding: 10px 20px;
+        }
+
+        .answer-activ {
+            background-color: #5bc0de;
+            border-color: #46b8da;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="reset" style="padding-top:10px;">
+    <div style="color:#333;">
+        @RenderBody()
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

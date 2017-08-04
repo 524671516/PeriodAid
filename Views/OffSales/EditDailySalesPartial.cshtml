@@ -1,0 +1,159 @@
+﻿@model PeriodAid.Models.Off_SalesInfo_Daily
+
+
+@using (Html.BeginForm("EditDailySalesPartial", "OffSales", FormMethod.Post, new { id = "offsales-daily-form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            <label class="control-label col-md-3">日期</label>
+            <div class="col-md-9">
+                <label class="control-label">@Html.DisplayFor(model => model.Date)</label>
+                @Html.HiddenFor(model => model.Date)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">店铺名称</label>
+            <div class="col-md-9">
+                <label class="control-label">
+                    @Html.DisplayFor(model => model.Off_Store.StoreName)
+                </label>
+                @Html.HiddenFor(model => model.StoreId)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">销售数据</label>
+            <div class="col-md-9">
+                @{
+                    Html.RenderAction("DailySalesProductListPartial", new { DailyId = Model.Id });
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">添加产品</label>
+            <div class="col-md-7">
+                <select id="productlist" class="form-control"></select>
+            </div>
+            <div class="col-md-2">
+                <a href="javascript:;" class="btn btn-default" id="add-p"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">促销员</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.SellerId, ViewBag.Sellerlist as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.SellerId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">考勤</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.Attendance, ViewBag.Attendancelist as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Attendance, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">工资</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">奖金</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Bonus, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Bonus, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">扣款</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Debit, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Debit, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">多人</label>
+            <div class="col-md-9">
+                @Html.CheckBoxFor(model => Model.isMultiple)
+                @Html.ValidationMessageFor(model => model.isMultiple, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">备注</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => Model.remarks, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Debit, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+                    }
+<script src="~/Scripts/bootstrap-switch.min.js"></script>
+<script>
+    $("#add-p").click(function () {
+        var select_item = $("#productlist").find("option:selected");
+        if (select_item.length != 0) {
+            $("#productdetails").append("<tr><td class='text-center'>" + select_item.text() + "</td><td><input class='form-control input-sm' type='number' placeholder='销量' name='sales_" + select_item.attr("value") + "' id='sales_" + select_item.attr("value") + "'/></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='库存' name='storage_" + select_item.attr("value") + "' id='storage_" + select_item.attr("value") + "' /></td>" +
+                "<td><input class='form-control input-sm' type='number' placeholder='销售额' name='amount_" + select_item.attr("value") + "' id='amount_" + select_item.attr("value") + "' /></td></tr>");
+            select_item.remove();
+        }
+    })
+    $(function () {
+        $.fn.bootstrapSwitch.defaults.size = 'small';
+        $.fn.bootstrapSwitch.defaults.onColor = 'success';
+        $.fn.bootstrapSwitch.defaults.onText = "&nbsp;是&nbsp;";
+        $.fn.bootstrapSwitch.defaults.offText = "&nbsp;否&nbsp;";
+        $('#offsales-daily-form').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("修改成功");
+                $('.modal-box').modal('hide');
+                $.ajax({
+                    url: "/OffSales/DailySalesListPartial",
+                    success: function (data) {
+                        $("#offsales-list").html(data);
+                    }
+                });
+            }
+            else {
+                $("#modal-con").html(data);
+            }
+
+        });
+        $("[name='isMultiple'][type='checkbox']").bootstrapSwitch();
+        $.ajax({
+            url: "/OffSales/DailySalesAllProductAjax",
+            type: "post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    for (var i = 0; i < data.data.length; i++) {
+                        var item = $("#sales_"+data.data[i].Id);
+                        if (item.length == 0) {
+                            $("#productlist").append("<option value='" + data.data[i].Id + "' data-target='" + data.data[i].ItemCode + "'>" + data.data[i].SimpleName + "</option>");
+                        }
+                    }
+                }
+            }
+        });
+
+    });
+</script>
+

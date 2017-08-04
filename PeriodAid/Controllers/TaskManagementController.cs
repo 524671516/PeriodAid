@@ -15,6 +15,9 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using Newtonsoft.Json.Linq;
 using PeriodAid.Filters;
+using System.Data;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
 
 namespace PeriodAid.Controllers
 {
@@ -1330,6 +1333,10 @@ namespace PeriodAid.Controllers
         public PartialViewResult SubjectLogsPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var EmployeeList = from m in _db.Employee
+                               where m.Status > EmployeeStatus.DEVOICE
+                               select m;
+            ViewBag.EmployeeDropDown = EmployeeList;
             return PartialView(subject);
         }
 
@@ -1457,6 +1464,40 @@ namespace PeriodAid.Controllers
                 ContentTypeClass ctc = GetContentType(TypeCode);
                 ViewBag.CTC = ctc;
                 return PartialView(subjectattachment);
+            }
+        }
+
+        //修改文件
+        [HttpPost]
+        public async Task<JsonResult> Subject_EditFile(int FileId,string Filename)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg = "员工不存在。" });
+            }
+            else
+            {
+                var file = _db.SubjectAttachment.SingleOrDefault(m => m.Id == FileId && m.Status > AttachmentStatus.DELETE);
+                if (file != null)
+                {
+                    if (file.UploaderId == employee.Id || file.Subject.HolderId == employee.Id)
+                    {
+                        file.AttachmentTitle = Filename;
+                        _db.Entry(file).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.EDITSUBJECT, employee, file.SubjectId, "把文件【" + file.AttachmentTitle + "】的名称修改为【"+Filename+"】。");
+                        return Json(new { result = "SUCCESS", errmsg = "" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL", errmsg = "当前用户没有权限修改此文件。" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL", errmsg = "操作失败，此文件已经被删除。" });
+                }
             }
         }
 
@@ -1686,9 +1727,770 @@ namespace PeriodAid.Controllers
         #endregion
 
 
+        #region 我的任务操作
+        //获取我的任务页面
+        public ActionResult PersonalActionPanel()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+
+        }
+
+        //个人近期的事情
+        public ActionResult PersonlRecentPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //近期任务获取
+        public ActionResult PersonalRecentAssignmentPartial(int? page, string timerange, string sorttype)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                int _page = page ?? 0;
+                ViewBag.currentpage = _page;
+                if (timerange == null|| timerange =="")
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var recentassignmentlist = (from m in _db.Assignment
+                                                    where m.HolderId == employee.Id&&m.Status==AssignmentStatus.UNFINISHED
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.DEADTIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+                else
+                {
+                    TimeRangeClass _timerange = getTimeRange(timerange);
+                    var starttime = _timerange.StartTime;
+                    var endtime = _timerange.EndTime;
+                    if (sorttype == null|| sorttype =="")
+                    {
+                        var recentassignmentlist = (from m in _db.Assignment
+                                                    where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED&&m.Deadline>= starttime && m.Deadline<endtime
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.DEADTIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED &&m.Deadline >= starttime && m.Deadline < endtime
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        orderby m.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.Assignment
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+            }
+        }
+        //近期子任务获取
+        public ActionResult PersonalRecentSubtaskPartial(int? page, string timerange, string sorttype)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                int _page = page ?? 0;
+                ViewBag.currentpage = _page;
+                if (timerange == null || timerange == "")
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var recentassignmentlist = (from m in _db.SubTask
+                                                    where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.DEADTIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.SubTask
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.SubTask
+                                                        where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.Assignment.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.SubTask
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+                else
+                {
+                    TimeRangeClass _timerange = getTimeRange(timerange);
+                    var starttime = _timerange.StartTime;
+                    var endtime = _timerange.EndTime;
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var recentassignmentlist = (from m in _db.SubTask
+                                                    where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                    orderby m.CreateTime descending
+                                                    select m).Skip(_page * 20).Take(20);
+                        return PartialView(recentassignmentlist);
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.DEADTIMESORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.SubTask
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        orderby m.Deadline ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var recentassignmentlist = (from m in _db.SubTask
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        orderby m.Assignment.SubjectId ascending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                        else
+                        {
+                            var recentassignmentlist = (from m in _db.SubTask
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        orderby m.CreateTime descending
+                                                        select m).Skip(_page * 20).Take(20);
+                            return PartialView(recentassignmentlist);
+                        }
+                    }
+                }
+            }
+        }
+
+        //参与的任务获取
+        public ActionResult PersonalInvolvedAssignmentPartial(int?page,string datarange,string sorttype)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                int _page = page ?? 0;
+                ViewBag.currentpage = _page;
+                var HolderAssignment = (from m in _db.Assignment
+                                       where m.HolderId == employee.Id&&m.Status>AssignmentStatus.DELETED
+                                       select m).ToList();
+                var ColAssigenment = from m in employee.CollaborateAssignment
+                                     where m.Status > AssignmentStatus.DELETED
+                                     select m;
+                var ConsolidationList = HolderAssignment.Union(ColAssigenment);
+                if (datarange == null || datarange == "")
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var ResultList = (from m in ConsolidationList
+                                          orderby m.CreateTime ascending
+                                          select m).Skip(_page * 20).Take(20);
+                        return PartialView(ResultList);
+
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.DEADTIMESORTDATA)
+                        {
+                            var ResultList = (from m in ConsolidationList
+                                              orderby m.Deadline ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var ResultList = (from m in ConsolidationList
+                                              orderby m.SubjectId ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                        else
+                        {
+                            var ResultList = (from m in ConsolidationList
+                                              orderby m.Id ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+
+
+                    }
+                }
+                else
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        if (datarange == GetDataType.UNFINISHDATA)
+                        {
+                            var ResultList = (from m in ConsolidationList
+                                              where m.Status==AssignmentStatus.UNFINISHED
+                                              orderby m.CreateTime ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                        else
+                        {
+                            var ResultList = (from m in ConsolidationList
+                                              where m.Status == AssignmentStatus.FINISHED
+                                              orderby m.CreateTime ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                    }
+                    else
+                    {
+                        if (datarange == GetDataType.UNFINISHDATA)
+                        {
+                            if (sorttype == GetDataType.DEADTIMESORTDATA)
+                            {
+                                var ResultList = (from m in ConsolidationList
+                                                  where m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.Deadline ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+
+                            }
+                            else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                            {
+                                var ResultList = (from m in ConsolidationList
+                                                  where m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.SubjectId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                            else
+                            {
+                                var ResultList = (from m in ConsolidationList
+                                                  where m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.Id ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                        }
+                        else
+                        {
+                            if (sorttype == GetDataType.DEADTIMESORTDATA)
+                            {
+                                var ResultList = (from m in ConsolidationList
+                                                  where m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.Deadline ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+
+                            }
+                            else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                            {
+                                var ResultList = (from m in ConsolidationList
+                                                  where m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.SubjectId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                            else
+                            {
+                                var ResultList = (from m in ConsolidationList
+                                                  where m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.Id ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+        //负责的任务获取
+        public ActionResult PersonalResponsibleAssignmentPartial(int?page,string datarange,string sorttype)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                int _page = page ?? 0;
+                ViewBag.currentpage = _page;
+                if (datarange == null || datarange == "")
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var ResultList = (from m in _db.Assignment
+                                          where m.HolderId==employee.Id
+                                          orderby m.CreateTime ascending
+                                          select m).Skip(_page * 20).Take(20);
+                        return PartialView(ResultList);
+
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.DEADTIMESORTDATA)
+                        {
+                            var ResultList = (from m in _db.Assignment
+                                              where m.HolderId == employee.Id
+                                              orderby m.Deadline ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var ResultList = (from m in _db.Assignment
+                                              where m.HolderId == employee.Id
+                                              orderby m.SubjectId ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                        else
+                        {
+                            var ResultList = (from m in _db.Assignment
+                                              where m.HolderId == employee.Id
+                                              orderby m.Id ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+
+
+                    }
+                }
+                else
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        if (datarange == GetDataType.UNFINISHDATA)
+                        {
+                            var ResultList = (from m in _db.Assignment
+                                              where m.HolderId == employee.Id&&m.Status == AssignmentStatus.UNFINISHED
+                                              orderby m.CreateTime ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                        else
+                        {
+                            var ResultList = (from m in _db.Assignment
+                                              where m.HolderId == employee.Id&&m.Status == AssignmentStatus.FINISHED
+                                              orderby m.CreateTime ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                    }
+                    else
+                    {
+                        if (datarange == GetDataType.UNFINISHDATA)
+                        {
+                            if (sorttype == GetDataType.DEADTIMESORTDATA)
+                            {
+                                var ResultList = (from m in _db.Assignment
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.Deadline ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+
+                            }
+                            else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                            {
+                                var ResultList = (from m in _db.Assignment
+                                                  where m.HolderId == employee.Id&& m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.SubjectId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                            else
+                            {
+                                var ResultList = (from m in _db.Assignment
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.Id ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                        }
+                        else
+                        {
+                            if (sorttype == GetDataType.DEADTIMESORTDATA)
+                            {
+                                var ResultList = (from m in _db.Assignment
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.Deadline ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+
+                            }
+                            else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                            {
+                                var ResultList = (from m in _db.Assignment
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.SubjectId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                            else
+                            {
+                                var ResultList = (from m in _db.Assignment
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.Id ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+        //执行的任务获取
+        public ActionResult PersonalExecutableTaskPartial(int?page,string datarange,string sorttype)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                int _page = page ?? 0;
+                ViewBag.currentpage = _page;
+                if (datarange == null || datarange == "")
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        var ResultList = (from m in _db.SubTask
+                                          where m.ExecutorId == employee.Id
+                                          orderby m.CreateTime ascending
+                                          select m).Skip(_page * 20).Take(20);
+                        return PartialView(ResultList);
+
+                    }
+                    else
+                    {
+                        if (sorttype == GetDataType.DEADTIMESORTDATA)
+                        {
+                            var ResultList = (from m in _db.SubTask
+                                              where m.ExecutorId== employee.Id
+                                              orderby m.Deadline ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+
+                        }
+                        else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                        {
+                            var ResultList = (from m in _db.SubTask
+                                              where m.ExecutorId == employee.Id
+                                              orderby m.Assignment.SubjectId ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                        else
+                        {
+                            var ResultList = (from m in _db.SubTask
+                                              where m.ExecutorId == employee.Id
+                                              orderby m.CreateTime ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+
+
+                    }
+                }
+                else
+                {
+                    if (sorttype == null || sorttype == "")
+                    {
+                        if (datarange == GetDataType.UNFINISHDATA)
+                        {
+                            var ResultList = (from m in _db.SubTask
+                                              where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                              orderby m.CreateTime ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                        else
+                        {
+                            var ResultList = (from m in _db.SubTask
+                                              where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                              orderby m.CreateTime ascending
+                                              select m).Skip(_page * 20).Take(20);
+                            return PartialView(ResultList);
+                        }
+                    }
+                    else
+                    {
+                        if (datarange == GetDataType.UNFINISHDATA)
+                        {
+                            if (sorttype == GetDataType.DEADTIMESORTDATA)
+                            {
+                                var ResultList = (from m in _db.SubTask
+                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.Deadline ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+
+                            }
+                            else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                            {
+                                var ResultList = (from m in _db.SubTask
+                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.Assignment.SubjectId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                            else
+                            {
+                                var ResultList = (from m in _db.SubTask
+                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  orderby m.AssignmentId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                        }
+                        else
+                        {
+                            if (sorttype == GetDataType.DEADTIMESORTDATA)
+                            {
+                                var ResultList = (from m in _db.SubTask
+                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.Deadline ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+
+                            }
+                            else if (sorttype == GetDataType.SUBJECTSORTDATA)
+                            {
+                                var ResultList = (from m in _db.SubTask
+                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.Assignment.SubjectId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                            else
+                            {
+                                var ResultList = (from m in _db.SubTask
+                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  orderby m.AssignmentId ascending
+                                                  select m).Skip(_page * 20).Take(20);
+                                return PartialView(ResultList);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+        //文件获取
+
+        //个人任务
+        public ActionResult PersonalTaskPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人文件
+        public ActionResult PersonalFilePartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        //个人收藏
+        public ActionResult PersonalCollectionPartial()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+        #endregion
+
+
+        #region  数据EXCEL导出操作
+        public ActionResult GetExcelDataForAssignment()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                DataTable dt = new DataTable();
+                DataColumn dc = null;
+                dc = dt.Columns.Add("序号", Type.GetType("System.Int32"));
+                dc.AutoIncrement = true;//自动增加
+                dc.AutoIncrementSeed = 1;//起始为1
+                dc.AutoIncrementStep = 1;//步长为1
+                dc.AllowDBNull = false;//
+                dc = dt.Columns.Add("名称", Type.GetType("System.String"));
+                dc = dt.Columns.Add("状态", Type.GetType("System.Int32"));
+                dc = dt.Columns.Add("权重", Type.GetType("System.Int32"));
+                dc = dt.Columns.Add("创建时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("截止时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("完成时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("提醒时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("备注", Type.GetType("System.String"));
+                dc = dt.Columns.Add("负责人", Type.GetType("System.String"));
+                dc = dt.Columns.Add("项目归属", Type.GetType("System.String"));
+                DataRow newRow;
+                var assignementlist = from m in _db.Assignment
+                                      where m.HolderId == employee.Id
+                                      select m;
+                
+                foreach(var item in assignementlist)
+                {
+                    newRow = dt.NewRow();
+                    newRow["名称"] = item.AssignmentTitle;
+                    newRow["状态"] = item.Status;
+                    newRow["权重"] = item.Priority;
+                    newRow["创建时间"] = item.CreateTime;
+                    newRow["截止时间"] = item.Deadline;
+                    newRow["提醒时间"] = item.RemindDate;
+                    newRow["备注"] = item.Remarks;
+                    newRow["负责人"] = item.Holder.NickName;
+                    newRow["项目归属"] = item.Subject.SubjectTitle;
+                    dt.Rows.Add(newRow);
+                }
+                HSSFWorkbook workbook = new HSSFWorkbook();
+                dt.TableName = "任务列表";
+                ISheet sheet = string.IsNullOrEmpty(dt.TableName) ? workbook.CreateSheet("Sheet1") : workbook.CreateSheet(dt.TableName);
+                IRow row = sheet.CreateRow(0);
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    ICell cell = row.CreateCell(i);
+                    cell.SetCellValue(dt.Columns[i].ColumnName);
+                }
+
+                //数据  
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    IRow row1 = sheet.CreateRow(i + 1);
+                    for (int j = 0; j < dt.Columns.Count; j++)
+                    {
+                        ICell cell = row1.CreateCell(j);
+                        cell.SetCellValue(dt.Rows[i][j].ToString());
+                    }
+                }
+
+                //转为字节数组  
+                MemoryStream _stream = new MemoryStream();
+                workbook.Write(_stream);
+                _stream.Flush();
+                _stream.Seek(0, SeekOrigin.Begin);
+                return File(_stream, "application/ms-excel", employee.NickName+"的任务.xls");
+            };
+        }
+        #endregion
+
+
         //获取项目侧边栏
         [OperationAuth(OperationGroup = 102)]
-        public PartialViewResult SubjectMenuPannelPartial(int SubjectId)
+        public PartialViewResult SubjectMenuPanelPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var loglist = (from m in _db.OperationLogs
@@ -1759,8 +2561,126 @@ namespace PeriodAid.Controllers
 
 
 
+        public PartialViewResult GetLogs(int? employeeId, int? SubjectId, int? logType, int? logTime, int _page)
+        {
+            if (logType.ToString() != "")
+            {
+                if (logTime.ToString() != "")
+                {
+                    var getLogsByTime = (from m in _db.OperationLogs
+                                         where m.UserId == employeeId
+                                         orderby m.Id
+                                         select m).Skip(_page * 9).Take(9);
+                    return PartialView(getLogsByTime);
+                }
+                else
+                {
+                    if (logType == 5)
+                    {
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    if (logType == 0)
+                    {
+                        var logCodeMin = 105;
+                        var logCodeMax = 108;
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    if (logType == 1)
+                    {
+                        var logCodeMin = 109;
+                        var logCodeMax = 112;
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogCode <= logCodeMax && m.LogCode >= logCodeMin
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    else
+                    {
+                        return PartialView("error");
+                    }
+                }
+            }
+            else
+            {
+                if (logTime.ToString() != "")
+                {
+                    if (logTime == 4)
+                    {
+                        string d1 = DateTime.Now.ToShortDateString().ToString();
+                        var starttime = Convert.ToDateTime(d1);
+                        var endtime = Convert.ToDateTime(d1).AddDays(1);
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId && m.LogTime >= starttime && m.LogTime < endtime
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    if (logTime == 3)
+                    {
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == employeeId && m.SubjectId == SubjectId
+                                             orderby m.Id
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
+                    }
+                    else
+                    {
+                        return PartialView("error");
+                    }
+                }
+                else
+                {
+                    var getLogsByTime = (from m in _db.OperationLogs
+                                         where m.UserId == employeeId
+                                         orderby m.Id
+                                         select m).Skip(_page * 9).Take(9);
+                    return PartialView(getLogsByTime);
+                }
+            }
+        }
 
+        public TimeRangeClass getTimeRange(string timetype)
+        {
+            TimeRangeClass item = new TimeRangeClass();
+            var _today = DateTime.Today;
+            if (timetype == GetDataType.WEEKDATA)
+            {
+                var startweek = _today.AddDays(1 - Convert.ToInt32(_today.DayOfWeek.ToString("d")));
+                var endweek = startweek.AddDays(7);
+                item.StartTime = startweek;
+                item.EndTime = endweek;
+            }
+            else if (timetype == GetDataType.MONTHDATA)
+            {
+                var startmonth = _today.AddDays(1 - _today.Day);
+                var endmonth = startmonth.AddMonths(1);
+                item.StartTime = startmonth;
+                item.EndTime = endmonth;
 
+            }
+            else if (timetype == GetDataType.YEARDATA)
+            {
+                var startyear = new DateTime(_today.Year, 1, 1);
+                var endyear = startyear.AddYears(1);
+                item.StartTime = startyear;
+                item.EndTime = endyear;
+            }
+            else if (timetype == GetDataType.DAYDATA)
+            {
+                item.StartTime = _today;
+                item.EndTime = _today.AddDays(1);
+            }
+            return item;
+        }
 
         public Employee getEmployee(string username)
         {

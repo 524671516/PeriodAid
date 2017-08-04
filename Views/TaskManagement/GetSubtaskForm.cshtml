@@ -1,0 +1,68 @@
+﻿@model PeriodAid.Models.SubTask
+@using (Html.BeginForm("CreateSubtask", "TaskManagement", FormMethod.Post, new { @id = "add_subtask_form", @class = "validate-form" }))
+            {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+    @Html.HiddenFor(m => m.AssignmentId);
+    @Html.HiddenFor(m => m.Id);
+    <div class="form-group">
+        @Html.TextBoxFor(m => m.TaskTitle, new { @class="form-control",@placeholder="标题" })
+    </div>
+    <div class="form-group">
+        @Html.TextAreaFor(m => m.Remarks, new { @class= "form-control",@row="3",@placeholder= "任务描述" })
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label for="ExecutorId">执行人</label>
+            @Html.DropDownListFor(m => m.ExecutorId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control" })
+        </div>
+    </div>
+  <div class="text-right">
+       <a class="btn btn-default cancel-subtask-write" id="cancel-subtask-write">取消</a>
+        <a class="btn btn-blue" id="btn_create_subtask">创建</a>
+  </div>
+}
+<script>
+    $("#cancel-subtask-write").on("click", function () {
+        $(".add-subtask-write").html("").addClass("hidden");
+    });
+    //子任务验证
+    $("#add_subtask_form").validate({
+        debug: false,
+        rules: {
+            TaskTitle: {
+                required: true,
+                maxlength: 128
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data.result == "SUCCESS") {
+                    UnimportantAlert("子任务创建成功");
+                    $("#btn_create_subtask").removeClass("disabled");
+                    GetSubTaskListPartial($("#AssignmentId").val
+                    (), function (data) {
+                        $("#modal_subtask_area").html(data);
+                    });
+                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                } else {
+                    ErrorAlert(data.errmsg);
+                    $("#btn_create_subtask").removeClass("disabled");
+                }
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#btn_create_subtask").removeClass("disabled");
+        }
+    });
+    //子任务的提交
+    $("#btn_create_subtask").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled");
+            $("#add_subtask_form").submit();
+        }
+    });
+</script>

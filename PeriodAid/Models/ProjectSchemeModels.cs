@@ -543,6 +543,45 @@
     }
 
 
+    public static class GetDataType
+    {
+        /// <summary>
+        /// 日数据
+        /// </summary>
+        public static string DAYDATA = "day";
+        /// <summary>
+        ///周数据
+        /// </summary>
+        public static string WEEKDATA = "week";
+        /// <summary>
+        /// 月数据
+        /// </summary>
+        public static string MONTHDATA = "month";
+        /// <summary>
+        /// 日数据
+        /// </summary>
+        public static string YEARDATA = "year";
+        /// <summary>
+        /// 截止时间时间排序
+        /// </summary>
+        public static string DEADTIMESORTDATA = "deadtimesort";
+        /// <summary>
+        /// 项目排序
+        /// </summary>
+        public static string SUBJECTSORTDATA = "subjectsort";
+        /// <summary>
+        /// 已完成
+        /// </summary>
+        public static string FINISHDATA = "finish";
+        /// <summary>
+        /// 未完成
+        /// </summary>
+        public static string UNFINISHDATA = "unfinish";
+
+
+
+    }
+
     public class SubjectFileArea
     {
         public int SubjectId { get; set; }

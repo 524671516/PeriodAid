@@ -1,0 +1,32 @@
+﻿
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>历史记录</strong></div>
+        <div class="right">
+            <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="SellerTaskList">
+        <div class="page-content infinite-scroll">
+            <div class="content-block-title">库存记录列表</div>
+            <div class="list-block media-list">
+                <ul class="seller-list" id="sellertask-list">
+
+                </ul>
+                <div class="color-gray preloader-text hidden infinite-pre">没有更多的加载项</div>
+                <div class="infinite-scroll-preloader hidden">
+                    <div class="preloader"></div>
+                </div>
+            </div>
+            <input type="hidden" id="sellertasklist-id" value="@ViewBag.SellerId"/>
+        </div>
+        </div>
+</div>

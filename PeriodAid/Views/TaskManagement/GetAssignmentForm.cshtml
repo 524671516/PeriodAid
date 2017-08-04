@@ -49,12 +49,12 @@
             $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
                     UnimportantAlert("任务创建成功。");
-                    GetAssignment(data.id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_pannel-body"));
+                    GetAssignment(data.id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_panel-body"));
                     $.ajax({
                         url: "/TaskManagement/GetProcedureJsonInfo",
                         type: "post",
                         data: {
-                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                            SubjectId: $("#panel-wrap").attr("data-sid")
                         },
                         success: function (data) {
                             var len = data.data.length;

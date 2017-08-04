@@ -230,10 +230,6 @@ namespace PeriodAid.Filters
                     {
                         //编辑子任务
                         var subtaskId = Convert.ToInt32(filterContext.HttpContext.Request.Params["SubTaskId"]);
-                        if (subtaskId == 0)
-                        {
-                             subtaskId = Convert.ToInt32(filterContext.HttpContext.Request.Params["Id"]);
-                        }
                         var subtask = _db.SubTask.SingleOrDefault(m => m.Id == subtaskId && m.Status > AssignmentStatus.DELETED);
                         if (subtask == null)
                         {

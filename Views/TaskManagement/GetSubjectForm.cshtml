@@ -1,0 +1,66 @@
+﻿@model PeriodAid.Models.Subject
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">新建项目</h4>
+</div>
+<div class="modal-body">
+    @using (Html.BeginForm("CreateSubject", "TaskManagement", FormMethod.Post, new { @id = "add_subject_form", @class = "validate-form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.TemplateId)
+        <div class="form-group">
+            @Html.TextBoxFor(m => m.SubjectTitle, new { @class = "subject-name form-control", @placeholder = "项目名称" })
+        </div>
+        <div class="form-group">
+            @Html.TextBoxFor(m => m.Remarks, new { @class = "subject-description form-control", @placeholder = "项目简介（选填）" })
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" id="btn_choose_template" data-toggle="modal" data-target="#Choose-Template">选择模板创建>></button>
+            <button type="button" class="btn btn-primary" id="btn_add_subject">直接创建项目</button>
+        </div>
+    }
+</div>
+<script>
+    //新增项目验证
+    $("#add_subject_form").validate({
+        debug: false,
+        rules: {
+            SubjectTitle: {
+                required: true,
+                maxlength: 128
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data.result == "SUCCESS") {
+                    UnimportantAlert("添加项目成功。");
+                    $("#btn_add_subject").removeClass("disabled");
+                    $('#Add-Subject').modal('hide');
+                    GetActiveSubject("#personal_active_subject")
+                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
+                } else {
+                    ErrorAlert(data.errmsg);
+                    $('#Add-Subject').find(".form-group input,.form-group textarea").val("");
+                    $("#btn_add_subject").removeClass("disabled");
+                }
+            }, function (data) {
+                ErrorAlert("请求失败。");
+                $("#btn_add_subject").removeClass("disabled");
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#btn_add_subject").removeClass("disabled");
+        }
+    });
+    //新增项目的提交
+    $("#btn_add_subject").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#add_subject_form").submit();
+        }
+    });
+</script>

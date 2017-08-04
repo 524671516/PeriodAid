@@ -58,11 +58,26 @@
       <HintPath>..\packages\QrCode.Net.0.4.0.0\lib\net45\Gma.QrCodeNet.Encoding.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\..\Release\Net20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NPOI">
+      <HintPath>..\..\..\Release\Net20\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>..\..\..\Release\Net20\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>..\..\..\Release\Net20\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>..\..\..\Release\Net20\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
       <Private>True</Private>
@@ -1051,7 +1066,7 @@
     <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
-    <Content Include="Views\TaskManagement\SubjectMenuPannelPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectMenuPanelPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
@@ -1062,7 +1077,19 @@
     <Content Include="Views\TaskManagement\Subject_FilesPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNotFound.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNoAuthority.cshtml" />
-    <Content Include="Views\TaskManagement\GetProcedureForm.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogs.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonlRecentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalActionPanel.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalCollectionPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalFilePartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalTaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentSubtaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalInvolvedAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalResponsibleAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalExecutableTaskPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

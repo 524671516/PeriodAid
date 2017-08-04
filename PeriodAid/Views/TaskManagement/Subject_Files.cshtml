@@ -44,7 +44,7 @@
                 <ul class="nav navbar-nav navbar-right navbar-border">
                     @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" id="btn_show_subject_pannel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
+                        <a href="#" class="dropdown-toggle" id="btn_show_subject_panel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
                     </li>
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -52,8 +52,8 @@
     </div>
     <!--The Second Nav End-->
     <!--Files Area-->
-    <div class="tm_pannel-wrap tm_pannel-file" id="tm_pannel-file" data-sid="@Model.Id">
-        <div class="tm_pannel-container tm_pannel-container-file" id="tm_folder_container">
+    <div class="tm_panel-wrap tm_panel-file" id="tm_panel-file" data-sid="@Model.Id">
+        <div class="tm_panel-container tm_panel-container-file" id="tm_folder_container">
             <div class="tm_files_wrap">
                 <div class="tm_files_header clear-float">
                     <div class="tm_files_left float-left tm_files_titile">
@@ -178,11 +178,11 @@
         </div>
     </div>
     <!--Files Area End-->
-<!--Pannel Menu-->
-<div class="tm_subject_pannel" id="tm_subject_pannel">
+<!--panel Menu-->
+<div class="tm_subject_panel" id="tm_subject_panel">
 
 </div>
-<!--Pannel Menu-->
+<!--panel Menu-->
 @section scripts{
     <script>
         $(function () {
@@ -190,7 +190,7 @@
                 url: "/TaskManagement/Subject_FilesAjax",
                 type: "post",
                 data: {
-                    SubjectId: $("#tm_pannel-file").attr("data-sid")
+                    SubjectId: $("#tm_panel-file").attr("data-sid")
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
@@ -208,12 +208,12 @@
                 }
             })
         })
-        $("#tm_pannel-file").on("click", ".tm_link_sub", function () {
+        $("#tm_panel-file").on("click", ".tm_link_sub", function () {
             var _code = $(this).parent().attr("data-code");
             $.ajax({
                 url: "/TaskManagement/Subject_FilesPartial",
                 data: {
-                    SubjectId: $("#tm_pannel-file").attr("data-sid"),
+                    SubjectId: $("#tm_panel-file").attr("data-sid"),
                     TypeCode: _code
                 },
                 success: function (data) {
@@ -221,7 +221,7 @@
                         ErrorAlert(data)
                     } else {
                         $("#tm_folder_container").addClass("hide");
-                        $("#tm_pannel-file").append(data);
+                        $("#tm_panel-file").append(data);
                     }
                 },
                 error: function () {

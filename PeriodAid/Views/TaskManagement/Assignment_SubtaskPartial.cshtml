@@ -37,6 +37,8 @@
                                 {
                                     <span class="color-orange">截止日期:</span>@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))
                                 }</div>
+
+
                          </div>
                         <div class="tm_modal_list-footer hidden add-subtask-write"></div>
                     </li>
@@ -49,13 +51,13 @@
                     <span>
                         <i class="fa fa-plus-circle  color-blue icon-size" aria-hidden="true"></i>
                     </span>
-                </div>
+                </div> 
                 <div class="tm_modal_list-middle add-btn btn_add_subtask" data-sbid="">添加子任务</div>
-                <div class="tm_modal_list-right"></div>
+                        <div class="tm_modal_list-right"></div>
+                    </div>
+                    <div class="tm_modal_list-footer hidden add-subtask-write"></div>
+                </div>
             </div>
-            <div class="tm_modal_list-footer hidden add-subtask-write"></div>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -118,12 +120,12 @@
                     GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
                         $("#modal_subtask_area").html(data);
                     });
-                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
                     $.ajax({
                         url: "/TaskManagement/GetProcedureJsonInfo",
                         type: "post",
                         data: {
-                            SubjectId: $("#pannel-wrap").attr("data-sid")
+                            SubjectId: $("#panel-wrap").attr("data-sid")
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {

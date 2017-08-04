@@ -1,0 +1,146 @@
+﻿@model PeriodAid.Models.Subject
+@using PeriodAid.Models;
+<div class="tm_subject_container">
+    <div class="tm_subject_panel_header">
+        <strong class="color-blue">项目菜单</strong>       
+    </div>
+    <div class="tm_subject_panel_body">
+        <div class="list-group">
+            <a href="javascript:;" class="list-group-item" id="btn_setting_subject">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                &nbsp;<strong>项目设置</strong>
+            </a>
+            <a href="javascript:;" class="list-group-item" id="subject_daily_schedule">
+                <div class="list-group-item-heading"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                &nbsp;<strong>今日进度</strong></div>
+                <div class="daily_schedule_content clear-float">
+                    <div class="float-left">
+                        <h5>已完成任务</h5>
+                        <div class="color-green text-center subject_task_num">
+                            <strong>@ViewBag.finishnum</strong>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <h5>待处理任务</h5>
+                        <div class="color-red text-center subject_task_num">
+                            <strong>@ViewBag.waitnum</strong>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="list-group-item">
+                <div class="list-group-item-heading"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                &nbsp;<strong>最近动态</strong></div>
+                <ul class="list-group tm_modal-list tm_modal_list_ul">
+                   @if (ViewBag.RecentEvent.Count==0)
+                   {
+                       <li>此项目最近没有任何动态更新。</li>
+                   }
+                   else
+                   {
+                    foreach (var log in ViewBag.RecentEvent)
+                    {
+                        <li class="clear-float tm_modal_list_li">
+                            <div class="tm_item_avatar float-left" title="@log.Employee.NickName" data-toggle="tooltip" data-placement="right">
+                                @if (log.Employee.ImgUrl == null)
+                                {
+                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }
+                                else
+                                {
+                                    <span style="background-image:url('http://cdn2.shouquanzhai.cn/@log.Employee.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                }                          
+                            </div>
+                            <div class="tm_item_middle float-left">
+                                <div class="tm_middle_top tm_middle_content" title="@log.LogContent" data-toggle="tooltip" data-placement="top">
+                                    <span>@Html.Encode(log.LogContent)</span>
+                                </div>
+                                <div class="tm_middle_bottom tm_middle_content clear-float">
+                                    <div class="tm_item_left">
+                                        <span class="color-gray"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                                        <span class="finish_subtask">@Html.Encode(log.LogTime.ToString("yyyy-MM-dd HH:ss"))</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </li>
+                    }
+                   }
+                </ul>
+            </a>
+            <a href="javascript:;" class="list-group-item" id="subject_logs_more">
+                <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                &nbsp;<strong>查看更多操作日志</strong>
+            </a>
+        </div>
+    </div>
+    <div class="tm_subject_panel_footer">没有更多了</div>
+</div>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+    $("#btn_setting_subject").on("click", function () {
+        $.ajax({
+            url: "/TaskManagement/EditSubject",
+            data: {
+                SubjectId: $("#panel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                if (data != "FAIL") {
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }
+                else {
+                    ErrorAlert("当前用户没有修改项目信息的权限")
+                }
+            },
+            error: function (data) {
+                ErrorAlert("操作失败。");
+            }
+        })
+        return false;
+    })
+    $("#subject_daily_schedule").on("click", function () {
+        $.ajax({
+           url: "/TaskManagement/SubjectProgressPartial",
+            data: {
+                SubjectId: $("#panel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                if (data != "FAIL") {
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }
+                else {
+                    ErrorAlert("操作失败。")
+                }
+            },
+            error: function (data) {
+                ErrorAlert("操作失败。");
+            }
+        })
+        return false;
+    })
+    $("#subject_logs_more").on("click", function () {
+        $.ajax({
+            url: "/TaskManagement/SubjectLogsPartial",
+            data: {
+                SubjectId: $("#panel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                if (data != "FAIL") {
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }
+                else {
+                    ErrorAlert("操作失败。")
+                }
+            },
+            error: function (data) {
+                ErrorAlert("操作失败。");
+            }
+        })
+        return false;
+    })
+</script>

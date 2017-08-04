@@ -1,0 +1,64 @@
+﻿@model PeriodAid.Models.Employee
+<!--My View-->
+<div id="tm-my-view" class="tm-my-view tm-view">
+    <div class="tm-view-header tm-my-view-header">
+        <div class="tm-my-view-control tm-view-control">
+            <a href="javascript:;" class="tm-view-control-link active" data-href="/TaskManagement/PersonlRecentPartial">近期的事</a>
+            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalTaskPartial">任务</a>
+            @*<a href="javascript:;" class="tm-view-control-link">文件</a>*@
+        </div>
+        <div class="tm-my-view-close tm-control-view-panel">
+            <button type="button" class="close"><span aria-hidden="true">×</span></button>
+        </div>
+    </div>
+    <div class="tm-view-content tm-my-view-content">
+        <div class="tm-view-content-wrap  tm-view-wrap tm-my-view-wrap">
+        </div>
+    </div>
+</div>
+<!--My View End-->
+<script>
+    $(function () {
+        //初始化加载数据
+        var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
+        if (init_link) {
+            $.ajax({
+                url: init_link,
+                success: function (data) {
+                    if (data == "FAIL") {
+                        ErrorAlert("获取数据失败。")
+                    } else {
+                        $(".tm-my-view-wrap").html(data);
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。");
+                }
+            })
+        }
+        //我的任务导航控制
+        $(".tm-my-view-control").on("click", ".tm-view-control-link", function () {
+            if (!$(this).hasClass("active")) {
+                $(".tm-my-view-control .tm-view-control-link").removeClass("active");
+                var _link = $(this).attr("data-href");
+                var _self = $(this);
+                if (_link) {
+                    $.ajax({
+                        url: _link,
+                        success: function (data) {
+                            if (data == "FAIL") {
+                                ErrorAlert("获取数据失败。")
+                            } else {
+                                $(".tm-my-view-wrap").html(data);
+                                _self.addClass("active");
+                            }
+                        },
+                        error: function () {
+                            ErrorAlert("请求失败。");
+                        }
+                    })
+                }
+            }
+        });
+    });
+</script>

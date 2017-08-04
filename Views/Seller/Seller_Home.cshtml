@@ -1,0 +1,172 @@
+﻿
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>促销员系统</title>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.colors.min.css" rel="stylesheet" />
+    <link href="~/Content/Seller.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="statusbar-overlay"></div>
+    <div class="panel-overlay"></div>
+    <div class="panel panel-left panel-reveal left-nav" id="user-panel">
+
+    </div>
+    <!-- Views -->
+    <div class="views">
+        <!-- Your main view, should have "view-main" class -->
+        <div class="view view-main">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="center sliding"><strong>促销员系统</strong></div>
+                    <div class="right">
+                        <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="pages navbar-through toolbar-through">
+                <div class="page" data-page="seller-home">
+                    <div class="page-content">
+                        <div id="seller-status">
+                            <div class="list-block media-list">
+                                <ul>
+                                    <li>
+                                        <a href="javascript:;" class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title-row">
+                                                    <div class="item-title color-black">@Html.Encode(ViewBag.StoreName)</div>
+                                                </div>
+                                                <div class="item-subtitle color-gray" style="font-size:12px;margin-top:5px;">店铺同期平均销量</div>
+                                            </div>
+                                            <div class="item-media">
+                                                <span class="color-blue" style="padding-right:15px;font-size:30px;">@Html.Encode(ViewBag.AVG_Info)</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="list-block">
+                                <ul>
+                                    <li class="accordion-item accordion-item-expanded">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title" style="font-size:0.8em;">今日任务</div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="row no-gutter icon-accordion">
+                                                <a href="javascript:;" class="col-25 text-center icon-item color-gray" id="checkin-icon">
+                                                    <div class="fa-stack fa-2x">
+                                                        <i class="fa fa-square fa-stack-2x"></i>
+                                                        <i class="fa fa-sign-in fa-stack-1x fa-inverse"></i>
+                                                    </div>
+                                                    <div class="icon-text">立即签到</div>
+                                                </a>
+                                                <a href="javascript:;" class="col-25  text-center icon-item color-gray" id="checkout-icon">
+                                                    <div class="fa-stack fa-2x">
+                                                        <i class="fa fa-square fa-stack-2x"></i>
+                                                        <i class="fa fa-sign-out fa-stack-1x fa-inverse"></i>
+                                                    </div>
+                                                    <div class="icon-text">立即签退</div>
+                                                </a>
+                                                <a href="javascript:;" class="col-25 text-center icon-item color-gray" id="report-icon">
+                                                    <div class="fa-stack fa-2x">
+                                                        <i class="fa fa-square fa-stack-2x"></i>
+                                                        <i class="fa fa-edit fa-stack-1x fa-inverse"></i>
+                                                    </div>
+                                                    <div class="icon-text">提报销量</div>
+                                                </a>
+                                                <a href="javascript:;" class="col-25 text-center icon-item color-gray" id="refresh-icon">
+                                                    <div class="fa-stack fa-2x">
+                                                        <i class="fa fa-square fa-stack-2x"></i>
+                                                        <i class="fa fa-refresh fa-stack-1x fa-inverse"></i>
+                                                    </div>
+                                                    <div class="icon-text">重填数据</div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    @if (ViewBag.BindInfo)
+                                    {
+                                        <li class="accordion-item accordion-item-expanded">
+                                            <a href="#" class="item-content item-link">
+                                                <div class="item-inner">
+                                                    <div class="item-title" style="font-size:0.8em;">辅助工具</div>
+                                                </div>
+                                            </a>
+                                            <div class="accordion-item-content">
+                                                <div class="row no-gutter icon-accordion">
+                                                    <a href="/Seller/Seller_ScheduleList" class="col-25 text-center color-blue">
+                                                        <div class="fa-stack fa-2x">
+                                                            <i class="fa fa-square fa-stack-2x"></i>
+                                                            <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
+                                                        </div>
+                                                        <div class="icon-text">排班信息</div>
+                                                    </a>
+                                                    <a href="/Seller/Seller_ConfirmedData" class="col-25  text-center color-blue">
+                                                        <div class="fa-stack fa-2x">
+                                                            <i class="fa fa-square fa-stack-2x"></i>
+                                                            <i class="fa fa-newspaper-o fa-stack-1x fa-inverse"></i>
+                                                        </div>
+                                                        <div class="icon-text">考勤数据</div>
+                                                    </a>
+                                                    <a href="/Seller/Seller_CompetitionInfoList" class="col-25 text-center color-blue">
+                                                        <div class="fa-stack fa-2x">
+                                                            <i class="fa fa-square fa-stack-2x"></i>
+                                                            <i class="fa fa-commenting fa-stack-1x fa-inverse"></i>
+                                                        </div>
+                                                        <div class="icon-text">竞品提报</div>
+                                                    </a>
+                                                    <a href="/Seller/Seller_CreditInfo" class="col-25 text-center color-blue">
+                                                        <div class="fa-stack fa-2x">
+                                                            <i class="fa fa-square fa-stack-2x"></i>
+                                                            <i class="fa fa-credit-card fa-stack-1x fa-inverse"></i>
+                                                        </div>
+                                                        <div class="icon-text">完善资料</div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hidden">
+            <span id="appId">@ViewBag.AppId</span>
+            <span id="timeStamp">@ViewBag.TimeStamp</span>
+            <span id="nonce">@ViewBag.Nonce</span>
+            <span id="url">@ViewBag.Url</span>
+            <span id="signature">@ViewBag.Signature</span>
+        </div>
+        <!-- Path to Framework7 Library JS-->
+        <script src="~/Scripts/framework7.min.js"></script>
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+        <script src="~/Scripts/jquery.form.min.js"></script>
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/highcharts.js"></script>
+        <!-- Path to your app js-->
+        <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+        <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+        <script src="~/Scripts/my-validate.js"></script>
+        <script src="~/Scripts/seller.min.js?v=1.6.0"></script>
+</body>
+</html>

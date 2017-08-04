@@ -1,0 +1,238 @@
+﻿@model PeriodAid.Models.Subject
+@using PeriodAid.Models;
+@{
+    ViewBag.ImgUrl = @ViewBag.img;
+    ViewBag.Title = "Subject_Files";
+    Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
+}
+
+    <!--The Second Nav-->
+    <div class="navbar-default tm_task-navbar">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <ol class="breadcrumb  navbar-breadcrumb">
+                    <li><a href="/TaskManagement/Index">主页</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" id="SubjectName" data-id="@Model.Id" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.Encode(Model.SubjectTitle)@*<span class="caret"></span>*@</a>
+                        @*<ul class="dropdown-menu dropdown-menu-list">
+                                 <li><a href="#">Action</a></li>
+                                 <li><a href="#">Another action</a></li>
+                                 <li><a href="#">Something else here</a></li>
+                                 <li role="separator" class="divider"></li>
+                                 <li><a href="#">Separated link</a></li>
+                                 <li role="separator" class="divider"></li>
+                                 <li><a href="#">One more separated link</a></li>
+                            </ul>*@
+                    </li>
+                </ol>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                <ul class="nav navbar-nav navbar-underline">
+                    <li><a href="/TaskManagement/Subject_Detail?SubjectId=@Model.Id">进度</a></li>
+                    <li><a href="#">日程</a></li>
+                    <li><a href="/TaskManagement/Subject_Files?SubjectId=@Model.Id" class="active">文件</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right navbar-border">
+                    @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" id="btn_show_subject_pannel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!--The Second Nav End-->
+    <!--Files Area-->
+    <div class="tm_pannel-wrap tm_pannel-file" id="tm_pannel-file" data-sid="@Model.Id">
+        <div class="tm_pannel-container tm_pannel-container-file" id="tm_folder_container">
+            <div class="tm_files_wrap">
+                <div class="tm_files_header clear-float">
+                    <div class="tm_files_left float-left tm_files_titile">
+                        <span>文件夹列表</span>
+                    </div>
+                </div>
+                <div class="tm-files_control clear-float">
+                    <div class="tm_files_left float-left tm_files_checkbox">
+                        <a>
+                            <input type="checkbox" style="margin:0" />
+                        </a>
+                    </div>
+                    <div class="tm_files_left float-left tm_files_type">
+                        &nbsp;
+                    </div>
+                    <div class="tm_files_middle float-left">
+                        <div class="tm_files_info">
+                            <a href="#" class="tm_files_name color-gray">名称</a>
+                            <a href="#" class="tm_files_size color-gray">文件数</a>
+                            <a href="#" class="tm_files_author color-gray">最后操作者</a>
+                            <a href="#" class="tm_files_time color-gray">更新时间</a>
+                        </div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+                <div class="tm_files_body">
+                    <ul class="tm_files_body_ul">                      
+                        <li class="clear-float tm_files_body_ul_li" data-code="100">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">图片</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span class="tm_files_author color-gray"></span>
+                                    <span  class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="103">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">文档</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span  class="tm_files_author color-gray"></span>
+                                    <span  class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="101">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">视频</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span class="tm_files_author color-gray"></span>
+                                    <span class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="102">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">音频</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span href="#" class="tm_files_author color-gray"></span>
+                                    <span href="#" class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clear-float tm_files_body_ul_li" data-code="401">
+                            <div class="tm_files_left float-left tm_files_checkbox">
+                                <a>
+                                    <input type="checkbox" />
+                                </a>
+                            </div>
+                            <div class="tm_files_left float-left tm_files_type">
+                                <span><i class="fa fa-folder color-blue fa-2x" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="tm_files_middle float-left clear-float tm_link_sub">
+                                <div class="tm_files_info float-left">
+                                    <span class="tm_files_name color-gray">其他</span>
+                                    <span class="tm_files_size color-gray"></span>
+                                    <span class="tm_files_author color-gray"></span>
+                                    <span class="tm_files_time color-gray"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Files Area End-->
+<!--Pannel Menu-->
+<div class="tm_subject_pannel" id="tm_subject_pannel">
+
+</div>
+<!--Pannel Menu-->
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/TaskManagement/Subject_FilesAjax",
+                type: "post",
+                data: {
+                    SubjectId: $("#tm_pannel-file").attr("data-sid")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        var _len = data.data.length;
+                        for (i = 0; i < _len; i++) {
+                            var self = $("li[data-code=" + data.data[i].FolderCode + "]")
+                            self.find(".tm_files_size").html(data.data[i].FileNum)
+                            self.find(".tm_files_author").html(data.data[i].LastUpLoadUser)
+                            self.find(".tm_files_time").html(data.data[i].LastUpLoadTime)
+                        };
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。")
+                }
+            })
+        })
+        $("#tm_pannel-file").on("click", ".tm_link_sub", function () {
+            var _code = $(this).parent().attr("data-code");
+            $.ajax({
+                url: "/TaskManagement/Subject_FilesPartial",
+                data: {
+                    SubjectId: $("#tm_pannel-file").attr("data-sid"),
+                    TypeCode: _code
+                },
+                success: function (data) {
+                    if (data == "FAIL") {
+                        ErrorAlert(data)
+                    } else {
+                        $("#tm_folder_container").addClass("hide");
+                        $("#tm_pannel-file").append(data);
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。")
+                }
+            })
+        })
+    </script>
+}
+
+
+
+
+

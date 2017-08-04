@@ -1,0 +1,174 @@
+﻿
+@{
+    ViewBag.Title = "Off_Statistic_Seller";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSeven";
+}
+<table class="offline-search-box">
+    <tr>
+        <td>
+            <label>开始时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="开始时间" id="data-startTime">
+        </td>
+        <td>
+            <label>结束时间：</label>
+            <input type="text" class="form-control input-sm offline-search-inline" placeholder="结束时间" id="data-endTime">
+        </td>
+        <td>
+            <label>促销姓名：</label>
+            <input id="seller" class="form-control input-sm offline-search-inline" placeholder="促销员" />
+            <input id="project-id" class="form-control input-sm offline-search-inline hidden" />
+        </td>
+        <td>
+            <a class="btn btn-info btn-sm" id="data-btn"><i class="fa fa-search"></i>&nbsp;&nbsp;查看</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input id="seller-item" name="seller-item" class="form-control input-sm hidden" disabled />
+        </td>
+    </tr>
+    <tr><td id="danger" class="text-danger h5"></td></tr>
+</table>
+<div id="map" class="row" style="display:none;">
+    <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
+</div>
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<script src="~/Scripts/highcharts.js"></script>
+<script>
+    $("#data-startTime").datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+    $("#data-endTime").datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+    function split(val) {
+        return val.split(/,\s*/);
+    };
+    function extractLast(term) {
+        return split(term).pop();
+    };
+    $(function () {
+        $("#seller").autocomplete({
+            minLength: 0,
+            max: 5,//列表里的条目数
+            minChars: 0,//自动完成激活之前填入的最小字符
+            width: 200,//提示的宽度，溢出隐藏
+            scrollHeight: 180,//提示的高度，溢出显示滚动条
+            matchContains: true,//包含匹配，就是data参数里的数据，是否只要包含文本框里的数据就显示
+            autoFill: false,//自动填充
+            source: function (request, response) {
+                $.ajax({
+                    url: "/OfflineSales/Off_Statistic_QuerySeller_Ajax",
+                    data: {
+                        query: request.term
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        response(data.data);
+                    }
+
+                })
+            },
+            search: function () {
+                var term = extractLast(this.value);
+                if (term.length < 1) {
+                    return false;
+                }
+            },
+            focus: function () {
+                return false;
+            },
+            select: function (event, ui) {
+                $("#seller-item").removeClass("hidden");
+                $("#seller-item").val(ui.item.label + " ———— " + ui.item.desc);
+                $("#seller").val(ui.item.label);
+                $("#project-id").val(ui.item.value);
+                return false;
+            }
+        });
+        $("#data-btn").click(function () {
+            var start = $("#data-startTime").val();
+            var end = $("#data-endTime").val();
+            var sellerid = $("#project-id").val();
+            var link_url = "/OfflineSales/Off_Statistic_Seller_Ajax";
+            if (start > end) {
+                $("#danger").text("开始时间不能大于结束时间")
+            }else if (start == "" || end == "") {
+            $("#danger").text("时间不能为空")
+        } else {
+                $("#danger").addClass("hidden")
+                $.ajax({
+                    url: link_url,
+                    data: {
+                        startdate: start,
+                        enddate: end,
+                        sellerid: sellerid
+                    },
+                    success: function (data) {
+                        if (data.data.length == 0) {
+                            alert("该促销员在此时间内无数据")
+                        } else {
+                            $("#map").show();
+                            var resultdata = data.data;
+                            var totalarray = new Array();
+                            var datearray = new Array();
+                            var evatotalarry = new Array();
+                            for (var i = 0; i < resultdata.length; i++) {
+                                var deeint = parseInt(resultdata[i].Date.replace(/\D/igm, ""));
+                                var dee = new Date(deeint)
+                                datearray.push(dee.Format("MM-dd"));
+                                var totaltemp = resultdata[i].SalesCount;
+                                totalarray.push(totaltemp);
+                                var avgtotaltemp = resultdata[i].AVG_SalesData;
+                                evatotalarry.push(avgtotaltemp)
+                            }
+                            $("#myChart_Bar").highcharts({
+                                chart: {
+                                },
+                                title: {
+                                    text:'促销员每天销售总额折线图(单位：盒/天)'
+                                },
+                                xAxis: {
+                                    categories: datearray
+                                },
+                                series: [{
+                                    type: 'column',
+                                    name: '每日销量',
+                                    data: totalarray
+                                }, {
+                                    type: 'spline',
+                                    name: '历史平均销量',
+                                    data: evatotalarry,
+                                    marker: {
+                                        lineWidth: 2,
+                                        lineColor: Highcharts.getOptions().colors[3],
+                                        fillColor: 'white'
+                                    }
+                                }]
+                            });
+                        }
+                    }
+                })
+            }
+        })
+    });
+    Date.prototype.Format = function (fmt) { //author: meizz   
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份   
+            "d+": this.getDate(),                    //日   
+            "h+": this.getHours(),                   //小时   
+            "m+": this.getMinutes(),                 //分   
+            "s+": this.getSeconds(),                 //秒   
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度   
+            "S": this.getMilliseconds()             //毫秒   
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+</script>
+

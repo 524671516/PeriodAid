@@ -2,53 +2,47 @@
 @model PeriodAid.Models.Subject
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title">@Html.Encode(Model.SubjectTitle+"的操作日志")</h4>
+    <h4 class="modal-title">@Html.Encode(Model.SubjectTitle + "的操作日志")</h4>
 </div>
 <div class="container-fluid">
     <div class="btn-group btn-group-justified" role="group" style="padding:10px;">
         <div class="btn-group">
             <select class="selectpicker" id="tm_select_straff" data-width="100%">
-                <option>张三</option>
+                <option value="@Model.HolderId" selected>@Model.Holder.NickName</option>
+                @foreach (var item in ViewBag.EmployeeDropDown)
+                {
+                    if (item.Id == Model.HolderId)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.NickName</option>
+                    }
+                }
             </select>
         </div>
         <div class="btn-group">
             <select class="selectpicker" id="tm_select_type" data-width="100%">
-                <option>任务</option>
-                <option>项目</option>
-                <option>子任务</option>
-                <option>文件</option>
+                <option value="5" selected>全部</option>
+                <option value="0">任务</option>
+                <option value="1">子任务</option>
+                <option value="2">文件</option>
             </select>
         </div>
         <div class="btn-group">
             <select class="selectpicker" id="tm_select_time" data-width="100%">
-                <option>全部</option>
-                <option>当日</option>
+                <option value="3" selected>全部</option>
+                <option value="4">当日</option>
             </select>
         </div>
     </div>
-    <div class="tm_modal_ul_wrap modal-list-pannel">
-        <ul class="list-group tm_modal_list_ul" id="tm_modal_logs_area">
-            <li class="clear-float tm_modal_list_li">
-                <div class="tm_item_avatar float-left" title="" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
-                    <span style="background-image:url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131435362956644032.jpg');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                </div>
-                <div class="tm_item_middle float-left">
-                    <div class="tm_middle_top tm_middle_content" title="" data-toggle="tooltip" data-placement="top" data-original-title="修改了项目:项目管理系统">
-                        <span>修改了项目:项目管理系统</span>
-                    </div>
-                    <div class="tm_middle_bottom tm_middle_content clear-float">
-                        <div class="tm_item_left">
-                            <span class="color-gray"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
-                            <span class="finish_subtask">2017/7/5 17:02:33</span>
-                        </div>
-
-                    </div>
-                </div>
-            </li>
-        </ul>
+    <div class="tm_modal_ul_wrap modal-list-panel">
+        <ul class="list-group tm_modal_list_ul" id="tm_modal_logs_area"></ul>
     </div>
 </div>
 <div class="modal-footer">
+    <input type="hidden" id="currentpage" name="currentpage" value="0" />
     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 </div>
 <script>
@@ -56,7 +50,7 @@
         $('#tm_select_straff').selectpicker({
             liveSearch: true,
             liveSearchPlaceholder: "搜索人员",
-            title:"人员选择"
+            title: "人员选择"
         });
         $('#tm_select_type').selectpicker({
             title: "类型"
@@ -64,29 +58,28 @@
         $('#tm_select_time').selectpicker({
             title: "时间"
         });
-
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            data: {
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logTime: $("#tm_select_time").val(),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#tm_modal_logs_area").append(data)
+                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+            }
+        })
     });
-    $.ajax({
-        url: $(".tm_active").attr("data-href"),
-        data: {
-            SubjectId: $("#pannel-wrap").attr("data-sid")
-        },
-        success: function (data) {
-            $("#tm_modal_list_area").html(data);
-            $("#loading-p").hide();
-        },
-        error: function () {
-            ErrorAlert("操作失败。");
-        }
-    })
+
     $(".tm_modal-nav").on("click", ".list-group-item", function () {
-        $(".list-group-item").removeClass("tm_active");
-        $(this).addClass("tm_active");
         $("#loading-p").show();
         $.ajax({
             url: $(this).attr("data-href"),
-            data:{
-                SubjectId:$("#pannel-wrap").attr("data-sid")
+            data: {
+                SubjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 $("#tm_modal_list_area").html(data);
@@ -97,5 +90,77 @@
             }
         })
     })
+    $("#tm_select_straff").on("change", function () {
+        $("#currentpage").val("0")
+        $("#tm_modal_logs_area").html("");
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            type: 'post',
+            data: {
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#tm_modal_logs_area").append(data)
+                $("#currentpage").val($("#currentpage").val() + 1);
+            }
+        })
+    })
+    $("#tm_select_time").on("change", function () {
+        $("#currentpage").val("0")
+        $("#tm_modal_logs_area").html("");
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            type: "post",
+            data: {
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logTime: $("#tm_select_time").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#tm_modal_logs_area").append(data);
+            }
+        })
+    })
+
+    $("#tm_select_type").on("change", function () {
+        $("#currentpage").val("0")
+        $("#tm_modal_logs_area").html("");
+        console.log($("#tm_select_type").val())
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            type: "post",
+            data: {
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#tm_modal_logs_area").append(data)
+            }
+        })
+    })
+    $("#Create-Subject-Content").on("click", "#ShowMoreLogs", function () {
+        var _self = $(this);
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            data: {
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                logTime: $("#tm_select_time").val(),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#tm_modal_logs_area").append(data)
+                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+                _self.parent().remove()
+            }
+        })
+    })
+
 </script>
 

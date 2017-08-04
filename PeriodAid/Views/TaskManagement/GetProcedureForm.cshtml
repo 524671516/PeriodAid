@@ -1,10 +1,10 @@
 ﻿@model PeriodAid.Models.Procedure
 <ul class="tm_dropdown_control">
     <li class="text-center clear-float">
-        <a class="float-left">
+        <a class="tm-show-listmenu" style="position:absolute;" href="javascript:;">
             <span class="glyphicon glyphicon-chevron-left color-gray" aria-hidden="true"></span>
         </a>
-        <div class="float-left">
+        <div>
             <strong class="color-blue">修改名称</strong>
         </div>
     </li>
@@ -41,7 +41,6 @@
                 if (data.result == "SUCCESS") {
                     UnimportantAlert(data.msg);
                     $("#edit_procedure_form").parents(".ajax-procedure").find(".tm_procedure-title").html($(".tm_dropdown_control #ProcedureTitle").val());
-                    $("#edit_procedure_form").parents(".ajax-procedure").find(".btn-del-procedure span").html($(".tm_dropdown_control #ProcedureTitle").val());
                     $("#btn_edit_procedure").removeClass("disabled");
                 } else {
                     ErrorAlert(data.errmsg);

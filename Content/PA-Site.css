@@ -1,0 +1,245 @@
+﻿body {
+    /*padding-top: 50px;
+    padding-bottom: 20px;*/
+    background-color:#eee;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+body.modal-open,
+.modal-open .navbar-fixed-top,
+.modal-open .navbar-fixed-bottom {
+  margin-right: 0px;
+}
+.modal-body{
+    max-height:300px;
+    overflow:auto;
+    margin:15px 0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    overflow:hidden;
+    width:100%;
+    height:100%;
+}
+.loading{
+    margin-left:-12px;
+    margin-top:-12px;
+    left:50%;
+    top:50%;
+    position:absolute;
+    width:24px;
+    height:24px;
+    opacity:1;
+}
+
+
+
+
+.reset{
+    padding:0 0 80px 0;
+    margin:0;
+}
+.body-content{
+    width:640px;
+    margin:auto;
+}
+.periodaid-navbar-bottom {
+    background-color: #fff;
+    color: #ff4361;
+    font-size: 1.1em;
+    line-height: 1.2em;
+    -webkit-box-shadow: 0 0 5px #ff4361;
+    -moz-box-shadow: 0 0 5px #ff4361;
+    box-shadow: 0 0 5px #ff4361;
+}
+.nav-button{
+    line-height:1.2em;
+}
+.periodaid-navbar-bottom a{
+    color:#ff8ea0;
+    text-decoration:none;
+    padding:5px 0;
+    display:block;
+}
+.periodaid-navbar-bottom a.activ{
+    color:#ff4361;
+    text-decoration:none;
+    padding:5px 0;
+    display:block;
+}
+
+.user-userinfo{
+    padding:30px 0 20px 0;
+    margin:auto;
+    height:150px;
+    background-color:#ff4361;
+    color:#fff;
+}
+
+.tag{
+    margin:1px 0px;
+}
+.tag-header{
+    font-size:1.2em;
+    line-height:3em;
+    background-color:#ff4361;
+    color:#fff;
+}
+
+.tag-body{
+    background-color:#fff;
+    color:#333;
+    font-size:1.2em;
+    line-height:3em;
+}
+
+.tag-link{
+    width:100%;
+    text-decoration:none;
+    display:block;
+    color:#333;
+}
+
+.tag-link:hover{
+    text-decoration:none;
+    color:#333;
+}
+
+
+/******日期******/
+#cal{
+    font-size:16px;
+    line-height:30px;
+}
+#cal th{
+    text-align:center; color:#ff4361;
+}
+#cal td{
+    padding:4px; text-align:center;
+}
+#cal td div{
+    color:#333; 
+    line-height:32px;
+    width:32px;
+    height:32px;
+    margin:auto;
+    text-align:center;
+    display:block;
+}
+#cal .t-day div{
+    font-weight:bold;
+    color:#ff4361;
+    margin:auto;
+}
+#cal .p-day div{
+    background-color:#ff4361;
+    color:#fff;
+    border-radius:1.8em;
+}
+#cal .e-day div{
+    border-bottom: 2px solid #ff8900; 
+}
+#cal .prep-day div{
+    background-color:#ff8ea0;
+    color:#fff;
+    border-radius:1.8em;
+}
+.e{
+    color:#ff8900;
+}
+.p{
+    color:#ff4361;
+}
+.prep{
+    color:#ff8ea0;
+}
+
+.tip-header{
+    background-color:#ff4361;
+    color:#fff;
+    padding-top:10px;
+    padding-bottom:10px;
+    border:solid 1px #eee;
+}
+.tip-body{
+    background-color:#fff;
+    padding-top:10px;
+    padding-bottom:10px;
+    border:solid 1px #eee;
+}
+
+/*************个人设置************/
+.setting-item{
+    border-bottom:solid 1px #ccc; padding:5px 0;
+}
+.setting-nav{
+    padding:15px 0; background-color:#fff;
+}
+.setting-nav h5{
+    color:#ff4361;
+}
+.setting-table{
+    border:none; color:#666;
+}
+.setting-table tr{
+    border:none; 
+}
+table.setting-table tr td{
+    border-top:1px solid #ddd; height:24px; line-height:24px;
+}
+input.setting-input {
+    max-width:125px; float:right; height:24px; line-height:24px; font-size:12px; padding:1px 5px;
+}
+select.setting-input{
+    max-width:58px; float:right; height:24px; line-height:24px; padding:1px;
+}
+#error-hint{
+    margin:5px 0;
+}
+#error-hint-body{
+    width:100px; padding:10px; line-height:24px; height:24px;
+    border-radius: 3px; background-color:#ff4361; color:#fff;
+    
+}
+
+/**********活动页面*********/
+.event-header{
+    padding:20px 0;
+    background-color:#ff4361;
+    color:#fff;
+}
+.event-content{
+    height:60px;
+}
+.event-avatar{
+    width:60px; 
+    height:60px;
+}
+.share-bg{
+    width:100%;
+    height:100%;
+    position:absolute;
+    left:0px;
+    top:0px;
+    z-index:100;
+    background:#000;
+    opacity:0.9;
+    display:none;
+}
