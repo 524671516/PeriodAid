@@ -4,18 +4,7 @@
         <ul>
             @foreach (var item in Model)
             {
-                <li class="clear-float tm-view-li">
-                    <div class="float-left tm-view-avatar" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
-                        @if (item.Holder.ImgUrl == null)
-                        {
-                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                        }
-                        else
-                        {
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-
-                        }
-                    </div>
+                <li class="clear-float tm-view-li">                   
                     <div class="tm-view-checkbox float-left">
                         <input type="checkbox" class="tm-checkbox-input" />
                     </div>
@@ -49,18 +38,7 @@
             <ul>
                 @foreach (var item in Model)
                 {
-                    <li class="clear-float tm-view-li">
-                        <div class="float-left tm-view-avatar" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
-                            @if (item.Holder.ImgUrl == null)
-                        {
-                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                            }
-                            else
-                            {
-                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-
-                            }
-                        </div>
+                    <li class="clear-float tm-view-li">                      
                         <div class="tm-view-checkbox float-left">
                             <input type="checkbox" class="tm-checkbox-input" />
                         </div>
