@@ -541,6 +541,8 @@
         public static int EDITPERSONALINFO = 113;
 
     }
+
+
     public static class GetDataType
     {
         /// <summary>

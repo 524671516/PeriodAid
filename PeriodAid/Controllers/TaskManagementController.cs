@@ -15,6 +15,9 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using Newtonsoft.Json.Linq;
 using PeriodAid.Filters;
+using System.Data;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
 
 namespace PeriodAid.Controllers
 {
@@ -1889,6 +1892,84 @@ namespace PeriodAid.Controllers
             {
                 return PartialView(employee);
             }
+        }
+        #endregion
+
+
+        #region  数据EXCEL导出操作
+        public ActionResult GetExcelDataForAssignment()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                DataTable dt = new DataTable();
+                DataColumn dc = null;
+                dc = dt.Columns.Add("序号", Type.GetType("System.Int32"));
+                dc.AutoIncrement = true;//自动增加
+                dc.AutoIncrementSeed = 1;//起始为1
+                dc.AutoIncrementStep = 1;//步长为1
+                dc.AllowDBNull = false;//
+                dc = dt.Columns.Add("名称", Type.GetType("System.String"));
+                dc = dt.Columns.Add("状态", Type.GetType("System.Int32"));
+                dc = dt.Columns.Add("权重", Type.GetType("System.Int32"));
+                dc = dt.Columns.Add("创建时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("截止时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("完成时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("提醒时间", Type.GetType("System.String"));
+                dc = dt.Columns.Add("备注", Type.GetType("System.String"));
+                dc = dt.Columns.Add("负责人", Type.GetType("System.String"));
+                dc = dt.Columns.Add("项目归属", Type.GetType("System.String"));
+                DataRow newRow;
+                var assignementlist = from m in _db.Assignment
+                                      where m.HolderId == employee.Id
+                                      select m;
+                
+                foreach(var item in assignementlist)
+                {
+                    newRow = dt.NewRow();
+                    newRow["名称"] = item.AssignmentTitle;
+                    newRow["状态"] = item.Status;
+                    newRow["权重"] = item.Priority;
+                    newRow["创建时间"] = item.CreateTime;
+                    newRow["截止时间"] = item.Deadline;
+                    newRow["提醒时间"] = item.RemindDate;
+                    newRow["备注"] = item.Remarks;
+                    newRow["负责人"] = item.Holder.NickName;
+                    newRow["项目归属"] = item.Subject.SubjectTitle;
+                    dt.Rows.Add(newRow);
+                }
+                HSSFWorkbook workbook = new HSSFWorkbook();
+                dt.TableName = "任务列表";
+                ISheet sheet = string.IsNullOrEmpty(dt.TableName) ? workbook.CreateSheet("Sheet1") : workbook.CreateSheet(dt.TableName);
+                IRow row = sheet.CreateRow(0);
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    ICell cell = row.CreateCell(i);
+                    cell.SetCellValue(dt.Columns[i].ColumnName);
+                }
+
+                //数据  
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    IRow row1 = sheet.CreateRow(i + 1);
+                    for (int j = 0; j < dt.Columns.Count; j++)
+                    {
+                        ICell cell = row1.CreateCell(j);
+                        cell.SetCellValue(dt.Rows[i][j].ToString());
+                    }
+                }
+
+                //转为字节数组  
+                MemoryStream _stream = new MemoryStream();
+                workbook.Write(_stream);
+                _stream.Flush();
+                _stream.Seek(0, SeekOrigin.Begin);
+                return File(_stream, "application/ms-excel", employee.NickName+"的任务.xls");
+            };
         }
         #endregion
 
