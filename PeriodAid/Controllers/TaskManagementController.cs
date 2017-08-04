@@ -114,6 +114,10 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //获取登录记录
+        public ActionResult LoginLog() {
+            return View();
+        }
 
         //修改个人信息
         [HttpPost, ValidateAntiForgeryToken]
