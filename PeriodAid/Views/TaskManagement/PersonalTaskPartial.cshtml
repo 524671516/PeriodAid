@@ -110,9 +110,9 @@
                     if (data == "FAIL") {
                         ErrorAlert("获取数据失败。");
                     } else {
+                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                         setTimeout(function () {
-                            $("#" + _link).append(data);
-                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                            $("#" + _link).html(data);
                             $("#tm-view-loading").hide();
                             if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
                                 $("#tm-view-scroll-container").unbind("scroll");
@@ -150,9 +150,9 @@
                     if (data == "FAIL") {
                         ErrorAlert("获取数据失败。");
                     } else {
+                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                         setTimeout(function () {
                             $("#" + _link).append(data);
-                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
                             if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
                                 $("#tm-view-scroll-container").unbind("scroll");
@@ -196,9 +196,9 @@
                                 if (data == "FAIL") {
                                     ErrorAlert("获取数据失败。");
                                 } else {
+                                    $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                                     setTimeout(function () {
                                         $("#" + _container).append(data);
-                                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                                         $("#tm-view-loading").hide();
                                         if ($("#" + _container).find(".tm-view-nomore").length > 0) {
                                             $("#" + _scroll).unbind("scroll");

@@ -1,24 +1,60 @@
 ﻿@model IEnumerable<PeriodAid.Models.OperationLogs>
-@{
-    ViewBag.Title = "GetLogs";
-    Layout = null;
-}
-@foreach (var m in Model)
+@if (Model.Count() >= 9)
 {
-
-    <li class="clear-float tm_modal_list_li">
-        <div class="tm_item_avatar float-left" title="" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
-            <span style="background-image:url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131435362956644032.jpg');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-        </div><div class="tm_item_middle float-left">
-            <div class="tm_middle_top tm_middle_content" title="" data-toggle="tooltip" data-placement="top" data-original-title="修改了项目:项目管理系统"><span>@m.LogContent</span></div><div class="tm_middle_bottom tm_middle_content clear-float">
-                <div class="tm_item_left">
-                    <span class="color-gray">
-                        <i class="fa fa-clock-o" aria-hidden="true"></i>
-                    </span><span class="finish_subtask">@m.LogTime.ToString("yyyy-MM-dd HH:ss")</span>
+    <ul>
+        @foreach (var m in Model)
+        {
+            <li class="clear-float tm_modal_list_li">
+                <div class="tm_item_avatar float-left" title="" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
+                    <span style="background-image:url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131435362956644032.jpg');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                </div><div class="tm_item_middle float-left">
+                    <div class="tm_middle_top tm_middle_content" title="" data-toggle="tooltip" data-placement="top" data-original-title="修改了项目:项目管理系统"><span>@m.LogContent</span></div><div class="tm_middle_bottom tm_middle_content clear-float">
+                        <div class="tm_item_left">
+                            <span class="color-gray">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            </span><span class="finish_subtask">@m.LogTime.ToString("yyyy-MM-dd HH:ss")</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </li>
+            </li>
 
+        }
+    </ul>
+    <div class="tm-view-more color-blue" id="ShowMoreLogs">-&nbsp;点击加载更多&nbsp;-</div>
 }
-<li><a href="javascript:;" id="ShowMoreLogs" class="show_more_logs"><strong>------点击加载更多------</strong></a></li>
+else
+{
+    if (ViewBag.currenshow == 0 && Model.Count() == 0)
+    {
+        <div class="tm-view-loading-empty">
+            <i class="fa fa-sticky-note-o color-blue fa-4x" aria-hidden="true"></i><br />
+            <strong class="color-blue">没有任何数据</strong>
+        </div>
+    }
+    else
+    {
+        <ul>
+            @foreach (var m in Model)
+            {
+
+                <li class="clear-float tm_modal_list_li">
+                    <div class="tm_item_avatar float-left" title="" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
+                        <span style="background-image:url('http://cdn2.shouquanzhai.cn/Subject/SubjectCover/131435362956644032.jpg');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                    </div><div class="tm_item_middle float-left">
+                        <div class="tm_middle_top tm_middle_content" title="" data-toggle="tooltip" data-placement="top" data-original-title="修改了项目:项目管理系统"><span>@m.LogContent</span></div><div class="tm_middle_bottom tm_middle_content clear-float">
+                            <div class="tm_item_left">
+                                <span class="color-gray">
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                </span><span class="finish_subtask">@m.LogTime.ToString("yyyy-MM-dd HH:ss")</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+            }
+        </ul>
+        <div class="tm-view-nomore color-blue">-&nbsp;没有更多数据啦&nbsp;-</div>
+    }
+}
+
+

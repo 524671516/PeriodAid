@@ -1069,7 +1069,6 @@
     <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
     <Content Include="Views\TaskManagement\SubjectMenuPanelPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
-    <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectUntreatedProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\EmployeeError.cshtml" />
@@ -1079,8 +1078,6 @@
     <Content Include="Views\TaskManagement\SubjectNotFound.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNoAuthority.cshtml" />
     <Content Include="Views\TaskManagement\GetLogs.cshtml" />
-    <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
-    <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
     <Content Include="Views\TaskManagement\PersonalRecentAssignmentPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonlRecentPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalActionPanel.cshtml" />
@@ -1091,6 +1088,7 @@
     <Content Include="Views\TaskManagement\PersonalInvolvedAssignmentPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalResponsibleAssignmentPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalExecutableTaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
