@@ -14,8 +14,12 @@
                     SubTaskId: atid
                 },
                 success: function (data) {
-                    $("#Edit-Assignment .modal-content").html(data);
-                    $('#Edit-Assignment').modal('show');
+                    if (data = "FAIL") {
+                        ErrorAlert("获取详情失败。");
+                    } else {
+                        $("#Edit-Assignment .modal-content").html(data);
+                        $('#Edit-Assignment').modal('show');
+                    }
                 }
             })
         } else {
