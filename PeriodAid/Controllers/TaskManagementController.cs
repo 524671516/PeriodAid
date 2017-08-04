@@ -1970,6 +1970,7 @@ namespace PeriodAid.Controllers
         {
             int _subjectId = SubjectId ?? 0;
             int _employeeId = employeeId ?? 0;
+            ViewBag.currentshow = _page;
             if (_employeeId!=0)
             {
                 if (_subjectId!=0)
