@@ -1,9 +1,9 @@
 ﻿<div class="tm-view-header clear-float">
     <div class="tm-view-header-left float-left">
         <div class="tm-my-view-control tm-view-control" id="tm-view-subcontrol">
-            <a href="javascript:;" class="tm-view-control-link active" data-href="/TaskManagement/PersonalInvolvedAssignmentPartial">我参与的</a>
-            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalResponsibleAssignmentPartial">我负责的</a>
-            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalExecutableTaskPartial">我执行的</a>
+            <a href="javascript:;" class="tm-view-control-link active" data-href="/TaskManagement/PersonalInvolvedAssignmentPartial" data-link="tm-view-col-content">我参与的</a>
+            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalResponsibleAssignmentPartial" data-link="tm-view-res-content">我负责的</a>
+            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalExecutableTaskPartial" data-link="tm-view-exe-content">我执行的</a>
         </div>
     </div>
     <div class="tm-view-header-right float-right">
@@ -11,7 +11,7 @@
             <ul>
                 <li class="tm-view-control-sort dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-progress" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span>已完成</span>
+                        <span class="tm-select-title">已完成</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress">
@@ -25,11 +25,11 @@
                 </li>
                 <li class="tm-view-control-sort tm-has-line dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-undefined" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span>按截止时间排序</span>
+                        <span class="tm-select-title">按截止时间排序</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-undefined">
-                        <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="deadtimesort">按截止时间时间排序</a></li>
+                        <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="deadtimesort">按截止时间排序</a></li>
                         <li><a href="javascript:;" class="tm-select-sort-type tm-select" data-type="subjectsort">按项目排序</a></li>
                         <li><a href="javascript:;"class="tm-select-sort-type tm-select">按任务排序</a></li>
                     </ul>
@@ -46,7 +46,11 @@
 </div>
 <div class="tm-view-content-container  tm-view-container" id="tm-view-scroll-container">
     <input type="hidden" id="tm-view-page" name="tm-view-page" value="0" />
-    <div class="tm-view-loading-content" id="tm-view-loading-content">
+    <div class="tm-view-loading-content" id="tm-view-col-content">
+    </div>
+    <div class="tm-view-loading-content hidden" id="tm-view-res-content">
+    </div>
+    <div class="tm-view-loading-content hidden" id="tm-view-exe-content">
     </div>
     <div class="tm-veiw-loading text-center" id="tm-view-loading">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
@@ -67,12 +71,16 @@
                         if (data == "FAIL") {
                             ErrorAlert("获取数据失败。");
                         } else {
+                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             setTimeout(function () {
-                                $("#tm-view-loading-content").append(data);
-                                $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                                $("#tm-view-col-content").append(data);
                                 $("#tm-view-loading").hide();
-                                var _loading = false;
-                                controlscroll(_loading,false);
+                                if ($("#tm-view-col-content .tm-view-nomore").length > 0 || $("#tm-view-col-content .tm-view-loading-empty").length > 0) {
+                                    $("#tm-view-scroll-container").unbind("scroll");
+                                    $("#tm-view-page").val("0");
+                                } else {
+                                    controlscroll("tm-view-col-content", "tm-view-scroll-container")();
+                                }
                             },500)
                         }
                     },
@@ -83,7 +91,9 @@
     })
     $("#tm-view-subcontrol").on("click", ".tm-view-control-link", function () {
         if (!$(this).hasClass("active")) {
-            $("#tm-view-loading-content").html("");
+            var _link = $(this).attr("data-link");
+            $(".tm-view-loading-content").addClass("hidden");
+            $("#" + _link).removeClass("hidden").html("");
             $("#tm-view-loading").show();
             $(this).parent().find(".tm-view-control-link.active").removeClass("active");
             $("#tm-view-page").val("0");
@@ -101,15 +111,14 @@
                         ErrorAlert("获取数据失败。");
                     } else {
                         setTimeout(function () {
-                            $("#tm-view-loading-content").append(data);
+                            $("#" + _link).append(data);
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
-                            var _loading = false;
-                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {
+                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
                                 $("#tm-view-scroll-container").unbind("scroll");
                                 $("#tm-view-page").val("0");
                             } else {
-                                controlscroll(_loading, true);
+                                controlscroll(_link, "tm-view-scroll-container")();
                             }
                         }, 500);
                     }
@@ -122,13 +131,14 @@
     })
     $("#tm-view-thirdcontrol").on("click", ".tm-select", function (e) {
         if (!$(this).hasClass("selected")) {
-            $("#tm-view-loading-content").html("");
+            var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-link");
+            var _initthirdlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+            $("#" + _link).html("");
             $("#tm-view-loading").show();
             $(this).parent().parent().find(".tm-select.selected").removeClass("selected");
             $(this).addClass("selected");
             $("#tm-view-page").val("0");
             $(this).parents(".tm-view-control-sort").find(".tm-select-title").html($(this).html());
-            var _initthirdlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
             $.ajax({
                 url: _initthirdlink,
                 data: {
@@ -141,15 +151,14 @@
                         ErrorAlert("获取数据失败。");
                     } else {
                         setTimeout(function () {
-                            $("#tm-view-loading-content").append(data);
+                            $("#" + _link).append(data);
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
-                            var _loading = false;
-                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {
+                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
                                 $("#tm-view-scroll-container").unbind("scroll");
                                 $("#tm-view-page").val("0");
                             } else {
-                                controlscroll(_loading, true);
+                                controlscroll(_link, "tm-view-scroll-container")();
                             }
                         }, 500)
                     }
@@ -160,51 +169,55 @@
             })
         }
     });
-    function controlscroll(_loading, newscroll) {
-        if (newscroll) {
-            $("#tm-view-scroll-container").unbind("scroll");
-        }
-        $("#tm-view-scroll-container").scroll(function (e) {
-            var _dis = parseInt($("#tm-view-loading-content").height()) - parseInt($("#tm-view-scroll-container").height());
-            if ($(this).scrollTop() >= _dis) {
-                if (_loading) {
-                    return false;
-                } else {
-                    _loading = !_loading;
-                    $(".tm-view-more").remove();
-                    $("#tm-view-loading").show();
-                    var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-                    $.ajax({
-                        url: _link,
-                        data: {
-                            page: parseInt($("#tm-view-page").val()),
-                            datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                            sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                        },
-                        success: function (data) {
-                            if (data == "FAIL") {
-                                ErrorAlert("获取数据失败。");
-                            } else {
-                                setTimeout(function () {
-                                    $("#tm-view-loading-content").append(data);
-                                    $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                                    $("#tm-view-loading").hide();
-                                    if ($(".tm-view-nomore").length > 0) {
-                                        $("#tm-view-scroll-container").unbind("scroll");
-                                        $("#tm-view-page").val("0");
-                                    } else {
-                                        _loading = !_loading;
-                                    }
-                                }, 500)
+    function controlscroll(containerEle,scrollEle) {
+        var _loading = false;
+        var _container = containerEle;
+        var _scroll = scrollEle;
+        function subcontrol() {
+            $("#" + _scroll).unbind("scroll");
+            $("#" + _scroll).scroll(function (e) {
+                var _dis = parseInt($("#" + _container).height()) - parseInt($("#" + _scroll).height());
+                if ($("#" + _scroll).scrollTop() >= _dis) {
+                    if (_loading) {
+                        return false;
+                    } else {
+                        _loading = !_loading;
+                        $(".tm-view-more").remove();
+                        $("#tm-view-loading").show();
+                        var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+                        $.ajax({
+                            url: _link,
+                            data: {
+                                page: parseInt($("#tm-view-page").val()),
+                                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+                            },
+                            success: function (data) {
+                                if (data == "FAIL") {
+                                    ErrorAlert("获取数据失败。");
+                                } else {
+                                    setTimeout(function () {
+                                        $("#" + _container).append(data);
+                                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                                        $("#tm-view-loading").hide();
+                                        if ($("#" + _container).find(".tm-view-nomore").length > 0) {
+                                            $("#" + _scroll).unbind("scroll");
+                                            $("#tm-view-page").val("0");
+                                        } else {
+                                            _loading = !_loading;
+                                        }
+                                    }, 500)
+                                }
+                            },
+                            error: function () {
+                                ErrorAlert("请求失败。");
                             }
-                        },
-                        error: function () {
-                            ErrorAlert("请求失败。");
-                        }
-                    })
+                        })
+                    }
                 }
-            }
-        })
+            })
+        }
+        return subcontrol;
     }
 </script>
 

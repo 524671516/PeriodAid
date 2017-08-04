@@ -1774,7 +1774,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null || sorttype == "")
                     {
                         var recentassignmentlist = (from m in _db.Assignment
-                                                    where m.HolderId == employee.Id&&m.Status==AssignmentStatus.UNFINISHED
+                                                    where m.HolderId == employee.Id&&m.Status==AssignmentStatus.UNFINISHED&&m.Subject.Status>SubjectStatus.DELETED
                                                     orderby m.CreateTime descending
                                                     select m).Skip(_page * 20).Take(20);
                         return PartialView(recentassignmentlist);
@@ -1784,7 +1784,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.Deadline ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1792,7 +1792,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.SubjectId ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1800,7 +1800,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.CreateTime descending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1815,7 +1815,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null|| sorttype =="")
                     {
                         var recentassignmentlist = (from m in _db.Assignment
-                                                    where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED&&m.Deadline>= starttime && m.Deadline<endtime
+                                                    where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED&&m.Deadline>= starttime && m.Deadline<endtime && m.Subject.Status > SubjectStatus.DELETED
                                                     orderby m.CreateTime descending
                                                     select m).Skip(_page * 20).Take(20);
                         return PartialView(recentassignmentlist);
@@ -1825,7 +1825,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED &&m.Deadline >= starttime && m.Deadline < endtime
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED &&m.Deadline >= starttime && m.Deadline < endtime && m.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.Deadline ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1833,7 +1833,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime && m.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.SubjectId ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1841,7 +1841,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var recentassignmentlist = (from m in _db.Assignment
-                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime && m.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.CreateTime descending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1867,7 +1867,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null || sorttype == "")
                     {
                         var recentassignmentlist = (from m in _db.SubTask
-                                                    where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                    where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED&&m.Assignment.Subject.Status>SubjectStatus.DELETED
                                                     orderby m.CreateTime descending
                                                     select m).Skip(_page * 20).Take(20);
                         return PartialView(recentassignmentlist);
@@ -1877,7 +1877,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.SubTask
-                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.Deadline ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1885,7 +1885,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.SubTask
-                                                        where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.Assignment.SubjectId ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1893,7 +1893,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var recentassignmentlist = (from m in _db.SubTask
-                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.CreateTime descending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1908,7 +1908,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null || sorttype == "")
                     {
                         var recentassignmentlist = (from m in _db.SubTask
-                                                    where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                    where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                     orderby m.CreateTime descending
                                                     select m).Skip(_page * 20).Take(20);
                         return PartialView(recentassignmentlist);
@@ -1918,7 +1918,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.SubTask
-                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.Deadline ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1926,7 +1926,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var recentassignmentlist = (from m in _db.SubTask
-                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.Assignment.SubjectId ascending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1934,7 +1934,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var recentassignmentlist = (from m in _db.SubTask
-                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime
+                                                        where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Deadline >= starttime && m.Deadline < endtime && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                         orderby m.CreateTime descending
                                                         select m).Skip(_page * 20).Take(20);
                             return PartialView(recentassignmentlist);
@@ -1957,10 +1957,10 @@ namespace PeriodAid.Controllers
                 int _page = page ?? 0;
                 ViewBag.currentpage = _page;
                 var HolderAssignment = (from m in _db.Assignment
-                                       where m.HolderId == employee.Id&&m.Status>AssignmentStatus.DELETED
+                                       where m.HolderId == employee.Id&&m.Status>AssignmentStatus.DELETED&&m.Subject.Status>SubjectStatus.DELETED
                                        select m).ToList();
                 var ColAssigenment = from m in employee.CollaborateAssignment
-                                     where m.Status > AssignmentStatus.DELETED
+                                     where m.Status > AssignmentStatus.DELETED && m.Subject.Status > SubjectStatus.DELETED
                                      select m;
                 var ConsolidationList = HolderAssignment.Union(ColAssigenment);
                 if (datarange == null || datarange == "")
@@ -2103,7 +2103,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null || sorttype == "")
                     {
                         var ResultList = (from m in _db.Assignment
-                                          where m.HolderId==employee.Id
+                                          where m.HolderId==employee.Id && m.Subject.Status > SubjectStatus.DELETED
                                           orderby m.CreateTime ascending
                                           select m).Skip(_page * 20).Take(20);
                         return PartialView(ResultList);
@@ -2114,7 +2114,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id
+                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED
                                               orderby m.Deadline ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2123,7 +2123,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id
+                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED
                                               orderby m.SubjectId ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2131,7 +2131,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id
+                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED
                                               orderby m.Id ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2147,7 +2147,7 @@ namespace PeriodAid.Controllers
                         if (datarange == GetDataType.UNFINISHDATA)
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id&&m.Status == AssignmentStatus.UNFINISHED
+                                              where m.HolderId == employee.Id&&m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
                                               orderby m.CreateTime ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2155,7 +2155,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id&&m.Status == AssignmentStatus.FINISHED
+                                              where m.HolderId == employee.Id&&m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
                                               orderby m.CreateTime ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2168,7 +2168,7 @@ namespace PeriodAid.Controllers
                             if (sorttype == GetDataType.DEADTIMESORTDATA)
                             {
                                 var ResultList = (from m in _db.Assignment
-                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Deadline ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2177,7 +2177,7 @@ namespace PeriodAid.Controllers
                             else if (sorttype == GetDataType.SUBJECTSORTDATA)
                             {
                                 var ResultList = (from m in _db.Assignment
-                                                  where m.HolderId == employee.Id&& m.Status == AssignmentStatus.UNFINISHED
+                                                  where m.HolderId == employee.Id&& m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.SubjectId ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2185,7 +2185,7 @@ namespace PeriodAid.Controllers
                             else
                             {
                                 var ResultList = (from m in _db.Assignment
-                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Id ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2196,7 +2196,7 @@ namespace PeriodAid.Controllers
                             if (sorttype == GetDataType.DEADTIMESORTDATA)
                             {
                                 var ResultList = (from m in _db.Assignment
-                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Deadline ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2205,7 +2205,7 @@ namespace PeriodAid.Controllers
                             else if (sorttype == GetDataType.SUBJECTSORTDATA)
                             {
                                 var ResultList = (from m in _db.Assignment
-                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.SubjectId ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2213,7 +2213,7 @@ namespace PeriodAid.Controllers
                             else
                             {
                                 var ResultList = (from m in _db.Assignment
-                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Id ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2242,7 +2242,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null || sorttype == "")
                     {
                         var ResultList = (from m in _db.SubTask
-                                          where m.ExecutorId == employee.Id
+                                          where m.ExecutorId == employee.Id&&m.Assignment.Status>AssignmentStatus.DELETED&&m.Assignment.Subject.Status>SubjectStatus.DELETED
                                           orderby m.CreateTime ascending
                                           select m).Skip(_page * 20).Take(20);
                         return PartialView(ResultList);
@@ -2253,7 +2253,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var ResultList = (from m in _db.SubTask
-                                              where m.ExecutorId== employee.Id
+                                              where m.ExecutorId== employee.Id && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                               orderby m.Deadline ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2262,7 +2262,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var ResultList = (from m in _db.SubTask
-                                              where m.ExecutorId == employee.Id
+                                              where m.ExecutorId == employee.Id && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                               orderby m.Assignment.SubjectId ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2270,7 +2270,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var ResultList = (from m in _db.SubTask
-                                              where m.ExecutorId == employee.Id
+                                              where m.ExecutorId == employee.Id && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                               orderby m.CreateTime ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2286,7 +2286,7 @@ namespace PeriodAid.Controllers
                         if (datarange == GetDataType.UNFINISHDATA)
                         {
                             var ResultList = (from m in _db.SubTask
-                                              where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                              where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                               orderby m.CreateTime ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2294,7 +2294,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var ResultList = (from m in _db.SubTask
-                                              where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                              where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                               orderby m.CreateTime ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2307,7 +2307,7 @@ namespace PeriodAid.Controllers
                             if (sorttype == GetDataType.DEADTIMESORTDATA)
                             {
                                 var ResultList = (from m in _db.SubTask
-                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Deadline ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2316,7 +2316,7 @@ namespace PeriodAid.Controllers
                             else if (sorttype == GetDataType.SUBJECTSORTDATA)
                             {
                                 var ResultList = (from m in _db.SubTask
-                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Assignment.SubjectId ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2324,7 +2324,7 @@ namespace PeriodAid.Controllers
                             else
                             {
                                 var ResultList = (from m in _db.SubTask
-                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED
+                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.AssignmentId ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2335,7 +2335,7 @@ namespace PeriodAid.Controllers
                             if (sorttype == GetDataType.DEADTIMESORTDATA)
                             {
                                 var ResultList = (from m in _db.SubTask
-                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  where m.ExecutorId== employee.Id && m.Status == AssignmentStatus.FINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Deadline ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2344,7 +2344,7 @@ namespace PeriodAid.Controllers
                             else if (sorttype == GetDataType.SUBJECTSORTDATA)
                             {
                                 var ResultList = (from m in _db.SubTask
-                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.Assignment.SubjectId ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
@@ -2352,7 +2352,7 @@ namespace PeriodAid.Controllers
                             else
                             {
                                 var ResultList = (from m in _db.SubTask
-                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED
+                                                  where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Assignment.Status > AssignmentStatus.DELETED && m.Assignment.Subject.Status > SubjectStatus.DELETED
                                                   orderby m.AssignmentId ascending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);

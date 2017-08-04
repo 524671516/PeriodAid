@@ -84,27 +84,9 @@
     </div>
 </div>
 <!--Procedure Content End-->
-<!-- Modal Edit-Assignment-->
-<div class="modal fade tm_modal" id="Edit-Assignment" role="dialog" aria-labelledby="Edit-AssignmentLabel" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        </div>
-    </div>
-
-</div>
-<!-- Modal Edit-Assignment End-->
-<!-- Modal Add-Collaborator-->
-<div class="modal fade" id="Add-Collaborator" tabindex="-1" role="dialog" aria-labelledby="Add-CollaboratorLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-<!-- Modal Add-Collaborator End-->
-
-<!--panel Menu-->
+    <!--panel Menu-->
 <div class="tm_subject_panel" id="tm_subject_panel">
-    
+
 </div>
 <!--panel Menu End-->
 @section scripts{
@@ -331,13 +313,6 @@
                 }
             })
 
-        });
-        //显示任务详情
-        $("#panel-wrap").on("click", ".tm_pop_assmodal", function () {
-            var aid = $(this).find(".tm_item_right").attr("data-aid");
-            GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
-                $('#Edit-Assignment').modal('show');
-            });
         });
 
         //控制新建列表

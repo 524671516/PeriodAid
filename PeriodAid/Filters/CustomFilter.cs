@@ -229,7 +229,7 @@ namespace PeriodAid.Filters
                     else if (OperationGroup == OperationGroupCode.SUBASSIEDIT)
                     {
                         //编辑子任务
-                        var subtaskId = Convert.ToInt32(filterContext.HttpContext.Request.Params["SubTaskId"]);
+                        var subtaskId = Convert.ToInt32(filterContext.HttpContext.Request.Params["Id"]);
                         var subtask = _db.SubTask.SingleOrDefault(m => m.Id == subtaskId && m.Status > AssignmentStatus.DELETED);
                         if (subtask == null)
                         {

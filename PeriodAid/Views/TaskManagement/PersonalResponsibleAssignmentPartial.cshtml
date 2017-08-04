@@ -1,23 +1,20 @@
-﻿@model IEnumerable<PeriodAid.Models.Assignment>
+﻿@using PeriodAid.Models
+@model IEnumerable<PeriodAid.Models.Assignment>
 @if (Model.Count() >= 20)
 {
     <ul>
         @foreach (var item in Model)
         {
-            <li class="clear-float tm-view-li">
-                <div class="float-left tm-view-avatar" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
-                    @if (item.Holder.ImgUrl == null)
+            <li class="clear-float tm-view-li">               
+                <div class="tm-view-checkbox float-left">
+                    @if (item.Status == AssignmentStatus.FINISHED)
                     {
-                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                        <input type="checkbox" class="tm-checkbox-input" checked />
                     }
                     else
                     {
-                        <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-
+                        <input type="checkbox" class="tm-checkbox-input"/>
                     }
-                </div>
-                <div class="tm-view-checkbox float-left">
-                    <input type="checkbox" class="tm-checkbox-input" />
                 </div>
                 <div class="tm-view-info float-left">
                     <div class="tm-view-info-top">
@@ -26,7 +23,10 @@
                     </div>
                     <div class="tm-view-info-bottom">
                         <span class="color-gray">创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd HH:ss"))</span>&nbsp;
-                        <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                        @if (item.Deadline != null)
+                        {
+                            <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                        }
                     </div>
                 </div>
 
@@ -49,20 +49,16 @@ else
         <ul>
             @foreach (var item in Model)
             {
-                <li class="clear-float tm-view-li">
-                    <div class="float-left tm-view-avatar" data-toggle="tooltip" data-placement="right" data-original-title="孟煜">
-                        @if (item.Holder.ImgUrl == null)
+                <li class="clear-float tm-view-li">                   
+                    <div class="tm-view-checkbox float-left">
+                        @if (item.Status == AssignmentStatus.FINISHED)
                         {
-                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            <input type="checkbox" class="tm-checkbox-input" checked />
                         }
                         else
                         {
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-
+                            <input type="checkbox" class="tm-checkbox-input"/>
                         }
-                    </div>
-                    <div class="tm-view-checkbox float-left">
-                        <input type="checkbox" class="tm-checkbox-input" />
                     </div>
                     <div class="tm-view-info float-left">
                         <div class="tm-view-info-top">
@@ -71,7 +67,10 @@ else
                         </div>
                         <div class="tm-view-info-bottom">
                             <span class="color-gray">创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd HH:ss"))</span>&nbsp;
-                            <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                            @if (item.Deadline != null)
+                            {
+                                <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                            }
                         </div>
                     </div>
 

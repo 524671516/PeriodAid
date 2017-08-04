@@ -50,20 +50,8 @@
                             </div>
                         </li>
                     </ul>
-                    @*<form class="navbar-form navbar-left">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="搜索">
-                            </div>
-                            <button type="submit" class="btn btn-default">搜索</button>
-                        </form>*@
                     <ul class="nav navbar-nav navbar-right navbar-border">
                         <li><a href="javascript:;" id="task_my_btn" class="tm-control-view-panel"><strong>我的任务</strong></a></li>
-                        @*<li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><strong>设置</strong></a>
-                                <ul class="dropdown-menu" id="dropdown-menu-my">
-                                    <li><a href="javascript:;">功能开发中</a></li>
-                                </ul>
-                            </li>*@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height:50px;">
                                 @if (ViewBag.ImgUrl == null)
@@ -103,35 +91,23 @@
         </div>
     </div>
     <!--Create Subject Modal End-->
-    <!--Choose Template Model-->
-    @*<div class="modal fade" id="Choose-Template" role="dialog" aria-labelledby="Choose-TemplateModalLabel" style="overflow-y:auto">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content" id="Choose-Template-Content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">选择模板</h4>
-                    </div>
-                    <div class="container-fluid">
-                        <div class="row modal-nav-panel">
-                            <div class="col-md-3 tm_modal_ul_wrap">
-                                <ul class="list-group tm_modal-nav tm_modal_nav_ul">
-                                    <li class="list-group-item tm_active" data-href="/TaskManagement/SubjectFinishProgressPartial">普通项目</li>
-                                    <li class="list-group-item" data-href="/TaskManagement/SubjectUntreatedProgressPartial">流程项目</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-9 tm_modal_ul_wrap">
-                                <p class="text-center" style="margin-top:10px;" id="loading-p"><i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom color-gray"></i></p>
-                                <ul class="list-group tm_modal-list tm_modal_list_ul" id="tm_modal_list_area"></ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer" style="border:none;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    </div>
-                </div>
+    <!-- Modal Edit-Assignment-->
+    <div class="modal fade tm_modal" id="Edit-Assignment" role="dialog" aria-labelledby="Edit-AssignmentLabel" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
             </div>
-        </div>*@
-    <!--Choose Template Model End-->
+        </div>
+
+    </div>
+    <!-- Modal Edit-Assignment End-->
+    <!-- Modal Add-Collaborator-->
+    <div class="modal fade" id="Add-Collaborator" tabindex="-1" role="dialog" aria-labelledby="Add-CollaboratorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!-- Modal Add-Collaborator End-->   
     @RenderBody()
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
