@@ -1,4 +1,29 @@
 ﻿$(function () {
+
+    $("#my-app").on("click", ".tm_pop_assmodal", function () {
+        if ($(this).attr("data-aid")) {
+            var aid = $(this).attr("data-aid");
+            GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
+                $('#Edit-Assignment').modal('show');
+            });
+        } else if ($(this).attr("data-atid")) {
+            var atid = $(this).attr("data-atid")
+            $.ajax({
+                url: "/TaskManagement/Subtask_Detail",
+                data: {
+                    SubTaskId: atid
+                },
+                success: function (data) {
+                    $("#Edit-Assignment .modal-content").html(data);
+                    $('#Edit-Assignment').modal('show');
+                }
+            })
+        } else {
+            ErrorAlert("获取数据失败。");
+        }
+
+    });
+
     //控制我的任务
     $("#my-app").on("click", ".tm-control-view-panel", function () {
         if ($("#tm-my-view").length > 0) {

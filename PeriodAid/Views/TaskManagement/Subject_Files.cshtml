@@ -41,12 +41,6 @@
                     <li><a href="#">日程</a></li>
                     <li><a href="/TaskManagement/Subject_Files?SubjectId=@Model.Id" class="active">文件</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right navbar-border">
-                    @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" id="btn_show_subject_panel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
-                    </li>
-                </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </div>
@@ -178,11 +172,6 @@
         </div>
     </div>
     <!--Files Area End-->
-<!--panel Menu-->
-<div class="tm_subject_panel" id="tm_subject_panel">
-
-</div>
-<!--panel Menu-->
 @section scripts{
     <script>
         $(function () {

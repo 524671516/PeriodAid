@@ -111,7 +111,7 @@
                         ErrorAlert("获取数据失败。");
                     } else {
                         setTimeout(function () {
-                            $("#" + _link).append(data);
+                            $("#" + _link).html(data);
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
                             if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
