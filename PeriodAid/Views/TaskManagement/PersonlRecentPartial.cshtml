@@ -47,8 +47,9 @@
 </div>
 <div class="tm-view-content-container  tm-view-container" id="tm-view-scroll-container">
     <input type="hidden" id="tm-view-page" name="tm-view-page" value="0"/> 
-    <div class="tm-view-loading-content" id="tm-view-loading-content"> 
+    <div class="tm-view-loading-content" id="tm-view-assignment-content"> 
     </div>
+    <div class="tm-view-loading-content" id="tm-view-subtask-content"></div>
     <div class="tm-veiw-loading text-center" id="tm-view-loading">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
         <span class="sr-only">正在加载...</span>
@@ -69,11 +70,10 @@
                             ErrorAlert("获取数据失败。");
                         } else {
                             setTimeout(function () {
-                                $("#tm-view-loading-content").append(data);
+                                $("#tm-view-assignment-content").append(data);
                                 $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                                 $("#tm-view-loading").hide();
-                                var _loading = false;
-                                controlscroll(_loading,false);
+                                controlscroll("tm-view-assignment-content", "tm-view-scroll-container")()
                             },500)
                         }
                     },
@@ -161,50 +161,55 @@
             })
         }
     });
-    function controlscroll(_loading, newscroll) {
-        if (newscroll) {
-            $("#tm-view-scroll-container").unbind("scroll");
-        }
-        $("#tm-view-scroll-container").scroll(function (e) {
-            var _dis = parseInt($("#tm-view-loading-content").height()) - parseInt($("#tm-view-scroll-container").height());
-            if ($(this).scrollTop() >= _dis) {
-                if (_loading) {
-                    return false;
-                } else {
-                    _loading = !_loading;
-                    $(".tm-view-more").remove();
-                    $("#tm-view-loading").show();
-                    var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-                    $.ajax({
-                        url: _link,
-                        data: {
-                            page: parseInt($("#tm-view-page").val()),
-                            timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                            sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                        },
-                        success: function (data) {
-                            if (data == "FAIL") {
-                                ErrorAlert("获取数据失败。");
-                            } else {
-                                setTimeout(function () {
-                                    $("#tm-view-loading-content").append(data);
-                                    $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                                    $("#tm-view-loading").hide();
-                                    if ($(".tm-view-nomore").length > 0) {
-                                        $("#tm-view-scroll-container").unbind("scroll");
-                                        $("#tm-view-page").val("0");
-                                    } else {
-                                        _loading = !_loading;
-                                    }
-                                }, 500)
+    function controlscroll(containerEle,scrollEle) {
+        var _loading = false;
+        var _container = containerEle;
+        var _scroll = scrollEle;
+        function subcontrol() {
+            $("#" + _scroll).unbind("scroll");
+            $("#" + _scroll).scroll(function (e) {
+                var _dis = parseInt($("#tm-view-loading-content").height()) - parseInt($("#" + _scroll).height());
+                console.log()
+                if ($("#" + _scroll).scrollTop() >= _dis) {
+                    if (_loading) {                        
+                        return false;
+                    } else {
+                        _loading = !_loading;
+                        $(".tm-view-more").remove();
+                        $("#tm-view-loading").show();
+                        var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+                        $.ajax({
+                            url: _link,
+                            data: {
+                                page: parseInt($("#tm-view-page").val()),
+                                timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+                            },
+                            success: function (data) {
+                                if (data == "FAIL") {
+                                    ErrorAlert("获取数据失败。");
+                                } else {
+                                    setTimeout(function () {
+                                        $("#" + _container).append(data);
+                                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                                        $("#tm-view-loading").hide();
+                                        if ($(".tm-view-nomore").length > 0) {
+                                            $("#" + _scroll).unbind("scroll");
+                                            $("#tm-view-page").val("0");
+                                        } else {
+                                            _loading = !_loading;
+                                        }
+                                    }, 500)
+                                }
+                            },
+                            error: function () {
+                                ErrorAlert("请求失败。");
                             }
-                        },
-                        error: function () {
-                            ErrorAlert("请求失败。");
-                        }
-                    })
+                        })
+                    }
                 }
-            }
-        })
+            })
+        }
+        return subcontrol;
     }
 </script>
