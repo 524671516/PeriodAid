@@ -11,19 +11,22 @@
             <ul>
                 <li class="tm-view-control-sort dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-progress" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="tm-select-title">已完成</span>
+                        <span class="tm-select-title">所有</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress">
                         <li>
-                            <a href="javascript:;" class="tm-select-range selected tm-select" data-type="finish">已完成</a>
+                            <a href="javascript:;" class="tm-select-range tm-select selected">所有</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="tm-select-range tm-select" data-type="finish">已完成</a>
                         </li>
                         <li>
                             <a href="javascript:;" class="tm-select-range tm-select" data-type="unfinish">未完成</a>
                         </li>
                     </ul>
                 </li>
-                <li class="tm-view-control-sort tm-has-line dropdown">
+                <li class="tm-view-control-sort dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-undefined" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <span class="tm-select-title">按截止时间排序</span>
                         <span class="caret"></span>
@@ -34,12 +37,12 @@
                         <li><a href="javascript:;"class="tm-select-sort-type tm-select">按任务排序</a></li>
                     </ul>
                 </li>
-                <li class="tm-view-control-sort">
+                @*<li class="tm-view-control-sort">
                     <a href="javascript:;">
                         <i class="fa fa-download color-blue" aria-hidden="true"></i>
                         导出excel
                     </a>
-                </li>
+                </li>*@
             </ul>
         </div>
     </div>

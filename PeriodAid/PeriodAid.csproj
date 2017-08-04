@@ -1089,6 +1089,7 @@
     <Content Include="Views\TaskManagement\PersonalResponsibleAssignmentPartial.cshtml" />
     <Content Include="Views\TaskManagement\PersonalExecutableTaskPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
+    <Content Include="Views\TaskManagement\GetProcedureForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -42,6 +42,8 @@
                     UnimportantAlert(data.msg);
                     $("#edit_procedure_form").parents(".ajax-procedure").find(".tm_procedure-title").html($(".tm_dropdown_control #ProcedureTitle").val());
                     $("#btn_edit_procedure").removeClass("disabled");
+                    $(".tm-dropdown-menu").hide();
+                    $(".tm-show-listmenu").removeClass("open");
                 } else {
                     ErrorAlert(data.errmsg);
                     $("#btn_edit_procedure").removeClass("disabled");
