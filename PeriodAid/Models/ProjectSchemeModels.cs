@@ -562,9 +562,9 @@
         /// </summary>
         public static string YEARDATA = "year";
         /// <summary>
-        /// 时间排序
+        /// 截止时间时间排序
         /// </summary>
-        public static string TIMESORTDATA = "timesort";
+        public static string DEADTIMESORTDATA = "deadtimesort";
         /// <summary>
         /// 项目排序
         /// </summary>
