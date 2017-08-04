@@ -15,23 +15,23 @@
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress">
                         <li>
-                            <a href="javascript:;" class="tm-select-range selected tm-select" data-type="week">最近一周</a>
+                            <a href="javascript:;" class="tm-select-range selected tm-select" data-type="week">本周</a>
                         </li>
                         <li>
-                            <a href="javascript:;" class="tm-select-range tm-select" data-type="month">最近一月</a>
+                            <a href="javascript:;" class="tm-select-range tm-select" data-type="month">本月</a>
                         </li>
                         <li>
-                            <a href="javascript:;" class="tm-select-range tm-select" data-type="year">最近一年</a>
+                            <a href="javascript:;" class="tm-select-range tm-select" data-type="year">今年</a>
                         </li>
                     </ul>
                 </li>
                 <li class="tm-view-control-sort tm-has-line dropdown">
                     <a href="javascript:;" id="tm-view-dropdown-undefined" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="tm-select-title">按时间排序</span>
+                        <span class="tm-select-title">按截止时间排序</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-undefined">
-                        <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="timesort">按时间排序</a></li>
+                        <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="timesort">按截止时间排序</a></li>
                         <li><a href="javascript:;" class="tm-select-sort-type tm-select" data-type="subjectsort">按项目排序</a></li>
                     </ul>
                 </li>
@@ -98,17 +98,20 @@
                     sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
                 },
                 success: function (data) {
-                    console.log(data);
                     if (data == "FAIL") {
                         ErrorAlert("获取数据失败。");
                     } else {
                         setTimeout(function () {
-                            $("#tm-view-loading-content").html("");
                             $("#tm-view-loading-content").append(data);
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
                             var _loading = false;
-                            controlscroll(_loading,true);
+                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {                               
+                                $("#tm-view-scroll-container").unbind("scroll");
+                                $("#tm-view-page").val("0");
+                            } else {
+                                controlscroll(_loading, true);
+                            }
                         }, 500);
                     }
                 },
@@ -116,8 +119,6 @@
                     ErrorAlert("请求失败。");
                 }
             })
-            var _loading = false;
-            controlscroll(_loading,true);
         }
     })
     $("#tm-view-thirdcontrol").on("click", ".tm-select", function (e) {
@@ -145,7 +146,12 @@
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
                             var _loading = false;
-                            controlscroll(_loading, true);
+                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {
+                                $("#tm-view-scroll-container").unbind("scroll");
+                                $("#tm-view-page").val("0");
+                            } else {
+                                controlscroll(_loading, true);
+                            }
                         }, 500)
                     }
                 },
@@ -155,7 +161,7 @@
             })
         }
     });
-    function controlscroll(_loading,newscroll) {
+    function controlscroll(_loading, newscroll) {
         if (newscroll) {
             $("#tm-view-scroll-container").unbind("scroll");
         }
