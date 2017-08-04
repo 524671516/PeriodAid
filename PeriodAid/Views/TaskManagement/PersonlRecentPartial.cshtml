@@ -1,8 +1,8 @@
 ﻿<div class="tm-view-header clear-float">
     <div class="tm-view-header-left float-left">
         <div class="tm-my-view-control tm-view-control" id="tm-view-subcontrol">
-            <a href="javascript:;" class="tm-view-control-link active" data-href="/TaskManagement/PersonalRecentAssignmentPartial">任务</a>
-            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalRecentSubtaskPartial">子任务</a>
+            <a href="javascript:;" class="tm-view-control-link active" data-href="/TaskManagement/PersonalRecentAssignmentPartial" data-link="tm-view-assignment-content">任务</a>
+            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalRecentSubtaskPartial" data-link="tm-view-subtask-content">子任务</a>
         </div>
     </div>
     <div class="tm-view-header-right float-right">
@@ -49,7 +49,9 @@
     <input type="hidden" id="tm-view-page" name="tm-view-page" value="0"/> 
     <div class="tm-view-loading-content" id="tm-view-assignment-content"> 
     </div>
-    <div class="tm-view-loading-content" id="tm-view-subtask-content"></div>
+    <div class="tm-view-loading-content hidden" id="tm-view-subtask-content">
+
+    </div>
     <div class="tm-veiw-loading text-center" id="tm-view-loading">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
         <span class="sr-only">正在加载...</span>
@@ -70,10 +72,15 @@
                             ErrorAlert("获取数据失败。");
                         } else {
                             setTimeout(function () {
-                                $("#tm-view-assignment-content").append(data);
                                 $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                                $("#tm-view-assignment-content").append(data);
                                 $("#tm-view-loading").hide();
-                                controlscroll("tm-view-assignment-content", "tm-view-scroll-container")()
+                                if ($("#tm-view-assignment-content .tm-view-nomore").length > 0 || $("#tm-view-assignment-content .tm-view-loading-empty").length > 0) {
+                                    $("#tm-view-scroll-container").unbind("scroll");
+                                    $("#tm-view-page").val("0");
+                                } else {
+                                    controlscroll("tm-view-assignment-content", "tm-view-scroll-container")();
+                                }
                             },500)
                         }
                     },
@@ -84,7 +91,9 @@
     })
     $("#tm-view-subcontrol").on("click", ".tm-view-control-link", function () {
         if (!$(this).hasClass("active")) {
-            $("#tm-view-loading-content").html("");
+            var _link = $(this).attr("data-link");
+            $(".tm-view-loading-content").addClass("hidden");
+            $("#" + _link).removeClass("hidden").html("");
             $("#tm-view-loading").show();
             $(this).parent().find(".tm-view-control-link.active").removeClass("active");
             $("#tm-view-page").val("0");
@@ -102,15 +111,14 @@
                         ErrorAlert("获取数据失败。");
                     } else {
                         setTimeout(function () {
-                            $("#tm-view-loading-content").append(data);
+                            $("#" + _link).append(data);
                             $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                             $("#tm-view-loading").hide();
-                            var _loading = false;
-                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {                               
+                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
                                 $("#tm-view-scroll-container").unbind("scroll");
                                 $("#tm-view-page").val("0");
                             } else {
-                                controlscroll(_loading, true);
+                                controlscroll(_link, "tm-view-scroll-container")();
                             }
                         }, 500);
                     }
@@ -123,13 +131,14 @@
     })
     $("#tm-view-thirdcontrol").on("click", ".tm-select", function (e) {
         if (!$(this).hasClass("selected")) {
-            $("#tm-view-loading-content").html("");
+            var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-link");
+            var _initthirdlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+            $("#" + _link).html("");
             $("#tm-view-loading").show();
             $(this).parent().parent().find(".tm-select.selected").removeClass("selected");
             $(this).addClass("selected");
             $("#tm-view-page").val("0");
             $(this).parents(".tm-view-control-sort").find(".tm-select-title").html($(this).html());
-            var _initthirdlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
             $.ajax({
                 url: _initthirdlink,
                 data: {
@@ -141,16 +150,15 @@
                     if (data == "FAIL") {
                         ErrorAlert("获取数据失败。");
                     } else {
+                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                         setTimeout(function () {                           
-                            $("#tm-view-loading-content").append(data);
-                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                            $("#" + _link).append(data);
                             $("#tm-view-loading").hide();
-                            var _loading = false;
-                            if ($(".tm-view-nomore").length > 0 || $(".tm-view-loading-empty").length > 0) {
+                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
                                 $("#tm-view-scroll-container").unbind("scroll");
                                 $("#tm-view-page").val("0");
                             } else {
-                                controlscroll(_loading, true);
+                                controlscroll(_link, "tm-view-scroll-container")();
                             }
                         }, 500)
                     }
@@ -168,8 +176,7 @@
         function subcontrol() {
             $("#" + _scroll).unbind("scroll");
             $("#" + _scroll).scroll(function (e) {
-                var _dis = parseInt($("#tm-view-loading-content").height()) - parseInt($("#" + _scroll).height());
-                console.log()
+                var _dis = parseInt($("#" + _container).height()) - parseInt($("#" + _scroll).height());
                 if ($("#" + _scroll).scrollTop() >= _dis) {
                     if (_loading) {                        
                         return false;
@@ -189,11 +196,11 @@
                                 if (data == "FAIL") {
                                     ErrorAlert("获取数据失败。");
                                 } else {
+                                    $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                                     setTimeout(function () {
                                         $("#" + _container).append(data);
-                                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
                                         $("#tm-view-loading").hide();
-                                        if ($(".tm-view-nomore").length > 0) {
+                                        if ($("#" + _container).find(".tm-view-nomore").length > 0) {
                                             $("#" + _scroll).unbind("scroll");
                                             $("#tm-view-page").val("0");
                                         } else {
