@@ -16,7 +16,7 @@
                     <input type="checkbox" class="tm-checkbox-input" />
                    }
                 </div>
-                <div class="tm-view-info float-left">
+                <div class="tm-view-info float-left tm_pop_assmodal" data-atid="@item.Id">
                     <div class="tm-view-info-top">
                         <span>子任务名称:@Html.Encode(item.TaskTitle)</span>&nbsp;
                         <span>归属任务:@Html.Encode(item.Assignment.AssignmentTitle)</span>&nbsp;
@@ -61,7 +61,7 @@ else
                         <input type="checkbox" class="tm-checkbox-input" />
                        }
                     </div>
-                    <div class="tm-view-info float-left">
+                    <div class="tm-view-info float-left tm_pop_assmodal" data-atid="@item.Id">
                         <div class="tm-view-info-top">
                             <span>任务名称:@Html.Encode(item.TaskTitle)</span>&nbsp;
                             <span>归属任务:@Html.Encode(item.Assignment.AssignmentTitle)</span>&nbsp;

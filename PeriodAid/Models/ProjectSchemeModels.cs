@@ -600,6 +600,7 @@
 
     }
 
+
     public class SubjectFileArea
     {
         public int SubjectId { get; set; }
