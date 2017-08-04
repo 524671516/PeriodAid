@@ -115,8 +115,16 @@ namespace PeriodAid.Controllers
         }
 
         //获取登录记录
-        public ActionResult LoginLog() {
-            return View();
+        public ActionResult LoginLog(string username) {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                return View(employee);
+            }
         }
 
         //修改个人信息
@@ -2749,7 +2757,6 @@ namespace PeriodAid.Controllers
             var user = _db.Employee.SingleOrDefault(m => m.UserName == username);
             return user;
         }
-
 
         [HttpPost]
         public JsonResult UploadSubjectCutFileAjax(FormCollection form)

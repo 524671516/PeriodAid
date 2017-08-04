@@ -57,6 +57,8 @@
                         </li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
+                <!-- Collect the nav links, forms, and other content for toggling -->
+
             </div><!-- /.container-fluid -->
         </nav>
         <div class="personal_setting_wrap" style="margin-top:30px;">
@@ -64,18 +66,32 @@
                 <div class="row">
                     <div class="col-md-2">
                         <ul class="nav nav-pills nav-stacked">
-                            <li role="presentation" class="active"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
+                            <li role="presentation"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
                             <li role="presentation"><a href="~/Views/TaskManagement/#">其他设置</a></li>
-                            <li role="presentation"><a href="/TaskManagement/LoginLog">登录记录</a></li>
+                            <li role="presentation" class="active"><a href="/TaskManagement/LoginLog">登录记录</a></li>
                         </ul>
                     </div>
                     <div class="col-md-10">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h3 class="panel-title">设置个人信息</h3>
+                                <h3 class="panel-title">近期登录记录</h3>
                             </div>
                             <div class="panel-body">
-                              
+                                @using (Html.BeginForm("EditPersonalInfo", "TaskManagement", FormMethod.Post, new { @id = "save_personalinfo_form", @class = "validate-form form-horizontal" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(m => m.Id)
+                                    @Html.HiddenFor(m => m.SignupDate)
+                                    @Html.HiddenFor(m => m.LastLoginDate)
+                                    <div class="form-group">
+                                        <label>用户：</label><label class="color-blue">@Model.UserName</label><label class="color-blue">（@Model.NickName）</label>
+                                        <label>最后登录时间：</label><label class="color-blue">@Model.LastLoginDate</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>用户：</label><label class="color-blue">@Model.UserName</label><label class="color-blue">（@Model.NickName）</label>
+                                        <label>注册时间：</label><label class="color-blue">@Model.SignupDate</label>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -84,66 +100,7 @@
         </div>
     </header>
     <!-- Cropping modal -->
-    <div id="crop-avatar" class="container">
-        <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    @using (Html.BeginForm("UploadSubjectCutFileAjax", "TaskManagement", FormMethod.Post, new { @class = "avatar-form" }))
-                    {
-
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" id="avatar-modal-label">调整头像</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="avatar-body">
-                                <!-- Upload image and data -->
-                                <div class="avatar-upload">
-                                    <input type="hidden" class="avatar-src" name="avatar_src">
-                                    <input type="hidden" class="avatar-data" name="avatar_data">
-                                    <label for="avatarInput">选择本地图片</label>
-                                    <input type="file" class="avatar-input" id="avatarInput" name="avatar_file" accept="image/jpeg,image/gif,application/msword,image/png">
-                                </div>
-                                <!-- Crop and preview -->
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <div class="avatar-wrapper"></div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="avatar-preview preview-lg"></div>
-                                        <div class="avatar-preview preview-md"></div>
-                                        <div class="avatar-preview preview-sm"></div>
-                                    </div>
-                                </div>
-                                <div class="row avatar-btns">
-                                    <div class="col-md-9">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate -90 degrees">向左旋转</button>
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-15">-15度</button>
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-30">-30度</button>
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45">-45度</button>
-                                        </div>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate 90 degrees">向右旋转</button>
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="15">15度</button>
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="30">30度</button>
-                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="45">45度</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button type="submit" class="btn btn-primary btn-block avatar-save">完成</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div> -->
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
 
     <!-- /.modal -->
@@ -158,6 +115,5 @@
     <script src="~/Scripts/jquery-confirm.js"></script>
     <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/croppermain.js"></script>
-
 </body>
 </html>
