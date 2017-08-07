@@ -2428,7 +2428,7 @@ namespace PeriodAid.Controllers
                 dc.AutoIncrementStep = 1;//步长为1
                 dc.AllowDBNull = false;//
                 dc = dt.Columns.Add("名称", Type.GetType("System.String"));
-                dc = dt.Columns.Add("状态", Type.GetType("System.Int32"));
+                dc = dt.Columns.Add("状态", Type.GetType("System.String"));
                 dc = dt.Columns.Add("权重", Type.GetType("System.Int32"));
                 dc = dt.Columns.Add("创建时间", Type.GetType("System.String"));
                 dc = dt.Columns.Add("截止时间", Type.GetType("System.String"));
@@ -2446,7 +2446,7 @@ namespace PeriodAid.Controllers
                 {
                     newRow = dt.NewRow();
                     newRow["名称"] = item.AssignmentTitle;
-                    newRow["状态"] = item.Status;
+                    newRow["状态"] = (item.Status == AssignmentStatus.DELETED) ? "已删除" : (item.Status == AssignmentStatus.FINISHED) ? "已完成" : (item.Status == AssignmentStatus.UNFINISHED) ? "未完成" :"已归档";
                     newRow["权重"] = item.Priority;
                     newRow["创建时间"] = item.CreateTime;
                     newRow["截止时间"] = item.Deadline;
