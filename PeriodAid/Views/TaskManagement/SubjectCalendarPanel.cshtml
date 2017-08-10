@@ -141,10 +141,26 @@
 		TmDatePicker.createPanel = function (datearray) {
 		    
 		}
-        TmDatePicker.Init=function(Options)
+		TmDatePicker.isArray=function(obj) {
+		    return Object.prototype.toString.call(obj) === '[object Array]';
+		}
+		TmDatePicker.Init = function (options) {
+		    if (arguments.length > 1) {
+                console.log("参数过多")
+		    } else {
+		        if (typeof (options) == "object" && !TmDatePicker.isArray(options)) {
+		            console.log("通过");
+		            TmDatePicker.userOption = options;
+		            TmDatePicker.createPanel();
+		        } else {
+		            console.log("参数不合法");
+		        };
+		    }
+		    
+		}
 		window.TmDatePicker=TmDatePicker;
 	})();
-	console.log(TmDatePicker.createPanel)
+	console.log(TmDatePicker.Init({}));
 </script>
 
 
