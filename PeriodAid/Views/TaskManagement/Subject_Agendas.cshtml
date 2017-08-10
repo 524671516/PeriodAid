@@ -1,0 +1,43 @@
+﻿@model PeriodAid.Models.Subject
+@using PeriodAid.Models;
+@{
+    ViewBag.ImgUrl = @ViewBag.img;
+    ViewBag.Title = "Subject_Agendas";
+    Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
+}
+<div class="navbar-default tm_task-navbar">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <ol class="breadcrumb  navbar-breadcrumb">
+                <li><a href="/TaskManagement/Index">主页</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="SubjectName" data-id="@Model.Id" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.Encode(Model.SubjectTitle)@*<span class="caret"></span>*@</a>
+                </li>
+            </ol>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+            <ul class="nav navbar-nav navbar-underline">
+                <li><a href="/TaskManagement/Subject_Detail?SubjectId=@Model.Id">进度</a></li>
+                <li><a href="/TaskManagement/Subject_Agendas?SubjectId=@Model.Id" class="active">日程</a></li>
+                <li><a href="/TaskManagement/Subject_Files?SubjectId=@Model.Id">文件</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="tm-panel-wrap bg-gray" id="tm_panel-agenda" data-sid="@Model.Id">
+    <div class="tm-panel-container">
+        <div class="tm-add-agenda-control tm-panel-heightfixed color-gray add-btn">
+                    <strong><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;添加日程</i></strong>
+        </div>
+        <div class="tm-agenda-view-panel">
+           <div class="tm-overdue-agenda"></div>
+           <div class="tm-"></div>
+        </div>
+    </div>
+</div>

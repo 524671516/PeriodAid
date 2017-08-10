@@ -127,19 +127,6 @@ namespace PeriodAid.Controllers
             }
         }
 
-        //安全设置
-        public ActionResult SecuritySetting(string username) {
-            var employee = getEmployee(User.Identity.Name);
-            if (employee == null)
-            {
-                return View("Error");
-            }
-            else
-            {
-                return View(employee);
-            }
-        }
-
         //修改个人信息
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<JsonResult> EditPersonalInfo(Employee model)
@@ -165,13 +152,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "模型错误。" });
         }
 
-        //修改密码
-        [HttpPost,ValidateAntiForgeryToken]
-        public async Task<JsonResult>EditSecuritySetting(Employee model)
-        {
-            return Json(new { result = "模型错误。" });
 
-        }
 
         #region 项目操作
 
@@ -1757,9 +1738,19 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-        #region 日程操作
-        public ActionResult Subject_CalendarPartial() {
-            return PartialView();
+        #region 日程操作  预留
+        public ViewResult Subject_Agendas(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status > SubjectStatus.DELETED);
+            if (subject == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
+                return View(subject);
+            }
         }
         #endregion
 
@@ -2447,6 +2438,24 @@ namespace PeriodAid.Controllers
         #endregion
 
 
+        #region  日历
+        //日历页面
+        public ActionResult SubjectCalendarPanel()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        #endregion
+
+
         #region  数据EXCEL导出操作
         public ActionResult GetExcelDataForAssignment()
         {
@@ -2478,12 +2487,12 @@ namespace PeriodAid.Controllers
                 var assignementlist = from m in _db.Assignment
                                       where m.HolderId == employee.Id
                                       select m;
-
-                foreach (var item in assignementlist)
+                
+                foreach(var item in assignementlist)
                 {
                     newRow = dt.NewRow();
                     newRow["名称"] = item.AssignmentTitle;
-                    newRow["状态"] = (item.Status == AssignmentStatus.DELETED) ? "已删除" : (item.Status == AssignmentStatus.FINISHED) ? "已完成" : (item.Status == AssignmentStatus.UNFINISHED) ? "未完成" : "已归档";
+                    newRow["状态"] = item.Status;
                     newRow["权重"] = item.Priority;
                     newRow["创建时间"] = item.CreateTime;
                     newRow["截止时间"] = item.Deadline;

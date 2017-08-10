@@ -1,0 +1,150 @@
+﻿@model PeriodAid.Models.Employee
+<!--My View-->
+<div id="tm-calendar-view" class="tm-calendar-view tm-view">
+    <div class="tm-view-header tm-calendar-view-header">
+        <div class="tm-calendar-view-close tm-control-calendar-panel tm-view-header-select">
+            <button type="button" class="close"><span aria-hidden="true">×</span></button>
+        </div>
+        <div class="tm-calendar-view-control tm-view-control">
+            <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <span class="tm-calendar-view-control tm-calendar-currentmonth color-blue">@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
+            <a href="javascript:;" class="tm-calendar-view-control tm-calendar-next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+        </div>
+        <div class="tm-calendar-view-close tm-control-calendar-panel tm-view-header-close">
+            <button type="button" class="close"><span aria-hidden="true">×</span></button>
+        </div>
+    </div>
+    <div class="tm-view-content tm-calendar-view-content">
+        <div class="tm-view-content-wrap  tm-view-wrap tm-calendar-view-wrap">
+            <div class="tm-calendar-view-menu">1</div>
+            <div class="tm-calendar-view-panel">
+                <div class="tm-calendar-inner">
+                    <div class="tm-calendar-inner-header tm-calendar-month-header">
+                        <ul class="clear-float">
+                            <li>星期一</li>
+                            <li>星期二</li>
+                            <li>星期三</li>
+                            <li>星期四</li>
+                            <li>星期五</li>
+                            <li>星期六</li>
+                            <li>星期天</li>
+                        </ul>
+                    </div>
+                    <div class="tm-calendar-inner-body tm-caleder-month-body">
+                            <ul class="tm-calendar-weekofmonth clear-float">
+                                <li class="tm-calendar-weekofday tm-calendar-prevmonth-weekofday">31</li>
+                                <li class="tm-calendar-weekofday">1</li>
+                                <li class="tm-calendar-weekofday">2</li>
+                                <li class="tm-calendar-weekofday">3</li>
+                                <li class="tm-calendar-weekofday">4</li>
+                                <li class="tm-calendar-weekofday">5</li>
+                                <li class="tm-calendar-weekofday">6</li>
+                            </ul>
+                        <ul class="tm-calendar-weekofmonth clear-float">
+                            <li class="tm-calendar-weekofday">7</li>
+                            <li class="tm-calendar-weekofday">8</li>
+                            <li class="tm-calendar-weekofday">
+                                <strong class="tm-calendar-currentday">9</strong>
+                            </li>
+                            <li class="tm-calendar-weekofday">10</li>
+                            <li class="tm-calendar-weekofday">11</li>
+                            <li class="tm-calendar-weekofday">12</li>
+                            <li class="tm-calendar-weekofday">13</li>
+                        </ul>
+                        <ul class="tm-calendar-weekofmonth clear-float">
+                            <li class="tm-calendar-weekofday">14</li>
+                            <li class="tm-calendar-weekofday">15</li>
+                            <li class="tm-calendar-weekofday">16</li>
+                            <li class="tm-calendar-weekofday">17</li>
+                            <li class="tm-calendar-weekofday">18</li>
+                            <li class="tm-calendar-weekofday">19</li>
+                            <li class="tm-calendar-weekofday">20</li>
+                        </ul>
+                        <ul class="tm-calendar-weekofmonth clear-float">
+                            <li class="tm-calendar-weekofday">21</li>
+                            <li class="tm-calendar-weekofday">22</li>
+                            <li class="tm-calendar-weekofday">23</li>
+                            <li class="tm-calendar-weekofday">24</li>
+                            <li class="tm-calendar-weekofday">25</li>
+                            <li class="tm-calendar-weekofday">26</li>
+                            <li class="tm-calendar-weekofday">27</li>
+                        </ul>
+                        <ul class="tm-calendar-weekofmonth clear-float">
+                            <li class="tm-calendar-weekofday">28</li>
+                            <li class="tm-calendar-weekofday">29</li>
+                            <li class="tm-calendar-weekofday">30</li>
+                            <li class="tm-calendar-weekofday">31</li>
+                            <li class="tm-calendar-weekofday tm-calendar-nextmonth-weekofday">1</li>
+                            <li class="tm-calendar-weekofday tm-calendar-nextmonth-weekofday">2</li>
+                            <li class="tm-calendar-weekofday tm-calendar-nextmonth-weekofday">3</li>
+                        </ul>                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--My View End-->
+<script>
+	(function(){
+	    var TmDatePicker = {};
+	    TmDatePicker.defaultOptions = {
+	        container: "body"
+	    };
+		TmDatePicker.getMonthDate=function(year,month){
+			var resdata=[];
+			if(typeof(year)!="number"||typeof(month)!="number"){
+				throw new Error('typeof yaer/month is not a number!');
+			}else{
+				var firstdayofmonth=new Date(year,month-1,1);     //本月的第一天
+				var lastdayofmonth=new Date(year,month,0);        //本月的最后一天
+				var lastdayoflastmonth=new Date(year,month-1,0);   //上个月的最后一天
+				var  firstdayofweekday=firstdayofmonth.getDay();  //计算每月第一天是星期几
+				if(firstdayofweekday===0) firstdayofweekday=7     //星期日转化为7
+				var lastdayscount=firstdayofweekday -1;           //上个月需要补充的天数
+			    var lastdateoflastmonth=lastdayoflastmonth.getDate();  //获取上个月最后一天是几号
+			    var lastdateofmonth=lastdayofmonth.getDate();         ///获取本月最后一天是几号
+			    for(var i=0;i<7*6;i++){
+			    	var virtualdate=i+1-lastdayscount;
+			    	var currentdate=virtualdate;
+			    	var currentmonth=month;
+			    	var currrentyear=firstdayofmonth.getFullYear();
+			    	if(virtualdate<=0){
+			    		//上个月
+			    		currentmonth=month-1;
+			    		currentdate=lastdateoflastmonth+virtualdate;
+			    	}else if(virtualdate>lastdateofmonth){
+			    		//下个月
+			    		currentmonth=month+1;
+			    		currentdate=currentdate-lastdateofmonth;
+			    	}
+			    	if(currentmonth===0) {
+                        currrentyear-=1;
+			    		currentmonth=12;
+			    	}else if(currentmonth===13)
+			    	{
+			    		currrentyear+=1;
+			    		currentmonth=1;
+			    	}
+			    	resdata.push({
+			    		year:currrentyear,
+			    		month:currentmonth,
+			    		date:currentdate,
+			    		virtualdate:virtualdate
+			    	});
+			    }
+			    return resdata
+
+			}
+
+		}
+		TmDatePicker.createPanel = function (datearray) {
+		    
+		}
+        TmDatePicker.Init=function(Options)
+		window.TmDatePicker=TmDatePicker;
+	})();
+	console.log(TmDatePicker.createPanel)
+</script>
+
+

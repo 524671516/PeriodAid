@@ -29,7 +29,8 @@
     });
 
     //控制我的任务
-    $("#my-app").on("click", ".tm-control-view-panel", function () {
+    $("#my-app").on("click", ".tm-control-my-panel", function () {
+        $("#tm-calendar-view").remove();
         if ($("#tm-my-view").length > 0) {
             $("#tm-my-view").fadeToggle("show");
             $("#my-app").removeClass("tm-open-view");
@@ -50,7 +51,32 @@
                 }
             });
         }       
-        })
+    })
+
+    //控制日历
+    $("#my-app").on("click", ".tm-control-calendar-panel", function () {
+        $("#tm-my-view").remove();
+        if ($("#tm-calendar-view").length > 0) {
+            $("#tm-calendar-view").fadeToggle("show");
+            $("#my-app").removeClass("tm-open-view");
+        } else {
+            $.ajax({
+                url: "/TaskManagement/SubjectCalendarPanel",
+                success: function (data) {
+                    if (data == "FAIL") {
+                        ErrorAlert("获取我的任务失败。");
+                    } else {
+                        $("#my-app>div:last").after(data);
+                        $("#my-app").addClass(".tm-open-view");
+                        $("#tm-calendar-view").fadeToggle();
+                    }
+                },
+                error: function () {
+                    ErrorAlert("请求失败。");
+                }
+            });
+        }
+    })
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {
         $.ajax({

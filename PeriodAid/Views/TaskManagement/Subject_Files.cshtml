@@ -6,7 +6,6 @@
     Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
 }
 
-    <!--The Second Nav-->
     <div class="navbar-default tm_task-navbar">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -20,16 +19,7 @@
                 <ol class="breadcrumb  navbar-breadcrumb">
                     <li><a href="/TaskManagement/Index">主页</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" id="SubjectName" data-id="@Model.Id" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.Encode(Model.SubjectTitle)@*<span class="caret"></span>*@</a>
-                        @*<ul class="dropdown-menu dropdown-menu-list">
-                                 <li><a href="#">Action</a></li>
-                                 <li><a href="#">Another action</a></li>
-                                 <li><a href="#">Something else here</a></li>
-                                 <li role="separator" class="divider"></li>
-                                 <li><a href="#">Separated link</a></li>
-                                 <li role="separator" class="divider"></li>
-                                 <li><a href="#">One more separated link</a></li>
-                            </ul>*@
+                        <a href="#" class="dropdown-toggle" id="SubjectName" data-id="@Model.Id" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.Encode(Model.SubjectTitle)@*<span class="caret"></span>*@</a>                       
                     </li>
                 </ol>
             </div>
@@ -38,16 +28,13 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
                 <ul class="nav navbar-nav navbar-underline">
                     <li><a href="/TaskManagement/Subject_Detail?SubjectId=@Model.Id">进度</a></li>
-                    <li><a href="#">日程</a></li>
                     <li><a href="/TaskManagement/Subject_Files?SubjectId=@Model.Id" class="active">文件</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </div>
-    <!--The Second Nav End-->
-    <!--Files Area-->
-    <div class="tm_panel-wrap tm_panel-file" id="tm_panel-file" data-sid="@Model.Id">
-        <div class="tm_panel-container tm_panel-container-file" id="tm_folder_container">
+    <div class="tm-panel-wrap bg-gray" id="tm_panel-file" data-sid="@Model.Id">
+        <div class="tm-panel-container tm-panel-heightauto" id="tm_folder_container">
             <div class="tm_files_wrap">
                 <div class="tm_files_header clear-float">
                     <div class="tm_files_left float-left tm_files_titile">
@@ -171,7 +158,6 @@
             </div>
         </div>
     </div>
-    <!--Files Area End-->
 @section scripts{
     <script>
         $(function () {
