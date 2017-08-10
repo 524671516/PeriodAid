@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="javascript:;" id="ReturnToSubject"><strong class="color-blue" >返回项目中心</strong></a>
+                    <a class="navbar-brand" href="javascript:;" id="ReturnToSubject"><strong class="color-blue">返回项目中心</strong></a>
                     <span class="navbar-brand">个人设置</span>
                 </div>
 
@@ -78,7 +78,7 @@
                                 @using (Html.BeginForm("EditPersonalInfo", "TaskManagement", FormMethod.Post, new { @id = "save_personalinfo_form", @class = "validate-form form-horizontal" }))
                                 {
                                     @Html.AntiForgeryToken()
-                                    @Html.HiddenFor(m => m.ImgUrl,new { @class= "tm-check-control" })
+                                    @Html.HiddenFor(m => m.ImgUrl, new { @class = "tm-check-control-img" })
                                     @Html.HiddenFor(m => m.Id)
                                     @Html.HiddenFor(m => m.DepartmentId)
                                     @Html.HiddenFor(m => m.Status)
@@ -86,7 +86,7 @@
                                     @Html.HiddenFor(m => m.LastLoginDate)
                                     @Html.HiddenFor(m => m.SignupDate)
                                     @Html.HiddenFor(m => m.UserName)
-                                    <input type="hidden" value="false" id="checkedit"/>
+                                    <input type="hidden" value="false" id="checkedit" />
                                     <div class="form-group">
                                         <label for="NickName" class="col-sm-2 control-label">头像</label>
                                         <div class="col-sm-4">
@@ -107,13 +107,13 @@
                                     <div class="form-group">
                                         <label for="NickName" class="col-sm-2 control-label">姓名</label>
                                         <div class="col-sm-4">
-                                            @Html.TextBoxFor(m => m.NickName, new { @class = "form-control tm-check-control" })
+                                            @Html.TextBoxFor(m => m.NickName, new { @class = "form-control tm-check-control-name" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="UserName" class="col-sm-2 control-label">电话号码</label>
                                         <div class="col-sm-4">
-                                            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control tm-check-control" })
+                                            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control tm-check-control-phone" })
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -207,39 +207,35 @@
     <script src="~/Scripts/croppermain.js"></script>
     <script>
         //保存信息提示
-        var arr = [];
-        for (i = 0; i < $(".tm-check-control").length; i++) {
-            arr.push($(".tm-check-control")[i].value);
-        };
+        var checkreturn = false;
+        var checksave = false;
         $("#ReturnToSubject").on("click", function () {
-            var newarry = [];
-            var norepeat = false;
-            for (i = 0; i < $(".tm-check-control").length; i++) {
-                newarry.push($(".tm-check-control")[i].value);
-            };
-            for (j = 0; j < newarry.length; j++) {
-
-                if (newarry[j] == arr[j]) {
-
-                    continue;
-                } else {
-                    norepeat = true;
-                    break;
-                }
-            }
-            if (norepeat) {
-                CustomConfirm2("信息已被修改！是否保存更改？", function () {
-                    $("#save_personalinfo_form").submit();
-                }, function () {
-                    window.location.href = "/TaskManagement";
-
-                });
-            }
-            else {
+            if (checksave)
+            {
                 window.location.href = "/TaskManagement";
             }
+            else
+            {
+                if ($(".tm-check-control-img").val() != "@Model.ImgUrl" || $(".tm-check-control-name").val() != "@Model.NickName" || $(".tm-check-control-phone").val() != "@Model.Mobile")
+                {
+                    checkreturn = true;
+                    CustomConfirm2("信息已被修改！是否保存更改？",
+                        function () {
+                           $("#save_personalinfo_form").submit();
+                           setTimeout(function () {
+                              window.location.href = "/TaskManagement";
+                           }, 2700)
+                       }, function () {
+                         window.location.href = "/TaskManagement";
+                       });
+                }
+                else
+                {
+                   window.location.href = "/TaskManagement";
+                }
+            }
         });
-        var arr = [];
+
         //修改个人信息验证
         $("#save_personalinfo_form").validate({
             debug: false,
@@ -248,20 +244,23 @@
                     required: true,
                     maxlength: 32
                 },
-                UserName: {
-                    validatetel: true,
-                    required: true,
-                    maxlength: 11
-                },
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit({
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            UnimportantAlert("修改成功");
-                            $("#btn_save_personalinfo").removeClass("disabled");
-                        } else {
+                            if (checkreturn) {
+                                UnimportantAlert("修改成功,即将返回项目中心。");
+                                $("#btn_save_personalinfo").removeClass("disabled");
+                            }
+                            else {
+                                UnimportantAlert("修改成功");
+                                $("#btn_save_personalinfo").removeClass("disabled");
+                            }
+
+                        }
+                        else {
                             ErrorAlert(data.result);
                             $("#btn_save_personalinfo").removeClass("disabled");
                         }
@@ -280,6 +279,7 @@
         });
         //修改个人信息的提交
         $("#btn_save_personalinfo").on("click", function () {
+            checksave = true;
             if (!$(this).hasClass("disabled")) {
                 $(this).addClass("disabled")
                 $("#save_personalinfo_form").submit();

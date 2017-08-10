@@ -127,6 +127,20 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //安全设置
+        public ActionResult SecuritySetting(string username)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                return View(employee);
+            }
+        }
+
         //修改个人信息
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<JsonResult> EditPersonalInfo(Employee model)
@@ -145,14 +159,12 @@ namespace PeriodAid.Controllers
                     {
                         return Json(new { result = "数据存储失败。" });
                     }
-                    return Json(new { result = "SUCCESS" });
+                    return Json(new { result = "SUCCESS"});
                 }
                 return Json(new { result = "模型同步错误。" });
             }
-            return Json(new { result = "模型错误。" });
+            return Json(new { result = "格式错误。" });
         }
-
-
 
         #region 项目操作
 
@@ -2620,7 +2632,7 @@ namespace PeriodAid.Controllers
                     var b = getTimeRange(logTime);
                     var getLogsByTime = (from m in _db.OperationLogs
                                          where m.UserId == _employeeId && m.SubjectId==_subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue && m.LogTime >= b.StartTime && m.LogTime < b.EndTime
-                                         orderby m.Id
+                                         orderby m.LogTime descending
                                          select m).Skip(_page * 9).Take(9);
                     return PartialView(getLogsByTime);
 

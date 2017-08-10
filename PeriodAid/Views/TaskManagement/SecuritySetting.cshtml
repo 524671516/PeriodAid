@@ -77,36 +77,36 @@
                                 <h3 class="panel-title">安全设置</h3>
                             </div>
                             <div class="panel-body">
-                               @using (Html.BeginForm("EditSecuritySetting", "TaskManagement", FormMethod.Post, new { @id = "save_securitysetting_form", @class = "validate-form form-horizontal" }))
-                               {
-                                @Html.AntiForgeryToken()
-                                @Html.HiddenFor(m => m.Id)
-                                @Html.HiddenFor(m => m.SignupDate)
-                                @Html.HiddenFor(m => m.LastLoginDate)
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">用户名</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-static color-blue">@Model.UserName</p>
+                                @using (Html.BeginForm("EditSecuritySetting", "TaskManagement", FormMethod.Post, new { @id = "save_securitysetting_form", @class = "validate-form form-horizontal" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(m => m.Id)
+                                    @Html.HiddenFor(m => m.SignupDate)
+                                    @Html.HiddenFor(m => m.LastLoginDate)
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">用户名</label>
+                                        <div class="col-sm-10">
+                                            <p class="form-control-static color-blue">@Model.UserName</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputPassword" class="col-sm-2 control-label">更改密码</label>
-                                    <div class="col-sm-10">
-                                        <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
+                                    <div class="form-group">
+                                        <label for="inputPassword" class="col-sm-2 control-label">更改密码</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputPassword" class="col-sm-2 control-label">确认密码</label>
-                                    <div class="col-sm-10">
-                                        <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
+                                    <div class="form-group">
+                                        <label for="inputPassword" class="col-sm-2 control-label">确认密码</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <button type="submit" class="btn btn-primary">确认更改</button>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-primary">确认更改</button>
+                                        </div>
                                     </div>
-                                </div>
-                               }
+                                }
                             </div>
                         </div>
                     </div>
