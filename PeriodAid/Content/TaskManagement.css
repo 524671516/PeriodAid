@@ -1315,6 +1315,7 @@ a.btn_subtask_detail{
     padding-top: 0;
 }
 .tm-calendar-view-menu,.tm-calendar-view-panel{
+    background-color:#fff;
     position:absolute;
     top:0;
     bottom:0;
@@ -1325,7 +1326,7 @@ a.btn_subtask_detail{
     height:100%;
 }
 .tm-calendar-view-panel{
-    left:256px;
+    left:0;
     right: 0;
     transition: left 327ms ease;
     height:100%;
@@ -1369,7 +1370,7 @@ a.btn_subtask_detail{
     float:left;
 }
 .tm-calendar-nextmonth-weekofday,.tm-calendar-prevmonth-weekofday{
-    background-color:rgba(229,229,229,.6)
+    background-color:rgba(229,229,229,.3)
 }
 .tm-calendar-currentday{
     text-align:center;
