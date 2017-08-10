@@ -1393,6 +1393,9 @@ a.btn_subtask_detail{
     width:100%;
     text-align:left;
     padding:5px 5px;
+        overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .tm-calendar-task{
     background-color:#337ab7;
