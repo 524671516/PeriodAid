@@ -8,6 +8,14 @@ namespace PeriodAid.Models
     public class ProjectViewModels
     {
     }
+    public class AssignmentInfoClass
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public int TypeCode { get; set; }
+        public string DeadTime { get; set; }
+    }
     public class TypeRangeClass
     {
         public int MinValue { get; set; }

@@ -1369,8 +1369,36 @@ a.btn_subtask_detail{
     height:200px;
     float:left;
 }
+.tm-calendar-monthofdate{
+    line-height: 30px;
+    height: 30px;
+    width: 30px;
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom:20px;
+}
+.tm-calendar-monthofcurrentdate{
+    color:#fff;
+    background-color: #3da8f5;
+    border-radius: 50%;
+}
 .tm-calendar-nextmonth-weekofday,.tm-calendar-prevmonth-weekofday{
     background-color:rgba(229,229,229,.3)
+}
+.tm-calendar-weekofday{
+    overflow:auto;
+}
+.tm-calendar-task,.tm-calendar-subtask{
+    border-bottom:1px solid #E5E5E5;
+    width:100%;
+    text-align:left;
+    padding:5px 5px;
+}
+.tm-calendar-task{
+    background-color:#337ab7;
+}
+.tm-calendar-subtask{
+    background-color:rgba(0,0,0,0.2);
 }
 .tm-calendar-currentday{
     text-align:center;
@@ -1384,7 +1412,7 @@ a.btn_subtask_detail{
     padding:5px;
 }
 .tm-calendar-weekofday:hover{
-   background-color:rgba(0,0,0,0.1);
+   background-color:rgba(0,0,0,0.125);
 }
 /*日历样式结束*/
 
