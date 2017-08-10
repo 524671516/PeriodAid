@@ -127,6 +127,19 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //安全设置
+        public ActionResult SecuritySetting(string username) {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                return View(employee);
+            }
+        }
+
         //修改个人信息
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<JsonResult> EditPersonalInfo(Employee model)
@@ -152,7 +165,13 @@ namespace PeriodAid.Controllers
             return Json(new { result = "模型错误。" });
         }
 
+        //修改密码
+        [HttpPost,ValidateAntiForgeryToken]
+        public async Task<JsonResult>EditSecuritySetting(Employee model)
+        {
+            return Json(new { result = "模型错误。" });
 
+        }
 
         #region 项目操作
 
@@ -745,8 +764,8 @@ namespace PeriodAid.Controllers
             var employee = getEmployee(User.Identity.Name);
             if (ModelState.IsValid)
             {
-                var item = _db.Assignment.SingleOrDefault(m => m.Id == model.Id);
-                if (employee.Subject.Contains(item.Subject) || item.Holder == employee)
+                var item = _db.Assignment.SingleOrDefault(m => m.Id == model.Id);         
+                if (employee.Subject.Contains(item.Subject) || item.Holder == employee || employee.Type == EmployeeType.DEPARTMENTMANAGER)
                 {
                     int oldholderid = item.HolderId;
                     if (TryUpdateModel(item))
@@ -985,7 +1004,7 @@ namespace PeriodAid.Controllers
         {
             var employee = getEmployee(User.Identity.Name);
             var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
-            if (employee.HolderAssignment.Select(p => p.Id).Contains(AssignmentId) || employee.Subject.Select(m => m.Id).Contains(assignment.SubjectId))
+            if (employee.HolderAssignment.Select(p => p.Id).Contains(AssignmentId) || employee.Subject.Select(m => m.Id).Contains(assignment.SubjectId) ||employee.Type==EmployeeType.DEPARTMENTMANAGER)
             {
                     var colstraff = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId && m.Status > EmployeeStatus.DEVOICE);
                     var colNum = (from m in _db.SubTask
@@ -1735,6 +1754,12 @@ namespace PeriodAid.Controllers
                 item.Name = ContentTypeCode.TEXT.TypeName;
             }            
             return item;
+        }
+        #endregion
+
+        #region 日程操作
+        public ActionResult Subject_CalendarPartial() {
+            return PartialView();
         }
         #endregion
 

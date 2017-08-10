@@ -67,32 +67,46 @@
                     <div class="col-md-2">
                         <ul class="nav nav-pills nav-stacked">
                             <li role="presentation"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
-                            <li role="presentation"><a href="/TaskManagement/SecuritySetting">安全设置</a></li>
-                            <li role="presentation" class="active"><a href="/TaskManagement/LoginLog">登录记录</a></li>
+                            <li role="presentation" class="active"><a href="~/TaskManagement/SecuritySetting">安全设置</a></li>
+                            <li role="presentation"><a href="/TaskManagement/LoginLog">登录记录</a></li>
                         </ul>
                     </div>
                     <div class="col-md-10">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h3 class="panel-title">近期登录记录</h3>
+                                <h3 class="panel-title">安全设置</h3>
                             </div>
                             <div class="panel-body">
-                                @using (Html.BeginForm("EditPersonalInfo", "TaskManagement", FormMethod.Post, new { @id = "save_personalinfo_form", @class = "validate-form form-horizontal" }))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    @Html.HiddenFor(m => m.Id)
-                                    @Html.HiddenFor(m => m.SignupDate)
-                                    @Html.HiddenFor(m => m.LastLoginDate)
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">@Model.NickName</label><label class="control-label color-blue">@Model.UserName</label>
+                               @using (Html.BeginForm("EditSecuritySetting", "TaskManagement", FormMethod.Post, new { @id = "save_securitysetting_form", @class = "validate-form form-horizontal" }))
+                               {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.Id)
+                                @Html.HiddenFor(m => m.SignupDate)
+                                @Html.HiddenFor(m => m.LastLoginDate)
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">用户名</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static color-blue">@Model.UserName</p>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">最后登录于</label><label class="control-label color-blue">@Model.LastLoginDate</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-2 control-label">更改密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">注册使用于</label><label class="control-label color-blue">@Model.SignupDate</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-2 control-label">确认密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
                                     </div>
-                                }
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-primary">确认更改</button>
+                                    </div>
+                                </div>
+                               }
                             </div>
                         </div>
                     </div>
@@ -101,9 +115,6 @@
         </div>
     </header>
     <!-- Cropping modal -->
-    
-
-
     <!-- /.modal -->
     <script src="~/Scripts/jquery-1.10.2.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
@@ -116,5 +127,52 @@
     <script src="~/Scripts/jquery-confirm.js"></script>
     <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/croppermain.js"></script>
+    <script>
+        //修改个人信息验证
+        $("#save_securitysetting_form").validate({
+            debug: false,
+            rules: {
+                NickName: {
+                    required: true,
+                    maxlength: 32
+                },
+                UserName: {
+                    validatetel: true,
+                    required: true,
+                    maxlength: 11
+                },
+            },
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            UnimportantAlert("修改成功");
+                            $("#btn_save_personalinfo").removeClass("disabled");
+                        } else {
+                            ErrorAlert(data.result);
+                            $("#btn_save_personalinfo").removeClass("disabled");
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("操作失败。");
+                        $("#btn_save_personalinfo").removeClass("disabled");
+                    }
+                });
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#btn_save_personalinfo").removeClass("disabled");
+            }
+        });
+        //修改个人信息的提交
+        $("#btn_save_personalinfo").on("click", function () {
+            if (!$(this).hasClass("disabled")) {
+                $(this).addClass("disabled")
+                $("#save_personalinfo_form").submit();
+            }
+        });
+    </script>
 </body>
 </html>

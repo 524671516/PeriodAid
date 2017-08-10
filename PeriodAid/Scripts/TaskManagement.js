@@ -392,6 +392,34 @@ function CustomConfirm(text,callback) {
     });
 }
 
+function CustomConfirm2(text, callback, cancelcallback) {
+    $.confirm({
+        type: "red",
+        alignMiddle: true,
+        typeAnimated: true,
+        content: text,
+        buttons: {
+            cancel: {
+                text: "否",
+                action: function () {
+                    if (cancelcallback && typeof cancelcallback == "function") {
+                        cancelcallback();
+                    }
+                }
+            },
+            confirm: {
+                text: "是",
+                btnClass: 'btn-red',
+                action: function () {
+                    if (callback && typeof callback == "function") {
+                        callback();
+                    }
+                }
+            },
+        }
+    });
+}
+
 /*时间控件调用*/
 function CompleteTimeWidget(cotainer) {
     $(cotainer).datetimepicker({
