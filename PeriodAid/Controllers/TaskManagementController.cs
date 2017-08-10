@@ -2465,6 +2465,43 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //获取用户每月的所有任务数据
+        [HttpPost]
+        public JsonResult  EmployeeMonthDataOfTask(int month,int year)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Json(new { result = "FAIL", errmsg="获取月数据失败,用户不存在!" });
+            }
+            else
+            {
+                DateTime starttime = new DateTime(year, month, 1);
+                DateTime endtime = starttime.AddMonths(1);
+                var holderassignmentlist = (from m in _db.Assignment
+                                            where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status == SubjectStatus.ACTIVE && m.Deadline >= starttime && m.Deadline < endtime
+                                            select new { Id = m.Id, Name = m.AssignmentTitle, Type = "任务", TypeCode = 1, DeadTime = m.Deadline}).ToList();
+                var subtasklist = (from m in _db.SubTask
+                                   where m.ExecutorId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Assignment.Status == AssignmentStatus.UNFINISHED && m.Assignment.Subject.Status == SubjectStatus.ACTIVE && m.Deadline >= starttime && m.Deadline < endtime
+                                   select new { Id = m.Id, Name = m.TaskTitle, Type = "子任务", TypeCode = 2,DeadTime=m.Deadline }).ToList();
+                var resultlist = holderassignmentlist.Concat(subtasklist).ToList();
+                List<AssignmentInfoClass> hal = new List<AssignmentInfoClass>();
+                foreach(var item in resultlist)
+                {
+                    AssignmentInfoClass t = new AssignmentInfoClass()
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Type = item.Type,
+                        TypeCode = item.TypeCode,
+                        DeadTime = Convert.ToDateTime(item.DeadTime).ToString("yyyy-MM-dd")
+                    };
+                    hal.Add(t);
+                }
+                return Json(new { result = "SUCCESS", msg = "获取月数据成功。",data= hal });
+            }
+        }
+
         #endregion
 
 
