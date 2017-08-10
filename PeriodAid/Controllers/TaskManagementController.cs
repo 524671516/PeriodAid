@@ -2478,12 +2478,12 @@ namespace PeriodAid.Controllers
                 var assignementlist = from m in _db.Assignment
                                       where m.HolderId == employee.Id
                                       select m;
-                
-                foreach(var item in assignementlist)
+
+                foreach (var item in assignementlist)
                 {
                     newRow = dt.NewRow();
                     newRow["名称"] = item.AssignmentTitle;
-                    newRow["状态"] = item.Status;
+                    newRow["状态"] = (item.Status == AssignmentStatus.DELETED) ? "已删除" : (item.Status == AssignmentStatus.FINISHED) ? "已完成" : (item.Status == AssignmentStatus.UNFINISHED) ? "未完成" : "已归档";
                     newRow["权重"] = item.Priority;
                     newRow["创建时间"] = item.CreateTime;
                     newRow["截止时间"] = item.Deadline;
