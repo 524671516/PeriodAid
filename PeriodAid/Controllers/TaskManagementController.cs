@@ -114,6 +114,18 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //获取登录记录
+        public ActionResult LoginLog(string username) {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                return View(employee);
+            }
+        }
 
         //修改个人信息
         [HttpPost, ValidateAntiForgeryToken]
@@ -733,8 +745,8 @@ namespace PeriodAid.Controllers
             var employee = getEmployee(User.Identity.Name);
             if (ModelState.IsValid)
             {
-                var item = _db.Assignment.SingleOrDefault(m => m.Id == model.Id);
-                if (employee.Subject.Contains(item.Subject) || item.Holder == employee)
+                var item = _db.Assignment.SingleOrDefault(m => m.Id == model.Id);         
+                if (employee.Subject.Contains(item.Subject) || item.Holder == employee || employee.Type == EmployeeType.DEPARTMENTMANAGER)
                 {
                     int oldholderid = item.HolderId;
                     if (TryUpdateModel(item))
@@ -973,7 +985,7 @@ namespace PeriodAid.Controllers
         {
             var employee = getEmployee(User.Identity.Name);
             var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
-            if (employee.HolderAssignment.Select(p => p.Id).Contains(AssignmentId) || employee.Subject.Select(m => m.Id).Contains(assignment.SubjectId)||employee.Type==EmployeeType.DEPARTMENTMANAGER)
+            if (employee.HolderAssignment.Select(p => p.Id).Contains(AssignmentId) || employee.Subject.Select(m => m.Id).Contains(assignment.SubjectId) ||employee.Type==EmployeeType.DEPARTMENTMANAGER)
             {
                     var colstraff = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId && m.Status > EmployeeStatus.DEVOICE);
                     var colNum = (from m in _db.SubTask
@@ -1726,6 +1738,22 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
+        #region 日程操作  预留
+        public ViewResult Subject_Agendas(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status > SubjectStatus.DELETED);
+            if (subject == null)
+            {
+                return View("Error");
+            }
+            else
+            {
+                ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
+                return View(subject);
+            }
+        }
+        #endregion
+
 
         #region 我的任务操作
         //获取我的任务页面
@@ -2410,6 +2438,24 @@ namespace PeriodAid.Controllers
         #endregion
 
 
+        #region  日历
+        //日历页面
+        public ActionResult SubjectCalendarPanel()
+        {
+            var employee = getEmployee(User.Identity.Name);
+            if (employee == null)
+            {
+                return Content("FAIL");
+            }
+            else
+            {
+                return PartialView(employee);
+            }
+        }
+
+        #endregion
+
+
         #region  数据EXCEL导出操作
         public ActionResult GetExcelDataForAssignment()
         {
@@ -2428,7 +2474,7 @@ namespace PeriodAid.Controllers
                 dc.AutoIncrementStep = 1;//步长为1
                 dc.AllowDBNull = false;//
                 dc = dt.Columns.Add("名称", Type.GetType("System.String"));
-                dc = dt.Columns.Add("状态", Type.GetType("System.String"));
+                dc = dt.Columns.Add("状态", Type.GetType("System.Int32"));
                 dc = dt.Columns.Add("权重", Type.GetType("System.Int32"));
                 dc = dt.Columns.Add("创建时间", Type.GetType("System.String"));
                 dc = dt.Columns.Add("截止时间", Type.GetType("System.String"));
@@ -2446,7 +2492,7 @@ namespace PeriodAid.Controllers
                 {
                     newRow = dt.NewRow();
                     newRow["名称"] = item.AssignmentTitle;
-                    newRow["状态"] = (item.Status == AssignmentStatus.DELETED) ? "已删除" : (item.Status == AssignmentStatus.FINISHED) ? "已完成" : (item.Status == AssignmentStatus.UNFINISHED) ? "未完成" :"已归档";
+                    newRow["状态"] = item.Status;
                     newRow["权重"] = item.Priority;
                     newRow["创建时间"] = item.CreateTime;
                     newRow["截止时间"] = item.Deadline;
@@ -2560,19 +2606,20 @@ namespace PeriodAid.Controllers
 
 
 
+
         public ActionResult GetLogs(int? employeeId, int? SubjectId, string logType, string logTime, int _page)
         {
             int _subjectId = SubjectId ?? 0;
             int _employeeId = employeeId ?? 0;
             ViewBag.currentshow = _page;
-            if (_employeeId != 0)
+            if (_employeeId!=0)
             {
-                if (_subjectId != 0)
+                if (_subjectId!=0)
                 {
                     var a = getTypeRange(logType);
                     var b = getTimeRange(logTime);
                     var getLogsByTime = (from m in _db.OperationLogs
-                                         where m.UserId == _employeeId && m.SubjectId == _subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue && m.LogTime >= b.StartTime && m.LogTime < b.EndTime
+                                         where m.UserId == _employeeId && m.SubjectId==_subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue && m.LogTime >= b.StartTime && m.LogTime < b.EndTime
                                          orderby m.Id
                                          select m).Skip(_page * 9).Take(9);
                     return PartialView(getLogsByTime);
@@ -2585,12 +2632,11 @@ namespace PeriodAid.Controllers
             else {
                 return Content("负责人不明确！");
             }
-
+            
 
         }
 
-        public TypeRangeClass getTypeRange(string type)
-        {
+        public TypeRangeClass getTypeRange(string type) {
             TypeRangeClass item = new TypeRangeClass();
             if (type == GetDataType.SUBJECTDATA)
             {
@@ -2602,8 +2648,7 @@ namespace PeriodAid.Controllers
                 item.MinValue = 105;
                 item.MaxValue = 108;
             }
-            else if (type == GetDataType.SUBMISSIONDATA)
-            {
+            else if (type == GetDataType.SUBMISSIONDATA) {
                 item.MinValue = 109;
                 item.MaxValue = 112;
             }
@@ -2641,6 +2686,12 @@ namespace PeriodAid.Controllers
                 item.StartTime = _today;
                 item.EndTime = _today.AddDays(1);
             }
+            else if(timetype == GetDataType.ALLDATA)
+            {
+                var startyear = new DateTime(2016, 1, 1);
+                var currentyear = new DateTime(_today.Year, 1, 1);           
+                var endyear = currentyear.AddYears(1);
+            }
             return item;
         }
 
@@ -2649,7 +2700,6 @@ namespace PeriodAid.Controllers
             var user = _db.Employee.SingleOrDefault(m => m.UserName == username);
             return user;
         }
-
 
         [HttpPost]
         public JsonResult UploadSubjectCutFileAjax(FormCollection form)

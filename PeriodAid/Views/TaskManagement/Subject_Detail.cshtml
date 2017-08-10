@@ -5,10 +5,8 @@
     ViewBag.Title = "Task_Detail";
     Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
 }
-<!--The Second Nav-->
 <div class="navbar-default tm_task-navbar">
     <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
@@ -19,41 +17,26 @@
             <ol class="breadcrumb  navbar-breadcrumb">
                 <li><a href="/TaskManagement/Index">主页</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" id="SubjectName" data-id="@Model.Id" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.Encode(Model.SubjectTitle)@*<span class="caret"></span>*@</a>
-                   @*<ul class="dropdown-menu dropdown-menu-list">
-                      <li><a href="#">Action</a></li>
-                      <li><a href="#">Another action</a></li>
-                      <li><a href="#">Something else here</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="#">Separated link</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="#">One more separated link</a></li>
-                 </ul>*@
+                    <a href="#" class="dropdown-toggle" id="SubjectName" data-id="@Model.Id" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.Encode(Model.SubjectTitle)</a>                 
                 </li>
             </ol>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
             <ul class="nav navbar-nav navbar-underline">
                 <li><a href="/TaskManagement/Subject_Detail?SubjectId=@Model.Id" class="active">进度</a></li>
-                <li><a href="#">日程</a></li>
                     <li><a href="/TaskManagement/Subject_Files?SubjectId=@Model.Id">文件</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right navbar-border">
-                @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
+            <ul class="nav navbar-nav navbar-right navbar-border">             
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" id="btn_show_subject_panel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
                 </li>
             </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+        </div>
+    </div>
 </div>
-<!--The Second Nav End-->
-<!--Procedure Content-->
-<div class="tm_panel-wrap tm_add_panel_hide" id="panel-wrap" data-sid="@Model.Id">
+<div class="tm-panel-wrap tm_add_panel_hide" id="panel-wrap" data-sid="@Model.Id">
     <div class="tm_control_panel_show" id="btn_show_add_panel">展开</div>
-    <div class="tm_panel-container" id="tm_panel-container">
+    <div class="tm-panel-container" id="tm_panel-container">
         <div class="tm_panel-item text-center tm_panel-item-add" id="tm_panel-item-add">
             <div class="color-gray btn-get-form" id="add-panel-list">
                 <div class="add-btn" id="btn_add-panel"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></div>
@@ -83,8 +66,7 @@
         }
     </div>
 </div>
-<!--Procedure Content End-->
-    <!--panel Menu-->
+ <!--panel Menu-->
 <div class="tm_subject_panel" id="tm_subject_panel">
 
 </div>

@@ -531,6 +531,7 @@
     <Content Include="Scripts\Sortable.js" />
     <Content Include="Scripts\Sortable.min.js" />
     <Content Include="Scripts\TaskManagement.js" />
+    <Content Include="Scripts\TaskManagementCalendar.js" />
     <Content Include="Scripts\validate.expand.js" />
     <Content Include="Scripts\zepto.min.js" />
     <None Include="Scripts\_references.js" />
@@ -1089,6 +1090,9 @@
     <Content Include="Views\TaskManagement\PersonalExecutableTaskPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\GetProcedureForm.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_Agendas.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectCalendarPanel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

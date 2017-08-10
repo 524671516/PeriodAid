@@ -32,6 +32,7 @@
         public virtual DbSet<AssignmentComment> AssignmentComment { get; set; }
         public virtual DbSet<SubjectAttachment> SubjectAttachment { get; set; }
         public virtual DbSet<OperationLogs> OperationLogs { get; set; }
+        //public virtual DbSet<SubjectAgenda> SubjectAgenda { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -45,6 +46,8 @@
             modelBuilder.Entity<Employee>().HasMany(e => e.AssignmentComment).WithRequired(e => e.Composer).HasForeignKey(e => e.ComposerId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Employee>().HasMany(e => e.UploadedAttachment).WithRequired(e => e.Uploader).HasForeignKey(e => e.UploaderId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Employee>().HasMany(e => e.OperationLogs).WithRequired(e => e.Employee).HasForeignKey(e => e.UserId).WillCascadeOnDelete(false);
+            //modelBuilder.Entity<Employee>().HasMany(e => e.HolderAgenda).WithRequired(e => e.Organizer).HasForeignKey(e => e.OrganizerId).WillCascadeOnDelete(false);
+            //modelBuilder.Entity<Employee>().HasMany(e => e.CollaborateAgenda).WithMany(e => e.Participants).Map(m => { m.MapLeftKey("ParticipantId"); m.MapRightKey("AgendaId"); m.ToTable("Participant_Agenda"); });
 
             modelBuilder.Entity<ProcedureTemplate>().HasMany(m => m.Subject).WithRequired(m => m.ProcedureTemplate).HasForeignKey(e => e.TemplateId).WillCascadeOnDelete(false);
             modelBuilder.Entity<ProcedureTemplate>().HasMany(m => m.Procedure).WithRequired(e => e.ProcedureTemplate).HasForeignKey(e => e.TemplateId).WillCascadeOnDelete(false);
@@ -57,6 +60,7 @@
             modelBuilder.Entity<Subject>().HasMany(e => e.SubjectAttachment).WithRequired(e => e.Subject).HasForeignKey(e => e.SubjectId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Subject>().HasMany(e => e.Assignment).WithRequired(e => e.Subject).HasForeignKey(e => e.SubjectId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Subject>().HasMany(e => e.OperationLogs).WithRequired(e => e.Subject).HasForeignKey(e => e.SubjectId).WillCascadeOnDelete(false);
+            //modelBuilder.Entity<Subject>().HasMany(e => e.SubjectAgenda).WithRequired(e => e.Subject).HasForeignKey(e => e.SubjectId).WillCascadeOnDelete(false);
 
         }
     }
@@ -132,6 +136,12 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OperationLogs> OperationLogs { get; set; }
 
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        //public virtual ICollection<SubjectAgenda> HolderAgenda { get; set; }
+
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        //public virtual ICollection<SubjectAgenda> CollaborateAgenda { get; set; }
+
     }
 
     [Table("Subject")]
@@ -168,6 +178,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OperationLogs> OperationLogs { get; set; }
+
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        //public virtual ICollection<SubjectAgenda> SubjectAgenda { get; set; }
     }
 
     [Table("ProcedureTemplate")]
@@ -357,11 +370,53 @@
         public virtual Employee Employee { get; set; } // 员工实例
     }
 
+    //[Table("SubjectAgenda")]
+    //public partial class SubjectAgenda
+    //{
+    //    public int Id { get; set; }
+
+    //    public int SubjectId { get; set; }
+
+    //    public virtual Subject Subject { get; set; }
+
+    //    public int OrganizerId { get; set; }
+
+    //    public virtual Employee Organizer { get; set; }
+
+    //    [Required, StringLength(256)]
+    //    public string AgendaTitle { get; set; } // 日程标题
+
+    //    [Required]
+    //    public DateTime StartTime { get; set; } // 日程开始时间
+
+    //    [Required]
+    //    public DateTime EndTime { get; set; }   //日程结束时间
+
+    //    public DateTime CreateTime { get; set; } //日程创建时间
+
+    //    public DateTime? RemindTime { get; set; } //提醒时间
+
+    //    public string AgendaRemark { get; set; }   //备注
+
+    //    public int RepeatType { get; set; }  //重复类型   0:不重复 1:每天重复
+
+    //    public int Status { get; set; } //状态 -1:删除 0:正常
+
+    //    public int Priority { get; set; } // 优先级 1-5
+
+    //    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    //    public virtual ICollection<Employee> Participants { get; set; } // 参与者实例
+    //}
+
+
+
     //public class MyEntity
     //{
     //    public int Id { get; set; }
     //    public string Name { get; set; }
     //}
+
+
     public static class EmployeeType
     {
         /// <summary>
