@@ -6,7 +6,7 @@
             <ul>
                 @foreach (var item in Model)
                 {
-                    <li class="tm_modal_list-header tm_subtask_li" data-stid="@item.Id">
+                    <li class="tm_modal_list-header tm-show-task-modal" data-atid="@item.Id">
                         <div class="tm-list-item_top clear-float">
                             <div class="tm_modal_list-left tm_left_icon">
                                 @if (item.Status == AssignmentStatus.FINISHED)
@@ -92,18 +92,6 @@
         } else {
             that.parent().parent().find(".add-subtask-write").addClass("hidden")
         }
-    });
-    //子任务了解详情
-    $("#subtask_modal_list").on("click", ".tm_subtask_li", function (event) {
-        $.ajax({
-            url: "/TaskManagement/Subtask_Detail",
-            data: {
-                SubTaskId: $(this).attr("data-stid")
-            },
-            success: function (data) {
-                $("#Edit-Assignment .modal-content").html(data);
-            }
-        })          
     });
     //完成
     $("#subtask_modal_list").on("click", ".subtask_comfirm_finish", function (event) {

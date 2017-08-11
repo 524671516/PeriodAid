@@ -1,82 +1,50 @@
 ﻿$(function () {
+    /*+++++++++++++++++++++全局通用事件++++++++++++++++++++*/
+    //控制view展示
+    $("#my-app").on("click", ".tm-show-view", function () {
+        if ($(this).hasClass("active")) {
+            HiddenTmView();
+            $(this).removeClass("active");
+        } else {
+            $(".tm-show-view").removeClass("active");
+            $(this).addClass("active");
+            ShowTmView($(this).attr("data-href"));
+        }
+    });
 
-    $("#my-app").on("click", ".tm_pop_assmodal", function () {
+    //控制view隐藏
+    $("#my-app").on("click", ".tm-hidden-view", function () {
+        HiddenTmView();
+        $(".tm-show-view").removeClass("active");
+    });
+
+    //查看任务详情(包含子任务)
+    $("#my-app").on("click", ".tm-show-task-modal", function () {
         if ($(this).attr("data-aid")) {
-            var aid = $(this).attr("data-aid");
-            GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
+            var data = {
+                AssignmentId: $(this).attr("data-aid")
+            };
+            GetTemplate("/TaskManagement/Assignment_Detail", data, function (data) {
+                $("#Edit-Assignment .modal-content").html(data);
                 $('#Edit-Assignment').modal('show');
             });
         } else if ($(this).attr("data-atid")) {
-            var atid = $(this).attr("data-atid")
-            $.ajax({
-                url: "/TaskManagement/Subtask_Detail",
-                data: {
-                    SubTaskId: atid
-                },
-                success: function (data) {
-                    if (data = "FAIL") {
-                        ErrorAlert("获取详情失败。");
-                    } else {
-                        $("#Edit-Assignment .modal-content").html(data);
-                        $('#Edit-Assignment').modal('show');
-                    }
-                }
-            })
+            var data = {
+                SubTaskId: $(this).attr("data-atid")
+            };
+            GetTemplate("/TaskManagement/Subtask_Detail", data, function (data) {
+                $("#Edit-Assignment .modal-content").html(data);
+                $('#Edit-Assignment').modal('show');
+            });
         } else {
-            ErrorAlert("获取数据失败。");
+            ErrorAlert("获取原始数据失败。");
         }
 
     });
 
-    //控制我的任务
-    $("#my-app").on("click", ".tm-control-my-panel", function () {
-        $("#tm-calendar-view").remove();
-        if ($("#tm-my-view").length > 0) {
-            $("#tm-my-view").fadeToggle("show");
-            $("#my-app").removeClass("tm-open-view");
-        } else {
-            $.ajax({
-                url: "/TaskManagement/PersonalActionPanel",
-                success: function (data) {
-                    if (data =="FAIL") {
-                        ErrorAlert("获取我的任务失败。");
-                    } else {
-                        $("#my-app>div:last").after(data);
-                        $("#my-app").addClass(".tm-open-view");
-                        $("#tm-my-view").fadeToggle();
-                    }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
-            });
-        }       
-    })
+    //任务完成状态回传(包含子任务)
 
-    //控制日历
-    $("#my-app").on("click", ".tm-control-calendar-panel", function () {
-        $("#tm-my-view").remove();
-        if ($("#tm-calendar-view").length > 0) {
-            $("#tm-calendar-view").fadeToggle("show");
-            $("#my-app").removeClass("tm-open-view");
-        } else {
-            $.ajax({
-                url: "/TaskManagement/SubjectCalendarPanel",
-                success: function (data) {
-                    if (data == "FAIL") {
-                        ErrorAlert("获取我的任务失败。");
-                    } else {
-                        $("#my-app>div:last").after(data);
-                        $("#my-app").addClass(".tm-open-view");
-                        $("#tm-calendar-view").fadeToggle();
-                    }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
-            });
-        }
-    })
+
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {
         $.ajax({
@@ -93,7 +61,7 @@
                 ErrorAlert("请求失败。")
             }
         });
-    })
+    });
 });
 
 //请求活动中的项目
@@ -165,28 +133,7 @@ function GetAssignmentForm(ProcedureId, SubjectId, container) {
     });
 }
 
-//获取任务详情
-function GetAssignmentDetail(AssignmentId, container, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignment_Detail",
-        data: {
-            AssignmentId: AssignmentId,
-        },
-        success: function (data) {
-            if (data == "FAIL") {
-                ErrorAlert("获取任务详情失败。")
-            } else {
-                container.html(data)
-                if (Callback && typeof Callback == "function") {
-                    Callback(data);
-                }
-            }        
-        },
-        error: function () {
-            ErrorAlert("请求失败。")
-        }
-    });
-}
+
 
 //获取任务列表
 function GetAssignment(ProcedureId, SubJectId, container) {
@@ -480,18 +427,71 @@ function GetElementsByClass(className) {
             return elements
 }
 
-//var FuzzySearch = function () {
-//    var Defaults = {
-//        InputId:"password",
-//    }
-//    function Init(Options) {
-//        var Options = $.extend({}, Defaults, Options);
-//        console.log(Options)
+//get请求模板
+function GetTemplate(url, data, callback) {
+    if (url == null || url == "") {
+        ErrorAlert("请求地址不合法。");
+    } else {
+        $.ajax({
+            url: url,
+            data: data,
+            success: function (data) {
+                if (data == "FAIL") {
+                    ErrorAlert("数据获取失败。");
+                } else {
+                    if (callback && typeof (callback) == "function") {
+                        callback(data);
+                    }
+                }
+            },
+            error: function () {
+                ErrorAlert("请求失败。");
+            }
+        });
+    }
+}
 
-//    }
-//    return { Init: Init };
-//}();
-//FuzzySearch.Init({
-//    InputId: "Name",
 
-//});
+//tm-view控制
+function HiddenTmView(callback) {
+    $(".tm-view").slideUp(300, function () {
+        $(".tm-view").remove();
+        $("body").removeClass("tm-open-view");
+        if (callback && typeof callback == "function") {
+            callback();
+        }
+    });
+}
+
+function ShowTmView(url) {
+        if ($(".tm-view").length > 0) {
+            HiddenTmView(function () {
+                //获取对应模板
+                GetTemplate(url, {}, function (data) {
+                    $("body>div:last").after(data);
+                    $("body").addClass("tm-open-view");
+                    $(".tm-view").slideDown(300);
+                });
+            });
+        } else {
+            //获取对应模板
+            GetTemplate(url, {}, function (data) {
+                $("body>div:last").after(data);
+                $("body").addClass("tm-open-view");
+                $(".tm-view").slideDown(300);
+            });
+        }
+}
+
+//查看任务
+
+
+//dropdown位移控制
+
+
+//post请求json
+
+
+
+
+

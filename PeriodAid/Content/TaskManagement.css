@@ -1145,13 +1145,25 @@ a.btn_subtask_detail{
 .tm-view-header-close button{
     outline:none;
 }
-.tm-view-header-close{  
+.tm-view-header-close{ 
     text-align:center;
     position:absolute;
     right:15px;
     top:0;
     bottom:0;
-    padding:11px 22px 12px 25px;
+    padding:11.5px 22px 12.5px 25px;
+}
+.tm-view-calendar-control-task:hover{
+    background-color:rgba(0,0,0,.1)
+}
+.tm-view-calendar-control-task.active{
+    background-color:rgba(0,0,0,.2)
+}
+.tm-view-calendar-control-task{
+    cursor:pointer;
+    border-radius:5px;
+    padding:5px;
+    background:#fff;
 }
 .tm-view-header-select{  
     text-align:center;
@@ -1159,7 +1171,7 @@ a.btn_subtask_detail{
     left:15px;
     top:0;
     bottom:0;
-    padding:11px 22px 12px 25px;
+    padding:11.5px 22px 12.5px 0px;
 }
 .tm-view-control .tm-view-control-link{
     display:inline-block;
@@ -1389,16 +1401,19 @@ a.btn_subtask_detail{
     overflow:auto;
 }
 .tm-calendar-task,.tm-calendar-subtask{
-    border-bottom:1px solid #E5E5E5;
+    margin-bottom:2px;
     width:100%;
     text-align:left;
     padding:5px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .tm-calendar-task{
     background-color:#337ab7;
 }
 .tm-calendar-subtask{
-    background-color:rgba(0,0,0,0.2);
+    background-color:#CDEEFD;
 }
 .tm-calendar-currentday{
     text-align:center;
@@ -1410,9 +1425,6 @@ a.btn_subtask_detail{
     height:30px;
     width:30px;
     padding:5px;
-}
-.tm-calendar-weekofday:hover{
-   background-color:rgba(0,0,0,0.125);
 }
 /*日历样式结束*/
 
