@@ -399,16 +399,23 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.HolderId == employee.Id);
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
                 if (subject != null)
                 {
-                    subject.Status = SubjectStatus.ARCHIVED;
-                    _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
-                    await _db.SaveChangesAsync();
-                    await AddLogAsync(LogCode.ARCHIVESUBJECT, employee, subject.Id, "将项目状态设置为：归档。");
-                    return Json(new { result = "SUCCESS", msg = "归档项目成功。" });
+                    if (subject.HolderId == employee.Id || employee.Type == EmployeeType.DEPARTMENTMANAGER)
+                    {
+                        subject.Status = SubjectStatus.ARCHIVED;
+                        _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.ARCHIVESUBJECT, employee, subject.Id, "将项目状态设置为：归档。");
+                        return Json(new { result = "SUCCESS", msg = "归档项目成功。" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL", errmsg = "当前用户没有权限归档项目。" });
+                    }
                 }
-                return Json(new { result = "FAIL", errmsg = "当前用户没有权限归档项目。" });
+                return Json(new { result = "FAIL", errmsg = "操作的项目不存在。" });
             }
         }
 
@@ -425,16 +432,19 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.HolderId == employee.Id);
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
                 if (subject != null)
                 {
-                    subject.Status = SubjectStatus.DELETED;
-                    _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
-                    await _db.SaveChangesAsync();
-                    await AddLogAsync(LogCode.DELETESUBJECT, employee, subject.Id, "将项目状态设置为：删除。");
-                    return Json(new { result = "SUCCESS", msg = "删除项目成功。" });
+                    if (subject.HolderId == employee.Id || employee.Type == EmployeeType.DEPARTMENTMANAGER) {
+                        subject.Status = SubjectStatus.DELETED;
+                        _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.DELETESUBJECT, employee, subject.Id, "将项目状态设置为：删除。");
+                        return Json(new { result = "SUCCESS", msg = "删除项目成功。" });
+                    }
+                    return Json(new { result = "FAIL", errmsg = "当前用户没有权限删除项目。" });
                 }
-                return Json(new { result = "FAIL", errmsg = "当前用户没有权限删除项目。" });
+                return Json(new { result = "FAIL", errmsg = "操作的项目不存在。" });
             }
         }
 
@@ -450,16 +460,19 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.HolderId == employee.Id);
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
                 if (subject != null)
                 {
-                    subject.Status = SubjectStatus.ACTIVE;
-                    _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
-                    await _db.SaveChangesAsync();
-                    await AddLogAsync(LogCode.RESETSUBJECT, employee, subject.Id, "将项目状态设置为：进行中。");
-                    return Json(new { result = "SUCCESS", msg = "恢复项目成功。" });
+                    if (subject.HolderId == employee.Id || employee.Type == EmployeeType.DEPARTMENTMANAGER) {
+                        subject.Status = SubjectStatus.ACTIVE;
+                        _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.RESETSUBJECT, employee, subject.Id, "将项目状态设置为：进行中。");
+                        return Json(new { result = "SUCCESS", msg = "恢复项目成功。" });
+                    }
+                    return Json(new { result = "FAIL", errmsg = "当前用户没有权限恢复项目。" });
                 }
-                return Json(new { result = "FAIL", errmsg = "当前用户没有权限恢复项目。" });
+                return Json(new { result = "FAIL", errmsg = "操作的项目不存在。" });
             }
         }
 
@@ -855,7 +868,7 @@ namespace PeriodAid.Controllers
         {
             var employee = getEmployee(User.Identity.Name);
             var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
-                if (employee.Subject.Contains(assignment.Subject) || assignment.Holder == employee)
+                if (employee.Subject.Contains(assignment.Subject) || assignment.Holder == employee || employee.Type == EmployeeType.DEPARTMENTMANAGER)
                 {
                     try
                     {
@@ -1237,7 +1250,7 @@ namespace PeriodAid.Controllers
 
         //任务评论添加
         [HttpPost, ValidateAntiForgeryToken]
-        [OperationAuth(OperationGroup = 301)]
+        [OperationAuth(OperationGroup = 202)]
         public async Task<JsonResult> Add_AssignmentComment(AssignmentComment model)
         {
             var employee = getEmployee(User.Identity.Name);

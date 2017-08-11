@@ -201,6 +201,7 @@ namespace PeriodAid.Filters
                             {
                                 setErrorResult(filterContext, "当前用户没有权限执行此操作。");
                             }
+                            
                         }
                     }
                     else if (OperationGroup == OperationGroupCode.SUBASSIVIEW)
