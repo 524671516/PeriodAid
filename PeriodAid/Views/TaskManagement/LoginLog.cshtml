@@ -67,7 +67,7 @@
                     <div class="col-md-2">
                         <ul class="nav nav-pills nav-stacked">
                             <li role="presentation"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
-                            <li role="presentation"><a href="~/Views/TaskManagement/#">其他设置</a></li>
+                            <li role="presentation"><a href="/TaskManagement/SecuritySetting">安全设置</a></li>
                             <li role="presentation" class="active"><a href="/TaskManagement/LoginLog">登录记录</a></li>
                         </ul>
                     </div>
@@ -84,12 +84,13 @@
                                     @Html.HiddenFor(m => m.SignupDate)
                                     @Html.HiddenFor(m => m.LastLoginDate)
                                     <div class="form-group">
-                                        <label>用户：</label><label class="color-blue">@Model.UserName</label><label class="color-blue">（@Model.NickName）</label>
-                                        <label>最后登录于：</label><label class="color-blue">@Model.LastLoginDate</label>
+                                        <label class="col-sm-2 control-label">@Model.NickName</label><label class="control-label color-blue">@Model.UserName</label>
                                     </div>
                                     <div class="form-group">
-                                        <label>用户：</label><label class="color-blue">@Model.UserName</label><label class="color-blue">（@Model.NickName）</label>
-                                        <label>注册使用于：</label><label class="color-blue">@Model.SignupDate</label>
+                                        <label class="col-sm-2 control-label">最后登录于</label><label class="control-label color-blue">@Model.LastLoginDate</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">注册使用于</label><label class="control-label color-blue">@Model.SignupDate</label>
                                     </div>
                                 }
                             </div>
@@ -100,9 +101,6 @@
         </div>
     </header>
     <!-- Cropping modal -->
-    
-
-
     <!-- /.modal -->
     <script src="~/Scripts/jquery-1.10.2.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>

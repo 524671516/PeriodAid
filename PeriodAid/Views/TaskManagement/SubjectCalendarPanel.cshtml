@@ -37,10 +37,10 @@
                         var _len = data.data.length;
                         $("#tm-view-calendar-task-num strong").html(_len);
                             for (i = 0; i < _len; i++) {
-                                if (data.data[i].typeCode == 1) {
-                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-task\">" + data.data[i].Name + "</div>");
+                                if (data.data[i].TypeCode == 1) {
+                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\""+data.data[i].Id+"\">" + data.data[i].Name + "</div>");
                                 } else {
-                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-subtask\">" + data.data[i].Name + "</div>");
+                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
                                 }
 
                             }

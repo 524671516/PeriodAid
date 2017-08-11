@@ -342,6 +342,33 @@ function ErrorAlert(text) {
         }
     });
 }
+function CustomConfirm2(text, callback, cancelcallback) {
+    $.confirm({
+        type: "red",
+        alignMiddle: true,
+        typeAnimated: true,
+        content: text,
+        buttons: {
+            cancel: {
+                text: "否",
+                action: function () {
+                    if (cancelcallback && typeof cancelcallback == "function") {
+                        cancelcallback();
+                    }
+                }
+            },
+            confirm: {
+                text: "是",
+                btnClass: 'btn-red',
+                action: function () {
+                    if (callback && typeof callback == "function") {
+                        callback();
+                    }
+                }
+            },
+        }
+    });
+}
 function CustomConfirm(text,callback) {
     $.confirm({
         type: "red",
@@ -426,7 +453,7 @@ function GetTemplate(url, data, callback) {
 
 //tm-view控制
 function HiddenTmView(callback) {
-    $(".tm-view").slideUp(300, function () {
+    $(".tm-view").slideUp(500, function () {
         $(".tm-view").remove();
         $("body").removeClass("tm-open-view");
         if (callback && typeof callback == "function") {
@@ -442,7 +469,7 @@ function ShowTmView(url) {
                 GetTemplate(url, {}, function (data) {
                     $("body>div:last").after(data);
                     $("body").addClass("tm-open-view");
-                    $(".tm-view").slideDown(300);
+                    $(".tm-view").slideDown(500);
                 });
             });
         } else {
@@ -450,7 +477,7 @@ function ShowTmView(url) {
             GetTemplate(url, {}, function (data) {
                 $("body>div:last").after(data);
                 $("body").addClass("tm-open-view");
-                $(".tm-view").slideDown(300);
+                $(".tm-view").slideDown(500);
             });
         }
 }
