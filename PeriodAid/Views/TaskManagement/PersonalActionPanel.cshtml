@@ -1,5 +1,4 @@
 ﻿@model PeriodAid.Models.Employee
-<!--My View-->
 <div id="tm-my-view" class="tm-my-view tm-view">
     <div class="tm-view-header tm-my-view-header">
         <div class="tm-my-view-control tm-view-control">
@@ -7,7 +6,7 @@
             <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonalTaskPartial">任务</a>
             @*<a href="javascript:;" class="tm-view-control-link">文件</a>*@
         </div>
-        <div class="tm-my-view-close tm-control-my-panel tm-view-header-close">
+        <div class="tm-hidden-view tm-view-header-close">
             <button type="button" class="close"><span aria-hidden="true">×</span></button>
         </div>
     </div>
@@ -15,9 +14,7 @@
         <div class="tm-view-content-wrap  tm-view-wrap tm-my-view-wrap">
         </div>
     </div>
-</div>
-<!--My View End-->
-<script>
+    <script>
     $(function () {
         //初始化加载数据
         var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
@@ -61,4 +58,5 @@
             }
         });
     });
-</script>
+    </script>
+</div>
