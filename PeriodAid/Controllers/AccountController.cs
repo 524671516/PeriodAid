@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using PeriodAid.Models;
+using System.Net.Mail;
+using System.Net;
 
 namespace PeriodAid.Controllers
 {
@@ -75,27 +77,37 @@ namespace PeriodAid.Controllers
 
             // 这不会计入到为执行帐户锁定而统计的登录失败次数中
             // 若要在多次输入错误密码的情况下触发帐户锁定，请更改为 shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            ApplicationUser signedUser = UserManager.FindByEmail(model.Email);
+            if (signedUser == null)
             {
-                case SignInStatus.Success:
-                    if (returnUrl == null)
-                    {
-                        return RedirectToAction("Index", "OffCommon");
-                    }
-                    else
-                    {
-                        return RedirectToLocal(returnUrl);
-                    }
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "无效的登录尝试。");
-                    return View(model);
+                ModelState.AddModelError("Email", "该邮箱未注册。");
+                return View(model);
             }
+            else
+            {
+                var result = await SignInManager.PasswordSignInAsync(signedUser.Email, model.Password, model.RememberMe, shouldLockout: false);
+                switch (result)
+                {
+                    case SignInStatus.Success:
+                        if (returnUrl == null)
+                        {
+                            return RedirectToAction("Index", "OffCommon");
+                        }
+                        else
+                        {
+                            return RedirectToLocal(returnUrl);
+                        }
+
+                    case SignInStatus.LockedOut:
+                        return View("Lockout");
+                    case SignInStatus.RequiresVerification:
+                        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    case SignInStatus.Failure:
+                    default:
+                        ModelState.AddModelError("Password", "密码错误。");
+                        return View(model);
+                }
+            }    
         }
 
         //
@@ -172,7 +184,11 @@ namespace PeriodAid.Controllers
 
                     return RedirectToAction("Index", "Home");
                 }
-                AddErrors(result);
+                foreach(var item in result.Errors)
+                {
+                    ModelState.AddModelError("Email", item);
+                }
+                return View(model);
             }
 
             // 如果我们进行到这一步时某个地方出错，则重新显示表单
@@ -210,18 +226,35 @@ namespace PeriodAid.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                if (user == null)
                 {
                     // 请不要显示该用户不存在或者未经确认
-                    return View("ForgotPasswordConfirmation");
+                    return RedirectToAction("ForgotPasswordConfirmation", "Account");
                 }
 
-                // 有关如何启用帐户确认和密码重置的详细信息，请访问 http://go.microsoft.com/fwlink/?LinkID=320771
-                // 发送包含此链接的电子邮件
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "重置密码", "请通过单击 <a href=\"" + callbackUrl + "\">此处</a>来重置你的密码");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                //有关如何启用帐户确认和密码重置的详细信息，请访问 http://go.microsoft.com/fwlink/?LinkID=320771
+                //发送包含此链接的电子邮件
+                try
+                {
+                    string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    MailMessage mailObj = new MailMessage();
+                    mailObj.From = new MailAddress("chen.zhuang@shouquanzhai.cn"); //发送人邮箱地址   
+                    mailObj.To.Add(model.Email);  //收件人邮箱地址
+                    mailObj.Subject = "寿全斋后台系统密码重置";  //主题
+                    mailObj.Body = "请通过单击 <a href=\"" + callbackUrl + "\">此处</a>来重置你的密码";  //正文,
+                    mailObj.IsBodyHtml = true; //表示正文内容是HTML
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = "smtp.exmail.qq.com";     //smtp服务器名称
+                    smtp.UseDefaultCredentials = true;
+                    smtp.Credentials = new NetworkCredential("chen.zhuang@shouquanzhai.cn", "Zc19931127"); //发送人的登录名和密码
+                    smtp.Send(mailObj);
+                }
+                catch (Exception)
+                {
+                    return View(model);
+                }    
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // 如果我们进行到这一步时某个地方出错，则重新显示表单
