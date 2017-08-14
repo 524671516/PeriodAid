@@ -9,11 +9,11 @@
                 <div class="tm-view-checkbox float-left">
                    @if (item.Status == AssignmentStatus.FINISHED)
                     {
-                    <input type="checkbox" class="tm-checkbox-input" checked />
+                    <input type="checkbox" class="tm-checkbox-input  tm-change-task-status" checked  data-atid="@item.Id"/>
                    }
                    else
                    {
-                    <input type="checkbox" class="tm-checkbox-input" />
+                    <input type="checkbox" class="tm-checkbox-input  tm-change-task-status" data-atid="@item.Id"/>
                    }
                 </div>
                 <div class="tm-view-info float-left tm-show-task-modal" data-atid="@item.Id">
@@ -54,11 +54,11 @@ else
                     <div class="tm-view-checkbox float-left">
                        @if (item.Status == AssignmentStatus.FINISHED)
                        {
-                        <input type="checkbox" class="tm-checkbox-input" checked />
+                        <input type="checkbox" class="tm-checkbox-input  tm-change-task-status" checked  data-atid="@item.Id"/>
                        }
                        else
                        {
-                        <input type="checkbox" class="tm-checkbox-input" />
+                        <input type="checkbox" class="tm-checkbox-input  tm-change-task-status" data-atid="@item.Id"/>
                        }
                     </div>
                     <div class="tm-view-info float-left tm-show-task-modal" data-atid="@item.Id">

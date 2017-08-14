@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<PeriodAid.Models.Assignment>
+@using PeriodAid.Models
     @if (Model.Count() >= 20)
     {
         <ul>
@@ -6,7 +7,14 @@
             {
                 <li class="clear-float tm-view-li">                   
                     <div class="tm-view-checkbox float-left">
-                        <input type="checkbox" class="tm-checkbox-input" />
+                        @if (item.Status == AssignmentStatus.FINISHED)
+                    {
+                            <input type="checkbox" class="tm-checkbox-input tm-change-task-status" checked data-aid="@item.Id" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" class="tm-checkbox-input tm-change-task-status" data-aid="@item.Id"/>
+                        }
                     </div>
                     <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
                         <div class="tm-view-info-top">
@@ -40,7 +48,14 @@
                 {
                     <li class="clear-float tm-view-li">                      
                         <div class="tm-view-checkbox float-left">
-                            <input type="checkbox" class="tm-checkbox-input" />
+                            @if (item.Status == AssignmentStatus.FINISHED)
+                            {
+                                <input type="checkbox" class="tm-checkbox-input tm-change-task-status" checked data-aid="@item.Id" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="tm-checkbox-input tm-change-task-status" data-aid="@item.Id"/>
+                            }
                         </div>
                         <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
                             <div class="tm-view-info-top">

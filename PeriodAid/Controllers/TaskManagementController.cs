@@ -1811,7 +1811,7 @@ namespace PeriodAid.Controllers
         }
 
         //近期任务获取
-        public ActionResult PersonalRecentAssignmentPartial(int? page, string timerange, string sorttype)
+        public ActionResult PersonalRecentAssignmentPartial(int? page, string datarange, string sorttype)
         {
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
@@ -1822,7 +1822,7 @@ namespace PeriodAid.Controllers
             {
                 int _page = page ?? 0;
                 ViewBag.currentpage = _page;
-                if (timerange == null|| timerange =="")
+                if (datarange == null|| datarange =="")
                 {
                     if (sorttype == null || sorttype == "")
                     {
@@ -1862,7 +1862,7 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    TimeRangeClass _timerange = getTimeRange(timerange);
+                    TimeRangeClass _timerange = getTimeRange(datarange);
                     var starttime = _timerange.StartTime;
                     var endtime = _timerange.EndTime;
                     if (sorttype == null|| sorttype =="")
@@ -1904,7 +1904,7 @@ namespace PeriodAid.Controllers
             }
         }
         //近期子任务获取
-        public ActionResult PersonalRecentSubtaskPartial(int? page, string timerange, string sorttype)
+        public ActionResult PersonalRecentSubtaskPartial(int? page, string datarange, string sorttype)
         {
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
@@ -1915,7 +1915,7 @@ namespace PeriodAid.Controllers
             {
                 int _page = page ?? 0;
                 ViewBag.currentpage = _page;
-                if (timerange == null || timerange == "")
+                if (datarange == null || datarange == "")
                 {
                     if (sorttype == null || sorttype == "")
                     {
@@ -1955,7 +1955,7 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    TimeRangeClass _timerange = getTimeRange(timerange);
+                    TimeRangeClass _timerange = getTimeRange(datarange);
                     var starttime = _timerange.StartTime;
                     var endtime = _timerange.EndTime;
                     if (sorttype == null || sorttype == "")

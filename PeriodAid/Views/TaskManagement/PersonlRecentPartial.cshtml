@@ -64,7 +64,7 @@
                     url: _initlink,
                     data: {
                         page: parseInt($("#tm-view-page").val()),
-                        timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                        datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
                         sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
                     },
                     success: function (data) {
@@ -103,7 +103,7 @@
                 url: _initlinksub,
                 data: {
                     page: parseInt($("#tm-view-page").val()),
-                    timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                    datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
                     sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
                 },
                 success: function (data) {
@@ -143,7 +143,7 @@
                 url: _initthirdlink,
                 data: {
                     page: parseInt($("#tm-view-page").val()),
-                    timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                    datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
                     sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
                 },
                 success: function (data) {
@@ -189,7 +189,7 @@
                             url: _link,
                             data: {
                                 page: parseInt($("#tm-view-page").val()),
-                                timerange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
                                 sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
                             },
                             success: function (data) {
