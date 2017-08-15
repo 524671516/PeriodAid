@@ -231,7 +231,12 @@
         nextbtn: ".tm-calendar-next",
         prebtn: ".tm-calendar-prev",
         showtimearea: ".tm-calendar-currentmonth",
+        initui:"month",                               //初始ui样式 "week"和"month"可选
+        changeuibtn:".tm-calendar-change-ui",         //修改ui样式 周或者月来回切换 
         onpagechanged: function (e) {
+
+        },
+        onchangeuied: function (e) {
 
         },
 

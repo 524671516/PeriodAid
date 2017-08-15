@@ -52,37 +52,13 @@
             _data.AssignmentId = _self.attr("data-aid");
             EditForAjax("/TaskManagement/ComfirmFinishAssignment", _data, function (data) {
                 if ($("#my-app").hasClass("tm-open-view")) {
-                    if ($(".tm-select-range.selected").attr("data-type") != ""&&$(".tm-select-range.selected").attr("data-type") != "undifined") {
+                    if ($(".tm-select-range.selected").attr("data-type") == "finish" || $(".tm-select-range.selected").attr("data-type") == "unfinish") {
                         _self.parents("li").remove();
                     }
                 }
-                GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
-                EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {
-                    var len = data.data.length;
-                    $(".ajax-procedure").each(function () {
-                        for (i = 0; i < len; i++) {
-                            if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                $(this).find(".total-num").html(data.data[i].TotalNum)
-                                $(this).find(".num").html(data.data[i].FinishNum)
-                            }
-                        }
-                    })
-                })
-            });
-        } else if (($(this).attr("data-atid"))) {
-            _data.SubTaskId = $(this).attr("data-atid");
-            EditForAjax("/TaskManagement/ComfirmFinishSubtask", _data, function (data) {
-                if ($("#my-app").hasClass("tm-open-view")) {
-                    if ($(".tm-select-range.selected").attr("data-type") != ""&&$(".tm-select-range.selected").attr("data-type") != "undifined") {
-                        _self.parents("li").remove();
-                    }
-                }
-                $("#Edit-Assignment #Status").val(data.ParentStatus)
-                GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-                    $("#modal_subtask_area").html(data);
-                });
-                GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
-                EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {             
+                if ($("#panel-wrap").attr("data-sid")) {
+                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
+                    EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {
                         var len = data.data.length;
                         $(".ajax-procedure").each(function () {
                             for (i = 0; i < len; i++) {
@@ -91,8 +67,40 @@
                                     $(this).find(".num").html(data.data[i].FinishNum)
                                 }
                             }
-                        })                    
-                })
+                        })
+                    })
+                }
+            }, function () {
+                _self.attr("checked", false);
+            });
+        } else if (($(this).attr("data-atid"))) {
+            _data.SubTaskId = $(this).attr("data-atid");
+            EditForAjax("/TaskManagement/ComfirmFinishSubtask", _data, function (data) {
+                if ($("#my-app").hasClass("tm-open-view")) {
+                    if ($(".tm-select-range.selected").attr("data-type") == "finish" || $(".tm-select-range.selected").attr("data-type") == "unfinish") {
+                        _self.parents("li").remove();
+                    }
+                }
+                if ($("#panel-wrap").attr("data-sid")) {
+                    $("#Edit-Assignment #Status").val(data.ParentStatus)
+                    GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+                        $("#modal_subtask_area").html(data);
+                    });
+                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
+                    EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {
+                        var len = data.data.length;
+                        $(".ajax-procedure").each(function () {
+                            for (i = 0; i < len; i++) {
+                                if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                    $(this).find(".total-num").html(data.data[i].TotalNum)
+                                    $(this).find(".num").html(data.data[i].FinishNum)
+                                }
+                            }
+                        })
+                    })
+                }                
+            }, function () {
+                _self.attr("checked", false);
             });
         } else {
             ErrorAlert("获取原始数据失败。");
@@ -263,24 +271,7 @@ function GetAssignment(ProcedureId, SubjectId, container) {
     });
 }
 
-//确定完成任务
-function ComfirmFinishAssignment(AssignmentId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/ComfirmFinishAssignment",
-        type: "post",
-        data: {
-            AssignmentId: AssignmentId,
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
+
 function Delete_Procedure(ProcedureId,SubjectId, Callback) {
     $.ajax({
         url: "/TaskManagement/Delete_Procedure",
@@ -482,7 +473,7 @@ function GetElementsByClass(className) {
 }
 
 //get请求模板
-function GetTemplate(url, data, callback) {
+function GetTemplate(url, data, callback,errback) {
     if (url == null || url == "") {
         ErrorAlert("请求地址不合法。");
     } else {
@@ -492,21 +483,27 @@ function GetTemplate(url, data, callback) {
             success: function (data) {
                 if (data == "FAIL") {
                     ErrorAlert("数据获取失败。");
+                    if (errback && typeof (errback) == "function") {
+                        errback(data)
+                    }
                 } else {
                     if (callback && typeof (callback) == "function") {
                         callback(data);
                     }
                 }
             },
-            error: function () {
+            error: function (data) {
                 ErrorAlert("请求失败。");
+                if (errback && typeof (errback) == "function") {
+                    errback(data)
+                }
             }
         });
     }
 }
 
 //post请求json
-function EditForAjax(url, data, callback) {
+function EditForAjax(url, data, callback,errback) {
     if (url == null || url == "") {
         ErrorAlert("请求地址不合法。");
     } else {
@@ -517,6 +514,9 @@ function EditForAjax(url, data, callback) {
             success: function (data) {
                 if (data.result == "FAIL") {
                     ErrorAlert(data.errmsg);
+                    if (errback && typeof (errback) == "function") {
+                        errback(data)
+                    }
                 } else {
                     if (callback && typeof (callback) == "function") {
                         callback(data);
@@ -525,6 +525,9 @@ function EditForAjax(url, data, callback) {
             },
             error: function () {
                 ErrorAlert("请求失败。");
+                if (errback && typeof (errback) == "function") {
+                    errback(data)
+                }
             }
         });
     }
@@ -564,6 +567,10 @@ function ShowTmView(url) {
 
 
 //dropdown位移控制
+
+
+
+//
 (function ($) {
     if (typeof ($) != "function") {
         console.log("没有引入Jquery");
@@ -574,10 +581,16 @@ function ShowTmView(url) {
         if (options) {
             this.$options = options;
         }
-        this.
+        this.$subjectnum = 0;
+        this.init();
     };
+    TmApp.prototype.init = function () {
+        console.log(this.$element);
+    };
+    window.TmApp = TmApp;
     
 })(jQuery)
+
 
 
 

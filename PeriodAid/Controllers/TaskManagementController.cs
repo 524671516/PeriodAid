@@ -2156,7 +2156,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null || sorttype == "")
                     {
                         var ResultList = (from m in _db.Assignment
-                                          where m.HolderId==employee.Id && m.Subject.Status > SubjectStatus.DELETED
+                                          where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
                                           orderby m.CreateTime ascending
                                           select m).Skip(_page * 20).Take(20);
                         return PartialView(ResultList);
@@ -2167,7 +2167,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED
+                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
                                               orderby m.Deadline ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2176,7 +2176,7 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED
+                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
                                               orderby m.SubjectId ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2184,7 +2184,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             var ResultList = (from m in _db.Assignment
-                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED
+                                              where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
                                               orderby m.Id ascending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
@@ -2536,8 +2536,7 @@ namespace PeriodAid.Controllers
                 dc.AutoIncrementStep = 1;//步长为1
                 dc.AllowDBNull = false;//
                 dc = dt.Columns.Add("名称", Type.GetType("System.String"));
-                dc = dt.Columns.Add("状态", Type.GetType("System.Int32"));
-                dc = dt.Columns.Add("权重", Type.GetType("System.Int32"));
+                dc = dt.Columns.Add("任务状态", Type.GetType("System.String"));
                 dc = dt.Columns.Add("创建时间", Type.GetType("System.String"));
                 dc = dt.Columns.Add("截止时间", Type.GetType("System.String"));
                 dc = dt.Columns.Add("完成时间", Type.GetType("System.String"));
@@ -2545,23 +2544,48 @@ namespace PeriodAid.Controllers
                 dc = dt.Columns.Add("备注", Type.GetType("System.String"));
                 dc = dt.Columns.Add("负责人", Type.GetType("System.String"));
                 dc = dt.Columns.Add("项目归属", Type.GetType("System.String"));
+                dc = dt.Columns.Add("项目状态", Type.GetType("System.String"));
+                dc = dt.Columns.Add("任务类型", Type.GetType("System.String"));
                 DataRow newRow;
-                var assignementlist = from m in _db.Assignment
+                var assignementlist = (from m in _db.Assignment
                                       where m.HolderId == employee.Id
-                                      select m;
-                
-                foreach(var item in assignementlist)
+                                      select m).ToList();
+                var collist = from m in employee.CollaborateAssignment
+                              select m;
+                var asslist = assignementlist.Union(collist);
+                foreach(var item in asslist)
                 {
                     newRow = dt.NewRow();
                     newRow["名称"] = item.AssignmentTitle;
-                    newRow["状态"] = item.Status;
-                    newRow["权重"] = item.Priority;
+                    newRow["任务状态"] = (item.Status == -1 ? "已删除" : item.Status == 0 ? "已归档" : item.Status == 1 ? "未完成" : "已完成");
                     newRow["创建时间"] = item.CreateTime;
                     newRow["截止时间"] = item.Deadline;
+                    newRow["完成时间"] = item.CompleteDate;
                     newRow["提醒时间"] = item.RemindDate;
                     newRow["备注"] = item.Remarks;
                     newRow["负责人"] = item.Holder.NickName;
                     newRow["项目归属"] = item.Subject.SubjectTitle;
+                    newRow["项目状态"] = (item.Subject.Status == -1 ? "已删除" : item.Subject.Status == 0 ? "已归档" : item.Subject.Status == 1 ? "进行中" : "未知");
+                    newRow["任务类型"] = "任务";
+                    dt.Rows.Add(newRow);
+                }
+                var subtasklist = from m in _db.SubTask
+                                  where m.ExecutorId == employee.Id
+                                  select m;
+                foreach (var item in subtasklist)
+                {
+                    newRow = dt.NewRow();
+                    newRow["名称"] = item.TaskTitle;
+                    newRow["任务状态"] = (item.Status == -1 ? "已删除" : item.Status == 0 ? "已归档" : item.Status == 1 ? "未完成" : "已完成");
+                    newRow["创建时间"] = item.CreateTime;
+                    newRow["截止时间"] = item.Deadline;
+                    newRow["完成时间"] = item.CompleteDate;
+                    newRow["提醒时间"] = item.RemindDate;
+                    newRow["备注"] = item.Remarks;
+                    newRow["负责人"] = item.Executor.NickName;
+                    newRow["项目归属"] = item.Assignment.Subject.SubjectTitle;
+                    newRow["项目状态"] = (item.Assignment.Subject.Status == -1 ? "已删除" : item.Assignment.Subject.Status == 0 ? "已归档" : item.Assignment.Subject.Status == 1 ? "进行中" : "未知");
+                    newRow["任务类型"] = "子任务";
                     dt.Rows.Add(newRow);
                 }
                 HSSFWorkbook workbook = new HSSFWorkbook();
