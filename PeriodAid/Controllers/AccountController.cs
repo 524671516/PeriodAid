@@ -252,7 +252,7 @@ namespace PeriodAid.Controllers
                 }
                 catch (Exception)
                 {
-                    return View(model);
+                    return RedirectToAction("ForgotPasswordConfirmation", "Account");
                 }    
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }

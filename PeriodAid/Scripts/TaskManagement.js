@@ -1,5 +1,5 @@
 ﻿$(function () {
-    /*+++++++++++++++++++++全局通用事件++++++++++++++++++++*/
+    
     //控制view展示
     $("#my-app").on("click", ".tm-show-view", function () {
         if ($(this).hasClass("active")) {
@@ -52,7 +52,7 @@
             _data.AssignmentId = _self.attr("data-aid");
             EditForAjax("/TaskManagement/ComfirmFinishAssignment", _data, function (data) {
                 if ($("#my-app").hasClass("tm-open-view")) {
-                    if ($(".tm-select-range.selected").attr("data-type") != "") {
+                    if ($(".tm-select-range.selected").attr("data-type") != ""&&$(".tm-select-range.selected").attr("data-type") != "undifined") {
                         _self.parents("li").remove();
                     }
                 }
@@ -73,8 +73,7 @@
             _data.SubTaskId = $(this).attr("data-atid");
             EditForAjax("/TaskManagement/ComfirmFinishSubtask", _data, function (data) {
                 if ($("#my-app").hasClass("tm-open-view")) {
-                    console.log($(".tm-select-range.selected").attr("data-type"))
-                    if ($(".tm-select-range.selected").attr("data-type") != "") {
+                    if ($(".tm-select-range.selected").attr("data-type") != ""&&$(".tm-select-range.selected").attr("data-type") != "undifined") {
                         _self.parents("li").remove();
                     }
                 }
@@ -562,10 +561,23 @@ function ShowTmView(url) {
         }
 }
 
-//查看任务
 
 
 //dropdown位移控制
+(function ($) {
+    if (typeof ($) != "function") {
+        console.log("没有引入Jquery");
+        return;
+    };
+    var TmApp = function (element, options) {
+        this.$element = $(element);
+        if (options) {
+            this.$options = options;
+        }
+        this.
+    };
+    
+})(jQuery)
 
 
 

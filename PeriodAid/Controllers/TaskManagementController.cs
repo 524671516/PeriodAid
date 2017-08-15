@@ -678,10 +678,10 @@ namespace PeriodAid.Controllers
 
         #region  任务操作
         //获取任务
-        public PartialViewResult SubjectAssignment(int ProcedureId, int SubJectId)
+        public PartialViewResult SubjectAssignment(int ProcedureId, int SubjectId)
         {
             var assignmentlist = from m in _db.Assignment
-                                 where m.ProcedureId == ProcedureId && m.SubjectId == SubJectId && m.Status > AssignmentStatus.DELETED
+                                 where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
                                  orderby m.Status ascending
                                  select m;
             ViewBag.ProcedureId = ProcedureId;
