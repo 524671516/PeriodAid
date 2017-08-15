@@ -1065,7 +1065,6 @@
     <Content Include="Views\TaskManagement\GetSubtaskFilledForm.cshtml" />
     <Content Include="Views\TaskManagement\Subtask_Detail.cshtml" />
     <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
-    <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
     <Content Include="Views\TaskManagement\SubjectMenuPanelPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
@@ -1093,6 +1092,8 @@
     <Content Include="Views\TaskManagement\Subject_Agendas.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCalendarPanel.cshtml" />
     <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
