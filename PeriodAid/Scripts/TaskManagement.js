@@ -20,18 +20,17 @@
 
     //查看任务详情(包含子任务)
     $("#my-app").on("click", ".tm-show-task-modal", function () {
+        var data = {};
         if ($(this).attr("data-aid")) {
-            var data = {
-                AssignmentId: $(this).attr("data-aid")
-            };
+            data.AssignmentId = $(this).attr("data-aid");
+            //请求任务详情
             GetTemplate("/TaskManagement/Assignment_Detail", data, function (data) {
                 $("#Edit-Assignment .modal-content").html(data);
                 $('#Edit-Assignment').modal('show');
             });
         } else if ($(this).attr("data-atid")) {
-            var data = {
-                SubTaskId: $(this).attr("data-atid")
-            };
+            data.SubTaskId = $(this).attr("data-atid");
+            //请求子任务详情
             GetTemplate("/TaskManagement/Subtask_Detail", data, function (data) {
                 $("#Edit-Assignment .modal-content").html(data);
                 $('#Edit-Assignment').modal('show');
@@ -43,7 +42,66 @@
     });
 
     //任务完成状态回传(包含子任务)
-
+    $("#my-app").on("click", ".tm-change-task-status", function () {
+        var _self = $(this);
+        var _data = {};
+        var subjectdata={
+            SubjectId:$("#panel-wrap").attr("data-sid")
+        };
+        if ($(this).attr("data-aid")) {
+            _data.AssignmentId = _self.attr("data-aid");
+            EditForAjax("/TaskManagement/ComfirmFinishAssignment", _data, function (data) {
+                if ($("#my-app").hasClass("tm-open-view")) {
+                    if ($(".tm-select-range.selected").attr("data-type") != "") {
+                        _self.parents("li").remove();
+                    }
+                }
+                GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
+                EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {
+                    var len = data.data.length;
+                    $(".ajax-procedure").each(function () {
+                        for (i = 0; i < len; i++) {
+                            if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                $(this).find(".total-num").html(data.data[i].TotalNum)
+                                $(this).find(".num").html(data.data[i].FinishNum)
+                            }
+                        }
+                    })
+                })
+            });
+        } else if (($(this).attr("data-atid"))) {
+            _data.SubTaskId = $(this).attr("data-atid");
+            EditForAjax("/TaskManagement/ComfirmFinishSubtask", _data, function (data) {
+                if ($("#my-app").hasClass("tm-open-view")) {
+                    console.log($(".tm-select-range.selected").attr("data-type"))
+                    if ($(".tm-select-range.selected").attr("data-type") != "") {
+                        _self.parents("li").remove();
+                    }
+                }
+                $("#Edit-Assignment #Status").val(data.ParentStatus)
+                GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+                    $("#modal_subtask_area").html(data);
+                });
+                GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
+                EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {             
+                        var len = data.data.length;
+                        $(".ajax-procedure").each(function () {
+                            for (i = 0; i < len; i++) {
+                                if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                    $(this).find(".total-num").html(data.data[i].TotalNum)
+                                    $(this).find(".num").html(data.data[i].FinishNum)
+                                }
+                            }
+                        })                    
+                })
+            });
+        } else {
+            ErrorAlert("获取原始数据失败。");
+        }
+        if (!_self.hasClass("tm-checkbox-input")) {
+            return false;
+        }
+    });
 
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {
@@ -63,7 +121,6 @@
         });
     });
 });
-
 //请求活动中的项目
 function GetActiveSubject(container) {
     $.ajax({
@@ -90,7 +147,6 @@ function GetFinishSubject(container) {
         }
     })
 }
-
 //获取项目的过程
 function GetProcedure(ProcedureId, SubjectId, container) {
     $.ajax({
@@ -136,12 +192,12 @@ function GetAssignmentForm(ProcedureId, SubjectId, container) {
 
 
 //获取任务列表
-function GetAssignment(ProcedureId, SubJectId, container) {
+function GetAssignment(ProcedureId, SubjectId, container) {
     $.ajax({
         url: "/TaskManagement/SubjectAssignment",
         data: {
             ProcedureId: ProcedureId,
-            SubJectId: SubJectId
+            SubjectId: SubjectId
         },
         success: function (data) {           
             container.html(data)
@@ -478,6 +534,30 @@ function GetTemplate(url, data, callback) {
     }
 }
 
+//post请求json
+function EditForAjax(url, data, callback) {
+    if (url == null || url == "") {
+        ErrorAlert("请求地址不合法。");
+    } else {
+        $.ajax({
+            url: url,
+            type:"post",
+            data: data,
+            success: function (data) {
+                if (data.result == "FAIL") {
+                    ErrorAlert(data.errmsg);
+                } else {
+                    if (callback && typeof (callback) == "function") {
+                        callback(data);
+                    }
+                }
+            },
+            error: function () {
+                ErrorAlert("请求失败。");
+            }
+        });
+    }
+}
 
 //tm-view控制
 function HiddenTmView(callback) {
@@ -516,7 +596,6 @@ function ShowTmView(url) {
 //dropdown位移控制
 
 
-//post请求json
 
 
 

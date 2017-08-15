@@ -10,7 +10,7 @@
                 <li class="tm_list-item tm_list-finish tm-show-task-modal" style="border-color:#259B24" data-aid="@item.Id">
                     <div class="tm_list-item_top clear-float">
                         <div class="tm_item_left">
-                            <input type="checkbox" class="assignment_comfirm_finish" checked="checked" />
+                            <input type="checkbox" class="tm-change-task-status" checked="checked"  data-aid="@item.Id"/>
                             &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
                         </div>
                         <div class="tm_item_right" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
@@ -48,7 +48,7 @@
                 <li class="tm_list-item tm-show-task-modal" style="border-color:#3da8f5" data-aid="@item.Id">
                     <div class="tm_list-item_top clear-float">
                         <div class="tm_item_left">
-                            <input type="checkbox" class="assignment_comfirm_finish" />
+                            <input type="checkbox" class="tm-change-task-status"  data-aid="@item.Id"/>
                             &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
                         </div>
                         <div class="tm_item_right" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">

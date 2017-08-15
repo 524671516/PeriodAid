@@ -194,7 +194,7 @@
         var html = TmDatePicker.createPanel(datearray);
         $("#tm-calender-picker").remove();
         $(container).append(html);
-        $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
+        $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
         $(showtimearea).html(year + "-" + (month < 10 ? "0" + month : month));
         var onpagechanged = TmDatePicker.getOptionValue("onpagechanged");
         if (typeof (onpagechanged) == "function") {
@@ -213,7 +213,7 @@
         var datearray = TmDatePicker.getMonthDate(year, month);
         var html = TmDatePicker.createPanel(datearray);
         $(container).append(html);
-        $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
+        $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
         TmDatePicker.bindEvent();
         var onpagechanged = TmDatePicker.getOptionValue("onpagechanged");
         if (typeof (onpagechanged) == "function") {

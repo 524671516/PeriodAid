@@ -245,7 +245,7 @@ namespace PeriodAid.Controllers
                     mailObj.Body = "请通过单击 <a href=\"" + callbackUrl + "\">此处</a>来重置你的密码";  //正文,
                     mailObj.IsBodyHtml = true; //表示正文内容是HTML
                     SmtpClient smtp = new SmtpClient();
-                    smtp.Host = "smtp.exmail.qq.com";     //smtp服务器名称
+                    smtp.Host = "smtp.163.com";     //smtp服务器名称
                     smtp.UseDefaultCredentials = true;
                     smtp.Credentials = new NetworkCredential("babybacyp@163.com", "liuhong"); //发送人的登录名和密码
                     smtp.Send(mailObj);
