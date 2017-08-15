@@ -1,4 +1,4 @@
-﻿@model PeriodAid.Models.Employee
+﻿@model PeriodAid.Models.ChangePasswordViewModel
 @using PeriodAid.Models;
 @{
     ViewBag.Title = "Task_Management_PersonalSetting";
@@ -43,13 +43,13 @@
                     <ul class="nav navbar-nav navbar-right navbar-border">
                         <li class="dropdown">
                             <a href="javascript:;" style="height:50px;">
-                                @if (Model.ImgUrl == null)
+                                @if (ViewBag.img == null)
                                 {
                                     <span class="tm_avatar tm_img-circle tm_personal-avatar text-center" style="background-color:#ccc;"><i class="glyphicon glyphicon-user" aria-hidden="true" style="line-height:26px;"></i></span>
                                 }
                                 else
                                 {
-                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@Model.ImgUrl');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@ViewBag.img');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
                                 }
                             </a>
                             <div class="dropdown-menu tm_dropdown">
@@ -67,7 +67,7 @@
                     <div class="col-md-2">
                         <ul class="nav nav-pills nav-stacked">
                             <li role="presentation"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
-                            <li role="presentation" class="active"><a href="~/TaskManagement/SecuritySetting">安全设置</a></li>
+                            <li role="presentation" class="active"><a href="/TaskManagement/SecuritySetting">安全设置</a></li>
                             <li role="presentation"><a href="/TaskManagement/LoginLog">登录记录</a></li>
                         </ul>
                     </div>
@@ -77,35 +77,43 @@
                                 <h3 class="panel-title">安全设置</h3>
                             </div>
                             <div class="panel-body">
-                                @using (Html.BeginForm("EditSecuritySetting", "TaskManagement", FormMethod.Post, new { @id = "save_securitysetting_form", @class = "validate-form form-horizontal" }))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    @Html.HiddenFor(m => m.Id)
-                                    @Html.HiddenFor(m => m.SignupDate)
-                                    @Html.HiddenFor(m => m.LastLoginDate)
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">用户名</label>
-                                        <div class="col-sm-10">
-                                            <p class="form-control-static color-blue">@Model.UserName</p>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.ValidationSummary("", new { @class = "text-danger" });
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.OldPassword, new { @class = "col-md-3 control-label" })
+                                                <div class="col-md-9">
+                                                    @Html.PasswordFor(m => m.OldPassword, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.OldPassword, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.NewPassword, new { @class = "col-md-3 control-label" })
+                                                <div class="col-md-9">
+                                                    @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.NewPassword, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-3 control-label" })
+                                                <div class="col-md-9">
+                                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-3 col-md-10">
+                                                    <input type="submit" value="更改密码" class="btn btn-default" />
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
-                                    <div class="form-group">
-                                        <label for="inputPassword" class="col-sm-2 control-label">更改密码</label>
-                                        <div class="col-sm-10">
-                                            <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputPassword" class="col-sm-2 control-label">确认密码</label>
-                                        <div class="col-sm-10">
-                                            <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-primary">确认更改</button>
-                                        </div>
-                                    </div>
+                                    <div class="col-md-6"></div>
+                                </div>
+                                @section Scripts {
+                                    @Scripts.Render("~/bundles/jqueryval")
                                 }
                             </div>
                         </div>
@@ -127,52 +135,6 @@
     <script src="~/Scripts/jquery-confirm.js"></script>
     <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/croppermain.js"></script>
-    <script>
-        //修改个人信息验证
-        $("#save_securitysetting_form").validate({
-            debug: false,
-            rules: {
-                NickName: {
-                    required: true,
-                    maxlength: 32
-                },
-                UserName: {
-                    validatetel: true,
-                    required: true,
-                    maxlength: 11
-                },
-            },
-            //验证通过的正式提交函数
-            submitHandler: function (form) {
-                $(form).ajaxSubmit({
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            UnimportantAlert("修改成功");
-                            $("#btn_save_personalinfo").removeClass("disabled");
-                        } else {
-                            ErrorAlert(data.result);
-                            $("#btn_save_personalinfo").removeClass("disabled");
-                        }
-                    },
-                    error: function () {
-                        ErrorAlert("操作失败。");
-                        $("#btn_save_personalinfo").removeClass("disabled");
-                    }
-                });
-            },
-            errorClass: "has-error",
-            //验证失败
-            errorPlacement: function (error, element) {
-                $("#btn_save_personalinfo").removeClass("disabled");
-            }
-        });
-        //修改个人信息的提交
-        $("#btn_save_personalinfo").on("click", function () {
-            if (!$(this).hasClass("disabled")) {
-                $(this).addClass("disabled")
-                $("#save_personalinfo_form").submit();
-            }
-        });
-    </script>
+
 </body>
 </html>

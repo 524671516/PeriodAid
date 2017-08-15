@@ -1094,6 +1094,7 @@
     <Content Include="Views\TaskManagement\Subject_Agendas.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCalendarPanel.cshtml" />
     <Content Include="Views\TaskManagement\SecuritySetting.cshtml" />
+    <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

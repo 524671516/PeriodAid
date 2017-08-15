@@ -131,15 +131,18 @@ namespace PeriodAid.Controllers
         public ActionResult SecuritySetting(string username)
         {
             var employee = getEmployee(User.Identity.Name);
+            
             if (employee == null)
             {
                 return View("Error");
             }
             else
             {
-                return View(employee);
+                ViewBag.img = employee.ImgUrl;
+                return View();
             }
         }
+
 
         //修改个人信息
         [HttpPost, ValidateAntiForgeryToken]

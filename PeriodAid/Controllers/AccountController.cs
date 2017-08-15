@@ -239,7 +239,7 @@ namespace PeriodAid.Controllers
                     string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     MailMessage mailObj = new MailMessage();
-                    mailObj.From = new MailAddress("chen.zhuang@shouquanzhai.cn"); //发送人邮箱地址   
+                    mailObj.From = new MailAddress("babybacyp@163.com"); //发送人邮箱地址   
                     mailObj.To.Add(model.Email);  //收件人邮箱地址
                     mailObj.Subject = "寿全斋后台系统密码重置";  //主题
                     mailObj.Body = "请通过单击 <a href=\"" + callbackUrl + "\">此处</a>来重置你的密码";  //正文,
@@ -247,7 +247,7 @@ namespace PeriodAid.Controllers
                     SmtpClient smtp = new SmtpClient();
                     smtp.Host = "smtp.exmail.qq.com";     //smtp服务器名称
                     smtp.UseDefaultCredentials = true;
-                    smtp.Credentials = new NetworkCredential("chen.zhuang@shouquanzhai.cn", "Zc19931127"); //发送人的登录名和密码
+                    smtp.Credentials = new NetworkCredential("babybacyp@163.com", "liuhong"); //发送人的登录名和密码
                     smtp.Send(mailObj);
                 }
                 catch (Exception)

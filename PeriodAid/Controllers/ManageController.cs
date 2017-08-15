@@ -217,6 +217,18 @@ namespace PeriodAid.Controllers
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
+
+            return View();
+        }
+
+        public ActionResult ChangePasswordSuccess(int? status)
+        {
+            int _status = status ?? 0;
+            if (_status == 0)
+            {
+                return View();
+            }
+            ViewBag.SuccessMessage = "密码修改成功！";
             return View();
         }
 
@@ -238,7 +250,7 @@ namespace PeriodAid.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+                return RedirectToAction("ChangePasswordSuccess", new { status =1 });
             }
             AddErrors(result);
             return View(model);
