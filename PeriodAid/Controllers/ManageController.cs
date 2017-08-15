@@ -221,6 +221,7 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+ 
         public ActionResult ChangePasswordSuccess(int? status)
         {
             int _status = status ?? 0;
@@ -229,6 +230,7 @@ namespace PeriodAid.Controllers
                 return View();
             }
             ViewBag.SuccessMessage = "密码修改成功！";
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return View();
         }
 

@@ -591,21 +591,7 @@ function ShowTmView(url) {
 
 
 
-//dropdown位移控制
-(function ($) {
-    if (typeof ($) != "function") {
-        console.log("没有引入Jquery");
-        return;
-    };
-    var TmApp = function (element, options) {
-        this.$element = $(element);
-        if (options) {
-            this.$options = options;
-        }
-        this.
-    };
-    
-})(jQuery)
+
 
 
 
