@@ -16,7 +16,7 @@ namespace PeriodAid.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private ProjectSchemeModels _dd;
         public ManageController()
         {
         }
@@ -217,7 +217,6 @@ namespace PeriodAid.Controllers
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
-
             return View();
         }
 
