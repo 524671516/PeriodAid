@@ -16,9 +16,10 @@ namespace PeriodAid.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private ProjectSchemeModels _db;
         public ManageController()
         {
+            _db = new ProjectSchemeModels();
         }
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -217,11 +218,11 @@ namespace PeriodAid.Controllers
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
-            var img=
+            var employee = _db.Employee.SingleOrDefault(m => m.UserName == User.Identity.Name);
+            ViewBag.img = employee.ImgUrl;
             return View();
         }
 
- 
         public ActionResult ChangePasswordSuccess(int? status)
         {
             int _status = status ?? 0;

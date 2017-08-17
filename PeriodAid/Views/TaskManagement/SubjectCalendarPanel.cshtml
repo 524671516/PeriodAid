@@ -2,10 +2,15 @@
 <div id="tm-calendar-view" class="tm-calendar-view tm-view">
     <div class="tm-view-header tm-calendar-view-header">
         <div class="tm-view-header-select">
-            <span class="tm-view-calendar-task-num" id="tm-view-calendar-task-num">任务总数：<strong class="color-blue">12</strong></span>&nbsp;
-            <span class="tm-view-calendar-task-show active tm-view-calendar-control-task">任务</span>&nbsp;
-            <span class="tm-view-calendar-subtask-show tm-view-calendar-control-task active">子任务</span>
+            <span class="tm-view-calendar-task-num" id="tm-view-calendar-task-num" style="padding:0 8px 0 0 "><span>任务总数:</span>&nbsp;<strong>12</strong></span>&nbsp;
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" aria-label="Left Align">任务</button>
+                <button type="button" class="btn btn-default active" aria-label="Center Align">子任务</button>
+                <button type="button" class="btn btn-default active" aria-label="Right Align">周</button>
+                <button type="button" class="btn btn-default" aria-label="Justify">月</button>
+            </div>
         </div>
+        
         <div class="tm-calendar-view-control tm-view-control">
             <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
             <span class="tm-calendar-view-control tm-calendar-currentmonth color-blue">@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
@@ -18,363 +23,43 @@
     <div class="tm-view-content tm-calendar-view-content">
         <div class="tm-view-content-wrap  tm-view-wrap tm-calendar-view-wrap" id="tm-calendar-view-wrap">
             @*<div class="tm-calendar-view-menu">1</div>*@
-            <div class="tm-calendar-view-panel">
-                <div class="tm-calendar-inner">
-                    <div class="tm-calendar-inner-header  tm-calendar-week-header">
-                        <ul class="clear-float calendar-week-area">
-                            <li></li>
-                            <li>星期一&nbsp;8/14</li>
-                            <li>星期二&nbsp;8/15</li>
-                            <li>星期三&nbsp;8/16</li>
-                            <li>星期四&nbsp;8/17</li>
-                            <li>星期五&nbsp;8/18</li>
-                            <li>星期六&nbsp;8/19</li>
-                            <li>星期日&nbsp;8/20</li>
-                        </ul>
-                    </div>
-                    <div class="tm-calendar-inner-header tm-calendar-week-header">
-                        <div class="tm-calendar-time-area"></div>
-                        <ul class="clear-float calendar-week-area">
-                            <li>全天</li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                    </div>
-                    <div class="tm-calendar-inner-body tm-calendar-week-body clear-float">
-                        <div class="tm-calendar-time-area float-left">
-                            <div class="tm-calendar-time">
-                                <div>凌晨1点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>凌晨2点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>凌晨3点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>凌晨4点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>凌晨5点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>早上6点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>早上7点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>早上8点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>上午9点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>上午10点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>上午11点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>中午12点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>下午1点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>下午2点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>下午3点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>下午4点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>下午5点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>下午6点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>晚上7点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>晚上8点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>夜晚9点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>夜晚10点</div>
-                            </div>
-                            <div class="tm-calendar-time">
-                                <div>夜晚11点</div>
-                            </div>  
-                            <div class="tm-calendar-time">
-                            </div>                          
-                        </div>
-                        <div class="tm-calendar-content-area float-left">
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>                           
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                            <ul class="clear-float calendar-week-area">
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                                <li>1</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
     <script>
-        //TmDatePicker.Init({
-        //    container: "#tm-calendar-view-wrap",
-        //    onpagechanged: function (e) {
-        //        var pickerdata = e;
-        //        $.ajax({
-        //            url: "/TaskManagement/EmployeeMonthDataOfTask",
-        //            type: "post",
-        //            data: {
-        //                month: e.currentmonth,
-        //                year: e.currentyear
-        //            },
-        //            success: function (data) {
-        //                if (data.result == "SUCCESS") {
-        //                    var _len = data.data.length;
-        //                    $("#tm-view-calendar-task-num strong").html(_len);
-        //                    for (i = 0; i < _len; i++) {
-        //                        if (data.data[i].TypeCode == 1) {
-        //                            $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
-        //                        } else {
-        //                            $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
-        //                        }
+        TmDatePicker.Init({
+            container: "#tm-calendar-view-wrap",
+            initui:"week",
+            onpagechanged: function (e) {
+                var pickerdata = e;
+                $.ajax({
+                    url: "/TaskManagement/EmployeeMonthDataOfTask",
+                    type: "post",
+                    data: {
+                        month: e.currentmonth,
+                        year: e.currentyear
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            var _len = data.data.length;
+                            $("#tm-view-calendar-task-num strong").html(_len);
+                            for (i = 0; i < _len; i++) {
+                                if (data.data[i].TypeCode == 1) {
+                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                } else {
+                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                }
 
-        //                    }
-        //                } else {
-        //                    ErrorAlert("数据获取失败。");
-        //                }
-        //            },
-        //            error: function () {
-        //                ErrorAlert("请求数据失败。");
-        //            }
-        //        })
-        //    }
-        //});
+                            }
+                        } else {
+                            ErrorAlert("数据获取失败。");
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("请求数据失败。");
+                    }
+                })
+            }
+        });
     </script>
 </div>

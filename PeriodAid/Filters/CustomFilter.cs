@@ -177,7 +177,7 @@ namespace PeriodAid.Filters
                             var cooperater_count = (from m in user.CollaborateAssignment
                                                     where m.Id == assignmentId&& m.Status > AssignmentStatus.DELETED
                                                     select m).Count();
-                            if (assignment.HolderId != user.Id && assignment.Subject.HolderId != user.Id && cooperater_count == 0)
+                            if (assignment.HolderId != user.Id && assignment.Subject.HolderId != user.Id)
                             {
                                 setErrorResult(filterContext, "当前用户没有权限编辑此任务。");
                             }

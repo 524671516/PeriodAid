@@ -58,7 +58,7 @@
                     </form>
                     <ul class="nav navbar-nav navbar-right navbar-border">
                         <li><a href="javascript:;" id="task_my_btn" class="tm-show-view" data-href="/TaskManagement/PersonalActionPanel"><strong>我的</strong></a></li>
-                        <li><a href="javascript:;" id="task_calendar_btn" class="tm-show-view" data-href="/TaskManagement/SubjectCalendarPanel"><strong>日历</strong></a></li>
+                        @*<li><a href="javascript:;" id="task_calendar_btn" class="tm-show-view" data-href="/TaskManagement/SubjectCalendarPanel"><strong>日历</strong></a></li>*@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height:50px;">
                                 @if (ViewBag.ImgUrl == null)
@@ -127,7 +127,6 @@
     <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
     <script src="~/Scripts/bootstrap-select.js"></script>
     <script src="~/Scripts/defaults-zh_CN.min.js"></script>
-    <script src="~/Scripts/TaskManagementCalendar.js"></script>
     <script src="~/Scripts/TaskManagement.js?V=SSA"></script>
     @RenderSection("scripts", required: false)
 </body>
