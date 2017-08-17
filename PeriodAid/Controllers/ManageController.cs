@@ -16,9 +16,10 @@ namespace PeriodAid.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private ProjectSchemeModels _dd;
+        private ProjectSchemeModels _db;
         public ManageController()
         {
+            _db = new ProjectSchemeModels();
         }
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -217,6 +218,8 @@ namespace PeriodAid.Controllers
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
+            var employee = _db.Employee.SingleOrDefault(m => m.UserName == User.Identity.Name);
+            ViewBag.img = employee.ImgUrl;
             return View();
         }
 
@@ -228,6 +231,7 @@ namespace PeriodAid.Controllers
                 return View();
             }
             ViewBag.SuccessMessage = "密码修改成功！";
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return View();
         }
 
