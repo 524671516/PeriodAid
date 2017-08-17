@@ -1453,6 +1453,7 @@ a.btn_subtask_detail{
     width:13.14222222%;
 }
  .tm-calendar-inner-body ul.calendar-week-area li{
+     position:relative;
      float:left;
     height:50px;
     width:14.28555555555%;

@@ -339,8 +339,19 @@
         TmDatePicker.datearray = datearray;
         var html = TmDatePicker.createPanel(datearray);
         $("#tm-calender-picker").remove();
-        TmDatePicker.container.append(html);
-        $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
+        TmDatePicker.container.html(html);
+        if (TmDatePicker.currentui == "week") {
+            if ($(".tm-calendar-currentmonth-weekofday[date-day=" + date + "]").length > 0) {
+                var _dindex = $(".tm-calendar-currentmonth-weekofday[date-day=" + TmDatePicker.getToday().fulldate + "]").index()-1;
+                var _hindex = TmDatePicker.getToday().hour;
+                var _mindex = TmDatePicker.getToday().minute;
+                var tp = _mindex / $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").height() + "px";
+                var _style = "height:1px;background-color:red;width:100%;postion:relative;display:block;" + "top:" + tp;
+                $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<span class=\"tm-today-line\" style="+_style+"></span>");
+            }
+        } else {
+            $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
+        }
         TmDatePicker.showtimearea.html(TmDatePicker.currentyear + "-" + (TmDatePicker.currentmonth < 10 ? "0" + TmDatePicker.currentmonth : TmDatePicker.currentmonth));
         var onpagechanged = TmDatePicker.getOptionValue("onpagechanged");
         if (typeof (onpagechanged) == "function") {
