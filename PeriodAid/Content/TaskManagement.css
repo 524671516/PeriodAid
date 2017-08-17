@@ -1133,6 +1133,7 @@ a.btn_subtask_detail{
 .tm-view-header{
     position:relative;
     height:47px;
+    line-height:47px;
     border-bottom: 1px solid #E5E5E5;
     min-width:550px;
 }
@@ -1143,15 +1144,19 @@ a.btn_subtask_detail{
     text-align:center;
 }
 .tm-view-header-close button{
+    width:28px;
     outline:none;
+    float:none;
+    line-height:inherit;
+    font-size:26px;
 }
 .tm-view-header-close{ 
+         padding:0 15px;
     text-align:center;
     position:absolute;
     right:15px;
     top:0;
     bottom:0;
-    padding:11.5px 22px 12.5px 25px;
 }
 .tm-view-calendar-control-task:hover{
     background-color:rgba(0,0,0,.1)
@@ -1166,21 +1171,20 @@ a.btn_subtask_detail{
     background:#fff;
 }
 .tm-view-header-select{  
+     font-size:16px;
     text-align:center;
     position:absolute;
     left:15px;
     top:0;
     bottom:0;
-    padding:11.5px 22px 12.5px 0px;
 }
 .tm-view-control .tm-view-control-link{
     display:inline-block;
     float:none;
 }
 .tm-calendar-view-control{
-    font-size:15px;
+    font-size:18px;
     cursor:pointer;
-    padding: 13.5px 10px;
     height:47px;
 }
 .tm-view-control-link,.tm-view-control-sort{
@@ -1188,7 +1192,6 @@ a.btn_subtask_detail{
     color: #777;
     display:block;
     float:left;
-    padding:15px 15px 12px 15px;
     margin:0 15px;
 }
 .tm-view-control-link:hover:after,.tm-view-control-link.active:after{

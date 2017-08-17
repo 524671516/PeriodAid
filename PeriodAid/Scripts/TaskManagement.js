@@ -71,7 +71,11 @@
                     })
                 }
             }, function () {
-                _self.attr("checked", false);
+                if (_self.hasClass("tm-checkbox-input")) {
+                    _self.attr("checked", !_self.is(":checked"));
+                }
+                _self.attr("checked", _self.is(":checked"));
+               
             });
         } else if (($(this).attr("data-atid"))) {
             _data.SubTaskId = $(this).attr("data-atid");
@@ -100,7 +104,10 @@
                     })
                 }                
             }, function () {
-                _self.attr("checked", false);
+                if (_self.hasClass("tm-checkbox-input")) {
+                    _self.attr("checked", !_self.is(":checked"));
+                }
+                _self.attr("checked", _self.is(':checked'));
             });
         } else {
             ErrorAlert("获取原始数据失败。");
@@ -571,25 +578,25 @@ function ShowTmView(url) {
 
 
 //
-(function ($) {
-    if (typeof ($) != "function") {
-        console.log("没有引入Jquery");
-        return;
-    };
-    var TmApp = function (element, options) {
-        this.$element = $(element);
-        if (options) {
-            this.$options = options;
-        }
-        this.$subjectnum = 0;
-        this.init();
-    };
-    TmApp.prototype.init = function () {
-        console.log(this.$element);
-    };
-    window.TmApp = TmApp;
+//(function ($) {
+//    if (typeof ($) != "function") {
+//        console.log("没有引入Jquery");
+//        return;
+//    };
+//    var TmApp = function (element, options) {
+//        this.$element = $(element);
+//        if (options) {
+//            this.$options = options;
+//        }
+//        this.$subjectnum = 0;
+//        this.init();
+//    };
+//    TmApp.prototype.init = function () {
+//        console.log(this.$element);
+//    };
+//    window.TmApp = TmApp;
     
-})(jQuery)
+//})(jQuery)
 
 
 
