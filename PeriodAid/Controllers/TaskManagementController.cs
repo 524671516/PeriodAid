@@ -2685,7 +2685,32 @@ namespace PeriodAid.Controllers
 
 
 
+        public ActionResult QuickSearch(string input) {
+            var getSubject = from m in _db.Subject
+                          where m.SubjectTitle.Contains(input)
+                          select m;
+            var getAssignment = from m in _db.Assignment
+                                where m.AssignmentTitle.Contains(input)
+                                select m;
+            var getSubTask = from m in _db.SubTask
+                             where m.TaskTitle.Contains(input)
+                             select m;
+            if (getSubject != null) {
+                return PartialView(getSubject);
+            }
+            if (getAssignment != null)
+            {
+                return PartialView(getAssignment);
+            }
+            if (getSubTask != null)
+            {
+                return PartialView(getSubTask);
+            }
+            else {
+                return PartialView();
+            }
 
+        }
 
 
 
@@ -2922,7 +2947,6 @@ namespace PeriodAid.Controllers
                 b.Dispose();
             }
         }
-
 
 
 

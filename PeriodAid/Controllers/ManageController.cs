@@ -217,7 +217,7 @@ namespace PeriodAid.Controllers
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
-
+            var img=
             return View();
         }
 

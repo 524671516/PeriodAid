@@ -588,8 +588,16 @@ function ShowTmView(url) {
             });
         }
 }
+$("#quick-search").on("keyup", function () {
+    $.ajax({
+        url: "/TaskManagement/QuickSearch/",
+        data: {
+            input: $(this).val()
+        }, success() {
 
-
+        }
+    })
+})
 
 
 
