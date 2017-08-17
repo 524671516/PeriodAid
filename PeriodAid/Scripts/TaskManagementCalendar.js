@@ -37,11 +37,11 @@
         var lastdayoflastmonth = new Date(year, month - 1, 0);   //获取上月的最后一天
         var lastdateoflastmonth = lastdayoflastmonth.getDate();  //获取上个月最后一天是几号
         var lastdateofmonth = lastdayofmonth.getDate();          //获取本月最后一天是几号
+        var firstdayofmonth = new Date(year, month - 1, 1);     //本月的第一天
         if (TmDatePicker.currentui == "month") {
             if (typeof (year) != "number" || typeof (month) != "number") {
                 throw new Error('typeof yaer/month is not a number!');
             } else {
-                var firstdayofmonth = new Date(year, month - 1, 1);     //本月的第一天
                 var firstdayofweekday = firstdayofmonth.getDay();  //计算每月第一天是星期几
                 if (firstdayofweekday === 0) firstdayofweekday = 7     //星期日转化为7
                 var lastdayscount = firstdayofweekday - 1;           //上个月需要补充的天数
@@ -75,13 +75,6 @@
                         virtualdate: virtualdate
                     });
                 }
-                return {
-                    currentyear: firstdayofmonth.getFullYear(),
-                    currentmonth: firstdayofmonth.getMonth() + 1,
-                    lastday: lastdateofmonth,
-                    days: resdata
-                }
-
             }
         } else {
             if (typeof (year) != "number" || typeof (month) != "number" || typeof (day) != "number") {
@@ -152,13 +145,13 @@
                         virtualdate: virtualdate
                     });
                 }
-                return {
-                    currentyear: firstdayofmonth.getFullYear(),
-                    currentmonth: firstdayofmonth.getMonth() + 1,
-                    lastday: lastdateofmonth,
-                    days: resdata
-                }
             }
+        }
+        return {
+            currentyear: firstdayofmonth.getFullYear(),
+            currentmonth: firstdayofmonth.getMonth() + 1,
+            lastday: lastdateofmonth,
+            days: resdata
         }
 
     }
@@ -167,8 +160,7 @@
 
     //创建日历模板
     TmDatePicker.createPanel = function (datearray) {
-        var initui = TmDatePicker.getOptionValue("initui");
-        switch (initui) {
+        switch (TmDatePicker.currentui) {
             case "month":
                 var _html = "<div class=\"tm-calendar-view-panel\" id=\"tm-calender-picker\">" +
                             "<div class=\"tm-calendar-inner\">" +
@@ -242,7 +234,7 @@
                             "<div class=\"tm-calendar-time\"><div>夜晚11点</div></div><div class=\"tm-calendar-time\"></div></div><div class=\"tm-calendar-content-area float-left\">"
                 for(i=0;i<24;i++){
                     var _htmlfooterpart;
-                    _htmlfooterpart="<ul class=\"clear-float calendar-week-area\"><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li></ul>"
+                    _htmlfooterpart="<ul class=\"clear-float calendar-week-area\"><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>"
                     _htmlbodyfooter+= _htmlfooterpart;
                 }
                 _htmlbodyfooter += "</div></div></div></div>";
@@ -267,6 +259,7 @@
         
         return _html;
     }
+
     //判断传入参数是否为数组
     TmDatePicker.isArray = function (obj) {
         return Object.prototype.toString.call(obj) === '[object Array]';
@@ -280,57 +273,75 @@
             return TmDatePicker.defaultOptions[option];
         }
     }
-
     //绑定事件
     TmDatePicker.bindEvent = function () {
-        var container = TmDatePicker.getOptionValue("container");
         var next = TmDatePicker.getOptionValue("nextbtn");
         var prev = TmDatePicker.getOptionValue("prebtn");
+        var changeui = TmDatePicker.getOptionValue("changeuibtn");
+        $(next).off("click");
+        $(prev).off("click");
+        $(changeui).off("click");
+        var lastdayofmonth = new Date(TmDatePicker.currentyear, TmDatePicker.currentmonth, 0);           //本月的最后一天
+        var lastdayoflastmonth = new Date(TmDatePicker.currentyear, TmDatePicker.currentmonth - 1, 0);   //获取上月的最后一天
+        var lastdateoflastmonth = lastdayoflastmonth.getDate();  //获取上个月最后一天是几号
+        var lastdateofmonth = lastdayofmonth.getDate();          //获取本月最后一天是几号
+        $(changeui).on("click", function () {
+            if (TmDatePicker.currentui == "week") {
+                TmDatePicker.currentui = "month";
+            } else {
+                TmDatePicker.currentui = "week";
+            }
+            var onuichanged = TmDatePicker.getOptionValue("onuichanged");
+            if (typeof (onuichanged) == "function") {
+                onuichanged(TmDatePicker, TmDatePicker.currentui);
+            } else {
+                throw new Error("onuichanged is not a function");
+            }
+            TmDatePicker.bindEvent();
+            TmDatePicker.createUi();
+        });
         $(prev).on("click", function () {
-            TmDatePicker.currentmonth -= 1;
-            if (TmDatePicker.currentmonth < 1) {
-                TmDatePicker.currentmonth = 12;
-                TmDatePicker.currentyear -= 1;
+            if (TmDatePicker.currentui == "week") {
+                TmDatePicker.currentday -= 7;
+                if (TmDatePicker.currentday <= 0) {
+                    TmDatePicker.currentday = TmDatePicker.currentday + lastdateoflastmonth;
+                    TmDatePicker.currentmonth -= 1;
+                }
+            } else {
+                TmDatePicker.currentmonth -= 1;
             }
-            TmDatePicker.createUi()
-        });
-        $(next).on("click", function () {
-            TmDatePicker.currentmonth += 1;
-            if (TmDatePicker.currentmonth > 12) {
-                TmDatePicker.currentmonth = 1;
-                TmDatePicker.currentyear += 1;
-            }
-            TmDatePicker.createUi()
-        });
-        $(container).on("click", ".tm-calendar-prevmonth-weekofday", function () {
-            TmDatePicker.currentmonth -= 1;
-            if (TmDatePicker.currentmonth < 1) {
-                TmDatePicker.currentmonth = 12;
-                TmDatePicker.currentyear -= 1;
-            }
-            TmDatePicker.createUi()
-        });
-        $(container).on("click", ".tm-calendar-nextmonth-weekofday", function () {
-            TmDatePicker.currentmonth += 1;
-            if (TmDatePicker.currentmonth > 12) {
-                TmDatePicker.currentmonth = 1;
-                TmDatePicker.currentyear += 1;
-            }
-            TmDatePicker.createUi()
-        })
+                if (TmDatePicker.currentmonth < 1) {
+                    TmDatePicker.currentmonth = 12;
+                    TmDatePicker.currentyear -= 1;
+                }
+                TmDatePicker.createUi()
+            });
+            $(next).on("click", function () {
+                if (TmDatePicker.currentui == "week") {
+                    TmDatePicker.currentday += 7;
+                    if (TmDatePicker.currentday > lastdateofmonth) {
+                        TmDatePicker.currentday = TmDatePicker.currentday - lastdateofmonth;
+                        TmDatePicker.currentmonth += 1;
+                    }
+                } else {
+                    TmDatePicker.currentmonth += 1;
+                }
+                if (TmDatePicker.currentmonth > 12) {
+                    TmDatePicker.currentmonth = 1;
+                    TmDatePicker.currentyear += 1;
+                }
+                TmDatePicker.createUi()
+            });
     }
     TmDatePicker.createUi = function () {
-        var container = TmDatePicker.getOptionValue("container");
-        var showtimearea = TmDatePicker.getOptionValue("showtimearea");
-        var month = TmDatePicker.currentmonth;
-        var year = TmDatePicker.currentyear;
-        var date = TmDatePicker.defaultOptions.currentdate;
-        var datearray = TmDatePicker.getMonthDate(year, month);
+        var date = TmDatePicker.defaultOptions.initfulldate;
+        var datearray = TmDatePicker.getMonthDate(TmDatePicker.currentyear, TmDatePicker.currentmonth, TmDatePicker.currentday);
+        TmDatePicker.datearray = datearray;
         var html = TmDatePicker.createPanel(datearray);
         $("#tm-calender-picker").remove();
-        $(container).append(html);
+        TmDatePicker.container.append(html);
         $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
-        $(showtimearea).html(year + "-" + (month < 10 ? "0" + month : month));
+        TmDatePicker.showtimearea.html(TmDatePicker.currentyear + "-" + (TmDatePicker.currentmonth < 10 ? "0" + TmDatePicker.currentmonth : TmDatePicker.currentmonth));
         var onpagechanged = TmDatePicker.getOptionValue("onpagechanged");
         if (typeof (onpagechanged) == "function") {
             onpagechanged(TmDatePicker);
@@ -338,25 +349,7 @@
             throw new Error("onpagechanged is not a function");
         }
     }
-    TmDatePicker.createUiInit = function () {
-        var container = TmDatePicker.getOptionValue("container");
-        var month = TmDatePicker.getOptionValue("initmonth");
-        var year = TmDatePicker.getOptionValue("inityear");
-        var date = TmDatePicker.defaultOptions.currentdate;
-        TmDatePicker.currentmonth = month;
-        TmDatePicker.currentyear = year;
-        var datearray = TmDatePicker.getMonthDate(year, month);
-        var html = TmDatePicker.createPanel(datearray);
-        $(container).append(html);
-        $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
-        TmDatePicker.bindEvent();
-        var onpagechanged = TmDatePicker.getOptionValue("onpagechanged");
-        if (typeof (onpagechanged) == "function") {
-            onpagechanged(TmDatePicker);
-        } else {
-            throw new Error("onpagechanged is not a function");
-        }
-    }
+
     TmDatePicker.defaultOptions = {
         container: "body",                              //默认会append在body里面
         initfulldate: TmDatePicker.getToday().fulldate, //默认时间         形式为2017-8-25
@@ -365,13 +358,14 @@
         initday: TmDatePicker.getToday().day,           //默认当前日        //后期删除
         nextbtn: ".tm-calendar-next",
         prebtn: ".tm-calendar-prev",
+        changeuibtn: ".tm-change-calendar-ui",         //切换ui
         showtimearea: ".tm-calendar-currentmonth",     //展示时间的容器
         initui:"month",                                //初始ui样式 "week"和"month"可选
         changeuibtn:".tm-calendar-change-ui",          //修改ui样式 周或者月来回切换 
         onpagechanged: function (e) {
 
         },
-        onchangeuied: function (e) {
+        onuichanged: function (e, currentui) {
 
         },
     };
@@ -380,10 +374,18 @@
             throw new Error("the function of Init only can accept object!");
         } else {
             if (typeof (options) == "object" && !TmDatePicker.isArray(options)) {
-                TmDatePicker.userOptions = options;
-                var initui = TmDatePicker.getOptionValue("initui");
-                TmDatePicker.currentui = initui;
-                TmDatePicker.createUiInit();
+                TmDatePicker.userOptions = options;                               //绑定用户参数
+                var initui = TmDatePicker.getOptionValue("initui");               
+                var container = TmDatePicker.getOptionValue("container");         
+                var showtimearea = TmDatePicker.getOptionValue("showtimearea");   
+                TmDatePicker.currentui = initui;                          //绑定初始化ui值
+                TmDatePicker.container = $(container);                   //绑定初始化日历容器
+                TmDatePicker.showtimearea = $(showtimearea);             //绑定初始化当前月显示位置
+                TmDatePicker.currentyear = TmDatePicker.getOptionValue("inityear");
+                TmDatePicker.currentmonth = TmDatePicker.getOptionValue("initmonth");
+                TmDatePicker.currentday = TmDatePicker.getOptionValue("initday");
+                TmDatePicker.createUi();   //创建ui
+                TmDatePicker.bindEvent();  //创建事件
             } else {
                 throw new Error("the function of Init only can accept object!");
             };
