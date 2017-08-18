@@ -324,12 +324,13 @@ a.close{
    -webkit-transition:  all 300ms ease;	/* Safari 和 Chrome */
    -o-transition:  all 300ms ease;	/* Opera */
 }
+
 .card-item:hover{
-   -moz-box-shadow: 0px 8px 15px #ccc; /* 老的 Firefox */
-   -webkit-box-shadow:0px 8px 15px #ccc;
-   box-shadow:0px 8px 15px #ccc;
-   top:-5px;
-}
+        -moz-box-shadow: 0px 8px 15px #ccc; /* 老的 Firefox */
+        -webkit-box-shadow: 0px 8px 15px #ccc;
+        box-shadow: 0px 8px 15px #ccc;
+        top: -5px;
+    }
 .card-header,.card-footer{
     overflow: hidden;
     text-overflow: ellipsis;

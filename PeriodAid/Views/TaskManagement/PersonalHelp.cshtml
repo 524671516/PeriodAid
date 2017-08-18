@@ -1,1 +1,53 @@
-﻿
+﻿@{
+    Layout =null;
+}
+ <div class="modal-content" id="Create-Subject-Content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="Add-SubjectLabel">使用演示</h4>
+        </div>
+        <div class="modal-body">
+            <div class="form-group text-center">
+                <button type="button" class="btn btn-green btn-show-video active">演示①</button>
+                <button type="button" class="btn btn-green btn-show-video">演示②</button>
+                <button type="button" class="btn btn-green btn-show-video">演示③</button>
+                  <div id="video_container">
+                      <video id="video_show" controls="controls" height="350" width="560">
+                          <source src="~/Content/audio/video_subject.mp4" type="video/mp4" />
+                      </video>
+                  </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group text-center">
+                    <p>项目操作：5少时诵诗书所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所</p>
+                    <button type="button" class="btn btn-blue btn-show-video next-btn">下一个</button>
+                </div>
+            </div>
+        </div>
+ </div>
+
+<script>
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+    $(".btn-show-video").on("click", function () {
+        var video_url = ["/Content/audio/video_subject.mp4", "/Content/audio/video_subject.mp4", "/Content/audio/video_subject.mp4"];
+        var _index;
+        if ($(this).hasClass("next-btn")) {
+            _index = $(".btn-show-video.active").index() + 1;
+            $(".btn-show-video").removeClass("active");
+            if (_index > 2) {
+                _index = 0;
+            }
+            $(".btn-show-video:eq(" + _index + ")").addClass("active");  
+        } else {
+            $(".btn-show-video").removeClass("active");
+            $(this).addClass("active");
+            _index = $(".btn-show-video.active").index();
+        }    
+        var init_url = video_url[_index];
+        $("#video_container").slideUp();
+        $("#video_container").slideDown().html("<video id=\"video_show\" controls=\"controls\" height=\"350\" width=\"560\"><source src=\"" + init_url + "\" type=\"video/mp4\" /></video>");
+    })
+
+</script>
