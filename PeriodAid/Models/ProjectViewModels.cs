@@ -15,6 +15,8 @@ namespace PeriodAid.Models
         public string Type { get; set; }
         public int TypeCode { get; set; }
         public string DeadTime { get; set; }
+        public int Hour { get; set; }
+        public int Minute { get; set; }
     }
     public class TypeRangeClass
     {

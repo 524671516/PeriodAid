@@ -3,12 +3,9 @@
     <div class="tm-view-header tm-calendar-view-header">
         <div class="tm-view-header-select">
             <span class="tm-view-calendar-task-num" id="tm-view-calendar-task-num" style="padding:0 8px 0 0 "><span>任务总数:</span>&nbsp;<strong>12</strong></span>&nbsp;
-            <div class="btn-group">
-                <button type="button" class="btn btn-default" aria-label="Left Align">任务</button>
-                <button type="button" class="btn btn-default active" aria-label="Center Align">子任务</button>
-                <button type="button" class="btn btn-default active tm-calendar-change-ui" aria-label="Right Align">周</button>
-                <button type="button" class="btn btn-default" aria-label="Justify">月</button>
-            </div>
+            <a class="tm-view-calendar-btn tm-change-calendar-ui">切换显示</a>
+            <a class="tm-view-calendar-btn">任务</a>
+            <a class="tm-view-calendar-btn">子任务</a>
         </div>
         
         <div class="tm-calendar-view-control tm-view-control">
@@ -30,11 +27,7 @@
         TmDatePicker.Init({
             container: "#tm-calendar-view-wrap",
             initui: "month",
-            onuichanged: function (e, currentui) {
-                console.log("uibianhuala")
-            },
             onpagechanged: function (e) {
-                console.log(e);
                 var pickerdata = e;
                 $.ajax({
                     url: "/TaskManagement/EmployeeMonthDataOfTask",
@@ -44,17 +37,34 @@
                         year: e.currentyear
                     },
                     success: function (data) {
+                        console.log(data);
                         if (data.result == "SUCCESS") {
                             var _len = data.data.length;
-                            $("#tm-view-calendar-task-num strong").html(_len);
-                            for (i = 0; i < _len; i++) {
-                                if (data.data[i].TypeCode == 1) {
-                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
-                                } else {
-                                    $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
-                                }
+                            if (pickerdata.currentui == "month") {
+                                for (i = 0; i < _len; i++) {
+                                    if (data.data[i].TypeCode == 1) {
+                                        $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                    } else {
+                                        $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                    }
 
+                                }
+                            } else {
+                                for (i = 0; i < _len; i++) {
+                                    if ($(".tm-calendar-currentmonth-weekofday[date-day=" + data.data[i].DeadTime + "]").length > 0) {
+                                        var _dindex = $(".tm-calendar-currentmonth-weekofday[date-day=" + data.data[i].DeadTime + "]").index();
+                                        var _hindex = data.data[i].Hour;
+                                        var _mindex = data.data[i].Minute;
+                                        if (data.data[i].TypeCode == 1) {
+                                            $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                        } else {
+                                            $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                        }
+                                       
+                                    }
+                                }                             
                             }
+                            $("#tm-view-calendar-task-num strong").html($(".tm-show-task-modal").length);
                         } else {
                             ErrorAlert("数据获取失败。");
                         }
