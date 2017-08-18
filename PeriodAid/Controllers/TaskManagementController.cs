@@ -2515,7 +2515,10 @@ namespace PeriodAid.Controllers
                         Name = item.Name,
                         Type = item.Type,
                         TypeCode = item.TypeCode,
-                        DeadTime = Convert.ToDateTime(item.DeadTime).ToString("yyyy-MM-dd")
+                        DeadTime = Convert.ToDateTime(item.DeadTime).ToString("yyyy-MM-dd"),
+                        Hour=Convert.ToDateTime(item.DeadTime).Hour,
+                        Minute= Convert.ToDateTime(item.DeadTime).Minute,
+
                     };
                     hal.Add(t);
                 }

@@ -1136,7 +1136,7 @@ a.btn_subtask_detail{
     height:47px;
     line-height:47px;
     border-bottom: 1px solid #E5E5E5;
-    min-width:550px;
+    min-width:960px;
 }
 .tm-view-control{
     width:100%;
@@ -1186,7 +1186,6 @@ a.btn_subtask_detail{
 .tm-calendar-view-control{
     font-size:18px;
     cursor:pointer;
-    height:47px;
 }
 .tm-view-control-link,.tm-view-control-sort{
     position:relative;
@@ -1430,9 +1429,6 @@ a.btn_subtask_detail{
     width:30px;
     padding:5px;
 }
-.tm-calendar-inner-header ul.calendar-week-area  li:first-child{
-    width:8%;
-}
 .tm-calendar-time-area{
     width:8%;
 
@@ -1451,7 +1447,7 @@ a.btn_subtask_detail{
 }
 .tm-calendar-inner-header ul.calendar-week-area  li{
     height:40px;
-    width:13.14222222%;
+    width:14.28555555555%;
 }
  .tm-calendar-inner-body ul.calendar-week-area li{
      position:relative;
@@ -1467,6 +1463,35 @@ a.btn_subtask_detail{
 }
 .tm-calendar-inner-body.tm-calendar-week-body{
        height:calc(100% - 82px);
+}
+.tm-today-line:before{
+    content:'';
+    height:6px;
+    background-color:red;
+    width:6px;
+    border-radius:50%;
+    display:block;
+    position:absolute;
+    top:-3px;
+    left:0;
+}
+.tm-view-calendar-btn{
+    border:1px solid #ccc;
+    background-color:#3da8f5;
+    color:#fff;
+    cursor:pointer;
+    border-radius:5px;
+    padding:4px;
+    text-align:center;
+    vertical-align:middle;
+}
+.tm-view-calendar-btn.active{
+    background-color:#ccc;
+    color:#000;
+}
+.tm-view-calendar-btn:hover{
+    background-color:#ccc;
+    color:#000;
 }
 /*日历样式结束*/
 

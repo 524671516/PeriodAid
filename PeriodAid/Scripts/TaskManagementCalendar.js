@@ -210,14 +210,15 @@
                 _html += _htmlbodyfooter;
                 break;
             case "week":
-                var _html="<div class=\"tm-calendar-view-panel\">"+
+                var _html="<div class=\"tm-calendar-view-panel\" id=\"tm-calender-picker\">"+
                 "<div class=\"tm-calendar-inner\">"+
-                "<div class=\"tm-calendar-inner-header  tm-calendar-week-header\">"+
-                "<ul class=\"clear-float calendar-week-area\"><li></li>";
-                var _htmlbodyfooter = "</ul></div><div class=\"tm-calendar-inner-header tm-calendar-week-header\">"+
-                        "<div class=\"tm-calendar-time-area\"></div>"+
-                        "<ul class=\"clear-float calendar-week-area\">"+
-                            "<li>全天</li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>"+
+                "<div class=\"tm-calendar-inner-header  tm-calendar-week-header\">" +
+                "<div class=\"tm-calendar-time-area float-left\"><div class=\"tm-calendar-time\"  style=\"height:40px;border-bottom: 1px solid #E5E5E5;\"></div></div>" +
+                "<div class=\"tm-calendar-content-area float-left\"><ul class=\"clear-float calendar-week-area\">";
+                var _htmlbodyfooter = "</ul></div></div><div class=\"tm-calendar-inner-header tm-calendar-week-header\">"+
+                        "<div class=\"tm-calendar-time-area float-left\"><div class=\"tm-calendar-time\" style=\"line-height:40px;height:40px;border-bottom: 1px solid #E5E5E5;\">全天</div></div>" +
+                        "<div class=\"tm-calendar-content-area float-left\"><ul class=\"clear-float calendar-week-area\">" +
+                            "<li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul></div>"+
                     "</div><div class=\"tm-calendar-inner-body tm-calendar-week-body clear-float\">"+
                         "<div class=\"tm-calendar-time-area float-left\">"+
                            " <div class=\"tm-calendar-time\"><div>凌晨1点</div></div><div class=\"tm-calendar-time\"><div>凌晨2点</div></div>"+
@@ -234,7 +235,7 @@
                             "<div class=\"tm-calendar-time\"><div>夜晚11点</div></div><div class=\"tm-calendar-time\"></div></div><div class=\"tm-calendar-content-area float-left\">"
                 for(i=0;i<24;i++){
                     var _htmlfooterpart;
-                    _htmlfooterpart="<ul class=\"clear-float calendar-week-area\"><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>"
+                    _htmlfooterpart = "<ul class=\"clear-float calendar-week-area\"><li class=\"tm-calendar-weekofday\"></li><li class=\"tm-calendar-weekofday\"></li><li class=\"tm-calendar-weekofday\"></li><li class=\"tm-calendar-weekofday\"></li><li class=\"tm-calendar-weekofday\"></li><li class=\"tm-calendar-weekofday\"></li><li class=\"tm-calendar-weekofday\"></li></ul>"
                     _htmlbodyfooter+= _htmlfooterpart;
                 }
                 _htmlbodyfooter += "</div></div></div></div>";
@@ -341,13 +342,14 @@
         $("#tm-calender-picker").remove();
         TmDatePicker.container.html(html);
         if (TmDatePicker.currentui == "week") {
-            if ($(".tm-calendar-currentmonth-weekofday[date-day=" + date + "]").length > 0) {
-                var _dindex = $(".tm-calendar-currentmonth-weekofday[date-day=" + TmDatePicker.getToday().fulldate + "]").index()-1;
+            if ($(".tm-calendar-currentmonth-weekofday[date-day=" + TmDatePicker.getToday().fulldate + "]").length > 0) {
+                var _dindex = $(".tm-calendar-currentmonth-weekofday[date-day=" + TmDatePicker.getToday().fulldate + "]").index();
                 var _hindex = TmDatePicker.getToday().hour;
                 var _mindex = TmDatePicker.getToday().minute;
-                var tp = _mindex / $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").height() + "px";
-                var _style = "height:1px;background-color:red;width:100%;postion:relative;display:block;" + "top:" + tp;
-                $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<span class=\"tm-today-line\" style="+_style+"></span>");
+                var tp = $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").height() / 60 * _mindex + "px";
+                var _style = "height:1px;background-color:rgba(255,0,0,1);width:100%;position:absolute;display:block;line-height:1px;text-align:center;" + "top:" + tp;
+                $("#tm-calender-picker ul").find("li:eq(" + _dindex + ")").css("background", "rgba(61, 168, 245, 0.1)");
+                $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<span class=\"tm-today-line\" style=" + _style + "></span>");
             }
         } else {
             $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
@@ -372,7 +374,6 @@
         changeuibtn: ".tm-change-calendar-ui",         //切换ui
         showtimearea: ".tm-calendar-currentmonth",     //展示时间的容器
         initui:"month",                                //初始ui样式 "week"和"month"可选
-        changeuibtn:".tm-calendar-change-ui",          //修改ui样式 周或者月来回切换 
         onpagechanged: function (e) {
 
         },
