@@ -1467,6 +1467,17 @@ a.btn_subtask_detail{
 .tm-calendar-inner-body.tm-calendar-week-body{
        height:calc(100% - 82px);
 }
+.tm-today-line:before{
+    content:'';
+    height:6px;
+    background-color:red;
+    width:6px;
+    border-radius:50%;
+    display:block;
+    position:absolute;
+    top:-3px;
+    left:0;
+}
 /*日历样式结束*/
 
 

@@ -345,9 +345,9 @@
                 var _dindex = $(".tm-calendar-currentmonth-weekofday[date-day=" + TmDatePicker.getToday().fulldate + "]").index()-1;
                 var _hindex = TmDatePicker.getToday().hour;
                 var _mindex = TmDatePicker.getToday().minute;
-                var tp = _mindex / $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").height() + "px";
-                var _style = "height:1px;background-color:red;width:100%;postion:relative;display:block;" + "top:" + tp;
-                $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<span class=\"tm-today-line\" style="+_style+"></span>");
+                var tp = $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").height() / 60 * _mindex + "px";
+                var _style = "height:1px;background-color:rgba(255,0,0,1);width:100%;position:absolute;display:block;line-height:1px;text-align:center;" + "top:" + tp;
+                $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<span class=\"tm-today-line\" style=" + _style + "></span>");
             }
         } else {
             $(".tm-calendar-monthofdate[date-day=" + date + "]").addClass("tm-calendar-monthofcurrentdate");
