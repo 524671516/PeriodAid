@@ -123,7 +123,7 @@
             url: "/TaskManagement/GetSubjectForm",
             success: function (data) {
                 if (data == "FAIL") {
-                    ErrorAlert("操作失败。")
+                    ErrorAlert("操作失败。");
                 } else {
                     $("#Add-Subject #Create-Subject-Content").html(data);
                     $("#Add-Subject").modal('show');
@@ -577,26 +577,26 @@ function ShowTmView(url) {
 
 
 
-//
-//(function ($) {
-//    if (typeof ($) != "function") {
-//        console.log("没有引入Jquery");
-//        return;
-//    };
-//    var TmApp = function (element, options) {
-//        this.$element = $(element);
-//        if (options) {
-//            this.$options = options;
-//        }
-//        this.$subjectnum = 0;
-//        this.init();
-//    };
-//    TmApp.prototype.init = function () {
-//        console.log(this.$element);
-//    };
-//    window.TmApp = TmApp;
+
+(function ($) {
+    if (typeof ($) != "function") {
+        console.log("没有引入Jquery");
+        return;
+    };
+    var TmApp = function (element, options) {
+        this.$element = $(element);
+        if (options) {
+            this.$options = options;
+        }
+        this.$subjectnum = 0;
+        this.init();
+    };
+    TmApp.prototype.init = function () {
+        console.log(this.$element);
+    };
+    window.TmApp = TmApp;
     
-//})(jQuery)
+})(jQuery)
 
 
 

@@ -35,12 +35,12 @@
     </div>
 </div>
 <div class="tm-panel-wrap tm_add_panel_hide" id="panel-wrap" data-sid="@Model.Id">
-    <div class="tm_control_panel_show" id="btn_show_add_panel">展开</div>
+    <div class="tm_control_panel_show tm-control-add-panel-btn">展开</div>
     <div class="tm-panel-container" id="tm_panel-container">
         <div class="tm_panel-item text-center tm_panel-item-add" id="tm_panel-item-add">
             <div class="color-gray btn-get-form" id="add-panel-list">
                 <div class="add-btn" id="btn_add-panel"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;新建列表</i></div>
-                <div class="tm_control_panel_hide" id="btn_hide_add_panel"><span>收起</span></div>
+                <div class="tm_control_panel_hide tm-control-add-panel-btn"><span>收起</span></div>
             </div>
             <div id="add-panel-write" class="tm_procedureform-area hidden">
                 @using (Html.BeginForm("CreateProcedure", "TaskManagement", FormMethod.Post, new { @id = "add_procedure_form", @class = "validate-form padding-10" }))
@@ -73,12 +73,14 @@
 <!--panel Menu End-->
 @section scripts{
     <script>
-        $("#btn_show_add_panel").on("click", function () {
-            $("#panel-wrap").removeClass("tm_add_panel_hide");
-            $("#tm_panel-container").scrollLeft("0")
-        });
-        $("#btn_hide_add_panel").on("click", function () {
-            $("#panel-wrap").addClass("tm_add_panel_hide");
+        //控制收起按钮
+        $(".tm-control-add-panel-btn").on("click", function () {
+            if ($("#panel-wrap").hasClass("tm_add_panel_hide")) {
+                $("#panel-wrap").removeClass("tm_add_panel_hide");
+                $("#tm_panel-container").scrollLeft("0")
+            } else {
+                 $("#panel-wrap").addClass("tm_add_panel_hide");
+            }
         });
 
         //项目菜单操作
