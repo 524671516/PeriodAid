@@ -6,7 +6,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-default" aria-label="Left Align">任务</button>
                 <button type="button" class="btn btn-default active" aria-label="Center Align">子任务</button>
-                <button type="button" class="btn btn-default active" aria-label="Right Align">周</button>
+                <button type="button" class="btn btn-default active tm-calendar-change-ui" aria-label="Right Align">周</button>
                 <button type="button" class="btn btn-default" aria-label="Justify">月</button>
             </div>
         </div>
@@ -29,8 +29,12 @@
     <script>
         TmDatePicker.Init({
             container: "#tm-calendar-view-wrap",
-            initui:"week",
+            initui: "month",
+            onuichanged: function (e, currentui) {
+                console.log("uibianhuala")
+            },
             onpagechanged: function (e) {
+                console.log(e);
                 var pickerdata = e;
                 $.ajax({
                     url: "/TaskManagement/EmployeeMonthDataOfTask",
