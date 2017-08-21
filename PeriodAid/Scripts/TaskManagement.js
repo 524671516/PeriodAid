@@ -571,7 +571,24 @@ function ShowTmView(url) {
         }
 }
 
-
+//帮助卡片
+$("#bn_help").on("click", function () {
+    $.ajax({
+        url: "/TaskManagement/PersonalHelp",
+        data: {
+            SubjectId: $(this).attr("data-link")
+        },
+        success: function (data) {
+            if (data != "FAIL") {
+                $("#Create-Subject-Content").html(data);
+                $("#Add-Subject").modal();
+            }
+            else {
+                ErrorAlert("获取项目基本信息失败。")
+            }
+        }
+    })
+});
 
 //dropdown位移控制
 
@@ -601,12 +618,7 @@ function ShowTmView(url) {
 //    window.TmApp = TmApp;
     
 //})(jQuery)
-(function (a, b) {
-    console.log(a + b);
-}(1, 2))
-(function (a, b) {
-    console.log(a + b);
-})(1, 2);
+
 
 
 

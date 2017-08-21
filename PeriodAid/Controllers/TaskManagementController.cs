@@ -1779,6 +1779,14 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
+        #region 我的帮助操作
+        //获取我的帮助页面
+        public ActionResult PersonalHelp()
+        {
+            return View();
+        }
+        #endregion
+
 
         #region 我的任务操作
         //获取我的任务页面

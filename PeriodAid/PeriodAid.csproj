@@ -283,6 +283,8 @@
     <Content Include="Content\audio\audio_02_background.jpg" />
     <Content Include="Content\audio\audio_03_background.jpg" />
     <Content Include="Content\audio\audio_03.mp3" />
+    <Content Include="Content\audio\video_mission.mp4" />
+    <Content Include="Content\audio\video_subject.mp4" />
     <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\bootstrap-select.css" />
@@ -1094,6 +1096,7 @@
     <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
