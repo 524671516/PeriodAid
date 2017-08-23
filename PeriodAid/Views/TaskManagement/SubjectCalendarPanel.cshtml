@@ -74,5 +74,31 @@
                 })
             }
         });
+        var spage_x;
+        var spage_y;
+        $("#my-app").on("mousedown", ".calendar-week-area li", function (e) {
+            console.log(e);
+            spage_x = e.pageX;
+            spage_y = e.pageY;
+            var target_height_half = e.target.clientHeight / 2;
+            if (e.offsetY > target_height_half) {
+                var style = 'position:absolute;bottom:0;width:100%;background:red;height:' + target_height_half+"px";
+               $(this).append("<div class=\"\" style=" + style + "></div>")
+            }
+            return false;
+        });
+        $("#my-app").on("mouseover", ".tm-calendar-content-area ", function (e) {
+            if (e.which == 1) {
+                console.log("yidong");
+                var px = e.pageX;
+                var py = e.pageY;
+                console.log(e.target);
+            }
+            return false;
+        });
+        $("#my-app").on("mouseup", ".tm-calendar-content-area ", function (e) {
+            console.log("松开");
+            return false;
+        });
     </script>
 </div>

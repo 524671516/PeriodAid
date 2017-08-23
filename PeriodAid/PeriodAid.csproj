@@ -214,6 +214,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorizationController.cs" />
+    <Compile Include="Controllers\MobileTaskManagementController.cs" />
     <Compile Include="Controllers\OffBonusController.cs" />
     <Compile Include="Controllers\OffCheckinController.cs" />
     <Compile Include="Controllers\OffCommonController.cs" />
@@ -309,6 +310,10 @@
     <Content Include="Content\font-awesome-ie7.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\framework7.ios.colors.css" />
+    <Content Include="Content\framework7.ios.css" />
+    <Content Include="Content\framework7.ios.rtl.css" />
+    <Content Include="Content\framework7.ios.rtl.min.css" />
     <Content Include="Content\images\banner_mobile_1.jpg" />
     <Content Include="Content\images\cover-default.jpg" />
     <Content Include="Content\images\defaultphoto.gif" />
@@ -421,6 +426,7 @@
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\prettify.css" />
     <Content Include="Content\TaskManagement.css" />
+    <Content Include="Content\taskmanagement_m.css" />
     <Content Include="Content\weui.min.css" />
     <Content Include="Content\framework7.ios.colors.min.css" />
     <Content Include="Content\framework7.ios.min.css" />
@@ -498,6 +504,8 @@
     <Content Include="Content\font-awesome.css.map" />
     <Content Include="Scripts\bootstrap-select.js.map" />
     <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="Scripts\framework7.js.map" />
+    <Content Include="Scripts\framework7.min.js.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />
@@ -535,6 +543,7 @@
     <Content Include="Scripts\Sortable.min.js" />
     <Content Include="Scripts\TaskManagement.js" />
     <Content Include="Scripts\TaskManagementCalendar.js" />
+    <Content Include="Scripts\taskmanagement_m.js" />
     <Content Include="Scripts\validate.expand.js" />
     <Content Include="Scripts\zepto.min.js" />
     <None Include="Scripts\_references.js" />
@@ -1051,7 +1060,6 @@
     <Content Include="Views\OffSellerTask\TaskSellerQueryDetails.cshtml" />
     <Content Include="Views\Custom\LittleGingerVoice.cshtml" />
     <Content Include="Views\TaskManagement\Index.cshtml" />
-    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\Subject_Detail.cshtml" />
     <Content Include="Views\TaskManagement\Personal_FinishSubjectListPartial.cshtml" />
     <Content Include="Views\TaskManagement\Personal_ActiveSubjectListPartial.cshtml" />
@@ -1098,7 +1106,11 @@
     <Content Include="Views\TaskManagement\SubjectCalendarPanel.cshtml" />
     <Content Include="Views\TaskManagement\SecuritySetting.cshtml" />
     <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
-    <Content Include="Views\TaskManagement\QuickSearch.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\MobileTaskManagement\Home.cshtml" />
+    <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
+    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
   </ItemGroup>
   <ItemGroup>
