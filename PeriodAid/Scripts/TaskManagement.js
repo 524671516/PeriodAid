@@ -584,7 +584,7 @@ $("#bn_help").on("click", function () {
                 $("#Add-Subject").modal();
             }
             else {
-                ErrorAlert("获取项目基本信息失败。")
+                ErrorAlert("获取项目基本信息失败。");
             }
         }
     })

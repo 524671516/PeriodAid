@@ -1,0 +1,89 @@
+﻿@model PeriodAid.Models.Subject
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>项目任务列表</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="subject_procedure" id="subject_procedure">
+        <div class="page-content" id="page-procedure-content">
+            @Html.HiddenFor(m => m.Id)
+            <div class="toolbar tabbar tabbar-scrollable">
+                <div class="toolbar-inner">
+                   @foreach (var item in Model.ProcedureTemplate.Procedure.OrderBy(m => m.Sort))
+                   {
+                       if (item.Sort == Model.ProcedureTemplate.Procedure.Select(m => m.Sort).Min())
+                       {
+                        <a href="#tab-procedure-@item.Sort" class="tab-link tab-link-procedure active" data-pid="@item.Id">@Html.Encode(item.ProcedureTitle)</a>
+                       }
+                       else
+                       {
+                        <a href="#tab-procedure-@item.Sort" class="tab-link tab-link-procedure" data-pid="@item.Id">@Html.Encode(item.ProcedureTitle)</a>
+                       }
+
+                   }
+                </div>
+            </div>
+            <div class="tabs">
+                @foreach (var item in Model.ProcedureTemplate.Procedure.OrderBy(m => m.Sort))
+                {
+                    if (item.Sort == Model.ProcedureTemplate.Procedure.Select(m => m.Sort).Min())
+                    {
+                        <div id="tab-procedure-@item.Sort" class="tab active">
+                            <div class="list-block media-list">
+                                <ul>
+                                    <li>
+                                        <a class="item-link" href="/MobileTaskManagement/SubjectProcedure?SubjectId=16">
+                                            <div class="item-content">
+                                                <div class="item-media"><img src="http://hhhhold.com/88/d/jpg?1" width="44"></div>
+                                                <div class="item-inner">
+                                                    <div class="item-title-row">
+                                                        <div class="item-title">Yellow Submarine</div>
+                                                    </div>
+                                                    <div class="item-subtitle">Beatles</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tm-empty">- 没有已归档的项目 -</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="tab-procedure-@item.Sort" class="tab">
+                            <div class="list-block media-list">
+                                <ul>
+                                    <li>
+                                        <a class="item-link" href="/MobileTaskManagement/SubjectProcedure?SubjectId=16">
+                                            <div class="item-content">
+                                                <div class="item-media"><img src="http://hhhhold.com/88/d/jpg?1" width="44"></div>
+                                                <div class="item-inner">
+                                                    <div class="item-title-row">
+                                                        <div class="item-title">Yellow Submarine</div>
+                                                    </div>
+                                                    <div class="item-subtitle">Beatles</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tm-empty">- 没有已归档的项目 -</div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
