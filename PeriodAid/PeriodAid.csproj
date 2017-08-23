@@ -1104,10 +1104,10 @@
     <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\LoginLog.cshtml" />
-    <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
     <Content Include="Views\MobileTaskManagement\Home.cshtml" />
     <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
     <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

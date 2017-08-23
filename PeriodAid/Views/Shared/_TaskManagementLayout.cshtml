@@ -135,9 +135,6 @@
     <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/TaskManagementCalendar.js"></script>
     <script>
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-        })
         $("#quick_search").focus(function () {
             $("#quick_search").off("keyup");
             $("#quick_search").on("keyup", function () {
@@ -156,18 +153,21 @@
                             for (var item in data) {
                                 for (i = 0; i < data[item].length; i++) {
                                     if (data[item][i].type == 0) {
-                                        $("#search_subject").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"right\" title=\"项目\" style=\"color:#3da8f5\" class=\"tm-show-subject-page\"  data-sid=" + data[item][i].id + ">" + '项目:【' + data[item][i].name + "】</a></li>");
+                                        $("#search_subject").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"项目\" style=\"color:#3da8f5\" class=\"tm-show-subject-page\"  data-sid=" + data[item][i].id + ">" + '项目:【' + data[item][i].name + "】</a></li>");
                                     } else if (data[item][i].type == 1) {
-                                        var taskbelong = "所属项目：" +"【"+ data[item][i].taskbelong+"】";
-                                        $("#search_ass").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"top\" title=" + taskbelong +" style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-aid=" + data[item][i].id + ">" + '任务:【' + data[item][i].name + "】</a></li>");
+                                        var taskbelong = "所属项目：" + "【" + data[item][i].taskbelong + "】";
+                                        $("#search_ass").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + taskbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-aid=" + data[item][i].id + ">" + '任务:【' + data[item][i].name + "】</a></li>");
                                     } else {
                                         var subtbelong = "所属任务：" + "【" + data[item][i].subtbelong + "】";
-                                        $("#search_subt").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"top\" title=" + subtbelong +" style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-atid=" + data[item][i].id + ">" + '子任务:【' + data[item][i].name + "】</a></li>");
+                                        $("#search_subt").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + subtbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-atid=" + data[item][i].id + ">" + '子任务:【' + data[item][i].name + "】</a></li>");
                                     }
                                 }
 
                             }
-                            $("#quick_result").slideDown()
+
+                            $("#quick_result").slideDown();
+                            $('[data-toggle="tooltip"]').tooltip();
+
                         }
                     })
                 }
