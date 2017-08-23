@@ -131,15 +131,18 @@ namespace PeriodAid.Controllers
         public ActionResult SecuritySetting(string username)
         {
             var employee = getEmployee(User.Identity.Name);
+            
             if (employee == null)
             {
                 return View("Error");
             }
             else
             {
-                return View(employee);
+                ViewBag.img = employee.ImgUrl;
+                return View();
             }
         }
+
 
         //修改个人信息
         [HttpPost, ValidateAntiForgeryToken]
@@ -1781,13 +1784,10 @@ namespace PeriodAid.Controllers
 
         #region 我的帮助操作
         //获取我的帮助页面
-        public ActionResult PersonalHelp()
-        {
+        public ActionResult PersonalHelp() {
             return View();
         }
         #endregion
-
-
         #region 我的任务操作
         //获取我的任务页面
         public ActionResult PersonalActionPanel()
@@ -2692,8 +2692,21 @@ namespace PeriodAid.Controllers
 
 
 
-
-
+        [HttpPost]
+        public JsonResult QuickSearch(string input)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            var subjectlist = (from m in _db.Subject
+                               where m.SubjectTitle.Contains(input) && m.HolderId == employee.Id && m.Status > SubjectStatus.ARCHIVED
+                               select new { id = m.Id, name = m.SubjectTitle, type = 0 }).ToList();
+            var tasklist = (from m in _db.Assignment
+                            where m.AssignmentTitle.Contains(input) && m.HolderId == employee.Id && m.Status > AssignmentStatus.ARCHIVED && m.Subject.Status > SubjectStatus.ARCHIVED
+                            select new { id = m.Id, name = m.AssignmentTitle, type = 1,taskbelong = m.Subject.SubjectTitle }).ToList();
+            var subtasklist = (from m in _db.SubTask
+                               where m.TaskTitle.Contains(input) && m.ExecutorId == employee.Id && m.Status > AssignmentStatus.DELETED && m.Assignment.Status> AssignmentStatus.DELETED && m.Assignment.Subject.Status> SubjectStatus.ARCHIVED
+                               select new { id = m.Id, name = m.TaskTitle, type = 2 ,subtbelong=m.Assignment.AssignmentTitle}).ToList();
+            return Json(new { subject = subjectlist, task = tasklist, subtask = subtasklist });
+        }
 
 
 
@@ -2930,7 +2943,6 @@ namespace PeriodAid.Controllers
                 b.Dispose();
             }
         }
-
 
 
 

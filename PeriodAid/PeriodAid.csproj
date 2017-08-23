@@ -1059,7 +1059,6 @@
     <Content Include="Views\OffSellerTask\TaskSellerQueryDetails.cshtml" />
     <Content Include="Views\Custom\LittleGingerVoice.cshtml" />
     <Content Include="Views\TaskManagement\Index.cshtml" />
-    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\Subject_Detail.cshtml" />
     <Content Include="Views\TaskManagement\Personal_FinishSubjectListPartial.cshtml" />
     <Content Include="Views\TaskManagement\Personal_ActiveSubjectListPartial.cshtml" />
@@ -1108,6 +1107,7 @@
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
     <Content Include="Views\MobileTaskManagement\Home.cshtml" />
     <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
+    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
