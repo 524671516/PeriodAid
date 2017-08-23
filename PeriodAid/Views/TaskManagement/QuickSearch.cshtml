@@ -2,6 +2,7 @@
 <ul>
     @foreach (var m in Model)
     {
-        <li data-original-index="3"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">许亦安</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+
+        <li style="background-color:#f5f5f5; opacity:0.9">@ViewBag.source：@m.SubjectTitle</li>
     }
 </ul>

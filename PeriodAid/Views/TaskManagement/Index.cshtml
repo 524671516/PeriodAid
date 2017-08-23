@@ -31,8 +31,8 @@
         //项目详细点击
         $(function () {
             //进入项目详情
-            $("#subject-container").on("click", ".card-item", function () {
-                var linkid = $(this).attr("data-link")
+            $("#my-app").on("click", ".tm-show-subject-page", function () {
+                var linkid = $(this).attr("data-sid")
                 if (linkid) {
                     location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
                 }

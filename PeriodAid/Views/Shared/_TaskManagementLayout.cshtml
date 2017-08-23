@@ -14,7 +14,7 @@
     <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
-    <link href="~/Content/TaskManagement.css?v=sds" rel="stylesheet" />
+    <link href="~/Content/TaskManagement.css" rel="stylesheet" />
     <!--[if lt IE 9]>
     <script src="~/Scripts/html5.js"></script>
     <script src="~/Scripts/respond.min.js"></script>
@@ -49,13 +49,17 @@
                                 </ul>
                             </div>
                         </li>
+                        <li class="dropdown open" style="max-height:400px;">
+                            <a href="#" style="padding:8px 0; background-color:#fff;" class="dropdown-toggle" aria-expanded="true"><input id="quick_search" class="form-control" type="text" autocomplete="on" placeholder="输入搜索内容" role="textbox" aria-label="Search" style="background-color:#eae6e6" /></a>
+                            <div class="dropdown-menu tm_dropdown" id="quick_result" style="display:none;width:179px;">
+                                <ul id="search_subject" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                                <ul id="search_ass" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                                <ul id="search_subt" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                            </div>
+                        </li>
                     </ul>
-                    <form class="navbar-form navbar-left">
-                        <span class="glyphicon glyphicon-search" style="font-size:20px;vertical-align: text-top;"></span>
-                        <div class="form-group">
-                            <input  id="quick-search" type="text" class="form-control" placeholder="输入搜索内容" style="background-color:#eae6e6">
-                        </div>
-                    </form>
+
+                 
                     <ul class="nav navbar-nav navbar-right navbar-border">        
                         <li><a href="#" id="bn_help" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="使用演示" style="font-size:20px;vertical-align: text-bottom;"></a></li>
                         <li><a href="javascript:;" id="task_my_btn" class="tm-show-view" data-href="/TaskManagement/PersonalActionPanel"><strong>我的</strong></a></li>
@@ -92,7 +96,7 @@
         </nav>
     </header>
     <!-- Create Subject Modal -->
-    <div class="modal fade" id="Add-Subject" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto">
+    <div class="modal fade" id="Add-Subject" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto;">
         <div class="modal-dialog" role="document">
             <div class="modal-content" id="Create-Subject-Content">
             </div>
@@ -131,9 +135,52 @@
     <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/TaskManagementCalendar.js"></script>
     <script>
-        $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+        $("#quick_search").focus(function () {
+            $("#quick_search").off("keyup");
+            $("#quick_search").on("keyup", function () {
+                if ($("#quick_search").val() != "") {
+                    $.ajax({
+                        url: "/TaskManagement/QuickSearch",
+                        type: "post",
+                        data: {
+                            input: $("#quick_search").val(),
+                        },
+                        success: function (data) {
+                            $("#quick_result ul").html("");
+                            if (data.subject.length == 0 && data.task.length == 0 && data.subtask.length == 0) {
+                                $("#search_subject").append("<li><a>" + "无搜索结果" + "</a></li>");
+                            }
+                            for (var item in data) {
+                                for (i = 0; i < data[item].length; i++) {
+                                    if (data[item][i].type == 0) {
+                                        $("#search_subject").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"项目\" style=\"color:#3da8f5\" class=\"tm-show-subject-page\"  data-sid=" + data[item][i].id + ">" + '项目:【' + data[item][i].name + "】</a></li>");
+                                    } else if (data[item][i].type == 1) {
+                                        var taskbelong = "所属项目：" + "【" + data[item][i].taskbelong + "】";
+                                        $("#search_ass").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + taskbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-aid=" + data[item][i].id + ">" + '任务:【' + data[item][i].name + "】</a></li>");
+                                    } else {
+                                        var subtbelong = "所属任务：" + "【" + data[item][i].subtbelong + "】";
+                                        $("#search_subt").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + subtbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-atid=" + data[item][i].id + ">" + '子任务:【' + data[item][i].name + "】</a></li>");
+                                    }
+                                }
+
+                            }
+
+                            $("#quick_result").slideDown();
+                            $('[data-toggle="tooltip"]').tooltip();
+
+                        }
+                    })
+                }
+                else {
+                    $("#quick_result ul").html("");
+                }
+            })
+        })
+        $("#quick_search").blur(function () {
+            $("#quick_result").slideUp("slow");
+            $("#quick_search").val("");
+        })
+
     </script>
     @RenderSection("scripts", required: false)
 </body>

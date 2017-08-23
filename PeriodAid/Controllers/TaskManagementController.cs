@@ -2692,32 +2692,20 @@ namespace PeriodAid.Controllers
 
 
 
-
-        public ActionResult QuickSearch(string input) {
-            var getSubject = from m in _db.Subject
-                          where m.SubjectTitle.Contains(input)
-                          select m;
-            var getAssignment = from m in _db.Assignment
-                                where m.AssignmentTitle.Contains(input)
-                                select m;
-            var getSubTask = from m in _db.SubTask
-                             where m.TaskTitle.Contains(input)
-                             select m;
-            if (getSubject != null) {
-                return PartialView(getSubject);
-            }
-            if (getAssignment != null)
-            {
-                return PartialView(getAssignment);
-            }
-            if (getSubTask != null)
-            {
-                return PartialView(getSubTask);
-            }
-            else {
-                return PartialView();
-            }
-
+        [HttpPost]
+        public JsonResult QuickSearch(string input)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            var subjectlist = (from m in _db.Subject
+                               where m.SubjectTitle.Contains(input) && m.HolderId == employee.Id && m.Status > SubjectStatus.ARCHIVED
+                               select new { id = m.Id, name = m.SubjectTitle, type = 0 }).ToList();
+            var tasklist = (from m in _db.Assignment
+                            where m.AssignmentTitle.Contains(input) && m.HolderId == employee.Id && m.Status > AssignmentStatus.ARCHIVED && m.Subject.Status > SubjectStatus.ARCHIVED
+                            select new { id = m.Id, name = m.AssignmentTitle, type = 1,taskbelong = m.Subject.SubjectTitle }).ToList();
+            var subtasklist = (from m in _db.SubTask
+                               where m.TaskTitle.Contains(input) && m.ExecutorId == employee.Id && m.Status > AssignmentStatus.DELETED && m.Assignment.Status> AssignmentStatus.DELETED && m.Assignment.Subject.Status> SubjectStatus.ARCHIVED
+                               select new { id = m.Id, name = m.TaskTitle, type = 2 ,subtbelong=m.Assignment.AssignmentTitle}).ToList();
+            return Json(new { subject = subjectlist, task = tasklist, subtask = subtasklist });
         }
 
 
