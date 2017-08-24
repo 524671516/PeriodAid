@@ -79,6 +79,13 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+
+        //任务详情
+        public ActionResult AssignmentDetail(int AssignmentId)
+        {
+            var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId && m.Status > AssignmentStatus.DELETED);
+            return View(assignment);
+        }
         //项目详情过程
         public ActionResult SubjectProcedure(int SubjectId)
         {
@@ -100,7 +107,7 @@ namespace PeriodAid.Controllers
             var employee = getEmployee(User.Identity.Name);
             if (employee == null)
             {
-                return Json(new { reulst = "FAIL",errmsg="用户不存在。" });
+                return Json(new { result = "FAIL",errmsg="用户不存在。" });
             }
             else
             {
@@ -145,7 +152,7 @@ namespace PeriodAid.Controllers
             try
             {
                 var assignmentlist = from m in _db.Assignment
-                                     where m.ProcedureId == ProcedureId && m.Status > AssignmentStatus.DELETED
+                                     where m.ProcedureId == ProcedureId && m.Status >AssignmentStatus.DELETED
                                      select new { id = m.Id, title = m.AssignmentTitle, holderName = m.Holder.NickName, status = m.Status, subCount = m.SubTask.Count(), holderUrl = m.Holder.ImgUrl, deadTime = m.Deadline };
                 return Json(new { result = "SUCCESS", data = assignmentlist });
             }
