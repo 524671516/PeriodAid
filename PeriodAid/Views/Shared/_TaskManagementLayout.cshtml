@@ -136,8 +136,8 @@
     <script src="~/Scripts/TaskManagementCalendar.js"></script>
     <script>
         $("#quick_search").focus(function () {
-            $("#quick_search").off("keyup");
-            $("#quick_search").on("keyup", function () {
+            $("#quick_search").off("input");
+            $("#quick_search").on("input", function () {
                 if ($("#quick_search").val() != "") {
                     $.ajax({
                         url: "/TaskManagement/QuickSearch",

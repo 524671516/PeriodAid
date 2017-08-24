@@ -285,8 +285,6 @@
     <Content Include="Content\audio\audio_02_background.jpg" />
     <Content Include="Content\audio\audio_03_background.jpg" />
     <Content Include="Content\audio\audio_03.mp3" />
-    <Content Include="Content\audio\video_mission.mp4" />
-    <Content Include="Content\audio\video_subject.mp4" />
     <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\bootstrap-select.css" />
@@ -1112,7 +1110,6 @@
     <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
     <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
-    <Content Include="Views\TaskManagement\QuickSearch.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
   </ItemGroup>
   <ItemGroup>
