@@ -177,3 +177,10 @@
     padding:10px;
     font-size:14px;
 }
+#page-procedure-content{
+    overflow:hidden;
+}
+#page-procedure-content .tabs{
+    height:calc(100% - 44px);
+    overflow:auto;
+}

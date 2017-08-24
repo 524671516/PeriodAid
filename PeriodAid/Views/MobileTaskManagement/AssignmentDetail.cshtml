@@ -1,0 +1,77 @@
+﻿@model PeriodAid.Models.Assignment
+@using PeriodAid.Models
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>@Html.Encode(Model.AssignmentTitle)</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="breakdowndetails" id="breakdowndetails">
+        <div class="page-content">
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">工厂名称</div>
+                                <div class="item-after"></div>
+                            </div>
+                        </div>
+
+                    </li>
+                    <li>
+
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">设备名称</div>
+                                <div class="item-after"></div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">故障类型</div>
+                                <div class="item-after"></div>
+                            </div>
+                        </div>
+
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">故障时间</div>
+                                <div class="item-after"></div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">修复时间</div>
+                                <div class="item-after"></div>
+                            </div>
+                        </div>
+                    </li>
+                   
+                </ul>
+            </div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content middle-content">
+                          
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

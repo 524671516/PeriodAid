@@ -1,4 +1,5 @@
 ﻿@model PeriodAid.Models.Subject
+@using PeriodAid.Models
 <div class="navbar">
     <div class="navbar-inner">
         <div class="left">
@@ -16,7 +17,7 @@
             @Html.HiddenFor(m => m.Id)
             <div class="toolbar tabbar tabbar-scrollable">
                 <div class="toolbar-inner">
-                   @foreach (var item in Model.ProcedureTemplate.Procedure.OrderBy(m => m.Sort))
+                   @foreach (var item in Model.ProcedureTemplate.Procedure.Where(m => m.Status == ProcedureStatus.NORMAL).OrderBy(m => m.Sort))
                    {
                        if (item.Sort == Model.ProcedureTemplate.Procedure.Select(m => m.Sort).Min())
                        {
@@ -31,51 +32,27 @@
                 </div>
             </div>
             <div class="tabs">
-                @foreach (var item in Model.ProcedureTemplate.Procedure.OrderBy(m => m.Sort))
+                @foreach (var item in Model.ProcedureTemplate.Procedure.Where(m=>m.Status==ProcedureStatus.NORMAL).OrderBy(m => m.Sort))
                 {
                     if (item.Sort == Model.ProcedureTemplate.Procedure.Select(m => m.Sort).Min())
                     {
-                        <div id="tab-procedure-@item.Sort" class="tab active">
+                        <div id="tab-procedure-@item.Sort" class="tab active procedure-tab">
                             <div class="list-block media-list">
                                 <ul>
-                                    <li>
-                                        <a class="item-link" href="/MobileTaskManagement/SubjectProcedure?SubjectId=16">
-                                            <div class="item-content">
-                                                <div class="item-media"><img src="http://hhhhold.com/88/d/jpg?1" width="44"></div>
-                                                <div class="item-inner">
-                                                    <div class="item-title-row">
-                                                        <div class="item-title">Yellow Submarine</div>
-                                                    </div>
-                                                    <div class="item-subtitle">Beatles</div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
+                                   
                                 </ul>
-                                <div class="tm-empty">- 没有已归档的项目 -</div>
+                                <div class="tm-empty" style="text-align:center">- 没有相对应的任务 -</div>
                             </div>
                         </div>
                     }
                     else
                     {
-                        <div id="tab-procedure-@item.Sort" class="tab">
+                        <div id="tab-procedure-@item.Sort" class="tab procedure-tab">
                             <div class="list-block media-list">
                                 <ul>
-                                    <li>
-                                        <a class="item-link" href="/MobileTaskManagement/SubjectProcedure?SubjectId=16">
-                                            <div class="item-content">
-                                                <div class="item-media"><img src="http://hhhhold.com/88/d/jpg?1" width="44"></div>
-                                                <div class="item-inner">
-                                                    <div class="item-title-row">
-                                                        <div class="item-title">Yellow Submarine</div>
-                                                    </div>
-                                                    <div class="item-subtitle">Beatles</div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
+                                  
                                 </ul>
-                                <div class="tm-empty">- 没有已归档的项目 -</div>
+                                <div class="tm-empty" style="text-align:center">- 没有相对应的任务 -</div>
                             </div>
                         </div>
                     }

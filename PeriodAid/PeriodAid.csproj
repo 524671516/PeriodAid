@@ -1108,6 +1108,7 @@
     <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
     <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
+    <Content Include="Views\MobileTaskManagement\AssignmentDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

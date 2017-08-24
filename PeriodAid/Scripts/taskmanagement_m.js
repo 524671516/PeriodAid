@@ -44,28 +44,71 @@ $$(".tm-dropdown-mask").on("click", function () {
     $$(".tm-dropdown-menu-list.open").removeClass("open");
 })
 myApp.onPageInit('home', function (page) {
-    alert("home");
+    HomeInitAjax()
 });
 myApp.onPageInit('my', function (page) {
     alert("my");
 });
 myApp.onPageInit('subject_procedure', function (page) {
-    alert("初始化项目过程");
+    //初始化加载数据
+    ProcedureAjax($$(".tab-link-procedure.active"))
     $$(".tab-link-procedure").on("click", function () {
+        var that = $$(this);
         if (!$$(this).hasClass("active")) {
-            alert("开始加载数据");
+            if (!$$(this).hasClass("init-finish")) {         
+                ProcedureAjax(that);
+            };
         }
     });
 });
 $$(".tab-link").on("click", function (page) {
     var tab_link = $$(this).attr("href");
     if (!$$(this).hasClass("active")) {
-        if (!$$(tab_link).hasClass("init-finsh")) {
-            $$(tab_link).addClass("init-finsh");
-            alert("开始加载数据")
+        if (!$$(this).hasClass("init-finish")) {
+            $$(this).addClass("init-finish");
+            alert("开始加载数据");
         };
     }
 });
+function ProcedureAjax(that) {
+    $$.ajax({
+        url: "/MobileTaskManagement/ProcedureAssigemnetAjax",
+        type: "post",
+        data: {
+            ProcedureId: that.attr("data-pid")
+        },
+        success: function (data) {
+            if (!that.hasClass("init-finish")) {
+                that.addClass("init-finish")
+            }
+            var _data = JSON.parse(data);
+            if (_data.result == "SUCCESS") {
+                var _tasklen = _data.data.length;
+                var _container = that.attr("href");
+                for (i = 0; i < _tasklen; i++) {
+                    var _status = _data.data[i].status == 1 ? "未完成" : "完成";
+                    var _deadtime = ChangeDateFormat(_data.data[i].deadTime) == "" ? "" : "截止时间:" + ChangeDateFormat(_data.data[i].deadTime);
+                    $$(_container).find("ul").append("<li><a class=\"item-content item-link\" href=\"/MobileTaskManagement/AssignmentDetail?AssignmentId=" + _data.data[i].id + "\">"
+                                            + "<div class=\"item-inner\"><div class=\"item-title-row\">"
+                                            + "<div class=\"item-title\">" + _data.data[i].title + "</div>"
+                                             + "<div class=\"item-after\">" + _data.data[i].holderName + "</div></div>"
+                                              + "<div class=\"item-subtitle color-gray\"><span>状态:" + _status + "</span>&nbsp;<span>" + _deadtime + "</span></div></div></a></li>")
+                }
+                //检查是否有数据和显示方式
+                if ($$(_container).find("ul li").length == 0) {
+                    $$(_container).find(".tm-empty").show();
+                    $$(_container).find("ul").hide();
+                }
+            } else {
+                myApp.alert("数据获取失败。");
+            }
+        },
+        error: function () {
+            myApp.alert("请求数据失败。");
+        }
+
+    })
+}
 function HomeInitAjax() {
     $$.ajax({
         url: "/MobileTaskManagement/PersonalSubject",
@@ -110,5 +153,19 @@ function HomeInitAjax() {
             myApp.alert("请求数据失败。")
         }
     })
+}
+function ChangeDateFormat(val) {
+    if (val != null) {
+        var date = new Date(parseInt(val.replace("/Date(", "").replace(")/", ""), 10));
+        //月份为0-11，所以+1，月份小于10时补个0
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        var hour = date.getHours();
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        var dd = date.getFullYear() + "-" + month + "-" + currentDate + " "+hour+":"+"00"
+        return dd;
+    }
+    return "";
 }
 
