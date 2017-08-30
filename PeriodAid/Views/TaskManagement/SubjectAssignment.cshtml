@@ -37,7 +37,14 @@
                         {
                             <div class="tm_item_left">
                                 <span class="color-orange">截止日期:</span>
+                               @if (DateTime.Now> item.Deadline)
+                               {
+                                <span class="finish_subtask over-deadline">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                               }
+                               else
+                               {
                                 <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                               }
                             </div>
                         }
                     </div>
@@ -76,7 +83,14 @@
                         {
                             <div class="tm_item_left">
                                 <span class="color-orange">截止日期:</span>
-                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                @if (DateTime.Now > item.Deadline)
+                                {
+                                    <span class="finish_subtask over-deadline">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                }
+                                else
+                                {
+                                    <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                }
                             </div>
                         }
                     </div>
