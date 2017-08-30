@@ -2701,7 +2701,7 @@ namespace PeriodAid.Controllers
                                select new { id = m.Id, name = m.SubjectTitle, type = 0 }).ToList();
             var tasklist = (from m in _db.Assignment
                             where m.AssignmentTitle.Contains(input) && m.HolderId == employee.Id && m.Status > AssignmentStatus.ARCHIVED && m.Subject.Status > SubjectStatus.ARCHIVED
-                            select new { id = m.Id, name = m.AssignmentTitle, type = 1,taskbelong = m.Subject.SubjectTitle }).ToList();
+                            select new { id = m.Id, name = m.AssignmentTitle, type = 1,taskbelong = m.Subject.SubjectTitle,SId=m.Subject.Id}).ToList();
             var subtasklist = (from m in _db.SubTask
                                where m.TaskTitle.Contains(input) && m.ExecutorId == employee.Id && m.Status > AssignmentStatus.DELETED && m.Assignment.Status> AssignmentStatus.DELETED && m.Assignment.Subject.Status> SubjectStatus.ARCHIVED
                                select new { id = m.Id, name = m.TaskTitle, type = 2 ,subtbelong=m.Assignment.AssignmentTitle}).ToList();

@@ -153,7 +153,8 @@
                             for (var item in data) {
                                 for (i = 0; i < data[item].length; i++) {
                                     if (data[item][i].type == 0) {
-                                        $("#search_subject").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"项目\" style=\"color:#3da8f5\" class=\"tm-show-subject-page\"  data-sid=" + data[item][i].id + ">" + '项目:【' + data[item][i].name + "】</a></li>");
+                                        var subjectshow = "项目：" + "【" + data[item][i].name + "】";
+                                        $("#search_subject").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + subjectshow +" style=\"color:#3da8f5\" class=\"tm-show-subject-page\"  data-sid=" + data[item][i].id + ">" + '项目:【' + data[item][i].name + "】</a></li>");
                                     } else if (data[item][i].type == 1) {
                                         var taskbelong = "所属项目：" + "【" + data[item][i].taskbelong + "】";
                                         $("#search_ass").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + taskbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-aid=" + data[item][i].id + ">" + '任务:【' + data[item][i].name + "】</a></li>");
