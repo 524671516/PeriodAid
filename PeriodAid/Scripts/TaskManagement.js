@@ -1,5 +1,11 @@
 ﻿$(function () {
     
+    //控制子任务展示
+    $("#my-app").on("click", ".tm-show-subtask-panel",function () {
+        $(this).parents("li").find(".tm-subtask-ul").slideToggle(300);
+        return false;
+    })
+
     //控制view展示
     $("#my-app").on("click", ".tm-show-view", function () {
         if ($(this).hasClass("active")) {
@@ -19,7 +25,7 @@
     });
 
     //查看任务详情(包含子任务)
-    $("#my-app").on("click", ".tm-show-task-modal", function () {
+    $("#my-app").on("click", ".tm-show-task-modal", function (e) {
         var data = {};
         if ($(this).attr("data-aid")) {
             data.AssignmentId = $(this).attr("data-aid");
@@ -38,6 +44,7 @@
         } else {
             ErrorAlert("获取原始数据失败。");
         }
+        return false;
 
     });
 
