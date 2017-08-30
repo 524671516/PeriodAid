@@ -135,6 +135,66 @@
         });
     });
 });
+
+
+function MoveTask() {
+    var byId = function (id) { return document.getElementById(id); };
+    [].forEach.call(byId('tm_panel-container').getElementsByClassName('tm_list-show'), function (el) {
+        Sortable.create(el, {
+            filter: ".tm_list-add",
+            group: 'item-ul',
+            dragClass: "sortable-drag",
+            ghostClass: "sortable-ghost",
+            animation: 150,
+            onEnd: function (evt) {
+                if (!evt.item.dataset.aid) {
+                    ErrorAlert("操作失败")
+                } else {
+                    if (!evt.item.offsetParent.offsetParent.dataset.procedureid) {
+                        ErrorAlert("操作失败")
+                    } else {
+                        $.ajax({
+                            url: "/TaskManagement/DragAssignment",
+                            type: "post",
+                            data: {
+                                AssignmentId: evt.item.dataset.aid,
+                                nowpid: evt.item.offsetParent.offsetParent.dataset.procedureid
+                            },
+                            success: function (data) {
+                                if (data.result != "SUCCESS") {
+                                    ErrorAlert(data.errmsg);
+                                } else {
+                                    $.ajax({
+                                        url: "/TaskManagement/GetProcedureJsonInfo",
+                                        type: "post",
+                                        data: {
+                                            SubjectId: $("#panel-wrap").attr("data-sid")
+                                        },
+                                        success: function (data) {
+                                            var len = data.data.length;
+                                            $(".ajax-procedure").each(function () {
+                                                for (i = 0; i < len; i++) {
+                                                    if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+
+                                                        $(this).find(".total-num").html(data.data[i].TotalNum)
+                                                        $(this).find(".num").html(data.data[i].FinishNum)
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            },
+                            error: function (data) {
+                                ErrorAlert("操作失败");
+                            }
+                        })
+                    }
+                }
+            },
+        });
+    });
+}
 //请求活动中的项目
 function GetActiveSubject(container) {
     $.ajax({
@@ -215,62 +275,6 @@ function GetAssignment(ProcedureId, SubjectId, container) {
         },
         success: function (data) {           
             container.html(data)
-            var byId = function (id) { return document.getElementById(id); };
-            [].forEach.call(byId('tm_panel-container').getElementsByClassName('tm_list-show'), function (el) {
-                Sortable.create(el, {
-                    filter: ".tm_list-add",
-                    group: 'item',
-                    dragClass: "sortable-drag",
-                    ghostClass: "sortable-ghost",
-                    animation: 150,
-                    onEnd: function (evt) {
-                        if (!evt.item.dataset.aid) {
-                            ErrorAlert("操作失败")
-                        } else {
-                            if (!evt.item.offsetParent.offsetParent.dataset.procedureid) {
-                                ErrorAlert("操作失败")
-                            } else {
-                                $.ajax({
-                                    url:"/TaskManagement/DragAssignment",
-                                    type:"post",
-                                    data: {
-                                        AssignmentId: evt.item.dataset.aid,
-                                        nowpid: evt.item.offsetParent.offsetParent.dataset.procedureid
-                                    },
-                                    success: function (data) {
-                                        if (data.result != "SUCCESS") {
-                                            ErrorAlert(data.errmsg);
-                                        } else {
-                                            $.ajax({                                               
-                                                url: "/TaskManagement/GetProcedureJsonInfo",
-                                                type:"post",
-                                                data: {
-                                                    SubjectId: $("#panel-wrap").attr("data-sid")
-                                                },
-                                                success: function (data) {
-                                                    var len = data.data.length;
-                                                    $(".ajax-procedure").each(function () {
-                                                        for (i = 0; i < len; i++) {
-                                                            if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                                                
-                                                                $(this).find(".total-num").html(data.data[i].TotalNum)
-                                                                $(this).find(".num").html(data.data[i].FinishNum)
-                                                            }
-                                                        }
-                                                    })
-                                                }
-                                            })
-                                        }
-                                    },
-                                    error: function (data) {
-                                        ErrorAlert("操作失败");
-                                    }
-                                })
-                            }
-                        }
-                    },
-                });
-            });
         },
         error: function () {
             ErrorAlert("操作失败")

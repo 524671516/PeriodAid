@@ -62,6 +62,7 @@ myApp.onPageInit('subject_procedure', function (page) {
     });
 });
 $$(".tab-link").on("click", function (page) {
+    loadScript('http://suggestion.baidu.com/su?wd=w', function () { console.log('loaded') });
     var tab_link = $$(this).attr("href");
     if (!$$(this).hasClass("active")) {
         if (!$$(this).hasClass("init-finish")) {
@@ -168,4 +169,19 @@ function ChangeDateFormat(val) {
     }
     return "";
 }
+function loadScript(url, func) {
+    var head = document.head || document.getElementByTagName('head');
+    var script = document.createElement('script');
+    script.src = url;
+    script.onload = script.onreadystatechange = function () {
+        if (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete') {
+            func();
+            script.onload = script.onreadystatechange = null;
+        }
+    };
+
+    head.insertBefore(script, head.childNodes[0]);
+}
+console.log(window)
+
 

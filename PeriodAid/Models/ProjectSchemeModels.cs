@@ -243,6 +243,9 @@
         [StringLength(512)]
         public string Remarks { get; set; } // 备注
 
+        [StringLength(512)]
+        public string Target { get; set; }  //目标
+
         public bool Repeat { get; set; } // 是否重复
 
         public int ProcedureId { get; set; } // 过程组ID
@@ -294,7 +297,10 @@
         public DateTime? CompleteDate { get; set; } // 完成时间(可为空)
 
         [StringLength(256)]
-        public string Remarks { get; set; }
+        public string Remarks { get; set; }  //备注
+
+        [StringLength(256)]
+        public string Target { get; set; }  //目标
     }
 
     [Table("AssignmentComment")]
