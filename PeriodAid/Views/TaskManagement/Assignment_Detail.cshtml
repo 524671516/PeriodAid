@@ -33,6 +33,10 @@
         <label for="Remarks">任务描述</label>
         @Html.TextAreaFor(m => m.Remarks, new { @class = "form-control", @rows = "3", @placeholder = "任务描述" })
     </div>
+    <div class="form-group">
+        <label for="Target">任务目标</label>
+        @Html.TextAreaFor(m => m.Target, new { @class = "form-control", @rows = "3", @placeholder = "任务目标" })
+    </div>
     <div class="row">
         <div class="form-group col-md-6 input-append date">
             <label for="RemindDate">提醒时间</label>

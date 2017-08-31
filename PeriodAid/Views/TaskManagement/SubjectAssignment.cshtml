@@ -9,7 +9,7 @@
             {
                 <li class="tm_list-item tm_list-finish tm-show-task-modal" style="border-color:#259B24" data-aid="@item.Id">
                     <div class="clear-float">
-                        <div class="tm_item_left tm-span-50">
+                        <div class="tm_item_left tm-span-80">
                             <input type="checkbox" class="tm-change-task-status" checked="checked"  data-aid="@item.Id"/>
                             &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
                         </div>                       
@@ -49,7 +49,7 @@
                     {
                         <ul class="tm-subtask-ul hide-change">
 
-                            @foreach (var _item in item.SubTask)
+                            @foreach (var _item in item.SubTask.OrderBy(m=>m.Status))
                             {
                                 if (_item.Status == AssignmentStatus.FINISHED)
                                 {
@@ -125,7 +125,7 @@
             {
                     <li class="tm_list-item tm-show-task-modal @(item.Priority==1?"border-blue":"border-red")" data-aid="@item.Id">            
                         <div class="clear-float">
-                            <div class="tm_item_left tm-span-50">
+                            <div class="tm_item_left tm-span-80">
                                 <input type="checkbox" class="tm-change-task-status" data-aid="@item.Id" />
                                 &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
                             </div>
@@ -171,15 +171,15 @@
                         {
                             <ul class="tm-subtask-ul hide-change">
 
-                                @foreach (var _item in item.SubTask)
-                            {
-                                if (_item.Status == AssignmentStatus.FINISHED)
+                                @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
                                 {
+                                    if (_item.Status == AssignmentStatus.FINISHED)
+                                    {
                                         <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
                                             <div class="clear-float">
                                                 <div class="tm_item_left tm-span-75">
                                                     <input type="checkbox" class="tm-change-task-status" checked="checked" data-atid="@_item.Id" />
-                                                    &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
+                                                    &nbsp;&nbsp;@Html.Encode(_item.TaskTitle)
                                                 </div>
                                                 <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
                                                     @if (_item.Executor.ImgUrl == null)

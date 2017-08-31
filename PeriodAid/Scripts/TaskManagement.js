@@ -211,6 +211,7 @@ function GetActiveSubject(container) {
                 ErrorAlert("读取执行中的项目失败。")
             } else {
                 $(container).html(data);
+              
             }
         }
     })
@@ -261,7 +262,7 @@ function GetAssignmentForm(ProcedureId, SubjectId, container) {
             if (data == "FAIL") {
                 ErrorAlert("创建任务失败。")
             } else {
-                container.html(data)
+                container.html(data)                
             }
         },
         error: function () {
@@ -269,8 +270,6 @@ function GetAssignmentForm(ProcedureId, SubjectId, container) {
         }
     });
 }
-
-
 
 //获取任务列表
 function GetAssignment(ProcedureId, SubjectId, container) {
@@ -282,14 +281,13 @@ function GetAssignment(ProcedureId, SubjectId, container) {
         },
         success: function (data) {           
             container.html(data)
+            MoveTask()
         },
         error: function () {
             ErrorAlert("操作失败")
         }
     });
 }
-
-
 function Delete_Procedure(ProcedureId,SubjectId, Callback) {
     $.ajax({
         url: "/TaskManagement/Delete_Procedure",
@@ -457,8 +455,20 @@ function CustomConfirm(text,callback) {
 }
 
 /*时间控件调用*/
-function CompleteTimeWidget(cotainer) {
-    $(cotainer).datetimepicker({
+function CompleteTimeWidget(inputName, container) {
+    if (container) {
+        $(inputName).datetimepicker({
+            format: 'yyyy-mm-dd hh:00',
+            container: container,
+            minView: "day",
+            autoclose: true,
+            todayBtn: true,
+            clearBtn: true,
+            pickerPosition: "bottom-right",
+            todayHighlighttodayHighlight: true,
+        });
+    } else {
+ $(inputName).datetimepicker({
         format: 'yyyy-mm-dd hh:00',
         minView:"day",
         autoclose: true,
@@ -467,6 +477,8 @@ function CompleteTimeWidget(cotainer) {
         pickerPosition: "bottom-right",
         todayHighlighttodayHighlight: true,
     });
+    }
+  
 }
 function GetElementsByClass(className) {
             var elements;
@@ -602,33 +614,6 @@ $("#bn_help").on("click", function () {
 });
 
 //dropdown位移控制
-
-
-
-
-//(function ($) {
-//    if (typeof ($) != "function") {
-//        console.log("没有引入Jquery");
-//        return;
-//    };
-//    var TmApp = function (element, options) {
-//        var _self = this;
-//        this.options=options||{};
-//        this.$element = $(element);
-//        this.subject = {
-//            subjectArray:
-//        }
-
-        
-
-//    };
-   
-//    function isArray() {
-//        console.log(1);
-//    }
-//    window.TmApp = TmApp;
-    
-//})(jQuery)
 
 
 

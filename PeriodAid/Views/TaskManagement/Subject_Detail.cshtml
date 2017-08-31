@@ -217,6 +217,24 @@
             });
         });
 
+        //筛选任务列表
+        $("#panel-wrap").on("click", '.btn-select-procedure', function () {
+            var that = $(this);
+            var data={
+                ProcedureId: that.attr("data-pid"),
+                SubjectId: $("#panel-wrap").attr("data-sid"),
+                Type:that.attr("data-type")
+            };
+            GetTemplate("/TaskManagement/SubjectAssignment", data, function (data) {                
+                that.parents(".ajax-procedure").find(".tm_panel-body").html(data);
+                $(".tm-dropdown-menu").hide();
+                $(".tm-show-listmenu").removeClass("open");
+                MoveTask()
+            }, function () {
+                $(".tm-dropdown-menu").hide();
+                $(".tm-show-listmenu").removeClass("open");
+            });
+        });
         //控制任务列表操作栏 
         $("#panel-wrap").on("click", ".tm-show-listmenu", function () {
             $(".tm-dropdown-menu").hide();

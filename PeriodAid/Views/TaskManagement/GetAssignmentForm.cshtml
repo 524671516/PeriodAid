@@ -9,19 +9,43 @@
        @Html.TextBoxFor(m => m.AssignmentTitle, new {@class="form-control", @placeholder="任务名称"})
     </div>
     <div class="form-group">
-        <textarea class="form-control" rows="2"  placeholder="任务描述" id="Remarks" name="Remarks"></textarea>
+        <label for="Deadline">截止期限</label>
+        <input id="Deadline" name="Deadline" type="text" readonly class="form-control form_datetime_assignmentform" />
     </div>
     <div class="form-group">
         <label for="HolderId">负责人</label>
-        @Html.DropDownListFor(m=>m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdown", @id= "tm_select_straff" })
+        @Html.DropDownListFor(m=>m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdown", @id= "assignment_holder_straff" })
     </div>
-    <div class="form-group">
-        <label for="HolderId">优先级</label>
-        <select name="Priority" id="Priority" class="form-control">
-            <option value="1">一般</option>
-            <option value="2">紧急</option>
+    <div style="margin-bottom:15px;">
+        <label for="assignment_col_straff">参与人</label>
+        <select class="selectpicker form-control" id="assignment_col_straff" name="assignment_col_straff" multiple>
+            @foreach (var depart in ViewBag.DepartmentList)
+            {
+                <optgroup label="@depart.DepartmentName">
+                    @foreach (var straff in depart.EmployeeList)
+                    {
+                        <option value="@straff.Id">@straff.NickName</option>
+                    }
+                </optgroup>
+            }
         </select>
-       
+    </div>
+    <div class="text-right form-group"><a href="javascript:;" id="btn_assignementform-more" class="color-blue">填写更多&nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i></a></div>
+    <div id="tm-assignementform-more" style="display:none;">
+        <div class="form-group">
+            <textarea class="form-control" rows="2" placeholder="任务目标" id="Target" name="Target"></textarea>
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" rows="2" placeholder="任务描述" id="Remarks" name="Remarks"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="HolderId">优先级</label>
+            <select name="Priority" id="Priority" class="form-control">
+                <option value="1">一般</option>
+                <option value="2">紧急</option>
+            </select>
+
+        </div>
     </div>
     <div class="text-right">
         <a class="btn btn-default" id="cancel-create-assignment">取消</a>
@@ -29,11 +53,32 @@
     </div>
 }
 <script>
-    $('#tm_select_straff').selectpicker({
+    $("#btn_assignementform-more").on("click", function () {
+        $("#tm-assignementform-more").slideToggle("300");
+    })
+    CompleteTimeWidget(".form_datetime_assignmentform", "#add_assignment_form");
+    $('#assignment_holder_straff').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
         width: "100%",
         dropupAuto: false,
+    });
+    $('#assignment_col_straff').selectpicker({
+        liveSearch: true,
+        liveSearchPlaceholder: "搜索人员",
+        width: "100%",
+        dropupAuto: false,
+        title: "选择添加参与人"
+    });
+    $('#assignment_col_straff').on('loaded.bs.select', function (e) {
+        $('#assignment_col_straff').find("[value=" + $("#assignment_holder_straff").val() + "]").hide();
+        $('#assignment_col_straff').selectpicker('refresh');
+    });
+    $("#assignment_holder_straff").on("change", function () {
+        $('#assignment_col_straff').find("option").show();
+        $('#assignment_col_straff').selectpicker('val', "");
+        $('#assignment_col_straff').find("[value=" + $("#assignment_holder_straff").val() + "]").hide();
+        $('#assignment_col_straff').selectpicker('refresh');
     });
     //新增任务验证
     $("#add_assignment_form").validate({
