@@ -19,8 +19,11 @@
                         <div class="card-body">
 
                         </div>
-                        <div class="card-footer text-shadow">@item.CreateTime.ToString("yyyy-MM-dd")</div>
-                        <div class="card-mask"></div>
+                            <div class="card-footer text-shadow">
+                                @item.CreateTime.ToString("yyyy-MM-dd")
+                                <div class="card-header-right float-right card-message-btn" data-link="@item.Id"><span class="glyphicon glyphicon-comment" style="font-size:18px;"><sub>5</sub></span></div>
+                            </div>
+                    <div class="card-mask"></div>
                     </div>
                 }
                 else
@@ -33,7 +36,10 @@
                         <div class="card-body">
 
                         </div>
-                        <div class="card-footer text-shadow">@item.CreateTime.ToString("yyyy-MM-dd")</div>
+                        <div class="card-footer text-shadow">
+                            @item.CreateTime.ToString("yyyy-MM-dd")
+                            <div class="card-header-right float-right card-message-btn" data-link="@item.Id"><span class="glyphicon glyphicon-comment" style="font-size:18px;"></span></div>
+                        </div>
                         <div class="card-mask"></div>
                     </div>
                 }
@@ -51,6 +57,18 @@
 </div>
 <script>
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        //$(".card-box.row .card-message-btn").hide();
+        $('[data-toggle="tooltip"]').tooltip();
+        $.ajax({
+            url: "/Taskmanagement/NewLogs/",
+            type: "post",
+            data: {
+            },
+            success: function (data) {
+                console.log(data);
+
+            }
+        })
+
     })
 </script>

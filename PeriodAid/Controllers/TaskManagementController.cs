@@ -1377,6 +1377,8 @@ namespace PeriodAid.Controllers
                                where m.Status > EmployeeStatus.DEVOICE
                                select m;
             ViewBag.EmployeeDropDown = EmployeeList;
+            ViewBag.type = getEmployee(User.Identity.Name).Type;
+            ViewBag.user_id = getEmployee(User.Identity.Name).Id;
             return PartialView(subject);
         }
 
@@ -2709,6 +2711,62 @@ namespace PeriodAid.Controllers
         }
 
 
+        public JsonResult NewLogs() {
+            var employee = getEmployee(User.Identity.Name);
+            // 自己创建的项目
+            var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
+            // 自己参与任务的项目
+            var ColAssignmentSubject = (from m in employee.CollaborateAssignment
+                                        where m.Status > AssignmentStatus.DELETED
+                                        select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
+            //获取负责任务的项目
+            var HolderSubject = (from m in _db.Assignment
+                                 where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
+                                 select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
+            var FirstMerge = ownSubject.Union(ColAssignmentSubject);
+            var MergeSubject = FirstMerge.Union(HolderSubject);
+
+            List<AjaxSubjectInfoClass> asicl = new List<AjaxSubjectInfoClass>();
+            foreach (var item in MergeSubject)
+            {
+                var SubjectId = item.Id;
+                var lastCheckTime = (from m in _db.OperationLogs
+                                     where m.SubjectId == SubjectId && m.LogCode == 400 && m.UserId == employee.Id
+                                     orderby m.LogTime descending
+                                     select m.LogTime).FirstOrDefault();
+                var loginTime = employee.LastLoginDate;
+                if (lastCheckTime < loginTime)
+                {
+                    var newdata = from m in _db.OperationLogs
+                                  where m.SubjectId == SubjectId && m.LogTime < loginTime && m.LogTime > lastCheckTime
+                                  select m;
+                    var newcount = newdata.Count();
+                    AjaxSubjectInfoClass asic = new AjaxSubjectInfoClass() {
+                        LogsCount=newcount,
+                        SubjectTitle=item.SubjectTitle,
+                        SubjectId= SubjectId,
+                        IsNew=newcount>0?true:false
+                    };
+                    asicl.Add(asic);
+                }
+                else
+                {
+                    var newdata = from m in _db.OperationLogs
+                                  where m.SubjectId == SubjectId && m.LogTime < lastCheckTime && m.LogTime > loginTime
+                                  select m;
+                    var newcount = newdata.Count();
+                    AjaxSubjectInfoClass asic = new AjaxSubjectInfoClass()
+                    {
+                        LogsCount = newcount,
+                        SubjectTitle = item.SubjectTitle,
+                        SubjectId = SubjectId,
+                        IsNew = newcount > 0 ? true : false
+                    };
+                    asicl.Add(asic);
+                }
+            }
+            return Json(new { data = asicl });
+        }
 
 
 
@@ -2716,33 +2774,46 @@ namespace PeriodAid.Controllers
 
 
 
-
-        public ActionResult GetLogs(int? employeeId, int? SubjectId, string logType, string logTime, int _page)
+        public ActionResult GetLogs(int user_type,int user_id,int holder_id, int? employeeId, int? SubjectId, string logType, string logTime, int _page)
         {
             int _subjectId = SubjectId ?? 0;
             int _employeeId = employeeId ?? 0;
             ViewBag.currentshow = _page;
-            if (_employeeId!=0)
+            if (user_type == 1 || user_id == holder_id)
             {
-                if (_subjectId!=0)
+                if (_employeeId != 0)
                 {
-                    var a = getTypeRange(logType);
-                    var b = getTimeRange(logTime);
-                    var getLogsByTime = (from m in _db.OperationLogs
-                                         where m.UserId == _employeeId && m.SubjectId==_subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue && m.LogTime >= b.StartTime && m.LogTime < b.EndTime
-                                         orderby m.LogTime descending
-                                         select m).Skip(_page * 9).Take(9);
-                    return PartialView(getLogsByTime);
+                    if (_subjectId != 0)
+                    {
+                        var a = getTypeRange(logType);
+                        var b = getTimeRange(logTime);
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.UserId == _employeeId && m.SubjectId == _subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue && m.LogTime >= b.StartTime && m.LogTime < b.EndTime
+                                             orderby m.LogTime descending
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
 
+                    }
+                    else
+                    {
+                        return Content("项目不明确！");
+                    }
                 }
-                else {
-                    return Content("项目不明确！");
+                else
+                {
+                        var a = getTypeRange(logType);
+                        var b = getTimeRange(logTime);
+                        var getLogsByTime = (from m in _db.OperationLogs
+                                             where m.SubjectId == _subjectId && m.LogCode <= a.MaxValue && m.LogCode >= a.MinValue && m.LogTime >= b.StartTime && m.LogTime < b.EndTime
+                                             orderby m.LogTime descending
+                                             select m).Skip(_page * 9).Take(9);
+                        return PartialView(getLogsByTime);
                 }
+
             }
             else {
-                return Content("负责人不明确！");
+                return Content("<h3 class='text-center color-red'>没有查看权限！主管和项目创建者才能查看！</h3>");
             }
-            
 
         }
 

@@ -63,11 +63,6 @@
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
-        console.log(DateTime.Now + item.Deadline);
-        if (DateTime.Now < item.Deadline) {
-            alert(1);
-            $(".tm_modal_list-right color-orange").addClass("color-red");
-         }
     })
     //内置子任务弹出处理
     $("#subtask_modal_list").on("click", ".btn_add_subtask", function (event) {

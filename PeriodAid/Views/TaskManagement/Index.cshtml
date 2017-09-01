@@ -56,7 +56,29 @@
                 })
                 return false;
             });
-            
+
+            //动态消息提示
+            $("#subject-container").on("click", ".card-message-btn", function () {
+                $.ajax({
+                    url: "/TaskManagement/SubjectLogsPartial",
+                    data: {
+                        SubjectId: $(this).attr("data-link")
+                    },
+                    success: function (data) {
+                        if (data != "FAIL") {
+                            $("#Create-Subject-Content").html(data);
+                            $("#Add-Subject").modal();
+                        }
+                        else {
+                            ErrorAlert("操作失败。")
+                        }
+                    },
+                    error: function (data) {
+                        ErrorAlert("操作失败。");
+                    }
+                })
+                return false;
+            });
         })
         
     </script>

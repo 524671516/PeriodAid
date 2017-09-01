@@ -8,6 +8,14 @@ namespace PeriodAid.Models
     public class ProjectViewModels
     {
     }
+
+    public class AjaxSubjectInfoClass
+    {
+        public int SubjectId { get; set; }
+        public string SubjectTitle { get; set; }
+        public int LogsCount { get; set; }
+        public bool IsNew { get; set; }
+    }
     public class AssignmentInfoClass
     {
         public int Id { get; set; }

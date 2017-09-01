@@ -135,6 +135,9 @@
     <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/TaskManagementCalendar.js"></script>
     <script>
+        $(function () {
+            $("#message_show").addClass("");
+        })
         $("#quick_search").focus(function () {
             $("#quick_search").off("input");
             $("#quick_search").on("input", function () {
