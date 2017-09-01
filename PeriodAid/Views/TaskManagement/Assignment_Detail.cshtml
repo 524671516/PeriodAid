@@ -65,7 +65,7 @@
     <div class="row">
         <div class="form-group col-md-6">
             <label for="HolderId">负责人</label>
-            @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdowm", @id = "tm_select_straff_assignment" })
+            @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdowm", @id = "tm_select_straff_assignmentdetail" })
         </div>
         <div class="form-group col-md-6">
             <label for="Priority">优先级</label>
@@ -104,18 +104,12 @@
         </div>
     </div>
     }
-    <!--SubTask Area-->
     <div class="row" id="modal_subtask_area">       
     </div>
-    <!--SubTask Area End-->
-
-    <!--Collaborator Area-->
     <div class="row" id="modal_collaborator_area">      
     </div>
-    <!--Comment Area End-->
     <div class="row" id="modal_comment_area">      
     </div>
-    <!--Comment Area End-->
 </div>
 <div class="modal-footer tm_modal-comment">
     <div class="tm_modal-comment-box row">
@@ -128,7 +122,7 @@
 }        
         </div>
         <div class="col-md-2 tm_modal-comment-control">
-            <button type="button" class="btn btn-blue" id="btn_add_comment">发布</button>
+            <button type="button" class="btn btn-default" id="btn_add_comment">发布</button>
         </div>
     </div>
 </div>
@@ -136,33 +130,37 @@
     <button type="button" class="btn btn-primary" id="btn_edit_assignment">保存</button>
 </div>
 <script type="text/javascript">
+    //注册时间插件
+    CompleteTimeWidget(".form_datetime");
+
+    //防止enter按键
     $(document).keydown(function (event) {
         switch (event.keyCode) {
             case 13: return false;
         }
     });
-    $('#tm_select_straff_assignment').selectpicker({
+    //注册选择插件
+    $('#tm_select_straff_assignmentdetail').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
         width: "100%",
         dropupAuto: false,
     });
-    CompleteTimeWidget(".form_datetime");
 
     //获取子任务列表
     GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
         $("#modal_subtask_area").html(data);
-    })
+    });
 
     //获取合作人
     GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
         $("#modal_collaborator_area").html(data);
-    })
+    });
 
     //获取评论
     GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
         $("#modal_comment_area").html(data);
-    })
+    });
 
     //checkbox
     $("#Repeat").on("click", function () {
@@ -264,6 +262,8 @@
             }
         }
     });
+
+
     function GetComment(AssignmentId,Callback) {
         $.ajax({
             url: "/TaskManagement/Assignment_CommentPartial",
@@ -277,5 +277,53 @@
                 ErrorAlert("请求失败。");
             }
         })
+    }
+    function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignmnet_CollaboratorAddPartial",
+            data: {
+                AssignmentId: AssignmentId,
+            },
+            success: function (data) {
+                if (Callback && typeof Callback == "function") {
+                    Callback(data);
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败。")
+            }
+        });
+    }
+    function GetAssignment_CollaboratorPartial(AssignmentId, Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignment_CollaboratorPartial",
+            data: {
+                AssignmentId: AssignmentId
+            },
+            success: function (data) {
+                if (Callback && typeof Callback == "function") {
+                    Callback(data);
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败。")
+            }
+        });
+    }
+    function GetSubTaskListPartial(AssignmentId, Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignment_SubtaskPartial",
+            data: {
+                AssignmentId: AssignmentId,
+            },
+            success: function (data) {
+                if (Callback && typeof Callback == "function") {
+                    Callback(data);
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败。")
+            }
+        });
     }
 </script>

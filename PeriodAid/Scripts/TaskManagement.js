@@ -234,11 +234,6 @@ function GetFinishSubject(container) {
         }
     })
 }
-
-
-
-
-
 //获取项目的过程
 function GetProcedure(ProcedureId, SubjectId, container) {
     $.ajax({
@@ -259,9 +254,6 @@ function GetProcedure(ProcedureId, SubjectId, container) {
         }
     });
 }
-
-
-
 //获取任务列表
 function GetAssignment(ProcedureId, SubjectId, container) {
     $.ajax({
@@ -279,10 +271,6 @@ function GetAssignment(ProcedureId, SubjectId, container) {
         }
     });
 }
-
-
-
-
 function Delete_Assignment(AssignmentId, Callback) {
     $.ajax({
         url: "/TaskManagement/Delete_Assignment",
@@ -296,54 +284,6 @@ function Delete_Assignment(AssignmentId, Callback) {
             }
         },
         error: function (data) {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
-function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignmnet_CollaboratorAddPartial",
-        data: {
-            AssignmentId: AssignmentId,
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
-function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignment_CollaboratorPartial",
-        data: {
-            AssignmentId: AssignmentId
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
-function GetSubTaskListPartial(AssignmentId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignment_SubtaskPartial",
-        data: {
-            AssignmentId: AssignmentId,
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
             ErrorAlert("操作失败。")
         }
     });
