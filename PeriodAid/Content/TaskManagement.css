@@ -7,6 +7,9 @@ html, body{
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family:微软雅黑, Arial;
 }
+form{
+    position:relative;
+}
 ul,li,a{
     text-decoration:none;
     list-style:none;
@@ -26,6 +29,62 @@ ul,li{
 }
 body,html{
     width:100%;
+}
+/*尺寸定义   必须给父级元素100%*/
+.tm-span-100{
+    width:100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+.tm-span-10{
+    box-sizing:border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width:10%;
+}
+.tm-span-30{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width:30%;
+    box-sizing:border-box;
+}
+.tm-span-25{
+    box-sizing:border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width:25%;
+}
+.tm-span-75{
+        box-sizing:border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width:75%;
+}
+.tm-span-15{
+        box-sizing:border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width:15%;
+}
+.tm-span-20{
+    box-sizing:border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width:20%;
+}
+.tm-span-50{
+        box-sizing:border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width:50%
 }
 /*颜色*/
 .bg-gray{
@@ -47,6 +106,15 @@ body,html{
 }
 .color-green{
     color:#259B24;
+}
+.border-blue{
+    border-color:#3da8f5 !important;
+}
+.border-green{
+    border-color:#259B24 !important;
+}
+.border-red{
+    border-color:#FF4F3E !important;
 }
 .color-lightgreen{
     color:#8BC34A;
@@ -156,11 +224,18 @@ body,html{
 .margin-0{
     margin:0!important;
 }
+.hide-change{
+    display:none;
+}
 .show{
     display:block !important;
 }
 .hide{
     display:none !important;
+}
+.tm-item-sub-avatar{
+    height:20px;
+    width:20px;
 }
 /*工具样式结束*/
 
@@ -576,8 +651,24 @@ a.close{
 .tm_list-show .tm_list-item:hover{
     opacity:0.8;
 }
-.tm_list-container .tm_list-item.tm_list-finish{
+.tm_list-container .tm_list-item.tm_list-finish,.tm_list-finish{
     opacity:0.6;
+}
+.tm-subtask-item:hover{
+    background-color:rgba(0,0,0,0.1);
+}
+.tm-subtask-item{
+    cursor:pointer;
+    box-sizing:border-box;
+    border-left:5px solid #fff;
+    box-sizing:border-box;
+    border-radius:2px;
+    margin-bottom:5px;
+    background-color:#fff;
+    padding:0px 3px 0px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .tm_list-item{
     opacity:1;
@@ -607,8 +698,10 @@ a.close{
     display:block;
     padding:10px;
 }
-.tm_list-item_top,.tm_list-item_bottom{
-    width:100%;
+.tm_sub_item_left{
+    height:40px;
+    line-height:40px;
+    float:left;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -616,23 +709,13 @@ a.close{
 .tm_item_left{
     height:40px;
     line-height:40px;
-    max-width:75%;
     float:left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 .tm_item_right{
     vertical-align:middle;
-    max-width:30%;
     height:40px;
     line-height:40px;
     float:right;
-    box-sizing:border-box;
-    vertical-align:middle;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 .tm_list-item .tm_item_left>input[type="checkbox"]{
     margin:0;

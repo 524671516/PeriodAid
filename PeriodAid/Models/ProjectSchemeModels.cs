@@ -540,6 +540,11 @@
 
     public static class LogCode
     {
+
+        /// <summary>
+        /// 查看项目
+        /// </summary>
+        public static int VIEWSUBJECT = 400;
         /// <summary>
         /// 创建项目
         /// </summary>

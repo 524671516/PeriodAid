@@ -25,7 +25,6 @@
     <header id="app-header">
         <nav class="navbar navbar-default bg-white">
             <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                         <span class="sr-only">Toggle navigation</span>
@@ -35,8 +34,6 @@
                     </button>
                     <a class="navbar-brand" href="/TaskManagement/Index"><strong class="color-blue">项目管理</strong></a>
                 </div>
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
@@ -45,7 +42,6 @@
                                 <ul class="tm_dropdown_list">
                                     <li><a href="javascript:;" class="create_subject_target"><span class="color-blue">新建项目</span></a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:;">功能开发中</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -57,9 +53,7 @@
                                 <ul id="search_subt" class="tm_dropdown_list" style="max-height:400px;"></ul>
                             </div>
                         </li>
-                    </ul>
-
-                 
+                    </ul>               
                     <ul class="nav navbar-nav navbar-right navbar-border">        
                         <li><a href="#" id="bn_help" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="使用演示" style="font-size:20px;vertical-align: text-bottom;"></a></li>
                         <li><a href="javascript:;" id="task_my_btn" class="tm-show-view" data-href="/TaskManagement/PersonalActionPanel"><strong>我的</strong></a></li>
@@ -91,10 +85,11 @@
                             </div>
                         </li>
                     </ul>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
+                </div>
+            </div>
         </nav>
     </header>
+    @RenderBody()
     <!-- Create Subject Modal -->
     <div class="modal fade" id="Add-Subject" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto;">
         <div class="modal-dialog" role="document">
@@ -120,7 +115,6 @@
         </div>
     </div>
     <!-- Modal Add-Collaborator End-->   
-    @RenderBody()
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/jquery.validate.min.js"></script>

@@ -1,5 +1,11 @@
 ﻿$(function () {
     
+    //控制子任务展示
+    $("#my-app").on("click", ".tm-show-subtask-panel",function () {
+        $(this).parents("li").find(".tm-subtask-ul").slideToggle(300);
+        return false;
+    })
+
     //控制view展示
     $("#my-app").on("click", ".tm-show-view", function () {
         if ($(this).hasClass("active")) {
@@ -19,7 +25,7 @@
     });
 
     //查看任务详情(包含子任务)
-    $("#my-app").on("click", ".tm-show-task-modal", function () {
+    $("#my-app").on("click", ".tm-show-task-modal", function (e) {
         var data = {};
         if ($(this).attr("data-aid")) {
             data.AssignmentId = $(this).attr("data-aid");
@@ -38,6 +44,7 @@
         } else {
             ErrorAlert("获取原始数据失败。");
         }
+        return false;
 
     });
 
@@ -48,90 +55,96 @@
         var subjectdata={
             SubjectId:$("#panel-wrap").attr("data-sid")
         };
-        if ($(this).attr("data-aid")) {
-            _data.AssignmentId = _self.attr("data-aid");
-            EditForAjax("/TaskManagement/ComfirmFinishAssignment", _data, function (data) {
-                if ($("#my-app").hasClass("tm-open-view")) {
+        if ($("#my-app").hasClass("tm-open-view")) {
+            if ($(this).attr("data-aid")) {
+                _data.AssignmentId = _self.attr("data-aid");
+                EditForAjax("/TaskManagement/ComfirmFinishAssignment", _data, function (data) {
                     if ($(".tm-select-range.selected").attr("data-type") == "finish" || $(".tm-select-range.selected").attr("data-type") == "unfinish") {
-                        _self.parents("li").remove();
+                            _self.parents("li").remove();
+                        }
+                }, function () {
+                    if (_self.hasClass("tm-checkbox-input")) {
+                        _self.attr("checked", !_self.is(":checked"));
                     }
-                }
-                if ($("#panel-wrap").attr("data-sid")) {
-                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
-                    EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {
-                        var len = data.data.length;
-                        $(".ajax-procedure").each(function () {
-                            for (i = 0; i < len; i++) {
-                                if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                    $(this).find(".total-num").html(data.data[i].TotalNum)
-                                    $(this).find(".num").html(data.data[i].FinishNum)
-                                }
-                            }
-                        })
-                    })
-                }
-            }, function () {
-                if (_self.hasClass("tm-checkbox-input")) {
-                    _self.attr("checked", !_self.is(":checked"));
-                }
-                _self.attr("checked", _self.is(":checked"));
-               
-            });
-        } else if (($(this).attr("data-atid"))) {
-            _data.SubTaskId = $(this).attr("data-atid");
-            EditForAjax("/TaskManagement/ComfirmFinishSubtask", _data, function (data) {
-                if ($("#my-app").hasClass("tm-open-view")) {
-                    if ($(".tm-select-range.selected").attr("data-type") == "finish" || $(".tm-select-range.selected").attr("data-type") == "unfinish") {
-                        _self.parents("li").remove();
+                    _self.attr("checked", _self.is(":checked"));
+
+                });
+            } else if (($(this).attr("data-atid"))) {
+                _data.SubTaskId = $(this).attr("data-atid");
+                EditForAjax("/TaskManagement/ComfirmFinishSubtask", _data, function (data) {
+                        if ($(".tm-select-range.selected").attr("data-type") == "finish" || $(".tm-select-range.selected").attr("data-type") == "unfinish") {
+                            _self.parents("li").remove();
+                        }
+                }, function () {
+                    if (_self.hasClass("tm-checkbox-input")) {
+                        _self.attr("checked", !_self.is(":checked"));
                     }
-                }
-                if ($("#panel-wrap").attr("data-sid")) {
-                    $("#Edit-Assignment #Status").val(data.ParentStatus)
-                    GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-                        $("#modal_subtask_area").html(data);
-                    });
-                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
-                    EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {
-                        var len = data.data.length;
-                        $(".ajax-procedure").each(function () {
-                            for (i = 0; i < len; i++) {
-                                if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                    $(this).find(".total-num").html(data.data[i].TotalNum)
-                                    $(this).find(".num").html(data.data[i].FinishNum)
-                                }
-                            }
-                        })
-                    })
-                }                
-            }, function () {
-                if (_self.hasClass("tm-checkbox-input")) {
-                    _self.attr("checked", !_self.is(":checked"));
-                }
-                _self.attr("checked", _self.is(':checked'));
-            });
+                    _self.attr("checked", _self.is(':checked'));
+                });
+            } else {
+                ErrorAlert("获取原始数据失败。");
+            }
+            if (!_self.hasClass("tm-checkbox-input")) {
+                return false;
+            }
         } else {
-            ErrorAlert("获取原始数据失败。");
-        }
-        if (!_self.hasClass("tm-checkbox-input")) {
-            return false;
+            if ($(this).attr("data-aid")) {
+                _data.AssignmentId = _self.attr("data-aid");
+                EditForAjax("/TaskManagement/ComfirmFinishAssignment", _data, function (data) {
+                    if ($("#panel-wrap").attr("data-sid")) {
+                        GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
+                        updateTaskNum($("#panel-wrap").attr("data-sid"))
+                        /*获取完成的任务*/
+                        getAssignment("/TaskManagement/SubjectAssignment", { SubjectId: $("#panel-wrap").attr("data-sid") }, $("#tm-finsih-task"), function (data) {
+                            /*成功回调*/
+                        }, function (data) {
+                            /*失败回调*/
+                        })
+                    }
+                }, function () {
+                    if (_self.hasClass("tm-checkbox-input")) {
+                        _self.attr("checked", !_self.is(":checked"));
+                    }
+                    _self.attr("checked", _self.is(":checked"));
+
+                });
+            } else if (($(this).attr("data-atid"))) {
+                _data.SubTaskId = $(this).attr("data-atid");
+                EditForAjax("/TaskManagement/ComfirmFinishSubtask", _data, function (data) {
+                    if ($("#panel-wrap").attr("data-sid")) {
+                        $("#Edit-Assignment #Status").val(data.ParentStatus)
+                        GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+                            $("#modal_subtask_area").html(data);
+                        });
+                        GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
+                        updateTaskNum($("#panel-wrap").attr("data-sid"))
+                        /*获取完成的任务*/
+                        getAssignment("/TaskManagement/SubjectAssignment", { SubjectId: $("#panel-wrap").attr("data-sid") }, $("#tm-finsih-task"), function (data) {
+                            /*成功回调*/
+                        }, function (data) {
+                            /*失败回调*/
+                        })
+                    }
+                }, function () {
+                    if (_self.hasClass("tm-checkbox-input")) {
+                        _self.attr("checked", !_self.is(":checked"));
+                    }
+                    _self.attr("checked", _self.is(':checked'));
+                });
+            } else {
+                ErrorAlert("获取原始数据失败。");
+            }
+            if (!_self.hasClass("tm-checkbox-input")) {
+                return false;
+            }
         }
     });
 
     //请求项目表单
     $("#my-app").on("click", ".create_subject_target", function () {
-        $.ajax({
-            url: "/TaskManagement/GetSubjectForm",
-            success: function (data) {
-                if (data == "FAIL") {
-                    ErrorAlert("操作失败。");
-                } else {
-                    $("#Add-Subject #Create-Subject-Content").html(data);
-                    $("#Add-Subject").modal('show');
-                }
-            },
-            error: function () {
-                ErrorAlert("请求失败。")
-            }
+        GetTemplate("/TaskManagement/GetSubjectForm", {}, function (data) {
+            $("#Add-Subject #Create-Subject-Content").html(data);
+            $("#Add-Subject").modal('show');
         });
     });
 });
@@ -203,7 +216,7 @@ function GetActiveSubject(container) {
             if (data == "FAIL") {
                 ErrorAlert("读取执行中的项目失败。")
             } else {
-                $(container).html(data);
+                $(container).html(data);                
             }
         }
     })
@@ -241,30 +254,6 @@ function GetProcedure(ProcedureId, SubjectId, container) {
         }
     });
 }
-
-//获取任务表单
-function GetAssignmentForm(ProcedureId, SubjectId, container) {
-    $.ajax({
-        url: "/TaskManagement/GetAssignmentForm",
-        data: {
-            ProcedureId: ProcedureId,
-            SubjectId: SubjectId
-        },
-        success: function (data) {
-            if (data == "FAIL") {
-                ErrorAlert("创建任务失败。")
-            } else {
-                container.html(data)
-            }
-        },
-        error: function () {
-            ErrorAlert("请求失败。")
-        }
-    });
-}
-
-
-
 //获取任务列表
 function GetAssignment(ProcedureId, SubjectId, container) {
     $.ajax({
@@ -275,28 +264,9 @@ function GetAssignment(ProcedureId, SubjectId, container) {
         },
         success: function (data) {           
             container.html(data)
+            MoveTask()
         },
         error: function () {
-            ErrorAlert("操作失败")
-        }
-    });
-}
-
-
-function Delete_Procedure(ProcedureId,SubjectId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Delete_Procedure",
-        type: "post",
-        data: {
-            ProcedureId: ProcedureId,
-            SubjectId:SubjectId
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function (data) {
             ErrorAlert("操作失败")
         }
     });
@@ -318,58 +288,7 @@ function Delete_Assignment(AssignmentId, Callback) {
         }
     });
 }
-function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignmnet_CollaboratorAddPartial",
-        data: {
-            AssignmentId: AssignmentId,
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
-function GetAssignment_CollaboratorPartial(AssignmentId,Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignment_CollaboratorPartial",
-        data: {
-            AssignmentId: AssignmentId
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
-function GetSubTaskListPartial(AssignmentId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignment_SubtaskPartial",
-        data: {
-            AssignmentId: AssignmentId,
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
 
-
-
-//插件调用
 /*dialog调用*/
 function UnimportantAlert(text) {
     $.alert({
@@ -450,8 +369,20 @@ function CustomConfirm(text,callback) {
 }
 
 /*时间控件调用*/
-function CompleteTimeWidget(cotainer) {
-    $(cotainer).datetimepicker({
+function CompleteTimeWidget(inputName, container) {
+    if (container) {
+        $(inputName).datetimepicker({
+            format: 'yyyy-mm-dd hh:00',
+            container: container,
+            minView: "day",
+            autoclose: true,
+            todayBtn: true,
+            clearBtn: true,
+            pickerPosition: "bottom-right",
+            todayHighlighttodayHighlight: true,
+        });
+    } else {
+ $(inputName).datetimepicker({
         format: 'yyyy-mm-dd hh:00',
         minView:"day",
         autoclose: true,
@@ -460,6 +391,8 @@ function CompleteTimeWidget(cotainer) {
         pickerPosition: "bottom-right",
         todayHighlighttodayHighlight: true,
     });
+    }
+  
 }
 function GetElementsByClass(className) {
             var elements;
@@ -575,6 +508,86 @@ function ShowTmView(url) {
         }
 }
 
+//任务拖动事件注册函数 id(ul的id)
+function dragtask(id) {
+    var el = document.getElementById(id)
+    Sortable.create(el, {
+        filter: ".tm_list-add",
+        group: 'item-ul',
+        dragClass: "sortable-drag",
+        ghostClass: "sortable-ghost",
+        animation: 150,
+        onEnd: function (evt) {
+            //判读是否携带任务id
+            if (!evt.item.dataset.aid) {
+                ErrorAlert("操作失败")
+            } else {
+                if (!evt.item.offsetParent.offsetParent.dataset.procedureid) {
+                    ErrorAlert("操作失败")
+                } else {
+                    EditForAjax("/TaskManagement/DragAssignment", {
+                        AssignmentId: evt.item.dataset.aid,
+                        nowpid: evt.item.offsetParent.offsetParent.dataset.procedureid
+                    }, function (data) {
+                        EditForAjax("/TaskManagement/GetProcedureJsonInfo", {
+                            SubjectId: $("#panel-wrap").attr("data-sid")
+                        }, function (data) {
+                            var len = data.data.length;
+                            $(".ajax-procedure").each(function () {
+                                for (i = 0; i < len; i++) {
+                                    if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+                                        $(this).find(".total-num").html(data.data[i].TotalNum)
+                                        $(this).find(".num").html(data.data[i].FinishNum)
+                                    }
+                                }
+                            })
+                        }, function (data) {
+                            /*失败回调*/
+                        })
+                    }, function (data) {
+                        /*失败回调*/
+                    })
+                }
+            }
+        },
+    });
+}
+//获取任务函数
+function getAssignment(url, data, container, success, error) {
+    /*获取任务*/
+    GetTemplate(url, data, function (data) {
+        container.html(data);
+        if (success && typeof (success) == "function") {
+            success(data);
+        }
+    }, function (data) {
+        if (error && typeof (error) == "function") {
+            success(data);
+        }
+    });
+}
+
+//任务面板页面数据更新
+function updateTaskNum(SubejctId) {
+    var subjectdata={
+        SubjectId: SubejctId
+    }
+    EditForAjax("/TaskManagement/GetProcedureJsonInfo", subjectdata, function (data) {
+        var len = data.data.length;
+        var totalnum = 0;
+        $(".ajax-procedure").each(function () {
+            for (i = 0; i < len; i++) {
+                if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
+                    $(this).find(".total-num").html(data.data[i].TotalNum)
+                    $(this).find(".num").html(data.data[i].FinishNum)
+                    totalnum += data.data[i].FinishNum;
+                }
+            }
+        });
+        $("#tm-finsh-total").html(totalnum)
+    })
+}
+
 //帮助卡片
 $("#bn_help").on("click", function () {
     $.ajax({
@@ -593,35 +606,6 @@ $("#bn_help").on("click", function () {
         }
     })
 });
-
-//dropdown位移控制
-
-
-
-
-//(function ($) {
-//    if (typeof ($) != "function") {
-//        console.log("没有引入Jquery");
-//        return;
-//    };
-//    var TmApp = function (element, options) {
-//        var _self = this;
-//        this.options=options||{};
-//        this.$element = $(element);
-//        this.subject = {
-//            subjectArray:
-//        }
-
-        
-
-//    };
-   
-//    function isArray() {
-//        console.log(1);
-//    }
-//    window.TmApp = TmApp;
-    
-//})(jQuery)
 
 
 

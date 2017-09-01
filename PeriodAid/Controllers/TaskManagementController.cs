@@ -171,6 +171,46 @@ namespace PeriodAid.Controllers
 
         #region 项目操作
 
+        //获取项目json详细
+        //[HttpPost]
+        //public JsonResult PersonalActiveSubjectAjaxJson()
+        //{
+        //    var employee = getEmployee(User.Identity.Name);
+        //    // 自己创建的项目
+        //    var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
+        //    // 自己参与任务的项目
+        //    var ColAssignmentSubject = (from m in employee.CollaborateAssignment
+        //                                where m.Status > AssignmentStatus.DELETED
+        //                                select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
+        //    //获取负责任务的项目
+        //    var HolderSubject = (from m in _db.Assignment
+        //                         where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
+        //                         select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
+        //    var FirstMerge = ownSubject.Union(ColAssignmentSubject);
+        //    var MergeSubject = FirstMerge.Union(HolderSubject);
+        //    List<PersonalSubjectInfoClass> pslcl = new List<PersonalSubjectInfoClass>();
+        //    foreach(var item in MergeSubject)
+        //    {
+        //        var personlog = from m in _db.OperationLogs
+        //                        where m.UserId == employee.Id && m.LogCode == 400 && m.SubjectId == item.Id
+        //                        orderby m.LogTime descending
+        //                        select m;
+        //        var lastdate = personlog.Take(1).FirstOrDefault().LogTime;
+        //        var seconddate = personlog.Skip(1).Take(1).FirstOrDefault().LogTime;
+        //        var subjectlognum = (from m in _db.OperationLogs
+        //                             where m.LogTime >= seconddate && m.LogTime <= seconddate && m.SubjectId == item.Id
+        //                             select m).Count();
+        //        PersonalSubjectInfoClass pslc = new PersonalSubjectInfoClass()
+        //        {
+        //            SubjectTiTle = item.SubjectTitle,
+        //            SubjectId = item.Id,
+        //            EventNum = subjectlognum
+        //        };
+        //        pslcl.Add(pslc);
+        //    }
+        //    return Json(new { data = pslcl });
+        //}
+
         //进行中的项目
         public ActionResult Personal_ActiveSubjectListPartial()
         {
@@ -229,9 +269,11 @@ namespace PeriodAid.Controllers
 
         //获取项目实例
         [OperationAuth(OperationGroup = 102)]
-        public ActionResult Subject_Detail(int SubjectId)
+        public async Task<ActionResult> Subject_Detail(int SubjectId)
         {
+            var employee = getEmployee(User.Identity.Name);
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status == SubjectStatus.ACTIVE);
+            await AddLogAsync(LogCode.VIEWSUBJECT, employee, SubjectId, "查看了项目:"+subject.SubjectTitle+"。");
             if (subject == null)
             {
                 return RedirectToAction("Index");
@@ -241,7 +283,7 @@ namespace PeriodAid.Controllers
                 ViewBag.sortprocedure = from m in subject.ProcedureTemplate.Procedure
                                         where m.Status == ProcedureStatus.NORMAL
                                         orderby m.Sort ascending
-                                        select m;
+                                        select m;                
                 ViewBag.img = getEmployee(User.Identity.Name).ImgUrl;
                 return View(subject);
             }
@@ -681,14 +723,46 @@ namespace PeriodAid.Controllers
 
         #region  任务操作
         //获取任务
-        public PartialViewResult SubjectAssignment(int ProcedureId, int SubjectId)
+        public PartialViewResult SubjectAssignment(int? ProcedureId, int SubjectId,string Type)
         {
-            var assignmentlist = from m in _db.Assignment
-                                 where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
-                                 orderby m.Status ascending
-                                 select m;
-            ViewBag.ProcedureId = ProcedureId;
-            return PartialView(assignmentlist);
+            if (ProcedureId == null) {
+                var assignmentlist = from m in _db.Assignment
+                                     where m.SubjectId == SubjectId && m.Status== AssignmentStatus.FINISHED
+                                     orderby m.CreateTime descending
+                                     select m;
+                ViewBag.ProcedureId = 0;
+                return PartialView(assignmentlist);
+            }
+            else
+            {
+                if (Type == GetDataType.ALLDATA)
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
+                else if (Type == GetDataType.FINISHDATA)
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.FINISHED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
+                else
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
+            }      
         }
 
         //获取任务填写表单
@@ -701,6 +775,27 @@ namespace PeriodAid.Controllers
                 SubjectId = SubjectId,
                 HolderId = employee.Id
             };
+            List<CollaboratorModel> collist = new List<CollaboratorModel>();
+            List<Employee> existem = new List<Employee>();
+            var departemt = from m in _db.Department
+                            where m.Status == DepartmentStatus.NORMAL
+                            select m;
+            foreach (var depart in departemt)
+            {
+                List<Employee> newlist = new List<Employee>();
+                foreach (var _item in depart.Employee)
+                {
+                   
+                        newlist.Add(_item);
+                }
+                CollaboratorModel colmodel = new CollaboratorModel()
+                {
+                    DepartmentName = depart.DepartmentName,
+                    EmployeeList = newlist
+                };
+                collist.Add(colmodel);
+            }
+            ViewBag.DepartmentList = collist;
             var EmployeeList = from m in _db.Employee
                                where m.Status > EmployeeStatus.DEVOICE
                                orderby m.Id descending
@@ -732,6 +827,29 @@ namespace PeriodAid.Controllers
                     {
                         return Json(new { result = "FAIL", errmsg = "数据存储失败。" });
                     }
+                    if (form["assignment_col_straff"]!=null)
+                    {
+                        item.Collaborator = new List<Employee>();
+                        var colarray = form["assignment_col_straff"].Split(',');
+                        foreach (var i in colarray)
+                        {
+                            try
+                            {
+                                var ci = Convert.ToInt32(i);
+                                var col = _db.Employee.SingleOrDefault(m => m.Id == ci && m.Status > EmployeeStatus.DEVOICE);
+                                if (item.HolderId!=ci)
+                                {
+                                    item.Collaborator.Add(col);
+                                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                                    await _db.SaveChangesAsync();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                return Json(new { result = "SUCCESS", id = item.ProcedureId,errmsg="参与人添加异常。"});
+                            }
+                        }                     
+                    }                   
                     return Json(new { result = "SUCCESS", id = item.ProcedureId });
 
                 }
@@ -1074,7 +1192,6 @@ namespace PeriodAid.Controllers
                 var collaborator = assignment.Collaborator;
                 List<Employee> emlist = new List<Employee>();
                 emlist.Add(assignment.Holder);
-                emlist.Add(assignment.Subject.Holder);
                 foreach (var i in collaborator)
                 {
                     emlist.Add(i);
@@ -1110,6 +1227,11 @@ namespace PeriodAid.Controllers
                     {
 
                         var assignment = _db.Assignment.SingleOrDefault(m => m.Id == item.AssignmentId);
+                        var excutor = _db.Employee.SingleOrDefault(m => m.Id == item.ExecutorId);
+                        if (!assignment.Collaborator.Contains(excutor) && assignment.HolderId != item.ExecutorId)
+                        {
+                            return Json(new { result = "FAIL", errmsg = "执行人不在此任务内,请刷新页面。" });
+                        }
                         assignment.Status = AssignmentStatus.UNFINISHED;
                         _db.Entry(assignment).State = System.Data.Entity.EntityState.Modified;
                         _db.SubTask.Add(item);
@@ -1451,6 +1573,9 @@ namespace PeriodAid.Controllers
                     logContent = employee.NickName + info;
                 }
                 else if (code == LogCode.RESETSUBJECT)
+                {
+                    logContent = employee.NickName + info;
+                }else if (code == LogCode.VIEWSUBJECT)
                 {
                     logContent = employee.NickName + info;
                 }
@@ -2639,7 +2764,7 @@ namespace PeriodAid.Controllers
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var loglist = (from m in _db.OperationLogs
-                           where m.SubjectId == SubjectId
+                           where m.SubjectId == SubjectId&&m.LogCode!=LogCode.VIEWSUBJECT
                            orderby m.LogTime descending
                            select m).Take(6).ToList();
             ViewBag.finishnum = (from m in subject.Assignment
