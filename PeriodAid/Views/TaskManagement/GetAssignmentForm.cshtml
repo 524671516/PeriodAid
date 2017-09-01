@@ -6,7 +6,7 @@
     @Html.HiddenFor(m => m.ProcedureId)
     @Html.HiddenFor(m => m.SubjectId)
     <div class="form-group">
-       @Html.TextBoxFor(m => m.AssignmentTitle, new {@class="form-control", @placeholder="任务名称"})
+        @Html.TextBoxFor(m => m.AssignmentTitle, new { @class = "form-control", @placeholder = "任务名称" })
     </div>
     <div class="form-group">
         <label for="Deadline">截止期限</label>
@@ -14,7 +14,7 @@
     </div>
     <div class="form-group">
         <label for="HolderId">负责人</label>
-        @Html.DropDownListFor(m=>m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdown", @id= "assignment_holder_straff" })
+        @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdown", @id = "assignment_holder_straff" })
     </div>
     <div style="margin-bottom:15px;">
         <label for="assignment_col_straff">参与人</label>
@@ -53,10 +53,20 @@
     </div>
 }
 <script>
+    //清除任务添加窗口
+    $("#cancel-create-assignment").on("click", function () {
+        $(".btn-get-assignmentform").removeClass("hidden");
+        $(".tm_assignmentform-area").html("");
+    });
+
+    //展开更多操作
     $("#btn_assignementform-more").on("click", function () {
         $("#tm-assignementform-more").slideToggle("300");
-    })
+    });
+    //事件插件调用
     CompleteTimeWidget(".form_datetime_assignmentform", "#add_assignment_form");
+
+    //选择插件调用
     $('#assignment_holder_straff').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
@@ -70,6 +80,8 @@
         dropupAuto: false,
         title: "选择添加参与人"
     });
+
+    //解决参与人和负责人回选方案(后端已判定)
     $('#assignment_col_straff').on('loaded.bs.select', function (e) {
         $('#assignment_col_straff').find("[value=" + $("#assignment_holder_straff").val() + "]").hide();
         $('#assignment_col_straff').selectpicker('refresh');
@@ -80,6 +92,7 @@
         $('#assignment_col_straff').find("[value=" + $("#assignment_holder_straff").val() + "]").hide();
         $('#assignment_col_straff').selectpicker('refresh');
     });
+
     //新增任务验证
     $("#add_assignment_form").validate({
         debug: false,
@@ -94,24 +107,17 @@
             $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
                     UnimportantAlert("任务创建成功。");
-                    GetAssignment(data.id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_panel-body"));
-                    $.ajax({
-                        url: "/TaskManagement/GetProcedureJsonInfo",
-                        type: "post",
-                        data: {
-                            SubjectId: $("#panel-wrap").attr("data-sid")
-                        },
-                        success: function (data) {
-                            var len = data.data.length;
-                            $(".ajax-procedure").each(function () {
-                                for (i = 0; i < len; i++) {
-                                    if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                        $(this).find(".total-num").html(data.data[i].TotalNum)
-                                        $(this).find(".num").html(data.data[i].FinishNum)
-                                    }
-                                }
-                            })
-                        }
+                    //更新列表
+                    var _data = {
+                        ProcedureId: data.id,
+                        SubjectId: $("#panel-wrap").attr("data-sid")
+                    }                                           //请求参数
+                    /*获取任务*/
+                    getAssignment("/TaskManagement/SubjectAssignment", _data, $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_panel-body"), function (data) {
+                        dragtask("tm-list-show-" + _data.ProcedureId) //注册拖动事件
+                        updateTaskNum($("#panel-wrap").attr("data-sid"))  //跟新数据
+                    }, function (data) {
+                        /*失败回调*/
                     })
                 } else {
                     ErrorAlert(data.result);
@@ -126,7 +132,7 @@
         }
     });
 
-    //新增任务
+    //新增任务提交
     $("#create-assignment").on("click", function () {
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled");

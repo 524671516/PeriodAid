@@ -172,44 +172,44 @@ namespace PeriodAid.Controllers
         #region 项目操作
 
         //获取项目json详细
-        [HttpPost]
-        public JsonResult PersonalActiveSubjectAjaxJson()
-        {
-            var employee = getEmployee(User.Identity.Name);
-            // 自己创建的项目
-            var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
-            // 自己参与任务的项目
-            var ColAssignmentSubject = (from m in employee.CollaborateAssignment
-                                        where m.Status > AssignmentStatus.DELETED
-                                        select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
-            //获取负责任务的项目
-            var HolderSubject = (from m in _db.Assignment
-                                 where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
-                                 select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
-            var FirstMerge = ownSubject.Union(ColAssignmentSubject);
-            var MergeSubject = FirstMerge.Union(HolderSubject);
-            List<PersonalSubjectInfoClass> pslcl = new List<PersonalSubjectInfoClass>();
-            foreach(var item in MergeSubject)
-            {
-                var personlog = from m in _db.OperationLogs
-                                where m.UserId == employee.Id && m.LogCode == 400 && m.SubjectId == item.Id
-                                orderby m.LogTime ascending
-                                select m;
-                var lastdate = personlog.ElementAtOrDefault(0).LogTime;
-                var seconddate = personlog.ElementAtOrDefault(1).LogTime;
-                var subjectlognum = (from m in _db.OperationLogs
-                                     where m.LogTime >= seconddate && m.LogTime <= seconddate && m.SubjectId == item.Id
-                                     select m).Count();
-                PersonalSubjectInfoClass pslc = new PersonalSubjectInfoClass()
-                {
-                    SubjectTiTle = item.SubjectTitle,
-                    SubjectId = item.Id,
-                    EventNum = subjectlognum
-                };
-                pslcl.Add(pslc);
-            }
-            return Json(new { data = pslcl });
-        }
+        //[HttpPost]
+        //public JsonResult PersonalActiveSubjectAjaxJson()
+        //{
+        //    var employee = getEmployee(User.Identity.Name);
+        //    // 自己创建的项目
+        //    var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
+        //    // 自己参与任务的项目
+        //    var ColAssignmentSubject = (from m in employee.CollaborateAssignment
+        //                                where m.Status > AssignmentStatus.DELETED
+        //                                select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
+        //    //获取负责任务的项目
+        //    var HolderSubject = (from m in _db.Assignment
+        //                         where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
+        //                         select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
+        //    var FirstMerge = ownSubject.Union(ColAssignmentSubject);
+        //    var MergeSubject = FirstMerge.Union(HolderSubject);
+        //    List<PersonalSubjectInfoClass> pslcl = new List<PersonalSubjectInfoClass>();
+        //    foreach(var item in MergeSubject)
+        //    {
+        //        var personlog = from m in _db.OperationLogs
+        //                        where m.UserId == employee.Id && m.LogCode == 400 && m.SubjectId == item.Id
+        //                        orderby m.LogTime descending
+        //                        select m;
+        //        var lastdate = personlog.Take(1).FirstOrDefault().LogTime;
+        //        var seconddate = personlog.Skip(1).Take(1).FirstOrDefault().LogTime;
+        //        var subjectlognum = (from m in _db.OperationLogs
+        //                             where m.LogTime >= seconddate && m.LogTime <= seconddate && m.SubjectId == item.Id
+        //                             select m).Count();
+        //        PersonalSubjectInfoClass pslc = new PersonalSubjectInfoClass()
+        //        {
+        //            SubjectTiTle = item.SubjectTitle,
+        //            SubjectId = item.Id,
+        //            EventNum = subjectlognum
+        //        };
+        //        pslcl.Add(pslc);
+        //    }
+        //    return Json(new { data = pslcl });
+        //}
 
         //进行中的项目
         public ActionResult Personal_ActiveSubjectListPartial()
@@ -723,35 +723,46 @@ namespace PeriodAid.Controllers
 
         #region  任务操作
         //获取任务
-        public PartialViewResult SubjectAssignment(int ProcedureId, int SubjectId,string Type)
+        public PartialViewResult SubjectAssignment(int? ProcedureId, int SubjectId,string Type)
         {
-            if (Type == GetDataType.ALLDATA)
-            {
+            if (ProcedureId == null) {
                 var assignmentlist = from m in _db.Assignment
-                                     where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
-                                     orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                     where m.SubjectId == SubjectId && m.Status== AssignmentStatus.FINISHED
+                                     orderby m.CreateTime descending
                                      select m;
-                ViewBag.ProcedureId = ProcedureId;
-                return PartialView(assignmentlist);
-            }
-            else if (Type == GetDataType.FINISHDATA)
-            {
-                var assignmentlist = from m in _db.Assignment
-                                     where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status==AssignmentStatus.FINISHED
-                                     orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
-                                     select m;
-                ViewBag.ProcedureId = ProcedureId;
+                ViewBag.ProcedureId = 0;
                 return PartialView(assignmentlist);
             }
             else
             {
-                var assignmentlist = from m in _db.Assignment
-                                     where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status==AssignmentStatus.UNFINISHED
-                                     orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
-                                     select m;
-                ViewBag.ProcedureId = ProcedureId;
-                return PartialView(assignmentlist);
-            }
+                if (Type == GetDataType.ALLDATA)
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
+                else if (Type == GetDataType.FINISHDATA)
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.FINISHED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
+                else
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
+            }      
         }
 
         //获取任务填写表单

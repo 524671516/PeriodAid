@@ -1,7 +1,7 @@
 ﻿@using PeriodAid.Models
 @model IEnumerable<PeriodAid.Models.Assignment>
 <div class="tm_list-container">
-    <ul class="tm_list-show">
+    <ul class="tm_list-show" id="tm-list-show-@ViewBag.ProcedureId">
 
         @foreach (var item in Model)
         {
@@ -253,13 +253,27 @@
                 }
             }
     </ul>
-    <div class="tm_list-control text-center">
-        <div class="add-btn color-gray btn-get-form btn-get-assignmentform" data-pid="@ViewBag.ProcedureId">
-            <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i>
+    @if (ViewBag.ProcedureId != 0)
+    {
+        <div class="tm_list-control text-center">
+            <div class="add-btn color-gray btn-get-form btn-get-assignmentform" data-pid="@ViewBag.ProcedureId">
+                <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;增加任务</i>
+            </div>
+            <div class="tm_assignmentform-area">
+            </div>
         </div>
-        <div class="tm_assignmentform-area">
-        </div>
-    </div>
+    }
+    else
+    {
+        if (Model.Count() == 0)
+        {
+            <div class="tm_list-control text-center">
+                <div class="color-gray btn-get-form">
+                    - 没有已完成的任务 -
+                </div>
+            </div>
+        }
+    }
 </div>
 <script>
     $(function () {
