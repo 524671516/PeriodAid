@@ -53,20 +53,10 @@
     </div>
 }
 <script>
-    //清除任务添加窗口
-    $("#cancel-create-assignment").on("click", function () {
-        $(".btn-get-assignmentform").removeClass("hidden");
-        $(".tm_assignmentform-area").html("");
-    });
-
-    //展开更多操作
-    $("#btn_assignementform-more").on("click", function () {
-        $("#tm-assignementform-more").slideToggle("300");
-    });
-    //事件插件调用
+    //时间插件初始化
     CompleteTimeWidget(".form_datetime_assignmentform", "#add_assignment_form");
 
-    //选择插件调用
+    //选择插件初始化
     $('#assignment_holder_straff').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
@@ -80,8 +70,18 @@
         dropupAuto: false,
         title: "选择添加参与人"
     });
+    //清除任务添加窗口
+    $("#cancel-create-assignment").on("click", function () {
+        $(".btn-get-assignmentform").removeClass("hidden");
+        $(".tm_assignmentform-area").html("");
+    });
 
-    //解决参与人和负责人回选方案(后端已判定)
+    //展开更多操作
+    $("#btn_assignementform-more").on("click", function () {
+        $("#tm-assignementform-more").slideToggle("300");
+    });
+
+    //解决参与人和负责人回选方案(后端也已经判定)   可查看selectpicker对应的文档
     $('#assignment_col_straff').on('loaded.bs.select', function (e) {
         $('#assignment_col_straff').find("[value=" + $("#assignment_holder_straff").val() + "]").hide();
         $('#assignment_col_straff').selectpicker('refresh');
@@ -115,7 +115,7 @@
                     /*获取任务*/
                     getAssignment("/TaskManagement/SubjectAssignment", _data, $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_panel-body"), function (data) {
                         dragtask("tm-list-show-" + _data.ProcedureId) //注册拖动事件
-                        updateTaskNum($("#panel-wrap").attr("data-sid"))  //跟新数据
+                        updateTaskNum(_data.SubjectId)  //跟新数据
                     }, function (data) {
                         /*失败回调*/
                     })

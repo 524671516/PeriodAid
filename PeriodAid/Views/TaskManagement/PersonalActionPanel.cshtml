@@ -16,44 +16,33 @@
     </div>
     <script>
     $(function () {
-        //初始化加载数据
+        //初始化加载数据地址
         var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
         if (init_link) {
-            $.ajax({
-                url: init_link,
-                success: function (data) {
-                    if (data == "FAIL") {
-                        ErrorAlert("获取数据失败。")
-                    } else {
-                        $(".tm-my-view-wrap").html(data);
-                    }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
-            })
+            //获取初始化数据
+            GetTemplate(init_link, {}, function (data) {
+                //成功
+                $(".tm-my-view-wrap").html(data);
+            }, function (data) {
+                //失败
+            });
         }
-        //我的任务导航控制
+
+        //我的任务导航控制    近期的事和任务
         $(".tm-my-view-control").on("click", ".tm-view-control-link", function () {
-            if (!$(this).hasClass("active")) {
+            var that = $(this);
+            if (!that.hasClass("active")) {
                 $(".tm-my-view-control .tm-view-control-link").removeClass("active");
-                var _link = $(this).attr("data-href");
-                var _self = $(this);
+                var _link = that.attr("data-href");
                 if (_link) {
-                    $.ajax({
-                        url: _link,
-                        success: function (data) {
-                            if (data == "FAIL") {
-                                ErrorAlert("获取数据失败。")
-                            } else {
-                                $(".tm-my-view-wrap").html(data);
-                                _self.addClass("active");
-                            }
-                        },
-                        error: function () {
-                            ErrorAlert("请求失败。");
-                        }
-                    })
+                    //获取数据模板
+                    GetTemplate(_link, {}, function (data) {
+                        //成功
+                        $(".tm-my-view-wrap").html(data);
+                        that.addClass("active");
+                    }, function (data) {
+                        //失败
+                    });
                 }
             }
         });

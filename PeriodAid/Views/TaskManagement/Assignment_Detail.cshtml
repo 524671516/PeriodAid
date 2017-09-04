@@ -130,16 +130,25 @@
     <button type="button" class="btn btn-primary" id="btn_edit_assignment">保存</button>
 </div>
 <script type="text/javascript">
-    //注册时间插件
+    /*页面初始化数据获取*/
+    //获取子任务列表
+    GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+        $("#modal_subtask_area").html(data);
+    });
+    //获取合作人
+    GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+        $("#modal_collaborator_area").html(data);
+    });
+    //获取评论
+    GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
+        $("#modal_comment_area").html(data);
+    });
+    /*页面初始化数据获取结束*/
+
+    //初始化事件选择插件
     CompleteTimeWidget(".form_datetime");
 
-    //防止enter按键
-    $(document).keydown(function (event) {
-        switch (event.keyCode) {
-            case 13: return false;
-        }
-    });
-    //注册选择插件
+    //初始化选择插件
     $('#tm_select_straff_assignmentdetail').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
@@ -147,22 +156,15 @@
         dropupAuto: false,
     });
 
-    //获取子任务列表
-    GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-        $("#modal_subtask_area").html(data);
+    //防止enter按键直接提交  任务评论存在此问题
+    $(document).keydown(function (event) {
+        switch (event.keyCode) {
+            case 13: return false;
+        }
     });
 
-    //获取合作人
-    GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-        $("#modal_collaborator_area").html(data);
-    });
 
-    //获取评论
-    GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
-        $("#modal_comment_area").html(data);
-    });
-
-    //checkbox
+    //checkbox自定义值
     $("#Repeat").on("click", function () {
         if ($(this).val().toLowerCase() == "false") {
             $(this).val("true")
@@ -170,7 +172,8 @@
             $(this).val("false")
         }
     });
-    //修改任务验证
+
+    //修改任务表单验证
     $("#edit_assignment_form").validate({
         debug: false,
         rules: {
@@ -186,7 +189,16 @@
                     UnimportantAlert("任务修改成功");
                     $("#btn_edit_assignment").removeClass("disabled");
                     $('#Edit-Assignment').modal('hide');
-                    GetAssignment(data.id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.id + "]").find(".tm_panel-body"));
+                    //获取任务
+                    var __data = {
+                        ProcedureId: data.id,
+                        SubjectId: $("#panel-wrap").attr("data-sid")
+                    }                                           //请求参数
+                    getAssignment("/TaskManagement/SubjectAssignment", __data, $(".ajax-procedure[data-procedureid=" + __data.ProcedureId + "]").find(".tm_panel-body"), function (data) {
+                        dragtask("tm-list-show-" + __data.ProcedureId) //为任务注册拖动事件
+                    }, function (data) {
+                        //失败
+                    });
                 } else {
                     ErrorAlert(data.errmsg);
                     $("#btn_edit_assignment").removeClass("disabled");
@@ -199,6 +211,7 @@
             $("#btn_edit_assignment").removeClass("disabled");
         }
     });
+
     //修改任务的提交
     $("#btn_edit_assignment").on("click", function () {
         if (!$(this).hasClass("disabled")) {
@@ -206,39 +219,36 @@
             $("#edit_assignment_form").submit();
         }
     });
+
     //删除任务
     $("#btn_del_assignment").on("click", function () {
-        var data_aid = $(this).parent().parent().parent().parent().attr("data-aid");
+        var that=$(this);
+        var _data = {
+            AssignmentId: that.parent().parent().parent().parent().attr("data-aid"),
+        }
         CustomConfirm("删除此任务的同时将删除其子任务，请确认是否删除?", function () {
-            Delete_Assignment(data_aid, function (data) {
-                if (data.result == "SUCCESS") {
-                    GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
-                    UnimportantAlert("删除任务成功。")
-                    $('#Edit-Assignment').modal('hide');
-                    $.ajax({
-                        url: "/TaskManagement/GetProcedureJsonInfo",
-                        type: "post",
-                        data: {
-                            SubjectId: $("#panel-wrap").attr("data-sid")
-                        },
-                        success: function (data) {
-                            var len = data.data.length;
-                            $(".ajax-procedure").each(function () {
-                                for (i = 0; i < len; i++) {
-                                    if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {   
-                                        $(this).find(".total-num").html(data.data[i].TotalNum)
-                                        $(this).find(".num").html(data.data[i].FinishNum)
-                                    }
-                                }
-                            })
-                        }
-                    })
-                } else {
-                    UnimportantAlert(data.errmsg)
-                }
+            EditForAjax("/TaskManagement/Delete_Assignment", _data, function (data) {
+                //成功
+                $('#Edit-Assignment').modal('hide');
+                //获取任务
+                var __data = {
+                    ProcedureId: data.Id,
+                    SubjectId: $("#panel-wrap").attr("data-sid")
+                }                                           //请求参数
+                getAssignment("/TaskManagement/SubjectAssignment", __data, $(".ajax-procedure[data-procedureid=" + __data.ProcedureId + "]").find(".tm_panel-body"), function (data) {
+
+                    dragtask("tm-list-show-" + __data.ProcedureId) //为任务注册拖动事件
+                }, function (data) {
+                    //失败
+                });
+                //跟新数据
+                updateTaskNum(__data.SubjectId)
+            }, function (data) {
+                //失败
             })
         })
     });
+
     //添加评论
     $("#btn_add_comment").on("click", function () {
         if (!$(this).hasClass("disabled")) {
@@ -262,68 +272,4 @@
             }
         }
     });
-
-
-    function GetComment(AssignmentId,Callback) {
-        $.ajax({
-            url: "/TaskManagement/Assignment_CommentPartial",
-            data: {
-                AssignmentId: AssignmentId
-            },
-            success: function (data) {
-                typeof Callback && Callback(data);
-            },
-            error: function () {
-                ErrorAlert("请求失败。");
-            }
-        })
-    }
-    function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
-        $.ajax({
-            url: "/TaskManagement/Assignmnet_CollaboratorAddPartial",
-            data: {
-                AssignmentId: AssignmentId,
-            },
-            success: function (data) {
-                if (Callback && typeof Callback == "function") {
-                    Callback(data);
-                }
-            },
-            error: function () {
-                ErrorAlert("操作失败。")
-            }
-        });
-    }
-    function GetAssignment_CollaboratorPartial(AssignmentId, Callback) {
-        $.ajax({
-            url: "/TaskManagement/Assignment_CollaboratorPartial",
-            data: {
-                AssignmentId: AssignmentId
-            },
-            success: function (data) {
-                if (Callback && typeof Callback == "function") {
-                    Callback(data);
-                }
-            },
-            error: function () {
-                ErrorAlert("操作失败。")
-            }
-        });
-    }
-    function GetSubTaskListPartial(AssignmentId, Callback) {
-        $.ajax({
-            url: "/TaskManagement/Assignment_SubtaskPartial",
-            data: {
-                AssignmentId: AssignmentId,
-            },
-            success: function (data) {
-                if (Callback && typeof Callback == "function") {
-                    Callback(data);
-                }
-            },
-            error: function () {
-                ErrorAlert("操作失败。")
-            }
-        });
-    }
 </script>

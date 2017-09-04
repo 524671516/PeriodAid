@@ -100,6 +100,8 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+
         //修改个人信息
         public ActionResult PersonalSetting()
         {
@@ -170,46 +172,6 @@ namespace PeriodAid.Controllers
         }
 
         #region 项目操作
-
-        //获取项目json详细
-        //[HttpPost]
-        //public JsonResult PersonalActiveSubjectAjaxJson()
-        //{
-        //    var employee = getEmployee(User.Identity.Name);
-        //    // 自己创建的项目
-        //    var ownSubject = employee.Subject.Where(m => m.Status == SubjectStatus.ACTIVE);
-        //    // 自己参与任务的项目
-        //    var ColAssignmentSubject = (from m in employee.CollaborateAssignment
-        //                                where m.Status > AssignmentStatus.DELETED
-        //                                select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
-        //    //获取负责任务的项目
-        //    var HolderSubject = (from m in _db.Assignment
-        //                         where m.HolderId == employee.Id && m.Status > AssignmentStatus.DELETED
-        //                         select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
-        //    var FirstMerge = ownSubject.Union(ColAssignmentSubject);
-        //    var MergeSubject = FirstMerge.Union(HolderSubject);
-        //    List<PersonalSubjectInfoClass> pslcl = new List<PersonalSubjectInfoClass>();
-        //    foreach(var item in MergeSubject)
-        //    {
-        //        var personlog = from m in _db.OperationLogs
-        //                        where m.UserId == employee.Id && m.LogCode == 400 && m.SubjectId == item.Id
-        //                        orderby m.LogTime descending
-        //                        select m;
-        //        var lastdate = personlog.Take(1).FirstOrDefault().LogTime;
-        //        var seconddate = personlog.Skip(1).Take(1).FirstOrDefault().LogTime;
-        //        var subjectlognum = (from m in _db.OperationLogs
-        //                             where m.LogTime >= seconddate && m.LogTime <= seconddate && m.SubjectId == item.Id
-        //                             select m).Count();
-        //        PersonalSubjectInfoClass pslc = new PersonalSubjectInfoClass()
-        //        {
-        //            SubjectTiTle = item.SubjectTitle,
-        //            SubjectId = item.Id,
-        //            EventNum = subjectlognum
-        //        };
-        //        pslcl.Add(pslc);
-        //    }
-        //    return Json(new { data = pslcl });
-        //}
 
         //进行中的项目
         public ActionResult Personal_ActiveSubjectListPartial()

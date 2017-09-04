@@ -160,48 +160,34 @@
     </div>
 @section scripts{
     <script>
-        $(function () {
-            $.ajax({
-                url: "/TaskManagement/Subject_FilesAjax",
-                type: "post",
-                data: {
-                    SubjectId: $("#tm_panel-file").attr("data-sid")
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        var _len = data.data.length;
-                        for (i = 0; i < _len; i++) {
-                            var self = $("li[data-code=" + data.data[i].FolderCode + "]")
-                            self.find(".tm_files_size").html(data.data[i].FileNum)
-                            self.find(".tm_files_author").html(data.data[i].LastUpLoadUser)
-                            self.find(".tm_files_time").html(data.data[i].LastUpLoadTime)
-                        };
-                    }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。")
-                }
-            })
-        })
+        //文件页面初始化数据填充
+        EditForAjax("/TaskManagement/Subject_FilesAjax", {
+            SubjectId: $("#tm_panel-file").attr("data-sid")
+        }, function (data) {
+            //成功
+            var _len = data.data.length;
+            for (i = 0; i < _len; i++) {
+                var self = $("li[data-code=" + data.data[i].FolderCode + "]")
+                self.find(".tm_files_size").html(data.data[i].FileNum)
+                self.find(".tm_files_author").html(data.data[i].LastUpLoadUser)
+                self.find(".tm_files_time").html(data.data[i].LastUpLoadTime)
+            };
+        }, function (data) {
+            //失败
+        });
+
+        //获取下一级页面
         $("#tm_panel-file").on("click", ".tm_link_sub", function () {
             var _code = $(this).parent().attr("data-code");
-            $.ajax({
-                url: "/TaskManagement/Subject_FilesPartial",
-                data: {
-                    SubjectId: $("#tm_panel-file").attr("data-sid"),
-                    TypeCode: _code
-                },
-                success: function (data) {
-                    if (data == "FAIL") {
-                        ErrorAlert(data)
-                    } else {
-                        $("#tm_folder_container").addClass("hide");
-                        $("#tm_panel-file").append(data);
-                    }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。")
-                }
+            GetTemplate("/TaskManagement/Subject_FilesPartial", {
+                SubjectId: $("#tm_panel-file").attr("data-sid"),
+                TypeCode: _code
+            }, function (data) {
+                //成功
+                $("#tm_folder_container").addClass("hide");
+                $("#tm_panel-file").append(data);
+            }, function (data) {
+                //失败
             })
         })
     </script>

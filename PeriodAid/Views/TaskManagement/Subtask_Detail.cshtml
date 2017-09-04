@@ -76,12 +76,14 @@
     <button type="button" class="btn btn-primary" id="btn_edit_subtask">保存</button>
 </div>
 <script type="text/javascript">
+    //初始化选择插件
     $('#tm_select_straff').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
         width: "100%",
         dropupAuto: false,
     });
+    //日期插件初始化
     CompleteTimeWidget(".form_datetime");
     //修改任务验证
     $("#edit_subtask_form").validate({
@@ -118,30 +120,29 @@
             $("#edit_subtask_form").submit();
         }
     });
-    //删除任务
+    //删除子任务
     $("#btn_del_subtask").on("click", function () {
-        var subtaskid = $(this).attr("data-stid");
+        var that = $(this);
         CustomConfirm("删除此任务将不可恢复，请确认是否删除?", function () {
-            $.ajax({
-                url: "/TaskManagement/Delete_Subtask",
-                type: "post",
-                data: {
-                    SubTaskId: subtaskid
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        UnimportantAlert("删除任务成功。");
-                        GetAssignment(data.Id, $("#panel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_panel-body"));
-                        $('#Edit-Assignment').modal('hide');
-
-                    } else {
-                        UnimportantAlert(data.result)
-                    }
-                },
-                error: function (data) {
-                    ErrorAlert("操作失败。")
-                }
-            });
+            var _data = {
+                SubTaskId: that.attr("data-stid")
+            }
+            EditForAjax("/TaskManagement/Delete_Subtask", _data, function (data) {
+                //成功
+                var __data = {
+                    ProcedureId: data.Id,
+                    SubjectId: $("#panel-wrap").attr("data-sid")
+                }                                           //请求参数
+                //获取任务
+                getAssignment("/TaskManagement/SubjectAssignment", __data, $(".ajax-procedure[data-procedureid=" + __data.ProcedureId + "]").find(".tm_panel-body"), function (data) {
+                    dragtask("tm-list-show-" + __data.ProcedureId) //为任务注册拖动事件
+                }, function (data) {
+                    //失败
+                })            
+                $('#Edit-Assignment').modal('hide');
+            }, function (data) {
+                //失败
+            })
         })
     });
 </script>

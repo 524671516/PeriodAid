@@ -118,7 +118,7 @@
                 })
             });
 
-            //排序拖拽   无需重复注册
+            //排序列表拖拽   无需重复注册
             var al = document.getElementById('tm_panel-container');  //必须用原生获取元素
             var sortable = new Sortable(al, {
                 animation: 150,
@@ -218,6 +218,14 @@
         })()
 
         /*以下为注册事件*/
+        //新增过程提交
+        $("#create-procedure-panel").on("click", function () {
+            if (!$(this).hasClass("disabled")) {
+                $(this).addClass("disabled")
+                $("#add_procedure_form").submit();
+            }
+        });
+
         //控制收起按钮
         $(".tm-control-add-panel-btn").on("click", function () {
             if ($("#panel-wrap").hasClass("tm_add_panel_hide")) {
@@ -263,14 +271,6 @@
             }, function () { })
             that.addClass("hidden");
         });
-        //新增过程
-        $("#create-procedure-panel").on("click", function () {
-            if (!$(this).hasClass("disabled")) {
-                $(this).addClass("disabled")
-                $("#add_procedure_form").submit();
-            }
-        });
-
 
         //任务列表删除
         $("#panel-wrap").on("click", ".btn-del-procedure", function () {
@@ -307,6 +307,7 @@
                 $(".tm-show-listmenu").removeClass("open");
             });
         });
+
         //控制任务列表操作栏
         $("#panel-wrap").on("click", ".tm-show-listmenu", function () {
             $(".tm-dropdown-menu").hide();
@@ -329,6 +330,7 @@
                 $(".tm-show-listmenu").removeClass("open");
             }
         });
+
         //修改任务列表名称
         $("#panel-wrap").on("click", ".btn-edit-procedure", function () {
             var _self = $(this);
@@ -361,6 +363,7 @@
             controlHidden()
         });
 
+        //控制任务添加和任务列表添加的切换
         function controlHidden(type) {
             $("#create-procedure-panel").removeClass("disabled");
             if ($("#add-panel-list").hasClass("hidden")) {
@@ -372,6 +375,8 @@
                 $("#add-panel-write").removeClass("hidden");
             }
         }
+        
+        //任务dropdown位移计算
         function changepostion(referencebox, movebox) {
             var referencepoint = referencebox.offset().left + referencebox.width() / 2;
             var moveboxhalfwidth = movebox.width() / 2;

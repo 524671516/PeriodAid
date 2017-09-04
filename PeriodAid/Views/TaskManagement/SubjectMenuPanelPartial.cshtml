@@ -79,7 +79,7 @@
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
     $("#btn_setting_subject").on("click", function () {
         $.ajax({
             url: "/TaskManagement/EditSubject",
@@ -100,10 +100,11 @@
             }
         })
         return false;
-    })
+    });
+
     $("#subject_daily_schedule").on("click", function () {
         $.ajax({
-           url: "/TaskManagement/SubjectProgressPartial",
+            url: "/TaskManagement/SubjectProgressPartial",
             data: {
                 SubjectId: $("#panel-wrap").attr("data-sid")
             },
@@ -121,7 +122,8 @@
             }
         })
         return false;
-    })
+    });
+
     $("#subject_logs_more").on("click", function () {
         $.ajax({
             url: "/TaskManagement/SubjectLogsPartial",
@@ -140,7 +142,7 @@
             error: function (data) {
                 ErrorAlert("操作失败。");
             }
-        })
+        });
         return false;
     })
 </script>

@@ -15,8 +15,7 @@
         <div class="form-group">
             @Html.TextBoxFor(m => m.Remarks, new { @class = "subject-description form-control", @placeholder = "项目简介（选填）" })
         </div>
-        <div class="modal-footer">
-            @*<button type="button" class="btn btn-success" id="btn_choose_template" data-toggle="modal" data-target="#Choose-Template">选择模板创建>></button>*@
+        <div class="modal-footer">          
             <button type="button" class="btn btn-primary" id="btn_add_subject">直接创建项目</button>
         </div>
     }
@@ -56,6 +55,7 @@
             $("#btn_add_subject").removeClass("disabled");
         }
     });
+
     //新增项目的提交
     $("#btn_add_subject").on("click", function () {
         if (!$(this).hasClass("disabled")) {

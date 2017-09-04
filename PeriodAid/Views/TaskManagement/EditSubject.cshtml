@@ -73,9 +73,9 @@
 </div>
 
 <script>
-    //编辑项目验证
-    $(function () {
-        $("#edit_subject_form").validate({
+
+    //新建项目表单验证   详细用法请查看validate插件
+    $("#edit_subject_form").validate({
             debug: true,
             rules: {
                 SubjectTitle: {
@@ -86,7 +86,6 @@
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
-                    console.log(data);
                     if (data.result == "SUCCESS") {
                         UnimportantAlert(data.msg);
                         $("#btn-edit-subject").removeClass("disabled");
@@ -104,102 +103,81 @@
             errorPlacement: function (error, element) {
                 $("#btn-edit-subject").removeClass("disabled");
             }
-        });
-        //编辑项目的提交
-        $("#btn-edit-subject").on("click", function () {
+    });
+
+    /*以下为页面按钮事件*/
+    //编辑项目的提交
+    $("#btn-edit-subject").on("click", function () {
             if (!$(this).hasClass("disabled")) {
                 $(this).addClass("disabled")
                 $("#edit_subject_form").submit();
             }
-        });
-        $("#Archive-Subject").click(function () {
-            CustomConfirm("是否确认归档项目？", function () {
-                $.ajax({
-                    url: "/TaskManagement/ArchiveSubject",
-                    method: "post",
-                    data: {
-                        SubjectId: $("#Id").val()
-                    },
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            $("#Add-Subject").modal("hide");
-                            UnimportantAlert(data.msg);
-                            GetActiveSubject("#personal_active_subject")
-                            GetFinishSubject("#personal_finish_subject")
-                        }
-                        else {
-                            ErrorAlert(data.errmsg);
-                        }
-                    },
-                    error: function () {
-                        ErrorAlert("请求失败。");
-                    }
-                });
+    });
+
+    //归档项目提交      CustomConfirm请查看js文件中可继续扩展用法 
+    $("#Archive-Subject").click(function () {
+        var that = $(this);
+        var _data = {
+            SubjectId: $("#Id").val()     //！！！注意
+        }
+        CustomConfirm("是否确认归档项目？", function () {
+            EditForAjax("/TaskManagement/ArchiveSubject", _data, function (data) {
+                //成功
+                $("#Add-Subject").modal("hide");
+                GetActiveSubject("#personal_active_subject")
+                GetFinishSubject("#personal_finish_subject")
+            }, function (data) {
+                //失败
+            });
                 return false;
             });
-        });
-        $("#Reset-Subject").click(function () {
-            CustomConfirm("是否确认恢复项目？", function () {
-                $.ajax({
-                    url: "/TaskManagement/ResetSubject",
-                    method: "post",
-                    data: {
-                        SubjectId: $("#Id").val()
-                    },
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            $("#Add-Subject").modal("hide");
-                            UnimportantAlert(data.msg);
-                            GetActiveSubject("#personal_active_subject")
-                            GetFinishSubject("#personal_finish_subject")
-                        }
-                        else {
-                            ErrorAlert(data.errmsg);
-                        }
-                    },
-                    error: function (data) {
-                        ErrorAlert("请求失败。");
-                    }
+    });
 
-                });
+    //恢复项目
+    $("#Reset-Subject").click(function () {
+        var that = $(this);
+        var _data = {
+            SubjectId: $("#Id").val()  //！！！注意
+        }
+        CustomConfirm("是否确认恢复项目？", function () {
+            EditForAjax("/TaskManagement/ResetSubject", _data, function (data) {
+                //成功
+                $("#Add-Subject").modal("hide");
+                GetActiveSubject("#personal_active_subject")
+                GetFinishSubject("#personal_finish_subject")
+            }, function (data) {
+                //失败
             });
-        });
-        $("#Delete-Subject").click(function () {
-            CustomConfirm("是否确认删除项目？", function () {
-                $.ajax({
-                    url: "/TaskManagement/DeleteSubject",
-                    method: "post",
-                    data: {
-                        SubjectId: $("#Id").val()
-                    },
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            UnimportantAlert(data.msg);
-                            $("#Add-Subject").modal("hide");
-                            GetActiveSubject("#personal_active_subject")
-                            GetFinishSubject("#personal_finish_subject")
-                        }
-                        else {
-                            ErrorAlert(data.errmsg);
-                        }
-                    },
-                    error: function (data) {
-                        ErrorAlert("请求失败。");
-                    }
-                });
             });
-        });
+    });
+
+    //删除项目
+    $("#Delete-Subject").click(function () {
+        var that = $(this);
+        var _data = {
+            SubjectId: $("#Id").val()  //！！！注意
+        }
+        CustomConfirm("是否确认删除项目？", function () {
+            EditForAjax("/TaskManagement/DeleteSubject", _data, function (data) {
+                //成功
+                $("#Add-Subject").modal("hide");
+                GetActiveSubject("#personal_active_subject")
+                GetFinishSubject("#personal_finish_subject")
+            }, function (data) {
+                //失败
+            });
+            });
+    });
+
+    $(document).delegate("#report-file", "change", function () {
+        Report_ajaxFileUpload();
     });
 
     function openUpload() {
         $("#report-file").trigger("click");
     }
 
-    $(document).delegate("#report-file", "change", function () {
-        Report_ajaxFileUpload();
-    });
-
-
+    //图片上传
     function Report_ajaxFileUpload() {
         $.ajaxFileUpload({
             url: '/TaskManagement/UploadSubjectCoverFileAjax', //用于文件上传的服务器端请求地址
