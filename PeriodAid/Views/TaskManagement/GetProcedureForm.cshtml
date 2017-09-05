@@ -26,7 +26,7 @@
     <li class="text-center"><a href="javascript:;" class="btn" id="btn_edit_procedure"><span class="color-blue">确认修改</span></a></li>
 </ul>
 <script>
-    //修改任务验证
+    //修改任务列表验证
     $("#edit_procedure_form").validate({
         debug: false,
         rules: {
@@ -40,6 +40,7 @@
             $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
                     UnimportantAlert(data.msg);
+                    //更新现有的任务列表名称
                     $("#edit_procedure_form").parents(".ajax-procedure").find(".tm_procedure-title").html($(".tm_dropdown_control #ProcedureTitle").val());
                     $("#btn_edit_procedure").removeClass("disabled");
                 } else {
@@ -56,7 +57,8 @@
             $("#btn_edit_procedure").removeClass("disabled");
         }
     });
-    //修改任务的提交
+
+    //修改任务列表的提交
     $("#btn_edit_procedure").on("click", function () {
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")

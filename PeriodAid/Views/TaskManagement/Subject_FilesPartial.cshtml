@@ -105,17 +105,23 @@
         </div>
     </div>
     <script>
+        //返回上一级
         $("#btn_back_menu").on("click", function () {
             $("#tm_file_container").remove();
             $("#tm_folder_container").removeClass("hide");
         })
+        
+        //上传按钮点击
         $("#btn_upload_file-sub").on("click", function () {
             $("#upload-input-sub").trigger("click");
         });
-        //解决chrome延迟
+
+        //解决chrome选取文件存在的验证导致文件选择框弹出延迟
         $("#upload-input-sub").on("click", function () {
             $(this).val("");
-        })
+        });
+
+        //上传文件
         $("#upload-input-sub").on("change", function () {
             var complete = false;
             if ($(this).val() != "" && !complete) {
@@ -186,12 +192,14 @@
 
         })
 
+        //下载文件
         $("#tm_file_container").on("click", ".btn_download_file", function () {
             var url_link = $(this).attr("data-url");
             if (url_link) {
                 window.open(url_link);
             }
         });
+        //删除文件
         $("#tm_file_container").on("click", ".btn_delete_file", function () {
             var _link = $(this).attr("data-attid");
             var _self = $(this);
@@ -240,14 +248,17 @@
                 })
             }
         });
+        //修改文件
         $("#tm_file_container").on("click", ".btn_edit_file", function () {
             $(this).parents(".tm_files_body_ul_li").find(".tm-file-after-item").removeClass("hidden");
             $(this).parents(".tm_files_body_ul_li").find(".tm-file-before-item").addClass("hidden");
         });
+        //取消修改
         $("#tm_file_container").on("click", ".btn_cancel_edit", function () {
             $(this).parents(".tm_files_body_ul_li").find(".tm-file-after-item").addClass("hidden");
             $(this).parents(".tm_files_body_ul_li").find(".tm-file-before-item").removeClass("hidden");
         });
+        //确定修改文件
         $("#tm_file_container").on("click", ".btn_confirm_edit", function () {
             var _link = $(this).attr("data-attid");
             var filename = $(this).parents(".tm_files_middle").find("input").val();

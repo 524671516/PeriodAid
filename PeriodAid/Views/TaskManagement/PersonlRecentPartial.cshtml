@@ -46,8 +46,8 @@
     </div>
 </div>
 <div class="tm-view-content-container  tm-view-container" id="tm-view-scroll-container">
-    <input type="hidden" id="tm-view-page" name="tm-view-page" value="0"/> 
-    <div class="tm-view-loading-content" id="tm-view-assignment-content"> 
+    <input type="hidden" id="tm-view-page" name="tm-view-page" value="0" />
+    <div class="tm-view-loading-content" id="tm-view-assignment-content">
     </div>
     <div class="tm-view-loading-content hidden" id="tm-view-subtask-content">
 
@@ -58,118 +58,101 @@
     </div>
 </div>
 <script>
-    $(function () {
-                var _initlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-                $.ajax({
-                    url: _initlink,
-                    data: {
-                        page: parseInt($("#tm-view-page").val()),
-                        datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                        sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                    },
-                    success: function (data) {
-                        if (data == "FAIL") {
-                            ErrorAlert("获取数据失败。");
-                        } else {
-                            setTimeout(function () {
-                                $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                                $("#tm-view-assignment-content").append(data);
-                                $("#tm-view-loading").hide();
-                                if ($("#tm-view-assignment-content .tm-view-nomore").length > 0 || $("#tm-view-assignment-content .tm-view-loading-empty").length > 0) {
-                                    $("#tm-view-scroll-container").unbind("scroll");
-                                    $("#tm-view-page").val("0");
-                                } else {
-                                    controlscroll("tm-view-assignment-content", "tm-view-scroll-container")();
-                                }
-                            },500)
-                        }
-                    },
-                    error: function () {
-                        ErrorAlert("请求失败。");
-                    }
-                })
-    })
+    //页面初始化获取数据地址
+    var _initlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+    //获取页面初始化数据
+    GetTemplate(_initlink, {
+        page: parseInt($("#tm-view-page").val()),
+        datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+        sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+    }, function (data) {
+        //成功
+        setTimeout(function () {
+            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+            $("#tm-view-assignment-content").append(data);
+            $("#tm-view-loading").hide();
+            if ($("#tm-view-assignment-content .tm-view-nomore").length > 0 || $("#tm-view-assignment-content .tm-view-loading-empty").length > 0) {
+                $("#tm-view-scroll-container").unbind("scroll");
+                $("#tm-view-page").val("0");
+            } else {
+                controlscroll("tm-view-assignment-content", "tm-view-scroll-container")();
+            }
+        }, 500)
+    }, function (data) {
+        //失败
+    });
+
+    //页面导航切换
     $("#tm-view-subcontrol").on("click", ".tm-view-control-link", function () {
-        if (!$(this).hasClass("active")) {
-            var _link = $(this).attr("data-link");
+        var that = $(this);
+        if (!that.hasClass("active")) {
+            var _link = that.attr("data-link");
             $(".tm-view-loading-content").addClass("hidden");
             $("#" + _link).removeClass("hidden").html("");
             $("#tm-view-loading").show();
-            $(this).parent().find(".tm-view-control-link.active").removeClass("active");
+            that.parent().find(".tm-view-control-link.active").removeClass("active");
             $("#tm-view-page").val("0");
-            $(this).addClass("active");
+            that.addClass("active");
             var _initlinksub = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-            $.ajax({
-                url: _initlinksub,
-                data: {
-                    page: parseInt($("#tm-view-page").val()),
-                    datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                    sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                },
-                success: function (data) {
-                    if (data == "FAIL") {
-                        ErrorAlert("获取数据失败。");
+            GetTemplate(_initlinksub, {
+                page: parseInt($("#tm-view-page").val()),
+                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+            }, function(data){
+                //成功
+                setTimeout(function () {
+                    $("#" + _link).html(data);
+                    $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                    $("#tm-view-loading").hide();
+                    if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
+                        $("#tm-view-scroll-container").unbind("scroll");
+                        $("#tm-view-page").val("0");
                     } else {
-                        setTimeout(function () {
-                            $("#" + _link).html(data);
-                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                            $("#tm-view-loading").hide();
-                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
-                                $("#tm-view-scroll-container").unbind("scroll");
-                                $("#tm-view-page").val("0");
-                            } else {
-                                controlscroll(_link, "tm-view-scroll-container")();
-                            }
-                        }, 500);
+                        controlscroll(_link, "tm-view-scroll-container")();
                     }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
+                }, 500);
+            },function(data){
+                //失败
+
             })
         }
     })
+
+    //页面筛选切换
     $("#tm-view-thirdcontrol").on("click", ".tm-select", function (e) {
-        if (!$(this).hasClass("selected")) {
+        var that = $(this);
+        if (!that.hasClass("selected")) {
             var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-link");
             var _initthirdlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
             $("#" + _link).html("");
             $("#tm-view-loading").show();
-            $(this).parent().parent().find(".tm-select.selected").removeClass("selected");
-            $(this).addClass("selected");
+            that.parent().parent().find(".tm-select.selected").removeClass("selected");
+            that.addClass("selected");
             $("#tm-view-page").val("0");
-            $(this).parents(".tm-view-control-sort").find(".tm-select-title").html($(this).html());
-            $.ajax({
-                url: _initthirdlink,
-                data: {
-                    page: parseInt($("#tm-view-page").val()),
-                    datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                    sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                },
-                success: function (data) {
-                    if (data == "FAIL") {
-                        ErrorAlert("获取数据失败。");
+            that.parents(".tm-view-control-sort").find(".tm-select-title").html(that.html());
+            GetTemplate(_initthirdlink, {
+                page: parseInt($("#tm-view-page").val()),
+                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+            }, function (data) {
+                //成功
+                $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                setTimeout(function () {
+                    $("#" + _link).append(data);
+                    $("#tm-view-loading").hide();
+                    if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
+                        $("#tm-view-scroll-container").unbind("scroll");
+                        $("#tm-view-page").val("0");
                     } else {
-                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                        setTimeout(function () {                              
-                            $("#" + _link).append(data);
-                            $("#tm-view-loading").hide();
-                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
-                                $("#tm-view-scroll-container").unbind("scroll");
-                                $("#tm-view-page").val("0");
-                            } else {
-                                controlscroll(_link, "tm-view-scroll-container")();
-                            }
-                        }, 500)
+                        controlscroll(_link, "tm-view-scroll-container")();
                     }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
+                }, 500)
+            }, function (data) {
+                //失败
             })
         }
     });
-    function controlscroll(containerEle,scrollEle) {
+    function controlscroll(containerEle, scrollEle) {
         var _loading = false;
         var _container = containerEle;
         var _scroll = scrollEle;
@@ -178,7 +161,7 @@
             $("#" + _scroll).scroll(function (e) {
                 var _dis = parseInt($("#" + _container).height()) - parseInt($("#" + _scroll).height());
                 if ($("#" + _scroll).scrollTop() >= _dis) {
-                    if (_loading) {                        
+                    if (_loading) {
                         return false;
                     } else {
                         _loading = !_loading;

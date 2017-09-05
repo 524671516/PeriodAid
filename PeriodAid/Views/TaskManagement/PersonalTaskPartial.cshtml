@@ -61,117 +61,118 @@
     </div>
 </div>
 <script>
-    $(function () {
-                var _initlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-                $.ajax({
-                    url: _initlink,
-                    data: {
-                        page: parseInt($("#tm-view-page").val()),
-                        datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                        sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                    },
-                    success: function (data) {
-                        if (data == "FAIL") {
-                            ErrorAlert("获取数据失败。");
-                        } else {
-                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                            setTimeout(function () {
-                                $("#tm-view-col-content").append(data);
-                                $("#tm-view-loading").hide();
-                                if ($("#tm-view-col-content .tm-view-nomore").length > 0 || $("#tm-view-col-content .tm-view-loading-empty").length > 0) {
-                                    $("#tm-view-scroll-container").unbind("scroll");
-                                    $("#tm-view-page").val("0");
-                                } else {
-                                    controlscroll("tm-view-col-content", "tm-view-scroll-container")();
-                                }
-                            },500)
-                        }
-                    },
-                    error: function () {
-                        ErrorAlert("请求失败。");
-                    }
-                })
+    //初始化数据地址
+    var _initlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+    var _data = {
+        page: parseInt($("#tm-view-page").val()),
+        datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+        sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+    }
+    //获取页面初始化数据
+    GetTemplate(_initlink, _data, function (data) {
+        //成功
+        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);   //更新页面数
+        setTimeout(function () {
+            $("#tm-view-col-content").append(data);        //放入数据
+            $("#tm-view-loading").hide();                  //隐藏加载动画
+            //判断第一次数据是否为空或者有加载更多
+            if ($("#tm-view-col-content .tm-view-nomore").length > 0 || $("#tm-view-col-content .tm-view-loading-empty").length > 0) {
+                //注销滚动条事件
+                $("#tm-view-scroll-container").unbind("scroll");
+                //页面归0
+                $("#tm-view-page").val("0");
+            } else {
+                //绑定滚动条事件
+                controlscroll("tm-view-col-content", "tm-view-scroll-container")();
+            }
+        }, 500)
+    }, function (data) {
+        //失败
     })
+    
+    //页面导航切换
     $("#tm-view-subcontrol").on("click", ".tm-view-control-link", function () {
-        if (!$(this).hasClass("active")) {
-            var _link = $(this).attr("data-link");
-            $(".tm-view-loading-content").addClass("hidden");
-            $("#" + _link).removeClass("hidden").html("");
-            $("#tm-view-loading").show();
-            $(this).parent().find(".tm-view-control-link.active").removeClass("active");
+        var that = $(this);
+        if (!that.hasClass("active")) {
+            var _link = that.attr("data-link");             //获取tab对应的页面
+            $(".tm-view-loading-content").addClass("hidden"); //隐藏所有的数据页面
+            $("#" + _link).removeClass("hidden").html("");    //tab所对应的页面清空并显示
+            $("#tm-view-loading").show();                     //加载动画打开
+            that.parent().find(".tm-view-control-link.active").removeClass("active"); //tab样式更改
             $("#tm-view-page").val("0");
-            $(this).addClass("active");
-            var _initlinksub = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-            $.ajax({
-                url: _initlinksub,
-                data: {
-                    page: parseInt($("#tm-view-page").val()),
-                    datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                    sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                },
-                success: function (data) {
-                    if (data == "FAIL") {
-                        ErrorAlert("获取数据失败。");
+            that.addClass("active"); //当前tab样式更改
+            var _initlinksub = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href"); //数据请求地址
+            var _data = {
+                page: parseInt($("#tm-view-page").val()),
+                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+            }
+            //请求数据
+            GetTemplate(_initlinksub, _data, function (data) {
+                //成功
+                $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                setTimeout(function () {
+                    //填入数据
+                    $("#" + _link).html(data);
+                    //隐藏加载动画
+                    $("#tm-view-loading").hide();
+                    //判读数据是否空或者无需加载下一次
+                    if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
+                        //移除滚动条事件
+                        $("#tm-view-scroll-container").unbind("scroll");
+                        //页面归0
+                        $("#tm-view-page").val("0");
                     } else {
-                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                        setTimeout(function () {
-                            $("#" + _link).html(data);
-                            $("#tm-view-loading").hide();
-                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
-                                $("#tm-view-scroll-container").unbind("scroll");
-                                $("#tm-view-page").val("0");
-                            } else {
-                                controlscroll(_link, "tm-view-scroll-container")();
-                            }
-                        }, 500);
+                        //添加滚动条事件
+                        controlscroll(_link, "tm-view-scroll-container")();
                     }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
+                }, 500);
+            }, function (data) {
+                //失败
             })
         }
     })
+
+    //页面筛选切换
     $("#tm-view-thirdcontrol").on("click", ".tm-select", function (e) {
-        if (!$(this).hasClass("selected")) {
-            var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-link");
-            var _initthirdlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-            $("#" + _link).html("");
-            $("#tm-view-loading").show();
-            $(this).parent().parent().find(".tm-select.selected").removeClass("selected");
-            $(this).addClass("selected");
+        var that = $(this);
+        if (!that.hasClass("selected")) {
+            var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-link");     //获取当前tab对应的页面
+            var _initthirdlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href"); //获取数据请求地址
+            $("#" + _link).html("");  //清空当前tab对应的页面数据
+            $("#tm-view-loading").show(); //展示滚动条
+            that.parent().parent().find(".tm-select.selected").removeClass("selected");  //移除选择样式
+            that.addClass("selected");                                                   //当前选择项怎加样式
             $("#tm-view-page").val("0");
-            $(this).parents(".tm-view-control-sort").find(".tm-select-title").html($(this).html());
-            $.ajax({
-                url: _initthirdlink,
-                data: {
-                    page: parseInt($("#tm-view-page").val()),
-                    datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                    sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                },
-                success: function (data) {
-                    if (data == "FAIL") {
-                        ErrorAlert("获取数据失败。");
+            that.parents(".tm-view-control-sort").find(".tm-select-title").html(that.html()); //更新当前选择项标题名称
+            //获取数据模板
+            var _data = {
+                page: parseInt($("#tm-view-page").val()),
+                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+            }
+            GetTemplate(_initthirdlink, _data, function (data) {
+                //成功
+                $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                setTimeout(function () {
+                    $("#" + _link).append(data);
+                    $("#tm-view-loading").hide();
+                    if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
+                        $("#tm-view-scroll-container").unbind("scroll");
+                        $("#tm-view-page").val("0");
                     } else {
-                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                        setTimeout(function () {
-                            $("#" + _link).append(data);
-                            $("#tm-view-loading").hide();
-                            if ($("#" + _link).find(".tm-view-nomore").length > 0 || $("#" + _link).find(".tm-view-loading-empty").length > 0) {
-                                $("#tm-view-scroll-container").unbind("scroll");
-                                $("#tm-view-page").val("0");
-                            } else {
-                                controlscroll(_link, "tm-view-scroll-container")();
-                            }
-                        }, 500)
+                        controlscroll(_link, "tm-view-scroll-container")();
                     }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
+                }, 500)
+            }, function (data) {
+                //失败
+
             })
         }
     });
+
+
+    //控制滚动条 containerEle==可滚动内容元素 scrollEle==滚动条元素
     function controlscroll(containerEle,scrollEle) {
         var _loading = false;
         var _container = containerEle;
@@ -188,33 +189,25 @@
                         $(".tm-view-more").remove();
                         $("#tm-view-loading").show();
                         var _link = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
-                        $.ajax({
-                            url: _link,
-                            data: {
-                                page: parseInt($("#tm-view-page").val()),
-                                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-                            },
-                            success: function (data) {
-                                if (data == "FAIL") {
-                                    ErrorAlert("获取数据失败。");
+                        GetTemplate(_link, {
+                            page: parseInt($("#tm-view-page").val()),
+                            datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                            sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+                        }, function (data) {
+                            //成功
+                            $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                            setTimeout(function () {
+                                $("#" + _container).append(data);
+                                $("#tm-view-loading").hide();
+                                if ($("#" + _container).find(".tm-view-nomore").length > 0) {
+                                    $("#" + _scroll).unbind("scroll");
+                                    $("#tm-view-page").val("0");
                                 } else {
-                                    $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                                    setTimeout(function () {
-                                        $("#" + _container).append(data);
-                                        $("#tm-view-loading").hide();
-                                        if ($("#" + _container).find(".tm-view-nomore").length > 0) {
-                                            $("#" + _scroll).unbind("scroll");
-                                            $("#tm-view-page").val("0");
-                                        } else {
-                                            _loading = !_loading;
-                                        }
-                                    }, 500)
+                                    _loading = !_loading;
                                 }
-                            },
-                            error: function () {
-                                ErrorAlert("请求失败。");
-                            }
+                            }, 500)
+                        }, function (data) {
+                            //失败
                         })
                     }
                 }

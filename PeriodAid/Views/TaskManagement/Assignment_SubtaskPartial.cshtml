@@ -59,34 +59,31 @@
                 </div>
             </div>
 </div>
-
 <script>
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        //鼠标移入字体浮动初始化
+        $('[data-toggle="tooltip"]').tooltip()
     })
-    //内置子任务弹出处理
+
+    //子任务表单请求
     $("#subtask_modal_list").on("click", ".btn_add_subtask", function (event) {
         var that = $(this);
+        var _data = {
+            AssignmentId: $("#modal-header-assignment").attr("data-aid"),
+        }
+        //防止多次请求
         if (that.parent().parent().find(".add-subtask-write").html() == "") {
             $(".add-subtask-write").html("").addClass("hidden");
-            $.ajax({
-                url: "/TaskManagement/GetSubtaskForm",
-                data: {
-                    AssignmentId: $("#modal-header-assignment").attr("data-aid"),
-                },
-                success: function (data) {
-                    if (data != "FAIL") {
-                        that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
-                    } else {
-                        ErrorAlert("操作失败。");
-                    }
-                },
-                error:function(data){
-                    ErrorAlert("操作失败。");
-            }
-
+            //请求表单
+            GetTemplate("/TaskManagement/GetSubtaskForm", _data, function (data) {
+                //成功
+                that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
+            }, function (data) {
+                //失败
             })
         }
+
+        //如果已经有表单就直接做隐藏和显示处理不在请求
         if (that.parent().parent().find(".add-subtask-write").hasClass("hidden")) {
             that.parent().parent().find(".add-subtask-write").removeClass("hidden")
         } else {

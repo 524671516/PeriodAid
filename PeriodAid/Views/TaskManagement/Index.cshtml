@@ -17,62 +17,38 @@
 </div>
 @section scripts{ 
     <script>
-        //Ajax获取各类型项目
-        GetActiveSubject("#personal_active_subject")
-        GetFinishSubject("#personal_finish_subject")
-        //项目详细点击
-        $(function () {
-            //进入项目详情
-            $("#my-app").on("click", ".tm-show-subject-page", function () {
-                var linkid = $(this).attr("data-sid")
+        /*页面初始化数据获取*/
+        //Ajax获取各类型项目模板   函数定义与js文件中
+        GetActiveSubject("#personal_active_subject")   //获取正在进行中的项目
+        GetFinishSubject("#personal_finish_subject")   //获取已完成的项目
+
+
+
+        /*以下为页面中的按钮事件*/
+       //进入项目详情
+       $("#subject-container").on("click", ".card-item", function () {
+                var linkid = $(this).attr("data-link")
                 if (linkid) {
                     location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
                 }
             });
-            //修改卡片即项目信息
-            $("#subject-container").on("click", ".card-edit-btn", function () {
-                $.ajax({
-                    url: "/TaskManagement/EditSubject",
-                    data: {
-                        SubjectId: $(this).attr("data-link")
-                    },
-                    success: function (data) {
-                        if (data != "FAIL") {
-                            $("#Create-Subject-Content").html(data);
-                            $("#Add-Subject").modal();
-                        }
-                        else {
-                            ErrorAlert("获取项目基本信息失败。")
-                        }
-                    }
-                })
-                return false;
-            });
 
-            //动态消息提示
-            $("#subject-container").on("click", ".card-message-btn", function () {
-                $.ajax({
-                    url: "/TaskManagement/SubjectLogsPartial",
-                    data: {
-                        SubjectId: $(this).attr("data-link")
-                    },
-                    success: function (data) {
-                        if (data != "FAIL") {
-                            $("#Create-Subject-Content").html(data);
-                            $("#Add-Subject").modal();
-                        }
-                        else {
-                            ErrorAlert("操作失败。")
-                        }
-                    },
-                    error: function (data) {
-                        ErrorAlert("操作失败。");
-                    }
+       //修改卡片即项目信息
+       $("#subject-container").on("click", ".card-edit-btn", function () {
+                var that = $(this);
+                _data = {
+                    SubjectId: that.attr("data-link")
+                }
+                //获取模板,函数请查看js文件
+                GetTemplate("/TaskManagement/EditSubject", _data, function (data) {
+                    //成功
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }, function (data) {
+                    //失败
                 })
                 return false;
             });
-        })
-        
     </script>
 
 }
