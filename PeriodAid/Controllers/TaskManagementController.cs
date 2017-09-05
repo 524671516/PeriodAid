@@ -756,7 +756,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var assignmentlist = from m in _db.Assignment
-                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
                                          orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
                                          select m;
                     ViewBag.ProcedureId = ProcedureId;

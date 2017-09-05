@@ -74,10 +74,20 @@
                                         <div class="clear-float">
                                             @if (_item.Deadline != null)
                                             {
-                                                <div class="tm_sub_item_left tm-span-100">
-                                                    <span class="color-orange">截止日期:</span>
-                                                    <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
-                                                </div>
+                                                if (DateTime.Now > _item.Deadline)
+                                                {
+                                                    <div class="tm_sub_item_left tm-span-100">
+                                                        <span class="color-orange">截止日期:</span>
+                                                        <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="tm_sub_item_left tm-span-100">
+                                                        <span class="color-orange">截止日期:</span>
+                                                        <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                                    </div>
+                                                }
                                             }
                                         </div>
                                     </li>
