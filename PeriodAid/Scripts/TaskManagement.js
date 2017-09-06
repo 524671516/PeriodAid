@@ -491,39 +491,8 @@ function GetAssignment_CollaboratorPartial(AssignmentId, Callback) {
     });
 }
 
-//获取任务评论模板
-function GetComment(AssignmentId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignment_CommentPartial",
-        data: {
-            AssignmentId: AssignmentId
-        },
-        success: function (data) {
-            typeof Callback && Callback(data);
-        },
-        error: function () {
-            ErrorAlert("请求失败。");
-        }
-    })
-}
 
-//获取子任务模板
-function GetSubTaskListPartial(AssignmentId, Callback) {
-    $.ajax({
-        url: "/TaskManagement/Assignment_SubtaskPartial",
-        data: {
-            AssignmentId: AssignmentId,
-        },
-        success: function (data) {
-            if (Callback && typeof Callback == "function") {
-                Callback(data);
-            }
-        },
-        error: function () {
-            ErrorAlert("操作失败。")
-        }
-    });
-}
+
 
 //任务面板任务数量更新
 function updateTaskNum(SubejctId) {

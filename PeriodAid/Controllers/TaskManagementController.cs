@@ -196,6 +196,7 @@ namespace PeriodAid.Controllers
                                      select m.Subject).Where(p => p.Status == SubjectStatus.ACTIVE);
                 var FirstMerge = ownSubject.Union(ColAssignmentSubject);
                 var MergeSubject = FirstMerge.Union(HolderSubject);
+                ViewBag.employeeId = employee.Id;
                 return PartialView(MergeSubject);
             }
         }
@@ -250,6 +251,7 @@ namespace PeriodAid.Controllers
                 return View(subject);
             }
         }
+
 
         //获取项目填写表单
         [OperationAuth(OperationGroup = 101)]
@@ -685,7 +687,7 @@ namespace PeriodAid.Controllers
 
         #region  任务操作
         //获取任务
-        public PartialViewResult SubjectAssignment(int? ProcedureId, int SubjectId,string Type)
+        public PartialViewResult SubjectAssignment(int? ProcedureId, int? SubjectId,string Type)
         {
             if (ProcedureId == null) {
                 var assignmentlist = from m in _db.Assignment
@@ -2817,40 +2819,22 @@ namespace PeriodAid.Controllers
             foreach (var item in MergeSubject)
             {
                 var SubjectId = item.Id;
-                var lastCheckTime = (from m in _db.OperationLogs
-                                     where m.SubjectId == SubjectId && m.LogCode == 400 && m.UserId == employee.Id
-                                     orderby m.LogTime descending
-                                     select m.LogTime).FirstOrDefault();
                 var loginTime = employee.LastLoginDate;
-                if (lastCheckTime < loginTime)
+                var newdata = from m in _db.OperationLogs
+                              where m.SubjectId == SubjectId && m.LogTime >= loginTime && m.LogCode!=400
+                              select m.LogContent+m.LogTime;
+                var newcount = newdata.Count();
+                var newcontent = newdata.ToArray();
+                AjaxSubjectInfoClass asic = new AjaxSubjectInfoClass()
                 {
-                    var newdata = from m in _db.OperationLogs
-                                  where m.SubjectId == SubjectId && m.LogTime < loginTime && m.LogTime > lastCheckTime
-                                  select m;
-                    var newcount = newdata.Count();
-                    AjaxSubjectInfoClass asic = new AjaxSubjectInfoClass() {
-                        LogsCount=newcount,
-                        SubjectTitle=item.SubjectTitle,
-                        SubjectId= SubjectId,
-                        IsNew=newcount>0?true:false
-                    };
-                    asicl.Add(asic);
-                }
-                else
-                {
-                    var newdata = from m in _db.OperationLogs
-                                  where m.SubjectId == SubjectId && m.LogTime < lastCheckTime && m.LogTime > loginTime
-                                  select m;
-                    var newcount = newdata.Count();
-                    AjaxSubjectInfoClass asic = new AjaxSubjectInfoClass()
-                    {
-                        LogsCount = newcount,
-                        SubjectTitle = item.SubjectTitle,
-                        SubjectId = SubjectId,
-                        IsNew = newcount > 0 ? true : false
-                    };
-                    asicl.Add(asic);
-                }
+                    LogsCount = newcount,
+                    SubjectTitle = item.SubjectTitle,
+                    SubjectId = SubjectId,
+                    Sid = item.Id,
+                    IsNew = newcount > 0 ? true : false,
+                    LogsContent = newcontent,
+                };
+                asicl.Add(asic);
             }
             return Json(new { data = asicl });
         }

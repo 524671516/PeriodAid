@@ -12,9 +12,12 @@ namespace PeriodAid.Models
     public class AjaxSubjectInfoClass
     {
         public int SubjectId { get; set; }
+        public int Sid { get; set; }
         public string SubjectTitle { get; set; }
         public int LogsCount { get; set; }
         public bool IsNew { get; set; }
+        public string[] LogsContent { get; set; }
+        public string[] LogsTime { get; set; }
     }
     public class AssignmentInfoClass
     {
