@@ -2,7 +2,7 @@
 <h3>
     <i class="fa fa-tasks color-blue" aria-hidden="true"></i>&nbsp;
     正在执行的项目&nbsp;
-    <button type="button" id="bt_new_mess" class="btn btn-primary" data-toggle="popover" title="新操作消息" data-content="And here's some amazing content. It's very engaging. Right?">新消息<span class="badge">4</span></button>
+    <button type="button" id="bt_new_mess" class="btn btn-primary" data-toggle="popover" title="新操作消息" data-content="">新消息<span class="badge">4</span></button>
 </h3><input type="hidden" id="user_id" value="@ViewBag.newcontent" />
 <div class="card-box row">
     @if (Model.Count() != 0)
@@ -69,11 +69,11 @@
             data: {
             },
             success: function (data) {
-                console.log(data);
                 for (var item in data) {
                     for (i = 0; i < data[item].length; i++) {
                         if (data[item][i].IsNew == true) {
-                           
+                            var l
+                            $("#bt_new_mess").attr("data-content", data[item][i].LogsContent);
                         }
                         else {
 
