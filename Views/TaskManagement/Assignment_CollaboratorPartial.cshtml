@@ -1,0 +1,77 @@
+﻿@model PeriodAid.Models.Assignment
+<div class="col-md-12 margin-bottom-10">
+    <div class="tm_modal_list">
+        <label for="RemindDate">参与人</label>
+        <div class="tm_modal_body">
+            <ul class="participator_area clear-float" id="modal_collaborator_area">
+                @if (Model.Holder.ImgUrl == null)
+                {
+                    <li title="@Model.Holder.NickName" data-toggle="tooltip" data-placement="top" ><div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle"></div></li>
+                }
+                else
+                {
+                    <li title="@Model.Holder.NickName" data-toggle="tooltip" data-placement="top"><div style="background-image: url('http://cdn2.shouquanzhai.cn/@Model.Holder.ImgUrl');" class="user_circle"></div></li>
+                }
+               
+               @foreach (var col in Model.Collaborator)
+               {
+                   if (col.ImgUrl != null)
+                   {
+                    <li title="@col.NickName" data-toggle="tooltip" data-placement="top" data-cid="@col.Id"><div style="background-image: url('http://cdn2.shouquanzhai.cn/@col.ImgUrl');" class="user_circle">
+                                                                                             <div class="minus-icon"><i class="fa fa-minus" aria-hidden="true"></i></div>
+                        </div></li>
+                   }
+                   else
+                   {
+                    <li title="@col.NickName" data-toggle="tooltip" data-placement="top" data-cid="@col.Id"><div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle">
+                                                                                             <div class="minus-icon"><i class="fa fa-minus" aria-hidden="true"></i></div>
+                        </div></li>
+                   }
+               }
+                <li title="添加参与人" data-toggle="tooltip" data-placement="top"><a href="javascript:;"  class="create_user_circle user_circle" id="create_user_circle"  data-aid="@Model.Id"><i class="fa fa-plus ver_icon" aria-hidden="true"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        //悬浮提示注册
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    //添加参与者按钮事件
+    $("#create_user_circle").on("click", function () {
+        var that=$(this);
+        _data = {
+            AssignmentId: that.attr("data-aid")
+        }
+        //获取增加参与人模板
+        GetTemplate("/TaskManagement/Assignmnet_CollaboratorAddPartial", _data, function (data) {
+            //成功
+            $("#Add-Collaborator .modal-content").html(data);
+            $('#Add-Collaborator').modal('show');
+        }, function () {
+            //失败 
+        })
+    });
+
+    //删除参与者按钮事件
+    $(".minus-icon").on("click", function () {
+        var that = $(this);
+        _data = {
+            AssignmentId: $("#modal-header-assignment").attr("data-aid"),
+            EmployeeId: that.parent().parent().attr("data-cid")
+        }
+        CustomConfirm("是否要删除此联系人?", function () {
+            EditForAjax("/TaskManagement/DeleteAssignmentCollaborator", _data, function (data) {
+                //成功
+                //获取参与人模板
+                GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
+                    $("#modal_collaborator_area").html(data);
+                });
+            }, function (data) {
+                //失败
+            })
+        })
+    })
+</script>

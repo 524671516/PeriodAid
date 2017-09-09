@@ -1,0 +1,1171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{89F475DD-22DE-478F-A54E-F786659B06B0}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PeriodAid</RootNamespace>
+    <AssemblyName>PeriodAid</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aliyun.OSS, Version=2.2.0.0, Culture=neutral, PublicKeyToken=0ad4175f0dac0b9b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aliyun.OSS.SDK.2.2.0\lib\Aliyun.OSS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.2.13.5.0\lib\net40-client\CsvHelper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Gma.QrCodeNet.Encoding, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QrCode.Net.0.4.0.0\lib\net45\Gma.QrCodeNet.Encoding.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NPOI, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OOXML.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Activities" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activities" />
+    <Reference Include="System.ServiceModel.Channels" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Facebook">
+      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.3.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.3.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter">
+      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.3.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
+      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.3.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AuthorizationController.cs" />
+    <Compile Include="Controllers\MobileTaskManagementController.cs" />
+    <Compile Include="Controllers\OffBonusController.cs" />
+    <Compile Include="Controllers\OffCheckinController.cs" />
+    <Compile Include="Controllers\OffCommonController.cs" />
+    <Compile Include="Controllers\CustomController.cs" />
+    <Compile Include="Controllers\ERPOrderController.cs" />
+    <Compile Include="Controllers\ExaminationController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OffExpensesController.cs" />
+    <Compile Include="Controllers\OfflineSalesController.cs" />
+    <Compile Include="Controllers\OffManagerController.cs" />
+    <Compile Include="Controllers\OffProductController.cs" />
+    <Compile Include="Controllers\OffSellerController.cs" />
+    <Compile Include="Controllers\OffSellerTaskController.cs" />
+    <Compile Include="Controllers\OffStatisticController.cs" />
+    <Compile Include="Controllers\OffStoreController.cs" />
+    <Compile Include="Controllers\PayController.cs" />
+    <Compile Include="Controllers\PeriodAidController.cs" />
+    <Compile Include="Controllers\OffSalesController.cs" />
+    <Compile Include="Controllers\SellerController.cs" />
+    <Compile Include="Controllers\SellerTaskController.cs" />
+    <Compile Include="Controllers\TaskManagementController.cs" />
+    <Compile Include="Controllers\TestAdminController.cs" />
+    <Compile Include="Controllers\WebContentController.cs" />
+    <Compile Include="Controllers\WxAccountController.cs" />
+    <Compile Include="DAL\AliOSSUtilities.cs" />
+    <Compile Include="DAL\AppPayUtilities.cs" />
+    <Compile Include="DAL\CommonUtilities.cs" />
+    <Compile Include="DAL\ERPOrderUtilities.cs" />
+    <Compile Include="DAL\GPRSPrinter.cs" />
+    <Compile Include="DAL\KDTUtilites.cs" />
+    <Compile Include="DAL\OfflineSalesUtilities.cs" />
+    <Compile Include="DAL\PeriodAidUtilities.cs" />
+    <Compile Include="DAL\TaskManagementLogsUtilities.cs" />
+    <Compile Include="DAL\ValidateCode.cs" />
+    <Compile Include="DAL\WeChatClasses.cs" />
+    <Compile Include="DAL\WeChatUtilities.cs" />
+    <Compile Include="Extensions\HtmlExtensions.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AppPay.cs" />
+    <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Filters\CustomFilter.cs" />
+    <Compile Include="Models\ERPOrderDataContext.cs" />
+    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\OfflineSales.cs" />
+    <Compile Include="Models\OfflineSalesViewModels.cs" />
+    <Compile Include="Models\PeriodAidDataContext.cs" />
+    <Compile Include="Models\PeriodAidViewModels.cs" />
+    <Compile Include="Models\PressConference.cs" />
+    <Compile Include="Models\ProjectSchemeModels.cs" />
+    <Compile Include="Models\ProjectViewModels.cs" />
+    <Compile Include="Models\Promotion.cs" />
+    <Compile Include="Models\SQZWEBModels.cs" />
+    <Compile Include="Models\TestViewModels.cs" />
+    <Compile Include="Models\WxAcountViewModels.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\audio\audio_01.mp3" />
+    <Content Include="Content\audio\audio_01_background.jpg" />
+    <Content Include="Content\audio\audio_02.mp3" />
+    <Content Include="Content\audio\audio_02_background.jpg" />
+    <Content Include="Content\audio\audio_03_background.jpg" />
+    <Content Include="Content\audio\audio_03.mp3" />
+    <Content Include="Content\bootstrap-datetimepicker.css" />
+    <Content Include="Content\bootstrap-datetimepicker.min.css" />
+    <Content Include="Content\bootstrap-select.css" />
+    <Content Include="Content\bootstrap-select.min.css" />
+    <Content Include="Content\bootstrap-switch.min.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\corppermain.css" />
+    <Content Include="Content\cropper.min.css" />
+    <Content Include="Content\CustomSite.css" />
+    <Content Include="Content\dialog\error.png" />
+    <Content Include="Content\dialog\info.png" />
+    <Content Include="Content\dialog\overlay.png" />
+    <Content Include="Content\dialog\question.png" />
+    <Content Include="Content\dialog\res.gif" />
+    <Content Include="Content\dialog\success.png" />
+    <Content Include="Content\dialog\warning.png" />
+    <Content Include="Content\example.css" />
+    <Content Include="Content\font-awesome-ie7.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\framework7.ios.colors.css" />
+    <Content Include="Content\framework7.ios.css" />
+    <Content Include="Content\framework7.ios.rtl.css" />
+    <Content Include="Content\framework7.ios.rtl.min.css" />
+    <Content Include="Content\images\banner_mobile_1.jpg" />
+    <Content Include="Content\images\cover-default.jpg" />
+    <Content Include="Content\images\defaultphoto.gif" />
+    <Content Include="Content\images\img_1.jpg" />
+    <Content Include="Content\images\benefits_flow_01.png" />
+    <Content Include="Content\images\benefits_flow_02.png" />
+    <Content Include="Content\images\benefits_flow_03.png" />
+    <Content Include="Content\images\benefits_intro.jpg" />
+    <Content Include="Content\images\bg.png" />
+    <Content Include="Content\images\defqr_dd81ccc.png" />
+    <Content Include="Content\images\guide-01-1.jpg" />
+    <Content Include="Content\images\guide-01-2.jpg" />
+    <Content Include="Content\images\guide-01-3.jpg" />
+    <Content Include="Content\images\guide-02-1.jpg" />
+    <Content Include="Content\images\guide-02-2.jpg" />
+    <Content Include="Content\images\guide-02-3.jpg" />
+    <Content Include="Content\images\guide-02-4.jpg" />
+    <Content Include="Content\images\guide-03-1.jpg" />
+    <Content Include="Content\images\guide-03-2.jpg" />
+    <Content Include="Content\images\guide-03-3.jpg" />
+    <Content Include="Content\images\guide-ex-01.jpg" />
+    <Content Include="Content\images\guide-ex-02.jpg" />
+    <Content Include="Content\images\guide-ex-03.jpg" />
+    <Content Include="Content\images\guide-ex-04.jpg" />
+    <Content Include="Content\images\guide-ex-05.jpg" />
+    <Content Include="Content\images\guide-ex-06.jpg" />
+    <Content Include="Content\images\guide-ex-07.jpg" />
+    <Content Include="Content\images\guide-ex-08.jpg" />
+    <Content Include="Content\images\hand.png" />
+    <Content Include="Content\images\i-f7-ios.png" />
+    <Content Include="Content\images\img_2.png" />
+    <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\logo_new.png" />
+    <Content Include="Content\images\Manager_app_01.jpg" />
+    <Content Include="Content\images\Manager_app_02.jpg" />
+    <Content Include="Content\images\Manager_app_03.jpg" />
+    <Content Include="Content\images\Manager_app_04.jpg" />
+    <Content Include="Content\images\Manager_app_05.jpg" />
+    <Content Include="Content\images\Manager_app_06.jpg" />
+    <Content Include="Content\images\Manager_app_07.jpg" />
+    <Content Include="Content\images\Manager_app_08.jpg" />
+    <Content Include="Content\images\Manager_app_09.jpg" />
+    <Content Include="Content\images\Manager_app_10.jpg" />
+    <Content Include="Content\images\Manager_app_11.jpg" />
+    <Content Include="Content\images\Manager_app_12.jpg" />
+    <Content Include="Content\images\Manager_app_13.jpg" />
+    <Content Include="Content\images\Manager_app_14.jpg" />
+    <Content Include="Content\images\Manager_app_15.jpg" />
+    <Content Include="Content\images\Manager_app_16.jpg" />
+    <Content Include="Content\images\Manager_app_17.jpg" />
+    <Content Include="Content\images\mark_0.png" />
+    <Content Include="Content\images\mark_1.png" />
+    <Content Include="Content\images\mark_2.png" />
+    <Content Include="Content\images\mark_3.png" />
+    <Content Include="Content\images\mark_4.png" />
+    <Content Include="Content\images\mark_5.png" />
+    <Content Include="Content\images\mark_6.png" />
+    <Content Include="Content\images\mark_other.png" />
+    <Content Include="Content\images\mark_wem.png" />
+    <Content Include="Content\images\img_3.jpg" />
+    <Content Include="Content\images\new_huawei.jpg" />
+    <Content Include="Content\images\new_sanxing.jpg" />
+    <Content Include="Content\images\new_xiaomi.jpg" />
+    <Content Include="Content\images\period-aid-logo.png" />
+    <Content Include="Content\images\phone-ban.png" />
+    <Content Include="Content\images\qrcode_for_sqz1760.jpg" />
+    <Content Include="Content\images\redmoney_01.png" />
+    <Content Include="Content\images\redmoney_02.png" />
+    <Content Include="Content\images\redmoney_03.png" />
+    <Content Include="Content\images\redmoney_04.png" />
+    <Content Include="Content\images\sellertask-guide-01.jpg" />
+    <Content Include="Content\images\sellertask-guide-02.jpg" />
+    <Content Include="Content\images\sellertask-guide-03.jpg" />
+    <Content Include="Content\images\sellertask-guide-04.jpg" />
+    <Content Include="Content\images\sellertask-guide-05.jpg" />
+    <Content Include="Content\images\sellertask-guide-06.jpg" />
+    <Content Include="Content\images\sellertask-guide-07.jpg" />
+    <Content Include="Content\images\sellertask-guide-08.jpg" />
+    <Content Include="Content\images\share-pic.png" />
+    <Content Include="Content\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
+    <Content Include="Content\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
+    <Content Include="Content\images\ui-bg_flat_10_000000_40x100.png" />
+    <Content Include="Content\images\ui-bg_glass_100_f6f6f6_1x400.png" />
+    <Content Include="Content\images\ui-bg_glass_100_fdf5ce_1x400.png" />
+    <Content Include="Content\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\images\ui-bg_gloss-wave_35_f6a828_500x100.png" />
+    <Content Include="Content\images\ui-bg_highlight-soft_100_eeeeee_1x100.png" />
+    <Content Include="Content\images\ui-bg_highlight-soft_75_ffe45c_1x100.png" />
+    <Content Include="Content\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\images\ui-icons_228ef1_256x240.png" />
+    <Content Include="Content\images\ui-icons_ef8c08_256x240.png" />
+    <Content Include="Content\images\ui-icons_ffd27a_256x240.png" />
+    <Content Include="Content\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\images\upfeathers.png" />
+    <Content Include="Content\images\wx_gambling_background.jpg" />
+    <Content Include="Content\images\wx_gambling_background02.jpg" />
+    <Content Include="Content\images\wx_gambling_background02_01.jpg" />
+    <Content Include="Content\images\wx_gambling_background02_02.jpg" />
+    <Content Include="Content\images\wx_gambling_background_01.jpg" />
+    <Content Include="Content\images\wx_gambling_background_03.jpg" />
+    <Content Include="Content\images\benefits_done.png" />
+    <Content Include="Content\Jcrop.gif" />
+    <Content Include="Content\Jcrop.min.css" />
+    <Content Include="Content\jedate.css" />
+    <Content Include="Content\jquery-confirm.css" />
+    <Content Include="Content\jquery-confirm.min.css" />
+    <Content Include="Content\jquery-ui.min.css" />
+    <Content Include="Content\jquery.fullPage.css" />
+    <Content Include="Content\PA-Site.css" />
+    <Content Include="Content\PagedList.css" />
+    <Content Include="Content\prettify.css" />
+    <Content Include="Content\TaskManagement.css" />
+    <Content Include="Content\taskmanagement_m.css" />
+    <Content Include="Content\weui.min.css" />
+    <Content Include="Content\framework7.ios.colors.min.css" />
+    <Content Include="Content\framework7.ios.min.css" />
+    <Content Include="Content\my-app.css" />
+    <Content Include="Content\Manager.css" />
+    <Content Include="Content\Seller.css" />
+    <Content Include="DevelopmentPlan\201603.txt" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\i-form-calendar-ios.svg" />
+    <Content Include="fonts\i-form-comment-ios.svg" />
+    <Content Include="fonts\i-form-email-ios.svg" />
+    <Content Include="fonts\i-form-gender-ios.svg" />
+    <Content Include="fonts\i-form-name-ios.svg" />
+    <Content Include="fonts\i-form-password-ios.svg" />
+    <Content Include="fonts\i-form-settings-ios.svg" />
+    <Content Include="fonts\i-form-tel-ios.svg" />
+    <Content Include="fonts\i-form-toggle-ios.svg" />
+    <Content Include="fonts\i-form-url-ios.svg" />
+    <Content Include="fonts\right.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\ajaxfileupload.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.zh-CN.js" />
+    <Content Include="Scripts\bootstrap-select.js" />
+    <Content Include="Scripts\bootstrap-select.min.js" />
+    <Content Include="Scripts\bootstrap-switch.min.js" />
+    <Content Include="Scripts\bootstrap-typeahead.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\xlsx\店铺日报表-Template.xlsx" />
+    <Content Include="Content\xlsx\店铺月报表-Template.xlsx" />
+    <Content Include="Content\xlsx\活动费用表-Template.xlsx" />
+    <Content Include="Content\xlsx\联系人信息表-Template.xlsx" />
+    <Content Include="Content\xlsx\进场费用表-Template.xlsx" />
+    <Content Include="Content\xlsx\门店信息表-Template.xlsx" />
+    <Content Include="Scripts\cropper.min.js" />
+    <Content Include="Scripts\croppermain.js" />
+    <Content Include="Scripts\defaults-zh_CN.min.js" />
+    <Content Include="Scripts\framework7.js" />
+    <Content Include="Scripts\framework7.min.js" />
+    <Content Include="Scripts\html5.js" />
+    <Content Include="Scripts\jquery-confirm.js" />
+    <Content Include="Scripts\jquery-confirm.min.js" />
+    <Content Include="Scripts\jquery-sortable.js" />
+    <Content Include="Scripts\kalendae.standalone.js" />
+    <Content Include="Scripts\Manager.js" />
+    <Content Include="Scripts\maapp.js" />
+    <Content Include="Scripts\manager.min.js" />
+    <Content Include="Scripts\mockjax.js" />
+    <Content Include="Scripts\my-app.js" />
+    <Content Include="Scripts\jedate.min.js" />
+    <Content Include="Scripts\my-validate.js" />
+    <Content Include="Scripts\off-JavaScript.js" />
+    <Content Include="Scripts\jeDate-gh-pages\params.json" />
+    <Content Include="Scripts\jeDate-gh-pages\README.md" />
+    <Content Include="Content\xlsx\产品销售明细表-Template.xlsx" />
+    <Content Include="Content\xlsx\产品运营数据表-Template.xlsx" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\font-awesome.css.map" />
+    <Content Include="Scripts\bootstrap-select.js.map" />
+    <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="Scripts\framework7.js.map" />
+    <Content Include="Scripts\framework7.min.js.map" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\highcharts.js" />
+    <Content Include="Scripts\JavaScript.js" />
+    <Content Include="Scripts\Jcrop.min.js" />
+    <Content Include="Scripts\jeDate-gh-pages\css\jedate.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\jedate.js" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\jedate.min.js" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\gray.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\green.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\jedate.css" />
+    <Content Include="Scripts\jeDate-gh-pages\jedate\skin\red.css" />
+    <Content Include="Scripts\jeDate-gh-pages\stylesheets\github-light.css" />
+    <Content Include="Scripts\jeDate-gh-pages\stylesheets\normalize.css" />
+    <Content Include="Scripts\jeDate-gh-pages\stylesheets\stylesheet.css" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery.form.js" />
+    <Content Include="Scripts\jquery.form.min.js" />
+    <Content Include="Scripts\jquery.form.min.js.map" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.fullPage.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\prettify.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\seller.min.js" />
+    <Content Include="Scripts\Seller.js" />
+    <Content Include="Scripts\Sortable.js" />
+    <Content Include="Scripts\Sortable.min.js" />
+    <Content Include="Scripts\TaskManagement.js" />
+    <Content Include="Scripts\TaskManagementCalendar.js" />
+    <Content Include="Scripts\taskmanagement_m.js" />
+    <Content Include="Scripts\validate.expand.js" />
+    <Content Include="Scripts\zepto.min.js" />
+    <None Include="Scripts\_references.js" />
+    <Content Include="Views\favicon.ico" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\SendCode.cshtml" />
+    <Content Include="Views\Account\VerifyCode.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\OfflineSales\Index.cshtml" />
+    <Content Include="Views\Shared\_OfflineSalesLayout.cshtml" />
+    <Content Include="Views\OfflineSales\Create_Store_System.cshtml" />
+    <Content Include="Views\OfflineSales\Create_Store.cshtml" />
+    <Content Include="Views\OfflineSales\Edit_Store_System.cshtml" />
+    <Content Include="Views\OfflineSales\Store_Home.cshtml" />
+    <Content Include="Views\OfflineSales\List_Store_System.cshtml" />
+    <Content Include="Views\OfflineSales\Delete_Store_System.cshtml" />
+    <Content Include="Views\OfflineSales\List_Store.cshtml" />
+    <Content Include="Views\OfflineSales\Delete_Store.cshtml" />
+    <Content Include="Views\OfflineSales\Edit_Store.cshtml" />
+    <Content Include="Views\OfflineSales\Seller_Home.cshtml" />
+    <Content Include="Views\OfflineSales\Sales_Home.cshtml" />
+    <Content Include="Views\OfflineSales\Event_Home.cshtml" />
+    <Content Include="Views\OfflineSales\List_Seller.cshtml" />
+    <Content Include="Views\OfflineSales\Create_Seller.cshtml" />
+    <Content Include="Views\OfflineSales\Delete_Seller.cshtml" />
+    <Content Include="Views\OfflineSales\Edit_Seller.cshtml" />
+    <Content Include="Views\OfflineSales\List_Sales_Data.cshtml" />
+    <Content Include="Views\OfflineSales\Create_Sales_Data.cshtml" />
+    <Content Include="Views\OfflineSales\DropDownList_Store.cshtml" />
+    <Content Include="Views\OfflineSales\Delete_Sales_Data.cshtml" />
+    <Content Include="Views\OfflineSales\Edit_Sales_Data.cshtml" />
+    <Content Include="Views\WxAccount\Wx_Register.cshtml" />
+    <Content Include="Views\WxAccount\Index.cshtml" />
+    <Content Include="Views\Shared\_PeriodAidLayout.cshtml" />
+    <Content Include="Views\OfflineSales\List_Sales_Data_Date.cshtml" />
+    <Content Include="Views\OfflineSales\List_sales_Data_Store.cshtml" />
+    <Content Include="Views\OfflineSales\List_Store_Sales_Month.cshtml" />
+    <Content Include="Views\OfflineSales\Create_Store_Sales_Month.cshtml" />
+    <Content Include="Views\OfflineSales\Edit_Store_Sales_Month.cshtml" />
+    <Content Include="Views\OfflineSales\Delete_Store_Sales_Month.cshtml" />
+    <Content Include="Views\PeriodAid\Index.cshtml" />
+    <Content Include="Views\Pay\Gambling_Pay.cshtml" />
+    <Content Include="Views\Pay\Gambling_Success.cshtml" />
+    <Content Include="Views\PeriodAid\Setting.cshtml" />
+    <Content Include="Views\PeriodAid\UserHome.cshtml" />
+    <Content Include="Views\PeriodAid\Version.cshtml" />
+    <Content Include="Views\PeriodAid\Privacy.cshtml" />
+    <Content Include="Views\PeriodAid\About.cshtml" />
+    <Content Include="Views\PeriodAid\SaleOff.cshtml" />
+    <Content Include="Views\TestAdmin\AddQuestion.cshtml" />
+    <Content Include="Views\TestAdmin\Index.cshtml" />
+    <Content Include="Views\TestAdmin\QuestonList.cshtml" />
+    <Content Include="Views\TestAdmin\EditQuestion.cshtml" />
+    <Content Include="Views\Shared\_ExamLayout.cshtml" />
+    <Content Include="Views\Examination\ExamBody.cshtml" />
+    <Content Include="Views\Examination\getCurrentQuestion.cshtml" />
+    <Content Include="Views\Examination\FinishExam.cshtml" />
+    <Content Include="Views\Examination\CheckoutExam.cshtml" />
+    <Content Include="Views\Examination\getNextCheckout.cshtml" />
+    <Content Include="Views\TestAdmin\ExamResultList.cshtml" />
+    <Content Include="Views\WxAccount\TestImageUpload.cshtml" />
+    <Content Include="Views\WxAccount\SaveOrignalImage.cshtml" />
+    <Content Include="Views\Shared\_CustomLayout.cshtml" />
+    <Content Include="Views\Custom\UploadImage.cshtml" />
+    <Content Include="Views\Custom\CutImage.cshtml" />
+    <Content Include="Views\Custom\CustomSuccess.cshtml" />
+    <Content Include="Views\TestAdmin\CustomOrderList.cshtml" />
+    <Content Include="Views\TestAdmin\AjaxCustomOrderList.cshtml" />
+    <Content Include="Views\WxAccount\TestAudio.cshtml" />
+    <Content Include="Views\Pay\CustomMicroPay.cshtml" />
+    <Content Include="Views\Home\generateQRCode.cshtml" />
+    <Content Include="Views\Custom\CustomVoice.cshtml" />
+    <Content Include="Views\Custom\Benefits_main.cshtml" />
+    <Content Include="Views\Custom\Benefits_info.cshtml" />
+    <Content Include="Views\Custom\Benefits_done.cshtml" />
+    <Content Include="Views\Custom\Benefits_error.cshtml" />
+    <Content Include="Views\OfflineSales\UploadStore.cshtml" />
+    <Content Include="Views\OfflineSales\UploadResult.cshtml" />
+    <Content Include="Views\OfflineSales\StoreMap.cshtml" />
+    <Content Include="Views\OfflineSales\UploadDailyInfo.cshtml" />
+    <Content Include="Views\OfflineSales\UploadSeller.cshtml" />
+    <Content Include="Views\OfflineSales\UploadMonthInfo.cshtml" />
+    <Content Include="Views\OfflineSales\UploadStoreSystemCosts.cshtml" />
+    <Content Include="Views\OfflineSales\UploadEventCosts.cshtml" />
+    <Content Include="Views\Shared\_OffLayout.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Store_main.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Store_ajaxlist.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Sales_main.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Costs_main.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Seller_main.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Seller_ajaxlist.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditSeller.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditSuccess.cshtml" />
+    <Content Include="Views\OfflineSales\Off_StoreSystemCosts_ajaxlist.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Costs_StoreSystem.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditStoreSystemCosts.cshtml" />
+    <Content Include="Views\OfflineSales\Off_DailySalesInfo_ajaxlist.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditDailyInfo.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditStore.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_AddSeller.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Costs_ajaxlist.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditCosts.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Seller_Controller.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Sales_Month.cshtml" />
+    <Content Include="Views\OfflineSales\Off_MonthSalesInfo_ajaxlist.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditMonthInfo.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Expenses_Add.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Expenses_Edit.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Expenses_Balance.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Expenses_Details.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Expenses_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Expenses_AjaxList.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Expenses_VerifyCost.cshtml" />
+    <Content Include="Views\Custom\TestLocation.cshtml" />
+    <Content Include="Views\Seller\Wx_Register.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_Home.cshtml" />
+    <Content Include="Views\Seller\Index.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_Panel.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_CheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_CheckOut.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_Report.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_EditReport.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_ScheduleList.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_ConfirmedData.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_SalaryResult.cshtml" />
+    <Content Include="Views\OfflineSales\Off_BindSeller_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_BindSeller.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Add_Schedule.cshtml" />
+    <Content Include="Views\OfflineSales\Off_ConfirmCheckIn.cshtml" />
+    <Content Include="Views\OfflineSales\Off_ConfirmCheckIn_Map.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CheckIn_List_ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CheckIn_List.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Home.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_StoreList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CheckReport.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_UnCheckInList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_UnReportList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_StoreSellerList.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_Register.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_Guide.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_ReportList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_ReportList_Partial.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_ConfirmRedPack.cshtml" />
+    <Content Include="Views\OfflineSales\Off_ScheduleList.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Sales_Control.cshtml" />
+    <Content Include="Views\OfflineSales\Off_ScheduleDetails.cshtml" />
+    <Content Include="Views\OfflineSales\Ajax_EditSchedule.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_APITest.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CreateCheckIn.cshtml" />
+    <Content Include="Views\OfflineSales\Off_ProxyCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_ProxyCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_EventList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_EventList_Partial.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_ViewCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CreateEvent.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_AddStore.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_CreditInfo.cshtml" />
+    <Content Include="Views\Seller\Error.cshtml" />
+    <Content Include="Views\Custom\LyyjPromotion.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CreateStore.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CreateSalesDaily.cshtml" />
+    <Content Include="Views\OfflineSales\Off_CreateSalesMonth.cshtml" />
+    <Content Include="Views\OfflineSales\Off_QueryCheckIn.cshtml" />
+    <Content Include="Views\Custom\Wx_RedPack_Tjh_main.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Guide.cshtml" />
+    <Content Include="Views\Seller\_Wx_Manager_Layout.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CreateCheckIn.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_List.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_AddCheckIn.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CheckInList_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CheckInView.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Task.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_TaskReport_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_TaskReport.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_TaskList.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_TaskList_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Tools.cshtml" />
+    <Content Include="Views\Custom\Wx_RedPack_Tjh_Success.cshtml" />
+    <Content Include="Views\Custom\Wx_RedPack_Tjh_Fail.cshtml" />
+    <Content Include="Views\Custom\Wx_Beacon_Tjh.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_QuerySeller.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_EditTask.cshtml" />
+    <Content Include="Views\Seller\Wx_Senior_AllCheckInList.cshtml" />
+    <Content Include="Views\Seller\Wx_Senior_AllCheckInList_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Senior_CheckInDetails.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Order_List.cshtml" />
+    <Content Include="Views\ERPOrder\_ERPOrder_Layout.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Member_List.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Order_List_Ajax.cshtml" />
+    <Content Include="Views\ERPOrder\Index.cshtml" />
+    <Content Include="Views\ERPOrder\Download_Member_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_Create.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Announcement_Edit.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_AnnouncementList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Request_Create.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Request_Edit.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Request_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Request_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Request_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Manager_Request_Edit.cshtml" />
+    <Content Include="Views\ERPOrder\Vip_Tag_Setup.cshtml" />
+    <Content Include="Views\ERPOrder\Vip_Tag_Create.cshtml" />
+    <Content Include="Views\ERPOrder\Vip_Tag_Upload.cshtml" />
+    <Content Include="Views\ERPOrder\teststores.cshtml" />
+    <Content Include="Views\Custom\TestVoice.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_Request_Check.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Schedule_Statistic.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_BonusList.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_BonusList_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_BonusHistory_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Statistic_StoreSystem.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Statistic_Seller.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Statistic_Store.cshtml" />
+    <Content Include="Views\ERPOrder\GenericData_List.cshtml" />
+    <Content Include="Views\ERPOrder\GenericData_List_Ajax.cshtml" />
+    <Content Include="Views\ERPOrder\Create_GenericData.cshtml" />
+    <Content Include="Views\ERPOrder\Edit_GenericData.cshtml" />
+    <Content Include="Views\ERPOrder\GenericData_Statistic.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_List.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_List_Ajax.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_Create.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_Edit.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Details_Statistic.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_List.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_List_Ajax.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_Create.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_Edit.cshtml" />
+    <Content Include="Views\ERPOrder\Product_Generic_Data_Statistic.cshtml" />
+    <Content Include="Views\ERPOrder\ERP_StoreList.cshtml" />
+    <Content Include="Views\ERPOrder\UploadProductDetails.cshtml" />
+    <Content Include="Views\ERPOrder\UploadResult.cshtml" />
+    <Content Include="Views\ERPOrder\UploadProductGenericData.cshtml" />
+    <Content Include="Views\Custom\ColdTutorial.cshtml" />
+    <Content Include="Views\Custom\TestRegion.cshtml" />
+    <Content Include="Views\Custom\GirlFriend_Start.cshtml" />
+    <Content Include="Views\Custom\GirlFriend_Result.cshtml" />
+    <Content Include="Views\Custom\GirlFriend_None.cshtml" />
+    <Content Include="Views\Seller\Wx_Seller_EditReport_Item.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_Create.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Product_Edit.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_EditReport_Item.cshtml" />
+    <Content Include="Views\OfflineSales\Off_ConfirmProductList.cshtml" />
+    <Content Include="Views\OfflineSales\Off_ConfirmPrductListBySchedule.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_List_Ajax.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_Create.cshtml" />
+    <Content Include="Views\OfflineSales\Off_Template_Edit.cshtml" />
+    <Content Include="Views\Custom\UNI_SubmitInfo.cshtml" />
+    <Content Include="Views\Custom\UNI_Error.cshtml" />
+    <Content Include="Views\Custom\UNI_Result.cshtml" />
+    <Content Include="Views\Custom\UNI_Admin.cshtml" />
+    <Content Include="Views\OfflineSales\Off_DailyProductList.cshtml" />
+    <Content Include="Views\OfflineSales\Off_BindSeller_List_Ajax.cshtml" />
+    <Content Include="Views\Seller\Wx_Manager_CreditInfo.cshtml" />
+    <Content Include="Views\Pay\StartPayAmount.cshtml" />
+    <Content Include="Views\Pay\Error.cshtml" />
+    <Content Include="Views\OfflineSales\Off_RedPack_List.cshtml" />
+    <Content Include="Views\OfflineSales\Off_RedPack_List_Ajax.cshtml" />
+    <Content Include="Views\OffSales\Index.cshtml" />
+    <Content Include="Views\OffSales\DailySalesIndex.cshtml" />
+    <Content Include="Views\OffSales\DailySalesListPartial.cshtml" />
+    <Content Include="Views\OffSales\MonthSalesList.cshtml" />
+    <Content Include="Views\OffSeller\SellerIndex.cshtml" />
+    <Content Include="Views\OffSeller\SellerListPartial.cshtml" />
+    <Content Include="Views\OffExpenses\ExpensesIndex.cshtml" />
+    <Content Include="Views\OffExpenses\ExpensesListPartial.cshtml" />
+    <Content Include="Views\OffExpenses\AddExpensesPartial.cshtml" />
+    <Content Include="Views\OffExpenses\EditExpenses.cshtml" />
+    <Content Include="Views\OffExpenses\BalanceExpenses.cshtml" />
+    <Content Include="Views\OffExpenses\VerifyExpenses.cshtml" />
+    <Content Include="Views\OffExpenses\ViewExpenses.cshtml" />
+    <Content Include="Views\OffSales\EditDailySalesPartial.cshtml" />
+    <Content Include="Views\OffSales\DailySalesProductListPartial.cshtml" />
+    <Content Include="Views\OffSales\MonthSalesListPartial.cshtml" />
+    <Content Include="Views\OffSales\EditMonthSalesPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ViewScheduleDetails.cshtml" />
+    <Content Include="Views\OffCheckin\EditSchedulePartial.cshtml" />
+    <Content Include="Views\OffCheckin\AddSchedule.cshtml" />
+    <Content Include="Views\OffSales\UploadDailySales.cshtml" />
+    <Content Include="Views\OffSales\UploadMonthSales.cshtml" />
+    <Content Include="Views\OffSales\UploadResult.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleList.cshtml" />
+    <Content Include="Views\OffCheckin\ViewScheduleDetailsPartial.cshtml" />
+    <Content Include="Views\OffSales\CreateSalesDailyPartial.cshtml" />
+    <Content Include="Views\Shared\modal.cshtml" />
+    <Content Include="Views\OffSales\CreateSalesMonthPartial.cshtml" />
+    <Content Include="Views\OffStore\StoreIndex.cshtml" />
+    <Content Include="Views\OffStore\StoreListPartial.cshtml" />
+    <Content Include="Views\OffStore\CreateStorePartial.cshtml" />
+    <Content Include="Views\OffStore\StoreMap.cshtml" />
+    <Content Include="Views\OffStore\UploadStore.cshtml" />
+    <Content Include="Views\OffStore\UploadResult.cshtml" />
+    <Content Include="Views\OffStore\EditStorePartial.cshtml" />
+    <Content Include="Views\OffProduct\Index.cshtml" />
+    <Content Include="Views\OffProduct\ProductList.cshtml" />
+    <Content Include="Views\OffProduct\ProductListPartial.cshtml" />
+    <Content Include="Views\OffProduct\TemplateList.cshtml" />
+    <Content Include="Views\OffProduct\TemplateListPartial.cshtml" />
+    <Content Include="Views\OffProduct\CreateTemplate.cshtml" />
+    <Content Include="Views\OffProduct\CreateProduct.cshtml" />
+    <Content Include="Views\OffProduct\EditProduct.cshtml" />
+    <Content Include="Views\OffProduct\EditTemplate.cshtml" />
+    <Content Include="Views\OffSeller\BindSellerIndex.cshtml" />
+    <Content Include="Views\OffSeller\AddSellerPartial.cshtml" />
+    <Content Include="Views\OffSeller\UploadSeller.cshtml" />
+    <Content Include="Views\OffSeller\UploadResult.cshtml" />
+    <Content Include="Views\OffSeller\EditSellerPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindSellerListPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindSellerPartial.cshtml" />
+    <Content Include="Views\OffManager\ManagerList.cshtml" />
+    <Content Include="Views\OffManager\ManagerListPartial.cshtml" />
+    <Content Include="Views\OffManager\TaskList.cshtml" />
+    <Content Include="Views\OffManager\TaskListPartial.cshtml" />
+    <Content Include="Views\OffManager\AnnouncementList.cshtml" />
+    <Content Include="Views\OffManager\AnnouncementListPartial.cshtml" />
+    <Content Include="Views\OffManager\RequestList.cshtml" />
+    <Content Include="Views\OffManager\RequestListPartial.cshtml" />
+    <Content Include="Views\OffManager\EditTask.cshtml" />
+    <Content Include="Views\OffManager\CreateAnnouncement.cshtml" />
+    <Content Include="Views\OffManager\EditAnnouncement.cshtml" />
+    <Content Include="Views\OffManager\EditRequest.cshtml" />
+    <Content Include="Views\OffStatistic\StoreSystemStatistic.cshtml" />
+    <Content Include="Views\OffStatistic\StoreStatistic.cshtml" />
+    <Content Include="Views\OffStatistic\SellerStatistic.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinList.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\CheckinProductListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ConfirmCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\QueryCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\QueryCheckinPartial.cshtml" />
+    <Content Include="Views\OffCheckin\ViewCheckinLBS.cshtml" />
+    <Content Include="Views\Shared\AuthorizeError.cshtml" />
+    <Content Include="Views\OffCheckin\ScheduleStatistic.cshtml" />
+    <Content Include="Views\OffCommon\Index.cshtml" />
+    <Content Include="Views\OffCommon\AccountSetting.cshtml" />
+    <Content Include="Views\OffBonus\BonusList.cshtml" />
+    <Content Include="Views\OffBonus\BonusListPartial.cshtml" />
+    <Content Include="Views\OffManager\AddManagerArea.cshtml" />
+    <Content Include="Views\OffCheckin\CreateCheckin.cshtml" />
+    <Content Include="Views\OffCheckin\AddCheckinProductListPartial.cshtml" />
+    <Content Include="Views\SellerTask\Register.cshtml" />
+    <Content Include="Views\SellerTask\WxJSAppPartial.cshtml" />
+    <Content Include="Views\SellerTask\Home.cshtml" />
+    <Content Include="Views\SellerTask\UserInfoPartial.cshtml" />
+    <Content Include="Views\SellerTask\UpdateAccountInfo.cshtml" />
+    <Content Include="Views\SellerTask\CreateSellerReport.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskList.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskListPartial.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskProductPartial.cshtml" />
+    <Content Include="Views\SellerTask\TaskError.cshtml" />
+    <Content Include="Views\SellerTask\EditSellerTask.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskListPhoto.cshtml" />
+    <Content Include="Views\SellerTask\SellerTaskDetails.cshtml" />
+    <Content Include="Views\OffProduct\TempSellerProductList.cshtml" />
+    <Content Include="Views\OffManager\ManagerDarkList.cshtml" />
+    <Content Include="Views\SellerTask\SellerRegister.cshtml" />
+    <Content Include="Views\OffSeller\BindTempSellerPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindTempSellerListPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindTempSellerIndex.cshtml" />
+    <Content Include="Views\Seller\Manager_Home.cshtml" />
+    <Content Include="Views\Seller\Manager_AddCheckin.cshtml" />
+    <Content Include="Views\Seller\Manager_TaskReport.cshtml" />
+    <Content Include="Views\Seller\Manager_CheckInView.cshtml" />
+    <Content Include="Views\Seller\Senior_AllCheckInList.cshtml" />
+    <Content Include="Views\Seller\Senior_CheckInDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_Request_Check.cshtml" />
+    <Content Include="Views\Seller\Manager_Task.cshtml" />
+    <Content Include="Views\Seller\Manager_Tools.cshtml" />
+    <Content Include="Views\Seller\Manager_SellerTaskHome.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckInList.cshtml" />
+    <Content Include="Views\Seller\Manager_ReportList.cshtml" />
+    <Content Include="Views\Seller\Manager_EventList.cshtml" />
+    <Content Include="Views\Seller\Manager_CreateCheckIn.cshtml" />
+    <Content Include="Views\Seller\Manager_StoreList.cshtml" />
+    <Content Include="Views\Seller\Manager_SellerList.cshtml" />
+    <Content Include="Views\Seller\Manager_AjaxSellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_CreditInfo.cshtml" />
+    <Content Include="Views\Seller\Manager_BonusList.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskMonthStatisticPartial.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskSeller.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskDetails.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskMonthStatistic.cshtml" />
+    <Content Include="Views\Seller\ManagerSellerTaskSellerPartial.cshtml" />
+    <Content Include="Views\Seller\ManangerSellerTaskStorageAlert.cshtml" />
+    <Content Include="Views\Seller\ManangerSellerTaskQuery.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckOutList.cshtml" />
+    <Content Include="Views\Seller\Manager_UserPanel.cshtml" />
+    <Content Include="Views\Seller\Manager_EventListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_TaskReportPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_ReportListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_AnnouncementList.cshtml" />
+    <Content Include="Views\Seller\Manager_TaskSellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_CheckInViewPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckInListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnCheckOutListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnReportList.cshtml" />
+    <Content Include="Views\Seller\Manager_UnReportListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_UnConfirmList.cshtml" />
+    <Content Include="Views\Seller\Manager_UnConfirmListPartial.cshtml" />
+    <Content Include="Views\Seller\Senior_AllCheckInListPartial.cshtml" />
+    <Content Include="Views\Seller\ManagerTempSellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestCreate.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestEdit.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestList.cshtml" />
+    <Content Include="Views\Seller\Manager_RequestListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_CheckinBonusRemark.cshtml" />
+    <Content Include="Views\Seller\Manager_EditCheckin.cshtml" />
+    <Content Include="Views\Seller\Manager_EditReport_Item.cshtml" />
+    <Content Include="Views\Seller\Manager_CheckinConfirm.cshtml" />
+    <Content Include="Views\Seller\Manager_ViewReport_Item.cshtml" />
+    <Content Include="Views\Seller\Manager_ViewConfirm.cshtml" />
+    <Content Include="Views\Seller\Manager_BonusList_HistoryPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_BonusList_UnSendPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_SellerDetails.cshtml" />
+    <Content Include="Views\Seller\Manager_EditSellerInfo.cshtml" />
+    <Content Include="Views\Seller\Manager_CreateEvent.cshtml" />
+    <Content Include="Views\Seller\Seller_Home.cshtml" />
+    <Content Include="Views\Seller\Manager_ViewSchedule.cshtml" />
+    <Content Include="Views\Seller\Manager_EditSchedule.cshtml" />
+    <Content Include="Views\Seller\Manager_ScheduleSeller.cshtml" />
+    <Content Include="Views\Seller\Seller_CheckIn.cshtml" />
+    <Content Include="Views\Seller\Seller_CheckOut.cshtml" />
+    <Content Include="Views\Seller\Seller_Report.cshtml" />
+    <Content Include="Views\Seller\Seller_ScheduleList.cshtml" />
+    <Content Include="Views\Seller\Seller_ConfirmedData.cshtml" />
+    <Content Include="Views\Seller\Seller_CreditInfo.cshtml" />
+    <Content Include="Views\Seller\Seller_APITest.cshtml" />
+    <Content Include="Views\Seller\Seller_Panel.cshtml" />
+    <Content Include="Views\Seller\Seller_ChangeAccount.cshtml" />
+    <Content Include="Views\Seller\Seller_RefreshBindListAjax.cshtml" />
+    <Content Include="Views\Seller\Seller_ReportPartial.cshtml" />
+    <Content Include="Views\Seller\Seller_ScheduleListPartial.cshtml" />
+    <Content Include="Views\Seller\Seller_ConfirmedDataPartial.cshtml" />
+    <Content Include="Views\Seller\Seller_ConfirmedDetails.cshtml" />
+    <Content Include="Views\Seller\Seller_Statistic.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerHome.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerQueryMonthPartial.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerAlert.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerQueryMonthBySellerPartial.cshtml" />
+    <Content Include="Views\Seller\Seller_EditReport_Item.cshtml" />
+    <Content Include="Views\Seller\Seller_CreateCompetitionInfo.cshtml" />
+    <Content Include="Views\Seller\Seller_CompetitionInfoList.cshtml" />
+    <Content Include="Views\Seller\Seller_CompetitionInfoListPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoList.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoList_UnSendPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoList_HistoryPartial.cshtml" />
+    <Content Include="Views\Seller\Manager_CompetitionInfoDetails.cshtml" />
+    <Content Include="Views\Pay\PressConferenceRegister.cshtml" />
+    <Content Include="Views\Pay\PressConferenceHome.cshtml" />
+    <Content Include="Views\OffManager\ManagerRouter.cshtml" />
+    <Content Include="Views\OffSeller\BindRecruitIndex.cshtml" />
+    <Content Include="Views\OffSeller\BindRecruitIndexPartial.cshtml" />
+    <Content Include="Views\OffSeller\BindRecruitForm.cshtml" />
+    <Content Include="Views\OffStore\EditStoreSystemPartial.cshtml" />
+    <Content Include="Views\OffStore\CreateStoreSystemPartial.cshtml" />
+    <Content Include="Views\OffStore\StoreSystemList.cshtml" />
+    <Content Include="Views\OffStore\StoreSystemListPartial.cshtml" />
+    <Content Include="Views\OffStore\EditProductListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\SalesEventList.cshtml" />
+    <Content Include="Views\OffCheckin\SalesEventListPartial.cshtml" />
+    <Content Include="Views\OffCheckin\EditSalesEvent.cshtml" />
+    <Content Include="Views\OffCheckin\CreateSalesEvent.cshtml" />
+    <Content Include="Views\OffCheckin\CommitSalesEvent.cshtml" />
+    <Content Include="Views\OffManager\EditManagerRoles.cshtml" />
+    <Content Include="Views\Shared\_WebContentLayout.cshtml" />
+    <Content Include="Views\WebContent\CreateWebEventPartial.cshtml" />
+    <Content Include="Views\WebContent\WebContentIndex.cshtml" />
+    <Content Include="Views\WebContent\WebEventsList_Ajax.cshtml" />
+    <Content Include="Views\WebContent\EditWebEventPartial.cshtml" />
+    <Content Include="Views\WebContent\CreateCheckCodeGroup.cshtml" />
+    <Content Include="Views\WebContent\EditCheckCodeGroup.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupList.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupListPartial.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeGroupStatistics.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeList.cshtml" />
+    <Content Include="Views\WebContent\CheckCodeListPartial.cshtml" />
+    <Content Include="Views\OffSellerTask\TaskSellerQueryDetails.cshtml" />
+    <Content Include="Views\Custom\LittleGingerVoice.cshtml" />
+    <Content Include="Views\TaskManagement\Index.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_Detail.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_FinishSubjectListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_ActiveSubjectListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Personal_StarSubjectListPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectProcedure.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectAssignment.cshtml" />
+    <Content Include="Views\TaskManagement\GetAssignmentForm.cshtml" />
+    <Content Include="Views\TaskManagement\Assignment_Detail.cshtml" />
+    <Content Include="Views\TaskManagement\EditSubject.cshtml" />
+    <Content Include="Views\TaskManagement\Assignment_CollaboratorPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Assignment_SubtaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\GetSubtaskForm.cshtml" />
+    <Content Include="Views\TaskManagement\Assignmnet_CollaboratorAddPartial.cshtml" />
+    <Content Include="Views\TaskManagement\GetSubtaskFilledForm.cshtml" />
+    <Content Include="Views\TaskManagement\Subtask_Detail.cshtml" />
+    <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
+    <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectMenuPanelPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectUntreatedProgressPartial.cshtml" />
+    <Content Include="Views\TaskManagement\EmployeeError.cshtml" />
+    <Content Include="Views\TaskManagement\Assignment_CommentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_Files.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_FilesPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectNotFound.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectNoAuthority.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogs.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonlRecentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalActionPanel.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalCollectionPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalFilePartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalTaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentSubtaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalInvolvedAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalResponsibleAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalExecutableTaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
+    <Content Include="Views\TaskManagement\GetProcedureForm.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_Agendas.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectCalendarPanel.cshtml" />
+    <Content Include="Views\TaskManagement\SecuritySetting.cshtml" />
+    <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\MobileTaskManagement\Home.cshtml" />
+    <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
+    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
+    <Content Include="Views\TaskManagement\AllUserAssignmentPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Content\checkin-img\" />
+    <Folder Include="Content\downloads\" />
+    <Folder Include="Views\Authorization\" />
+    <Folder Include="Views\Sales\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>54260</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:54260/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>此项目引用这台计算机上缺少的 NuGet 程序包。使用 NuGet 程序包还原可下载这些程序包。有关详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

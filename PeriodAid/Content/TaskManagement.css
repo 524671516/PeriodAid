@@ -147,6 +147,12 @@ body,html{
 .margin-0{
     margin:0!important;
 }
+.show{
+    display:block !important;
+}
+.hide{
+    display:none !important;
+}
 /*工具样式结束*/
 
 
@@ -189,6 +195,13 @@ a.close{
 
 
 /*dropdown样式改造*/
+.procedure-dropdown-toggle{
+    padding:5px 5px 5px 0;
+}
+.tm-dropdown-area{
+    position:absolute;
+    z-index:9999;
+}
 .tm_dropdown.dropdown-menu.tm_procedure-dropdown{
     left:0;
 }
@@ -427,19 +440,16 @@ a.close{
    -o-transition:  all 300ms ease;	
 }
 .tm_add_pannel_hide .tm_pannel-item-add{
-    left:-200px;
     height:0;
     width:0;
     opacity:0;
 }
 .tm_add_pannel_hide .tm_control_pannel_show{
-    opacity:0.8;
+    opacity:1;
     display:block;
 }
-.tm_control_pannel_show:hover{
-    opacity:1;
-}
 .tm_control_pannel_show{
+    color:#fff;
     display:none;
     opacity:0;
     z-index:999999;
@@ -447,9 +457,9 @@ a.close{
     left:0;
     background-color:#3da8f5;
     width:14px;
-    line-height:30px;
+    line-height:40px;
     top:115px;
-    height:60px;
+    height:80px;
     border-top-right-radius:5px;
     border-bottom-right-radius:5px;
     word-break:break-word;
@@ -1009,6 +1019,8 @@ a.btn_subtask_detail{
     display:inline-block;
 }
 .tm_files_body_ul_li .tm_files_middle{
+    line-height:30px;
+    height:58px;
     padding:18px 0;
 }
 .tm_files_middle{
@@ -1019,6 +1031,9 @@ a.btn_subtask_detail{
     text-overflow: ellipsis;
     white-space: nowrap;
     width:40%;
+}
+.tm_files_name input{
+    height:30px;
 }
 .tm_files_size,.tm_files_author{
     overflow: hidden;

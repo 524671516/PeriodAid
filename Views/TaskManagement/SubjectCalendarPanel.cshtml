@@ -1,0 +1,77 @@
+﻿@model PeriodAid.Models.Employee
+<div id="tm-calendar-view" class="tm-calendar-view tm-view">
+    <div class="tm-view-header tm-calendar-view-header">
+        <div class="tm-view-header-select">
+            <span class="tm-view-calendar-task-num" id="tm-view-calendar-task-num" style="padding:0 8px 0 0 "><span>任务总数:</span>&nbsp;<strong>12</strong></span>&nbsp;
+            <a class="tm-view-calendar-btn tm-change-calendar-ui">切换显示</a>
+            <a class="tm-view-calendar-btn">任务</a>
+            <a class="tm-view-calendar-btn">子任务</a>
+        </div>
+        
+        <div class="tm-calendar-view-control tm-view-control">
+            <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <span class="tm-calendar-view-control tm-calendar-currentmonth color-blue">@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
+            <a href="javascript:;" class="tm-calendar-view-control tm-calendar-next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+        </div>
+        <div class="tm-hidden-view tm-view-header-close">
+            <button type="button" class="close"><span aria-hidden="true">×</span></button>
+        </div>
+    </div>
+    <div class="tm-view-content tm-calendar-view-content">
+        <div class="tm-view-content-wrap  tm-view-wrap tm-calendar-view-wrap" id="tm-calendar-view-wrap">           
+        </div>
+    </div>
+    <script>
+        //初始化日历详细请看相关js文件配置有自己扩展
+        TmDatePicker.Init({
+            container: "#tm-calendar-view-wrap",
+            initui: "month",
+            onpagechanged: function (e) {
+                var pickerdata = e;
+                $.ajax({
+                    url: "/TaskManagement/EmployeeMonthDataOfTask",
+                    type: "post",
+                    data: {
+                        month: e.currentmonth,
+                        year: e.currentyear
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            var _len = data.data.length;
+                            if (pickerdata.currentui == "month") {
+                                for (i = 0; i < _len; i++) {
+                                    if (data.data[i].TypeCode == 1) {
+                                        $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                    } else {
+                                        $(".tm-calendar-currentmonth-weekofday .tm-calendar-monthofdate[date-day=" + data.data[i].DeadTime + "]").parent().append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                    }
+
+                                }
+                            } else {
+                                for (i = 0; i < _len; i++) {
+                                    if ($(".tm-calendar-currentmonth-weekofday[date-day=" + data.data[i].DeadTime + "]").length > 0) {
+                                        var _dindex = $(".tm-calendar-currentmonth-weekofday[date-day=" + data.data[i].DeadTime + "]").index();
+                                        var _hindex = data.data[i].Hour;
+                                        var _mindex = data.data[i].Minute;
+                                        if (data.data[i].TypeCode == 1) {
+                                            $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<div class=\"tm-calendar-task  tm-show-task-modal\"  data-aid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                        } else {
+                                            $(".tm-calendar-week-body .calendar-week-area:eq(" + _hindex + ")").find("li:eq(" + _dindex + ")").append("<div class=\"tm-calendar-subtask tm-show-task-modal\" data-atid=\"" + data.data[i].Id + "\">" + data.data[i].Name + "</div>");
+                                        }
+                                       
+                                    }
+                                }                             
+                            }
+                            $("#tm-view-calendar-task-num strong").html($(".tm-show-task-modal").length);
+                        } else {
+                            ErrorAlert("数据获取失败。");
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("请求数据失败。");
+                    }
+                })
+            }
+        });
+    </script>
+</div>

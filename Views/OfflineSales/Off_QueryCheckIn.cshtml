@@ -1,0 +1,217 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin>
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+@{
+    ViewBag.Title = "Off_QueryCheckIn";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingFive";
+    var query = Request.Url.Query;
+    string result = "";
+    if (query.IndexOf("query=") != -1)
+    {
+        var start = query.Substring(query.IndexOf("query="), query.Length - query.IndexOf("query="));
+        var end = start.Substring(0, start.IndexOf("&") == -1 ? start.Length : start.IndexOf("&"));
+        result = end.Substring(6, end.Length - 6);
+    }
+}
+<div class="container">
+    <ul class="list-unstyled row">
+        <li class="row">
+            <div class="col-md-4">
+                <label>开始时间：</label>
+                <input type="text" class="form-control input-sm offline-search-inline start-date" placeholder="开始时间" />
+            </div>
+            <div class="col-md-4 col-md-offset-1">
+                <label>结束时间：</label>
+                <input type="text" class="form-control input-sm offline-search-inline end-date" placeholder="结束时间" />
+            </div>
+        </li>
+        <li class="row">
+            <div class="col-md-4">
+                <label>门店名称：</label>
+                <input type="text" class="form-control input-sm offline-search-inline" id="dta" value="@Html.Encode(result)" placeholder="门店名称" />
+            </div>
+            <div class="col-md-4 col-md-offset-1">
+                <label>促销姓名：</label>
+                <input type="text" class="form-control input-sm offline-search-inline" placeholder="促销姓名" />
+            </div>
+            <div class="col-md-2 text-right">
+                <a class="btn btn-info btn-sm" id="query"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+            </div>
+        </li>
+    </ul>
+</div>
+<table class="table table-condensed table-hover" style="table-layout: fixed;width:100%;">
+    <tr class="offline-table-background">
+        <th style="width:15%">
+            活动时间
+        </th>
+        <th style="width:10%">
+            状态
+        </th>
+        <th style="width:15%">
+            店铺名称
+        </th>
+        <th style="width:15%">
+            促销员姓名
+        </th>
+        <th style="width:15%">
+            确认人
+        </th>
+        <th style="width:15%">
+            确认时间
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        if (item.Status < 0)
+        {
+            <tr class="text-danger">
+                <td class="ellipsis">
+                    @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+                </td>
+                <td class="ellipsis">
+                    @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmUser)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmTime)
+                </td>
+
+                <td class="ellipsis">
+                    @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                    @if (item.Status == 0)
+                    {
+                        @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                    }
+                    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn dele"})
+                </td>
+            </tr>
+        }
+        else if (item.Status >= 5)
+        {
+            <tr class="text-success">
+            <td class="ellipsis">
+                @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td class="ellipsis">
+                @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ConfirmUser)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.ConfirmTime)
+            </td>
+
+            <td class="ellipsis">
+                @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                @if (item.Status == 0)
+                    {
+                    @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn dele" })
+            </td>
+
+        </tr>
+        }
+        else
+        {
+            <tr>
+                <td class="ellipsis">
+                    @Html.Encode(item.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+                </td>
+                <td class="ellipsis">
+                    @Html.Encode(ParseStatus.CheckInStatus(item.Status))
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Checkin_Schedule.Off_Store.StoreName)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.Off_Seller.Name)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmUser)
+                </td>
+                <td class="ellipsis">
+                    @Html.DisplayFor(modelItem => item.ConfirmTime)
+                </td>
+
+                <td class="ellipsis">
+                    @Html.ActionLink("查看", "Off_ConfirmCheckIn", new { CheckInId = item.Id }, new { @class = "btn btn-info btn-xs", target = "_blank" })
+                    @if (item.Status == 0)
+    {
+        @Html.ActionLink("代签到", "Off_ProxyCheckIn", new { checkid = item.Id }, new { @class = "btn btn-primary btn-xs" })
+                    }
+    @Html.ActionLink("作废", "Off_CancelCheckIn", new { Id = item.Id }, new { @class = "btn btn-danger btn-xs cancel-btn dele"})
+                </td>
+
+            </tr>
+        }
+
+    }
+
+</table>
+
+<script>
+    $(function () {
+        $(".start-date").val(getUrlParam("start"));
+        $(".end-date").val(getUrlParam("end"));
+        $("#dta").val(decodeURIComponent($("#dta").val()));
+        $(".start-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $(".end-date").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $("#query").click(function () {
+            //alert("搜索页面")
+            var start = $(".start-date").val();
+            var end = $(".end-date").val();
+            var query = $("#dta").val();
+            window.location.href = "/OfflineSales/Off_QueryCheckIn?start=" + start + "&end=" + end + "&query=" + query;
+        })
+
+    });
+
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+        
+    }
+    
+    $(".dele").click(function () {
+        var result = confirm("确定要作废吗？")
+        if (result) {
+            var link_url = $(this).attr("href")
+            $.ajax({
+                type: "post",
+                url: link_url,
+                success: function (data) {
+                    alert("作废成功");
+                    var start = $("#start-date").val();
+                    var end = $("#end-date").val();
+                    var query = $("#dta").val();
+                    window.location.href = "/OfflineSales/Off_QueryCheckIn?start=" + start + "&end=" + end + "&query=" + query;
+                }
+            })
+        }
+        return false
+    })
+</script>

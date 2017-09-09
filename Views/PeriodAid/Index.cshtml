@@ -1,0 +1,363 @@
+﻿
+@{
+    ViewBag.Title = "日历";
+    Layout = "~/Views/Shared/_PeriodAidLayout.cshtml";
+}
+<br />
+<div class="container container-body">
+    <div class="row">
+        <div class="col-xs-3 text-left"><a class="btn btn-default btn-lg prev_m fl">&lt;</a></div>
+        <div class="col-xs-6 text-center"><h4 id="date"></h4></div>
+        <div class="col-xs-3 text-right">
+            <a class="btn btn-default next_m fr btn-lg">&gt;</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="data_table table table-striped text-center" id="cal">
+                <thead>
+                    <tr>
+                        <th>日</th>
+                        <th>一</th>
+                        <th>二</th>
+                        <th>三</th>
+                        <th>四</th>
+                        <th>五</th>
+                        <th>六</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <div class="p-day text-center h6"><i class="fa fa-circle p"></i>&nbsp;&nbsp;生理期</div>
+        </div>
+        <div class="col-xs-4">
+            <div class="prep-day text-center h6"><i class="fa fa-circle prep"></i>&nbsp;&nbsp;预测生理期</div> 
+        </div>
+        <div class="col-xs-4">
+            <div class="e-day text-center h6"><span class="fa fa-minus e"></span>&nbsp;&nbsp;易孕期</div> 
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table h6">
+                <tr>
+                    <td class="tip-header text-right col-xs-3">今日提示</td>
+                    <td class="tip-body col-xs-9"><span id="tip_body">今日提示内容</span></td>
+                </tr>
+                <tr>
+                    <td class="tip-header text-right col-xs-3">
+                        今日签到
+                    </td>
+                    <td class="tip-body col-xs-9">
+                        您今天还没有签到哦
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</div>
+<div class="overlay hidden">
+    <div class="loading"><i class="fa fa-spinner fa-spin fa-3x"></i></div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">设定经期时间</h4>
+            </div>
+            <div class="modal-body" id="modal-body" style="overflow:inherit;">
+                <div class="container text-center">
+                    <button class="btn btn-danger btn-lg set-period" id="it_come" value-year="0" value-month="0" value-day="0">她来了</button>&nbsp;
+                    <button class="btn btn-success btn-lg set-period" id="it_gone" value-year="0" value-month="0" value-day="0">她走了</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <span id="nav-name" class="hidden">Calendar</span>
+    <script>
+        var today = new Date();
+        var current = new Date();
+        
+        $(function () {
+            var current = new Date();
+            var year = current.getFullYear();
+            var month = current.getMonth();
+            renderMonth(year, month);
+            // 前一个月
+            $(".prev_m").click(function () {
+                month = current.getMonth() - 1;
+                year = current.getFullYear();
+                if (month < 0) {
+                    month = 11;
+                    year = year - 1;
+                }
+                current.setFullYear(year);
+                current.setMonth(month);
+                
+                renderMonth(year, month);
+
+            });
+            // 后一个月
+            $(".next_m").click(function () {
+
+                month = current.getMonth() + 1;
+                year = current.getFullYear();
+                if (month == 12) {
+                    month = 0;
+                    year = year + 1;
+                }
+                current.setFullYear(year);
+                current.setMonth(month);
+                renderMonth(year, month);
+            });
+            // 日期点击事件
+            $("td").click(function () {
+                var item = $(this);
+                $.ajax({
+                    url: "/PeriodAid/getClickDateResult",
+                    type: "post",
+                    data: {
+                        year: current.getFullYear(),
+                        month: current.getMonth() + 1,
+                        day: item.attr("id").substr(8)
+                    },
+                    success: function (data) {
+                        if (data.result == "MODAL") {
+                            
+                            $("#it_come").attr("value-year", current.getFullYear()).attr("value-month", current.getMonth() + 1).attr("value-day", item.attr("id").substr(8)).removeClass("disabled");
+                            $("#it_gone").attr("value-year", current.getFullYear()).attr("value-month", current.getMonth() + 1).attr("value-day", item.attr("id").substr(8)).removeClass("disabled");
+                            if (data.message == "0") {
+                                $("#it_gone").addClass("disabled");
+                            }
+                            $('#myModal').modal('show');
+                        }
+                    }
+
+                });
+                //var item = $(this);
+                if (item.attr("id") != null) {
+                    //alert(item.attr("id"));
+                    var clickday = "(" + current.getFullYear() + "-" + (current.getMonth() + 1) + "-" + item.attr("id").substr(8) + "): ";
+                    if (item.hasClass("p-day")) {
+                        // 判断是否经期
+                        clickday += "生理期";
+                    }
+                    else if (item.hasClass("prep-day")) {
+                        // 判断是否经期
+                        clickday += "预测生理期";
+                    }
+                    else if (item.hasClass("e-day")) {
+                        // 判断是否经期
+                        clickday += "易孕期";
+                    }
+                    else {
+                        clickday += "日常期";
+                    }
+                    //alert(clickday);
+                    $("#tip_body").text(clickday);
+                }
+            });
+            // 她来了点击事件
+            $("#it_come").click(function () {
+                var clickitem = $(this);
+                $.ajax({
+                    url: "/PeriodAid/setItCome",
+                    type: "post",
+                    data: {
+                        year: clickitem.attr("value-year"),
+                        month: clickitem.attr("value-month"),
+                        day: clickitem.attr("value-day")
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            renderMonth(year, month);
+                        }
+                    }
+                });
+                $('#myModal').modal('hide');
+            });
+            // 她走了点击事件
+            $("#it_gone").click(function () {
+                var clickitem = $(this);
+                $.ajax({
+                    url: "/PeriodAid/setItGone",
+                    type:"post",
+                    data:{
+                        year: clickitem.attr("value-year"),
+                        month: clickitem.attr("value-month"),
+                        day: clickitem.attr("value-day")
+                    },
+                    success:function(data){
+                        if (data.result == "SUCCESS") {
+                            renderMonth(year, month);
+                        }
+                    }
+                });
+                $('#myModal').modal('hide');
+            });
+        });
+        function renderMonth(year, month) {
+            // 这里添加当月各期间日期
+            $.ajax({
+                url: "/PeriodAid/getPeriodDetails",
+                type: "post",
+                data: {
+                    year: year,
+                    month: month+1
+                },
+                beforeSend: function(){
+                    //alert("1");
+                    $(".overlay").removeClass("hidden");
+                    //$("body").addClass("modal-open");
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        var arr_p_days = data.p_day;
+                        var arr_e_days = data.e_day;
+                        var arr_prep_days = data.prep_day;
+                        // 重新绘制日历
+                        renderCal(year, month, arr_p_days, arr_e_days, arr_prep_days);
+                        $(".overlay").addClass("hidden");
+                    }
+                    else if (data.result == "FAILURE") {
+                        window.location.href = "/PeriodAid/Setting";
+                    }
+                }
+            });
+        }
+        function renderCal(year, month, p_days, e_days, prep_days) {
+            // 清空日历格式
+            $("td").removeClass("day t-day p-day e-day prep-day");
+            $("td").removeAttr("id");
+            // 清空日历数据
+            $("#cal").find("td").text("");
+            // 判断月份
+            var totalday = 31;
+            var arr31 = new Array(0, 2, 4, 6, 7, 9, 11);
+            var arr30 = new Array(3, 5, 8, 10);
+            if (contains(arr31, month)) {
+                totalday = 31;
+            }
+            else if(contains(arr30, month)){
+                totalday = 30;
+            }
+            else if (month == 1) {
+                // 判断闰年
+                var arryear = new Array(2000, 2004, 2008, 2012, 2016, 2020, 2024, 2028, 2032);
+                if (contains(arryear, year)) {
+                    totalday = 29;
+                }
+                else {
+                    totalday = 28;
+                }
+            }
+            // 填充标题
+            $("#date").text(year + "年" + (month+1) + "月");
+            // 填充日期
+            var firstDay = new Date(year, month, 1);
+            var dayoffirst = firstDay.getDay();
+            var day = 1;
+            for (var i = dayoffirst; i < totalday + dayoffirst; i++) {
+                var item = $("#cal td")[i];
+                // 判断是否当日
+                if (day == today.getDate() && year == today.getFullYear() && month == today.getMonth()) {
+                    $("#cal").find(item).html("<div>"+day+"</div>").addClass("day t-day").attr("id", "cal-day-" + day);
+                }
+                
+                
+                if (contains(p_days, day)) {
+                    // 判断是否经期
+                    $("#cal").find(item).html("<div>" + day + "</div>").removeClass("e-day prep-day").addClass("day p-day").attr("id", "cal-day-" + day);
+                }
+                else if (contains(prep_days, day)) {
+                    // 判断是否预测经期
+                    $("#cal").find(item).html("<div>" + day + "</div>").removeClass("e-day").addClass("day prep-day").attr("id", "cal-day-" + day);
+                }
+                else if (contains(e_days, day)) {
+                    // 判断是否易孕期
+                    $("#cal").find(item).html("<div>" + day + "</div>").addClass("day e-day").attr("id", "cal-day-" + day);
+                }
+                
+                
+                else {
+                    $("#cal").find(item).html("<div>" + day + "</div>").addClass("day").attr("id", "cal-day-" + day);
+                }
+                day++;
+            }
+        }
+        function contains(arr, obj) {
+            var i = arr.length;
+            while (i--) {
+                if (arr[i] === obj) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+    </script>
+}

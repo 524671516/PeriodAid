@@ -1,0 +1,185 @@
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>任务管理系统</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/TaskManagement.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+    <script src="~/Scripts/html5.js"></script>
+    <script src="~/Scripts/respond.min.js"></script>
+    <![endif]-->
+    @RenderSection("header", required: false)
+</head>
+<body id="my-app">
+    <header id="app-header">
+        <nav class="navbar navbar-default bg-white">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/TaskManagement/Index"><strong class="color-blue">项目管理</strong></a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus-circle  color-blue icon-size" aria-hidden="true"></i></a>
+                            <div class="dropdown-menu tm_dropdown">
+                                <ul class="tm_dropdown_list">
+                                    <li><a href="javascript:;" class="create_subject_target"><span class="color-blue">新建项目</span></a></li>
+                                    <li role="separator" class="divider"></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown open" style="max-height:400px;">
+                            <a href="#" style="padding:8px 0; background-color:#fff;" class="dropdown-toggle" aria-expanded="true"><input id="quick_search" class="form-control" type="text" autocomplete="on" placeholder="输入搜索内容" role="textbox" aria-label="Search" style="background-color:#eae6e6" /></a>
+                            <div class="dropdown-menu tm_dropdown" id="quick_result" style="display:none;width:179px;">
+                                <ul id="search_subject" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                                <ul id="search_ass" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                                <ul id="search_subt" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                            </div>
+                        </li>
+                    </ul>               
+                    <ul class="nav navbar-nav navbar-right navbar-border">        
+                        <li><a href="#" id="bn_help" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="使用演示" style="font-size:20px;vertical-align: text-bottom;"></a></li>
+                        <li><a href="javascript:;" id="task_my_btn" class="tm-show-view" data-href="/TaskManagement/PersonalActionPanel"><strong>我的</strong></a></li>
+                        <li><a href="javascript:;" id="task_calendar_btn" class="tm-show-view" data-href="/TaskManagement/SubjectCalendarPanel"><strong>日历</strong></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height:50px;">
+                                @if (ViewBag.ImgUrl == null)
+                                {
+                                    <span class="tm_avatar tm_img-circle tm_personal-avatar text-center" style="background-color:#ccc;"><i class="glyphicon glyphicon-user" aria-hidden="true" style="line-height:26px;"></i></span>
+                                }
+                                else
+                                {
+                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@ViewBag.ImgUrl');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                                }
+                            </a>
+                            <div class="dropdown-menu tm_dropdown">
+                                @if (Request.IsAuthenticated)
+                                {
+                                    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm"}))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <ul class="tm_dropdown_list">
+                                            <li><a href="/TaskManagement/PersonalSetting"><span class="color-blue">设置个人信息</span></a></li>
+                                            <li role="separator" class="divider"></li>
+                                            <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="color-red">退出账号</span></a></li>
+                                        </ul>
+                                    }
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    @RenderBody()
+    <!-- Create Subject Modal -->
+    <div class="modal fade" id="Add-Subject" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" id="Create-Subject-Content">
+            </div>
+        </div>
+    </div>
+    <!--Create Subject Modal End-->
+    <!-- Modal Edit-Assignment-->
+    <div class="modal fade tm_modal" id="Edit-Assignment" role="dialog" aria-labelledby="Edit-AssignmentLabel" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+
+    </div>
+    <!-- Modal Edit-Assignment End-->
+    <!-- Modal Add-Collaborator-->
+    <div class="modal fade" id="Add-Collaborator" tabindex="-1" role="dialog" aria-labelledby="Add-CollaboratorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!-- Modal Add-Collaborator End-->   
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/Sortable.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/defaults-zh_CN.min.js"></script>
+    <script src="~/Scripts/TaskManagement.js"></script>
+    <script src="~/Scripts/TaskManagementCalendar.js"></script>
+    <script>
+        $(function () {
+            $("#message_show").addClass("");
+        })
+        $("#quick_search").focus(function () {
+            $("#quick_search").off("input");
+            $("#quick_search").on("input", function () {
+                if ($("#quick_search").val() != "") {
+                    $.ajax({
+                        url: "/TaskManagement/QuickSearch",
+                        type: "post",
+                        data: {
+                            input: $("#quick_search").val(),
+                        },
+                        success: function (data) {
+                            $("#quick_result ul").html("");
+                            if (data.subject.length == 0 && data.task.length == 0 && data.subtask.length == 0) {
+                                $("#search_subject").append("<li><a>" + "无搜索结果" + "</a></li>");
+                            }
+                            for (var item in data) {
+                                for (i = 0; i < data[item].length; i++) {
+                                    if (data[item][i].type == 0) {
+                                        var subjectshow = "项目：" + "【" + data[item][i].name + "】";
+                                        $("#search_subject").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + subjectshow +" style=\"color:#3da8f5\" class=\"tm-show-subject-page\"  data-sid=" + data[item][i].id + ">" + '项目:【' + data[item][i].name + "】</a></li>");
+                                    } else if (data[item][i].type == 1) {
+                                        var taskbelong = "所属项目：" + "【" + data[item][i].taskbelong + "】";
+                                        $("#search_ass").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + taskbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-aid=" + data[item][i].id + ">" + '任务:【' + data[item][i].name + "】</a></li>");
+                                    } else {
+                                        var subtbelong = "所属任务：" + "【" + data[item][i].subtbelong + "】";
+                                        $("#search_subt").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + subtbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-atid=" + data[item][i].id + ">" + '子任务:【' + data[item][i].name + "】</a></li>");
+                                    }
+                                }
+
+                            }
+
+                            $("#quick_result").slideDown();
+                            $('[data-toggle="tooltip"]').tooltip();
+
+                        }
+                    })
+                }
+                else {
+                    $("#quick_result ul").html("");
+                }
+            })
+        })
+        $("#quick_search").blur(function () {
+            $("#quick_result").slideUp("slow");
+            $("#quick_search").val("");
+        })
+
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

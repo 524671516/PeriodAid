@@ -1,0 +1,80 @@
+﻿@{
+    Layout = null;
+}
+<div class="modal-content" id="Create-Subject-Content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="Add-SubjectLabel">使用演示</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group text-center">
+            <button class="btn btn-primary btn-show-video active" data-toggle="tooltip" title="项目操作" style="margin-right:3px">演示①</button><button class="btn btn-primary btn-show-video" data-toggle="tooltip" title="任务操作" style="margin-right:3px">演示②</button><button class="btn btn-primary btn-show-video" data-toggle="tooltip" title="权限说明" style="margin-right:3px">演示③</button>
+            <div id="video_container">
+                <embed src="https://imgcache.qq.com/tencentvideo_v1/playerv3/TPout.swf?max_age=86400&v=20161117&vid=q0540qs0qze&auto=0" allowFullScreen="true" quality="high" width="480" height="400" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="form-group text-center">
+                <div id="text_show">
+                    <p><strong>项目，可以是企业项目，也可以是个人的长期规划。<br>合理制定项目，宏观把控各类任务，助你赢在起点。</strong></p>
+                </div>
+                <div id="table_show" hidden>
+                        <table border="1" align="center">
+                            <tr><td></td><td>主管</td><td>项目负责人</td><td>项目参与人</td><td>任务负责人</td><td>任务参与人</td><td>子任务执行人</td><td>未分配人员</td></tr>
+                            <tr><td>添加项目</td><td>O</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>O</td></tr>
+                            <tr><td>查看项目</td><td>O</td><td>C</td><td>C</td><td>-</td><td>-</td><td>-</td><td>X</td></tr>
+                            <tr><td>修改/删除项目</td><td>O</td><td>O</td><td>X</td><td>-</td><td>-</td><td>-</td><td>X</td></tr>
+                            <tr><td>添加任务</td><td>O</td><td>O</td><td>O</td><td>-</td><td>-</td><td>-</td><td>X</td></tr>
+                            <tr><td>查看任务</td><td>O</td><td>O</td><td>-</td><td>C</td><td>C</td><td>-</td><td>X</td></tr>
+                            <tr><td>修改/删除任务</td><td>O</td><td>O</td><td>-</td><td>O</td><td>X</td><td>-</td><td>X</td></tr>
+                            <tr><td>添加子任务</td><td>O</td><td>O</td><td>-</td><td>O</td><td>O</td><td>-</td><td>X</td></tr>
+                            <tr><td>查看子任务</td><td>O</td><td>O</td><td>-</td><td>O</td><td>O</td><td>O</td><td>X</td></tr>
+                            <tr><td>修改/删除子任务</td><td>O</td><td>O</td><td>-</td><td>O</td><td>X</td><td>O</td><td>X</td></tr>
+                        </table>
+                    <div class="text-center">
+                        <p>O：完全权限&emsp;X：无权限&emsp;C：仅限个人权限&emsp;-：不用判断权限</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-blue btn-show-video next-btn">下一个</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+    $(".btn-show-video").on("click", function () {
+        $("#table_show").hide();
+        var text_content = ["<p><strong>项目，可以是企业项目，也可以是个人的长期规划。<br>合理制定项目，宏观把控各类任务，助你赢在起点。</strong></p>",
+            "<p><strong>任务，复杂多样的任务，化繁为简，分门别类。<br>明确每个任务的归属，让你事半功倍。</strong></p>",
+            "<p><strong>权限说明：项目创建者拥有最高权限。<br>任务负责人、任务参与人、子任务负责人和未分配人员，权限逐级递减(详情见<a href='#'>权限表</a>)。</strong></p>"];
+        var video_url = ["https://imgcache.qq.com/tencentvideo_v1/playerv3/TPout.swf?max_age=86400&v=20161117&vid=q0540qs0qze&auto=0", "https://imgcache.qq.com/tencentvideo_v1/playerv3/TPout.swf?max_age=86400&v=20161117&vid=z0540p2ersc&auto=0", "https://imgcache.qq.com/tencentvideo_v1/playerv3/TPout.swf?max_age=86400&v=20161117&vid=a05408fyfhy&auto=0"];
+        var _index;
+        if ($(this).hasClass("next-btn")) {
+            _index = $(".btn-show-video.active").index() + 1;
+            $(".btn-show-video").removeClass("active");
+            if (_index > 2) {
+                _index = 0;
+            }
+            $(".btn-show-video:eq(" + _index + ")").addClass("active");
+        } else {
+            $(".btn-show-video").removeClass("active");
+            $(this).addClass("active");
+            _index = $(".btn-show-video.active").index(".btn-show-video");
+        }
+        var init_url = video_url[_index];
+        $("#video_container").slideUp();
+        $("#video_container").slideDown().html("<embed src=\"" + init_url + "\" allowFullScreen=\"true\" quality= \"high\" width= \"480\" height= \"400\" align= \"middle\" allowScriptAccess= \"always\" type= \"application/x-shockwave-flash\" >");
+        $("#video_show").attr("autoplay", "autoplay");
+        $("#text_show").html(text_content[_index]);
+        $("#text_show a").on("click", function () {
+            $("#table_show").slideToggle();
+        })
+    })
+
+</script>
+
+
+

@@ -1,0 +1,144 @@
+﻿.img-center {
+    margin: auto auto;
+    padding: 20px;
+    font-size: 16px;
+    color: lightgray;
+}
+.text-center{
+    margin: auto auto;
+    text-align:center;
+}
+.icon-text{
+    font-size:0.6em;
+}
+.icon-accordion{
+    font-size:1.4em;
+    padding:10px 0px 15px 0;
+}
+.icon-accordionheader{
+    font-size:0.8em;
+}
+.h3{
+    font-size:1.5em;
+}
+.h4{
+    font-size:1.2em;
+}
+.h5{
+    font-size:1em;
+}
+.h6{
+    font-size:0.8em;
+}
+
+.img-responsive {
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+
+.img-circle {
+    border-radius: 50%;
+}
+
+.leftnav-margin-10 {
+    margin: 10px 0;
+}
+
+.left-nav ul {
+    background-color: #111;
+    color: lightgrey;
+}
+
+.media-box {
+    width: 60px;
+    height: auto;
+    margin-right: 10px;
+    border-bottom: 1px solid #E0DEDE;
+}
+
+.font-style-01 {
+    font-size: 12px;
+    margin-top: 9px;
+}
+
+.font-style-02 {
+    font-weight: bold;
+    font-size: 36px;
+}
+
+.list-block ul.rep-imglist {
+    padding: 0;
+}
+.list-block ul.rep-imglist li{
+    float:left;
+}
+.rep-imgitem{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:60px; height:60px; 
+    border:solid #ccc 1px; 
+    margin:10px;
+    font-size:48px; line-height:60px; text-align:center;
+    color:#ccc;
+    display:block;
+}
+.rep-imgitem-selected{
+    opacity:0.5;
+    color:#fff;
+    background-color:#000;
+}
+.rep-imgitem-btn {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 60px;
+    height: 60px;
+    border: solid #ccc 1px;
+    margin: 10px;
+    font-size: 48px;
+    line-height: 60px;
+    text-align: center;
+    color: #ccc;
+    display: block;
+}
+.sellertasklist-photo{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:44px; height:44px; 
+    border-radius:5px;
+}
+.list-block ul.rep-imglist {
+    padding: 0;
+}
+
+.infinite-scroll-preloader {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+    .infinite-scroll-preloader .preloader {
+        width: 34px;
+        height: 34px;
+    }
+
+.hidden {
+    display: none;
+}
+
+.preloader-text {
+    text-align: center;
+}
+
+.validate-form input.custom-error {
+    background: #d76a67;
+}
+
+.validate-form textarea.custom-error {
+    background: #d76a67;
+}
+block.media-list .item-title {
+    font-weight: normal;
+}

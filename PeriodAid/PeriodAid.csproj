@@ -26,6 +26,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -237,6 +238,14 @@
     <Compile Include="Extensions\HtmlExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201709090241211_555.cs" />
+    <Compile Include="Migrations\201709090241211_555.Designer.cs">
+      <DependentUpon>201709090241211_555.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201709090317129_155555.cs" />
+    <Compile Include="Migrations\201709090317129_155555.Designer.cs">
+      <DependentUpon>201709090317129_155555.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1062,6 +1071,9 @@
     <Content Include="Views\TaskManagement\Subject_FilesPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNotFound.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNoAuthority.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogs.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
+    <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1076,6 +1088,14 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201709090241211_555.resx">
+      <DependentUpon>201709090241211_555.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709090317129_155555.resx">
+      <DependentUpon>201709090317129_155555.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

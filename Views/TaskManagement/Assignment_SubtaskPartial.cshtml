@@ -1,0 +1,95 @@
+﻿@model IEnumerable<PeriodAid.Models.SubTask>
+@using PeriodAid.Models
+<div class="col-md-12 margin-bottom-10">
+    <div class="tm_modal_list" id="subtask_modal_list">
+        <div class="tm_modal_body">
+            <ul>
+                @foreach (var item in Model)
+                {
+                    <li class="tm_modal_list-header tm-show-task-modal" data-atid="@item.Id">
+                        <div class="tm-list-item_top clear-float">
+                            <div class="tm_modal_list-left tm_left_icon">
+                                @if (item.Status == AssignmentStatus.FINISHED)
+                                {
+                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 tm-change-task-status" checked data-atid="@item.Id">
+                                }
+                                else
+                                {
+                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 tm-change-task-status" data-atid="@item.Id">
+                                }
+                            </div>
+
+                                <div class="tm_modal_list-left" style="padding:0 6px;" title="@item.Executor.NickName" data-toggle="tooltip" data-placement="top">
+                                    @if (item.Executor.ImgUrl == null)
+                                    {
+                                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                    }
+                                    else
+                                    {
+                                        <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Executor.ImgUrl');margin-top:-3px;" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                    }
+                                    
+                                </div>
+                                <div class="tm_modal_list-middle" data-sbid="@item.Id">
+                                    <span>@Html.Encode(item.TaskTitle)</span>&nbsp;&nbsp;&nbsp;                                
+                                </div>
+                                <div class="tm_modal_list-right">@if (item.Deadline != null)
+                                {
+                                    <span class="color-orange">截止日期:</span>@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))
+                                }</div>
+
+
+                         </div>
+                        <div class="tm_modal_list-footer hidden add-subtask-write"></div>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="tm_modal_list-header clear-float">
+            <div class="tm-list-item_top clear-float">
+                <div class="tm_modal_list-left tm_left_icon">
+                    <span>
+                        <i class="fa fa-plus-circle  color-blue icon-size" aria-hidden="true"></i>
+                    </span>
+                </div> 
+                <div class="tm_modal_list-middle add-btn btn_add_subtask" data-sbid="">添加子任务</div>
+                        <div class="tm_modal_list-right"></div>
+                    </div>
+                    <div class="tm_modal_list-footer hidden add-subtask-write"></div>
+                </div>
+            </div>
+</div>
+<script>
+    $(function () {
+        //鼠标移入字体浮动初始化
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    //子任务表单请求
+    $("#subtask_modal_list").on("click", ".btn_add_subtask", function (event) {
+        var that = $(this);
+        var _data = {
+            AssignmentId: $("#modal-header-assignment").attr("data-aid"),
+        }
+        //防止多次请求
+        if (that.parent().parent().find(".add-subtask-write").html() == "") {
+            $(".add-subtask-write").html("").addClass("hidden");
+            //请求表单
+            GetTemplate("/TaskManagement/GetSubtaskForm", _data, function (data) {
+                //成功
+                that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
+            }, function (data) {
+                //失败
+            })
+        }
+
+        //如果已经有表单就直接做隐藏和显示处理不在请求
+        if (that.parent().parent().find(".add-subtask-write").hasClass("hidden")) {
+            that.parent().parent().find(".add-subtask-write").removeClass("hidden")
+        } else {
+            that.parent().parent().find(".add-subtask-write").addClass("hidden")
+        }
+    });
+
+</script>
+

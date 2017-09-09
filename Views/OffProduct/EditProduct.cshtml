@@ -1,0 +1,75 @@
+﻿@model PeriodAid.Models.Off_Product
+
+@using (Html.BeginForm("EditProduct", "OffProduct", FormMethod.Post, new { id = "offproduct-product-ajaxform" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Off_System_Id)
+    @Html.HiddenFor(m => m.status)
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="control-label col-md-2" id="ItemName" name="ItemName">产品名称</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.ItemName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" id="SimpleName" name="SimpleName">产品简称</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SimpleName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.SimpleName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" id="Spec" name="Spec">产品规格</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Spec, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Spec, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" id="ItemCode" name="ItemCode">产品编码</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ItemCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ItemCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" id="SalesPrice" name="SalesPrice">销售单价</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SalesPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SalesPrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $('#offproduct-product-ajaxform').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("修改成功");
+                $('.modal-box').modal('hide');
+                $.ajax({
+                    url: "/OffProduct/ProductListPartial",
+                    success: function (data) {
+                        $("#offproduct-product-list").html(data)
+                    }
+                })
+            }
+            else {
+                $(".modal-con").html(data);
+            }
+
+        });
+    });
+</script>

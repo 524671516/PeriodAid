@@ -1,0 +1,21 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Manager_CheckIn>
+@using PeriodAid.DAL;
+<div class="weui_panel weui_panel_access">
+    <div class="weui_panel_hd">签到数据列表 (@Html.Encode(Model.Count()))</div>
+    <div class="weui_panel_bd">
+        @foreach (var item in Model)
+        {
+            <div onclick="javascript:openactionsheet(@item.Id);" class="weui_media_box weui_media_appmsg">
+                <div class="weui_media_hd">
+                    <img class="img-responsive img-rounded" src="/Seller/ThumbnailImage_box?filename=@CommonUtilities.getFirst(item.Photo)" alt="">
+                </div>
+                <div class="weui_media_bd">
+                    <div class="h5" style="line-height:1.2; padding-bottom:8px; text-overflow: ellipsis; overflow:hidden; white-space: nowrap;">@Html.Encode(item.Remark)</div>
+                    <p class="weui_media_desc" style="padding-bottom:4px;">@Html.Encode(item.Location_Desc)</p>
+                    <p class="weui_media_desc">签到时间:&nbsp;&nbsp;@Html.Encode(item.CheckIn_Time.ToString("HH:mm:ss"))</p>
+                </div>
+            </div>
+        }
+    </div>
+    <a class="weui_panel_ft" href="/Seller/Wx_Manager_TaskReport/@ViewBag.TaskId">编辑日报信息</a>
+</div>

@@ -1,0 +1,92 @@
+﻿@model PeriodAid.Models.Off_Store
+
+@using (Html.BeginForm("Ajax_EditStore", "OfflineSales", FormMethod.Post, new { id = "ajaxForm" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model=>model.Off_System_Id)
+        <div class="form-group">
+            <label class="control-label col-md-3">店铺名称</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StoreName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">渠道</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.StoreSystem, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StoreSystem, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">区域</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.Region, ViewBag.Regionlist as SelectList, "- 请选择区域 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Region, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">经销商</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Distributor, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Distributor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">详细地址</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">经度</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Longitude, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">纬度</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Latitude, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $('#ajaxForm').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                $('#myModal').modal('hide');
+                alert("修改成功");
+                $.ajax({
+                    url: "/OfflineSales/Off_Store_ajaxlist",
+                    success: function (data) {
+                        $("#list-container").html(data);
+                    }
+                });
+            }
+            else {
+                $("#editcontent").html(data);
+            }
+        });
+    });
+</script>

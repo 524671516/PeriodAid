@@ -1,0 +1,54 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Checkin_Schedule>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>促销员考勤</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="hd">
+        <h2 class="page_title text-center">查看排班表</h2>
+    </div>
+    <div class="weui_cells_title">@ViewBag.StoreName</div>
+    <div class="weui_cells">
+        @{
+            DateTime today = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+        }
+        @foreach (var item in Model.OrderBy(m=>m.Subscribe))
+        {
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Html.Encode(item.Subscribe.ToString("yyyy-MM-dd"))</p>
+                </div>
+                @if (item.Subscribe == today)
+                {
+                    <div class="weui_cell_ft"><span class="text-primary">今天</span><i class="weui_icon_info" style="margin-left:10px"></i></div>
+                }
+                else
+                {
+                    <div class="weui_cell_ft"></div>
+                }
+                
+            </div>
+        }
+    </div>
+    <br />
+    <div class="container">
+        <a href="/Seller/Wx_Seller_Home" class="weui_btn weui_btn_primary" id="submit-btn">
+            返回首页
+        </a>
+    </div>
+    <br /><br />
+</body>
+</html>

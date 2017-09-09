@@ -1,0 +1,128 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>督导管理</title>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.min.css" rel="stylesheet" />
+    <link href="~/Content/framework7.ios.colors.min.css" rel="stylesheet" />
+    <link href="~/Content/Manager.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="statusbar-overlay"></div>
+    <div class="panel-overlay"></div>
+    <div class="panel panel-left panel-reveal left-nav" id="manager_userpanel">
+    </div>
+    <!-- Views -->
+    <div class="views">
+        <!-- Your main view, should have "view-main" class -->
+        <div class="view view-main">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="center sliding"><strong>督导管理系统</strong></div>
+                    <div class="right">
+                        <a href="" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="pages navbar-through toolbar-through">
+                <div class="page" data-page="manager-home">
+                    <div class="page-content pull-to-refresh-content" id="home-refresh">
+                        <div class="pull-to-refresh-layer">
+                            <div class="preloader"></div>
+                            <div class="pull-to-refresh-arrow"></div>
+                        </div>
+                        <div class="content-block-title">店铺巡查</div>
+                        <div class="list-block">
+                            <ul>
+                                <li>
+                                    <a href="/Seller/Manager_UnCheckInList" class="item-link item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">今日未签到</div>
+                                            <div class="item-after" id="uncheckin-count">N/A</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/Seller/Manager_UnCheckOutList" class="item-link item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">今日未签退</div>
+                                            <div class="item-after" id="uncheckout-count">N/A</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/Seller/Manager_UnReportList" class="item-link item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">今日未提报销量</div>
+                                            <div class="item-after" id="unreport-count">N/A</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/Seller/Manager_UnConfirmList" class="item-link item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">销量待确认</div>
+                                            <div class="item-after" id="unconfirm-count">N/A</div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toolbar tabbar tabbar-labels">
+            <div class="toolbar-inner">
+                <a href="javascript:;"  class="tab-link" data-href="/Seller/Manager_Task">
+                    <i class="fa fa-map-marker padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">签到</span>
+                </a>
+                <a href="javascript:;" class="tab-link active" data-href="/Seller/Manager_Home">
+                    <i class="fa fa-street-view padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">巡店</span>
+                </a>
+                <a href="javascript:;" class="tab-link" data-href="/Seller/Manager_Tools">
+                    <i class="fa fa-cog padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">管理</span>
+                </a>
+                <a href="javascript:;" class="tab-link" data-href="/Seller/Manager_SellerTaskHome">
+                    <i class="fa fa-user padding-top-2"></i>
+                    <span class="tabbar-label padding-bottom-2">暗促</span>
+                </a>
+            </div>
+        </div>
+            <!-- Bottom Toolbar-->
+    </div>
+    <div class="hidden">
+        <span id="appId">@ViewBag.AppId</span>
+        <span id="timeStamp">@ViewBag.TimeStamp</span>
+        <span id="nonce">@ViewBag.Nonce</span>
+        <span id="url">@ViewBag.Url</span>
+        <span id="signature">@ViewBag.Signature</span>
+    </div>
+    <!-- Path to Framework7 Library JS-->
+    <script src="~/Scripts/framework7.min.js"></script>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <!-- Path to your app js-->
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+    <script src="~/Scripts/my-validate.js"></script>
+    <script src="~/Scripts/manager.min.js?v=1.6.0"></script>
+</body>
+</html>

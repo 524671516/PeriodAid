@@ -199,7 +199,7 @@ namespace PeriodAid.Filters
                                                     select m).Count();
                             if (assignment.HolderId != user.Id && assignment.Subject.HolderId != user.Id && cooperater_count == 0)
                             {
-                                setErrorResult(filterContext, "当前用户没有权限添加子任务。");
+                                setErrorResult(filterContext, "当前用户没有权限执行此操作。");
                             }
                         }
                     }

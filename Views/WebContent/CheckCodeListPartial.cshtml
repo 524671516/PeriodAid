@@ -1,0 +1,56 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.CheckCodes>
+@using PagedList.Mvc;
+<table class="table table-hover table-condensed table-list" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:2%">
+            <input type="checkbox" class="allChk" />
+        </th>
+        <th style="width:18%">
+            活动名称
+        </th>
+        <th style="width:20%">
+            使用时间
+        </th>
+        <th style="width:30%">
+            优惠码
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <input type="checkbox" name="subChk" value="@item.Id" data-region="@item.Id" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CheckCode_Group.GroupName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("CheckCodeListPartial", new { page }))</div>
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data: {
+                query: $("#cc-search-query").val(),
+                groupid: $("#select-input").val()
+            },
+            success: function (data) {
+                $("#cc-list").html(data);
+            }
+        });
+        return false;
+    });   
+</script>
+
+
+

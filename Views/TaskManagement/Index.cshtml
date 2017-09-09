@@ -1,0 +1,62 @@
+﻿@using PeriodAid.Models;
+@model PeriodAid.Models.Employee
+@{
+    ViewBag.ImgUrl=Model.ImgUrl;
+    ViewBag.Title = "Task_Management_Home";
+    Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
+}
+<div id="app-content">
+    <div class="wrapper">
+        <div class="container" id="subject-container">
+            <div class="content-inner" id="personal_active_subject">
+            </div>
+            <div class="content-inner" id="personal_finish_subject">
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{ 
+    <script>
+        /*页面初始化数据获取*/
+        //Ajax获取各类型项目模板   函数定义与js文件中
+        GetActiveSubject("#personal_active_subject")   //获取正在进行中的项目
+        GetFinishSubject("#personal_finish_subject")   //获取已完成的项目
+        //进入项目详情
+        $("#my-app").on("click", ".tm-show-subject-page", function () {
+            var linkid = $(this).attr("data-sid")
+            if (linkid) {
+                location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+            }
+        });
+
+
+
+       // /*以下为页面中的按钮事件*/
+       //$("#subject-container").on("click", ".card-item", function () {
+       //         var linkid = $(this).attr("data-link")
+       //         if (linkid) {
+       //             location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+       //         }
+       //     });
+
+       //修改卡片即项目信息
+       $("#subject-container").on("click", ".card-edit-btn", function () {
+                var that = $(this);
+                _data = {
+                    SubjectId: that.attr("data-link")
+                }
+                //获取模板,函数请查看js文件
+                GetTemplate("/TaskManagement/EditSubject", _data, function (data) {
+                    //成功
+                    $("#Create-Subject-Content").html(data);
+                    $("#Add-Subject").modal();
+                }, function (data) {
+                    //失败
+                })
+                return false;
+        });
+        
+
+    </script>
+
+}

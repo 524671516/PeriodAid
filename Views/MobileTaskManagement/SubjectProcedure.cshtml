@@ -1,0 +1,66 @@
+﻿@model PeriodAid.Models.Subject
+@using PeriodAid.Models
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>项目任务列表</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="subject_procedure" id="subject_procedure">
+        <div class="page-content" id="page-procedure-content">
+            @Html.HiddenFor(m => m.Id)
+            <div class="toolbar tabbar tabbar-scrollable">
+                <div class="toolbar-inner">
+                   @foreach (var item in Model.ProcedureTemplate.Procedure.Where(m => m.Status == ProcedureStatus.NORMAL).OrderBy(m => m.Sort))
+                   {
+                       if (item.Sort == Model.ProcedureTemplate.Procedure.Select(m => m.Sort).Min())
+                       {
+                        <a href="#tab-procedure-@item.Sort" class="tab-link tab-link-procedure active" data-pid="@item.Id">@Html.Encode(item.ProcedureTitle)</a>
+                       }
+                       else
+                       {
+                        <a href="#tab-procedure-@item.Sort" class="tab-link tab-link-procedure" data-pid="@item.Id">@Html.Encode(item.ProcedureTitle)</a>
+                       }
+
+                   }
+                </div>
+            </div>
+            <div class="tabs">
+                @foreach (var item in Model.ProcedureTemplate.Procedure.Where(m=>m.Status==ProcedureStatus.NORMAL).OrderBy(m => m.Sort))
+                {
+                    if (item.Sort == Model.ProcedureTemplate.Procedure.Select(m => m.Sort).Min())
+                    {
+                        <div id="tab-procedure-@item.Sort" class="tab active procedure-tab">
+                            <div class="list-block media-list">
+                                <ul>
+                                   
+                                </ul>
+                                <div class="tm-empty" style="text-align:center">- 没有相对应的任务 -</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="tab-procedure-@item.Sort" class="tab procedure-tab">
+                            <div class="list-block media-list">
+                                <ul>
+                                  
+                                </ul>
+                                <div class="tm-empty" style="text-align:center">- 没有相对应的任务 -</div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

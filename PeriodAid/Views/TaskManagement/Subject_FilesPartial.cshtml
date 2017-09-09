@@ -47,7 +47,7 @@
                             @switch (item.AttachmentType)
                             {
                                 case 100:
-                                    <span><img src="http://cdn2.shouquanzhai.cn/@item.AttachmentSource" /></span>
+                                    <span><i class="fa fa-file-image-o fa-2x" aria-hidden="true"></i></span>
                                     break;
                                 case 101:
                                     <span><i class="fa fa-file-video-o fa-2x" aria-hidden="true"></i></span>
@@ -68,8 +68,8 @@
                         </div>
                         <div class="tm_files_middle float-left clear-float">
                             <div class="tm_files_info float-left">
-                                <span class="tm_files_name color-gray">@Html.Encode(item.AttachmentTitle)</span>
-                                <span class="tm_files_name color-gray hidden"><input type="text" id="edit_input_@item.Id"/></span>
+                                <span class="tm_files_name color-gray tm-file-before-item tm_files_title">@Html.Encode(item.AttachmentTitle)</span>
+                                <span class="tm_files_name color-gray tm-file-after-item hidden"><input type="text" id="edit_input_@item.Id" value="@item.AttachmentTitle"/></span>
                                 <span class="tm_files_size color-gray">
                                     @if (item.AttachmentSize > 1024 * 1024 * 1024)
                                     {
@@ -92,11 +92,11 @@
                                 <span href="#" class="tm_files_time color-gray">@Html.Encode(item.UploadTime.ToString("yyyy-MM-dd HH:mm"))</span>
                             </div>
                             <div class="float-right tm_files_link">
-                                <a href="javascript:;" data-attid="@item.Id" class="btn_delete_file"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                <a href="javascript:;" data-url="http://cdn2.shouquanzhai.cn/@item.AttachmentSource" class="btn_download_file"><i class="fa fa-download" aria-hidden="true"></i></a>
-                                <a href="javascript:;" data-attid="@item.Id" class="btn_edit_file"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                <a href="javascript:;" class="color-green btn_confirm_edit hidden"><i class="fa fa-check" aria-hidden="true"></i></a>
-                                <a href="javascript:;" class="color-red  btn_cancel_edit hidden"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                <a href="javascript:;" data-attid="@item.Id" class="btn_delete_file tm-file-before-item"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                <a href="javascript:;" data-url="http://cdn2.shouquanzhai.cn/@item.AttachmentSource" class="btn_download_file tm-file-before-item"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                <a href="javascript:;" data-attid="@item.Id" class="btn_edit_file tm-file-before-item"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a href="javascript:;" class="color-green btn_confirm_edit hidden tm-file-after-item" data-attid="@item.Id"><i class="fa fa-check" aria-hidden="true"></i></a>
+                                <a href="javascript:;" class="color-red  btn_cancel_edit hidden tm-file-after-item"><i class="fa fa-times" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </li>
@@ -240,9 +240,43 @@
                 })
             }
         });
-        $("#tm_file_container").on("click", ".btn_eidt_file", function () {
-            var attid = $(this).attr("data-attid");
-
+        $("#tm_file_container").on("click", ".btn_edit_file", function () {
+            $(this).parents(".tm_files_body_ul_li").find(".tm-file-after-item").removeClass("hidden");
+            $(this).parents(".tm_files_body_ul_li").find(".tm-file-before-item").addClass("hidden");
+        });
+        $("#tm_file_container").on("click", ".btn_cancel_edit", function () {
+            $(this).parents(".tm_files_body_ul_li").find(".tm-file-after-item").addClass("hidden");
+            $(this).parents(".tm_files_body_ul_li").find(".tm-file-before-item").removeClass("hidden");
+        });
+        $("#tm_file_container").on("click", ".btn_confirm_edit", function () {
+            var _link = $(this).attr("data-attid");
+            var filename = $(this).parents(".tm_files_middle").find("input").val();
+            var _self = $(this);1
+            if (_link) {
+                $.ajax({
+                    url: "/TaskManagement/Subject_EditFile",
+                    type: "post",
+                    data: {
+                        FileId: _link,
+                        Filename:filename
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            UnimportantAlert("文件修改成功。");
+                            _self.parents(".tm_files_middle").find(".tm_files_title").html(filename);
+                            _self.parents(".tm_files_body_ul_li").find(".tm-file-after-item").addClass("hidden");
+                            _self.parents(".tm_files_body_ul_li").find(".tm-file-before-item").removeClass("hidden");
+                        } else {
+                            ErrorAlert(data.errmsg)
+                            _self.parents(".tm_files_body_ul_li").find(".tm-file-after-item").addClass("hidden");
+                            _self.parents(".tm_files_body_ul_li").find(".tm-file-before-item").removeClass("hidden");
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("请求失败。")
+                    }
+                })
+            }
         });
     </script>
 </div>

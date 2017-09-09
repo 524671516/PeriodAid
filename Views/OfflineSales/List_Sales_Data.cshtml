@@ -1,0 +1,124 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Sales_Data>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "销售记录列表";
+    Layout = "~/Views/Shared/_OfflineSalesLayout.cshtml";
+}
+
+<h4>销售记录列表</h4>
+<hr />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="form-group-sm">
+                <input type="date" class="form-control input-sm" id="form-data" />
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="form-group-sm">
+                <a class="btn btn-default btn-sm" id="filter-date-btn"><span class="glyphicon glyphicon-filter"></span></a>
+            </div>
+        </div>
+        <br /><br />
+        <div class="col-xs-5">
+            <div class="form-group-sm">
+                @Html.DropDownList("Store_System_Id", ViewBag.Store_System as SelectList, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+
+        <div class="col-xs-4">
+            <div class="form-group-sm">
+                <span id="dropdown-area">@Html.DropDownList("Store_Id", ViewBag.Store as SelectList, "-- 请选择店铺 --", new { @class = "form-control input-sm" })</span>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="form-group-sm">
+                <a class="btn btn-default btn-sm" id="filter-store-btn"><span class="glyphicon glyphicon-filter"></span></a>
+            </div>
+        </div>
+        <br /><br />
+    </div>
+</div>
+
+<div id="sales-data-list">
+    <table class="table table-striped h6">
+        <tr>
+            <th>
+                日期
+            </th>
+            <th>
+                门店
+            </th>
+            <th>
+                销售
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Sales_Date.ToString("MM-dd")
+                </td>
+                <td>
+                    @item.Store.Store_System.System_Name - @Html.DisplayFor(modelItem => item.Store.Store_Name)
+                </td>
+                <td>
+                    @item.Sales_Details.Sum(m => m.Report_Num)
+                </td>
+                <td>
+                    <div class="text-right">
+                        @Html.ActionLink("修改", "Edit_Sales_Data", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                        @Html.ActionLink("删除", "Delete_Sales_Data", new { id = item.Id }, new { @class = "btn btn-danger btn-xs" })
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("List_Sales_Data", new { page }))</div>
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $("#filter-date-btn").click(function () {
+                $.ajax({
+                    url: "/OfflineSales/List_Sales_Data_Date",
+                    data: {
+                        date: $("#form-data").val()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#sales-data-list").html(data);
+                    }
+                })
+            });
+            $("#filter-store-btn").click(function () {
+                $.ajax({
+                    url: "/OfflineSales/List_Sales_Data_Store",
+                    data: {
+                        storesystem: $("#Store_System_Id").val(),
+                        store: $("#Store_Id").val()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#sales-data-list").html(data);
+                    }
+                })
+            });
+            $("#Store_System_Id").change(function () {
+                var checkValue = $("#Store_System_Id").val();
+                $.ajax({
+                    url: "/OfflineSales/DropDownList_Store",
+                    method: "get",
+                    data: {
+                        store_system_id: checkValue
+                    },
+                    success: function (data) {
+                        $("#dropdown-area").html(data);
+                        $("#Store_Id").addClass("input-sm");
+                    }
+                });
+            });
+        });
+    </script>
+}

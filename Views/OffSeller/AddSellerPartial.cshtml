@@ -1,0 +1,114 @@
+﻿@model PeriodAid.Models.Off_Seller
+
+@using (Html.BeginForm("AddSellerPartial", "OffSeller", FormMethod.Post, new { @id = "offseller-seller-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Off_System_Id)
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="col-md-3 control-label">姓名</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label">联系方式</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label">店铺名称</label>
+            <div class="col-md-9">
+                <input id="store-input" type="text" class="span4 form-control" placeholder="搜索店铺" autocomplete="off" name="store-input" />
+                <input type="hidden" id="StoreId" name="StoreId" />
+                @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">身份证号码</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.IdNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">银行名称</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.CardName, ViewBag.BankList as SelectList, "- 请选择 -", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CardName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">开户行</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.AccountSource, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">银行卡号</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.CardNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CardNo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">暗促标准工资</label>
+            <div class="col-md-9">
+                @Html.EditorFor(model=>model.StandardSalary, new { htmlAttributes = new { @class = "form-control", type="number" } })
+                @Html.ValidationMessageFor(model => model.StandardSalary, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="新增" class="btn btn-default" id="add-submit"  disabled="disabled"/>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        //店铺搜索
+        function displayResult(item, val, text) {
+            $("#StoreId").val(val);
+            $("#add-submit").attr("disabled", false);
+        }
+        $("#store-input").on("keyup", function () {
+            $("#add-submit").attr("disabled", true);
+        });
+        $('#store-input').typeahead({
+            ajax: {
+                url: '/OffSeller/QueryStore',
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'StoreName',
+            val: 'Id'
+        });
+        $('#offseller-seller-form').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("添加成功");
+                $('.modal-box').modal('hide');
+                $.ajax({
+                    url: "/OffSeller/SellerListPartial",
+                    success: function (data) {
+                        $("#offseller-seller-list").html(data);
+                    }
+                });
+            }
+            else {
+                $(".modal-con").html(data);
+            }
+        });
+    });
+</script>
+

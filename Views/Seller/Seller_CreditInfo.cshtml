@@ -1,0 +1,99 @@
+﻿@model PeriodAid.Models.Wx_SellerCreditViewModel
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding">修改个人信息</div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="seller-creditinfo">
+        <div class="page-content">
+            <div class="content-block-title">基本信息</div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">@Html.Encode(Model.Name)</div>
+                                <div class="item-after">@Html.Encode(Model.Mobile)</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            @using (Html.BeginForm("Seller_CreditInfo", "Seller", FormMethod.Post, new { @id = "credit-form", @class = "validate-form" }))
+            {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.Name)
+            @Html.HiddenFor(m => m.Mobile)
+            <div class="content-block-title">个人信息</div>
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">证件</div>
+                                <div class="item-input">
+                                    @Html.EditorFor(m => m.IdNumber, new { htmlAttributes = new {  placeholder = "请输入身份证号码" } })
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#" class="item-link smart-select" data-back-on-select="true" data-back-text="返回">
+                            @Html.DropDownListFor(m => m.CardName, ViewBag.BankList as SelectList)
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">选择银行</div>
+                                    <div class="item-after">中国工商银行</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">开户行</div>
+                                <div class="item-input">
+                                    @Html.EditorFor(m => m.AccountSource, new { htmlAttributes = new {  placeholder = "请输入开户行名称" } })
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">户名</div>
+                                <div class="item-input">
+                                    @Html.EditorFor(m => m.AccountName, new { htmlAttributes = new {  placeholder = "请输入开户人姓名" } })
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">卡号</div>
+                                <div class="item-input">
+                                    @Html.EditorFor(m => m.CardNo, new { htmlAttributes = new {  placeholder = "请输入银行卡号" } })
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-block">
+                <a href="javascript:;" type="submit" class="button button-big button-fill" id="credit-btn">提交</a>
+            </div>
+            }
+        </div>
+    </div>
+</div>

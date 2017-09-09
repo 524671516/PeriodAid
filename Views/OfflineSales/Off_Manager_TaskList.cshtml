@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewBag.Title = "Off_Manager_TaskList";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSix";
+}
+<div class="row">
+    <div class="col-xs-2">
+        <input type="text" class="form-control" placeholder="开始时间" id="start-date">
+    </div>
+    <div class="col-xs-2">
+        <input type="text" class="form-control" placeholder="结束时间" id="end-date">
+    </div>
+    <div class="col-xs-4">
+        <input type="text" class="form-control" placeholder="关键词" id="dtat" value="">
+    </div>
+    <div class="col-xs-2">
+        <button class="btn btn-info" id="query">搜索</button>
+    </div>
+</div>
+<div id="list-container">
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_Manager_TaskList_Ajax",
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            $("#start-date").datepicker({
+                dateFormat: 'yy-mm-dd'
+            });
+            $("#end-date").datepicker({
+                dateFormat: 'yy-mm-dd'
+            });
+        });
+        $("#query").click(function () {
+            //alert("搜索页面")
+            var start = $("#start-date").val();
+            var end = $("#end-date").val();
+            var query = $("#dtat").val();
+            var status = status;
+            var page = page;
+            var link_url = "/OfflineSales/Off_Manager_TaskList_Ajax?query=" + query + "&status" + status + "&page" + page
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            })
+            return false;
+
+        })
+
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+
+        }
+    </script>
+}
+

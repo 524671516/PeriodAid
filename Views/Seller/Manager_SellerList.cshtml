@@ -1,0 +1,50 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Seller>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>查询促销员</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-queryseller">
+        <form class="searchbar">
+            <div class="searchbar-input">
+                <input type="search" placeholder="搜索">
+                <a href="#" class="searchbar-clear"></a>
+            </div>
+            <a href="#" class="searchbar-cancel">取消</a>
+        </form>
+        <div class="searchbar-overlay"></div>
+        <div class="page-content">
+            <div class="content-block searchbar-not-found">
+                查找内容不存在
+            </div>
+
+            <div class="list-block list-block-search searchbar-found">
+                <ul>
+                    @foreach (var item in Model)
+                    {
+                        <li class="swipeout">
+                            <div class="swipeout-content">
+                                <a href="/Seller/Manager_SellerDetails?id=@item.Id" class="item-content item-link random-param">
+                                    <div class="item-inner">
+                                        <div class="item-title">@Html.Encode(item.Name)</div>
+                                        <div class="item-after">@Html.Encode(item.Off_Store.StoreName)</div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="swipeout-actions-right">
+                                <a href="/Seller/Manager_EditSellerInfo?id=@item.Id" class="bg-blue random-param">修改信息</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

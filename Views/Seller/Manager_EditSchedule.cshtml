@@ -1,0 +1,87 @@
+﻿@model PeriodAid.Models.Wx_ManagerCreateScheduleViewModel
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>修改活动日程</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-editschedule">
+        <div class="page-content">
+            @using (Html.BeginForm("Manager_EditSchedule", "Seller", FormMethod.Post, new { @id = "editschedule-form", @class = "validate-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m=>m.Off_Store_Id)
+                @Html.HiddenFor(m=>m.ScheduleId)
+                @Html.HiddenFor(m=>m.Subscribe)
+                <div class="content-block-title">活动日程</div>
+                <div class="list-block">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">店铺名称</div>
+                                <div class="item-after">@Html.Encode(ViewBag.StoreName)</div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">活动日期</div>
+                                <div class="item-after">@Html.Encode(Model.Subscribe.ToString("yyyy-MM-dd"))</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">标准上班时间</div>
+                                    <div class="item-input">
+                                        <input id="Standard_CheckIn" name="Standard_CheckIn" type="text" placeholder="请输入时间" value="@Model.Standard_CheckIn">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">标准下班时间</div>
+                                    <div class="item-input">
+                                        <input id="Standard_CheckOut" name="Standard_CheckOut" type="text" placeholder="请输入时间" value="@Model.Standard_CheckOut">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="选择模板" data-searchbar-cancel="取消">
+                                @Html.DropDownListFor(m=>m.Off_Template_Id, ViewBag.TemplateList as SelectList)
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">选择模板</div>
+                                        <div class="item-after"></div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">标准薪资</div>
+                                    <div class="item-input">
+                                        <input id="Standard_Salary" name="Standard_Salary" type="number" placeholder="请输入标准薪资" value="@Model.Standard_Salary">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="content-block">
+                    <a href="javascript:;" class="button button-big button-fill" id="editschedule-btn">提交</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

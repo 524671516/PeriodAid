@@ -1,0 +1,290 @@
+﻿@model PeriodAid.Models.Employee
+@using PeriodAid.Models;
+@{
+    ViewBag.Title = "Task_Management_PersonalSetting";
+    Layout = null;
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>任务管理系统</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/Content/cropper.min.css" rel="stylesheet" />
+    <link href="~/Content/corppermain.css" rel="stylesheet" />
+    <link href="~/Content/TaskManagement.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+    <script src="~/Scripts/html5.js"></script>
+    <script src="~/Scripts/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body id="my-app">
+    <header id="app-header">
+        <nav class="navbar navbar-default bg-white">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="javascript:;" id="ReturnToSubject"><strong class="color-blue">返回项目中心</strong></a>
+                    <span class="navbar-brand">个人设置</span>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right navbar-border">
+                        <li class="dropdown">
+                            <a href="javascript:;" style="height:50px;">
+                                @if (Model.ImgUrl == null)
+                                {
+                                    <span class="tm_avatar tm_img-circle tm_personal-avatar text-center" style="background-color:#ccc;"><i class="glyphicon glyphicon-user" aria-hidden="true" style="line-height:26px;"></i></span>
+                                }
+                                else
+                                {
+                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@Model.ImgUrl');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                                }
+                            </a>
+                            <div class="dropdown-menu tm_dropdown">
+                            </div>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        <div class="personal_setting_wrap" style="margin-top:30px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-2">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation" class="active"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
+                            <li role="presentation"><a href="/Manage/ChangePassword">更改密码</a></li>
+                            <li role="presentation"><a href="/TaskManagement/LoginLog">登录记录</a></li>   
+                        </ul>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">设置个人信息</h3>
+                            </div>
+                            <div class="panel-body">
+                                @using (Html.BeginForm("EditPersonalInfo", "TaskManagement", FormMethod.Post, new { @id = "save_personalinfo_form", @class = "validate-form form-horizontal" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(m => m.ImgUrl, new { @class = "tm-check-control-img" })
+                                    @Html.HiddenFor(m => m.Id)
+                                    @Html.HiddenFor(m => m.DepartmentId)
+                                    @Html.HiddenFor(m => m.Status)
+                                    @Html.HiddenFor(m => m.Type)
+                                    @Html.HiddenFor(m => m.LastLoginDate)
+                                    @Html.HiddenFor(m => m.SignupDate)
+                                    @Html.HiddenFor(m => m.UserName)
+                                    <input type="hidden" value="false" id="checkedit" />
+                                    <div class="form-group">
+                                        <label for="NickName" class="col-sm-2 control-label">头像</label>
+                                        <div class="col-sm-4">
+                                            <span style="height:180px;width:180px;display:inline-block">
+                                                @if (Model.ImgUrl == null)
+                                                {
+                                                    <img src="~/Content/images/defaultphoto.gif" style="width:100%;height:100%" id="PicUrl-img" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="http://cdn2.shouquanzhai.cn/@Model.ImgUrl" style="width:100%;height:100%" id="PicUrl-img" />
+                                                }
+                                            </span>
+                                            <input type="file" id="report-file" name="report-file" class="hidden form-control" accept=".jpg,.png,.gif" />
+                                            <a class="btn btn-primary padding-10" style="margin-top:30px;" data-toggle="modal" data-target="#avatar-modal"><span class="glyphicon glyphicon-open" aria-hidden="true"></span>更换头像</a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NickName" class="col-sm-2 control-label">姓名</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.NickName, new { @class = "form-control tm-check-control-name" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="UserName" class="col-sm-2 control-label">电话号码</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control tm-check-control-phone" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <a class="btn btn-primary" id="btn_save_personalinfo">保存</a>
+                                            <span class="color-orange">提示：信息保存后方可生效</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Cropping modal -->
+    <div id="crop-avatar" class="container">
+        <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    @using (Html.BeginForm("UploadSubjectCutFileAjax", "TaskManagement", FormMethod.Post, new { @class = "avatar-form" }))
+                    {
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="avatar-modal-label">调整头像</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="avatar-body">
+                                <!-- Upload image and data -->
+                                <div class="avatar-upload">
+                                    <input type="hidden" class="avatar-src" name="avatar_src">
+                                    <input type="hidden" class="avatar-data" name="avatar_data">
+                                    <label for="avatarInput">选择本地图片</label>
+                                    <input type="file" class="avatar-input" id="avatarInput" name="avatar_file" accept="image/jpeg,image/gif,application/msword,image/png">
+                                </div>
+                                <!-- Crop and preview -->
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="avatar-wrapper"></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="avatar-preview preview-lg"></div>
+                                        <div class="avatar-preview preview-md"></div>
+                                        <div class="avatar-preview preview-sm"></div>
+                                    </div>
+                                </div>
+                                <div class="row avatar-btns">
+                                    <div class="col-md-9">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate -90 degrees">向左旋转</button>
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-15">-15度</button>
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-30">-30度</button>
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45">-45度</button>
+                                        </div>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate 90 degrees">向右旋转</button>
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="15">15度</button>
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="30">30度</button>
+                                            <button type="button" class="btn btn-primary" data-method="rotate" data-option="45">45度</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-primary btn-block avatar-save">完成</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div> -->
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- /.modal -->
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/cropper.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/validate.expand.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/TaskManagement.js"></script>
+    <script src="~/Scripts/croppermain.js"></script>
+    <script>
+        //保存信息提示
+        var checkreturn = false;
+        var checksave = false;
+        $("#ReturnToSubject").on("click", function () {
+            if (checksave)
+            {
+                window.location.href = "/TaskManagement";
+            }
+            else
+            {
+                if ($(".tm-check-control-img").val() != "@Model.ImgUrl" || $(".tm-check-control-name").val() != "@Model.NickName" || $(".tm-check-control-phone").val() != "@Model.Mobile")
+                {
+                    checkreturn = true;
+                    CustomConfirm2("信息已被修改！是否保存更改？",
+                        function () {
+                           $("#save_personalinfo_form").submit();
+                           setTimeout(function () {
+                              window.location.href = "/TaskManagement";
+                           }, 2700)
+                       }, function () {
+                         window.location.href = "/TaskManagement";
+                       });
+                }
+                else
+                {
+                   window.location.href = "/TaskManagement";
+                }
+            }
+        });
+
+        //修改个人信息验证
+        $("#save_personalinfo_form").validate({
+            debug: false,
+            rules: {
+                NickName: {
+                    required: true,
+                    maxlength: 32
+                },
+            },
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            if (checkreturn) {
+                                UnimportantAlert("修改成功,即将返回项目中心。");
+                                $("#btn_save_personalinfo").removeClass("disabled");
+                            }
+                            else {
+                                UnimportantAlert("修改成功");
+                                $("#btn_save_personalinfo").removeClass("disabled");
+                            }
+
+                        }
+                        else {
+                            ErrorAlert(data.result);
+                            $("#btn_save_personalinfo").removeClass("disabled");
+                        }
+                    },
+                    error: function () {
+                        ErrorAlert("操作失败。");
+                        $("#btn_save_personalinfo").removeClass("disabled");
+                    }
+                });
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#btn_save_personalinfo").removeClass("disabled");
+            }
+        });
+        //修改个人信息的提交
+        $("#btn_save_personalinfo").on("click", function () {
+            checksave = true;
+            if (!$(this).hasClass("disabled")) {
+                $(this).addClass("disabled")
+                $("#save_personalinfo_form").submit();
+            }
+        });
+    </script>
+</body>
+</html>

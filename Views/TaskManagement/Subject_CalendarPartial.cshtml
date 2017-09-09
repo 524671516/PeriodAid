@@ -1,0 +1,44 @@
+﻿@model PeriodAid.Models.Subject
+@using PeriodAid.Models;
+@{
+    ViewBag.ImgUrl = @ViewBag.img;
+    ViewBag.Title = "Task_Detail";
+    Layout = "~/Views/Shared/_TaskManagementLayout.cshtml";
+}
+<!--The Second Nav-->
+<div class="navbar-default tm_task-navbar">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <ol class="breadcrumb  navbar-breadcrumb">
+                <li><a href="/TaskManagement/Index">主页</a></li>
+            </ol>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+            <ul class="nav navbar-nav navbar-underline">
+                <li><a href="/TaskManagement/Subject_Detail">进度</a></li>
+                <li><a href="/TaskManagement/Subject_CalendarPartial"  class="active">日程</a></li>
+                <li><a href="/TaskManagement/Subject_Files">文件</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right navbar-border">
+                @*<li><a href="#" id="users-btn"><i class="fa fa-users color-blue" aria-hidden="true"></i>&nbsp;<span class="users-num">20</span></a></li>*@
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="btn_show_subject_panel"><i class="fa fa-bars color-blue" aria-hidden="true"></i>&nbsp;菜单</a>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</div>
+<div class="tm_files_wrap">
+    <div class="tm_files_header clear-float">
+        <div class="tm_modal_list-middle add-btn btn_add_subtask" data-sbid="">添加日程</div>
+    </div>
+</div>
