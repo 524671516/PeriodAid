@@ -8,6 +8,37 @@ namespace PeriodAid.Models
     public class ProjectViewModels
     {
     }
+
+    public class AjaxSubjectInfoClass
+    {
+        public int SubjectId { get; set; }
+        public int Sid { get; set; }
+        public string SubjectTitle { get; set; }
+        public int LogsCount { get; set; }
+        public bool IsNew { get; set; }
+        public string[] LogsContent { get; set; }
+        public string[] LogsTime { get; set; }
+    }
+    public class AssignmentInfoClass
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public int TypeCode { get; set; }
+        public string DeadTime { get; set; }
+        public int Hour { get; set; }
+        public int Minute { get; set; }
+    }
+    public class TypeRangeClass
+    {
+        public int MinValue { get; set; }
+        public int MaxValue { get; set; }
+    }
+    public class TimeRangeClass
+    {
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+    }
     public class ContentTypeClass
     {
         public int Code { get; set; }

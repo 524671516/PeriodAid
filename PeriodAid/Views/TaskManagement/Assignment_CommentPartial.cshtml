@@ -46,31 +46,27 @@
 </div>
 <script>
     $(function () {
+        //初始化悬浮提示
         $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
+
+    //任务评论删除按钮事件
     $(".btn_delete_comment").on("click", function () {
-        if (!$(this).hasClass("disabled")) {
-            $(this).addClass("disabled");
-            var cid = $(this).attr("data-cid");
-            $.ajax({
-                url: "/TaskManagement/Delete_AssignmentComment",
-                type: "post",
-                data: {
-                    CommentId: cid
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        UnimportantAlert(data.msg);
-                        GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
-                            $("#modal_comment_area").html(data);
-                        })
-                    } else {
-                        ErrorAlert(data.errmsg);
-                    }
-                },
-                error: function () {
-                    ErrorAlert("请求失败。");
-                }
+        var that = $(this);
+        var _data = {
+            CommentId: that.attr("data-cid")
+        }
+        if (!that.hasClass("disabled")) {
+            that.addClass("disabled");
+            //请求删除
+            EditForAjax("/TaskManagement/Delete_AssignmentComment", _data, function (data) {
+                //成功
+                //重新获取评论模板
+                GetComment($("#modal-header-assignment").attr("data-aid"), function (data) {
+                    $("#modal_comment_area").html(data);
+                })
+            }, function (data) {
+                //失败
             })
         }
 

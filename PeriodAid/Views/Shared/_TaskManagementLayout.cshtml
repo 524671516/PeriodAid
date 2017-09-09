@@ -25,7 +25,6 @@
     <header id="app-header">
         <nav class="navbar navbar-default bg-white">
             <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                         <span class="sr-only">Toggle navigation</span>
@@ -35,8 +34,6 @@
                     </button>
                     <a class="navbar-brand" href="/TaskManagement/Index"><strong class="color-blue">项目管理</strong></a>
                 </div>
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
@@ -45,25 +42,22 @@
                                 <ul class="tm_dropdown_list">
                                     <li><a href="javascript:;" class="create_subject_target"><span class="color-blue">新建项目</span></a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:;">功能开发中</a></li>
                                 </ul>
                             </div>
                         </li>
-                    </ul>
-                    @*<form class="navbar-form navbar-left">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="搜索">
+                        <li class="dropdown open" style="max-height:400px;">
+                            <a href="#" style="padding:8px 0; background-color:#fff;" class="dropdown-toggle" aria-expanded="true"><input id="quick_search" class="form-control" type="text" autocomplete="on" placeholder="输入搜索内容" role="textbox" aria-label="Search" style="background-color:#eae6e6" /></a>
+                            <div class="dropdown-menu tm_dropdown" id="quick_result" style="display:none;width:179px;">
+                                <ul id="search_subject" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                                <ul id="search_ass" class="tm_dropdown_list" style="max-height:400px;"></ul>
+                                <ul id="search_subt" class="tm_dropdown_list" style="max-height:400px;"></ul>
                             </div>
-                            <button type="submit" class="btn btn-default">搜索</button>
-                        </form>*@
-                    <ul class="nav navbar-nav navbar-right navbar-border">
-                        <li><a href="javascript:;" id="task_my_btn"><strong>我的任务</strong></a></li>
-                        @*<li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><strong>设置</strong></a>
-                                <ul class="dropdown-menu" id="dropdown-menu-my">
-                                    <li><a href="javascript:;">功能开发中</a></li>
-                                </ul>
-                            </li>*@
+                        </li>
+                    </ul>               
+                    <ul class="nav navbar-nav navbar-right navbar-border">        
+                        <li><a href="#" id="bn_help" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="使用演示" style="font-size:20px;vertical-align: text-bottom;"></a></li>
+                        <li><a href="javascript:;" id="task_my_btn" class="tm-show-view" data-href="/TaskManagement/PersonalActionPanel"><strong>我的</strong></a></li>
+                        <li><a href="javascript:;" id="task_calendar_btn" class="tm-show-view" data-href="/TaskManagement/SubjectCalendarPanel"><strong>日历</strong></a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height:50px;">
                                 @if (ViewBag.ImgUrl == null)
@@ -91,48 +85,36 @@
                             </div>
                         </li>
                     </ul>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
+                </div>
+            </div>
         </nav>
     </header>
+    @RenderBody()
     <!-- Create Subject Modal -->
-    <div class="modal fade" id="Add-Subject" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto">
+    <div class="modal fade" id="Add-Subject" role="dialog" aria-labelledby="myModalLabel" style="overflow-y:auto;">
         <div class="modal-dialog" role="document">
             <div class="modal-content" id="Create-Subject-Content">
             </div>
         </div>
     </div>
     <!--Create Subject Modal End-->
-    <!--Choose Template Model-->
-    @*<div class="modal fade" id="Choose-Template" role="dialog" aria-labelledby="Choose-TemplateModalLabel" style="overflow-y:auto">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content" id="Choose-Template-Content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">选择模板</h4>
-                    </div>
-                    <div class="container-fluid">
-                        <div class="row modal-nav-pannel">
-                            <div class="col-md-3 tm_modal_ul_wrap">
-                                <ul class="list-group tm_modal-nav tm_modal_nav_ul">
-                                    <li class="list-group-item tm_active" data-href="/TaskManagement/SubjectFinishProgressPartial">普通项目</li>
-                                    <li class="list-group-item" data-href="/TaskManagement/SubjectUntreatedProgressPartial">流程项目</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-9 tm_modal_ul_wrap">
-                                <p class="text-center" style="margin-top:10px;" id="loading-p"><i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom color-gray"></i></p>
-                                <ul class="list-group tm_modal-list tm_modal_list_ul" id="tm_modal_list_area"></ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer" style="border:none;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    </div>
-                </div>
+    <!-- Modal Edit-Assignment-->
+    <div class="modal fade tm_modal" id="Edit-Assignment" role="dialog" aria-labelledby="Edit-AssignmentLabel" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
             </div>
-        </div>*@
-    <!--Choose Template Model End-->
-    @RenderBody()
+        </div>
+
+    </div>
+    <!-- Modal Edit-Assignment End-->
+    <!-- Modal Add-Collaborator-->
+    <div class="modal fade" id="Add-Collaborator" tabindex="-1" role="dialog" aria-labelledby="Add-CollaboratorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!-- Modal Add-Collaborator End-->   
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -145,6 +127,59 @@
     <script src="~/Scripts/bootstrap-select.js"></script>
     <script src="~/Scripts/defaults-zh_CN.min.js"></script>
     <script src="~/Scripts/TaskManagement.js"></script>
+    <script src="~/Scripts/TaskManagementCalendar.js"></script>
+    <script>
+        $(function () {
+            $("#message_show").addClass("");
+        })
+        $("#quick_search").focus(function () {
+            $("#quick_search").off("input");
+            $("#quick_search").on("input", function () {
+                if ($("#quick_search").val() != "") {
+                    $.ajax({
+                        url: "/TaskManagement/QuickSearch",
+                        type: "post",
+                        data: {
+                            input: $("#quick_search").val(),
+                        },
+                        success: function (data) {
+                            $("#quick_result ul").html("");
+                            if (data.subject.length == 0 && data.task.length == 0 && data.subtask.length == 0) {
+                                $("#search_subject").append("<li><a>" + "无搜索结果" + "</a></li>");
+                            }
+                            for (var item in data) {
+                                for (i = 0; i < data[item].length; i++) {
+                                    if (data[item][i].type == 0) {
+                                        var subjectshow = "项目：" + "【" + data[item][i].name + "】";
+                                        $("#search_subject").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + subjectshow +" style=\"color:#3da8f5\" class=\"tm-show-subject-page\"  data-sid=" + data[item][i].id + ">" + '项目:【' + data[item][i].name + "】</a></li>");
+                                    } else if (data[item][i].type == 1) {
+                                        var taskbelong = "所属项目：" + "【" + data[item][i].taskbelong + "】";
+                                        $("#search_ass").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + taskbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-aid=" + data[item][i].id + ">" + '任务:【' + data[item][i].name + "】</a></li>");
+                                    } else {
+                                        var subtbelong = "所属任务：" + "【" + data[item][i].subtbelong + "】";
+                                        $("#search_subt").append("<li><a href='#' data-toggle=\"tooltip\" data-placement=\"bottom\" title=" + subtbelong + " style=\"color:#3da8f5\" class=\"tm-show-task-modal\" data-atid=" + data[item][i].id + ">" + '子任务:【' + data[item][i].name + "】</a></li>");
+                                    }
+                                }
+
+                            }
+
+                            $("#quick_result").slideDown();
+                            $('[data-toggle="tooltip"]').tooltip();
+
+                        }
+                    })
+                }
+                else {
+                    $("#quick_result ul").html("");
+                }
+            })
+        })
+        $("#quick_search").blur(function () {
+            $("#quick_result").slideUp("slow");
+            $("#quick_search").val("");
+        })
+
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

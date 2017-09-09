@@ -25,7 +25,7 @@ $$(document).on("ajaxComplete", function (e) {
 });
 
 $$.ajax({
-    url: "/Seller/Seller_Panel",
+    url: "/Seller/Seller_panel",
     success: function (data) {
         $$("#user-panel").html(data);
     }
@@ -38,7 +38,7 @@ $$("#user-panel").on("click", "#versionChange", function () {
             window.location.href = url;
         },
         function () {
-            myApp.closePanel();
+            myApp.closepanel();
         });
 });
 // 防止缓存机制
@@ -74,7 +74,7 @@ $$(document).on("pageAfterAnimation", ".page[data-page='seller-home']", function
 });
 
 $$(document).on("pageInit", ".page[data-page='seller-changeaccount']", function (e) {
-    myApp.closePanel();
+    myApp.closepanel();
     $$("#SystemId").change(function (e) {
         var selectlist = $$("#SystemId");
         $$.ajax({

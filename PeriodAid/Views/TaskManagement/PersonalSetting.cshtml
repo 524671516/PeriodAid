@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/TaskManagement/Index"><strong class="color-blue">返回项目中心</strong></a>
+                    <a class="navbar-brand" href="javascript:;" id="ReturnToSubject"><strong class="color-blue">返回项目中心</strong></a>
                     <span class="navbar-brand">个人设置</span>
                 </div>
 
@@ -65,8 +65,8 @@
                     <div class="col-md-2">
                         <ul class="nav nav-pills nav-stacked">
                             <li role="presentation" class="active"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
-                            <li role="presentation"><a href="~/Views/TaskManagement/#">其他设置</a></li>
-                            <li role="presentation"><a href="/TaskManagement/LoginLog">登录记录</a></li>
+                            <li role="presentation"><a href="/Manage/ChangePassword">更改密码</a></li>
+                            <li role="presentation"><a href="/TaskManagement/LoginLog">登录记录</a></li>   
                         </ul>
                     </div>
                     <div class="col-md-10">
@@ -78,7 +78,7 @@
                                 @using (Html.BeginForm("EditPersonalInfo", "TaskManagement", FormMethod.Post, new { @id = "save_personalinfo_form", @class = "validate-form form-horizontal" }))
                                 {
                                     @Html.AntiForgeryToken()
-                                    @Html.HiddenFor(m => m.ImgUrl)
+                                    @Html.HiddenFor(m => m.ImgUrl, new { @class = "tm-check-control-img" })
                                     @Html.HiddenFor(m => m.Id)
                                     @Html.HiddenFor(m => m.DepartmentId)
                                     @Html.HiddenFor(m => m.Status)
@@ -86,6 +86,7 @@
                                     @Html.HiddenFor(m => m.LastLoginDate)
                                     @Html.HiddenFor(m => m.SignupDate)
                                     @Html.HiddenFor(m => m.UserName)
+                                    <input type="hidden" value="false" id="checkedit" />
                                     <div class="form-group">
                                         <label for="NickName" class="col-sm-2 control-label">头像</label>
                                         <div class="col-sm-4">
@@ -99,26 +100,26 @@
                                                     <img src="http://cdn2.shouquanzhai.cn/@Model.ImgUrl" style="width:100%;height:100%" id="PicUrl-img" />
                                                 }
                                             </span>
-                                            <input type="file" id="report-file" name="report-file" class="hidden" accept=".jpg,.png,.gif" />
+                                            <input type="file" id="report-file" name="report-file" class="hidden form-control" accept=".jpg,.png,.gif" />
                                             <a class="btn btn-primary padding-10" style="margin-top:30px;" data-toggle="modal" data-target="#avatar-modal"><span class="glyphicon glyphicon-open" aria-hidden="true"></span>更换头像</a>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="NickName" class="col-sm-2 control-label">姓名</label>
                                         <div class="col-sm-4">
-                                            @Html.TextBoxFor(m => m.NickName, new { @class = "form-control" })
+                                            @Html.TextBoxFor(m => m.NickName, new { @class = "form-control tm-check-control-name" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="UserName" class="col-sm-2 control-label">电话号码</label>
                                         <div class="col-sm-4">
-                                            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control" })
+                                            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control tm-check-control-phone" })
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
                                             <a class="btn btn-primary" id="btn_save_personalinfo">保存</a>
-                                            <span class="color-orange">保存后头像修改方可生效</span>
+                                            <span class="color-orange">提示：信息保存后方可生效</span>
                                         </div>
                                     </div>
                                 }
@@ -205,6 +206,36 @@
     <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/croppermain.js"></script>
     <script>
+        //保存信息提示
+        var checkreturn = false;
+        var checksave = false;
+        $("#ReturnToSubject").on("click", function () {
+            if (checksave)
+            {
+                window.location.href = "/TaskManagement";
+            }
+            else
+            {
+                if ($(".tm-check-control-img").val() != "@Model.ImgUrl" || $(".tm-check-control-name").val() != "@Model.NickName" || $(".tm-check-control-phone").val() != "@Model.Mobile")
+                {
+                    checkreturn = true;
+                    CustomConfirm2("信息已被修改！是否保存更改？",
+                        function () {
+                           $("#save_personalinfo_form").submit();
+                           setTimeout(function () {
+                              window.location.href = "/TaskManagement";
+                           }, 2700)
+                       }, function () {
+                         window.location.href = "/TaskManagement";
+                       });
+                }
+                else
+                {
+                   window.location.href = "/TaskManagement";
+                }
+            }
+        });
+
         //修改个人信息验证
         $("#save_personalinfo_form").validate({
             debug: false,
@@ -213,20 +244,23 @@
                     required: true,
                     maxlength: 32
                 },
-                UserName: {
-                    validatetel: true,
-                    required: true,
-                    maxlength: 11
-                },
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit({
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            UnimportantAlert("修改成功");
-                            $("#btn_save_personalinfo").removeClass("disabled");
-                        } else {
+                            if (checkreturn) {
+                                UnimportantAlert("修改成功,即将返回项目中心。");
+                                $("#btn_save_personalinfo").removeClass("disabled");
+                            }
+                            else {
+                                UnimportantAlert("修改成功");
+                                $("#btn_save_personalinfo").removeClass("disabled");
+                            }
+
+                        }
+                        else {
                             ErrorAlert(data.result);
                             $("#btn_save_personalinfo").removeClass("disabled");
                         }
@@ -245,6 +279,7 @@
         });
         //修改个人信息的提交
         $("#btn_save_personalinfo").on("click", function () {
+            checksave = true;
             if (!$(this).hasClass("disabled")) {
                 $(this).addClass("disabled")
                 $("#save_personalinfo_form").submit();

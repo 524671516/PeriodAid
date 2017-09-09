@@ -1,10 +1,10 @@
 ﻿@model PeriodAid.Models.Subject
 @using PeriodAid.Models;
 <div class="tm_subject_container">
-    <div class="tm_subject_pannel_header">
+    <div class="tm_subject_panel_header">
         <strong class="color-blue">项目菜单</strong>       
     </div>
-    <div class="tm_subject_pannel_body">
+    <div class="tm_subject_panel_body">
         <div class="list-group">
             <a href="javascript:;" class="list-group-item" id="btn_setting_subject">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -74,17 +74,17 @@
             </a>
         </div>
     </div>
-    <div class="tm_subject_pannel_footer">没有更多了</div>
+    <div class="tm_subject_panel_footer">没有更多了</div>
 </div>
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
     $("#btn_setting_subject").on("click", function () {
         $.ajax({
             url: "/TaskManagement/EditSubject",
             data: {
-                SubjectId: $("#pannel-wrap").attr("data-sid")
+                SubjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 if (data != "FAIL") {
@@ -100,12 +100,13 @@
             }
         })
         return false;
-    })
+    });
+
     $("#subject_daily_schedule").on("click", function () {
         $.ajax({
-           url: "/TaskManagement/SubjectProgressPartial",
+            url: "/TaskManagement/SubjectProgressPartial",
             data: {
-                SubjectId: $("#pannel-wrap").attr("data-sid")
+                SubjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 if (data != "FAIL") {
@@ -121,12 +122,13 @@
             }
         })
         return false;
-    })
+    });
+
     $("#subject_logs_more").on("click", function () {
         $.ajax({
             url: "/TaskManagement/SubjectLogsPartial",
             data: {
-                SubjectId: $("#pannel-wrap").attr("data-sid")
+                SubjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
                 if (data != "FAIL") {
@@ -140,7 +142,7 @@
             error: function (data) {
                 ErrorAlert("操作失败。");
             }
-        })
+        });
         return false;
     })
 </script>

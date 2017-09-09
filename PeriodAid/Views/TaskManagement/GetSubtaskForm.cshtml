@@ -23,9 +23,6 @@
   </div>
 }
 <script>
-    $("#cancel-subtask-write").on("click", function () {
-        $(".add-subtask-write").html("").addClass("hidden");
-    });
     //子任务验证
     $("#add_subtask_form").validate({
         debug: false,
@@ -41,11 +38,21 @@
                 if (data.result == "SUCCESS") {
                     UnimportantAlert("子任务创建成功");
                     $("#btn_create_subtask").removeClass("disabled");
+                    //刷新子任务列表
                     GetSubTaskListPartial($("#AssignmentId").val
                     (), function (data) {
                         $("#modal_subtask_area").html(data);
                     });
-                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
+                    //获取任务
+                    var __data = {
+                        ProcedureId: data.Id,
+                        SubjectId: $("#panel-wrap").attr("data-sid")
+                    }                                           //请求参数
+                    getAssignment("/TaskManagement/SubjectAssignment", __data, $(".ajax-procedure[data-procedureid=" + __data.ProcedureId + "]").find(".tm_panel-body"), function (data) {
+                        dragtask("tm-list-show-" + __data.ProcedureId) //为任务注册拖动事件
+                    }, function (data) {
+                        //失败
+                    });
                 } else {
                     ErrorAlert(data.errmsg);
                     $("#btn_create_subtask").removeClass("disabled");
@@ -58,11 +65,17 @@
             $("#btn_create_subtask").removeClass("disabled");
         }
     });
+
     //子任务的提交
     $("#btn_create_subtask").on("click", function () {
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled");
             $("#add_subtask_form").submit();
         }
+    });
+
+    //取消表单
+    $("#cancel-subtask-write").on("click", function () {
+        $(".add-subtask-write").html("").addClass("hidden");
     });
 </script>

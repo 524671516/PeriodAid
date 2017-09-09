@@ -64,6 +64,22 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NPOI, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OOXML.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
       <Private>True</Private>
@@ -198,6 +214,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorizationController.cs" />
+    <Compile Include="Controllers\MobileTaskManagementController.cs" />
     <Compile Include="Controllers\OffBonusController.cs" />
     <Compile Include="Controllers\OffCheckinController.cs" />
     <Compile Include="Controllers\OffCommonController.cs" />
@@ -238,14 +255,6 @@
     <Compile Include="Extensions\HtmlExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709090241211_555.cs" />
-    <Compile Include="Migrations\201709090241211_555.Designer.cs">
-      <DependentUpon>201709090241211_555.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709090317129_155555.cs" />
-    <Compile Include="Migrations\201709090317129_155555.Designer.cs">
-      <DependentUpon>201709090317129_155555.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -299,6 +308,10 @@
     <Content Include="Content\font-awesome-ie7.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\framework7.ios.colors.css" />
+    <Content Include="Content\framework7.ios.css" />
+    <Content Include="Content\framework7.ios.rtl.css" />
+    <Content Include="Content\framework7.ios.rtl.min.css" />
     <Content Include="Content\images\banner_mobile_1.jpg" />
     <Content Include="Content\images\cover-default.jpg" />
     <Content Include="Content\images\defaultphoto.gif" />
@@ -411,6 +424,7 @@
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\prettify.css" />
     <Content Include="Content\TaskManagement.css" />
+    <Content Include="Content\taskmanagement_m.css" />
     <Content Include="Content\weui.min.css" />
     <Content Include="Content\framework7.ios.colors.min.css" />
     <Content Include="Content\framework7.ios.min.css" />
@@ -477,7 +491,6 @@
     <Content Include="Scripts\jeDate-gh-pages\README.md" />
     <Content Include="Content\xlsx\产品销售明细表-Template.xlsx" />
     <Content Include="Content\xlsx\产品运营数据表-Template.xlsx" />
-    <Content Include="event1.json" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -489,6 +502,8 @@
     <Content Include="Content\font-awesome.css.map" />
     <Content Include="Scripts\bootstrap-select.js.map" />
     <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="Scripts\framework7.js.map" />
+    <Content Include="Scripts\framework7.min.js.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />
@@ -525,6 +540,8 @@
     <Content Include="Scripts\Sortable.js" />
     <Content Include="Scripts\Sortable.min.js" />
     <Content Include="Scripts\TaskManagement.js" />
+    <Content Include="Scripts\TaskManagementCalendar.js" />
+    <Content Include="Scripts\taskmanagement_m.js" />
     <Content Include="Scripts\validate.expand.js" />
     <Content Include="Scripts\zepto.min.js" />
     <None Include="Scripts\_references.js" />
@@ -1041,7 +1058,6 @@
     <Content Include="Views\OffSellerTask\TaskSellerQueryDetails.cshtml" />
     <Content Include="Views\Custom\LittleGingerVoice.cshtml" />
     <Content Include="Views\TaskManagement\Index.cshtml" />
-    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\Subject_Detail.cshtml" />
     <Content Include="Views\TaskManagement\Personal_FinishSubjectListPartial.cshtml" />
     <Content Include="Views\TaskManagement\Personal_ActiveSubjectListPartial.cshtml" />
@@ -1060,9 +1076,8 @@
     <Content Include="Views\TaskManagement\GetSubjectForm.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
     <Content Include="Views\TaskManagement\TaskManagerLogin.cshtml" />
-    <Content Include="Views\TaskManagement\SubjectMenuPannelPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectMenuPanelPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectProgressPartial.cshtml" />
-    <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectFinishProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectUntreatedProgressPartial.cshtml" />
     <Content Include="Views\TaskManagement\EmployeeError.cshtml" />
@@ -1072,8 +1087,31 @@
     <Content Include="Views\TaskManagement\SubjectNotFound.cshtml" />
     <Content Include="Views\TaskManagement\SubjectNoAuthority.cshtml" />
     <Content Include="Views\TaskManagement\GetLogs.cshtml" />
-    <Content Include="Views\TaskManagement\GetLogsByTime.cshtml" />
-    <Content Include="Views\TaskManagement\GetLogsByType.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonlRecentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalActionPanel.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalCollectionPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalFilePartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalTaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalRecentSubtaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalInvolvedAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalResponsibleAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalExecutableTaskPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
+    <Content Include="Views\TaskManagement\GetProcedureForm.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_Agendas.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectCalendarPanel.cshtml" />
+    <Content Include="Views\TaskManagement\SecuritySetting.cshtml" />
+    <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\MobileTaskManagement\Home.cshtml" />
+    <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
+    <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
+    <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
+    <Content Include="Views\TaskManagement\AllUserAssignmentPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1088,14 +1126,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201709090241211_555.resx">
-      <DependentUpon>201709090241211_555.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709090317129_155555.resx">
-      <DependentUpon>201709090317129_155555.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

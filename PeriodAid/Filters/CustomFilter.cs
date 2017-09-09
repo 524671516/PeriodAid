@@ -177,7 +177,7 @@ namespace PeriodAid.Filters
                             var cooperater_count = (from m in user.CollaborateAssignment
                                                     where m.Id == assignmentId&& m.Status > AssignmentStatus.DELETED
                                                     select m).Count();
-                            if (assignment.HolderId != user.Id && assignment.Subject.HolderId != user.Id && cooperater_count == 0)
+                            if (assignment.HolderId != user.Id && assignment.Subject.HolderId != user.Id)
                             {
                                 setErrorResult(filterContext, "当前用户没有权限编辑此任务。");
                             }
@@ -201,6 +201,7 @@ namespace PeriodAid.Filters
                             {
                                 setErrorResult(filterContext, "当前用户没有权限执行此操作。");
                             }
+                            
                         }
                     }
                     else if (OperationGroup == OperationGroupCode.SUBASSIVIEW)
@@ -227,9 +228,18 @@ namespace PeriodAid.Filters
                         }
                     }
                     else if (OperationGroup == OperationGroupCode.SUBASSIEDIT)
+
                     {
                         //编辑子任务
-                        var subtaskId = Convert.ToInt32(filterContext.HttpContext.Request.Params["SubTaskId"]);
+                        int subtaskId;
+                        if (filterContext.HttpContext.Request.Params["Id"]==null|| filterContext.HttpContext.Request.Params["Id"] == "")
+                        {
+                             subtaskId = Convert.ToInt32(filterContext.HttpContext.Request.Params["SubTaskId"]);
+                        }
+                        else
+                        {
+                             subtaskId = Convert.ToInt32(filterContext.HttpContext.Request.Params["Id"]);
+                        }                       
                         var subtask = _db.SubTask.SingleOrDefault(m => m.Id == subtaskId && m.Status > AssignmentStatus.DELETED);
                         if (subtask == null)
                         {

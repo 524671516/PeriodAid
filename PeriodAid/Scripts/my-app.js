@@ -683,7 +683,7 @@ function refresh_userpanel() {
 
 function refresh_mainpanel() {
     $$.ajax({
-        url: "/SellerTask/MainPanel",
+        url: "/SellerTask/Mainpanel",
         data: {
             id: $$("#sellerId").val()
         },

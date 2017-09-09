@@ -3,7 +3,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <a class="close dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" href="#">更多<i class="fa fa-caret-down color-blue" aria-hidden="true" title="更多"></i></a>
     <h4 class="modal-title" id="Edit-SubtaskLabel">
-        <a href="javascript:;" class="color-blue tm_parent_assignment" id="btn_get_parent" data-parent="@Model.AssignmentId">@Html.Encode(Model.Assignment.AssignmentTitle)</a>
+        <a href="javascript:;" class="color-blue tm-show-task-modal"  data-aid="@Model.AssignmentId">@Html.Encode(Model.Assignment.AssignmentTitle)</a>
     <span class="color-gray">/@Html.Encode(Model.TaskTitle)</span>
     </h4>
     <div class="dropdown-menu tm_dropdown tm_dropdown_width">
@@ -76,13 +76,15 @@
     <button type="button" class="btn btn-primary" id="btn_edit_subtask">保存</button>
 </div>
 <script type="text/javascript">
+    //初始化选择插件
     $('#tm_select_straff').selectpicker({
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
         width: "100%",
         dropupAuto: false,
     });
-    CompleteTimeWidget(".form_datetime");
+    //日期插件初始化
+    CompleteTimeWidget(".form_datetime","#Edit-Assignment");
     //修改任务验证
     $("#edit_subtask_form").validate({
         debug: false,
@@ -118,39 +120,30 @@
             $("#edit_subtask_form").submit();
         }
     });
-    //删除任务
+    //删除子任务
     $("#btn_del_subtask").on("click", function () {
-        var subtaskid = $(this).attr("data-stid");
+        var that = $(this);
         CustomConfirm("删除此任务将不可恢复，请确认是否删除?", function () {
-            $.ajax({
-                url: "/TaskManagement/Delete_Subtask",
-                type: "post",
-                data: {
-                    SubTaskId: subtaskid
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        UnimportantAlert("删除任务成功。");
-                        GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
-                        $('#Edit-Assignment').modal('hide');
-
-                    } else {
-                        UnimportantAlert(data.result)
-                    }
-                },
-                error: function (data) {
-                    ErrorAlert("操作失败。")
-                }
-            });
+            var _data = {
+                SubTaskId: that.attr("data-stid")
+            }
+            EditForAjax("/TaskManagement/Delete_Subtask", _data, function (data) {
+                //成功
+                var __data = {
+                    ProcedureId: data.Id,
+                    SubjectId: $("#panel-wrap").attr("data-sid")
+                }                                           //请求参数
+                //获取任务
+                getAssignment("/TaskManagement/SubjectAssignment", __data, $(".ajax-procedure[data-procedureid=" + __data.ProcedureId + "]").find(".tm_panel-body"), function (data) {
+                    dragtask("tm-list-show-" + __data.ProcedureId) //为任务注册拖动事件
+                }, function (data) {
+                    //失败
+                })            
+                $('#Edit-Assignment').modal('hide');
+            }, function (data) {
+                //失败
+            })
         })
     });
-    $("#btn_get_parent").on("click", function () {
-        var aid = $(this).attr("data-parent");
-        if (aid) {
-            GetAssignmentDetail(aid, $("#Edit-Assignment .modal-content"), function () {
-            });
-        }
-        
-    })
 </script>
 

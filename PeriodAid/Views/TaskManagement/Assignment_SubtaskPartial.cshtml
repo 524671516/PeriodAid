@@ -6,16 +6,16 @@
             <ul>
                 @foreach (var item in Model)
                 {
-                    <li class="tm_modal_list-header tm_subtask_li" data-stid="@item.Id">
+                    <li class="tm_modal_list-header tm-show-task-modal" data-atid="@item.Id">
                         <div class="tm-list-item_top clear-float">
                             <div class="tm_modal_list-left tm_left_icon">
                                 @if (item.Status == AssignmentStatus.FINISHED)
                                 {
-                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish" checked>
+                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 tm-change-task-status" checked data-atid="@item.Id">
                                 }
                                 else
                                 {
-                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 subtask_comfirm_finish">
+                                    <input type="checkbox" style="width:20px;height:20px;" class="margin-0 tm-change-task-status" data-atid="@item.Id">
                                 }
                             </div>
 
@@ -59,102 +59,36 @@
                 </div>
             </div>
 </div>
-
 <script>
     $(function () {
+        //鼠标移入字体浮动初始化
         $('[data-toggle="tooltip"]').tooltip()
     })
-    //内置子任务弹出处理
+
+    //子任务表单请求
     $("#subtask_modal_list").on("click", ".btn_add_subtask", function (event) {
         var that = $(this);
+        var _data = {
+            AssignmentId: $("#modal-header-assignment").attr("data-aid"),
+        }
+        //防止多次请求
         if (that.parent().parent().find(".add-subtask-write").html() == "") {
             $(".add-subtask-write").html("").addClass("hidden");
-            $.ajax({
-                url: "/TaskManagement/GetSubtaskForm",
-                data: {
-                    AssignmentId: $("#modal-header-assignment").attr("data-aid"),
-                },
-                success: function (data) {
-                    if (data != "FAIL") {
-                        that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
-                    } else {
-                        ErrorAlert("操作失败。");
-                    }
-                },
-                error:function(data){
-                    ErrorAlert("操作失败。");
-            }
-
+            //请求表单
+            GetTemplate("/TaskManagement/GetSubtaskForm", _data, function (data) {
+                //成功
+                that.parent().parent().find(".add-subtask-write").html(data).removeClass("hidden");
+            }, function (data) {
+                //失败
             })
         }
+
+        //如果已经有表单就直接做隐藏和显示处理不在请求
         if (that.parent().parent().find(".add-subtask-write").hasClass("hidden")) {
             that.parent().parent().find(".add-subtask-write").removeClass("hidden")
         } else {
             that.parent().parent().find(".add-subtask-write").addClass("hidden")
         }
-    });
-    //子任务了解详情
-    $("#subtask_modal_list").on("click", ".tm_subtask_li", function (event) {
-        $.ajax({
-            url: "/TaskManagement/Subtask_Detail",
-            data: {
-                SubTaskId: $(this).attr("data-stid")
-            },
-            success: function (data) {
-                $("#Edit-Assignment .modal-content").html(data);
-            }
-        })          
-    });
-    //完成
-    $("#subtask_modal_list").on("click", ".subtask_comfirm_finish", function (event) {
-        var stid = $(this).parent().parent().parent().attr("data-stid");
-        $.ajax({
-            url: "/TaskManagement/ComfirmFinishSubtask",
-            type: "post",
-            data: {
-                SubTaskId: stid,
-            },
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    $("#Edit-Assignment #Status").val(data.ParentStatus)
-                    GetSubTaskListPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-                        $("#modal_subtask_area").html(data);
-                    });
-                    GetAssignment(data.Id, $("#pannel-wrap").attr("data-sid"), $(".ajax-procedure[data-procedureid=" + data.Id + "]").find(".tm_pannel-body"));
-                    $.ajax({
-                        url: "/TaskManagement/GetProcedureJsonInfo",
-                        type: "post",
-                        data: {
-                            SubjectId: $("#pannel-wrap").attr("data-sid")
-                        },
-                        success: function (data) {
-                            if (data.result == "SUCCESS") {
-                                var len = data.data.length;
-                                $(".ajax-procedure").each(function () {
-                                    for (i = 0; i < len; i++) {
-                                        if (data.data[i].ProcedureId == $(this).attr("data-procedureid")) {
-                                            $(this).find(".total-num").html(data.data[i].TotalNum)
-                                            $(this).find(".num").html(data.data[i].FinishNum)
-                                        }
-                                    }
-                                })
-                            } else {
-                                ErrorAlert("请求失败。");
-                            }
-                        },
-                        error: function (data) {
-                            ErrorAlert("请求失败。");
-                        }
-                    })
-                } else {
-                    ErrorAlert(data.errmsg)
-                }
-            },
-            error: function () {
-                ErrorAlert("操作失败")
-            }
-        });
-        return false;
     });
 
 </script>

@@ -1,4 +1,6 @@
-﻿@model PeriodAid.Models.SubTask
+﻿@*
+    
+    @model PeriodAid.Models.SubTask
 @using (Html.BeginForm("EditSubtask", "TaskManagement", FormMethod.Post, new { @id = "edit_subtask_form", @class = "validate-form" }))
             {
     @Html.AntiForgeryToken()
@@ -65,4 +67,4 @@
             $("#edit_subtask_form").submit();
         }
     });
-</script>
+</script>*@

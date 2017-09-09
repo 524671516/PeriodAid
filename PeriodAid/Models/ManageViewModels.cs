@@ -34,7 +34,7 @@ namespace PeriodAid.Models
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "确认新密码")]
+        [Display(Name = "确认密码")]
         [Compare("NewPassword", ErrorMessage = "新密码和确认密码不匹配。")]
         public string ConfirmPassword { get; set; }
     }
@@ -53,7 +53,7 @@ namespace PeriodAid.Models
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "确认新密码")]
+        [Display(Name = "确认密码")]
         [Compare("NewPassword", ErrorMessage = "新密码和确认密码不匹配。")]
         public string ConfirmPassword { get; set; }
     }

@@ -400,7 +400,7 @@ namespace PeriodAid.Controllers
             return RedirectToAction("Home");
         }
         [HttpPost]
-        public JsonResult MainPanel(int id)
+        public JsonResult Mainpanel(int id)
         {
             var seller = _offlineDB.Off_Seller.SingleOrDefault(m => m.Id == id);
             string StoreName = seller.Off_Store.StoreName;
