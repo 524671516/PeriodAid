@@ -2,17 +2,15 @@
 <h3 style="position:relative">
     <i class="fa fa-tasks color-blue" aria-hidden="true"></i>&nbsp;
     正在执行的项目&nbsp;
-    <button type="button" id="bt_new_mess" class="btn btn-primary" data-toggle="popover" title="新操作消息" data-content="">新消息<span class="badge">4</span></button>
-    <span class="popover right in" role="tooltip" id="popover810957" style="word-wrap: break-word;display: inline-block; position:absolute;left:310px">
-        <span class="arrow" style="top: 17.9559%;display:block"></span>
-        <span class="popover-title" style="display:block">新操作消息</span>
-    </span>
-    <span class="popover-content"></span>
+    <button type="button" id="bt_new_mess" class="color-gray btn btn-primary">
+        暂无消息</button>
+            <span class="popover" role="tooltip" id="new_mess_show" style="opacity:0.95;display: inline-block; position:absolute;left:290px;">
+                <span class="arrow" style="top: 17.9559%;display:block"></span>
+                <span class="popover-title glyphicon glyphicon-chevron-left" style="display:block">新操作消息(请前往项目查看)</span>
+            </span>
 </h3>
-<input type="hidden" id="user_id" value="@ViewBag.newcontent" />
 
 <div class="card-box row">
-    
     @if (Model.Count() != 0)
     {
         foreach (var item in Model)
@@ -67,6 +65,7 @@
 
 <script>
     $(function () {
+        $("#new_mess_show").hide();
         $(function () {
             $('[data-toggle="popover"]').popover()
         })
@@ -78,23 +77,25 @@
             },
             success: function (data) {
                 for (var item in data) {
+                    console.log(data);
                     for (i = 0; i < data[item].length; i++) {
+                        $("#bt_new_mess").unbind("click");
                         if (data[item][i].IsNew == true) {
-                            var l
-                            $("#bt_new_mess").attr("data-content", data[item][i].LogsContent);
-                        }
-                        else {
-
+                            //$("#bt_new_mess").attr("data-content", data[item][i].LogsContent);
+                            $("#bt_new_mess").removeClass("color-gray");
+                            $("#new_mess_show").append("<div class=\"popover-title\">" + "项目【" + data[item][i].SubjectTitle + "】操作消息：" + "</br><div class=\"color-gray\">"+ data[item][i].LogsContent + "</div></div>");
+                            $("#bt_new_mess").html("新消息");
+                            //动态消息提示
+                            $("#bt_new_mess").on("click", function () {
+                                $("#new_mess_show").slideToggle();
+                            });
                         }
                     }
 
                 }
             }
         })
-        //动态消息提示
-        $("#bt_new_mess").on("click", function () {
 
-        });
     })
 
 
