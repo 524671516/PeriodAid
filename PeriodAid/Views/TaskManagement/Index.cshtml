@@ -22,7 +22,12 @@
         GetActiveSubject("#personal_active_subject")   //获取正在进行中的项目
         GetFinishSubject("#personal_finish_subject")   //获取已完成的项目
 
-
+        $("#my-app").on("click", ".tm-show-subject-page", function () {
+            var linkid = $(this).attr("data-sid")
+            if (linkid) {
+                location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+            }
+        });
 
         /*以下为页面中的按钮事件*/
        //进入项目详情
