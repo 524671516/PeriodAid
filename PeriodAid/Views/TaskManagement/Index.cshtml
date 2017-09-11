@@ -29,7 +29,12 @@
             }
         });
 
-
+        $("#my-app").on("click", ".tm-show-subject-page", function () {
+            var linkid = $(this).attr("data-sid")
+            if (linkid) {
+                location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+            }
+        });
 
        // /*以下为页面中的按钮事件*/
        //$("#subject-container").on("click", ".card-item", function () {
