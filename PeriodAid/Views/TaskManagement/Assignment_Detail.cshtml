@@ -146,7 +146,7 @@
     /*页面初始化数据获取结束*/
 
     //初始化事件选择插件
-    CompleteTimeWidget(".form_datetime");
+    CompleteTimeWidget(".form_datetime","#Edit-Assignment");
 
     //初始化选择插件
     $('#tm_select_straff_assignmentdetail').selectpicker({
@@ -272,4 +272,70 @@
             }
         }
     });
+
+    //获取任务评论模板
+    function GetComment(AssignmentId, Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignment_CommentPartial",
+            data: {
+                AssignmentId: AssignmentId
+            },
+            success: function (data) {
+                typeof Callback && Callback(data);
+            },
+            error: function () {
+                ErrorAlert("请求失败。");
+            }
+        })
+    }
+    function GetAssignmnet_CollaboratorAddPartial(AssignmentId, Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignmnet_CollaboratorAddPartial",
+            data: {
+                AssignmentId: AssignmentId,
+            },
+            success: function (data) {
+                if (Callback && typeof Callback == "function") {
+                    Callback(data);
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败。")
+            }
+        });
+    }
+    function GetAssignment_CollaboratorPartial(AssignmentId, Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignment_CollaboratorPartial",
+            data: {
+                AssignmentId: AssignmentId
+            },
+            success: function (data) {
+                if (Callback && typeof Callback == "function") {
+                    Callback(data);
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败。")
+            }
+        });
+    }
+
+    //获取子任务模板
+    function GetSubTaskListPartial(AssignmentId, Callback) {
+        $.ajax({
+            url: "/TaskManagement/Assignment_SubtaskPartial",
+            data: {
+                AssignmentId: AssignmentId,
+            },
+            success: function (data) {
+                if (Callback && typeof Callback == "function") {
+                    Callback(data);
+                }
+            },
+            error: function () {
+                ErrorAlert("操作失败。")
+            }
+        });
+    }
 </script>

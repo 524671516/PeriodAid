@@ -21,6 +21,13 @@
         //Ajax获取各类型项目模板   函数定义与js文件中
         GetActiveSubject("#personal_active_subject")   //获取正在进行中的项目
         GetFinishSubject("#personal_finish_subject")   //获取已完成的项目
+        //进入项目详情
+        $("#my-app").on("click", ".tm-show-subject-page", function () {
+            var linkid = $(this).attr("data-sid")
+            if (linkid) {
+                location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+            }
+        });
 
         $("#my-app").on("click", ".tm-show-subject-page", function () {
             var linkid = $(this).attr("data-sid")
@@ -29,14 +36,13 @@
             }
         });
 
-        /*以下为页面中的按钮事件*/
-       //进入项目详情
-       $("#subject-container").on("click", ".card-item", function () {
-                var linkid = $(this).attr("data-link")
-                if (linkid) {
-                    location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
-                }
-            });
+       // /*以下为页面中的按钮事件*/
+       //$("#subject-container").on("click", ".card-item", function () {
+       //         var linkid = $(this).attr("data-link")
+       //         if (linkid) {
+       //             location.href = "/TaskManagement/Subject_Detail?SubjectId=" + linkid
+       //         }
+       //     });
 
        //修改卡片即项目信息
        $("#subject-container").on("click", ".card-edit-btn", function () {
@@ -53,7 +59,9 @@
                     //失败
                 })
                 return false;
-            });
+        });
+        
+
     </script>
 
 }
