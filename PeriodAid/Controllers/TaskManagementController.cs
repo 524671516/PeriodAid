@@ -3100,7 +3100,7 @@ namespace PeriodAid.Controllers
                                      select m.LogTime).FirstOrDefault();
                 var newdata = from m in _db.OperationLogs
                               where m.SubjectId == SubjectId && m.LogTime >= lastCheckTime && m.LogCode!=400
-                              select m.LogContent+m.LogTime+"</br>";
+                              select m.LogContent+m.LogTime+ "</br>";
                 var newcount = newdata.Count();
                 var newcontent = newdata.ToArray();
                 AjaxSubjectInfoClass asic = new AjaxSubjectInfoClass()

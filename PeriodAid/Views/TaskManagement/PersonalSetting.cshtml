@@ -75,6 +75,15 @@
                                 <h3 class="panel-title">设置个人信息</h3>
                             </div>
                             <div class="panel-body">
+                                <span class="glyphicon glyphicon-user"></span>
+                                @if (Model.Type == 1)
+                                {
+                                    <span>当前权限：</span><span class="control-label color-orange">主管</span>
+                                }
+                                else
+                                {
+                                    <span>当前权限：</span><span class="control-label color-orange">普通</span>
+                                }
                                 @using (Html.BeginForm("EditPersonalInfo", "TaskManagement", FormMethod.Post, new { @id = "save_personalinfo_form", @class = "validate-form form-horizontal" }))
                                 {
                                     @Html.AntiForgeryToken()
