@@ -226,7 +226,6 @@ namespace PeriodAid.Controllers
                 var MergeSubject = FirstMerge.Union(HolderSubject);
 
                 return PartialView(MergeSubject);
-
             }
         }
 
@@ -235,7 +234,7 @@ namespace PeriodAid.Controllers
         public async Task<ActionResult> Subject_Detail(int SubjectId)
         {
             var employee = getEmployee(User.Identity.Name);
-            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status == SubjectStatus.ACTIVE);
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId &&(m.Status == SubjectStatus.ACTIVE || m.Status == SubjectStatus.ARCHIVED));
             await AddLogAsync(LogCode.VIEWSUBJECT, employee, SubjectId, "查看了项目:"+subject.SubjectTitle+"。");
             if (subject == null)
             {
@@ -518,7 +517,6 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  项目任务列表操作
         //获取任务列表
         public ActionResult SubjectProcedure(int ProcedureId)
@@ -684,16 +682,16 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  任务操作
         //获取任务
         public PartialViewResult SubjectAssignment(int? ProcedureId, int? SubjectId,string Type)
         {
+            ViewBag.SubjectId = SubjectId;
             if (ProcedureId == null) {
-                var assignmentlist = from m in _db.Assignment
+                var assignmentlist = (from m in _db.Assignment
                                      where m.SubjectId == SubjectId && m.Status== AssignmentStatus.FINISHED
                                      orderby m.CreateTime descending
-                                     select m;
+                                     select m).Take(5);
                 ViewBag.ProcedureId = 0;
                 return PartialView(assignmentlist);
             }
@@ -720,7 +718,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var assignmentlist = from m in _db.Assignment
-                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
                                          orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
                                          select m;
                     ViewBag.ProcedureId = ProcedureId;
@@ -728,6 +726,42 @@ namespace PeriodAid.Controllers
                 }
             }      
         }
+
+        #region 获取全部已完成任务
+        public PartialViewResult SubjectCompletedAssignmentList(int subjectId)
+        {
+            var collaborator = from m in _db.Assignment
+                                where m.SubjectId == subjectId
+                                select m.Collaborator;
+            var holder = from m in _db.Assignment
+                         where m.SubjectId == subjectId
+                         select m.Holder;
+
+            //ViewBag.Collaborator = collaborator.Union(
+            return PartialView();
+        }
+        // 筛选代码
+        public PartialViewResult SubjectCompletedAssignmentList_partial(int subjectId, int? employeeId, int sorttype)
+        {
+            int _employeeId = employeeId ?? 0;
+            if (_employeeId != 0)
+            {
+                var list = from m in _db.Assignment
+                           where m.SubjectId == subjectId && m.HolderId == _employeeId
+                           orderby m.Deadline descending
+                           select m;
+                return PartialView(list);
+            }
+            else
+            {
+                var list = from m in _db.Assignment
+                           where m.SubjectId == subjectId
+                           orderby m.Deadline descending
+                           select m;
+                return PartialView(list);
+            }
+        }
+        #endregion
 
         //获取任务填写表单
         public PartialViewResult GetAssignmentForm(int ProcedureId, int SubjectId)
@@ -998,7 +1032,6 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  任务参与人操作
         //获取任务的参与者模板
         [OperationAuth(OperationGroup = 202)]
@@ -1128,7 +1161,6 @@ namespace PeriodAid.Controllers
 
         }
         #endregion
-
 
         #region 子任务操作
         //获取子任务模板
@@ -1429,7 +1461,6 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  数据获取操作
         //获取任务列表数字更新数据
         [HttpPost]
@@ -1452,10 +1483,8 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region 日志操作
         //获取项目日志
-        [OperationAuth(OperationGroup = 102)]
         public PartialViewResult SubjectLogsPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
@@ -1558,8 +1587,7 @@ namespace PeriodAid.Controllers
             return false;
         }
         #endregion
-
-
+        
         #region 文件操作
         //项目文件页
         [OperationAuth(OperationGroup = 102)]
@@ -1879,6 +1907,7 @@ namespace PeriodAid.Controllers
             return View();
         }
         #endregion
+
         #region 我的任务操作
         //获取我的任务页面
         public ActionResult PersonalActionPanel()
@@ -2561,7 +2590,6 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  日历
         //日历页面
         public ActionResult SubjectCalendarPanel()
@@ -2618,7 +2646,6 @@ namespace PeriodAid.Controllers
         }
 
         #endregion
-
 
         #region  数据EXCEL导出操作
         public ActionResult GetExcelDataForAssignment()
@@ -2771,17 +2798,6 @@ namespace PeriodAid.Controllers
                                  select m;
             return PartialView(AssignmentList);
         }
-
-
-
-
-
-
-
-
-
-
-
 
         [HttpPost]
         public JsonResult QuickSearch(string input)

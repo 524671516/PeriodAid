@@ -197,5 +197,14 @@ namespace System.Web.Mvc
             }
             return string.Join(",", nicknames);
         }
+
+        public static string StringFixLength(this HtmlHelper helper, string str, int str_length)
+        {
+            int _str_len = str.Length;
+            if (_str_len > str_length)
+                return str.Substring(0, str_length) + "...";
+            else
+                return str;
+        }
     }
 }

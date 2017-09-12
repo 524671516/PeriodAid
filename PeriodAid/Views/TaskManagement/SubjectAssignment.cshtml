@@ -11,7 +11,7 @@
                     <div class="clear-float">
                         <div class="tm_item_left tm-span-80">
                             <input type="checkbox" class="tm-change-task-status" checked="checked"  data-aid="@item.Id"/>
-                            &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
+                            &nbsp;&nbsp;@Html.StringFixLength(item.AssignmentTitle,13)
                         </div>                       
                         <div class="tm_item_right tm-span-20" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
                             @if (item.Holder.ImgUrl == null)
@@ -127,7 +127,7 @@
                         <div class="clear-float">
                             <div class="tm_item_left tm-span-80">
                                 <input type="checkbox" class="tm-change-task-status" data-aid="@item.Id" />
-                                &nbsp;&nbsp;@Html.Encode(item.AssignmentTitle)
+                                &nbsp;&nbsp;@Html.StringFixLength(item.AssignmentTitle, 13)
                             </div>
                             <div class="tm_item_right tm-span-20" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
                                 @if (item.Holder.ImgUrl == null)
@@ -215,7 +215,7 @@
                                                 <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
                                                     @if (item.Holder.ImgUrl == null)
                                                     {
-                                                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                        <span style="background-image:url('/Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
                                                     }
                                                     else
                                                     {
@@ -270,6 +270,16 @@
             <div class="tm_list-control text-center">
                 <div class="color-gray btn-get-form">
                     - 没有已完成的任务 -
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="tm_list-control text-center">
+                <div class="add-btn color-gray btn-get-allcompleted" data-pid="@ViewBag.ProcedureId">
+                    <a href="javascript:;" class="tm-show-view" data-href="/TaskManagement/SubjectCompletedAssignmentList?subjectId=@ViewBag.SubjectId"><i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;&nbsp;查看更多</i></a>
+                </div>
+                <div class="tm_assignmentform-area">
                 </div>
             </div>
         }
