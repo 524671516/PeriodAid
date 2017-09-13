@@ -40,6 +40,7 @@
 
             modelBuilder.Entity<Employee>().HasMany(e => e.SupervisorDepartment).WithOptional(e => e.Supervisor).HasForeignKey(e => e.SupervisorId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Employee>().HasMany(m => m.Subject).WithRequired(m => m.Holder).HasForeignKey(e => e.HolderId).WillCascadeOnDelete(false);
+            modelBuilder.Entity<Employee>().HasMany(m => m.AttendSubject).WithMany(e => e.AttendEmployee).Map(m => { m.MapLeftKey("EmployeeId"); m.MapRightKey("SubjectId"); m.ToTable("AttendEmployee_Subject"); });
             modelBuilder.Entity<Employee>().HasMany(e => e.CollaborateAssignment).WithMany(e => e.Collaborator).Map(m => { m.MapLeftKey("CollaboratorId"); m.MapRightKey("AssignmentId"); m.ToTable("Collaborator_Assignment"); });
             modelBuilder.Entity<Employee>().HasMany(e => e.HolderAssignment).WithRequired(e => e.Holder).HasForeignKey(e => e.HolderId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Employee>().HasMany(e => e.ExecuteTask).WithRequired(e => e.Executor).HasForeignKey(e => e.ExecutorId).WillCascadeOnDelete(false);
@@ -119,7 +120,10 @@
         public virtual ICollection<Subject> Subject { get; set; } // 所有拥有的项目
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Assignment> CollaborateAssignment { get; set; } // 合作的项目
+        public virtual ICollection<Subject> AttendSubject { get; set; } // 参加的项目
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Assignment> CollaborateAssignment { get; set; } // 合作的任务
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Assignment> HolderAssignment { get; set; } // 负责的任务
@@ -178,6 +182,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OperationLogs> OperationLogs { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Employee> AttendEmployee { get; set; }
 
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         //public virtual ICollection<SubjectAgenda> SubjectAgenda { get; set; }

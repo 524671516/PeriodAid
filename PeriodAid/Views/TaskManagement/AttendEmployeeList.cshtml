@@ -1,0 +1,22 @@
+﻿@model PeriodAid.Models.Subject
+
+@foreach (var emp in Model.AttendEmployee)
+{
+    <div class="clear-float">
+        <div class="tm_item_left tm-span-80">
+            <input type="checkbox" class="tm-change-task-status" checked="checked" data-aid="@emp.Id" />
+            &nbsp;&nbsp;@Html.StringFixLength(emp.NickName, 13)
+        </div>
+        <div class="tm_item_right tm-span-20" data-aid="@emp.Id" title="@emp.NickName" data-toggle="tooltip" data-placement="left">
+            @if (emp.ImgUrl == null)
+            {
+                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+            }
+            else
+            {
+                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@emp.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+
+            }
+        </div>
+    </div>
+}
