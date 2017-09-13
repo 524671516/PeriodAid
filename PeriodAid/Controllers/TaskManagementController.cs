@@ -773,31 +773,9 @@ namespace PeriodAid.Controllers
                 SubjectId = SubjectId,
                 HolderId = employee.Id
             };
-            List<CollaboratorModel> collist = new List<CollaboratorModel>();
-            List<Employee> existem = new List<Employee>();
-            var departemt = from m in _db.Department
-                            where m.Status == DepartmentStatus.NORMAL
-                            select m;
-            foreach (var depart in departemt)
-            {
-                List<Employee> newlist = new List<Employee>();
-                foreach (var _item in depart.Employee)
-                {
-                   
-                        newlist.Add(_item);
-                }
-                CollaboratorModel colmodel = new CollaboratorModel()
-                {
-                    DepartmentName = depart.DepartmentName,
-                    EmployeeList = newlist
-                };
-                collist.Add(colmodel);
-            }
-            ViewBag.DepartmentList = collist;
-            var EmployeeList = from m in _db.Employee
-                               where m.Status > EmployeeStatus.DEVOICE
-                               orderby m.Id descending
-                               select m;
+            var Sub = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var EmployeeList = Sub.AttendEmployee;
+            ViewBag.DepartmentList = EmployeeList;
             ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", employee.Id);
             return PartialView(item);
         }
@@ -1055,27 +1033,8 @@ namespace PeriodAid.Controllers
                 {
                     existem.Add(col);
                 }
-                var departemt = from m in _db.Department
-                                where m.Status == DepartmentStatus.NORMAL
-                                select m;
-                foreach (var depart in departemt)
-                {
-                    List<Employee> newlist = new List<Employee>();
-                    foreach (var item in depart.Employee)
-                    {
-                        if (!existem.Contains(item))
-                        {
-                            newlist.Add(item);
-                        }
-                    }
-                    CollaboratorModel colmodel = new CollaboratorModel()
-                    {
-                        DepartmentName = depart.DepartmentName,
-                        EmployeeList = newlist
-                    };
-                    collist.Add(colmodel);
-                }
-                ViewBag.DepartmentList = collist;
+                var waitEmployee = assignment.Subject.AttendEmployee.Except(existem);
+                ViewBag.DepartmentList = waitEmployee;
                 return PartialView(assignment);
             }
             catch (Exception)
@@ -3039,6 +2998,10 @@ namespace PeriodAid.Controllers
                                where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
                                select m).Count();
             ViewBag.RecentEvent = loglist;
+            List<Employee> attendlist = new List<Employee>();
+            attendlist.Add(subject.Holder);
+            attendlist.AddRange(subject.AttendEmployee.Except(attendlist));
+            ViewBag.AttendList = attendlist;
             return PartialView(subject);
         }
 
@@ -3283,9 +3246,48 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-
-
-
+        
+        public async Task<ActionResult> InitialRelationShip_Subject_Employee()
+        {
+            foreach(var subject in _db.Subject)
+            {
+                // 遍历每一个项目
+                List<int> employeeIds = new List<int>();
+                // 添加项目主管
+                employeeIds.Add(subject.HolderId);
+                foreach(var assignment in subject.Assignment)
+                {
+                    // 比较任务主管
+                    employeeIds = CompareEmployee(employeeIds, assignment.HolderId);
+                    foreach(var collaborator in assignment.Collaborator)
+                    {
+                        employeeIds = CompareEmployee(employeeIds, collaborator.Id);
+                    }
+                }
+                foreach(int i in employeeIds)
+                {
+                    Employee emp = _db.Employee.SingleOrDefault(m => m.Id == i);
+                    subject.AttendEmployee.Add(emp);
+                }
+            }
+            await _db.SaveChangesAsync();
+            return Content("SUCCESS");
+        }
+        public ActionResult AttendEmployeeList(int subjectId)
+        {
+            var sub = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
+            return View(sub);
+        }
+        public static List<int> CompareEmployee(List<int> org, int employeeId)
+        {
+            if (org.Contains(employeeId))
+                return org;
+            else
+            {
+                org.Add(employeeId);
+                return org;
+            }
+        }
 
         //旋转图片
         public static Bitmap KiRotate(Image originalImage, float angle)
@@ -3380,12 +3382,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-
-
-
-
-
-
+        
     }
 
 }

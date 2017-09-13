@@ -14,19 +14,14 @@
     </div>
     <div class="form-group">
         <label for="HolderId">负责人</label>
-        @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdown", @id = "assignment_holder_straff" })
+        @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, "", new { @class = "form-control selectpicker dropdown", id = "assignment_holder_straff" })
     </div>
     <div style="margin-bottom:15px;">
         <label for="assignment_col_straff">参与人</label>
         <select class="selectpicker form-control" id="assignment_col_straff" name="assignment_col_straff" multiple>
-            @foreach (var depart in ViewBag.DepartmentList)
+            @foreach (var staff in ViewBag.DepartmentList)
             {
-                <optgroup label="@depart.DepartmentName">
-                    @foreach (var straff in depart.EmployeeList)
-                    {
-                        <option value="@straff.Id">@straff.NickName</option>
-                    }
-                </optgroup>
+                <option value="@staff.Id">@staff.NickName</option>
             }
         </select>
     </div>
