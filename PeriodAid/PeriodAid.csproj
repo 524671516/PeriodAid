@@ -1109,8 +1109,10 @@
     <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectCompletedAssignmentList.cshtml" />
     <Content Include="Views\TaskManagement\AllUserAssignmentPartial.cshtml" />
     <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\TaskManagement\AttendEmployeeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

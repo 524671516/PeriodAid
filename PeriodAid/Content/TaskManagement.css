@@ -1584,6 +1584,13 @@ a.btn_subtask_detail{
 }
 /*日历样式结束*/
 
+.menu-attend-item{
+    width:12%;
+    padding:2%;
+    float:left;
+    text-align:center;
+}
+
 
 
 
