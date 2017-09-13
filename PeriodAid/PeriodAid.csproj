@@ -1113,6 +1113,8 @@
     <Content Include="Views\TaskManagement\AllUserAssignmentPartial.cshtml" />
     <Content Include="Views\TaskManagement\LoginLog.cshtml" />
     <Content Include="Views\TaskManagement\AttendEmployeeList.cshtml" />
+    <Content Include="Views\TaskManagement\EditTeam.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
