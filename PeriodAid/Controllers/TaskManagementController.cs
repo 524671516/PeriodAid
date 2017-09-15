@@ -364,6 +364,23 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //获取项目团队
+        [OperationAuth(OperationGroup = 101)]
+        public ActionResult EditTeam(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var team = (from m in _db.Employee
+                       select m).ToList();
+            List < Employee > attendlist = new List<Employee>();
+            attendlist.Add(subject.Holder);
+            attendlist.AddRange(subject.AttendEmployee.Except(attendlist));
+            ViewBag.AttendList = attendlist;
+            List<Employee> attendlist1 = new List<Employee>();
+            attendlist1.AddRange(team.Except(attendlist));
+            ViewBag.AttendList1 = attendlist1;
+            return PartialView();
+        }
+
         //修改项目
         [HttpPost, ValidateAntiForgeryToken]
         [OperationAuth(OperationGroup = 103)]
@@ -1052,6 +1069,26 @@ namespace PeriodAid.Controllers
                 var waitEmployee = assignment.Subject.AttendEmployee.Except(existem);
                 ViewBag.DepartmentList = waitEmployee;
                 return PartialView(assignment);
+            }
+            catch (Exception)
+            {
+                return Content("FAIL");
+            }
+        }
+
+        //添加团队成员
+        [OperationAuth(OperationGroup = 202)]
+        public ActionResult Subject_CollaboratorAddPartial()
+        {
+            try
+            {
+                var team = (from m in _db.Employee
+                            select m).ToList();
+                List<Employee> attendlist = new List<Employee>();
+                List<Employee> attendlist1 = new List<Employee>();
+                attendlist1.AddRange(team.Except(attendlist));
+                ViewBag.AttendList1 = attendlist1;
+                return PartialView();
             }
             catch (Exception)
             {

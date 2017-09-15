@@ -79,22 +79,41 @@
                 for (var item in data) {
                     console.log(data);
                     for (i = 0; i < data[item].length; i++) {
-                        $("#bt_new_mess").unbind("click");
                         if (data[item][i].IsNew == true) {
                             //$("#bt_new_mess").attr("data-content", data[item][i].LogsContent);
                             $("#bt_new_mess").removeClass("color-gray");
+                            $("#new_mess_show .popover-content").hide();
                             $("#new_mess_show").append("<div class=\"popover-title\">" + "项目【" + data[item][i].SubjectTitle + "】操作消息：" + "</br><div class=\"color-gray\">"+ data[item][i].LogsContent + "</div></div>");
                             $("#bt_new_mess").html("新消息");
-                            //动态消息提示
-                            $("#bt_new_mess").on("click", function () {
-                                $("#new_mess_show").slideToggle();
-                            });
                         }
                     }
 
                 }
             }
         })
+        //动态消息提示
+        $("#bt_new_mess").on("click", function () {
+            //$("#new_mess_show").slideToggle();
+            $.ajax({
+               // url: "/TaskManagement/SubjectProgressPartial",
+                url: "/TaskManagement/PersonalHelp",
+                data: {
+                    SubjectId: $("#panel-wrap").attr("data-sid")
+                },
+                success: function (data) {
+                    if (data != "FAIL") {
+                        $("#Create-Subject-Content").html(data);
+                        $("#Add-Subject").modal();
+                    }
+                    else {
+                        ErrorAlert("操作失败。")
+                    }
+                },
+                error: function (data) {
+                    ErrorAlert("操作失败。");
+                }
+            })
+        });
 
     })
 
