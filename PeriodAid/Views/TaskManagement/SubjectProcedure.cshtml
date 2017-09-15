@@ -48,5 +48,5 @@
 </div>
 <div class="tm_panel-footer clear-float">
     <div class="tm_panel-footer-left float-left"></div>
-    <div class="tm_panel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Assignment.Count(p => p.Status == AssignmentStatus.FINISHED))</span>/<span class="total-num">@Html.Encode(Model.Assignment.Count(p => p.Status > AssignmentStatus.DELETED))</span></div>
+    <div class="tm_panel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Assignment.Count(p => p.Status == AssignmentStatus.UNFINISHED))</span></div>
 </div>

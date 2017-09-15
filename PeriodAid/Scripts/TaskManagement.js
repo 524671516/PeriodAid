@@ -491,6 +491,24 @@ function GetAssignment_CollaboratorPartial(AssignmentId, Callback) {
     });
 }
 
+//获取团队参与人模板
+function GetTeam_CollaboratorPartial(subject, Callback) {
+    $.ajax({
+        url: "/TaskManagement/EditTeam",
+        data: {
+            SubjectId: subject
+        },
+        success: function (data) {
+            if (Callback && typeof Callback == "function") {
+                Callback(data);
+            }
+        },
+        error: function () {
+            ErrorAlert("操作失败。")
+        }
+    });
+}
+
 
 
 

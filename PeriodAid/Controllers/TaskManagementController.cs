@@ -226,7 +226,6 @@ namespace PeriodAid.Controllers
                 var MergeSubject = FirstMerge.Union(HolderSubject);
 
                 return PartialView(MergeSubject);
-
             }
         }
 
@@ -235,7 +234,7 @@ namespace PeriodAid.Controllers
         public async Task<ActionResult> Subject_Detail(int SubjectId)
         {
             var employee = getEmployee(User.Identity.Name);
-            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status == SubjectStatus.ACTIVE);
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId &&(m.Status == SubjectStatus.ACTIVE || m.Status == SubjectStatus.ARCHIVED));
             await AddLogAsync(LogCode.VIEWSUBJECT, employee, SubjectId, "查看了项目:"+subject.SubjectTitle+"。");
             if (subject == null)
             {
@@ -363,6 +362,28 @@ namespace PeriodAid.Controllers
                 }
                 return Content("FAIL");
             }
+        }
+
+        //获取项目团队
+        public ActionResult EditTeam(int SubjectId)
+        {
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var employee = subject.HolderId;
+            var all = (from m in _db.Employee
+                       select m).ToList();
+            List<Employee> attendlist = new List<Employee>();
+            attendlist.Add(subject.Holder);
+            attendlist.AddRange(subject.AttendEmployee.Except(attendlist));
+            ViewBag.AttendList = attendlist;
+            List<Employee> attendlist1 = new List<Employee>();
+            List<Employee> attendlist2 = new List<Employee>();
+            attendlist2.Add(subject.Holder);
+            attendlist1.AddRange(subject.AttendEmployee.Except(attendlist2));
+            ViewBag.AttendList1 = attendlist1;
+            ViewBag.AttendList2 = attendlist2;
+            ViewBag.employee = employee;
+            ViewBag.subject = subject.Id;
+            return PartialView();
         }
 
         //修改项目
@@ -517,7 +538,6 @@ namespace PeriodAid.Controllers
             return Content(err_res);
         }
         #endregion
-
 
         #region  项目任务列表操作
         //获取任务列表
@@ -684,16 +704,16 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  任务操作
         //获取任务
         public PartialViewResult SubjectAssignment(int? ProcedureId, int? SubjectId,string Type)
         {
+            ViewBag.SubjectId = SubjectId;
             if (ProcedureId == null) {
-                var assignmentlist = from m in _db.Assignment
+                var assignmentlist = (from m in _db.Assignment
                                      where m.SubjectId == SubjectId && m.Status== AssignmentStatus.FINISHED
                                      orderby m.CreateTime descending
-                                     select m;
+                                     select m).Take(5);
                 ViewBag.ProcedureId = 0;
                 return PartialView(assignmentlist);
             }
@@ -720,7 +740,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var assignmentlist = from m in _db.Assignment
-                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status > AssignmentStatus.DELETED
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
                                          orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
                                          select m;
                     ViewBag.ProcedureId = ProcedureId;
@@ -728,6 +748,56 @@ namespace PeriodAid.Controllers
                 }
             }      
         }
+
+        #region 获取全部已完成任务
+        public PartialViewResult SubjectCompletedAssignmentList(int subjectId)
+        {
+            var collaborator = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
+            ViewBag.Collaborator = collaborator.AttendEmployee;
+            return PartialView();
+        }
+        public PartialViewResult SubjectCompletedAssignmentListPartial(int subjectId, int? employeeId)
+        {
+            int _emplyeeId = employeeId ?? 0;
+            if (_emplyeeId == 0)
+            {
+                var model = from m in _db.Assignment
+                            where m.Status == AssignmentStatus.FINISHED
+                            orderby m.CompleteDate descending
+                            select m;
+                return PartialView(model);
+            }
+            else
+            {
+                var model = from m in _db.Assignment
+                            where m.Status == AssignmentStatus.FINISHED && m.HolderId == _emplyeeId
+                            orderby m.CompleteDate descending
+                            select m;
+                return PartialView(model);
+            }
+        }
+        // 筛选代码
+        public PartialViewResult SubjectCompletedAssignmentList_partial(int subjectId, int? employeeId, int sorttype)
+        {
+            int _employeeId = employeeId ?? 0;
+            if (_employeeId != 0)
+            {
+                var list = from m in _db.Assignment
+                           where m.SubjectId == subjectId && m.HolderId == _employeeId
+                           orderby m.Deadline descending
+                           select m;
+                return PartialView(list);
+            }
+            else
+            {
+                var list = from m in _db.Assignment
+                           where m.SubjectId == subjectId
+                           orderby m.Deadline descending
+                           select m;
+                return PartialView(list);
+            }
+        }
+        #endregion
 
         //获取任务填写表单
         public PartialViewResult GetAssignmentForm(int ProcedureId, int SubjectId)
@@ -739,31 +809,9 @@ namespace PeriodAid.Controllers
                 SubjectId = SubjectId,
                 HolderId = employee.Id
             };
-            List<CollaboratorModel> collist = new List<CollaboratorModel>();
-            List<Employee> existem = new List<Employee>();
-            var departemt = from m in _db.Department
-                            where m.Status == DepartmentStatus.NORMAL
-                            select m;
-            foreach (var depart in departemt)
-            {
-                List<Employee> newlist = new List<Employee>();
-                foreach (var _item in depart.Employee)
-                {
-                   
-                        newlist.Add(_item);
-                }
-                CollaboratorModel colmodel = new CollaboratorModel()
-                {
-                    DepartmentName = depart.DepartmentName,
-                    EmployeeList = newlist
-                };
-                collist.Add(colmodel);
-            }
-            ViewBag.DepartmentList = collist;
-            var EmployeeList = from m in _db.Employee
-                               where m.Status > EmployeeStatus.DEVOICE
-                               orderby m.Id descending
-                               select m;
+            var Sub = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            var EmployeeList = Sub.AttendEmployee;
+            ViewBag.DepartmentList = EmployeeList;
             ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", employee.Id);
             return PartialView(item);
         }
@@ -998,7 +1046,6 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  任务参与人操作
         //获取任务的参与者模板
         [OperationAuth(OperationGroup = 202)]
@@ -1022,32 +1069,70 @@ namespace PeriodAid.Controllers
                 {
                     existem.Add(col);
                 }
-                var departemt = from m in _db.Department
-                                where m.Status == DepartmentStatus.NORMAL
-                                select m;
-                foreach (var depart in departemt)
-                {
-                    List<Employee> newlist = new List<Employee>();
-                    foreach (var item in depart.Employee)
-                    {
-                        if (!existem.Contains(item))
-                        {
-                            newlist.Add(item);
-                        }
-                    }
-                    CollaboratorModel colmodel = new CollaboratorModel()
-                    {
-                        DepartmentName = depart.DepartmentName,
-                        EmployeeList = newlist
-                    };
-                    collist.Add(colmodel);
-                }
-                ViewBag.DepartmentList = collist;
+                var waitEmployee = assignment.Subject.AttendEmployee.Except(existem);
+                ViewBag.DepartmentList = waitEmployee;
                 return PartialView(assignment);
             }
             catch (Exception)
             {
                 return Content("FAIL");
+            }
+        }
+
+        //添加团队成员
+        public ActionResult Subject_CollaboratorAddPartial(int employee,int subject)
+        {
+            var Employee = _db.Employee.SingleOrDefault(m => m.Id == employee);
+            var Subject = _db.Subject.SingleOrDefault(m => m.Id == subject);
+            try
+            {
+                var team = (from m in _db.Employee
+                            select m).ToList();
+                List<Employee> attendlist = new List<Employee>();
+                attendlist.Add(Employee);
+                attendlist.AddRange(Subject.AttendEmployee.Except(attendlist));
+                ViewBag.AttendList = attendlist;
+                List<Employee> attendlist1 = new List<Employee>();
+                attendlist1.AddRange(team.Except(attendlist));
+                ViewBag.AttendList1 = attendlist1;
+                ViewBag.Subject = Subject.Id;
+                return PartialView(Employee);
+            }
+            catch (Exception)
+            {
+                return Content("FAIL");
+            }
+        }
+        //添加团队人员
+        [HttpPost]
+        public async Task<JsonResult> AddTeamCollaborator(int SubjectId, string colvalue)
+        {
+            try
+            {
+                var employee = getEmployee(User.Identity.Name);
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status > AssignmentStatus.DELETED);
+                var colarray = colvalue.Split(',');
+                foreach (var i in colarray)
+                {
+                    try
+                    {
+                        var ci = Convert.ToInt32(i);
+                        var col = _db.Employee.SingleOrDefault(m => m.Id == ci && m.Status > EmployeeStatus.DEVOICE);
+                        subject.AttendEmployee.Add(col);
+                        _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { result = "FAIL", errmsg = "数据保存失败。" });
+                    }
+                }
+                await AddLogAsync(LogCode.EDITTASK, employee, subject.Id, "为项目【" + subject.SubjectTitle + "】添加" + colarray.Count() + "位参与人。");
+                return Json(new { result = "SUCCESS", errmsg = "" });
+            }
+            catch (Exception)
+            {
+                return Json(new { result = "FAIL", errmsg = "内部异常。" });
             }
         }
 
@@ -1086,6 +1171,52 @@ namespace PeriodAid.Controllers
             {
                 return Json(new { result = "FAIL", errmsg = "内部异常。" });
             }
+        }
+
+        //删除团队人员
+        [HttpPost]
+        public async Task<JsonResult> DeleteTeamCollaborator(int SubjectId, int EmployeeId)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status > AssignmentStatus.DELETED);
+            if (employee.HolderAssignment.Select(p => p.Id).Contains(EmployeeId) || employee.Subject.Select(m => m.Id).Contains(subject.Id) || employee.Type == EmployeeType.DEPARTMENTMANAGER)
+            {
+                var colstraff = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId && m.Status > EmployeeStatus.DEVOICE);
+                var colNum = (from m in _db.Assignment
+                              where m.SubjectId== subject.Id && m.HolderId == EmployeeId && m.Status > AssignmentStatus.DELETED
+                              select m).Count();
+                var colNum1 = (from m in _db.SubTask
+                              where m.Assignment.HolderId == subject.Id && m.ExecutorId == EmployeeId && m.Status > AssignmentStatus.DELETED
+                              select m).Count();
+                if (colNum > 0)
+                {
+                    return Json(new { result = "FAIL", errmsg = "无法删除请确认参与人不负责任何任务。" });
+                }
+                if (colNum1 > 0)
+                {
+                    return Json(new { result = "FAIL", errmsg = "无法删除请确认参与人不负责任何子任务。" });
+                }
+                else
+                {
+                    try
+                    {
+                        subject.AttendEmployee.Remove(colstraff);
+                        _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.EDITTASK, employee, subject.Id, "为项目【" + subject.SubjectTitle + "】删除了1位参与人。");
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { result = "FAIL", errmsg = "存储失败。" });
+                    }
+                    return Json(new { result = "SUCCESS", errmsg = "" });
+                }
+            }
+            else
+            {
+                return Json(new { result = "FAIL", errmsg = "当前用户没有权限删除参与人。" });
+            }
+
         }
 
         //删除参与人
@@ -1128,7 +1259,6 @@ namespace PeriodAid.Controllers
 
         }
         #endregion
-
 
         #region 子任务操作
         //获取子任务模板
@@ -1429,7 +1559,6 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  数据获取操作
         //获取任务列表数字更新数据
         [HttpPost]
@@ -1452,10 +1581,8 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region 日志操作
         //获取项目日志
-        [OperationAuth(OperationGroup = 102)]
         public PartialViewResult SubjectLogsPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
@@ -1558,8 +1685,7 @@ namespace PeriodAid.Controllers
             return false;
         }
         #endregion
-
-
+        
         #region 文件操作
         //项目文件页
         [OperationAuth(OperationGroup = 102)]
@@ -1878,7 +2004,10 @@ namespace PeriodAid.Controllers
         public ActionResult PersonalHelp() {
             return View();
         }
+
+        
         #endregion
+
         #region 我的任务操作
         //获取我的任务页面
         public ActionResult PersonalActionPanel()
@@ -2835,7 +2964,6 @@ namespace PeriodAid.Controllers
         }
         #endregion
 
-
         #region  日历
         //日历页面
         public ActionResult SubjectCalendarPanel()
@@ -2892,7 +3020,6 @@ namespace PeriodAid.Controllers
         }
 
         #endregion
-
 
         #region  数据EXCEL导出操作
         public ActionResult GetExcelDataForAssignment()
@@ -3012,6 +3139,10 @@ namespace PeriodAid.Controllers
                                where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
                                select m).Count();
             ViewBag.RecentEvent = loglist;
+            List<Employee> attendlist = new List<Employee>();
+            attendlist.Add(subject.Holder);
+            attendlist.AddRange(subject.AttendEmployee.Except(attendlist));
+            ViewBag.AttendList = attendlist;
             return PartialView(subject);
         }
 
@@ -3022,6 +3153,8 @@ namespace PeriodAid.Controllers
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             return PartialView(subject);
         }
+
+       
 
 
         //获取项目今日完成进度
@@ -3045,17 +3178,6 @@ namespace PeriodAid.Controllers
                                  select m;
             return PartialView(AssignmentList);
         }
-
-
-
-
-
-
-
-
-
-
-
 
         [HttpPost]
         public JsonResult QuickSearch(string input)
@@ -3100,7 +3222,7 @@ namespace PeriodAid.Controllers
                                      select m.LogTime).FirstOrDefault();
                 var newdata = from m in _db.OperationLogs
                               where m.SubjectId == SubjectId && m.LogTime >= lastCheckTime && m.LogCode!=400
-                              select m.LogContent+m.LogTime+"</br>";
+                              select m.LogContent+m.LogTime+ "</br>";
                 var newcount = newdata.Count();
                 var newcontent = newdata.ToArray();
                 AjaxSubjectInfoClass asic = new AjaxSubjectInfoClass()
@@ -3267,9 +3389,48 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-
-
-
+        
+        public async Task<ActionResult> InitialRelationShip_Subject_Employee()
+        {
+            foreach(var subject in _db.Subject)
+            {
+                // 遍历每一个项目
+                List<int> employeeIds = new List<int>();
+                // 添加项目主管
+                employeeIds.Add(subject.HolderId);
+                foreach(var assignment in subject.Assignment)
+                {
+                    // 比较任务主管
+                    employeeIds = CompareEmployee(employeeIds, assignment.HolderId);
+                    foreach(var collaborator in assignment.Collaborator)
+                    {
+                        employeeIds = CompareEmployee(employeeIds, collaborator.Id);
+                    }
+                }
+                foreach(int i in employeeIds)
+                {
+                    Employee emp = _db.Employee.SingleOrDefault(m => m.Id == i);
+                    subject.AttendEmployee.Add(emp);
+                }
+            }
+            await _db.SaveChangesAsync();
+            return Content("SUCCESS");
+        }
+        public ActionResult AttendEmployeeList(int subjectId)
+        {
+            var sub = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
+            return View(sub);
+        }
+        public static List<int> CompareEmployee(List<int> org, int employeeId)
+        {
+            if (org.Contains(employeeId))
+                return org;
+            else
+            {
+                org.Add(employeeId);
+                return org;
+            }
+        }
 
         //旋转图片
         public static Bitmap KiRotate(Image originalImage, float angle)
@@ -3364,12 +3525,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-
-
-
-
-
-
+        
     }
 
 }

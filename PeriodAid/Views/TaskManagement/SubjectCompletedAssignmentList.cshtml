@@ -1,0 +1,128 @@
+﻿
+<div id="tm-my-view" class="tm-my-view tm-view">
+    <div class="tm-view-header tm-my-view-header">
+        <div class="tm-my-view-control tm-view-control">
+            <h3><a data-href="/TaskManagement/SubjectCompletedAssignmentList">已完成的任务</a></h3>
+            
+        </div>
+        <div class="tm-hidden-view tm-view-header-close">
+            <button type="button" class="close"><span aria-hidden="true">×</span></button>
+        </div>
+    </div>
+    <div class="tm-view-content tm-my-view-content">
+        <div class="tm-view-content-wrap  tm-view-wrap tm-my-view-wrap" id="show-view">            
+           
+             <div class="tm-view-header clear-float">
+                <div class="tm-view-header-left float-left">
+                    
+                </div>
+                <div class="tm-view-header-right float-right">
+                    <div class="tm-view-control" id="tm-view-thirdcontrol">
+                        <ul>
+                            <li class="tm-view-control-sort dropdown">
+                    <a href="javascript:;" id="tm-view-dropdown-progress" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="tm-select-title">根据人员排序</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress">
+                        @foreach (var item in ViewBag.Collaborator)
+                        {
+                            <li>
+                                <a href="javascript:;" class="tm-select-range tm-select collaborator_select" data-empid="@item.Id">@item.NickName</a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                            @*<li class="tm-view-control-sort dropdown">
+        <a href="javascript:;" id="tm-view-dropdown-undefined" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <span class="tm-select-title">按截止时间排序</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-undefined">
+            <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="deadtimesort">按发起时间排序</a></li>
+            <li><a href="javascript:;" class="tm-select-sort-type tm-select" data-type="subjectsort">按项目排序</a></li>
+
+        </ul>
+    </li>*@
+                            @*<li class="tm-view-control-sort">
+                            <a href="javascript:;">
+                                <i class="fa fa-download color-blue" aria-hidden="true"></i>
+                                导出excel
+                            </a>
+                        </li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tm-view-content-container  tm-view-container" id="tm-view-scroll-container">
+                <input type="hidden" id="tm-view-page" name="tm-view-page" value="0" />
+                <div class="tm-view-loading-content" id="tm-view-col-content">
+                </div>
+                
+            </div>   
+        </div>
+    </div>
+    <script>
+    $(function () {
+        //初始化加载数据地址
+        var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
+        if (init_link) {
+            //获取初始化数据
+            GetTemplate(init_link, {}, function (data) {
+                //成功
+                console.log(data)
+                $(".tm-my-view-wrap").html(data);
+            }, function (data) {
+                //失败
+            });
+        }
+
+        //我的任务导航控制    近期的事和任务
+        $(".tm-my-view-control").on("click", ".tm-view-control-link", function () {
+            var that = $(this);
+            if (!that.hasClass("active")) {
+                $(".tm-my-view-control .tm-view-control-link").removeClass("active");
+                var _link = that.attr("data-href");
+                if (_link) {
+                    //获取数据模板
+                    GetTemplate(_link, {}, function (data) {
+                        //成功
+                        $(".tm-my-view-wrap").html(data);
+                        that.addClass("active");
+                    }, function (data) {
+                        //失败
+                    });
+                }
+            }
+        });
+        $.ajax({
+            url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
+            type: 'post',
+            data: {
+                subjectId: $("#panel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                //console.log(data)
+                $("#tm-view-col-content").html(data);
+                $('.btn-get-allcompleted').hide()
+            }
+        })
+        $(".collaborator_select").click(function () {
+            console.log($(this).attr("data-empid"));
+            $.ajax({
+                url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
+                type: 'post',
+                data: {
+                    subjectId: $("#panel-wrap").attr("data-sid"),
+                    employeeId: $(this).attr("data-empid")
+                },
+                success: function (data) {
+                    $("#tm-view-col-content").html(data);
+                    $('.btn-get-allcompleted').hide()
+                }
+            })
+        })
+    });
+
+    </script>
+</div>

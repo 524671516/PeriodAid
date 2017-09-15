@@ -1099,19 +1099,23 @@
     <Content Include="Views\TaskManagement\PersonalExecutableTaskPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectLogsPartial.cshtml" />
     <Content Include="Views\TaskManagement\GetProcedureForm.cshtml" />
-    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
     <Content Include="Views\TaskManagement\Subject_Agendas.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCalendarPanel.cshtml" />
     <Content Include="Views\TaskManagement\SecuritySetting.cshtml" />
     <Content Include="Views\Manage\ChangePasswordSuccess.cshtml" />
     <Content Include="Views\TaskManagement\PersonalSetting.cshtml" />
-    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
     <Content Include="Views\MobileTaskManagement\Home.cshtml" />
     <Content Include="Views\MobileTaskManagement\SubjectProcedure.cshtml" />
     <Content Include="Views\Shared\_TaskManagementLayout.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
     <Content Include="Views\TaskManagement\PersonalHelp.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectCompletedAssignmentList.cshtml" />
     <Content Include="Views\TaskManagement\AllUserAssignmentPartial.cshtml" />
+    <Content Include="Views\TaskManagement\LoginLog.cshtml" />
+    <Content Include="Views\TaskManagement\AttendEmployeeList.cshtml" />
+    <Content Include="Views\TaskManagement\EditTeam.cshtml" />
+    <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectCompletedAssignmentListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,9 +1,12 @@
 ﻿@model IEnumerable<PeriodAid.Models.Subject>
-<h3>
+<h3 style="position:relative">
     <i class="fa fa-tasks color-blue" aria-hidden="true"></i>&nbsp;
     正在执行的项目&nbsp;
-    <button type="button" id="bt_new_mess" class="btn btn-primary" data-toggle="popover" title="新操作消息" data-content="">新消息<span class="badge">4</span></button>
-</h3><input type="hidden" id="user_id" value="@ViewBag.newcontent" />
+    <button type="button" id="bt_new_mess" class="color-gray btn btn-primary" style="color:white">
+        全部消息</button>
+            
+</h3>
+
 <div class="card-box row">
     @if (Model.Count() != 0)
     {
@@ -57,36 +60,88 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">全部消息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row modal-nav-panel">
+                        <div class="col-md-3 tm_modal_ul_wrap">
+                            <ul class="list-group tm_modal-nav tm_modal_nav_ul">
+                                <li class="list-group-item tm_active" data-href="/TaskManagement/NewLogs">未查看</li>
+                                @*<li class="list-group-item" data-href="/TaskManagement/NewLogs">已查看</li>*@
+                            </ul>
+                        </div>
+                        <div class="col-md-9   tm_modal_ul_wrap">
+                            @*<p class="text-center" style="margin:0 auto;" id="loading-p"><a class="popover-title glyphicon " style="display:block">新操作消息</a></p>*@
+                            
+                            <div id="log_content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
 <script>
     $(function () {
-        $(function () {
-            $('[data-toggle="popover"]').popover()
-        })
-        $('[data-toggle="tooltip"]').tooltip();
-        $.ajax({
+       /* $.ajax({
             url: "/Taskmanagement/NewLogs/",
             type: "post",
             data: {
             },
             success: function (data) {
+                console.log(typeof data)
+                console.log(data)
                 for (var item in data) {
+                    console.log(data);
                     for (i = 0; i < data[item].length; i++) {
                         if (data[item][i].IsNew == true) {
-                            var l
-                            $("#bt_new_mess").attr("data-content", data[item][i].LogsContent);
-                        }
-                        else {
-
+                            $("#bt_new_mess").css({color:'white'}).html("新消息")
+                            //$("#bt_new_mess").attr("data-content", data[item][i].LogsContent);        
+                            
                         }
                     }
-
                 }
             }
-        })
-        //动态消息提示
-        $("#bt_new_mess").on("click", function () {
-
+        })*/
+        $("#bt_new_mess").click(function () {
+            console.log("show")
+            $('#myModal').modal()
+            $.ajax({
+                url: "/Taskmanagement/NewLogs/",
+                type: "post",
+                data: {
+                },
+                success: function (data) {
+                    for (var item in data) {
+                        console.log(data);
+                        for (i = 0; i < data[item].length; i++) {
+                            if (data[item][i].IsNew == true) {
+                                //$("#bt_new_mess").attr("data-content", data[item][i].LogsContent);
+                                $("#log_content").append("<div class=\"popover-title\" style='text-align:center'>" + "项目【" + data[item][i].SubjectTitle + "】操作消息：" + "<h5 class=\"color-gray text-left\">" + data[item][i].LogsContent + "</h5></div>");
+                            }
+                        }
+                    }
+                }
+            })
         });
+        
+        
+
     })
 
 
