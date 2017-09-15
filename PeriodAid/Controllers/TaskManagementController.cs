@@ -747,15 +747,29 @@ namespace PeriodAid.Controllers
         #region 获取全部已完成任务
         public PartialViewResult SubjectCompletedAssignmentList(int subjectId)
         {
-            var collaborator = from m in _db.Assignment
-                                where m.SubjectId == subjectId
-                                select m.Collaborator;
-            var holder = from m in _db.Assignment
-                         where m.SubjectId == subjectId
-                         select m.Holder;
-
-            //ViewBag.Collaborator = collaborator.Union(
+            var collaborator = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
+            ViewBag.Collaborator = collaborator.AttendEmployee;
             return PartialView();
+        }
+        public PartialViewResult SubjectCompletedAssignmentListPartial(int subjectId, int? employeeId)
+        {
+            int _emplyeeId = employeeId ?? 0;
+            if (_emplyeeId == 0)
+            {
+                var model = from m in _db.Assignment
+                            where m.Status == AssignmentStatus.FINISHED
+                            orderby m.CompleteDate descending
+                            select m;
+                return PartialView(model);
+            }
+            else
+            {
+                var model = from m in _db.Assignment
+                            where m.Status == AssignmentStatus.FINISHED && m.HolderId == _emplyeeId
+                            orderby m.CompleteDate descending
+                            select m;
+                return PartialView(model);
+            }
         }
         // 筛选代码
         public PartialViewResult SubjectCompletedAssignmentList_partial(int subjectId, int? employeeId, int sorttype)

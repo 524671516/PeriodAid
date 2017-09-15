@@ -1115,6 +1115,7 @@
     <Content Include="Views\TaskManagement\AttendEmployeeList.cshtml" />
     <Content Include="Views\TaskManagement\EditTeam.cshtml" />
     <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
+    <Content Include="Views\TaskManagement\SubjectCompletedAssignmentListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
