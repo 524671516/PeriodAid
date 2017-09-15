@@ -365,19 +365,24 @@ namespace PeriodAid.Controllers
         }
 
         //获取项目团队
-        [OperationAuth(OperationGroup = 101)]
         public ActionResult EditTeam(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
-            var team = (from m in _db.Employee
+            var employee = subject.HolderId;
+            var all = (from m in _db.Employee
                        select m).ToList();
-            List < Employee > attendlist = new List<Employee>();
+            List<Employee> attendlist = new List<Employee>();
             attendlist.Add(subject.Holder);
             attendlist.AddRange(subject.AttendEmployee.Except(attendlist));
             ViewBag.AttendList = attendlist;
             List<Employee> attendlist1 = new List<Employee>();
-            attendlist1.AddRange(team.Except(attendlist));
+            List<Employee> attendlist2 = new List<Employee>();
+            attendlist2.Add(subject.Holder);
+            attendlist1.AddRange(subject.AttendEmployee.Except(attendlist2));
             ViewBag.AttendList1 = attendlist1;
+            ViewBag.AttendList2 = attendlist2;
+            ViewBag.employee = employee;
+            ViewBag.subject = subject.Id;
             return PartialView();
         }
 
@@ -1061,22 +1066,59 @@ namespace PeriodAid.Controllers
         }
 
         //添加团队成员
-        [OperationAuth(OperationGroup = 202)]
-        public ActionResult Subject_CollaboratorAddPartial()
+        public ActionResult Subject_CollaboratorAddPartial(int employee,int subject)
         {
+            var Employee = _db.Employee.SingleOrDefault(m => m.Id == employee);
+            var Subject = _db.Subject.SingleOrDefault(m => m.Id == subject);
             try
             {
                 var team = (from m in _db.Employee
                             select m).ToList();
                 List<Employee> attendlist = new List<Employee>();
+                attendlist.Add(Employee);
+                attendlist.AddRange(Subject.AttendEmployee.Except(attendlist));
+                ViewBag.AttendList = attendlist;
                 List<Employee> attendlist1 = new List<Employee>();
                 attendlist1.AddRange(team.Except(attendlist));
                 ViewBag.AttendList1 = attendlist1;
-                return PartialView();
+                ViewBag.Subject = Subject.Id;
+                return PartialView(Employee);
             }
             catch (Exception)
             {
                 return Content("FAIL");
+            }
+        }
+        //添加团队人员
+        [HttpPost]
+        public async Task<JsonResult> AddTeamCollaborator(int SubjectId, string colvalue)
+        {
+            try
+            {
+                var employee = getEmployee(User.Identity.Name);
+                var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status > AssignmentStatus.DELETED);
+                var colarray = colvalue.Split(',');
+                foreach (var i in colarray)
+                {
+                    try
+                    {
+                        var ci = Convert.ToInt32(i);
+                        var col = _db.Employee.SingleOrDefault(m => m.Id == ci && m.Status > EmployeeStatus.DEVOICE);
+                        subject.AttendEmployee.Add(col);
+                        _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { result = "FAIL", errmsg = "数据保存失败。" });
+                    }
+                }
+                await AddLogAsync(LogCode.EDITTASK, employee, subject.Id, "为项目【" + subject.SubjectTitle + "】添加" + colarray.Count() + "位参与人。");
+                return Json(new { result = "SUCCESS", errmsg = "" });
+            }
+            catch (Exception)
+            {
+                return Json(new { result = "FAIL", errmsg = "内部异常。" });
             }
         }
 
@@ -1115,6 +1157,52 @@ namespace PeriodAid.Controllers
             {
                 return Json(new { result = "FAIL", errmsg = "内部异常。" });
             }
+        }
+
+        //删除团队人员
+        [HttpPost]
+        public async Task<JsonResult> DeleteTeamCollaborator(int SubjectId, int EmployeeId)
+        {
+            var employee = getEmployee(User.Identity.Name);
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status > AssignmentStatus.DELETED);
+            if (employee.HolderAssignment.Select(p => p.Id).Contains(EmployeeId) || employee.Subject.Select(m => m.Id).Contains(subject.Id) || employee.Type == EmployeeType.DEPARTMENTMANAGER)
+            {
+                var colstraff = _db.Employee.SingleOrDefault(m => m.Id == EmployeeId && m.Status > EmployeeStatus.DEVOICE);
+                var colNum = (from m in _db.Assignment
+                              where m.SubjectId== subject.Id && m.HolderId == EmployeeId && m.Status > AssignmentStatus.DELETED
+                              select m).Count();
+                var colNum1 = (from m in _db.SubTask
+                              where m.Assignment.HolderId == subject.Id && m.ExecutorId == EmployeeId && m.Status > AssignmentStatus.DELETED
+                              select m).Count();
+                if (colNum > 0)
+                {
+                    return Json(new { result = "FAIL", errmsg = "无法删除请确认参与人不负责任何任务。" });
+                }
+                if (colNum1 > 0)
+                {
+                    return Json(new { result = "FAIL", errmsg = "无法删除请确认参与人不负责任何子任务。" });
+                }
+                else
+                {
+                    try
+                    {
+                        subject.AttendEmployee.Remove(colstraff);
+                        _db.Entry(subject).State = System.Data.Entity.EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                        await AddLogAsync(LogCode.EDITTASK, employee, subject.Id, "为项目【" + subject.SubjectTitle + "】删除了1位参与人。");
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { result = "FAIL", errmsg = "存储失败。" });
+                    }
+                    return Json(new { result = "SUCCESS", errmsg = "" });
+                }
+            }
+            else
+            {
+                return Json(new { result = "FAIL", errmsg = "当前用户没有权限删除参与人。" });
+            }
+
         }
 
         //删除参与人

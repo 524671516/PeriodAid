@@ -2,44 +2,65 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="Add-SubjectLabel">项目团队</h4>
+    <input type="hidden" id="team_holder" value="@ViewBag.employee" />
+    <input type="hidden" id="team_subject" value="@ViewBag.subject" />
 </div>
 <div class="modal-body">
     <div class="form-group">
         <div class="h4 edit-title">当前人员
             <span title="添加参与人" data-toggle="tooltip" data-placement="top"><a href="javascript:;" class="create_user_circle user_circle" id="add-employee" data-aid=""><i class="fa fa-plus ver_icon" aria-hidden="true"></i></a></span></div>
         <div class="clear-float">
-            @foreach (var emp in ViewBag.AttendList)
+            @foreach (var emb in ViewBag.AttendList2)
             {
-                <div class="menu-attend-item" data-aid="@emp.Id" title="@emp.NickName" data-toggle="tooltip" data-placement="top">
-                    @if (emp.ImgUrl == null)
-                    {
-                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                    }
-                    else
-                    {
-                        <span style="background-image: url('http://cdn2.shouquanzhai.cn/@emp.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                    }
+                <div class="menu-attend-item" data-aid="@emb.Id" title="@emb.NickName" data-toggle="tooltip" data-placement="top">
+                    <ul class="participator_area clear-float">
+                        @if (emb.ImgUrl == null)
+                        {
+                            <li>
+                                <div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle">
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <div style="background-image: url('http://cdn2.shouquanzhai.cn/@emb.ImgUrl');" class="user_circle">
+                                </div>
+                            </li>
+                        }
+                    </ul>
                 </div>
             }
-        </div>
-        <br />
-        <div class="clear-float">
             @foreach (var emp in ViewBag.AttendList1)
             {
                 <div class="menu-attend-item" data-aid="@emp.Id" title="@emp.NickName" data-toggle="tooltip" data-placement="top">
+                    <ul class="participator_area clear-float">
                     @if (emp.ImgUrl == null)
                     {
-                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                        <li>
+                            <div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle">
+                                <div class="minus-icon"><i class="fa fa-minus" aria-hidden="true"></i></div>
+                            </div>
+                        </li>
                     }
                     else
                     {
-                        <span style="background-image: url('http://cdn2.shouquanzhai.cn/@emp.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                        <li>
+                            <div style="background-image: url('http://cdn2.shouquanzhai.cn/@emp.ImgUrl');" class="user_circle">
+                                <div class="minus-icon"><i class="fa fa-minus" aria-hidden="true"></i></div>
+                            </div>
+                        </li>
                     }
+                    </ul>
                 </div>
             }
         </div>
     </div>
 </div>
+<div class="modal-body">
+
+</div>
+<script src="~/Scripts/TaskManagement.js"></script>
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -48,28 +69,34 @@
     //添加参与者按钮事件
     $("#add-employee").on("click", function () {
         //获取增加参与人模板
-        GetTemplate("/TaskManagement/Subject_CollaboratorAddPartial", function (data) {
-            //成功
-            $("#Add-Collaborator .modal-content").html(data);
-            $('#Add-Collaborator').modal('show');
-        }, function () {
-            //失败 
+        $.ajax({
+            url: "/TaskManagement/Subject_CollaboratorAddPartial",
+            type: "post",
+            data: {
+                employee: $("#team_holder").val(),
+                subject: $("#team_subject").val()
+            },
+            success: function (data) {
+                $("#Add-Team .modal-content").html(data);
+                $('#Add-Team').modal('show');
+            }
         })
     });
     //删除参与者按钮事件
     $(".minus-icon").on("click", function () {
         var that = $(this);
         _data = {
-            AssignmentId: $("#modal-header-assignment").attr("data-aid"),
-            EmployeeId: that.parent().parent().attr("data-cid")
+            SubjectId: $("#team_subject").val(),
+            EmployeeId: that.parent().parent().parent().parent().attr("data-aid")
         }
         CustomConfirm("是否要删除此联系人?", function () {
-            EditForAjax("/TaskManagement/DeleteAssignmentCollaborator", _data, function (data) {
+            EditForAjax("/TaskManagement/DeleteTeamCollaborator", _data, function (data) {
                 //成功
                 //获取参与人模板
-                GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-                    $("#modal_collaborator_area").html(data);
-                });
+                console.log($("#team_subject").val());
+                /*GetTeam_CollaboratorPartial($("#team_subject").val(), function (data) {
+                    $(".participator_area.clear-float").html(data);
+                });*/
             }, function (data) {
                 //失败
             })
