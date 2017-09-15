@@ -54,6 +54,43 @@ namespace PeriodAid.DAL
                 return false;
             }
         }
+        public bool UpdateDailySalesAvgSync(int storeid, int dow)
+        {
+            try
+            {
+                var item = _offlineDb.Off_AVG_Info.SingleOrDefault(m => m.DayOfWeek == dow && m.StoreId == storeid);
+                if (item != null)
+                {
+                    //修改
+                    string sql = "update Off_AVG_Info set AVG_SalesData = (Select cast(cast(T5.SalesCount as decimal(18, 2)) / T2.Count as decimal(18, 2)) as AVG_SalesData from(SELECT StoreId, DATEPART(DW, T1.[Date]) as DayOfWeek, COUNT(T1.Id) as Count FROM Off_SalesInfo_Daily as T1" +
+                        " where T1.StoreId = " + storeid + " and DATEPART(DW, T1.[Date]) = " + dow + " group by T1.StoreId, DATEPART(DW, T1.[Date])) as T2  left join (select T3.StoreId, DATEPART(DW, T3.Date) as DayOfWeek, SUM(T4.SalesCount) as SalesCount, SUM(T4.SalesAmount) as SalesAmount, SUM(T4.StorageCount) as StorageCount" +
+                        " FROM Off_SalesInfo_Daily as T3 left join Off_Daily_Product as T4 on T3.Id = T4.DailyId  where T3.StoreId = " + storeid + " and DATEPART(DW, T3.[Date]) = " + dow + " group by T3.StoreId, DATEPART(DW, T3.Date) ) as T5 on T2.StoreId = T5.StoreId and T2.DayOfWeek = T5.DayOfWeek), " +
+                        " AVG_AmountData = ( Select cast(cast(T5.SalesAmount as decimal(18, 2)) / T2.Count as decimal(18,2)) as AVG_AmountData from(SELECT StoreId, DATEPART(DW, T1.[Date]) as DayOfWeek, COUNT(T1.Id) as Count FROM Off_SalesInfo_Daily as T1 where T1.StoreId = " + storeid + " and DATEPART(DW, T1.[Date]) = " + dow +
+                        " group by T1.StoreId, DATEPART(DW, T1.[Date])) as T2  left join (select T3.StoreId, DATEPART(DW, T3.Date) as DayOfWeek, SUM(T4.SalesCount) as SalesCount, SUM(T4.SalesAmount) as SalesAmount, SUM(T4.StorageCount) as StorageCount" +
+                        " FROM Off_SalesInfo_Daily as T3 left join Off_Daily_Product as T4 on T3.Id = T4.DailyId where T3.StoreId = " + storeid + " and DATEPART(DW, T3.[Date]) = " + dow + " group by T3.StoreId, DATEPART(DW, T3.Date) ) as T5 on T2.StoreId = T5.StoreId and T2.DayOfWeek = T5.DayOfWeek)" +
+                        " where StoreId = " + storeid + " and DayOfWeek = " + dow;
+                    _offlineDb.Database.ExecuteSqlCommand(sql);
+                    _offlineDb.SaveChanges();
+                }
+                else
+                {
+                    //新增
+                    string sql = "INSERT INTO dbo.Off_AVG_Info ([StoreId] ,[DayOfWeek] ,[AVG_SalesData],[AVG_AmountData])" +
+                        " Select T2.StoreId, T2.DayOfWeek, cast(cast(T5.SalesCount as decimal(18,2))/T2.Count as decimal(18,2)) as AVG_SalesData, cast(cast(T5.SalesAmount as decimal(18, 2)) / T2.Count as decimal(18,2)) as AVG_AmountData from(SELECT StoreId, DATEPART(DW, T1.[Date]) as DayOfWeek, COUNT(T1.Id) as Count" +
+                        " FROM Off_SalesInfo_Daily as T1 where T1.StoreId = " + storeid + " and DATEPART(DW, T1.[Date]) = " + dow +
+                        " group by T1.StoreId, DATEPART(DW, T1.[Date])) as T2  left join (select T3.StoreId, DATEPART(DW, T3.Date) as DayOfWeek, SUM(T4.SalesCount) as SalesCount, SUM(T4.SalesAmount) as SalesAmount, SUM(T4.StorageCount) as StorageCount" +
+                        " FROM Off_SalesInfo_Daily as T3 left join Off_Daily_Product as T4 on T3.Id = T4.DailyId" +
+                        " where T3.StoreId = " + storeid + " and DATEPART(DW, T3.[Date]) = " + dow + " group by T3.StoreId, DATEPART(DW, T3.Date) ) as T5 on T2.StoreId = T5.StoreId and T2.DayOfWeek = T5.DayOfWeek";
+                    _offlineDb.Database.ExecuteSqlCommand(sql);
+                    _offlineDb.SaveChanges();
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
     public enum Expenses_Name
     {

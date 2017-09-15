@@ -199,6 +199,101 @@ namespace PeriodAid.Controllers
             else
                 return View("Error");
         }
+        #region 临时
+        /*
+        public async Task<ActionResult> ParaConfirm()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            DateTime date = new DateTime(2017, 9, 1);
+            var list = from m in _offlineDB.Off_Checkin
+                       where m.Off_Checkin_Schedule.Subscribe < date
+                       && m.Status == 4
+                       select m;
+            foreach(var checkin in list)
+            {
+                bool attendance_late = false;
+                bool attendance_early = false;
+                int dt = 0;
+                var difftime = _offlineDB.Off_System_Setting.SingleOrDefault(m => m.Off_System_Id == user.DefaultSystemId && m.SettingName == "AttendanceAllow");
+                if (difftime != null)
+                {
+                    try
+                    {
+                        dt = Convert.ToInt32(difftime.SettingValue);
+                    }
+                    catch
+                    {
+                        dt = 0;
+                    }
+                }
+                else
+                    dt = 0;
+                // 此处时间后期可以进行调整
+                if (checkin.CheckinTime >= checkin.Off_Checkin_Schedule.Standard_CheckIn.AddMinutes(dt))
+                    attendance_late = true;
+                if (checkin.CheckoutTime <= checkin.Off_Checkin_Schedule.Standard_CheckOut.AddMinutes(0 - dt))
+                    attendance_early = true;
+                int attendance = 0;
+                int debits = 0;
+                if (attendance_early && attendance_late)
+                {
+                    attendance = 3;
+                    debits = -40;
+                }
+                else if (attendance_early)
+                {
+                    attendance = 2;
+                    debits = -20;
+                }
+                else if (attendance_late)
+                {
+                    attendance = 1;
+                    debits = -20;
+                }
+                Off_SalesInfo_Daily info = new Off_SalesInfo_Daily()
+                {
+                    Attendance = attendance,
+                    Date = checkin.Off_Checkin_Schedule.Subscribe,
+                    Bonus = checkin.Bonus,
+                    Debit = debits,
+                    isMultiple = false,
+                    remarks = checkin.Remark,
+                    SellerId = checkin.Off_Seller_Id,
+                    Salary = checkin.Off_Checkin_Schedule.Standard_Salary,
+                    StoreId = checkin.Off_Checkin_Schedule.Off_Store_Id,
+                    UploadTime = DateTime.Now,
+                    UploadUser = User.Identity.Name
+                };
+                _offlineDB.Off_SalesInfo_Daily.Add(info);
+                
+                    // 判断是否已有数据
+                var checkinproductlist = _offlineDB.Off_Checkin_Product.Where(m => m.CheckinId == checkin.Id);
+                checkin.Status = 5;
+                checkin.SubmitTime = DateTime.Now;
+                checkin.SubmitUser = User.Identity.Name;
+                _offlineDB.Entry(checkin).State = System.Data.Entity.EntityState.Modified;
+                foreach (var i in checkin.Off_Checkin_Product)
+                {
+                    Off_Daily_Product product = new Off_Daily_Product()
+                    {
+                        Off_SalesInfo_Daily = info,
+                        ItemCode = i.ItemCode,
+                        ProductId = i.ProductId,
+                        SalesAmount = i.SalesAmount,
+                        SalesCount = i.SalesCount,
+                        StorageCount = i.StorageCount
+                    };
+                    _offlineDB.Off_Daily_Product.Add(product);
+                }
+                
+                // 计算平均值
+                OfflineSalesUtilities util = new OfflineSalesUtilities();
+                var result2 = util.UpdateDailySalesAvgSync(checkin.Off_Checkin_Schedule.Off_Store_Id, (int)checkin.Off_Checkin_Schedule.Subscribe.DayOfWeek + 1);
+            }
+            var result = _offlineDB.SaveChanges();
+            return Content(list.Count().ToString());
+        }*/
+        #endregion
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<ActionResult> ConfirmCheckin(FormCollection form)
         {
