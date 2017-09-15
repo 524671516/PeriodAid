@@ -1902,6 +1902,8 @@ namespace PeriodAid.Controllers
         public ActionResult PersonalHelp() {
             return View();
         }
+
+        
         #endregion
 
         #region 我的任务操作
@@ -3049,6 +3051,8 @@ namespace PeriodAid.Controllers
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             return PartialView(subject);
         }
+
+       
 
 
         //获取项目今日完成进度

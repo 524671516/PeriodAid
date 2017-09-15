@@ -152,6 +152,7 @@
                 SubjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
+                console.log(data)                
                 if (data != "FAIL") {
                     $("#Create-Subject-Content").html(data);
                     $("#Add-Subject").modal();

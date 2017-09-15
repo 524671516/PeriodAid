@@ -1,6 +1,7 @@
 ﻿<div id="tm-my-view" class="tm-my-view tm-view">
     <div class="tm-view-header tm-my-view-header">
         <div class="tm-my-view-control tm-view-control">
+            <h3><a data-href="/TaskManagement/SubjectCompletedAssignmentList">已完成的任务</a></h3>
             
         </div>
         <div class="tm-hidden-view tm-view-header-close">
@@ -8,7 +9,59 @@
         </div>
     </div>
     <div class="tm-view-content tm-my-view-content">
-        <div class="tm-view-content-wrap  tm-view-wrap tm-my-view-wrap">
+        <div class="tm-view-content-wrap  tm-view-wrap tm-my-view-wrap" id="show-view">            
+           
+             <div class="tm-view-header clear-float">
+                <div class="tm-view-header-left float-left">
+                    
+                </div>
+                <div class="tm-view-header-right float-right">
+                    <div class="tm-view-control" id="tm-view-thirdcontrol">
+                        <ul>
+                            <li class="tm-view-control-sort dropdown">
+                    <a href="javascript:;" id="tm-view-dropdown-progress" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="tm-select-title">根据人员排序</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress">
+                        <li>
+                            <a href="javascript:;" class="tm-select-range tm-select selected">发起者</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="tm-select-range tm-select" data-type="finish">参与者</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="tm-select-range tm-select" data-type="unfinish">参与者</a>
+                        </li>
+                    </ul>
+                </li>
+                            @*<li class="tm-view-control-sort dropdown">
+        <a href="javascript:;" id="tm-view-dropdown-undefined" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <span class="tm-select-title">按截止时间排序</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-undefined">
+            <li><a href="javascript:;" class="tm-select-sort-type tm-select selected" data-type="deadtimesort">按发起时间排序</a></li>
+            <li><a href="javascript:;" class="tm-select-sort-type tm-select" data-type="subjectsort">按项目排序</a></li>
+
+        </ul>
+    </li>*@
+                            @*<li class="tm-view-control-sort">
+                            <a href="javascript:;">
+                                <i class="fa fa-download color-blue" aria-hidden="true"></i>
+                                导出excel
+                            </a>
+                        </li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tm-view-content-container  tm-view-container" id="tm-view-scroll-container">
+                <input type="hidden" id="tm-view-page" name="tm-view-page" value="0" />
+                <div class="tm-view-loading-content" id="tm-view-col-content">
+                </div>
+                
+            </div>   
         </div>
     </div>
     <script>
@@ -19,6 +72,7 @@
             //获取初始化数据
             GetTemplate(init_link, {}, function (data) {
                 //成功
+                console.log(data)
                 $(".tm-my-view-wrap").html(data);
             }, function (data) {
                 //失败
@@ -43,6 +97,20 @@
                 }
             }
         });
+        $.ajax({
+            url: '/Taskmanagement/SubjectAssignment/',
+            type: 'post',
+            data: {
+                SubjectId: $("#panel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                console.log(data)
+                $("#tm-view-col-content").html(data);
+                $('.btn-get-allcompleted').hide()
+            }
+        })
+        
     });
+
     </script>
 </div>
