@@ -1,4 +1,5 @@
-﻿<div id="tm-my-view" class="tm-my-view tm-view">
+﻿
+<div id="tm-my-view" class="tm-my-view tm-view">
     <div class="tm-view-header tm-my-view-header">
         <div class="tm-my-view-control tm-view-control">
             <h3><a data-href="/TaskManagement/SubjectCompletedAssignmentList">已完成的任务</a></h3>
@@ -24,15 +25,12 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress">
-                        <li>
-                            <a href="javascript:;" class="tm-select-range tm-select selected">发起者</a>
-                        </li>
-                        <li>
-                            <a href="javascript:;" class="tm-select-range tm-select" data-type="finish">参与者</a>
-                        </li>
-                        <li>
-                            <a href="javascript:;" class="tm-select-range tm-select" data-type="unfinish">参与者</a>
-                        </li>
+                        @foreach (var item in ViewBag.Collaborator)
+                        {
+                            <li>
+                                <a href="javascript:;" class="tm-select-range tm-select collaborator_select" data-empid="@item.Id">@item.NickName</a>
+                            </li>
+                        }
                     </ul>
                 </li>
                             @*<li class="tm-view-control-sort dropdown">
@@ -98,18 +96,32 @@
             }
         });
         $.ajax({
-            url: '/Taskmanagement/SubjectAssignment/',
+            url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
             type: 'post',
             data: {
-                SubjectId: $("#panel-wrap").attr("data-sid")
+                subjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
-                console.log(data)
+                //console.log(data)
                 $("#tm-view-col-content").html(data);
                 $('.btn-get-allcompleted').hide()
             }
         })
-        
+        $(".collaborator_select").click(function () {
+            console.log($(this).attr("data-empid"));
+            $.ajax({
+                url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
+                type: 'post',
+                data: {
+                    subjectId: $("#panel-wrap").attr("data-sid"),
+                    employeeId: $(this).attr("data-empid")
+                },
+                success: function (data) {
+                    $("#tm-view-col-content").html(data);
+                    $('.btn-get-allcompleted').hide()
+                }
+            })
+        })
     });
 
     </script>

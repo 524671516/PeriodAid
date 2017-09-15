@@ -747,10 +747,8 @@ namespace PeriodAid.Controllers
         #region 获取全部已完成任务
         public PartialViewResult SubjectCompletedAssignmentList(int subjectId)
         {
-            var collaborator = from m in _db.Subject
-                               where m.Id == subjectId
-                               select m.AttendEmployee;
-            ViewBag.Collaborator = new SelectList(collaborator, "Id", "NickName");
+            var collaborator = _db.Subject.SingleOrDefault(m => m.Id == subjectId);
+            ViewBag.Collaborator = collaborator.AttendEmployee;
             return PartialView();
         }
         public PartialViewResult SubjectCompletedAssignmentListPartial(int subjectId, int? employeeId)
