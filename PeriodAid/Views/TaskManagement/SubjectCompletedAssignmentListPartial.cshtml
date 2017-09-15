@@ -1,0 +1,99 @@
+﻿@model IEnumerable<PeriodAid.Models.Assignment>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AssignmentTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Priority)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Deadline)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RemindDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CompleteDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remarks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Target)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Repeat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProcedureId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HolderId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SubjectId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.AssignmentTitle)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Priority)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreateTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Deadline)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RemindDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompleteDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remarks)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Target)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Repeat)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProcedureId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.HolderId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SubjectId)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
