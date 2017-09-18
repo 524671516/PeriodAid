@@ -73,8 +73,9 @@
                 $("#Add-Team").modal('hide');
                 //请求参与人模板
                 GetTeam_CollaboratorPartial($("#team_subject").val(), function (data) {
-                    $(".modal-body").remove();
-                    $(".modal-header").html(data);
+                    $(".modal-header").remove();
+                    $(".modal-body").html("");
+                    $(".modal-content").html(data);
                     $("#menu_team_show").html($("#team_show").html());
                 });
             }, function (data) {

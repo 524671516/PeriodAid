@@ -1182,6 +1182,7 @@ namespace PeriodAid.Controllers
         public async Task<JsonResult> DeleteTeamCollaborator(int SubjectId, int EmployeeId)
         {
             var employee = getEmployee(User.Identity.Name);
+            var employee_select =_db.Employee.SingleOrDefault(m=>m.Id==EmployeeId);
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId && m.Status > AssignmentStatus.DELETED);
             if (employee.HolderAssignment.Select(p => p.Id).Contains(EmployeeId) || employee.Subject.Select(m => m.Id).Contains(subject.Id) || employee.Type == EmployeeType.DEPARTMENTMANAGER)
             {
@@ -1192,13 +1193,20 @@ namespace PeriodAid.Controllers
                 var colNum1 = (from m in _db.SubTask
                               where m.Assignment.HolderId == subject.Id && m.ExecutorId == EmployeeId && m.Status > AssignmentStatus.DELETED
                               select m).Count();
+                var colNum2 = (from m in subject.Assignment
+                              where m.SubjectId == subject.Id  && m.Status > AssignmentStatus.DELETED && m.Collaborator.Contains(employee_select)
+                              select m).Count();
                 if (colNum > 0)
                 {
-                    return Json(new { result = "FAIL", errmsg = "无法删除请确认参与人不负责任何任务。" });
+                    return Json(new { result = "FAIL", errmsg = "无法删除,请确认参与人不负责任何任务。" });
                 }
                 if (colNum1 > 0)
                 {
-                    return Json(new { result = "FAIL", errmsg = "无法删除请确认参与人不负责任何子任务。" });
+                    return Json(new { result = "FAIL", errmsg = "无法删除,请确认参与人不负责任何子任务。" });
+                }
+                if (colNum2 > 0)
+                {
+                    return Json(new { result = "FAIL", errmsg = "无法删除,请确认参与人不参与任何任务。" });
                 }
                 else
                 {
