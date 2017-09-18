@@ -72,8 +72,10 @@
                 //成功
                 $("#Add-Team").modal('hide');
                 //请求参与人模板
-                GetAssignment_CollaboratorPartial($("#modal-header-assignment").attr("data-aid"), function (data) {
-                    
+                GetTeam_CollaboratorPartial($("#team_subject").val(), function (data) {
+                    $(".modal-body").remove();
+                    $(".modal-header").html(data);
+                    $("#menu_team_show").html($("#team_show").html());
                 });
             }, function (data) {
                 //失败
