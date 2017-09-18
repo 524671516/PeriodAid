@@ -2261,7 +2261,7 @@ namespace PeriodAid.Controllers
                     if (sorttype == null || sorttype == "")
                     {
                         var ResultList = (from m in ConsolidationList
-                                          orderby m.CreateTime ascending
+                                          orderby m.CreateTime descending
                                           select m).Skip(_page * 20).Take(20);
                         return PartialView(ResultList);
 
@@ -2271,7 +2271,7 @@ namespace PeriodAid.Controllers
                         if (sorttype == GetDataType.DEADTIMESORTDATA)
                         {
                             var ResultList = (from m in ConsolidationList
-                                              orderby m.Deadline ascending
+                                              orderby m.Deadline descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
 
@@ -2279,14 +2279,14 @@ namespace PeriodAid.Controllers
                         else if (sorttype == GetDataType.SUBJECTSORTDATA)
                         {
                             var ResultList = (from m in ConsolidationList
-                                              orderby m.SubjectId ascending
+                                              orderby m.SubjectId descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
                         else
                         {
                             var ResultList = (from m in ConsolidationList
-                                              orderby m.Id ascending
+                                              orderby m.Id descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
@@ -2302,7 +2302,7 @@ namespace PeriodAid.Controllers
                         {
                             var ResultList = (from m in ConsolidationList
                                               where m.Status==AssignmentStatus.UNFINISHED
-                                              orderby m.CreateTime ascending
+                                              orderby m.CreateTime descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
@@ -2310,7 +2310,7 @@ namespace PeriodAid.Controllers
                         {
                             var ResultList = (from m in ConsolidationList
                                               where m.Status == AssignmentStatus.FINISHED
-                                              orderby m.CreateTime ascending
+                                              orderby m.CreateTime descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
@@ -2323,7 +2323,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in ConsolidationList
                                                   where m.Status == AssignmentStatus.UNFINISHED
-                                                  orderby m.Deadline ascending
+                                                  orderby m.Deadline descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
 
@@ -2332,7 +2332,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in ConsolidationList
                                                   where m.Status == AssignmentStatus.UNFINISHED
-                                                  orderby m.SubjectId ascending
+                                                  orderby m.SubjectId descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2340,7 +2340,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in ConsolidationList
                                                   where m.Status == AssignmentStatus.UNFINISHED
-                                                  orderby m.Id ascending
+                                                  orderby m.Id descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2351,7 +2351,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in ConsolidationList
                                                   where m.Status == AssignmentStatus.FINISHED
-                                                  orderby m.Deadline ascending
+                                                  orderby m.Deadline descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
 
@@ -2360,7 +2360,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in ConsolidationList
                                                   where m.Status == AssignmentStatus.FINISHED
-                                                  orderby m.SubjectId ascending
+                                                  orderby m.SubjectId descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2368,7 +2368,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in ConsolidationList
                                                   where m.Status == AssignmentStatus.FINISHED
-                                                  orderby m.Id ascending
+                                                  orderby m.Id descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2397,7 +2397,7 @@ namespace PeriodAid.Controllers
                     {
                         var ResultList = (from m in _db.Assignment
                                           where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
-                                          orderby m.CreateTime ascending
+                                          orderby m.CreateTime descending
                                           select m).Skip(_page * 20).Take(20);
                         return PartialView(ResultList);
 
@@ -2408,7 +2408,7 @@ namespace PeriodAid.Controllers
                         {
                             var ResultList = (from m in _db.Assignment
                                               where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
-                                              orderby m.Deadline ascending
+                                              orderby m.Deadline descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
 
@@ -2417,7 +2417,7 @@ namespace PeriodAid.Controllers
                         {
                             var ResultList = (from m in _db.Assignment
                                               where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
-                                              orderby m.SubjectId ascending
+                                              orderby m.SubjectId descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
@@ -2425,7 +2425,7 @@ namespace PeriodAid.Controllers
                         {
                             var ResultList = (from m in _db.Assignment
                                               where m.HolderId == employee.Id && m.Subject.Status > SubjectStatus.DELETED && m.Status > AssignmentStatus.DELETED
-                                              orderby m.Id ascending
+                                              orderby m.Id descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
@@ -2441,7 +2441,7 @@ namespace PeriodAid.Controllers
                         {
                             var ResultList = (from m in _db.Assignment
                                               where m.HolderId == employee.Id&&m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                              orderby m.CreateTime ascending
+                                              orderby m.CreateTime descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
@@ -2449,7 +2449,7 @@ namespace PeriodAid.Controllers
                         {
                             var ResultList = (from m in _db.Assignment
                                               where m.HolderId == employee.Id&&m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                              orderby m.CreateTime ascending
+                                              orderby m.CreateTime descending
                                               select m).Skip(_page * 20).Take(20);
                             return PartialView(ResultList);
                         }
@@ -2462,7 +2462,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                                  orderby m.Deadline ascending
+                                                  orderby m.Deadline descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
 
@@ -2471,7 +2471,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.HolderId == employee.Id&& m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                                  orderby m.SubjectId ascending
+                                                  orderby m.SubjectId descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2479,7 +2479,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                                  orderby m.Id ascending
+                                                  orderby m.Id descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2490,7 +2490,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                                  orderby m.Deadline ascending
+                                                  orderby m.Deadline descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
 
@@ -2499,7 +2499,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                                  orderby m.SubjectId ascending
+                                                  orderby m.SubjectId descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2507,7 +2507,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.DELETED
-                                                  orderby m.Id ascending
+                                                  orderby m.Id descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2555,7 +2555,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList3 = (from m in _db.Assignment
                                                    where ResultList2.Contains(m.SubjectId) && m.Subject.Status > SubjectStatus.ARCHIVED && m.Status > AssignmentStatus.ARCHIVED
-                                                   orderby m.Deadline ascending
+                                                   orderby m.Deadline descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList3);
 
@@ -2564,7 +2564,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList3 = (from m in _db.Assignment
                                                    where ResultList2.Contains(m.SubjectId) && m.Subject.Status > SubjectStatus.ARCHIVED && m.Status > AssignmentStatus.ARCHIVED
-                                                   orderby m.SubjectId ascending
+                                                   orderby m.SubjectId descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList3);
                             }
@@ -2572,8 +2572,8 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList3 = (from m in _db.Assignment
                                                    where ResultList2.Contains(m.SubjectId) && m.Subject.Status > SubjectStatus.ARCHIVED && m.Status > AssignmentStatus.ARCHIVED
-                                                   orderby m.Id ascending
-                                                  select m).Skip(_page * 20).Take(20);
+                                                   orderby m.Id descending
+                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList3);
                             }
 
@@ -2588,16 +2588,16 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList3 = (from m in _db.Assignment
                                                    where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                   orderby m.CreateTime ascending
-                                                  select m).Skip(_page * 20).Take(20);
+                                                   orderby m.CreateTime descending
+                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList3);
                             }
                             else
                             {
                                 var ResultList3 = (from m in _db.Assignment
                                                    where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                   orderby m.CreateTime ascending
-                                                  select m).Skip(_page * 20).Take(20);
+                                                   orderby m.CreateTime descending
+                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList3);
                             }
                         }
@@ -2609,8 +2609,8 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList3 = (from m in _db.Assignment
                                                        where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                       orderby m.Deadline ascending
-                                                      select m).Skip(_page * 20).Take(20);
+                                                       orderby m.Deadline descending
+                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList3);
 
                                 }
@@ -2618,16 +2618,16 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList3 = (from m in _db.Assignment
                                                        where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                       orderby m.SubjectId ascending
-                                                      select m).Skip(_page * 20).Take(20);
+                                                       orderby m.SubjectId descending
+                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList3);
                                 }
                                 else
                                 {
                                     var ResultList3 = (from m in _db.Assignment
                                                        where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                       orderby m.Id ascending
-                                                      select m).Skip(_page * 20).Take(20);
+                                                       orderby m.Id descending
+                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList3);
                                 }
                             }
@@ -2637,8 +2637,8 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList3 = (from m in _db.Assignment
                                                        where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                       orderby m.Deadline ascending
-                                                      select m).Skip(_page * 20).Take(20);
+                                                       orderby m.Deadline descending
+                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList3);
 
                                 }
@@ -2646,16 +2646,16 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList3 = (from m in _db.Assignment
                                                        where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                       orderby m.SubjectId ascending
-                                                      select m).Skip(_page * 20).Take(20);
+                                                       orderby m.SubjectId descending
+                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList3);
                                 }
                                 else
                                 {
                                     var ResultList3 = (from m in _db.Assignment
                                                        where ResultList2.Contains(m.SubjectId) && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                       orderby m.Id ascending
-                                                      select m).Skip(_page * 20).Take(20);
+                                                       orderby m.Id descending
+                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList3);
                                 }
                             }
@@ -2680,7 +2680,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.Subject.HolderId == employee.Id && m.Subject.Status > SubjectStatus.ARCHIVED && m.Status > AssignmentStatus.ARCHIVED
-                                                  orderby m.Deadline ascending
+                                                  orderby m.Deadline descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
 
@@ -2689,7 +2689,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.Subject.HolderId == employee.Id && m.Subject.Status > SubjectStatus.ARCHIVED && m.Status > AssignmentStatus.ARCHIVED
-                                                  orderby m.SubjectId ascending
+                                                  orderby m.SubjectId descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2697,7 +2697,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.Subject.HolderId == employee.Id && m.Subject.Status > SubjectStatus.ARCHIVED && m.Status > AssignmentStatus.ARCHIVED
-                                                  orderby m.Id ascending
+                                                  orderby m.Id descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2713,7 +2713,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                  orderby m.CreateTime ascending
+                                                  orderby m.CreateTime descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2721,7 +2721,7 @@ namespace PeriodAid.Controllers
                             {
                                 var ResultList = (from m in _db.Assignment
                                                   where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                  orderby m.CreateTime ascending
+                                                  orderby m.CreateTime descending
                                                   select m).Skip(_page * 20).Take(20);
                                 return PartialView(ResultList);
                             }
@@ -2734,7 +2734,7 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList = (from m in _db.Assignment
                                                       where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                      orderby m.Deadline ascending
+                                                      orderby m.Deadline descending
                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList);
 
@@ -2743,7 +2743,7 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList = (from m in _db.Assignment
                                                       where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                      orderby m.SubjectId ascending
+                                                      orderby m.SubjectId descending
                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList);
                                 }
@@ -2751,7 +2751,7 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList = (from m in _db.Assignment
                                                       where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.UNFINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                      orderby m.Id ascending
+                                                      orderby m.Id descending
                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList);
                                 }
@@ -2762,7 +2762,7 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList = (from m in _db.Assignment
                                                       where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                      orderby m.Deadline ascending
+                                                      orderby m.Deadline descending
                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList);
 
@@ -2771,7 +2771,7 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList = (from m in _db.Assignment
                                                       where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                      orderby m.SubjectId ascending
+                                                      orderby m.SubjectId descending
                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList);
                                 }
@@ -2779,7 +2779,7 @@ namespace PeriodAid.Controllers
                                 {
                                     var ResultList = (from m in _db.Assignment
                                                       where m.Subject.HolderId == employee.Id && m.Status == AssignmentStatus.FINISHED && m.Subject.Status > SubjectStatus.ARCHIVED
-                                                      orderby m.Id ascending
+                                                      orderby m.Id descending
                                                       select m).Skip(_page * 20).Take(20);
                                     return PartialView(ResultList);
                                 }
