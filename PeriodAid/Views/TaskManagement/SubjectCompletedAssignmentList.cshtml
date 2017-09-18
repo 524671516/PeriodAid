@@ -13,10 +13,10 @@
             <div class="tm-view-header clear-float">
                 <div class="tm-view-header-left float-left">
                 </div>
-                <div class="tm-view-header-right float-right">
+                <div class="tm-view-header-right float-right" style="margin-right:80px;">
                     <div class="tm-view-control" id="tm-view-thirdcontrol">
                         <ul>
-                            <li class="tm-view-control-sort dropdown">
+                            <li class="tm-view-control-sort dropdown" style="width:120px">
                                 <a href="javascript:;" id="tm-view-dropdown-progress" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                     <span class="tm-select-title">根据人员排序</span>
                                     <span class="caret"></span>
@@ -25,7 +25,7 @@
                                     @foreach (var item in ViewBag.Collaborator)
                                     {
                                         <li>
-                                            <a href="javascript:;" class="tm-select-range tm-select collaborator_select" data-empid="@item.Id">@item.NickName</a>
+                                            <a href="javascript:;" class="tm-select-range tm-select collaborator_select" data-empid="@item.Id" >@item.NickName</a>
                                         </li>
                                     }
                                 </ul>
@@ -56,92 +56,95 @@
     <script>
         $(function () {
             $("#tm-view-loading").hide();
-        //初始化加载数据地址
-        var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
-        var _data = {
-            page: parseInt($("#tm-view-page").val()),
-            datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-            sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
-        }
-        if (init_link) {
-            //获取初始化数据
-            GetTemplate(init_link, {}, function (data) {
-                //成功
-                console.log(data)
-                $(".tm-my-view-wrap").html(data);
-            }, function (data) {
-                //失败
-            });
-        }
-
-        $.ajax({
-            url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
-            type: 'post',
-            data: {
-                page: parseInt($("#tm-view-page-done").val()),
-                subjectId: $("#panel-wrap").attr("data-sid")
-            },
-            success: function (data) {
-                //console.log(data)
-                $("#tm-view-col-content").html(data);
-                
+            
+            //初始化加载数据地址
+            var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
+            var _data = {
+                page: parseInt($("#tm-view-page").val()),
+                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
+                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
             }
-        })
-        $(".collaborator_select").click(function () {
-            $(this).removeClass("selected");
+            if (init_link) {
+                //获取初始化数据
+                GetTemplate(init_link, {}, function (data) {
+                    //成功
+                    console.log(data)
+                    $(".tm-my-view-wrap").html(data);
+                }, function (data) {
+                    //失败
+                });
+            }
+
             $.ajax({
                 url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
                 type: 'post',
                 data: {
                     page: parseInt($("#tm-view-page-done").val()),
-                    subjectId: $("#panel-wrap").attr("data-sid"),
-                    employeeId: $(this).attr("data-empid"),
-                    _page:1
+                    subjectId: $("#panel-wrap").attr("data-sid")
                 },
                 success: function (data) {
+                    //console.log(data)
                     $("#tm-view-col-content").html(data);
-                    var employee = '"' + $(".collaborator_select").attr("data-empid") + '"';
-                    $("#tm-view-dropdown-progress").on("click", function () {
-                        console.log($(".collaborator_select").attr("data-empid"));
-                        $(".collaborator_select[data-empid=" + employee + "]").addClass("selected");
-                    })
+
                 }
             })
-        })
-
-
-
-        $(".tm-my-view-content").on("click", ".tm-view-more", function () {
-            $(".tm-view-more").hide();
-            $("#tm-view-loading").show();
-            var _initlink = '/Taskmanagement/SubjectCompletedAssignmentListPartial'
-            var _data = {
-                page: parseInt($("#tm-view-page").val()),
-                subjectId: $("#panel-wrap").attr("data-sid"),
-                employeeId: $(this).attr("data-empid"),
-                _page: 1
-            }
-            var _link = $("tm-view-control-link").attr("data-link");             //获取tab对应的页面
+            $(".collaborator_select").click(function () {
                 
+                var that = $(this);
+                if (!that.hasClass('selected')) {
+                    
+                    that.parent().parent().find(".tm-select.selected").removeClass("selected");
+                   
+                    that.addClass("selected");
+                    $('.tm-select-title').html($('.selected').html());
+                }
+                $.ajax({
+                    url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
+                    type: 'post',
+                    data: {
+                        page: parseInt($("#tm-view-page-done").val()),
+                        subjectId: $("#panel-wrap").attr("data-sid"),
+                        employeeId: $(this).attr("data-empid"),
+                        _page:1
+                    },
+                    success: function (data) {
+                        $("#tm-view-col-content").html(data);
 
-            GetTemplate(_initlink, _data, function (data) {
-                setTimeout(function () {
-                    $("#tm-view-col-content").append(data);        //放入数据
-                    $("#tm-view-res-content").append(data);
-                    $("#tm-view-exe-content").append(data);
-                    //$("#tm-view-scroll-container").append(data);
-                    $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
-                    $("#tm-view-loading").hide();                  //隐藏加载动画
-                }, 500)
-            }, function (data) {
-                //失败
+                    }
+                })
             })
-        })
+
+            $(".tm-my-view-content").on("click", ".tm-view-more", function () {
+                $(".tm-view-more").hide();
+                $("#tm-view-loading").show();
+                var _initlink = '/Taskmanagement/SubjectCompletedAssignmentListPartial'
+                var _data = {
+                    page: parseInt($("#tm-view-page").val()),
+                    subjectId: $("#panel-wrap").attr("data-sid"),
+                    employeeId: $(this).attr("data-empid"),
+                    _page: 1
+                }
+
+
+
+                GetTemplate(_initlink, _data, function (data) {
+                    setTimeout(function () {
+                        $("#tm-view-col-content").append(data);        //放入数据
+                        $("#tm-view-res-content").append(data);
+                        $("#tm-view-exe-content").append(data);
+                        //$("#tm-view-scroll-container").append(data);
+                        $("#tm-view-page").val(parseInt($("#tm-view-page").val()) + 1);
+                        $("#tm-view-loading").hide();                  //隐藏加载动画
+                    }, 500)
+                }, function (data) {
+                    //失败
+                })
+            })
 
 
 
 
-    });
+        });
 
     </script>
 
