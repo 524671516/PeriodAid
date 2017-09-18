@@ -9,7 +9,7 @@
             <button type="button" class="close"><span aria-hidden="true">×</span></button>
         </div>
     </div>
-    <div class="tm-view-content tm-my-view-content">
+    <div class="center-block tm-view-content tm-my-view-content" style="width:70%;height:91%;right:10%;left:10%;">
         <div class="tm-view-content-wrap  tm-view-wrap tm-my-view-wrap" id="show-view">            
            
              <div class="tm-view-header clear-float">
@@ -104,7 +104,6 @@
             success: function (data) {
                 //console.log(data)
                 $("#tm-view-col-content").html(data);
-                $('.btn-get-allcompleted').hide()
             }
         })
         $(".collaborator_select").click(function () {
@@ -118,7 +117,6 @@
                 },
                 success: function (data) {
                     $("#tm-view-col-content").html(data);
-                    $('.btn-get-allcompleted').hide()
                 }
             })
         })

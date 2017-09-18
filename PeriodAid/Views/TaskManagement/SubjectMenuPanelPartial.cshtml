@@ -15,7 +15,7 @@
                     <span class="fa fa-users" aria-hidden="true"></span>
                     &nbsp;<strong>项目团队</strong>
                 </div>
-                <div class="clear-float">
+                <div class="clear-float" id="menu_team_show">
                     @foreach (var emp in ViewBag.AttendList)
                     {
                         <div class="menu-attend-item" data-aid="@emp.Id" title="@emp.NickName" data-toggle="tooltip" data-placement="top">
