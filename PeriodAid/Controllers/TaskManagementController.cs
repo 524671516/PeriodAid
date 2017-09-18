@@ -756,15 +756,18 @@ namespace PeriodAid.Controllers
             ViewBag.Collaborator = collaborator.AttendEmployee;
             return PartialView();
         }
-        public PartialViewResult SubjectCompletedAssignmentListPartial(int subjectId, int? employeeId)
+
+
+        public PartialViewResult SubjectCompletedAssignmentListPartial(int subjectId, int? employeeId, int? page)
         {
+            int _page = page ?? 0;
             int _emplyeeId = employeeId ?? 0;
             if (_emplyeeId == 0)
             {
-                var model = from m in _db.Assignment
+                var model = (from m in _db.Assignment
                             where m.Status == AssignmentStatus.FINISHED
                             orderby m.CompleteDate descending
-                            select m;
+                            select m).Skip(_page * 20).Take(20);
                 return PartialView(model);
             }
             else
@@ -775,6 +778,7 @@ namespace PeriodAid.Controllers
                             select m;
                 return PartialView(model);
             }
+            
         }
         // 筛选代码
         public PartialViewResult SubjectCompletedAssignmentList_partial(int subjectId, int? employeeId, int sorttype)
