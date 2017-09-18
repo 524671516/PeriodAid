@@ -31,7 +31,7 @@
                                 </ul>
                             </li>
                         </ul>
-                        @*<div class="tm-view-nomore color-blue">-&nbsp;没有更多数据啦&nbsp;-</div>*@
+                       
                     </div>
                 </div>
             </div>
@@ -54,7 +54,8 @@
 </div>   
 
     <script>
-    $(function () {
+        $(function () {
+            $("#tm-view-loading").hide();
         //初始化加载数据地址
         var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
         var _data = {
@@ -92,7 +93,8 @@
                 type: 'post',
                 data: {
                     subjectId: $("#panel-wrap").attr("data-sid"),
-                    employeeId: $(this).attr("data-empid")
+                    employeeId: $(this).attr("data-empid"),
+                    _page:1
                 },
                 success: function (data) {
                     $("#tm-view-col-content").html(data);
@@ -104,11 +106,12 @@
         $(".tm-my-view-content").on("click", ".tm-view-more", function () {
             $(".tm-view-more").hide();
             $("#tm-view-loading").show();
-            var _initlink = $("#tm-view-subcontrol .tm-view-control-link.active").attr("data-href");
+            var _initlink = '/Taskmanagement/SubjectCompletedAssignmentListPartial'
             var _data = {
                 page: parseInt($("#tm-view-page").val()),
-                datarange: $("#tm-view-thirdcontrol .tm-select-range.selected").attr("data-type"),
-                sorttype: $("#tm-view-thirdcontrol .tm-select-sort-type.selected").attr("data-type")
+                subjectId: $("#panel-wrap").attr("data-sid"),
+                employeeId: $(this).attr("data-empid"),
+                _page: 1
             }
             var _link = $("tm-view-control-link").attr("data-link");             //获取tab对应的页面
                 
