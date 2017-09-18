@@ -88,7 +88,7 @@
             }
         })
         $(".collaborator_select").click(function () {
-            console.log($(this).attr("data-empid"));
+            $(this).removeClass("selected");
             $.ajax({
                 url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
                 type: 'post',
@@ -100,10 +100,16 @@
                 },
                 success: function (data) {
                     $("#tm-view-col-content").html(data);
-                    
+                    var employee = '"' + $(".collaborator_select").attr("data-empid") + '"';
+                    $("#tm-view-dropdown-progress").on("click", function () {
+                        console.log($(".collaborator_select").attr("data-empid"));
+                        $(".collaborator_select[data-empid=" + employee + "]").addClass("selected");
+                    })
                 }
             })
         })
+
+
 
         $(".tm-my-view-content").on("click", ".tm-view-more", function () {
             $(".tm-view-more").hide();

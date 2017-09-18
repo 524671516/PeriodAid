@@ -713,7 +713,7 @@ namespace PeriodAid.Controllers
                 var assignmentlist = (from m in _db.Assignment
                                      where m.SubjectId == SubjectId && m.Status== AssignmentStatus.FINISHED
                                      orderby m.CreateTime descending
-                                     select m).Take(5);
+                                     select m).Take(7);
                 ViewBag.ProcedureId = 0;
                 return PartialView(assignmentlist);
             }
