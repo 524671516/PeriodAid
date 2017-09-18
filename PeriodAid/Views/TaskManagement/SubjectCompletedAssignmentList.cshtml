@@ -60,7 +60,7 @@
                 </div>
                 
             </div>   
-        </div>
+        </div><input type="hidden" id="tm-view-page-done" value="0" />
     </div>
     <script>
     $(function () {
@@ -99,6 +99,7 @@
             url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
             type: 'post',
             data: {
+                page: parseInt($("#tm-view-page-done").val()),
                 subjectId: $("#panel-wrap").attr("data-sid")
             },
             success: function (data) {
@@ -112,6 +113,7 @@
                 url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
                 type: 'post',
                 data: {
+                    page: parseInt($("#tm-view-page-done").val()),
                     subjectId: $("#panel-wrap").attr("data-sid"),
                     employeeId: $(this).attr("data-empid")
                 },

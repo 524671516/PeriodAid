@@ -1,123 +1,249 @@
 ﻿@using PeriodAid.Models
 @model IEnumerable<PeriodAid.Models.Assignment>
-<div class="tm_list-container">
-    <ul class="tm_list-show" id="tm-list-show-@ViewBag.ProcedureId">
-        @foreach (var item in Model)
-        {
-            <li class="tm_list-item tm_list-finish tm-show-task-modal" style="border-color:#259B24" data-aid="@item.Id">
-                <div class="clear-float">
-                    <div class="tm_item_left tm-span-80">
-                        <input type="checkbox" class="tm-change-task-status" checked="checked" data-aid="@item.Id" />
-                        &nbsp;&nbsp;@Html.StringFixLength(item.AssignmentTitle, 12)
-                    </div>
-                    <div class="tm_item_right tm-span-20" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
-                        @if (item.Holder.ImgUrl == null)
-                        {
-                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-                        }
-                        else
-                        {
-                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
-
-                        }
-                    </div>
-                </div>
-                <div class="clear-float">
-                    @if (item.Deadline != null)
-                    {
-                        <div class="tm_item_left tm-span-75">
-                            <span class="color-orange">截止日期:</span>
-                            <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+@if (Model.Count() >= 20)
+{
+    <div class="tm_list-container">
+        <ul class="tm_list-show" id="tm-list-show-@ViewBag.ProcedureId">
+            @foreach (var item in Model)
+            {
+                <li class="tm_list-item tm_list-finish tm-show-task-modal" style="border-color:#259B24" data-aid="@item.Id">
+                    <div class="clear-float">
+                        <div class="tm_item_left tm-span-80">
+                            <input type="checkbox" class="tm-change-task-status" checked="checked" data-aid="@item.Id" />
+                            &nbsp;&nbsp;@Html.StringFixLength(item.AssignmentTitle, 12)
                         </div>
-                    }
+                        <div class="tm_item_right tm-span-20" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
+                            @if (item.Holder.ImgUrl == null)
+                            {
+                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
+                            else
+                            {
+                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+
+                            }
+                        </div>
+                    </div>
+                    <div class="clear-float">
+                        @if (item.Deadline != null)
+                    {
+                            <div class="tm_item_left tm-span-75">
+                                <span class="color-orange">截止日期:</span>
+                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                            </div>
+                        }
+                        @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                    {
+                            <div class="tm_item_left tm-show-subtask-panel tm-span-25">
+                                <span title="展示子任务" data-toggle="tooltip" data-placement="top">
+                                    &nbsp; &nbsp;
+                                    <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                    <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                </span>
+                            </div>
+                        }
+                    </div>
                     @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
                     {
-                        <div class="tm_item_left tm-show-subtask-panel tm-span-25">
-                            <span title="展示子任务" data-toggle="tooltip" data-placement="top">
-                                &nbsp; &nbsp;
-                                <i class="fa fa-list-ul" aria-hidden="true"></i>
-                                <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
-                            </span>
-                        </div>
-                    }
-                </div>
-                @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
-                {
-                    <ul class="tm-subtask-ul hide-change">
+                        <ul class="tm-subtask-ul hide-change">
 
-                        @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
+                            @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
                         {
                             if (_item.Status == AssignmentStatus.FINISHED)
                             {
-                                <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
-                                    <div class="clear-float">
-                                        <div class="tm_item_left tm-span-75">
-                                            <input type="checkbox" class="tm-change-task-status" checked="checked" data-atid="@_item.Id" />
-                                            &nbsp;&nbsp;@Html.Encode(_item.TaskTitle)
-                                        </div>
-                                        <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
-                                            @if (_item.Executor.ImgUrl == null)
-                                            {
-                                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
-                                            }
-                                            else
-                                            {
-                                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
-
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="clear-float">
-                                        @if (_item.Deadline != null)
-                                        {
-                                            <div class="tm_sub_item_left tm-span-100">
-                                                <span class="color-orange">截止日期:</span>
-                                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                    <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                        <div class="clear-float">
+                                            <div class="tm_item_left tm-span-75">
+                                                <input type="checkbox" class="tm-change-task-status" checked="checked" data-atid="@_item.Id" />
+                                                &nbsp;&nbsp;@Html.Encode(_item.TaskTitle)
                                             </div>
-                                        }
-                                    </div>
-                                </li>
+                                            <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                @if (_item.Executor.ImgUrl == null)
+                                                {
+                                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
 
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="clear-float">
+                                            @if (_item.Deadline != null)
+                                            {
+                                                <div class="tm_sub_item_left tm-span-100">
+                                                    <span class="color-orange">截止日期:</span>
+                                                    <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </li>
+
+                                }
+                                else if (_item.Status == AssignmentStatus.UNFINISHED)
+                                {
+                                    <li class="tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                        <div class="clear-float">
+                                            <div class="tm_item_left tm-span-75">
+                                                <input type="checkbox" class="tm-change-task-status" checked="checked" data-atid="@_item.Id" />
+                                                &nbsp;&nbsp;@Html.Encode(_item.TaskTitle)
+                                            </div>
+                                            <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                @if (_item.Executor.ImgUrl == null)
+                                                {
+                                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="clear-float">
+                                            @if (_item.Deadline != null)
+                                            {
+                                                <div class="tm_item_left tm-span-100">
+                                                    <span class="color-orange">截止日期:</span>
+                                                    <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </li>
+
+                                }
                             }
-                            else if (_item.Status == AssignmentStatus.UNFINISHED)
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="tm-view-more color-blue">-&nbsp;点击加载更多&nbsp;-</div>
+}
+else
+{
+    <div class="tm_list-container">
+        <ul class="tm_list-show" id="tm-list-show-@ViewBag.ProcedureId">
+            @foreach (var item in Model)
+            {
+                <li class="tm_list-item tm_list-finish tm-show-task-modal" style="border-color:#259B24" data-aid="@item.Id">
+                    <div class="clear-float">
+                        <div class="tm_item_left tm-span-80">
+                            <input type="checkbox" class="tm-change-task-status" checked="checked" data-aid="@item.Id" />
+                            &nbsp;&nbsp;@Html.StringFixLength(item.AssignmentTitle, 12)
+                        </div>
+                        <div class="tm_item_right tm-span-20" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
+                            @if (item.Holder.ImgUrl == null)
                             {
-                                <li class="tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
-                                    <div class="clear-float">
-                                        <div class="tm_item_left tm-span-75">
-                                            <input type="checkbox" class="tm-change-task-status" checked="checked" data-atid="@_item.Id" />
-                                            &nbsp;&nbsp;@Html.Encode(_item.TaskTitle)
-                                        </div>
-                                        <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
-                                            @if (_item.Executor.ImgUrl == null)
-                                            {
-                                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
-                                            }
-                                            else
-                                            {
-                                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
-
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="clear-float">
-                                        @if (_item.Deadline != null)
-                                        {
-                                            <div class="tm_item_left tm-span-100">
-                                                <span class="color-orange">截止日期:</span>
-                                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
-                                            </div>
-                                        }
-                                    </div>
-                                </li>
+                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
+                            else
+                            {
+                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
 
                             }
+                        </div>
+                    </div>
+                    <div class="clear-float">
+                        @if (item.Deadline != null)
+                    {
+                            <div class="tm_item_left tm-span-75">
+                                <span class="color-orange">截止日期:</span>
+                                <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                            </div>
                         }
-                    </ul>
-                }
-            </li>
-        }
-    </ul>
-</div>
+                        @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                    {
+                            <div class="tm_item_left tm-show-subtask-panel tm-span-25">
+                                <span title="展示子任务" data-toggle="tooltip" data-placement="top">
+                                    &nbsp; &nbsp;
+                                    <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                    <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                </span>
+                            </div>
+                        }
+                    </div>
+                    @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                    {
+                        <ul class="tm-subtask-ul hide-change">
+
+                            @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
+                        {
+                            if (_item.Status == AssignmentStatus.FINISHED)
+                            {
+                                    <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                        <div class="clear-float">
+                                            <div class="tm_item_left tm-span-75">
+                                                <input type="checkbox" class="tm-change-task-status" checked="checked" data-atid="@_item.Id" />
+                                                &nbsp;&nbsp;@Html.Encode(_item.TaskTitle)
+                                            </div>
+                                            <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                @if (_item.Executor.ImgUrl == null)
+                                                {
+                                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="clear-float">
+                                            @if (_item.Deadline != null)
+                                            {
+                                                <div class="tm_sub_item_left tm-span-100">
+                                                    <span class="color-orange">截止日期:</span>
+                                                    <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </li>
+
+                                }
+                                else if (_item.Status == AssignmentStatus.UNFINISHED)
+                                {
+                                    <li class="tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                        <div class="clear-float">
+                                            <div class="tm_item_left tm-span-75">
+                                                <input type="checkbox" class="tm-change-task-status" checked="checked" data-atid="@_item.Id" />
+                                                &nbsp;&nbsp;@Html.Encode(_item.TaskTitle)
+                                            </div>
+                                            <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                @if (_item.Executor.ImgUrl == null)
+                                                {
+                                                    <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="clear-float">
+                                            @if (_item.Deadline != null)
+                                            {
+                                                <div class="tm_item_left tm-span-100">
+                                                    <span class="color-orange">截止日期:</span>
+                                                    <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(_item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </li>
+
+                                }
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}
+
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
