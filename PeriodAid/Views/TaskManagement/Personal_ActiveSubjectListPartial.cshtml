@@ -2,8 +2,8 @@
 <h3 style="position:relative">
     <i class="fa fa-tasks color-blue" aria-hidden="true"></i>&nbsp;
     正在执行的项目&nbsp;
-    <button type="button" id="bt_new_mess" class="color-gray btn btn-primary" style="color:white">
-        全部消息</button>
+    @*<button type="button" id="bt_new_mess" class="color-gray btn btn-primary" style="color:white">
+    全部消息</button>*@
             
 </h3>
 
@@ -92,34 +92,11 @@
     </div>
 </div>
 
-
-
-
-
 <script>
     $(function () {
-       /* $.ajax({
-            url: "/Taskmanagement/NewLogs/",
-            type: "post",
-            data: {
-            },
-            success: function (data) {
-                console.log(typeof data)
-                console.log(data)
-                for (var item in data) {
-                    console.log(data);
-                    for (i = 0; i < data[item].length; i++) {
-                        if (data[item][i].IsNew == true) {
-                            $("#bt_new_mess").css({color:'white'}).html("新消息")
-                            //$("#bt_new_mess").attr("data-content", data[item][i].LogsContent);        
-                            
-                        }
-                    }
-                }
-            }
-        })*/
+        $("#bt_new_mess").hide()
         $("#bt_new_mess").click(function () {
-            console.log("show")
+            
             $('#myModal').modal()
             $.ajax({
                 url: "/Taskmanagement/NewLogs/",
@@ -129,16 +106,18 @@
                 success: function (data) {
                     for (var item in data) {
                         console.log(data);
+                        $("#log_content").html('');
                         for (i = 0; i < data[item].length; i++) {
                             if (data[item][i].IsNew == true) {
                                 //$("#bt_new_mess").attr("data-content", data[item][i].LogsContent);
                                 $("#log_content").append("<div class=\"popover-title\" style='text-align:center'>" + "项目【" + data[item][i].SubjectTitle + "】操作消息：" + "<h5 class=\"color-gray text-left\">" + data[item][i].LogsContent + "</h5></div>");
-                            }
+                            } 
                         }
                     }
                 }
             })
         });
+        
         
         
 
