@@ -772,10 +772,10 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var model = from m in _db.Assignment
+                var model = (from m in _db.Assignment
                             where m.Status == AssignmentStatus.FINISHED && m.HolderId == _emplyeeId
                             orderby m.CompleteDate descending
-                            select m;
+                            select m).Skip(_page * 20).Take(20);
                 return PartialView(model);
             }
             

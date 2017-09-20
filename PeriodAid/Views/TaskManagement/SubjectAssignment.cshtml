@@ -30,7 +30,7 @@
                         @if (item.Deadline != null)
                         {
                             <div class="tm_item_left tm-span-75">
-                                <span class="color-orange">截止日期:</span>
+                                <span class="color-orange over-deadline">截止日期:</span>
                                 <span class="finish_subtask">@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:00"))</span>
                             </div>
                         }
