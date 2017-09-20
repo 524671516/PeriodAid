@@ -39,7 +39,7 @@
                         <div class="tm-view-info-bottom">
                             @if (item.Deadline != null)
                             {
-                                <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                                <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:mm:ss"))</span>
                             }
                             else
                             {
@@ -132,7 +132,7 @@
                             }
                             else if (item.Deadline != null && DateTime.Now <= item.Deadline)
                             {
-                                <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                                <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:mm:ss"))</span>
                             }
                             else
                             {
@@ -258,7 +258,7 @@ else
                             <div class="tm-view-info-bottom">
                                 @if (item.Deadline != null)
                                 {
-                                    <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                                    <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:mm:ss"))</span>
                                 }
                                 else
                                 {
@@ -351,7 +351,7 @@ else
                                 }
                                 else if (item.Deadline != null && DateTime.Now <= item.Deadline)
                                 {
-                                    <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                                    <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:mm:ss"))</span>
                                 }
                                 else
                                 {

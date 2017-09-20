@@ -1036,10 +1036,11 @@ namespace PeriodAid.Controllers
             {
                 var original = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
                 var nowprocedure = _db.Procedure.SingleOrDefault(m => m.Id == nowpid);
+                var oldtitle = original.Procedure.ProcedureTitle;
                 original.ProcedureId = nowpid;
                 _db.Entry(original).State = System.Data.Entity.EntityState.Modified;
                 await _db.SaveChangesAsync();
-                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从"+original.Procedure.ProcedureTitle+"移动到了"+nowprocedure.ProcedureTitle+"。");
+                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从"+ oldtitle + "移动到了"+nowprocedure.ProcedureTitle+"。");
             }
             catch (Exception)
             {
@@ -3151,10 +3152,12 @@ namespace PeriodAid.Controllers
                                where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
                                select m).Count();
             ViewBag.RecentEvent = loglist;
-            List<Employee> attendlist = new List<Employee>();
-            attendlist.Add(subject.Holder);
-            attendlist.AddRange(subject.AttendEmployee.Except(attendlist));
-            ViewBag.AttendList = attendlist;
+            List<Employee> attendlist1 = new List<Employee>();
+            attendlist1.Add(subject.Holder);
+            ViewBag.AttendList1 = attendlist1;
+            List<Employee> attendlist = new List<Employee>();            
+            attendlist.AddRange(subject.AttendEmployee.Except(attendlist1));
+            ViewBag.AttendList = attendlist;            
             return PartialView(subject);
         }
 
