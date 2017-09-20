@@ -563,7 +563,7 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(item))
                 {
                     var employee = getEmployee(User.Identity.Name);
-                    if (employee.Subject.Select(p => p.TemplateId).Contains(item.TemplateId))
+                    if (employee.Subject.Select(p => p.TemplateId).Contains(item.TemplateId) || employee.Type == EmployeeType.DEPARTMENTMANAGER)
                     {
                         var template = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);
                         var maxsort = template.Procedure.Max(m => m.Sort);
@@ -604,7 +604,7 @@ namespace PeriodAid.Controllers
         {
             var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId && m.Status == ProcedureStatus.NORMAL);
             var employee = getEmployee(User.Identity.Name);
-            if (employee.Subject.Select(p => p.TemplateId).Contains(procedure.TemplateId))
+            if (employee.Subject.Select(p => p.TemplateId).Contains(procedure.TemplateId) || employee.Type== EmployeeType.DEPARTMENTMANAGER)
             {
                 var assignmentlist = (from m in _db.Assignment
                                       where m.ProcedureId == ProcedureId && m.Status > AssignmentStatus.DELETED
@@ -740,7 +740,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var assignmentlist = from m in _db.Assignment
-                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId
                                          orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
                                          select m;
                     ViewBag.ProcedureId = ProcedureId;
@@ -765,15 +765,15 @@ namespace PeriodAid.Controllers
             if (_emplyeeId == 0)
             {
                 var model = (from m in _db.Assignment
-                            where m.Status == AssignmentStatus.FINISHED
-                            orderby m.CompleteDate descending
+                            where m.Status == AssignmentStatus.FINISHED && m.SubjectId== subjectId
+                             orderby m.CompleteDate descending
                             select m).Skip(_page * 20).Take(20);
                 return PartialView(model);
             }
             else
             {
                 var model = (from m in _db.Assignment
-                            where m.Status == AssignmentStatus.FINISHED && m.HolderId == _emplyeeId
+                            where m.Status == AssignmentStatus.FINISHED && m.SubjectId == subjectId && m.HolderId == _emplyeeId
                             orderby m.CompleteDate descending
                             select m).Skip(_page * 20).Take(20);
                 return PartialView(model);
@@ -1035,12 +1035,12 @@ namespace PeriodAid.Controllers
             try
             {
                 var original = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
-                var nowprocedure = _db.Procedure.SingleOrDefault(m => m.Id == nowpid);
                 var oldtitle = original.Procedure.ProcedureTitle;
-                original.ProcedureId = nowpid;
+                var nowprocedure = _db.Procedure.SingleOrDefault(m => m.Id == nowpid);
                 _db.Entry(original).State = System.Data.Entity.EntityState.Modified;
+                original.ProcedureId = nowpid;
                 await _db.SaveChangesAsync();
-                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从"+ oldtitle + "移动到了"+nowprocedure.ProcedureTitle+"。");
+                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从["+ oldtitle + "]移动到了["+nowprocedure.ProcedureTitle+"]。");
             }
             catch (Exception)
             {
@@ -1599,10 +1599,9 @@ namespace PeriodAid.Controllers
         public PartialViewResult SubjectLogsPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
-            var EmployeeList = from m in _db.Employee
-                               where m.Status > EmployeeStatus.DEVOICE
-                               select m;
-            ViewBag.EmployeeDropDown = EmployeeList;
+            List<Employee> attendlist = new List<Employee>();
+            attendlist.AddRange(subject.AttendEmployee);
+            ViewBag.EmployeeDropDown = attendlist;
             ViewBag.type = getEmployee(User.Identity.Name).Type;
             ViewBag.user_id = getEmployee(User.Identity.Name).Id;
             return PartialView(subject);
@@ -3155,9 +3154,9 @@ namespace PeriodAid.Controllers
             List<Employee> attendlist1 = new List<Employee>();
             attendlist1.Add(subject.Holder);
             ViewBag.AttendList1 = attendlist1;
-            List<Employee> attendlist = new List<Employee>();            
+            List<Employee> attendlist = new List<Employee>();
             attendlist.AddRange(subject.AttendEmployee.Except(attendlist1));
-            ViewBag.AttendList = attendlist;            
+            ViewBag.AttendList = attendlist;
             return PartialView(subject);
         }
 

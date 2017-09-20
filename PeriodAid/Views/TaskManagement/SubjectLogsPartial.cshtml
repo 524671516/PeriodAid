@@ -14,14 +14,7 @@
             <select class="selectpicker" id="tm_select_straff" data-width="100%">
                 @foreach (var item in ViewBag.EmployeeDropDown)
                 {
-                    if (item.Id == Model.HolderId)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        <option value="@item.Id">@item.NickName</option>
-                    }
+                    <option value="@item.Id">@item.NickName</option>
                 }
             </select>
         </div>

@@ -35,7 +35,7 @@
                     <div class="tm-view-info float-left tm-show-task-modal" style="opacity:0.6;" data-aid="@item.Id">
                         <div class="tm-view-info-top">
                             <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;&nbsp;
-                            <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                            <span>位于:[@Html.Encode(item.Procedure.ProcedureTitle)]</span>&nbsp;&nbsp;
                         </div>
                         <div class="tm-view-info-bottom">
                             @if (item.Deadline != null)
@@ -124,7 +124,7 @@
                     <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
                         <div class="tm-view-info-top">
                             <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;
-                            <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                            <span>位于:[@Html.Encode(item.Procedure.ProcedureTitle)]</span>&nbsp;&nbsp;
                         </div>
                         <div class="tm-view-info-bottom">
                             @if (item.Deadline != null)
@@ -250,7 +250,7 @@
                         <div class="tm-view-info float-left tm-show-task-modal" style="opacity:0.6;" data-aid="@item.Id">
                             <div class="tm-view-info-top">
                                 <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;&nbsp;
-                                <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                                <span>位于:[@Html.Encode(item.Procedure.ProcedureTitle)]</span>&nbsp;&nbsp;
                             </div>
                             <div class="tm-view-info-bottom">
                                 @if (item.Deadline != null)
@@ -339,7 +339,7 @@
                         <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
                             <div class="tm-view-info-top">
                                 <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;
-                                <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                                <span>位于:[@Html.Encode(item.Procedure.ProcedureTitle)]</span>&nbsp;&nbsp;
                             </div>
                             <div class="tm-view-info-bottom">
                                 @if (item.Deadline != null)
