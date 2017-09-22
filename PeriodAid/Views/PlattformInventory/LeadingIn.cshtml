@@ -1,0 +1,57 @@
+﻿@model PeriodAid.Models.SS_Product
+
+<h1>Select the Excel file</h1>
+<div class="input-group ">
+@*文件路径的文本框*@
+<input id="txt_Path" type="text" class="form-control">
+@*浏览本地文件按钮*@
+    <span id="btn_Browse" style="cursor:pointer;" onclick="$('input[id=fileUpload]').click();" class="input-group-addon">
+      <i class="glyphicon glyphicon-folder-open"></i>&nbsp;&nbsp;&nbsp;浏览文件
+    </span>
+</div>
+<br /><br />
+
+@using (Html.BeginForm("Browse", "PlattformInventory",
+FormMethod.Post, new { enctype = "multipart/form-data   ", id = "form_Upload" }))
+{
+   @Html.AntiForgeryToken() //防止跨站请求伪造(CSRF:Cross-site request forgery)攻击
+<input id = "fileUpload" type = "file" name = "file" style = "display:none" > //把fileUpload隐藏,原因它太难看了
+}	
+
+<div class="input-group pull-right" style="margin:0 0 5px 0">@Html.RouteLink("开始提交", new { action = "Upload" },
+  new
+  {
+      id = "submit",
+      @class = "btn  btn-primary ladda-button ",
+      data_style = "expand-right"
+  })
+</div>
+<table class="table table-striped table-hover table-bordered">
+    <tr>
+        <th>@Html.DisplayNameFor(model=>model.System_Code)</th>
+        <th>@Html.DisplayNameFor(model=>model.Item_Code)</th>
+    </tr>
+    @if (ViewBag.Data != null) {
+        foreach (var item in (ViewBag.Data as IEnumerable<PeriodAid.Models.SS_Product>).Take(10)) {
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.System_Code)</th>
+                <th>@Html.DisplayNameFor(model => model.Item_Code)</th>
+            </tr>
+        }
+    }
+</table>
+
+
+@section scripts{
+    <style type="text/css">
+        #btn_Browse:hover {
+            color:#3C763D;
+        }
+    </style>
+    <script type="text/javascript">
+        $("input[id=fileUpload]").change(function () {
+            $("#txt_Path").val($(this).val());
+            $("#form_Upload").submit();
+        });
+     </script>	
+}	
