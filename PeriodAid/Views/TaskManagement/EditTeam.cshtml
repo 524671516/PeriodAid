@@ -13,7 +13,6 @@
             @foreach (var emb in ViewBag.AttendList2)
             {
                 <div class="menu-attend-item" data-aid="@emb.Id" title="@emb.NickName" data-toggle="tooltip" data-placement="top">
-                    
                     <ul class="participator_area clear-float">
                         @if (emb.ImgUrl == null)
                         {

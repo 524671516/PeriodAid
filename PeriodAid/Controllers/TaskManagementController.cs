@@ -1096,7 +1096,7 @@ namespace PeriodAid.Controllers
                     List<Employee> newlist = new List<Employee>();
                     foreach (var item in depart.Employee)
                     {
-                        if (!assignment.Collaborator.Contains(item) && Subject.AttendEmployee.Contains(item) && assignment.Holder!=item)
+                        if (!assignment.Collaborator.Contains(item) && existem.Contains(item) && assignment.Holder!=item )
                         {
                             newlist.Add(item);
                         }
