@@ -5,13 +5,15 @@
 </div>
 <div class="padding-10">
     <select class="selectpicker form-control" id="tm_select_straff_addcol_1" multiple>
-        <optgroup label="工作人员">
-            @foreach (var staff in ViewBag.AttendList1)
+        @foreach (var depart in ViewBag.DepartmentList)
             {
-                <option value="@staff.Id">@staff.NickName</option>
-            }
-        </optgroup>
-
+            <optgroup label="@depart.DepartmentName">
+                @foreach (var straff in depart.EmployeeList)
+                {
+                    <option value="@straff.Id">@straff.NickName</option>
+                }
+            </optgroup>
+        }
     </select>
 </div><input type="hidden" id="Subject_id" value="@ViewBag.Subject" />
 <div class="tm_modal_ul_wrap modal-list-panel" style="padding:0 10px">

@@ -28,7 +28,7 @@
                 </a>
             </li>
             <li>
-                <a href="javascript:;" data-pid="@Model.Id" data-type="unfinish"   class="btn-select-procedure">
+                <a href="javascript:;" data-pid="@Model.Id" data-type="unfinish" class="btn-select-procedure">
                     <span class="color-blue">@Html.Encode("筛选未完成任务")</span>
                 </a>
             </li>
@@ -48,5 +48,5 @@
 </div>
 <div class="tm_panel-footer clear-float">
     <div class="tm_panel-footer-left float-left"></div>
-    <div class="tm_panel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Assignment.Count(p => p.Status == AssignmentStatus.UNFINISHED ))</span></div>
+    <div class="tm_panel-footer-right float-right"><span class="num color-green">@Html.Encode(Model.Assignment.Count(p => p.Status == AssignmentStatus.UNFINISHED))</span></div>
 </div>

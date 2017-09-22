@@ -13,7 +13,7 @@
             @foreach (var emb in ViewBag.AttendList2)
             {
                 <div class="menu-attend-item" data-aid="@emb.Id" title="@emb.NickName" data-toggle="tooltip" data-placement="top">
-                   
+                    <span class="fa fa-mortar-board" aria-hidden="true" title="拥有者" data-toggle="tooltip" data-placement="right" style="position: absolute;right: 551.2px;top: 56px;"></span>
                     <ul class="participator_area clear-float">
                         @if (emb.ImgUrl == null)
                         {
@@ -81,7 +81,7 @@
             },
             success: function (data) {
                 $("#Add-Team .modal-content").html(data);
-                $('#Add-Team').modal('show');
+                $('#Add-Team').modal();
             }
         })
     });

@@ -234,6 +234,7 @@
     <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\PeriodAidController.cs" />
     <Compile Include="Controllers\OffSalesController.cs" />
+    <Compile Include="Controllers\PlattformInventoryController.cs" />
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\SellerTaskController.cs" />
     <Compile Include="Controllers\TaskManagementController.cs" />
@@ -272,6 +273,7 @@
     <Compile Include="Models\ProjectSchemeModels.cs" />
     <Compile Include="Models\ProjectViewModels.cs" />
     <Compile Include="Models\Promotion.cs" />
+    <Compile Include="Models\ShopStorageModel.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
@@ -1124,6 +1126,7 @@
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
+    <Folder Include="Views\PlattformInventory\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
