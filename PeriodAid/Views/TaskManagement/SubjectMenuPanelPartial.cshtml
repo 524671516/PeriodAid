@@ -19,13 +19,14 @@
                     @foreach (var emp in ViewBag.AttendList1)
                     {
                         <div class="menu-attend-item" data-aid="@emp.Id" title="@emp.NickName" data-toggle="tooltip" data-placement="top">
+                            <span class="fa fa-mortar-board" aria-hidden="true" title="拥有者" data-toggle="tooltip" data-placement="right" style="position: absolute;right: 307.5px;top: 31px;"></span>
                             @if (emp.ImgUrl == null)
                             {
-                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"><span class="crown-show" style="width:15px;height:15px;background:url('../../../../Content/images/crown.svg') center center;background-size:cover;position:absolute;top:-14px;left:5px" title="创建者" data-toggle="tooltip" data-placement="top"></span></span>
                             }
                             else
                             {
-                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@emp.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@emp.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"><span class="crown-show" style="width:15px;height:15px;background:url('../../../../Content/images/crown.svg') center center;background-size:cover;position:absolute;top:-14px;left:5px"></span></span>
                             }
                         </div>
                     }
