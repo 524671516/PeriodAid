@@ -5,14 +5,14 @@ namespace PeriodAid.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.ProjectSchemeModels>
+    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.ShopStorageModel>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(PeriodAid.Models.ProjectSchemeModels context)
+        protected override void Seed(PeriodAid.Models.ShopStorageModel context)
         {
             //  This method will be called after migrating to the latest version.
 

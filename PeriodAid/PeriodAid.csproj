@@ -234,6 +234,7 @@
     <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\PeriodAidController.cs" />
     <Compile Include="Controllers\OffSalesController.cs" />
+    <Compile Include="Controllers\PlattformInventoryController.cs" />
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\SellerTaskController.cs" />
     <Compile Include="Controllers\TaskManagementController.cs" />
@@ -272,11 +273,13 @@
     <Compile Include="Models\ProjectSchemeModels.cs" />
     <Compile Include="Models\ProjectViewModels.cs" />
     <Compile Include="Models\Promotion.cs" />
+    <Compile Include="Models\ShopStorageModel.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="UnityTool\ExcelHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\audio\audio_01.mp3" />
@@ -314,6 +317,7 @@
     <Content Include="Content\framework7.ios.rtl.min.css" />
     <Content Include="Content\images\banner_mobile_1.jpg" />
     <Content Include="Content\images\cover-default.jpg" />
+    <Content Include="Content\images\crown.svg" />
     <Content Include="Content\images\defaultphoto.gif" />
     <Content Include="Content\images\img_1.jpg" />
     <Content Include="Content\images\benefits_flow_01.png" />
@@ -413,6 +417,7 @@
     <Content Include="Content\images\wx_gambling_background_01.jpg" />
     <Content Include="Content\images\wx_gambling_background_03.jpg" />
     <Content Include="Content\images\benefits_done.png" />
+    <Content Include="Content\images\皇冠.svg" />
     <Content Include="Content\Jcrop.gif" />
     <Content Include="Content\Jcrop.min.css" />
     <Content Include="Content\jedate.css" />
@@ -422,6 +427,7 @@
     <Content Include="Content\jquery.fullPage.css" />
     <Content Include="Content\PA-Site.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\Plattformlnventory.css" />
     <Content Include="Content\prettify.css" />
     <Content Include="Content\TaskManagement.css" />
     <Content Include="Content\taskmanagement_m.css" />
@@ -1116,6 +1122,10 @@
     <Content Include="Views\TaskManagement\EditTeam.cshtml" />
     <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCompletedAssignmentListPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\LeadingIn.cshtml" />
+    <Content Include="Views\PlattformInventory\Index.cshtml" />
+    <Content Include="Views\Shared\_PlattformInventory.cshtml" />
+    <Content Include="Views\PlattformInventory\PlattformInventory_form.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
