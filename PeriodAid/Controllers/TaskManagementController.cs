@@ -737,6 +737,15 @@ namespace PeriodAid.Controllers
                     ViewBag.ProcedureId = ProcedureId;
                     return PartialView(assignmentlist);
                 }
+                else if (Type == GetDataType.UNFINISHDATA)
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
                 else
                 {
                     var assignmentlist = from m in _db.Assignment
@@ -815,8 +824,11 @@ namespace PeriodAid.Controllers
             };
             var Sub = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var EmployeeList = Sub.AttendEmployee;
-            ViewBag.DepartmentList = EmployeeList;
-            ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", employee.Id);
+            List<Employee> existem = new List<Employee>();
+            existem.Add(Sub.Holder);
+            existem.AddRange(Sub.AttendEmployee.Except(existem));
+            ViewBag.DepartmentList = existem;
+            ViewBag.EmployeeDropDown = new SelectList(existem, "Id", "NickName", employee.Id);
             return PartialView(item);
         }
 
@@ -891,10 +903,10 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var EmployeeList = from m in _db.Employee
-                                   where m.Status > EmployeeStatus.DEVOICE
-                                   select m;
-                ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", assignment.HolderId);
+                List<Employee> attendlist = new List<Employee>();
+                attendlist.Add(assignment.Holder);
+                attendlist.AddRange(assignment.Subject.AttendEmployee.Except(attendlist));
+                ViewBag.EmployeeDropDown = new SelectList(attendlist, "Id", "NickName", assignment.HolderId);
                 return PartialView(assignment);
             }
         }
@@ -1067,15 +1079,39 @@ namespace PeriodAid.Controllers
             try
             {
                 var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+                var employee = assignment.Holder;
+                var Subject = _db.Subject.SingleOrDefault(m => m.Id == assignment.SubjectId);
                 List<CollaboratorModel> collist = new List<CollaboratorModel>();
                 List<Employee> existem = new List<Employee>();
-                existem.Add(assignment.Holder);
-                foreach (var col in assignment.Collaborator)
+                List<Employee> existem1 = new List<Employee>();
+                existem1.Add(employee);
+                existem.AddRange(Subject.AttendEmployee.Except(existem1));
+                existem.Add(Subject.Holder);
+
+                var departemt1 = (from m in existem
+                                 select m.Department).Distinct();
+                var departemt = from m in _db.Department
+                                where m.Status == DepartmentStatus.NORMAL
+                                select m;
+                foreach (var depart in departemt1)
                 {
-                    existem.Add(col);
+                    List<Employee> newlist = new List<Employee>();
+                    foreach (var item in depart.Employee)
+                    {
+                        if (!assignment.Collaborator.Contains(item) && Subject.AttendEmployee.Contains(item) && assignment.Holder!=item)
+                        {
+                            newlist.Add(item);
+                        }
+                    }
+                    CollaboratorModel colmodel = new CollaboratorModel()
+                    {
+                        DepartmentName = depart.DepartmentName,
+                        EmployeeList = newlist
+                    };
+                    collist.Add(colmodel);
                 }
-                var waitEmployee = assignment.Subject.AttendEmployee.Except(existem);
-                ViewBag.DepartmentList = waitEmployee;
+                ViewBag.DepartmentList = collist;
+
                 return PartialView(assignment);
             }
             catch (Exception)
@@ -1101,6 +1137,36 @@ namespace PeriodAid.Controllers
                 attendlist1.AddRange(team.Except(attendlist));
                 ViewBag.AttendList1 = attendlist1;
                 ViewBag.Subject = Subject.Id;
+
+                List<CollaboratorModel> collist = new List<CollaboratorModel>();
+                List<Employee> existem = new List<Employee>();
+                existem.Add(Subject.Holder);
+                foreach (var col in Subject.AttendEmployee)
+                {
+                    existem.Add(col);
+                }
+                var departemt = from m in _db.Department
+                                where m.Status == DepartmentStatus.NORMAL
+                                select m;
+                foreach (var depart in departemt)
+                {
+                    List<Employee> newlist = new List<Employee>();
+                    foreach (var item in depart.Employee)
+                    {
+                        if (!existem.Contains(item))
+                        {
+                            newlist.Add(item);
+                        }
+                    }
+                    CollaboratorModel colmodel = new CollaboratorModel()
+                    {
+                        DepartmentName = depart.DepartmentName,
+                        EmployeeList = newlist
+                    };
+                    collist.Add(colmodel);
+                }
+                ViewBag.DepartmentList = collist;
+
                 return PartialView(Employee);
             }
             catch (Exception)
@@ -3264,6 +3330,10 @@ namespace PeriodAid.Controllers
             int _subjectId = SubjectId ?? 0;
             int _employeeId = employeeId ?? 0;
             ViewBag.currentshow = _page;
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            List<Employee> attendlist = new List<Employee>();
+            attendlist.AddRange(subject.AttendEmployee);
+            ViewBag.EmployeeDropDown = attendlist;
             if (user_type == 1 || user_id == holder_id)
             {
                 if (_employeeId != 0)
