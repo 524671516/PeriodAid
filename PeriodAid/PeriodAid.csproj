@@ -279,6 +279,7 @@
     <Compile Include="Models\WxAcountViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="UnityTool\ExcelHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\audio\audio_01.mp3" />
@@ -1120,13 +1121,13 @@
     <Content Include="Views\TaskManagement\EditTeam.cshtml" />
     <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCompletedAssignmentListPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\LeadingIn.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
-    <Folder Include="Views\PlattformInventory\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
