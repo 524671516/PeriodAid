@@ -14,7 +14,7 @@
     </div>
     <div class="form-group">
         <label for="HolderId">负责人</label>
-        @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, "", new { @class = "form-control selectpicker dropdown", id = "assignment_holder_straff" })
+        @Html.DropDownListFor(m => m.HolderId, ViewBag.EmployeeDropDown as SelectList, new { @class = "form-control selectpicker dropdown", id = "assignment_holder_straff" })
     </div>
     <div style="margin-bottom:15px;">
         <label for="assignment_col_straff">参与人</label>
@@ -56,7 +56,7 @@
         liveSearch: true,
         liveSearchPlaceholder: "搜索人员",
         width: "100%",
-        dropupAuto: false,
+        dropupAuto: false
     });
     $('#assignment_col_straff').selectpicker({
         liveSearch: true,

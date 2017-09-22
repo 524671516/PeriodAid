@@ -16,6 +16,19 @@
                     &nbsp;<strong>项目团队</strong>
                 </div>
                 <div class="clear-float" id="menu_team_show">
+                    @foreach (var emp in ViewBag.AttendList1)
+                    {
+                        <div class="menu-attend-item" data-aid="@emp.Id" title="@emp.NickName" data-toggle="tooltip" data-placement="top">
+                            @if (emp.ImgUrl == null)
+                            {
+                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
+                            else
+                            {
+                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@emp.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                            }
+                        </div>
+                    }
                     @foreach (var emp in ViewBag.AttendList)
                     {
                         <div class="menu-attend-item" data-aid="@emp.Id" title="@emp.NickName" data-toggle="tooltip" data-placement="top">
@@ -84,7 +97,7 @@
                                     <div class="tm_middle_bottom tm_middle_content clear-float">
                                         <div class="tm_item_left">
                                             <span class="color-gray"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
-                                            <span class="finish_subtask">@Html.Encode(log.LogTime.ToString("yyyy-MM-dd HH:ss"))</span>
+                                            <span class="finish_subtask">@Html.Encode(log.LogTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
                                         </div>
 
                                     </div>
@@ -151,8 +164,7 @@
             data: {
                 SubjectId: $("#panel-wrap").attr("data-sid")
             },
-            success: function (data) {
-                console.log(data)                
+            success: function (data) {           
                 if (data != "FAIL") {
                     $("#Create-Subject-Content").html(data);
                     $("#Add-Subject").modal();

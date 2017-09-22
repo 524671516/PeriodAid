@@ -563,7 +563,7 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(item))
                 {
                     var employee = getEmployee(User.Identity.Name);
-                    if (employee.Subject.Select(p => p.TemplateId).Contains(item.TemplateId))
+                    if (employee.Subject.Select(p => p.TemplateId).Contains(item.TemplateId) || employee.Type == EmployeeType.DEPARTMENTMANAGER)
                     {
                         var template = _db.ProcedureTemplate.SingleOrDefault(m => m.Id == item.TemplateId);
                         var maxsort = template.Procedure.Max(m => m.Sort);
@@ -604,7 +604,7 @@ namespace PeriodAid.Controllers
         {
             var procedure = _db.Procedure.SingleOrDefault(m => m.Id == ProcedureId && m.Status == ProcedureStatus.NORMAL);
             var employee = getEmployee(User.Identity.Name);
-            if (employee.Subject.Select(p => p.TemplateId).Contains(procedure.TemplateId))
+            if (employee.Subject.Select(p => p.TemplateId).Contains(procedure.TemplateId) || employee.Type== EmployeeType.DEPARTMENTMANAGER)
             {
                 var assignmentlist = (from m in _db.Assignment
                                       where m.ProcedureId == ProcedureId && m.Status > AssignmentStatus.DELETED
@@ -737,10 +737,19 @@ namespace PeriodAid.Controllers
                     ViewBag.ProcedureId = ProcedureId;
                     return PartialView(assignmentlist);
                 }
-                else
+                else if (Type == GetDataType.UNFINISHDATA)
                 {
                     var assignmentlist = from m in _db.Assignment
                                          where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId && m.Status == AssignmentStatus.UNFINISHED
+                                         orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
+                                         select m;
+                    ViewBag.ProcedureId = ProcedureId;
+                    return PartialView(assignmentlist);
+                }
+                else
+                {
+                    var assignmentlist = from m in _db.Assignment
+                                         where m.ProcedureId == ProcedureId && m.SubjectId == SubjectId
                                          orderby m.Status ascending, m.Priority descending, m.Deadline.HasValue descending, m.Deadline
                                          select m;
                     ViewBag.ProcedureId = ProcedureId;
@@ -765,17 +774,17 @@ namespace PeriodAid.Controllers
             if (_emplyeeId == 0)
             {
                 var model = (from m in _db.Assignment
-                            where m.Status == AssignmentStatus.FINISHED
-                            orderby m.CompleteDate descending
+                            where m.Status == AssignmentStatus.FINISHED && m.SubjectId== subjectId
+                             orderby m.CompleteDate descending
                             select m).Skip(_page * 20).Take(20);
                 return PartialView(model);
             }
             else
             {
-                var model = from m in _db.Assignment
-                            where m.Status == AssignmentStatus.FINISHED && m.HolderId == _emplyeeId
+                var model = (from m in _db.Assignment
+                            where m.Status == AssignmentStatus.FINISHED && m.SubjectId == subjectId && m.HolderId == _emplyeeId
                             orderby m.CompleteDate descending
-                            select m;
+                            select m).Skip(_page * 20).Take(20);
                 return PartialView(model);
             }
             
@@ -815,8 +824,11 @@ namespace PeriodAid.Controllers
             };
             var Sub = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var EmployeeList = Sub.AttendEmployee;
-            ViewBag.DepartmentList = EmployeeList;
-            ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", employee.Id);
+            List<Employee> existem = new List<Employee>();
+            existem.Add(Sub.Holder);
+            existem.AddRange(Sub.AttendEmployee.Except(existem));
+            ViewBag.DepartmentList = existem;
+            ViewBag.EmployeeDropDown = new SelectList(existem, "Id", "NickName", employee.Id);
             return PartialView(item);
         }
 
@@ -891,10 +903,10 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                var EmployeeList = from m in _db.Employee
-                                   where m.Status > EmployeeStatus.DEVOICE
-                                   select m;
-                ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", assignment.HolderId);
+                List<Employee> attendlist = new List<Employee>();
+                attendlist.Add(assignment.Holder);
+                attendlist.AddRange(assignment.Subject.AttendEmployee.Except(attendlist));
+                ViewBag.EmployeeDropDown = new SelectList(attendlist, "Id", "NickName", assignment.HolderId);
                 return PartialView(assignment);
             }
         }
@@ -1035,11 +1047,12 @@ namespace PeriodAid.Controllers
             try
             {
                 var original = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+                var oldtitle = original.Procedure.ProcedureTitle;
                 var nowprocedure = _db.Procedure.SingleOrDefault(m => m.Id == nowpid);
-                original.ProcedureId = nowpid;
                 _db.Entry(original).State = System.Data.Entity.EntityState.Modified;
+                original.ProcedureId = nowpid;
                 await _db.SaveChangesAsync();
-                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从"+original.Procedure.ProcedureTitle+"移动到了"+nowprocedure.ProcedureTitle+"。");
+                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从["+ oldtitle + "]移动到了["+nowprocedure.ProcedureTitle+"]。");
             }
             catch (Exception)
             {
@@ -1066,15 +1079,39 @@ namespace PeriodAid.Controllers
             try
             {
                 var assignment = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
+                var employee = assignment.Holder;
+                var Subject = _db.Subject.SingleOrDefault(m => m.Id == assignment.SubjectId);
                 List<CollaboratorModel> collist = new List<CollaboratorModel>();
                 List<Employee> existem = new List<Employee>();
-                existem.Add(assignment.Holder);
-                foreach (var col in assignment.Collaborator)
+                List<Employee> existem1 = new List<Employee>();
+                existem1.Add(employee);
+                existem.AddRange(Subject.AttendEmployee.Except(existem1));
+                existem.Add(Subject.Holder);
+
+                var departemt1 = (from m in existem
+                                 select m.Department).Distinct();
+                var departemt = from m in _db.Department
+                                where m.Status == DepartmentStatus.NORMAL
+                                select m;
+                foreach (var depart in departemt1)
                 {
-                    existem.Add(col);
+                    List<Employee> newlist = new List<Employee>();
+                    foreach (var item in depart.Employee)
+                    {
+                        if (!assignment.Collaborator.Contains(item) && Subject.AttendEmployee.Contains(item) && assignment.Holder!=item)
+                        {
+                            newlist.Add(item);
+                        }
+                    }
+                    CollaboratorModel colmodel = new CollaboratorModel()
+                    {
+                        DepartmentName = depart.DepartmentName,
+                        EmployeeList = newlist
+                    };
+                    collist.Add(colmodel);
                 }
-                var waitEmployee = assignment.Subject.AttendEmployee.Except(existem);
-                ViewBag.DepartmentList = waitEmployee;
+                ViewBag.DepartmentList = collist;
+
                 return PartialView(assignment);
             }
             catch (Exception)
@@ -1100,6 +1137,36 @@ namespace PeriodAid.Controllers
                 attendlist1.AddRange(team.Except(attendlist));
                 ViewBag.AttendList1 = attendlist1;
                 ViewBag.Subject = Subject.Id;
+
+                List<CollaboratorModel> collist = new List<CollaboratorModel>();
+                List<Employee> existem = new List<Employee>();
+                existem.Add(Subject.Holder);
+                foreach (var col in Subject.AttendEmployee)
+                {
+                    existem.Add(col);
+                }
+                var departemt = from m in _db.Department
+                                where m.Status == DepartmentStatus.NORMAL
+                                select m;
+                foreach (var depart in departemt)
+                {
+                    List<Employee> newlist = new List<Employee>();
+                    foreach (var item in depart.Employee)
+                    {
+                        if (!existem.Contains(item))
+                        {
+                            newlist.Add(item);
+                        }
+                    }
+                    CollaboratorModel colmodel = new CollaboratorModel()
+                    {
+                        DepartmentName = depart.DepartmentName,
+                        EmployeeList = newlist
+                    };
+                    collist.Add(colmodel);
+                }
+                ViewBag.DepartmentList = collist;
+
                 return PartialView(Employee);
             }
             catch (Exception)
@@ -1598,10 +1665,9 @@ namespace PeriodAid.Controllers
         public PartialViewResult SubjectLogsPartial(int SubjectId)
         {
             var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
-            var EmployeeList = from m in _db.Employee
-                               where m.Status > EmployeeStatus.DEVOICE
-                               select m;
-            ViewBag.EmployeeDropDown = EmployeeList;
+            List<Employee> attendlist = new List<Employee>();
+            attendlist.AddRange(subject.AttendEmployee);
+            ViewBag.EmployeeDropDown = attendlist;
             ViewBag.type = getEmployee(User.Identity.Name).Type;
             ViewBag.user_id = getEmployee(User.Identity.Name).Id;
             return PartialView(subject);
@@ -3151,9 +3217,11 @@ namespace PeriodAid.Controllers
                                where m.Status == AssignmentStatus.UNFINISHED && (m.RemindDate >= DateTime.Today && m.RemindDate < DateTime.Today.AddDays(1) || m.Deadline >= DateTime.Today && m.Deadline < DateTime.Today.AddDays(1))
                                select m).Count();
             ViewBag.RecentEvent = loglist;
+            List<Employee> attendlist1 = new List<Employee>();
+            attendlist1.Add(subject.Holder);
+            ViewBag.AttendList1 = attendlist1;
             List<Employee> attendlist = new List<Employee>();
-            attendlist.Add(subject.Holder);
-            attendlist.AddRange(subject.AttendEmployee.Except(attendlist));
+            attendlist.AddRange(subject.AttendEmployee.Except(attendlist1));
             ViewBag.AttendList = attendlist;
             return PartialView(subject);
         }
@@ -3262,6 +3330,10 @@ namespace PeriodAid.Controllers
             int _subjectId = SubjectId ?? 0;
             int _employeeId = employeeId ?? 0;
             ViewBag.currentshow = _page;
+            var subject = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
+            List<Employee> attendlist = new List<Employee>();
+            attendlist.AddRange(subject.AttendEmployee);
+            ViewBag.EmployeeDropDown = attendlist;
             if (user_type == 1 || user_id == holder_id)
             {
                 if (_employeeId != 0)

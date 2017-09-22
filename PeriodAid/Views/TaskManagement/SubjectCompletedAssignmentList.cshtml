@@ -96,7 +96,7 @@
                     that.parent().parent().find(".tm-select.selected").removeClass("selected");
                     
                     that.addClass("selected");
-                    $('.tm-select-title').html($('.selected').html());
+                    $('.tm-select-title').html($('.selected').text());
                 }
                 $.ajax({
                     url: '/Taskmanagement/SubjectCompletedAssignmentListPartial',
@@ -105,7 +105,7 @@
                         page: parseInt($("#tm-view-page-done").val()),
                         subjectId: $("#panel-wrap").attr("data-sid"),
                         employeeId: $(this).attr("data-empid"),
-                        _page:1
+                       
                     },
                     success: function (data) {
                         $("#tm-view-col-content").html(data);
