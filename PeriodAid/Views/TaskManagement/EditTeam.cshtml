@@ -13,12 +13,14 @@
             @foreach (var emb in ViewBag.AttendList2)
             {
                 <div class="menu-attend-item" data-aid="@emb.Id" title="@emb.NickName" data-toggle="tooltip" data-placement="top">
-                    <span class="fa fa-mortar-board" aria-hidden="true" title="拥有者" data-toggle="tooltip" data-placement="right" style="position: absolute;right: 551.2px;top: 56px;"></span>
+                   
                     <ul class="participator_area clear-float">
                         @if (emb.ImgUrl == null)
                         {
                             <li>
+                                
                                 <div style="background-image: url('../../Content/images/defaultphoto.gif');" class="user_circle">
+                                    @*<span class="crown-show" style="width:15px;height:15px;background:url('../../../../Content/images/crown.svg') center center;background-size:cover;position:absolute;top:53px;left:31px"></span>*@
                                 </div>
                             </li>
                         }
@@ -26,6 +28,7 @@
                         {
                             <li>
                                 <div style="background-image: url('http://cdn2.shouquanzhai.cn/@emb.ImgUrl');" class="user_circle">
+                                    @*<span class="crown-show" style="width:15px;height:15px;background:url('../../../../Content/images/crown.svg') center center;background-size:cover;position:absolute;top:53px;left:31px"></span>*@
                                 </div>
                             </li>
                         }
