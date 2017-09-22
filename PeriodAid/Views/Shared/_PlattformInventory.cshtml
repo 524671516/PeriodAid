@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>库存管理系统</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("header", required: false)
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
+                    <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
+                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
+                    <li>@Html.ActionLink("库存管理系统", "Index", "PlattformInventory")</li>
+                    <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                            工具　<span class="caret"></span>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
+                            <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
+                            <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
+
+                        </ul>
+                    </li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <footer>
+            @*<p>&copy; @DateTime.Now.Year - 我的 ASP.NET 应用程序</p>*@
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/Sortable.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/defaults-zh_CN.min.js"></script>
+    <script src="~/Scripts/TaskManagement.js"></script>
+    <script src="~/Scripts/TaskManagementCalendar.js"></script>
+    <script>
+        
+       
+
+    </script>
+    @RenderSection("scripts", required: false)
+    
+</body>
+</html>

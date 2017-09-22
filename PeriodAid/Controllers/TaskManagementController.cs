@@ -824,8 +824,11 @@ namespace PeriodAid.Controllers
             };
             var Sub = _db.Subject.SingleOrDefault(m => m.Id == SubjectId);
             var EmployeeList = Sub.AttendEmployee;
-            ViewBag.DepartmentList = EmployeeList;
-            ViewBag.EmployeeDropDown = new SelectList(EmployeeList, "Id", "NickName", employee.Id);
+            List<Employee> existem = new List<Employee>();
+            existem.Add(Sub.Holder);
+            existem.AddRange(Sub.AttendEmployee.Except(existem));
+            ViewBag.DepartmentList = existem;
+            ViewBag.EmployeeDropDown = new SelectList(existem, "Id", "NickName", employee.Id);
             return PartialView(item);
         }
 
@@ -901,6 +904,7 @@ namespace PeriodAid.Controllers
             else
             {
                 List<Employee> attendlist = new List<Employee>();
+                attendlist.Add(assignment.Subject.Holder);
                 attendlist.Add(assignment.Holder);
                 attendlist.AddRange(assignment.Subject.AttendEmployee.Except(attendlist));
                 ViewBag.EmployeeDropDown = new SelectList(attendlist, "Id", "NickName", assignment.HolderId);
@@ -1046,11 +1050,10 @@ namespace PeriodAid.Controllers
                 var original = _db.Assignment.SingleOrDefault(m => m.Id == AssignmentId);
                 var oldtitle = original.Procedure.ProcedureTitle;
                 var nowprocedure = _db.Procedure.SingleOrDefault(m => m.Id == nowpid);
-                original.ProcedureId = nowpid;
                 _db.Entry(original).State = System.Data.Entity.EntityState.Modified;
                 original.ProcedureId = nowpid;
                 await _db.SaveChangesAsync();
-                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从"+ oldtitle + "移动到了"+nowprocedure.ProcedureTitle+"。");
+                await AddLogAsync(LogCode.EDITTASK, employee, original.SubjectId, "将任务【" + original.AssignmentTitle + "】从["+ oldtitle + "]移动到了["+nowprocedure.ProcedureTitle+"]。");
             }
             catch (Exception)
             {
@@ -3216,9 +3219,9 @@ namespace PeriodAid.Controllers
                                select m).Count();
             ViewBag.RecentEvent = loglist;
             List<Employee> attendlist1 = new List<Employee>();
-            attendlist1.Add(subject.Holder);           
+            attendlist1.Add(subject.Holder);
             ViewBag.AttendList1 = attendlist1;
-            List<Employee> attendlist = new List<Employee>();           
+            List<Employee> attendlist = new List<Employee>();
             attendlist.AddRange(subject.AttendEmployee.Except(attendlist1));
             ViewBag.AttendList = attendlist;
             return PartialView(subject);

@@ -426,6 +426,7 @@
     <Content Include="Content\jquery.fullPage.css" />
     <Content Include="Content\PA-Site.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\Plattformlnventory.css" />
     <Content Include="Content\prettify.css" />
     <Content Include="Content\TaskManagement.css" />
     <Content Include="Content\taskmanagement_m.css" />
@@ -1120,13 +1121,15 @@
     <Content Include="Views\TaskManagement\EditTeam.cshtml" />
     <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCompletedAssignmentListPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\Index.cshtml" />
+    <Content Include="Views\Shared\_PlattformInventory.cshtml" />
+    <Content Include="Views\PlattformInventory\PlattformInventory_form.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
-    <Folder Include="Views\PlattformInventory\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
