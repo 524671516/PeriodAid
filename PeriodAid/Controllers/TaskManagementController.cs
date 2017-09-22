@@ -904,6 +904,7 @@ namespace PeriodAid.Controllers
             else
             {
                 List<Employee> attendlist = new List<Employee>();
+                attendlist.Add(assignment.Subject.Holder);
                 attendlist.Add(assignment.Holder);
                 attendlist.AddRange(assignment.Subject.AttendEmployee.Except(attendlist));
                 ViewBag.EmployeeDropDown = new SelectList(attendlist, "Id", "NickName", assignment.HolderId);
