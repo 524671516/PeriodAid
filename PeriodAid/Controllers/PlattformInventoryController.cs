@@ -39,9 +39,9 @@ namespace PeriodAid.Controllers
 
             try
             {
-                file.SaveAs(savePath);
-                stus = ExcelHelper.ReadExcelToEntityList<Student>(savePath);
-                ViewBag.Data = stus;
+                //file.SaveAs(savePath);
+                //stus = ExcelHelper.ReadExcelToEntityList<Student>(savePath);
+                //ViewBag.Data = stus;
                 return View("Index");
             }
             finally
