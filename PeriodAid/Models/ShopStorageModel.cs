@@ -137,4 +137,14 @@
     //    public int Id { get; set; }
     //    public string Name { get; set; }
     //}
+
+    // ViewModel
+    public class Product_SummaryViewModel
+    {
+        public SS_Product Product { get; set; }
+
+        public int Sales_Sum { get; set; }
+
+        public int Inventory_Sum { get; set; }
+    }
 }
