@@ -16,7 +16,7 @@ namespace PeriodAid.Controllers
     {
         // GET: PlattformInventory
         public ActionResult Index()
-        {
+        {           
             return View();
         }
 
