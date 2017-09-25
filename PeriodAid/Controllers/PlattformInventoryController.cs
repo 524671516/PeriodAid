@@ -99,6 +99,25 @@ namespace PeriodAid.Controllers
                     sb.Append(e.Message);
                     row_count++;
                 }
+                try {
+                    string system_code = csv_reader.GetField<string>("商品编号");
+                    string product_name = csv_reader.GetField<string>("商品名称");
+                    DateTime date = new DateTime(2017, 9, 12);
+                    SS_Product Product = new SS_Product()
+                    {
+                        System_Code = system_code,
+                        Item_Name = product_name.Substring(9,8),
+                        Inventory_Date = date,
+                        Plattform_Id = 1
+                    };
+                    _db.SS_Product.Add(Product);
+                    row_count++;
+                }
+                catch (Exception e)
+                {
+                    sb.Append(e.Message);
+                    row_count++;
+                }
             }
             _db.SaveChanges();
             return Content(sb.ToString());
