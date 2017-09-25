@@ -28,8 +28,9 @@
 
                         </li>
                         <li>
-                            <a href="#">
-                                <span>导入Excel文件</span>
+                            <a href="#" id="rel_excel_in">
+                                <span onclick="$('#excel_in').click();">导出Excel文件</span>
+                                 <input type="file" name="fileName" id="excel_in"/>
                             </a>
                         </li>
                         <li>
@@ -76,6 +77,7 @@
 <script>
     // 初始化数据
     $(function () {
+        $("#excel_in").hide();
             $.ajax({
                 url: "/PlattformInventory/PlattformInventory_form/",
                 data: {
@@ -95,7 +97,6 @@
                     success: function (data) {
                         that.children('.form-select-a').addClass("active");
                         $("#storage_show").html(data);
-                        console.log(data);
                     }
                 })
             })

@@ -142,6 +142,9 @@ namespace PeriodAid.Controllers
                         };
             return View(SalesRecord);
         }
+
+
+
         public ActionResult StorageShow(int Storage) {
             var storage = from m in _db.SS_Storage
                           select m;
