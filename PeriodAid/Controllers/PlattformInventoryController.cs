@@ -55,7 +55,7 @@ namespace PeriodAid.Controllers
             }
         }
         public ActionResult Index()
-        {           
+        {
             return View();
         }
         public ActionResult Read_InsertFile()
