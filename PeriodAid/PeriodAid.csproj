@@ -257,6 +257,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201709241301048_201709242100.cs" />
+    <Compile Include="Migrations\201709241301048_201709242100.Designer.cs">
+      <DependentUpon>201709241301048_201709242100.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201709241341087_201709242140.cs" />
+    <Compile Include="Migrations\201709241341087_201709242140.Designer.cs">
+      <DependentUpon>201709241341087_201709242140.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -506,6 +514,7 @@
     <Content Include="Content\bootstrap-select.css.map" />
     <Content Include="Scripts\framework7.js.map" />
     <Content Include="Scripts\framework7.min.js.map" />
+    <Content Include="Content\xlsx\201709221540.csv" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />
@@ -1118,13 +1127,13 @@
     <Content Include="Views\TaskManagement\EditTeam.cshtml" />
     <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCompletedAssignmentListPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
-    <Folder Include="Views\PlattformInventory\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
@@ -1133,6 +1142,14 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201709241301048_201709242100.resx">
+      <DependentUpon>201709241301048_201709242100.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709241341087_201709242140.resx">
+      <DependentUpon>201709241341087_201709242140.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
