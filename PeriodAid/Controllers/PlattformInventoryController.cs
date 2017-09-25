@@ -56,9 +56,6 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Index()
         {
-            var storage = from m in _db.SS_Storage
-                          select m;
-            ViewBag.storage = storage;
             return View();
         }
         public ActionResult Read_InsertFile()
@@ -102,6 +99,26 @@ namespace PeriodAid.Controllers
                     sb.Append(e.Message);
                     row_count++;
                 }
+                //try
+                //{
+                //    string system_code = csv_reader.GetField<string>("商品编号");
+                //    string product_name = csv_reader.GetField<string>("商品名称");
+                //    DateTime date = new DateTime(2017, 9, 12);
+                //    SS_Product Product = new SS_Product()
+                //    {
+                //        System_Code = system_code,
+                //        Item_Name = product_name.Substring(9, 15),
+                //        Inventory_Date = date,
+                //        Plattform_Id = 1
+                //    };
+                //    _db.SS_Product.Add(Product);
+                //    row_count++;
+                //}
+                //catch (Exception e)
+                //{
+                //    sb.Append(e.Message);
+                //    row_count++;
+                //}
             }
             _db.SaveChanges();
             return Content(sb.ToString());
@@ -111,17 +128,31 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult PlattformInventory_form() {            
-            
+        public ActionResult PlattformInventory_form() {
             var storage = from m in _db.SS_Storage
                           select m;
             ViewBag.storage = storage;
-            var sales = from m in _db.SS_SalesRecord
+            var SalesRecord = from m in _db.SS_SalesRecord
                         group m by m.SS_Product into g
-                        select new Product_SummaryViewModel{ Product = g.Key, Sales_Sum = g.Sum(m => m.Sales_Count) ,
-                        Inventory_Sum = g.Sum(m=>m.Storage_Count)};
-            return View(sales);
+                        select new Product_SummaryViewModel
+                        {
+                            Product = g.Key,
+                            Sales_Sum = g.Sum(m => m.Sales_Count),
+                            Inventory_Sum = g.Sum(m => m.Storage_Count)
+                        };
+            return View(SalesRecord);
         }
+        public ActionResult StorageShow(int Storage) {
+            var storage = from m in _db.SS_Storage
+                          select m;
+            ViewBag.storage = storage;
+            var SalesRecord = from m in _db.SS_SalesRecord
+                          where m.Storage_Id == Storage
+                          select m;
+            ViewBag.SalesRecord = SalesRecord;
+            return PartialView();
+        }
+
     }
     
 }

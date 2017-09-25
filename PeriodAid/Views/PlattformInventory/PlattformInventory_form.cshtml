@@ -1,17 +1,58 @@
 ﻿@model IEnumerable<PeriodAid.Models.Product_SummaryViewModel>
+@{
+    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 
-        
+}
+<div class="navbar-default tm_task-navbar" style="padding-top:10px">
+    <div id="nav-table-show">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs nav-pills" role="tablist" style="font-size:14px">
+            @foreach (var item in ViewBag.storage)
+            {
+                <li role="presentation" class="form-select-li"><a href="#"  role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a">@item.Storage_Name</a></li>
+            }
+        </ul>
+    </div>
+    <div class="text-center h2" style="padding:20px 0;">销量清单</div>
+    <div id="storage_show">
+        <div class="form-view-header clear-float">
+            <div>
+                <div class="tm-view-control">
+                    <ul class="nav nav-pills" style="float:right">
+                        <li class="tm-view-control-sort dropdown">
+                            <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
+                                <span class="tm-select-title">选择日期</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress"></ul>
+
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span>导入Excel文件</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span>导出Excel文件</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="center-block" id="my-form-content">
             <!-- Tab panes -->
-<div class="tab-content">
+            <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active">
                     <table class="table table-bordered table-hover">
-                        <thead>                           
+                        <thead>
                             <tr>
                                 <th>产品编号</th>
-                                <th>商品名称</th>                               
-                                <th>销量</th>
-                                <th>库存</th>
-                                <th>全国销量</th>
+                                <th>商品编号</th>
+                                <th>商品名称</th>
+                                <th>销售数据</th>
+                                <th>仓库库存</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -19,48 +60,45 @@
                             {
                                 <tr>
                                     <th scope="row">@item.Product.System_Code</th>
-                                    <td><a href="#">@item.Product.Item_Name</a></td>
-                                    <td>1</td>
+                                    <td></td>
+                                    <td><a href="#" data-pid="@item.Product.Id">@item.Product.Item_Name</a></td>
                                     <td>@item.Sales_Sum</td>
-                                    <td>@Html.Encode(item.Inventory_Sum)</td>
+                                    <td>@item.Inventory_Sum</td>
                                 </tr>
                             }                                                      
                         </tbody>
                     </table>
                 </div>                
+            </div>
+        </div>
+    </div>
 </div>
-        
-
 <script>
     // 初始化数据
-    //$(function () {       
-    //        $.ajax({
-    //            url: '/PlattformInventory/PlattformInventory_form/',
-    //            type: 'get',
-    //            data: {
-                    
-    //            },
-    //            success: function (data) {
-                    
-    //            }
-    //        })
-    //    })
-    $('.form-select-li').on('click', function () {
-        var that = $(this)
-        if (!that.hasClass('active')) {            
-            var strageName = that.children('.form-select-a').attr('data-ssid')
+    $(function () {
             $.ajax({
-                url: '/PlattformInventory/PlattformInventory_form/',
-                type: 'get',
+                url: "/PlattformInventory/PlattformInventory_form/",
                 data: {
-                    strageName
+                    Storage: $("#nav-table-show ul li a").first().attr("data-ssid")
                 },
                 success: function (data) {
-                    console.log(data)
                     
                 }
-            })
-        }
-        
         })
+            $("#nav-table-show ul li").on("click", function () {
+                var that = $(this);
+                $.ajax({
+                    url: "/PlattformInventory/StorageShow/",
+                    data: {
+                        Storage: that.children('.form-select-a').attr('data-ssid')
+                    },
+                    success: function (data) {
+                        that.children('.form-select-a').addClass("active");
+                        $("#storage_show").html(data);
+                        console.log(data);
+                    }
+                })
+            })
+    })
+
 </script>
