@@ -112,6 +112,9 @@ namespace PeriodAid.Controllers
             var storage = from m in _db.SS_Storage
                           select m;
             ViewBag.storage = storage;
+            var product = from m in _db.SS_Product
+                          select m;
+            ViewBag.product = product;
             return View();
         }
 

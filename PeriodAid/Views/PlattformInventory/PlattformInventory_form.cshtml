@@ -1,11 +1,14 @@
-﻿
-<div class="navbar-default tm_task-navbar">
+﻿@{
+    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
+
+}
+<div class="navbar-default tm_task-navbar" style="padding-top:10px">
     <div id="nav-table-show">
         <!-- Nav tabs -->
-        <ul class="nav nav-tabs nav-pills" role="tablist" style="">
+        <ul class="nav nav-tabs nav-pills" role="tablist" style="font-size:14px">
             @foreach (var item in ViewBag.storage)
             {
-                <li role="presentation"><a href="www.baidu.com" aria-controls="home" role="tab" data-toggle="tab">京东：@item.Storage_Name</a></li>
+                <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">@item.Storage_Name</a></li>
             }
         </ul>
     </div>
@@ -15,17 +18,13 @@
             <div>
                 <div class="tm-view-control">
                     <ul class="nav nav-pills" style="float:right">
-                        <li>
+                        <li class="tm-view-control-sort dropdown">
                             <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
                                 <span class="tm-select-title">选择日期</span>
                                 <span class="caret"></span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">day1</a></li>
-                                <li><a href="#">day2</a></li>
-                                <li><a href="#">day3</a></li>
-                                <li><a href="#">day4</a></li>
-                            </ul>
+                            <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress"></ul>
+
                         </li>
                         <li>
                             <a href="#">
@@ -276,5 +275,8 @@
         </div>
     </div>
 </div>
+
+
+
 
 
