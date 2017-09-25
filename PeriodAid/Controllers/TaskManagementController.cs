@@ -904,6 +904,7 @@ namespace PeriodAid.Controllers
             else
             {
                 List<Employee> attendlist = new List<Employee>();
+                attendlist.Add(assignment.Subject.Holder);
                 attendlist.Add(assignment.Holder);
                 attendlist.AddRange(assignment.Subject.AttendEmployee.Except(attendlist));
                 ViewBag.EmployeeDropDown = new SelectList(attendlist, "Id", "NickName", assignment.HolderId);
@@ -1098,7 +1099,7 @@ namespace PeriodAid.Controllers
                     List<Employee> newlist = new List<Employee>();
                     foreach (var item in depart.Employee)
                     {
-                        if (!assignment.Collaborator.Contains(item) && Subject.AttendEmployee.Contains(item) && assignment.Holder!=item)
+                        if (!assignment.Collaborator.Contains(item) && existem.Contains(item) && assignment.Holder!=item )
                         {
                             newlist.Add(item);
                         }
