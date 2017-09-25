@@ -1,20 +1,26 @@
-﻿<body style="overflow-y:scroll;">
-
-    @using (Html.BeginForm("LeadingIn", "PlattformInventory", FormMethod.Post, new { enctype = "multipart/form-data", id = "form1" }))
-    {
-
-        <div style="margin-top: 20px; font-size:12px; width:80%; padding-left:20px;">
+﻿@using (Html.BeginForm("StationImport", "Station", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <h2>
+        基站信息导入
+    </h2>
+        <div>
+            <fieldset id="myfieldset">
+                <legend>excel模版格式 </legend><font color="red">导入基站的模板格式如下，若模板格式不正确，则相应的基站不能导入!</font><br />
+                <img src="http://www.cnblogs.com/http://www.cnblogs.com/Content/AdminImages/stationexceltemplate.png" />
+                <p style="color: Red; text-align: center;">@Html.ActionLink("下载模版", "GetFile")</p>
+            </fieldset>
+        </div>
+        <div style="margin-top: 20px;">
             <fieldset id="myfieldset1">
-                <legend>物料数据导入</legend>
+                <legend>基站批量信息导入</legend>
                 <p>
-                    选择文件：
-                    <input id="FileUpload" type="file" name="FileUpload" style="width: 250px; height: 24px; background: White" />
-                    <input id="btnImport" type="submit" value="上传" style="width: 60px; height: 24px;" />
+                    选择文件：<input id="FileUpload" type="file" name="files" style="width: 250px; height: 24px;
+                    background: White" class="easyui-validatebox" />
+                </p>
+                <p>
+                    <input id="btnImport" type="submit" value="导入" style="width: 60px; height: 28px;" />
                 </p>
                 <p style="color: Red; text-align: center;">@ViewBag.error</p>
             </fieldset>
         </div>
-
-    }
-
-</body>
+}
