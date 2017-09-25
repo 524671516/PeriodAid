@@ -24,18 +24,13 @@
                                 <span class="tm-select-title">选择日期</span>
                                 <span class="caret"></span>
                             </a>
-                            <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" style="text-align:center">
-                                @foreach (var item in ViewBag.DataDate)
-                                {
-                                    <li><a href="#" class="tm-select-range tm-select form-date-select">@item.Inventory_Date.ToString("yyyy年MM月dd日")</a></li>
-                                }
-                                                             
-                            </ul>
+                            <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress"></ul>
 
                         </li>
                         <li>
-                            <a href="#">
-                                <span>导入Excel文件</span>
+                            <a href="#" id="rel_excel_in">
+                                <span onclick="$('#excel_in').click();">导出Excel文件</span>
+                                 <input type="file" name="fileName" id="excel_in"/>
                             </a>
                         </li>
                         <li>
@@ -82,53 +77,29 @@
 <script>
     // 初始化数据
     $(function () {
-        $.ajax({
-            url: "/PlattformInventory/PlattformInventory_form/",
-            data: {
-                Storage: $("#nav-table-show ul li a").first().attr("data-ssid")
-            },
-            success: function (data) {
+        $("#excel_in").hide();
+            $.ajax({
+                url: "/PlattformInventory/PlattformInventory_form/",
+                data: {
+                    Storage: $("#nav-table-show ul li a").first().attr("data-ssid")
+                },
+                success: function (data) {
                     
-            }
+                }
         })
-    })
-        // 切换
             $("#nav-table-show ul li").on("click", function () {
                 var that = $(this);
                 $.ajax({
                     url: "/PlattformInventory/StorageShow/",
                     data: {
-                        Storage: that.children('.form-select-a').attr('data-ssid')// 获取对应仓库
-
+                        Storage: that.children('.form-select-a').attr('data-ssid')
                     },
                     success: function (data) {
                         that.children('.form-select-a').addClass("active");
-                        $("#storage_show").html(data);                        
-                    }
-                })
-            })
-    // 日期
-            $(".form-date-select").click(function () {
-
-                var that = $(this);
-                if (!that.hasClass('selected')) {
-
-                    that.parent().parent().find(".tm-select.selected").removeClass("selected");
-
-                    that.addClass("selected");
-                    $('.tm-select-title').html($('.selected').text());
-                }
-                $.ajax({
-                    url: '/PlattformInventory/StorageShow/',
-                    type: 'post',
-                    data: {
-                        
-                    },
-                    success: function (data) {
                         $("#storage_show").html(data);
-
                     }
                 })
             })
+    })
 
 </script>
