@@ -1,6 +1,5 @@
 ﻿using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
-using PeriodAid.UnityTool;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CsvHelper;
-using System.IO;
 using System.Text;
 using Microsoft.AspNet.Identity.Owin;
 using PeriodAid.Models;
@@ -57,7 +55,7 @@ namespace PeriodAid.Controllers
             }
         }
         public ActionResult Index()
-        {
+        {           
             return View();
         }
         public ActionResult Read_InsertFile()
@@ -105,6 +103,18 @@ namespace PeriodAid.Controllers
             _db.SaveChanges();
             return Content(sb.ToString());
         }
+
+        public ActionResult LeadingIn() {
+            return View();
+        }
+
+        public ActionResult PlattformInventory_form() {
+            var storage = from m in _db.SS_Storage
+                          select m;
+            ViewBag.storage = storage;
+            return View();
+        }
+
 
     }
     
