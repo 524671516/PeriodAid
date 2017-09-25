@@ -1,0 +1,90 @@
+﻿<div class="form-view-header clear-float">
+    <div>
+        <div class="tm-view-control">
+            <ul class="nav nav-pills" style="float:right">
+                <li class="tm-view-control-sort dropdown">
+                    <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
+                        <span class="tm-select-title">选择日期</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" style="text-align:center">
+                        @foreach (var item in ViewBag.DataDate)
+                        {
+                            <li><a href="#" class="tm-select-range tm-select form-date-select">@item.Inventory_Date.ToString("yyyy年MM月dd日")</a></li>
+                        }
+
+                    </ul>
+
+
+
+                </li>
+                <li>
+                    <a href="#">
+                        <span>导入Excel文件</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span>导出Excel文件</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="center-block" id="my-form-content">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>产品编号</th>
+                        <th>商品编号</th>
+                        <th>商品名称</th>
+                        <th>销售数据</th>
+                        <th>仓库库存</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.SalesRecord)
+                    {
+                        <tr>
+                            <th scope="row">@item.SS_Product.System_Code</th>
+                            <td></td>
+                            <td><a href="#">@item.SS_Product.Item_Name</a></td>
+                            <td>@item.Sales_Count</td>
+                            <td>@item.Storage_Count</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    // 日期
+    $(".form-date-select").click(function () {
+
+        var that = $(this);
+        if (!that.hasClass('selected')) {
+
+            that.parent().parent().find(".tm-select.selected").removeClass("selected");
+
+            that.addClass("selected");
+            $('.tm-select-title').html($('.selected').text());
+        }
+        $.ajax({
+            url: '/PlattformInventory/StorageShow/',
+            type: 'post',
+            data: {
+
+            },
+            success: function (data) {
+                $("#storage_show").html(data);
+
+            }
+        })
+    })
+</script>

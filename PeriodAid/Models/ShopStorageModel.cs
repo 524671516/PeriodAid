@@ -67,8 +67,6 @@
         [StringLength(16)]
         public string Item_Name { get; set; }
 
-        public int Inventory_Count { get; set; }
-
         public DateTime Inventory_Date { get; set; }
 
         public int Plattform_Id { get; set; }
@@ -95,6 +93,11 @@
 
         public virtual SS_Plattform SS_Plattform { get; set; }
 
+        [StringLength(16)]
+        public string Sales_Header { get; set; }
+        [StringLength(16)]
+        public string Inventory_Header { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_SalesRecord> SS_SalesRecord { get; set; }
 
@@ -110,6 +113,8 @@
 
         public int Sales_Count { get; set; }
 
+        public int Storage_Count { get; set; }
+
         public int Product_Id { get; set; }
 
         public virtual SS_Product SS_Product { get; set; }
@@ -118,9 +123,20 @@
 
         public virtual SS_Storage SS_Storage { get; set; }
     }
+    // ViewModel
+    public class Product_SummaryViewModel
+    {
+        public SS_Product Product { get; set; }
+
+        public int Sales_Sum { get; set; }
+
+        public int Inventory_Sum { get; set; }
+    }
     //public class MyEntity
     //{
     //    public int Id { get; set; }
     //    public string Name { get; set; }
     //}
+
+
 }
