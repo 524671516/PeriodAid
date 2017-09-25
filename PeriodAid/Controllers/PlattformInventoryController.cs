@@ -131,7 +131,10 @@ namespace PeriodAid.Controllers
         public ActionResult PlattformInventory_form() {
             var storage = from m in _db.SS_Storage
                           select m;
-            ViewBag.storage = storage;
+            ViewBag.storage = storage;            
+            var DataDate = (from m in _db.SS_Product
+                          select m).Take(1);
+            ViewBag.DataDate = DataDate;
             var SalesRecord = from m in _db.SS_SalesRecord
                         group m by m.SS_Product into g
                         select new Product_SummaryViewModel
@@ -153,6 +156,9 @@ namespace PeriodAid.Controllers
                           where m.Storage_Id == Storage
                           select m;
             ViewBag.SalesRecord = SalesRecord;
+            var DataDate = (from m in _db.SS_Product
+                            select m).Take(1);
+            ViewBag.DataDate = DataDate;
             return PartialView();
         }
 

@@ -40,15 +40,16 @@
                 </div>
             </div>
         </div>      
-    </div>
-    <div class="center-block" id="my-form-content">
+        <div id="my-form-content">
 
+        </div>
     </div>
+
 </div>
 <script>
     // 初始化数据
     $(function () {
-        $('#form-select-ul .form-select-li').eq(0).addClass('active');
+        //$('#form-select-ul .form-select-li').eq(0).addClass('active');
         $.ajax({
             url: '/PlattformInventory/PlattformInventory_form/',
             type: 'get',
