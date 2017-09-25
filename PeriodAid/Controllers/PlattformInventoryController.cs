@@ -56,6 +56,9 @@ namespace PeriodAid.Controllers
         }
         public ActionResult Index()
         {
+            var storage = from m in _db.SS_Storage
+                          select m;
+            ViewBag.storage = storage;
             return View();
         }
         public ActionResult Read_InsertFile()
@@ -108,17 +111,17 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult PlattformInventory_form() {
+        public ActionResult PlattformInventory_form() {            
+            
             var storage = from m in _db.SS_Storage
                           select m;
             ViewBag.storage = storage;
-            var product = from m in _db.SS_Product
-                          select m;
-            ViewBag.product = product;
-            return View();
+            var sales = from m in _db.SS_SalesRecord
+                        group m by m.SS_Product into g
+                        select new Product_SummaryViewModel{ Product = g.Key, Sales_Sum = g.Sum(m => m.Sales_Count) ,
+                        Inventory_Sum = g.Sum(m=>m.Storage_Count)};
+            return View(sales);
         }
-
-
     }
     
 }
