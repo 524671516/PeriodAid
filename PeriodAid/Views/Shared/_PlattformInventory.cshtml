@@ -17,6 +17,20 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @RenderSection("header", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/Sortable.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/defaults-zh_CN.min.js"></script>
+    <script src="~/Scripts/TaskManagement.js"></script>
+    <script src="~/Scripts/TaskManagementCalendar.js"></script>
+    @RenderSection("scripts", required: false)
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -39,7 +53,7 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("京东", "Index", "PlattformInventory")</li>
+                            <li>@Html.ActionLink("京东", "PlattformInventory_form", "PlattformInventory")</li>
                             <li>@Html.ActionLink("天猫", "CustomOrderList", "TestAdmin")</li>
                             <li>@Html.ActionLink("自营", "generateQRCode", "Home")</li>
                         </ul>
@@ -67,26 +81,9 @@
         <footer>
             @*<p>&copy; @DateTime.Now.Year - 我的 ASP.NET 应用程序</p>*@
         </footer>
-    </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/Scripts/jquery.form.min.js"></script>
-    <script src="~/Scripts/ajaxfileupload.js"></script>
-    <script src="~/Scripts/jquery-confirm.js"></script>
-    <script src="~/Scripts/Sortable.min.js"></script>
-    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
-    <script src="~/Scripts/bootstrap-select.js"></script>
-    <script src="~/Scripts/defaults-zh_CN.min.js"></script>
-    <script src="~/Scripts/TaskManagement.js"></script>
-    <script src="~/Scripts/TaskManagementCalendar.js"></script>
-    <script>
         
-       
-
-    </script>
-    @RenderSection("scripts", required: false)
+    </div>
+   
     
 </body>
 </html>
