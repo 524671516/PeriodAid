@@ -128,21 +128,25 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult PlattformInventory_form() {
-            var storage = from m in _db.SS_Storage
+            var storage = from m in _db.SS_Storage                         
                           select m;
-            ViewBag.storage = storage;            
+            ViewBag.storage = storage;
             var DataDate = (from m in _db.SS_Product
-                          select m).Take(1);
+                            select m).Take(1);
             ViewBag.DataDate = DataDate;
             var SalesRecord = from m in _db.SS_SalesRecord
-                        group m by m.SS_Product into g
-                        select new Product_SummaryViewModel
-                        {
-                            Product = g.Key,
-                            Sales_Sum = g.Sum(m => m.Sales_Count),
-                            Inventory_Sum = g.Sum(m => m.Storage_Count)
-                        };
+                              group m by m.SS_Product into g
+                              select new Product_SummaryViewModel
+                              {
+                                  Product = g.Key,
+                                  Sales_Sum = g.Sum(m => m.Sales_Count),
+                                  Inventory_Sum = g.Sum(m => m.Storage_Count)
+                              };
             return View(SalesRecord);
         }
 
