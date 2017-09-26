@@ -60,6 +60,22 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+
+        public ActionResult CustomUploadFile(int plattformId)
+        {
+            ViewBag.PlattformId = plattformId;
+            return View();
+        }
+        public ActionResult CustomUploadFilePartial(int plattformId, string month)
+        {
+            DateTime start = Convert.ToDateTime(month);
+            DateTime end = start.AddMonths(1);
+            var list = from m in _db.SS_UploadRecord
+                       where m.SalesRecord_Date >= start && m.SalesRecord_Date < end
+                       select m;
+            return PartialView(list);
+        }
+
         private bool Read_InsertFile(string filename, DateTime date)
         {
             string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
