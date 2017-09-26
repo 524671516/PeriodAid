@@ -56,7 +56,7 @@ namespace PeriodAid.Controllers
             }
         }
         public ActionResult Index()
-        {           
+        {
             return View();
         }
         private bool Read_InsertFile(string filename, DateTime date)
@@ -111,6 +111,26 @@ namespace PeriodAid.Controllers
                 {
                     return false;
                 }
+                //try
+                //{
+                //    string system_code = csv_reader.GetField<string>("商品编号");
+                //    string product_name = csv_reader.GetField<string>("商品名称");
+                //    DateTime date = new DateTime(2017, 9, 12);
+                //    SS_Product Product = new SS_Product()
+                //    {
+                //        System_Code = system_code,
+                //        Item_Name = product_name.Substring(9, 15),
+                //        Inventory_Date = date,
+                //        Plattform_Id = 1
+                //    };
+                //    _db.SS_Product.Add(Product);
+                //    row_count++;
+                //}
+                //catch (Exception e)
+                //{
+                //    sb.Append(e.Message);
+                //    row_count++;
+                //}
             }
             _db.SaveChanges();
             return true;
@@ -185,40 +205,37 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [HandleError(View = "~/Views/Shared/Error.cshtml")]
-        public ActionResult Browse(HttpPostedFileBase file)
-        {
-
-            if (string.Empty.Equals(file.FileName) || ".xlsx" != Path.GetExtension(file.FileName))
-            {
-                throw new ArgumentException("当前文件格式不正确,请确保正确的Excel文件格式!");
-            }
-
-            var severPath = this.Server.MapPath("/files/"); //获取当前虚拟文件路径
-
-            var savePath = Path.Combine(severPath, file.FileName); //拼接保存文件路径
-
-            try
-            {
-                file.SaveAs(savePath);
-                stus = ExcelHelper.ReadExcelToEntityList<Student>(savePath);
-                ViewBag.Data = stus;
-                return View("Index");
-            }
-            finally
-            {
-                System.IO.File.Delete(savePath);//每次上传完毕删除文件
-            }
-
+        public ActionResult PlattformInventory_form() {
+            var storage = from m in _db.SS_Storage
+                          select m;
+            ViewBag.storage = storage;            
+            var DataDate = (from m in _db.SS_Product
+                          select m).Take(1);
+            ViewBag.DataDate = DataDate;
+            var SalesRecord = from m in _db.SS_SalesRecord
+                        group m by m.SS_Product into g
+                        select new Product_SummaryViewModel
+                        {
+                            Product = g.Key,
+                            Sales_Sum = g.Sum(m => m.Sales_Count),
+                            Inventory_Sum = g.Sum(m => m.Storage_Count)
+                        };
+            return View(SalesRecord);
         }
 
-        [HandleError(View = "~/Views/Shared/Error.cshtml")]
-        public ActionResult Upload() {
-            return View("UploadSuccess");
-        }*/
-
+        public ActionResult StorageShow(int Storage) {
+            var storage = from m in _db.SS_Storage
+                          select m;
+            ViewBag.storage = storage;
+            var SalesRecord = from m in _db.SS_SalesRecord
+                          where m.Storage_Id == Storage
+                          select m;
+            ViewBag.SalesRecord = SalesRecord;
+            var DataDate = (from m in _db.SS_Product
+                            select m).Take(1);
+            ViewBag.DataDate = DataDate;
+            return PartialView();
+        }
 
     }
     
