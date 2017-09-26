@@ -257,14 +257,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201709241301048_201709242100.cs" />
-    <Compile Include="Migrations\201709241301048_201709242100.Designer.cs">
-      <DependentUpon>201709241301048_201709242100.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709241341087_201709242140.cs" />
-    <Compile Include="Migrations\201709241341087_201709242140.Designer.cs">
-      <DependentUpon>201709241341087_201709242140.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -282,12 +274,12 @@
     <Compile Include="Models\ProjectViewModels.cs" />
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\ShopStorageModel.cs" />
+    <Compile Include="Models\ShopStorageViewModel.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="UnityTool\ExcelHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\audio\audio_01.mp3" />
@@ -1150,14 +1142,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201709241301048_201709242100.resx">
-      <DependentUpon>201709241301048_201709242100.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709241341087_201709242140.resx">
-      <DependentUpon>201709241341087_201709242140.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
