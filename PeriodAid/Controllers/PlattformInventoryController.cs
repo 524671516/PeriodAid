@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.AspNet.Identity.Owin;
 using PeriodAid.Models;
 using System.Web.Script.Serialization;
+using NPOI.XSSF.UserModel;
 
 namespace PeriodAid.Controllers
 {
@@ -104,6 +105,11 @@ namespace PeriodAid.Controllers
                                 };
                                 _db.SS_SalesRecord.Add(record);
                             }
+                            if (date > product.Inventory_Date)
+                            {
+                                product.Inventory_Date = date;
+                                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            }
                         }
                     }
                     row_count++;
@@ -111,26 +117,22 @@ namespace PeriodAid.Controllers
                 {
                     return false;
                 }
-                //try
-                //{
-                //    string system_code = csv_reader.GetField<string>("商品编号");
-                //    string product_name = csv_reader.GetField<string>("商品名称");
-                //    DateTime date = new DateTime(2017, 9, 12);
-                //    SS_Product Product = new SS_Product()
-                //    {
-                //        System_Code = system_code,
-                //        Item_Name = product_name.Substring(9, 15),
-                //        Inventory_Date = date,
-                //        Plattform_Id = 1
-                //    };
-                //    _db.SS_Product.Add(Product);
-                //    row_count++;
-                //}
-                //catch (Exception e)
-                //{
-                //    sb.Append(e.Message);
-                //    row_count++;
-                //}
+            }
+            var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == 1 && m.SalesRecord_Date == date);
+            if (upload_record != null)
+            {
+                upload_record.Upload_Date = DateTime.Now;
+                _db.Entry(upload_record).State = System.Data.Entity.EntityState.Modified;
+            }
+            else
+            {
+                upload_record = new SS_UploadRecord()
+                {
+                    Plattform_Id = 1,
+                    Upload_Date = DateTime.Now,
+                    SalesRecord_Date = date
+                };
+                _db.SS_UploadRecord.Add(upload_record);
             }
             _db.SaveChanges();
             return true;
@@ -141,7 +143,7 @@ namespace PeriodAid.Controllers
             /*string pstr = System.Web.HttpContext.Current.Request.Form["Param"];
             JavaScriptSerializer s = new JavaScriptSerializer(); //继承自 System.Web.Script.Serialization;
             List<CalcStorageParmsViewModel> jr = s.Deserialize<List<CalcStorageParmsViewModel>>(pstr); //只要你的JSON串没问题就可以转*/
-            HSSFWorkbook book = new HSSFWorkbook();
+            XSSFWorkbook book = new XSSFWorkbook();
             ISheet sheet = book.CreateSheet("Total");
             var inventory_list = _db.SS_Storage.Where(m => m.Plattform_Id == 1);
             var product_list = _db.SS_Product.Where(m => m.Plattform_Id == 1);
@@ -196,7 +198,7 @@ namespace PeriodAid.Controllers
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss")+"库存表.xls");
+            return File(_stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", DateTime.Now.ToString("yyyyMMddHHmmss")+"库存表.xlsx");
 
 
         }

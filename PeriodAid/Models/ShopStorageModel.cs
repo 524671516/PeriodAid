@@ -28,6 +28,7 @@
         public virtual DbSet<SS_Product> SS_Product { get; set; }
         public virtual DbSet<SS_Storage> SS_Storage { get; set; }
         public virtual DbSet<SS_SalesRecord> SS_SalesRecord { get; set; }
+        public virtual DbSet<SS_UploadRecord> SS_UploadRecord { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
