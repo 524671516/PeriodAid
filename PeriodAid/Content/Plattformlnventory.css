@@ -1591,9 +1591,12 @@ a.btn_subtask_detail{
     text-align:center;
 }
 
-
-
-
+/*二级菜单*/
+#product-form-ul{
+    float:left;
+    position:relative;
+    padding:10px 5px
+}
 
 
 
