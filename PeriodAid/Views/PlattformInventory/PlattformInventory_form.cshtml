@@ -10,13 +10,13 @@
             <li role="presentation" class="form-select-li active all-form-select"><a href="#" role="tab" data-toggle="tab" class="form-select-a">所有仓库</a></li>
             @foreach (var item in ViewBag.storage)
             {               
-                <li role="presentation" class="form-select-li"><a href="#"  role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a">@item.Storage_Name</a></li>
+                <li role="presentation" class="form-select-li" style="margin-top:1px"><a href="#"  role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a" style="margin-right:0">@item.Storage_Name</a></li>
             }
         </ul>
     </div>
     <div style="padding:20px 0;">
     
-        <div class="text-center h2">销量清单</div>
+        <div class="text-center h2">每日数据</div>
     </div>
     <div id="storage_show">
         <div class="form-view-header clear-float">
@@ -41,12 +41,12 @@
                                  <input type="file" name="fileName" id="excel_in" style="display:none"/>
                             </a>
                         </li>
-                        <li>
+                        @*<li>
                             <a href="#" id="rel_excel_out">
                                 <span onclick="$('#excel_out').click();">导出Excel文件</span>
                                 <input type="file" name="fileName" id="excel_out" style="display:none" />
                             </a>
-                        </li>
+                        </li>*@
                     </ul>
                 </div>
             </div>
