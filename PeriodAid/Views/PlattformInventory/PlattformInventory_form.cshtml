@@ -7,14 +7,22 @@
     <div id="nav-table-show">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs nav-pills" role="tablist" style="font-size:14px">
-            <li role="presentation" class="form-select-li"><a href="#" role="tab" data-toggle="tab" class="form-select-a" data-ssid="0">所有仓库</a></li>
+            <li role="presentation" class="form-select-li active all-form-select"><a href="#" role="tab" data-toggle="tab" class="form-select-a">所有仓库</a></li>
             @foreach (var item in ViewBag.storage)
             {               
                 <li role="presentation" class="form-select-li"><a href="#"  role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a">@item.Storage_Name</a></li>
             }
         </ul>
     </div>
-    <div class="text-center h2" style="padding:20px 0;">销量清单</div>
+    <div  style="padding:20px 0;">
+        <ul style="float:left">
+            <li><a>1</a></li>
+            <li><a>2</a></li>
+            <li><a>3</a></li>
+            <li><a>4</a></li>
+        </ul>
+        <div class="text-center h2">销量清单</div>
+    </div>
     <div id="storage_show">
         <div class="form-view-header clear-float">
             <div>
@@ -35,13 +43,13 @@
                         <li>
                             <a href="#" id="rel_excel_in">
                                 <span onclick="$('#excel_in').click();">导入Excel文件</span>
-                                 <input type="file" name="fileName" id="excel_in"/>
+                                 <input type="file" name="fileName" id="excel_in" style="display:none"/>
                             </a>
                         </li>
                         <li>
                             <a href="#" id="rel_excel_out">
                                 <span onclick="$('#excel_out').click();">导出Excel文件</span>
-                                <input type="file" name="fileName" id="excel_out" />
+                                <input type="file" name="fileName" id="excel_out" style="display:none" />
                             </a>
                         </li>
                     </ul>
@@ -68,7 +76,7 @@
                                 <tr>
                                     <th scope="row">@item.Product.System_Code</th>
                                     <td></td>
-                                    <td><a href="#" data-pid="@item.Product.Id">@item.Product.Item_Name</a></td>
+                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                     <td>@item.Sales_Sum</td>
                                     <td>@item.Inventory_Sum</td>
                                 </tr>
@@ -82,31 +90,42 @@
 </div>
 <script>
     // 初始化数据
-    $(function () {
-        $("#excel_in").hide();
-        $("#excel_out").hide();
-        $.ajax({
-            url: "/PlattformInventory/PlattformInventory_form/",
-            data: {
-                Storage: $("#nav-table-show ul li a").first().attr("data-ssid")
-            },
-            success: function (data) {
+    $(function () {     
+            $.ajax({
+                url: "/PlattformInventory/PlattformInventory_form/",
+                data: {
                     
-            }
-        })
+                },
+                success: function (data) {
+                    console.log(data)
+                }
+            })       
     })
+        // tab 切换
             $("#nav-table-show ul li").on("click", function () {
                 var that = $(this);
-                $.ajax({
-                    url: "/PlattformInventory/StorageShow/",
-                    data: {
-                        Storage: that.children('.form-select-a').attr('data-ssid')
-                    },
-                    success: function (data) {
-                        that.children('.form-select-a').addClass("active");
-                        $("#storage_show").html(data);
-                    }
-                })
+                if (that.hasClass('all-form-select')) {
+                    $.ajax({
+                        url: "/PlattformInventory/PlattformInventory_form/",
+                        data: {
+                            
+                        },
+                        success: function (data) {
+                            window.location.href = '/PlattformInventory/PlattformInventory_form/'
+                        }
+                    })
+                } else {
+                    $.ajax({
+                        url: "/PlattformInventory/StorageShow/",
+                        data: {
+                            Storage: that.children('.form-select-a').attr('data-ssid')
+                        },
+                        success: function (data) {
+                            that.children('.form-select-a').addClass("active");
+                            $("#storage_show").html(data);
+                        }
+                    })
+                }               
             })
     // 选择日期
             $(".form-date-select").click(function () {
