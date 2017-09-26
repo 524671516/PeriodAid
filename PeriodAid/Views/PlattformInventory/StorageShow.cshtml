@@ -19,15 +19,16 @@
 
                 </li>
                 <li>
-                    <a href="#">
-                        <span>导入Excel文件</span>
+                    <a href="#" id="rel_excel_in">
+                        <span onclick="$('#excel_in').click();">导入Excel文件</span>
+                        <input type="file" name="fileName" id="excel_in" style="display:none" />
                     </a>
                 </li>
-                <li>
+                @*<li>
                     <a href="#">
                         <span>导出Excel文件</span>
                     </a>
-                </li>
+                </li>*@
             </ul>
         </div>
     </div>
@@ -64,14 +65,11 @@
     </div>
 </div>
 <script>
-    // 日期
+    // 选择日期
     $(".form-date-select").click(function () {
-
         var that = $(this);
         if (!that.hasClass('selected')) {
-
             that.parent().parent().find(".tm-select.selected").removeClass("selected");
-
             that.addClass("selected");
             $('.tm-select-title').html($('.selected').text());
         }
@@ -83,7 +81,6 @@
             },
             success: function (data) {
                 $("#storage_show").html(data);
-
             }
         })
     })

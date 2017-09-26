@@ -48,16 +48,7 @@
                     <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
                     <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
                     <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">库存管理系统
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("京东", "PlattformInventory_form", "PlattformInventory")</li>
-                            <li>@Html.ActionLink("天猫", "CustomOrderList", "TestAdmin")</li>
-                            <li>@Html.ActionLink("自营", "generateQRCode", "Home")</li>
-                        </ul>
-                    </li>
+                    <li>@Html.ActionLink("库存管理系统", "PlattformInventory_form", "PlattformInventory")</li>
                     <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
@@ -76,8 +67,105 @@
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
+    <div class="container body-content" style="padding:20px">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    产品信息 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a href="/OffStore/StoreSystemList"><i class="fa fa-search"></i>&nbsp;&nbsp;渠道列表</a></li>
+                                    <li class="left-navbar"><a href="/OffStore/StoreIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;产品列表</a></li>                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingEight">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                    产品系列 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingEight"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
+                            <div class="panel-body">
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "ProductList", "OffProduct")</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    销售数据 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a href="/OffSales/DailySalesIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;日销售数据</a></li>
+                                    <li class="left-navbar"><a href="/OffSales/MonthSalesList"><i class="fa fa-search"></i>&nbsp;&nbsp;月销售数据</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    费用数据 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingThree"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a href="/OffExpenses/ExpensesIndex"><i class="fa fa-money"></i>&nbsp;&nbsp;费用列表</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingSeven">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                                    数据图表 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingSeven"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseSeven" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSeven">
+                            <div class="panel-body">
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar"><a><i class="fa fa-line-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域数据图表", "StoreSystemStatistic", "OffStatistic")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域门店数据图表", "StoreStatistic", "OffStatistic")</li>
+                                    <li class="left-navbar"><a><i class="fa fa-area-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("促销员销售数据图", "SellerStatistic", "OffStatistic")</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-xs-12">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*RenderBody()*@
         <footer>
             @*<p>&copy; @DateTime.Now.Year - 我的 ASP.NET 应用程序</p>*@
         </footer>

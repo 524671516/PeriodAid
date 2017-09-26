@@ -28,6 +28,7 @@
         public virtual DbSet<SS_Product> SS_Product { get; set; }
         public virtual DbSet<SS_Storage> SS_Storage { get; set; }
         public virtual DbSet<SS_SalesRecord> SS_SalesRecord { get; set; }
+        public virtual DbSet<SS_UploadRecord> SS_UploadRecord { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -35,6 +36,7 @@
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_SalesRecord).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Storage>().HasMany(m => m.SS_SalesRecord).WithRequired(m => m.SS_Storage).HasForeignKey(m => m.Storage_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_Storage).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_UploadRecord).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
         }
     }
     /// <summary>
@@ -52,6 +54,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Storage> SS_Storage { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_UploadRecord> SS_UploadRecord { get; set; }
     }
     /// <summary>
     /// 产品表
@@ -66,6 +71,12 @@
         public string Item_Code { get; set; }
         [StringLength(16)]
         public string Item_Name { get; set; }
+        
+        // 箱规
+        public int Carton_Spec { get; set; }
+
+        // 采购价
+        public decimal Purchase_Price { get; set; }
 
         public DateTime Inventory_Date { get; set; }
 
@@ -98,13 +109,16 @@
         [StringLength(16)]
         public string Inventory_Header { get; set; }
 
+        // 仓库顺序
+        public int Index { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_SalesRecord> SS_SalesRecord { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Product> SS_Product { get; set; }
     }
-    
+    [Table("SS_SalesRecord")]
     public partial class SS_SalesRecord
     {
         public int Id { get; set; }
@@ -122,6 +136,20 @@
         public int Storage_Id { get; set; }
 
         public virtual SS_Storage SS_Storage { get; set; }
+    }
+
+    [Table("SS_UploadRecord")]
+    public partial class SS_UploadRecord
+    {
+        public int Id { get; set; }
+
+        public DateTime SalesRecord_Date { get; set; }
+
+        public int Plattform_Id { get; set; }
+
+        public virtual SS_Plattform SS_Plattform { get; set; }
+
+        public DateTime Upload_Date { get; set; }
     }
     // ViewModel
     public class Product_SummaryViewModel

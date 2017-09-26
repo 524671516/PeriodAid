@@ -274,6 +274,7 @@
     <Compile Include="Models\ProjectViewModels.cs" />
     <Compile Include="Models\Promotion.cs" />
     <Compile Include="Models\ShopStorageModel.cs" />
+    <Compile Include="Models\ShopStorageViewModel.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
@@ -1128,6 +1129,8 @@
     <Content Include="Views\PlattformInventory\PlattformInventory_form.cshtml" />
     <Content Include="Views\PlattformInventory\Index.cshtml" />
     <Content Include="Views\PlattformInventory\StorageShow.cshtml" />
+    <Content Include="Views\PlattformInventory\CustomUploadFile.cshtml" />
+    <Content Include="Views\PlattformInventory\CustomUploadFilePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
