@@ -64,14 +64,11 @@
     </div>
 </div>
 <script>
-    // 日期
+    // 选择日期
     $(".form-date-select").click(function () {
-
         var that = $(this);
         if (!that.hasClass('selected')) {
-
             that.parent().parent().find(".tm-select.selected").removeClass("selected");
-
             that.addClass("selected");
             $('.tm-select-title').html($('.selected').text());
         }
@@ -83,7 +80,6 @@
             },
             success: function (data) {
                 $("#storage_show").html(data);
-
             }
         })
     })
