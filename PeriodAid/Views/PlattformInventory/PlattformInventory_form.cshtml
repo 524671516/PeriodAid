@@ -1,7 +1,6 @@
 ﻿@model IEnumerable<PeriodAid.Models.Product_SummaryViewModel>
 @{
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
-
 }
 <div class="navbar-default tm_task-navbar" style="padding-top:10px">
     <div id="nav-table-show">
@@ -35,12 +34,12 @@
                                     }
                                 </ul>
                         </li>
-                        <li>
+                        @*<li>
                             <a href="#" id="rel_excel_in">
                                 <span onclick="$('#excel_in').click();">导入Excel文件</span>
                                  <input type="file" name="fileName" id="excel_in" style="display:none"/>
                             </a>
-                        </li>
+                        </li>*@
                         @*<li>
                             <a href="#" id="rel_excel_out">
                                 <span onclick="$('#excel_out').click();">导出Excel文件</span>

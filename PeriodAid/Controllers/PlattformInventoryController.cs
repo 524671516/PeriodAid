@@ -66,14 +66,15 @@ namespace PeriodAid.Controllers
             ViewBag.PlattformId = plattformId;
             return View();
         }
+        [HttpPost]
         public ActionResult CustomUploadFilePartial(int plattformId, string month)
         {
             DateTime start = Convert.ToDateTime(month);
             DateTime end = start.AddMonths(1);
             var list = from m in _db.SS_UploadRecord
                        where m.SalesRecord_Date >= start && m.SalesRecord_Date < end
-                       select m;
-            return PartialView(list);
+                       select new { record_date = m.SalesRecord_Date};
+            return Json(list);
         }
 
         private bool Read_InsertFile(string filename, DateTime date)
