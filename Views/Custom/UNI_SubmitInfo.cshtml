@@ -1,0 +1,226 @@
+﻿@model PeriodAid.Models.UNI_MchBill
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>寿全斋 校园行动</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .top {
+            height: 150px;
+            background-color: #555;
+        }
+        .user-text {
+            position: relative;
+            top: 120px;
+            line-height: 30px;
+        }
+        .user-img {
+            position: relative;
+            top: 80px;
+            border: solid 4px #fff;
+            box-shadow: 3px 3px 5px #444;
+            -moz-box-shadow: 3px 3px 5px #444;
+            -webkit-box-shadow: 3px 3px 5px #444;
+        }
+        .validation-summary-errors{
+            display:none;
+        }
+        #submit-btn{
+            width:100%;
+            line-height:50px;
+            text-align:center;
+            font-size:24px;
+            background-color:#04BE02;
+            color:#fff;
+            display:block;
+        }
+    </style>
+</head>
+<body>
+    <div class="hidden">
+        <span id="appId">@ViewBag.AppId</span>
+        <span id="timeStamp">@ViewBag.TimeStamp</span>
+        <span id="nonce">@ViewBag.Nonce</span>
+        <span id="url">@ViewBag.Url</span>
+        <span id="signature">@ViewBag.Signature</span>
+    </div>
+    <div class="top">
+        <div class="container userinfo">
+            <div class="row">
+                <div class="col-xs-8 text-right text-muted user-text h4" id="top-nickname">@Html.Encode(Model.NickName)</div>
+                <div class="col-xs-4"><img class="img-rounded img-responsive user-img" id="headurl" src="@Model.ImgUrl" /></div>
+            </div>
+        </div>
+    </div>
+    <br /><br /><br />
+    @using (Html.BeginForm("UNI_SubmitInfo", "Custom",FormMethod.Post, new { @class="submit-form"}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.NickName)
+        @Html.HiddenFor(m => m.Province)
+        @Html.HiddenFor(m => m.City)
+        @Html.HiddenFor(m => m.ImgUrl)
+        @Html.HiddenFor(m => m.OpenId)
+        @Html.HiddenFor(m => m.GroupId)
+        @Html.HiddenFor(m => m.Sex)
+        @Html.HiddenFor(m=>m.UploadImg)
+        <div class="weui_cells_title">操作</div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">手机</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.TextBoxFor(m => m.Mobile, new { @class = "weui_input", placeholder = "请输入与订单相同的手机号" })
+                </div>
+            </div>
+        </div>
+        <div class="weui_cells weui_cells_access">
+            <a class="weui_cell" href="javascript:;" id="img-btn">
+                <div class="weui_cell_hd"><i class="weui_icon_waiting" style="margin:0 10px 0 0;height:24px"></i></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>上传图片</p>
+                </div>
+                <div class="weui_cell_ft">未上传</div>
+            </a>
+        </div>
+    }
+    <div class="error-label container" style="display:none;">
+        <div class="col-xs-12 text-center error-text"></div>
+        <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+    </div>
+    <div id="loadingToast" class="weui_loading_toast" style="display:none;">
+        <div class="weui_mask_transparent"></div>
+        <div class="weui_toast">
+            <div class="weui_loading">
+                <!-- :) -->
+                <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+            </div>
+            <p class="weui_toast_content">提交中...</p>
+        </div>
+    </div>
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container-fluid">
+            <a href="javascript:;" id="submit-btn" class="">
+                提交
+            </a>
+        </div>
+    </nav>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+    <script>
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: $("#appId").text(), // 必填，公众号的唯一标识
+            timestamp: $("#timeStamp").text(), // 必填，生成签名的时间戳
+            nonceStr: $("#nonce").text(), // 必填，生成签名的随机串
+            signature: $("#signature").text(),// 必填，签名，见附录1
+            jsApiList: ['uploadImage', 'downloadImage', 'chooseImage', 'previewImage']
+            //必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+        $(function () {
+            var $errors = $(".validation-summary-errors").find("li");
+            if ($errors.length > 0) {
+                $(".error-text").text($($errors.get($errors.length - 1)).text());
+                $(".error-label").show();
+                setTimeout(function () {
+                    $(".error-label").fadeOut(1000)
+                }, 3000);
+            }
+            if ($("#UploadImg").val() != "") {
+                cell_success($("#img-btn"), "图片上传成功");
+            }
+        });
+        
+        $("#img-btn").click(function () {
+            var localIds
+            var btn = $(this);
+            wx.chooseImage({
+                count: 1, // 默认9
+                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    $("#preview").attr("src", localIds);
+                    wx.uploadImage({
+                        localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            var serverId = res.serverId; // 返回图片的服务器端ID
+                            $.ajax({
+                                url: "/Custom/SaveOrignalImage",
+                                type: "post",
+                                data: {
+                                    serverId: serverId
+                                },
+                                success: function (data) {
+                                    if (data.result == "SUCCESS") {
+                                        cell_success(btn, "图片上传成功");
+                                        $("#UploadImg").val(data.filename);
+                                    }
+                                    else {
+                                        alert("上传失败，请重试");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        
+        $("#submit-btn").click(function () {
+            var $btn = $(this);
+            $btn.addClass("hidden");
+            if ($("#UploadImg").val() == "") {
+                //$(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+                $(".error-text").text("请上传交易截图");
+                $(".error-label").show();
+                setTimeout(function () {
+                    $(".error-label").fadeOut(1000)
+                }, 3000);
+                $btn.removeClass("hidden");
+                return false;
+            }
+            else {
+                $btn.attr("disabled", "disabled").addClass("disabled");
+                $("#loadingToast").show();
+                $("form").submit();
+            }
+            
+        });
+        
+        function cell_success(cellname, text) {
+            $("#toast_success").show();
+            setTimeout(function () {
+                $("#toast_success").fadeOut(500);
+            }, 500);
+            $(cellname).find("i").attr("class", "weui_icon_success");
+            $(cellname).find(".weui_cell_ft").text(text);
+        }
+    </script>
+</body>
+</html>

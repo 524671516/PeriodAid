@@ -1,0 +1,61 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+@using (Html.BeginForm("Seller_ReportPartial", "Seller", FormMethod.Post, new { @id = "report_form", @class = "validate-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Off_Seller_Id)
+    @Html.HiddenFor(m => m.Off_Schedule_Id)
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.CheckinLocation)
+    @Html.HiddenFor(m => m.CheckinPhoto)
+    @Html.HiddenFor(m => m.CheckinTime)
+    @Html.HiddenFor(m => m.CheckoutLocation)
+    @Html.HiddenFor(m => m.CheckoutTime)
+    @Html.HiddenFor(m => m.CheckoutPhoto)
+    @Html.HiddenFor(m => m.Proxy)
+    @Html.HiddenFor(m => m.Report_Time)
+    @Html.HiddenFor(m => m.Rep_Image)
+
+    <div class="content-block-title">提报信息</div>
+    <div class="list-block">
+        <ul>
+            @{
+                Html.RenderAction("Seller_EditReport_Item", new { id = Model.Id });
+            }
+        </ul>
+    </div>
+    <div class="list-block media-list">
+        <ul>
+            <li>
+                <div class="item-content">
+                    <div class="item-inner">
+                        @Html.TextAreaFor(m => m.Remark, new { rows = "3", placeholder = "请输入简报" })
+                        <div class="item-title-row">
+                            <div class="item-title"></div>
+                            <div class="item-after"><span id="report-curracount">0</span>/<span>500</span></div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title">图片上传</div>
+                            <div class="item-after"><span id="report-imgaccount"></span>/<span>7</span></div>
+                        </div>
+                        <div class="subtitle">
+                            <ul class="rep-imglist" id="report-imglist">
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="content-block">
+        <a href="javascript:;" class="button button-big button-fill" id="report-btn">提交</a>
+    </div>
+}

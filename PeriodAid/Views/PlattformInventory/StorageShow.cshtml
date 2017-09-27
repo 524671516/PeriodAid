@@ -1,39 +1,4 @@
-﻿<div class="form-view-header clear-float">
-    <div>
-        <div class="tm-view-control">
-            <ul class="nav nav-pills" style="float:right">
-                <li class="tm-view-control-sort dropdown">
-                    <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
-                        <span class="tm-select-title">选择日期</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" style="text-align:center">
-                        @foreach (var item in ViewBag.DataDate)
-                        {
-                            <li><a href="#" class="tm-select-range tm-select form-date-select">@item.Inventory_Date.ToString("yyyy年MM月dd日")</a></li>
-                        }
-
-                    </ul>
-
-
-
-                </li>
-                @*<li>
-                    <a href="#" id="rel_excel_in">
-                        <span onclick="$('#excel_in').click();">导入Excel文件</span>
-                        <input type="file" name="fileName" id="excel_in" style="display:none" />
-                    </a>
-                </li>*@
-                @*<li>
-                    <a href="#">
-                        <span>导出Excel文件</span>
-                    </a>
-                </li>*@
-            </ul>
-        </div>
-    </div>
-</div>
-<div class="center-block" id="my-form-content">
+﻿<div class="center-block" id="my-form-content">
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active">
@@ -65,23 +30,5 @@
     </div>
 </div>
 <script>
-    // 选择日期
-    $(".form-date-select").click(function () {
-        var that = $(this);
-        if (!that.hasClass('selected')) {
-            that.parent().parent().find(".tm-select.selected").removeClass("selected");
-            that.addClass("selected");
-            $('.tm-select-title').html($('.selected').text());
-        }
-        $.ajax({
-            url: '/PlattformInventory/StorageShow/',
-            type: 'post',
-            data: {
 
-            },
-            success: function (data) {
-                $("#storage_show").html(data);
-            }
-        })
-    })
 </script>

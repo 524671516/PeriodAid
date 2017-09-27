@@ -1,0 +1,140 @@
+﻿@model PeriodAid.Models.ChangePasswordViewModel
+@using PeriodAid.Models;
+@{
+    ViewBag.Title = "Task_Management_PersonalSetting";
+    Layout = null;
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>任务管理系统</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/Content/cropper.min.css" rel="stylesheet" />
+    <link href="~/Content/corppermain.css" rel="stylesheet" />
+    <link href="~/Content/TaskManagement.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+    <script src="~/Scripts/html5.js"></script>
+    <script src="~/Scripts/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body id="my-app">
+    <header id="app-header">
+        <nav class="navbar navbar-default bg-white">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/TaskManagement/Index"><strong class="color-blue">返回项目中心</strong></a>
+                    <span class="navbar-brand">个人设置</span>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right navbar-border">
+                        <li class="dropdown">
+                            <a href="javascript:;" style="height:50px;">
+                                @if (ViewBag.img == null)
+                                {
+                                    <span class="tm_avatar tm_img-circle tm_personal-avatar text-center" style="background-color:#ccc;"><i class="glyphicon glyphicon-user" aria-hidden="true" style="line-height:26px;"></i></span>
+                                }
+                                else
+                                {
+                                    <span style="background-image: url('http://cdn2.shouquanzhai.cn/@ViewBag.img');" class="tm_avatar tm_img-circle tm_personal-avatar"></span>
+                                }
+                            </a>
+                            <div class="dropdown-menu tm_dropdown">
+                            </div>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+                <!-- Collect the nav links, forms, and other content for toggling -->
+
+            </div><!-- /.container-fluid -->
+        </nav>
+        <div class="personal_setting_wrap" style="margin-top:30px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-2">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation"><a href="/TaskManagement/PersonalSetting">个人信息</a></li>
+                            <li role="presentation" class="active"><a href="/TaskManagement/SecuritySetting">安全设置</a></li>
+                            <li role="presentation"><a href="/TaskManagement/LoginLog">登录记录</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">安全设置</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.ValidationSummary("", new { @class = "text-danger" });
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.OldPassword, new { @class = "col-md-3 control-label" })
+                                                <div class="col-md-9">
+                                                    @Html.PasswordFor(m => m.OldPassword, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.OldPassword, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.NewPassword, new { @class = "col-md-3 control-label" })
+                                                <div class="col-md-9">
+                                                    @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.NewPassword, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-3 control-label" })
+                                                <div class="col-md-9">
+                                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-3 col-md-10">
+                                                    <input type="submit" value="更改密码" class="btn btn-default" />
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                </div>
+                                @section Scripts {
+                                    @Scripts.Render("~/bundles/jqueryval")
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Cropping modal -->
+    <!-- /.modal -->
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/cropper.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/validate.expand.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/TaskManagement.js"></script>
+    <script src="~/Scripts/croppermain.js"></script>
+
+</body>
+</html>

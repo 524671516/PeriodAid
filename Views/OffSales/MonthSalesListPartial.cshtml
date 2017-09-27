@@ -1,0 +1,142 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Month>
+@using PagedList.Mvc;
+<br />
+<table class="table table-condensed table-hover" style="table-layout:fixed;width:100%">
+    <tr class="offline-table-background">
+        <th style="width:8%">月份</th>
+        <th style="width:15%">
+            店铺名称
+        </th>
+        <th style="width:6%">
+            渠道
+        </th>
+        <th style="width:8%">
+            经销商
+        </th>
+        <th style="width:7%">
+            红糖姜茶
+        </th>
+        <th style="width:7%">
+            黑糖姜茶
+        </th>
+        <th style="width:7%">
+            柠檬姜茶
+        </th>
+        <th style="width:7%">
+            蜂蜜姜茶
+        </th>
+        <th style="width:7%">
+            红枣姜茶
+        </th>
+        <th style="width:8%">
+            累计数量
+        </th>
+        <th style="width:10%">
+            累计金额
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Store.Off_StoreSystem.SystemName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Store.Off_StoreSystem.Distributor)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Item_Brown)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Item_Black)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Item_Lemon)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Item_Honey)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Item_Dates)
+            </td>
+            <td class="ellipsis">
+                @(item.Item_Brown + item.Item_Black + item.Item_Honey + item.Item_Lemon + item.Item_Dates)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.TotalFee)
+            </td>
+            <td class="ellipsis">
+                @Html.ActionLink("修改", "EditMonthSalesPartial", new { id = item.Id }, new { @class = "btn btn-xs btn-info offsales-edit-month"})
+                <a class="btn btn-danger btn-xs offsales-del-month" href="/OffSales/DeleteSalesMonthAjax?id=@item.Id">删除</a>
+            </td>
+        </tr>
+    }
+
+</table>
+@Html.Partial("modal")
+<script>
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#offsalesmonth-search-query").val();
+            l = l + "&query=" + query;
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#offsales-list-month").html(data);
+                }
+            });
+            return false;
+        });
+        //修改
+        $(".offsales-edit-month").click(function () {
+            var url = $(this).attr("href");
+            var head = "修改月报表";
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".modal-con").html(data);
+                    $(".modal-box").modal();
+                    $(".modal-head").text(head)
+                }
+            });
+            return false;
+        });
+        //删除
+        $(".offsales-del-month").click(function () {
+            var url = $(this).attr("href");
+            confirm("确定要删除吗?", "你将把此条信息从月报列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: url,
+                        type: "post",
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/OffSales/MonthSalesListPartial",
+                                        success: function (data) {
+                                            $("#offsales-list-month").html(data);
+                                        }
+                                    });
+                                    alert("删除成功")
+                                }, 1000)
+                            }
+                        }
+                    })
+                }
+            });
+            return false;
+        })
+
+    });
+</script>

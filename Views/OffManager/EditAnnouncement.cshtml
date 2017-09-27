@@ -1,0 +1,189 @@
+﻿@model PeriodAid.Models.Off_Manager_Announcement
+
+@{
+    ViewBag.Title = "EditAnnouncement";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSix";
+}
+@using (Html.BeginForm("EditAnnouncement", "OffManager", FormMethod.Post, new { @id = "offmanager-announcement-editform" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ManagerUserName)
+    @Html.HiddenFor(m => m.Off_System_Id)
+    <div class="row">
+        <div class="col-md-3">
+            <select multiple id="selectList_add" class="form-control input-sm" style="height:240px;"></select>
+            <ul class="list-inline list-unstyled  offline-list-padding text-center">
+                <li><a class="btn btn-sm btn-success" href="javascript:;" id="offmanager-announcement-add">添加</a></li>
+                <li><a class="btn btn-sm btn-danger" href="javascript:;" id="offmanager-announcement-remove">移除</a></li>
+            </ul>
+            <select multiple id="selectList_rem" class="form-control input-sm" style="height:240px;"></select>
+            <div id="select-false" class="text-danger"></div>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-5 row">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>开始时间</small></div>
+                        <input type="text" class="input-sm form-control" id="StartTime" name="StartTime" value="@Model.StartTime.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div id="fal-date" class="text-danger"></div>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <div class="input-group-addon"><small>结束时间</small></div>
+                        <input type="text" class="input-sm form-control" id="FinishTime" name="FinishTime" value="@Model.FinishTime.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div id="false-date" class="text-danger"></div>
+                </div>
+            </div><br />
+            <div class="row">
+                <div class="input-group col-md-12">
+                    <div class="input-group-addon"><small>活动等级</small></div>
+                    <select class="form-control input-sm" style="width:100%;" id="Priority" name="Priority">
+                        @if (Model.Priority == 1)
+                        {
+                            <option value="1" selected>低</option>
+                            <option value="3">普通</option>
+                            <option value="5">最高</option>
+                        }
+                        else if (Model.Priority == 3)
+                        {
+                            <option value="1">低</option>
+                            <option value="3" selected>普通</option>
+                            <option value="5">最高</option>
+                        }
+                        else {
+                            <option value="1" selected>低</option>
+                            <option value="3">普通</option>
+                            <option value="5" selected>最高</option>
+                        }
+                    </select>
+                </div>
+            </div><br />
+            <div class="row">
+                <div class="input-group col-md-12">
+                    <div class="input-group-addon"><small>标题</small></div>
+                    <input class="form-control input-sm" style="width:100%;" id="Title" name="Title" value="@Model.Title" />
+                </div>
+                <div id="false-con" class="col-md-12 col-md-offset-1 text-danger"></div>
+            </div><br />
+            <div class="row">
+                <div class="input-group col-md-12">
+                    <div class="input-group-addon" style="padding-bottom:170px;"><small>内容</small></div>
+                    <textarea class="form-control input-sm" rows="10" id="Content" name="Content">@Model.Content</textarea>
+                </div>
+            </div><br />
+            <div class="row btn-group">
+                    <input type="submit" class="btn btn-success" value="提交" />
+                    <a class="btn btn-default" href="/OffManager/AnnouncementList">返回</a>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $("#StartTime").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $("#FinishTime").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+        $.ajax({
+            url: "/OffManager/ManagerListAjax",
+            type: "post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    for (var i = 0; i < data.managerlist.length; i++) {
+                        $("#selectList_add").append("<option value='" + data.managerlist[i].UserName + "' >" + data.managerlist[i].NickName + "</option>");
+                    }
+                    var s = ($("#ManagerUserName").val()).split(',');
+                    for (var i = 0; i < s.length; i++) {
+                        existName(s[i]);
+                    }
+                }
+            }
+        })
+    });
+    function existName(username) {
+        var nickname = $("#selectList_add option[value='" + username + "']").text();
+        $("#selectList_rem").append("<option value='" + username + "'>" + nickname + "</option>");
+        $("#selectList_add option[value='" + username + "']").remove();
+    }
+    function TitleName() {
+        var title = document.getElementById("false-con");
+        if ($("#Title").val().length == 0) {
+            title.textContent = "标题值不能为空"
+        } else {
+            title.textContent =""
+        }
+    };
+    var titlecon = document.getElementById("Title");
+    titlecon.addEventListener('blur',TitleName,false)
+    $("#offmanager-announcement-add").click(function () {
+        var selectvalue = $("#selectList_add").val()+"";
+        var managerArray = selectvalue.split(',');
+        for (var i = 0; i < managerArray.length; i++) {
+            var optionitem = "<option value=\"" + managerArray[i] + "\">" + $("option[value='" + managerArray[i] + "']").text() + "</option>";
+            $("#selectList_rem").append(optionitem);
+            $("#selectList_add option[value='" + managerArray[i] + "']").remove();
+        }
+        setManagerUserName();
+    });
+    $("#offmanager-announcement-remove").click(function () {
+        var selectRem = $("#selectList_rem").val() + "";
+        var arry_rem = selectRem.split(",");
+        for (var i = 0; i < arry_rem.length; i++) {
+            var option_con = "<option value=\"" + arry_rem[i] + "\">" + $("option[value='" + arry_rem[i] + "']").text() + "</option>";
+            $("#selectList_rem option[value='" + arry_rem[i] + "']").remove();
+            $("#selectList_add").append(option_con)
+        }
+        setManagerUserName();
+    });
+    $("#offmanager-announcement-editform").submit(function () {
+        var start = $("#StartTime").val();
+        var end = $("#FinishTime").val();
+        var select = $("#ManagerUserName").val().trim();
+        var title = $("#Title").val();
+        var _start = new Date(start);
+        var _end = new Date(end);
+        var bool = true;
+        if (_end <= _start) {
+            $("#false-date").text("结束时间不能超过开始时间");
+            bool = false;
+        }
+        if (select == "") {
+            $("#select-false").text("联系人不能为空");
+            bool = false;
+        }
+        if (title.length == 0) {
+            $("#false-con").text("标题不能为空");
+            bool = false;
+        }
+        if (start == "") {
+            $("#fal-date").text("开始时间不能为空");
+            bool = false;
+        }
+        if (end == "") {
+            $("#false-date").text("结束时间不能为空");
+            bool = false;
+        }
+        if (!bool)
+            return false;
+        else {
+
+        }
+
+    });
+    function setManagerUserName() {
+        var s = new Array();
+        $("#selectList_rem option").each(function () {
+            s.push($(this).attr("value"));
+        });
+        $("#ManagerUserName").val(s);
+    }
+
+
+
+</script>
+

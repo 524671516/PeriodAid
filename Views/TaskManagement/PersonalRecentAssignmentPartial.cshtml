@@ -1,0 +1,76 @@
+﻿@model IEnumerable<PeriodAid.Models.Assignment>
+@using PeriodAid.Models
+    @if (Model.Count() >= 20)
+    {
+        <ul>
+            @foreach (var item in Model)
+            {
+                <li class="clear-float tm-view-li">                   
+                    <div class="tm-view-checkbox float-left">
+                        @if (item.Status == AssignmentStatus.FINISHED)
+                    {
+                            <input type="checkbox" class="tm-checkbox-input tm-change-task-status" checked data-aid="@item.Id" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" class="tm-checkbox-input tm-change-task-status" data-aid="@item.Id"/>
+                        }
+                    </div>
+                    <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
+                        <div class="tm-view-info-top">
+                            <span>任务名称:@Html.Encode(item.AssignmentTitle)</span>&nbsp;
+                            <span>归属项目:@Html.Encode(item.Subject.SubjectTitle)</span>&nbsp;
+                        </div>
+                        <div class="tm-view-info-bottom">
+                            <span class="color-gray">创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd HH:ss"))</span>&nbsp;
+                            <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                        </div>
+                    </div>
+
+                </li>
+            }
+        </ul>
+        <div class="tm-view-more color-blue">-&nbsp;点击加载更多&nbsp;-</div>
+    }
+    else
+    {
+        if (ViewBag.currentpage == 0&&Model.Count()==0)
+        {
+            <div class="tm-view-loading-empty">
+                <i class="fa fa-sticky-note-o color-blue fa-4x" aria-hidden="true"></i><br />
+                <strong class="color-blue">没有任何数据</strong>
+            </div>
+        }
+        else
+        {
+            <ul>
+                @foreach (var item in Model)
+                {
+                    <li class="clear-float tm-view-li">                      
+                        <div class="tm-view-checkbox float-left">
+                            @if (item.Status == AssignmentStatus.FINISHED)
+                            {
+                                <input type="checkbox" class="tm-checkbox-input tm-change-task-status" checked data-aid="@item.Id" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="tm-checkbox-input tm-change-task-status" data-aid="@item.Id"/>
+                            }
+                        </div>
+                        <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
+                            <div class="tm-view-info-top">
+                                <span>任务名称:@Html.Encode(item.AssignmentTitle)</span>&nbsp;
+                                <span>归属项目:@Html.Encode(item.Subject.SubjectTitle)</span>&nbsp;
+                            </div>
+                            <div class="tm-view-info-bottom">
+                                <span class="color-gray">创建时间:@Html.Encode(item.CreateTime.ToString("yyyy-MM-dd HH:ss"))</span>&nbsp;
+                                <span class="color-gray">截止日期:@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                            </div>
+                        </div>
+
+                    </li>
+                }
+            </ul>
+            <div class="tm-view-nomore color-blue">-&nbsp;没有更多数据啦&nbsp;-</div>
+        }
+    }

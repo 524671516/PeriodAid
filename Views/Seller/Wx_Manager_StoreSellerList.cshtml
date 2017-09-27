@@ -1,0 +1,30 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_Seller>
+
+@{
+    ViewBag.Title = "督导管理 巡店";
+    ViewBag.Current = 0;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+}
+
+    <div class="hd">
+        <h3 class="page_title text-center">销售员列表</h3>
+    </div>
+    <div class="weui_cells_title">@ViewBag.StoreName</div>
+    <div class="weui_cells">
+        @foreach (var item in Model)
+        {
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Html.Encode(item.Name)</p>
+                </div>
+                <div class="weui_cell_ft">@Html.Encode(item.Mobile)</div>
+            </div>
+        }
+    </div>
+    <br />
+    <div class="container">
+        <a href="/Seller/Wx_Manager_UnCheckInList?status=0" class="weui_btn weui_btn_default" id="submit-btn">
+            返回列表
+        </a>
+    </div>
+    <br /><br />

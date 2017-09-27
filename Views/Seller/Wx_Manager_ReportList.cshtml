@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "督导管理 工具";
+    ViewBag.Current = 2;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+}
+
+<div class="weui_cells_title">选择日期</div>
+<div class="weui_cells weui_cells_form">
+    <div class="weui_cell">
+        <div class="weui_cell_hd"><label for="" class="weui_label">日期</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input" type="text" value="@ViewBag.today.ToString("yyyy-MM-dd")" name="list_date" id="list_date">
+        </div>
+        <div class="weui_cell_ft">
+        </div>
+    </div>
+    <div class="weui_cell weui_cell_select weui_select_after">
+        <div class="weui_cell_hd">
+            <label for="" class="weui_label">系统</label>
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            @Html.DropDownList("checklist", ViewBag.StoreSystem as SelectList, new { @class = "weui_select", @id = "storesystem", style="padding-left:0"})
+        </div>
+    </div>
+
+</div>
+<div id="list-content">
+</div>
+<br />
+<div class="container">
+    <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default">
+        返回首页
+    </a>
+</div>
+<div id="toast_success" style="display: none;">
+    <div class="weui_mask_transparent"></div>
+    <div class="weui_toast">
+        <i class="weui_icon_toast"></i>
+        <p class="weui_toast_content">已提交</p>
+    </div>
+</div>
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">注意</strong></div>
+        <div class="weui_dialog_bd">该促销员未注册系统，无法发放红包！</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:close_dialog();" class="weui_btn_dialog primary">确定</a>
+        </div>
+    </div>
+</div>
+<div class="weui_dialog_alert" id="dialog_alert_2" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd"><strong class="weui_dialog_title">注意</strong></div>
+        <div class="weui_dialog_bd">红包已发放，无法修改红包数据</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:close_dialog_2();" class="weui_btn_dialog primary">确定</a>
+        </div>
+    </div>
+</div>
+<div class="error-label container" style="display:none;">
+    <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+    <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+</div>
+<br /><br />
+@section scripts{
+<script src="~/Scripts/jeDate-gh-pages/jedate/jedate.min.js"></script>
+    <script>    
+        $(function () {
+            $.ajax({
+                url: "/Seller/Wx_Manager_ReportList_Partial",
+                data: {
+                    date: $("#list_date").val(),
+                    storesystem: $("#storesystem").val()
+                },
+                type: "post",
+                success: function (data) {
+                    $("#list-content").html(data);
+                }
+            });
+        });
+        jeDate({
+            dateCell: '#list_date',
+            format: 'YYYY-MM-DD',
+            isTime: true,// 分隔符可以任意定义，该例子表示只显示年月
+            choosefun: function (date) {
+                $.ajax({
+                    url: "/Seller/Wx_Manager_ReportList_Partial",
+                    data: {
+                        date: $("#list_date").val(),
+                        storesystem: $("#storesystem").val()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        $("#list-content").html(data);
+                    }
+                });
+            }
+        });
+        $("#storesystem").change(function (data) {
+            $.ajax({
+                url: "/Seller/Wx_Manager_ReportList_Partial",
+                data: {
+                    date: $("#list_date").val(),
+                    storesystem: $("#storesystem").val()
+                },
+                type: "post",
+                success: function (data) {
+                    $("#list-content").html(data);
+                }
+            });
+        });
+        function close_dialog() {
+            $("#dialog_alert").hide();
+        }
+        function close_dialog_2() {
+            $("#dialog_alert_2").hide();
+        }
+    </script>
+}

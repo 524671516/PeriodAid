@@ -1,0 +1,165 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_SalesInfo_Month>
+@using PagedList.Mvc;
+<br />
+<table class="table table-condensed table-striped">
+    <tr>
+        <th style="width:8%">月份</th>
+        <th style="width:15%">
+            店铺名称
+        </th>
+        <th style="width:6%">
+            系统
+        </th>
+        <th style="width:8%">
+            经销商
+        </th>
+        <th style="width:7%">
+            红糖姜茶
+        </th>
+        <th style="width:7%">
+            黑糖姜茶
+        </th>
+        <th style="width:7%">
+            柠檬姜茶
+        </th>
+        <th style="width:7%">
+            蜂蜜姜茶
+        </th>
+        <th style="width:7%">
+            红枣姜茶
+        </th>
+        <th style="width:8%">
+            累计数量
+        </th>
+        <th style="width:10%">
+            累计金额
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Off_Store.StoreSystem)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Off_Store.Distributor)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Brown)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Black)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Lemon)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Honey)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.Item_Dates)
+        </td>
+        <td class="ellipsis">
+            @(item.Item_Brown + item.Item_Black + item.Item_Honey + item.Item_Lemon + item.Item_Dates)
+        </td>
+        <td class="ellipsis">
+            @Html.DisplayFor(modelItem => item.TotalFee)
+        </td>
+        <td class="ellipsis">
+            @Html.ActionLink("修改", "Ajax_EditMonthInfo", new { id = item.Id }, new { @class = "btn btn-sm btn-info edit-button" })
+            <a class="btn btn-danger btn-sm del-bn" href="/OfflineSales/Off_DeleteSalesMonth?id=@item.Id">删除</a>
+        </td>
+    </tr>
+}
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("Off_MonthSalesInfo_ajaxlist", new { page, query = "" }))</div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改报表</h4>
+            </div>
+            <div class="modal-body" id="editcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">增加报表</h4>
+            </div>
+            <div class="modal-body" id="addMonthcontent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    $(function () {
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            var query = $("#search-query").val();
+            l = l + "&query=" + query;
+            $.ajax({
+                url: l,
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+            return false;
+        });
+        $(".edit-button").click(function () {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#editcontent").html(data);
+                    $('#myModal').modal()
+                }
+            });
+            return false;
+        });
+        $("#add-btn").click(function () {
+            var link_url = "/OfflineSales/Off_CreateSalesMonth"
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $("#addMonthcontent").html(data)
+                    $("#addModal").modal()
+                }
+
+            })
+        });
+        $(".del-bn").click(function () {
+            var result = confirm("确定删除吗？")
+            if (result) {
+                var url = $(this).attr("href");
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    success:function(data){
+                        if (data == "SUCCESS") {
+                            window.location.reload()
+                        }
+                    }
+                })
+            }
+            return false;
+        })
+        
+    });
+</script>

@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "月销售信息";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingTwo";
+}
+<div class="row">
+    <div class="col-xs-8">
+        <a class="btn btn-sm btn-info" id="add-btn"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报表</a>
+        <a class="btn btn-sm btn-info" href="/OfflineSales/UploadMonthInfo" style="margin-left:5px;"><i class="fa fa-calendar-plus-o"></i>&nbsp;&nbsp;上传月报表</a>
+    </div>
+    <div class="col-xs-4">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索门店名称" id="search-query">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+<div id="list-container">
+
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: "/OfflineSales/Off_MonthSalesInfo_ajaxlist",
+            success: function (data) {
+                $("#list-container").html(data);
+            }
+        });
+        $("#search-btn").click(function () {
+            $.ajax({
+                url: "/OfflineSales/Off_MonthSalesInfo_ajaxlist",
+                data: {
+                    query: $("#search-query").val()
+                },
+                success: function (data) {
+                    $("#list-container").html(data);
+                }
+            });
+        });
+    });
+</script>
+

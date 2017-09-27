@@ -1,0 +1,164 @@
+﻿@using PeriodAid.Models;
+@model PeriodAid.Models.Subject
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">@Html.Encode(Model.SubjectTitle + "的操作日志")</h4>
+</div>
+<div class="container-fluid">
+    <div class="btn-group btn-group-justified" role="group" style="padding:10px;">
+        <div class="btn-group">
+            <input type="hidden" id="user_type" value="@ViewBag.type" />
+            <input type="hidden" id="user_id" value="@ViewBag.user_id" />
+            <input type="hidden" id="holder_id" value="@Model.HolderId" />
+            <input type="hidden" id="subject_id" value="@Model.Id" />
+            <select class="selectpicker" id="tm_select_straff" data-width="100%">
+                @foreach (var item in ViewBag.EmployeeDropDown)
+                {
+                    if (item.Id == Model.HolderId)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.NickName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="btn-group">
+            <select class="selectpicker" id="tm_select_type" data-width="100%">
+                <option value="subject" selected>全部</option>
+                <option value="mission">任务</option>
+                <option value="submission">子任务</option>
+                <option value="file">文件</option>
+            </select>
+        </div>
+        <div class="btn-group">
+            <select class="selectpicker" id="tm_select_time" data-width="100%">
+                <option value="year" selected>全部</option>
+                <option value="day">今日</option>
+                <option value="week">本周</option>
+                <option value="month">本月</option>
+            </select>
+        </div>
+    </div>
+    <div class="tm_modal_ul_wrap modal-list-panel">
+        <div class="tm-view-loading-content list-group tm_modal_list_ul"  id="tm_modal_logs_area"></div>
+        <div class="tm-veiw-loading text-center" id="tm-view-log-loading">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
+            <span class="sr-only">正在加载...</span>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <input type="hidden" id="currentpage" name="currentpage" value="0" />
+    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#Create-Subject-Content").unbind("click");
+        $('#tm_select_straff').selectpicker({
+            liveSearch: true,
+            liveSearchPlaceholder: "搜索人员",
+            title: "人员选择"
+        });
+        $('#tm_select_type').selectpicker({
+            title: "类型"
+        });
+        $('#tm_select_time').selectpicker({
+            title: "时间"
+        });
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            data: {
+                user_type: $("#user_type").val(),
+                user_id: $("#user_id").val(),
+                holder_id: $("#holder_id").val(),
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#subject_id").val(),
+                logTime: $("#tm_select_time").val(),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+                setTimeout(function () {
+                    $("#tm_modal_logs_area").append(data)
+                    $("#tm-view-log-loading").hide();
+                }, 500)
+            }
+        })
+
+    });
+
+    $(".bootstrap-select").on("click", "li a", function () {
+        $("#currentpage").val("0");
+        $("#tm_modal_logs_area").html("");
+        $("#tm-view-log-loading").show();     
+        $.ajax({
+            url: "/TaskManagement/GetLogs",
+            data: {
+                user_type: $("#user_type").val(),
+                user_id: $("#user_id").val(),
+                holder_id: $("#holder_id").val(),
+                employeeId: $("#tm_select_straff").val(),
+                SubjectId: $("#subject_id").val(),
+                logTime: $("#tm_select_time").val(),
+                logtype: $("#tm_select_type").val(),
+                _page: $("#currentpage").val()
+            },
+            success: function (data) {
+                setTimeout(function () {
+                    $("#tm_modal_logs_area").html(data)
+                    $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+                    $("#tm-view-log-loading").hide();
+                }, 500)
+            }
+        })
+    });
+
+    $(".tm_modal-nav").on("click", ".list-group-item", function () {
+        $("#loading-p").show();
+        $.ajax({
+            url: $(this).attr("data-href"),
+            data: {
+                SubjectId: $("#panel-wrap").attr("data-sid")
+            },
+            success: function (data) {
+                $("#tm_modal_list_area").html(data);
+                $("#loading-p").hide();
+            },
+            error: function () {
+                ErrorAlert("操作失败。");
+            }
+        })
+    })
+
+        $("#Create-Subject-Content").on("click", "#ShowMoreLogs", function () {           
+            $("#tm-view-log-loading").show();
+            var _self = $(this);
+            _self.remove();
+            $.ajax({
+                url: "/TaskManagement/GetLogs",
+                data: {
+                    user_type: $("#user_type").val(),
+                    user_id: $("#user_id").val(),
+                    holder_id: $("#holder_id").val(),
+                    employeeId: $("#tm_select_straff").val(),
+                    SubjectId: $("#subject_id").val(),
+                    logTime: $("#tm_select_time").val(),
+                    logtype: $("#tm_select_type").val(),
+                    _page: $("#currentpage").val()
+                },
+                success: function (data) {
+                    $("#currentpage").val(parseInt($("#currentpage").val()) + 1);
+                    setTimeout(function () {
+                        $("#tm_modal_logs_area").append(data)
+                        $("#tm-view-log-loading").hide();
+                    }, 500)
+                }
+            })
+        })
+
+</script>
+

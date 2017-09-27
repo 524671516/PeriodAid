@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "修改管辖门店";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingSix";
+}
+<h4>修改管辖范围</h4>
+@if (ViewBag.Name != null)
+{
+    <h4>管理员姓名：@Html.Encode(ViewBag.Name)</h4>
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <input type="hidden" value="@ViewBag.ManagerId" id="managerid" />
+        <row>
+            <div class="col-md-3">
+                @Html.DropDownList("StoreSystem", ViewBag.SystemList as SelectList, new { @class = "form-control", id = "StoreSystem" })<br />
+                <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:400px; font-size:1em;"></select>
+                <br />
+                <a class="btn btn-default" href="javascript:;" id="add-btn">添加</a>
+            </div>
+            <div class="col-md-9">
+                <select multiple id="selectList" name="selectList" class="form-control input-sm" style="height:454px; font-size:1em;">
+                    @foreach (var item in ViewBag.StoreList)
+                    {
+                        <option value="@item.Id">@item.StoreName</option>
+                    }
+                </select>
+                <br />
+                <a class="btn btn-default" href="javascript:;" id="remove-btn">移除</a>
+            </div>
+        </row>
+        <br /><br />
+        <a class="btn btn-primary" id="submit-btn">修改</a>
+    }
+}
+else
+{
+    <h4>
+        错误未找到管理员
+    </h4>
+}
+<script>
+    $(function () {
+        $(".input-date").datepicker();
+        refresh_list();
+    });
+    $("#StoreSystem").change(function () {
+        refresh_list();
+    });
+    $("#add-btn").click(function () {
+        var addlist = $("#StoreList").val() + "";
+        var currentlist = $("#selectList").val() + "";
+        var arr_add = addlist.split(",");
+        var arr_current = currentlist.split(",");
+        for (var i = 0; i < arr_add.length; i++) {
+            if (arr_current.indexOf(arr_add[i]) == -1) {
+                $.ajax({
+                    url: "/OfflineSales/Off_GetStoreName?storeid=" + arr_add[i],
+                    success: function (data) {
+                        $("#selectList").append("<option value='" + data.id + "' >" + data.name + "</option>");
+                        refresh_list();
+                    }
+                });
+
+            }
+        }
+    });
+    $("#remove-btn").click(function () {
+        var selectlist = $("#selectList").children("option");
+        var removelist = ($("#selectList").val() + "").split(",");
+
+
+        selectlist.each(function () {
+            if (removelist.indexOf($(this).attr("value")) != -1) {
+                var v = $(this).attr("value");
+                $("option[value='" + v + "']").remove();
+            }
+        });
+        refresh_list();
+        selectlist = $("#selectList").children("option");
+        var arr_list = new Array();
+        selectlist.each(function () {
+            arr_list.push($(this).attr("value"));
+        });
+    });
+    $("#submit-btn").click(function () {
+        var selectlist = $("#selectList").children("option");
+        var arr_list = new Array();
+        selectlist.each(function () {
+            arr_list.push($(this).attr("value"));
+        });
+        $.ajax({
+            url: "/OfflineSales/Off_Manager_AjaxAddStore",
+            data: {
+                managerId: $("#managerid").val(),
+                arr_list: arr_list.join(","),
+            },
+            success: function (data) {
+                if (data == "SUCCESS") {
+                    window.location.reload();
+                }
+            }
+        })
+    });
+    function refresh_list() {
+        $.ajax({
+            url: "/OfflineSales/Off_Add_Schedule_StoreList",
+            type: "post",
+            data: {
+                storesystem: $("#StoreSystem").val()
+            },
+            success: function (data) {
+                $("#StoreList").html("");
+                var selectlist = $("#selectList").children("option");
+                var arr_list = new Array();
+                selectlist.each(function () {
+                    arr_list.push($(this).attr("value"));
+                });
+                for (var i = 0; i < data.StoreList.length; i++) {
+                    if (arr_list.indexOf(data.StoreList[i].ID + "") == -1) {
+                        $("#StoreList").append("<option value='" + data.StoreList[i].ID + "'>" + data.StoreList[i].StoreName + "</option>");
+                    }
+                }
+            }
+        });
+    }
+
+</script>

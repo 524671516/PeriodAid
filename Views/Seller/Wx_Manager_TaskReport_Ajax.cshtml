@@ -1,0 +1,413 @@
+﻿@model PeriodAid.Models.Off_Manager_Task
+@using (Html.BeginForm("Wx_Manager_TaskReport_Ajax", "Seller", FormMethod.Post, new { id = "report-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.UserName)
+    @Html.HiddenFor(model => model.TaskDate)
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.NickName)
+    @Html.HiddenFor(model => model.Off_System_Id)
+    <div class="weui_cells_title">工作日报</div>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.TextAreaFor(m => m.Event_Complete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入重点工作内容" })
+                <div class="weui_textarea_counter"><abbr id="current_length_cp">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog1"><i class="fa fa-microphone"></i></a></div>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.TextAreaFor(m => m.Event_UnComplete, new { @class = "weui_textarea", rows = "3", placeholder = "请输入一般工作内容" })
+                <div class="weui_textarea_counter"><abbr id="current_length_uc">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog2"><i class="fa fa-microphone"></i></a></div>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                @Html.TextAreaFor(m => m.Event_Assistance, new { @class = "weui_textarea", rows = "3", placeholder = "请输入需协调工作" })
+                <div class="weui_textarea_counter"><abbr id="current_length_as">0</abbr>/500&nbsp;<a href="javascript:;" id="showDialog3"><i class="fa fa-microphone"></i></a></div>
+            </div>
+        </div>
+        @Html.HiddenFor(model=>model.Photo)
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <div class="weui_uploader">
+                    <div class="weui_uploader_hd weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">图片上传</div>
+                        <div class="weui_cell_ft"><abbr id="current_image">0</abbr>/7</div>
+                    </div>
+                    <div class="weui_uploader_bd">
+                        <ul class="weui_uploader_files" id="img-upload-list"></ul>
+                        <div class="weui_uploader_input_wrp">
+                            <a class="weui_uploader_input" href="javascript:;" id="upload-btn"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="container">
+        <a href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
+            修改并提交
+        </a>
+    </div>
+}
+<div class="error-label container" style="display:none;">
+    <div class="col-xs-12 text-center">提交错误，请根据提示修改</div>
+    <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+</div>
+<div id="loadingToast" class="weui_loading_toast" style="display:none;">
+    <div class="weui_mask_transparent"></div>
+    <div class="weui_toast">
+        <div class="weui_loading">
+            <!-- :) -->
+            <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+            <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+        </div>
+        <p class="weui_toast_content">获取中...</p>
+    </div>
+</div>
+<div class="weui_dialog_alert" id="dialog_alert" style="display:none;">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog">
+        <div class="weui_dialog_hd">提示</div>
+        <div class="weui_dialog_bd" id="dialog_text">当前无法上传更多图片，请删除任意图片后更新！</div>
+        <div class="weui_dialog_ft">
+            <a href="javascript:;" class="weui_btn_dialog primary" id="alert-btn">确定</a>
+        </div>
+    </div>
+</div>
+@*Event_Complete语音识别*@
+<div class="weui_dialog_confirm" id="diaLg1" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        <div class="voice_con">
+            <a id="startRecord" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stopRecord" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn1" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
+@*Event_UnComplete语音识别*@
+<div class="weui_dialog_confirm" id="diaLg2" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        <div class="voice_con">
+            <a id="start_record" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stop_record" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn2" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
+@*Event_Assistance语音识别*@
+<div class="weui_dialog_confirm" id="diaLg3" style="display:none">
+    <div class="weui_mask"></div>
+    <div class="weui_dialog_01">
+        <br />
+        <div class="voice_con">
+            <a id="start-record" href="javascript:;" class="microphone"><i class="fa fa-microphone"></i><h5>点击录音</h5></a>
+            <a id="stop-record" href="javascript:;" class="microphone" style="display:none;"><i class="fa fa-microphone-slash"></i><h5>点击取消录音</h5></a>
+        </div>
+        <a href="javascript:;" id="close_btn3" class="weui_btn weui_btn_mini weui_btn_primary">关闭</a>
+        <h6 class="weui_dialog_title" style="color:#777; display:none;font-size:10px;text-align:center;margin-top:0">正在识别语音...</h6>
+    </div>
+</div>
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    var img_max = 7;
+    var img_array = new Array();
+    
+    $(function () {
+        if ($(".input-validation-error").length > 0) {
+            $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+            $(".error-label").show();
+            setTimeout(function () {
+                $(".error-label").fadeOut(1000)
+            }, 3000);
+        }
+        cal_length();
+        if ($("#Photo").val() != "") {
+            img_array = $("#Photo").val().split(',');
+        }
+        $("#current_image").text(img_array.length);
+        if (img_array.length > 0) {
+            for (var i = 0; i < img_array.length; i++) {
+                var html_img = "<li class='weui_uploader_file' style='background-image:url(/Seller/ThumbnailImage?filename=" + img_array[i] + ")' data-target='" + img_array[i] + "'></li>";
+                $("#img-upload-list").append(html_img);
+            }
+        }
+    });
+    $("#error-label-close").click(function () {
+        $(".error-label").hide();
+    });
+    $("#submit-btn").click(function () {
+        if (img_array.length == 0) {
+            $("#dialog_text").text("请至少上传1张图片");
+            $("#dialog_alert").show();
+            return false;
+        }
+        $("#report-form").ajaxSubmit(function (data) {
+            if (data == "SUCCESS") {
+                window.location.href = "/Seller/Wx_Manager_Task";
+            }
+            else {
+                $("#form_zone").html(data);
+            }
+        });
+    });
+    $(".weui_textarea").change(function () {
+        cal_length();
+    });
+    $("#alert-btn").click(function () {
+        $("#dialog_alert").hide();
+    });
+    function cal_length() {
+        $("#current_length_cp").text($("#Event_Complete").val().length);
+        $("#current_length_uc").text($("#Event_UnComplete").val().length);
+        $("#current_length_as").text($("#Event_Assistance").val().length);
+    }
+    $("#upload-btn").click(function () {
+        var localIds
+        var btn = $(this);
+        if ($("#Photo").val() != "") {
+            img_array = $("#Photo").val().split(',');
+        }
+        else {
+            img_array = new Array();
+        }
+        var img_remain = img_max - img_array.length;
+        if (img_remain > 0) {
+            wx.chooseImage({
+                count: img_remain, // 默认9
+                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    $("#loadingToast").show();
+                    upload_img(localIds, 0);
+                }
+            });
+        }
+        else {
+            $("#dialog_text").text("当前无法上传更多图片，请删除任意图片后更新！");
+            $("#dialog_alert").show();
+        }
+    });
+    // 点击显示可删除
+    $(".weui_uploader_files").delegate(".weui_uploader_file", "click", function () {
+        //alert("4");
+        $(".weui_uploader_status").html("");
+        $(".weui_uploader_file").removeClass("weui_uploader_status")
+        $(this).addClass("weui_uploader_status").html("<div class='weui_uploader_status_content' id='remove_btn'><i class='fa fa-minus-circle fa-2x'></i></div>");
+    });
+    $(".weui_uploader_files").delegate("#remove_btn", "click", function () {
+        var img_value = $(this).parent(".weui_uploader_status").attr("data-target");
+        //alert(img_value);
+        img_array = img_array = $("#Photo").val().split(',');
+        var del_img_pos = $.inArray(img_value, img_array);
+        img_array.splice(del_img_pos, 1);
+        $("#current_image").text(img_array.length);
+        $("#Photo").val(img_array);
+        //alert($("#Rep_Image").val());
+        $(this).parent(".weui_uploader_status").remove();
+    });
+    function upload_img(localIds, arraycount) {
+        if (arraycount < localIds.length) {
+            wx.uploadImage({
+                localId: localIds[arraycount], // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips: 0, // 默认为1，显示进度提示
+                success: function (res) {
+                    var serverId = res.serverId; // 返回图片的服务器端ID
+                    $.ajax({
+                        url: "/Seller/SaveOrignalImage",
+                        type: "post",
+                        data: {
+                            serverId: serverId
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                img_array.push(data.filename);
+                                arraycount++;
+                                upload_img(localIds, arraycount);
+                            }
+                            else {
+                                alert("上传失败，请重试");
+                                $("#loadingToast").fadeOut(500);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            $("#loadingToast").fadeOut(500);
+            $("#img-upload-list").html("");
+            for (var i = 0; i < img_array.length; i++) {
+                var html_img = "<li class='weui_uploader_file' style='background-image:url(/Seller/ThumbnailImage?filename=" + img_array[i] + ")' data-target='" + img_array[i] + "'></li>";
+                $("#img-upload-list").append(html_img);
+            }
+            $("#current_image").text(img_array.length);
+            $("#Photo").val(img_array);
+            //alert($("#Rep_Image").val());
+        }
+    };
+    //Event_Complete录音功能
+    $(".weui_mask").click(function () {
+        $("#diaLg1").hide();
+        wx.stopRecord();
+        $("#startRecord").show();
+        $("#stopRecord").hide();
+        $(".weui_dialog_title").hide();
+    });
+    $("#close_btn1").click(function () {
+        $("#diaLg1").hide();
+        wx.stopRecord();
+        $("#stopRecord").hide();
+        $(".weui_dialog_title").hide();
+        $("#startRecord").show();
+    });
+        $("#showDialog1").click(function () {
+            $("#diaLg1").show();
+        });
+        $("#startRecord").click(function () {
+            wx.startRecord();
+            $(this).hide();
+            $("#stopRecord").show();
+            $(".weui_dialog_title").show()
+        });
+        $("#stopRecord").click(function () {
+            $("#startRecord").show();
+            $(this).hide();
+            $("#diaLg1").hide();
+            $(".weui_dialog_title").hide();
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            //Event_Complete
+                            $("#Event_Complete").val($("#Event_Complete").val() + res.translateResult);// Event_Complete的语音识别的结果 
+                            $("#current_length_cp").text(cal_length($("#current_length_cp").text($("#Event_Complete").val().length)));//weui_textarea_counter的数字计算
+                            //获取焦点后光标在字符串后 
+                            //其原理就是获得焦点后重新把自己复制粘帖一下 
+                            var t = $("#Event_Complete").val();
+                            $("#Event_Complete").val("").focus().val(t);
+                        }
+                    });
+                }
+            });//结束录音
+        });
+    //Event_UnComplete语音功能
+    $(".weui_mask").click(function () {
+        $("#diaLg2").hide();
+        wx.stopRecord();
+        $("#start_record").show();
+        $("#stop_record").hide();
+        $(".weui_dialog_title").hide();
+        });
+    $("#close_btn2").click(function () {
+        $("#diaLg2").hide();
+        wx.stopRecord();
+        $("#stop_record").hide();
+        $(".weui_dialog_title").hide();
+        $("#start_record").show();
+    });
+    $("#showDialog2").click(function () {
+        $("#diaLg2").show();
+    });
+    $("#start_record").click(function () {
+        wx.startRecord();
+        $(this).hide();
+        $("#stop_record").show();
+        $(".weui_dialog_title").show()
+    });
+    $("#stop_record").click(function () {
+        $("#start_record").show();
+        $(this).hide();
+        $("#diaLg2").hide();
+        $(".weui_dialog_title").hide();
+        wx.stopRecord({
+            success: function (res) {
+                var localId = res.localId;
+                wx.translateVoice({
+                    localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (res) {
+                        //Event_UnComplete
+                        $("#Event_UnComplete").val($("#Event_UnComplete").val() + res.translateResult);//Event_UnComplete的输入框结果
+                        $("#current_length_uc").text(cal_length($("#current_length_uc").text($("#Event_UnComplete").val().length)));//输入框字的数量
+                        //获取焦点后光标在字符串后 
+                        //其原理就是获得焦点后重新把自己复制粘帖一下 
+                        var t = $("#Event_UnComplete").val();
+                        $("#Event_UnComplete").val("").focus().val(t);
+                    }
+                });
+            }
+        });//结束录音
+    });
+    //Event_Assistance录音功能
+    $(".weui_mask").click(function () {
+        $("#diaLg3").hide();
+        wx.stopRecord();
+        $("#start-record").show();
+        $("#stop-record").hide();
+        $(".weui_dialog_title").hide();
+    });
+    $("#close_btn3").click(function () {
+        $("#diaLg3").hide();
+        wx.stopRecord();
+        $("#stop-record").hide();
+        $(".weui_dialog_title").hide();
+        $("#start-record").show();
+    });
+    $("#showDialog3").click(function () {
+        $("#diaLg3").show();
+    });
+    $("#start-record").click(function () {
+        wx.startRecord();
+        $(this).hide();
+        $("#stop-record").show();
+        $(".weui_dialog_title").show()
+    });
+    $("#stop-record").click(function () {
+        $("#start-record").show();
+        $(this).hide();
+        $("#diaLg3").hide();
+        $(".weui_dialog_title").hide();
+        wx.stopRecord({
+            success: function (res) {
+                var localId = res.localId;
+                wx.translateVoice({
+                    localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (res) {
+                        //Event_Assistance
+                        $("#Event_Assistance").val($("#Event_Assistance").val() + res.translateResult);//current_length_as的输入框结果
+                        $("#current_length_as").text(cal_length($("#current_length_as").text($("#Event_Assistance").val().length)))//输入框字的数量
+                        //获取焦点后光标在字符串后 
+                        //其原理就是获得焦点后重新把自己复制粘帖一下 
+                        var t = $("#Event_Assistance").val();
+                        $("#Event_Assistance").val("").focus().val(t);
+                    }
+                });
+            }
+        });//结束录音
+    });
+</script>

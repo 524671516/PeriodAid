@@ -1,0 +1,58 @@
+﻿@model IEnumerable<PeriodAid.Models.TestQuestion>
+
+@{
+    ViewBag.Title = "QuestonList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>题库列表</h2>
+
+<p>
+    @Html.ActionLink("添加题目", "AddQuestion", new { @class="btn btn-success"})
+</p>
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.QuestionContent)
+        </th>
+        <th>
+            答案A
+        </th>
+        <th>
+            答案B
+        </th>
+        <th>
+            答案C
+        </th>
+        <th>
+            答案D
+        </th>
+        
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td class="col-md-4">
+            <a href="/TestAdmin/EditQuestion/@item.ID">@item.QuestionContent</a>
+            
+        </td>
+        @foreach (var answer in item.TestAnswer)
+        {
+            if (answer.AnswerProperty)
+            {
+            <td class="col-md-2 label-success">
+                @answer.AnswerContent
+            </td>
+
+            }
+            else
+            {
+                <td class="col-md-2">
+                    @answer.AnswerContent
+                </td>
+            }
+        }
+
+    </tr>
+}
+
+</table>

@@ -1,0 +1,110 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Manager_Request>
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:12%">系统名称</th>
+        <th style="width:15%;">
+            店铺
+        </th>
+        <th style="width:10%;">
+            操作人
+        </th>
+        <th style="width:10%;">
+            状态
+        </th>
+        <th style="width:10%;">
+            提报类型
+        </th>
+        <th style="width:18%;">
+            内容
+        </th>
+        <th style="width:18%;">
+            备注
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem=>item.Off_Store.Off_StoreSystem.SystemName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Store.StoreName)
+            </td>
+            <td class="ellipsis">
+                @Html.Encode(Html.ManagerNickName(item.ManagerUserName, (int)ViewBag.SystemId))
+            </td>
+            <td class="ellipsis">
+                @Html.Encode(Html.ManagerRequestStatus(item.Status))
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.RequestType)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.RequestContent)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.RequestRemark)
+            </td>
+
+            <td class="ellipsis">
+                @Html.ActionLink("查看", "EditRequest", new { id = item.Id }, new { @class = "btn btn-info btn-xs offmanager-request-edit" })
+                @if (item.Status == 0)
+                {
+                    @Html.ActionLink("驳回", "DismissRequestAjax", new { id = item.Id }, new { @class = "btn btn-danger btn-xs offmanager-request-del" })
+                }
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("RequestListPartial", new { page }))</div>
+<script>
+    //查看
+    $(".offmanager-request-edit").click(function () {
+        var url = $(this).attr("href")
+        var head = "提报审核"
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $(".modal-con").html(data);
+                $(".modal-box").modal();
+                $(".modal-head").text(head)
+            }
+        })
+        return false
+    });
+    //驳回
+    $(".offmanager-request-del").click(function () {
+        var link_url = $(this).attr("href");
+        confirm("确定要驳回吗?", "你将把此需求驳回", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            setTimeout(function () {
+                                $.ajax({
+                                    url: "/OffManager/RequestListPartial",
+                                    success: function (list) {
+                                        $("#offmanager-request-list").html(list)
+                                    }
+                                });
+                                alert("成功驳回")
+                            }, 1000);
+                        } else {
+                            alert("驳回无效", "", function () {
+                                //after click the confirm button, will run this callback function
+                            }, { type: 'error' });
+                        }
+                    }
+                })
+            }
+        });
+        return false;
+    });
+</script>

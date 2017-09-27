@@ -1,0 +1,437 @@
+﻿@using PeriodAid.Models
+@model IEnumerable<PeriodAid.Models.Assignment>
+@if (Model.Count() >= 20)
+{
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li class="clear-float tm-view-li">
+                @if (item.Status == AssignmentStatus.FINISHED)
+                    {
+                    <div class="tm-view-checkbox float-left" style="border-left:#259B24 solid 5px;opacity: 0.6;">
+                        <input type="checkbox" class="tm-checkbox-input tm-change-task-status" checked data-aid="@item.Id" />
+                    </div>
+                }
+                else
+                {
+                    <div class="tm-view-checkbox float-left" style="border-left:#3da8f5 solid 5px;">
+                        <input type="checkbox" class="tm-checkbox-input  tm-change-task-status" data-aid="@item.Id" />
+                    </div>
+                }
+                <div class="tm_item_avatar float-left" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
+                    @if (item.Holder.ImgUrl == null)
+                    {
+                        <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                    }
+                    else
+                    {
+                        <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+
+                    }
+                </div>
+                @if (item.Status == AssignmentStatus.FINISHED)
+                {
+                    <div class="tm-view-info float-left tm-show-task-modal" style="opacity:0.6;" data-aid="@item.Id">
+                        <div class="tm-view-info-top">
+                            <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;&nbsp;
+                            <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                        </div>
+                        <div class="tm-view-info-bottom">
+                            @if (item.Deadline != null)
+                            {
+                                <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                            }
+                            else
+                            {
+                                <span class="color-gray">截止日期：无</span>
+                            }
+                            @if (item.Remarks != null)
+                            {
+                                <span>&nbsp;&nbsp;&nbsp;描述：@Html.Encode(item.Remarks)</span>
+                            }
+                            else
+                            {
+                                <span>&nbsp;&nbsp;&nbsp;描述：无</span>
+                            }
+                            @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                            {
+                                <span title="展示子任务" data-toggle="tooltip" data-placement="top" class="subtask_show">
+                                    &nbsp; &nbsp;
+                                    <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                    <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                </span>
+                            }
+
+                            @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                            {
+                                <ul class="tm-subtask-ul hide-change">
+
+                                    @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
+                                    {
+                                        if (_item.Status == AssignmentStatus.FINISHED)
+                                        {
+                                            <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                                <div class="clear-float">
+                                                    <div class="tm_item_left tm-span-75">
+                                                        子任务:【@Html.Encode(_item.TaskTitle)】
+                                                    </div>
+                                                    <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                        @if (_item.Executor.ImgUrl == null)
+                                                        {
+                                                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                        }
+                                        else if (_item.Status == AssignmentStatus.UNFINISHED)
+                                        {
+                                            <li class="tm-subtask-item tm-show-task-modal" style="border-color:#3da8f5" data-atid="@_item.Id">
+                                                <div class="clear-float">
+                                                    <div class="tm_item_left tm-span-75">
+                                                        子任务:【@Html.Encode(_item.TaskTitle)】
+                                                    </div>
+                                                    <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                        @if (_item.Executor.ImgUrl == null)
+                                                        {
+                                                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                        }
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
+                        <div class="tm-view-info-top">
+                            <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;
+                            <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                        </div>
+                        <div class="tm-view-info-bottom">
+                            @if (item.Deadline != null)
+                        {
+                                <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                            }
+                            else
+                            {
+                                <span class="color-gray">截止日期：无</span>
+                            }
+                            @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                        {
+                                <span title="展示子任务" data-toggle="tooltip" data-placement="top" class="subtask_show">
+                                    &nbsp; &nbsp;
+                                    <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                    <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                </span>
+                            }
+
+                            @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                            {
+                                <ul class="tm-subtask-ul hide-change">
+
+                                    @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
+                                    {
+                                        if (_item.Status == AssignmentStatus.FINISHED)
+                                        {
+                                            <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                                <div class="clear-float">
+                                                    <div class="tm_item_left tm-span-75">
+                                                        子任务:【@Html.Encode(_item.TaskTitle)】
+                                                    </div>
+                                                    <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                        @if (_item.Executor.ImgUrl == null)
+                                                        {
+                                                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                        }
+                                        else if (_item.Status == AssignmentStatus.UNFINISHED)
+                                        {
+                                            <li class="tm-subtask-item tm-show-task-modal" style="border-color:#3da8f5" data-atid="@_item.Id">
+                                                <div class="clear-float">
+                                                    <div class="tm_item_left tm-span-75">
+                                                        子任务:【@Html.Encode(_item.TaskTitle)】
+                                                    </div>
+                                                    <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                        @if (_item.Executor.ImgUrl == null)
+                                                        {
+                                                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                        }
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                }
+
+            </li>
+        }
+    </ul>
+    <div class="tm-view-more color-blue">-&nbsp;点击加载更多&nbsp;-</div>
+}
+else
+{
+    if (ViewBag.currentpage == 0 && Model.Count() == 0)
+    {
+        <div class="tm-view-loading-empty">
+            <i class="fa fa-sticky-note-o color-blue fa-4x" aria-hidden="true"></i><br />
+            <strong class="color-blue">没有任何数据</strong>
+        </div>
+    }
+    else
+    {
+        <ul>
+            @foreach (var item in Model)
+            {
+                <li class="clear-float tm-view-li">
+                    <input type="hidden" id="assignment_status" value="@item.Status" />
+                    @if (item.Status == AssignmentStatus.FINISHED)
+                    {
+                        <div class="tm-view-checkbox float-left" style="border-left:#259B24 solid 5px;opacity: 0.6;">
+                            <input type="checkbox" class="tm-checkbox-input tm-change-task-status" checked data-aid="@item.Id" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="tm-view-checkbox float-left" style="border-left:#3da8f5 solid 5px;">
+                            <input type="checkbox" class="tm-checkbox-input  tm-change-task-status" data-aid="@item.Id" />
+                        </div>
+                    }
+                    <div class="tm_item_avatar float-left" data-aid="@item.Id" title="@item.Holder.NickName" data-toggle="tooltip" data-placement="left">
+                        @if (item.Holder.ImgUrl == null)
+                        {
+                            <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+                        }
+                        else
+                        {
+                            <span style="background-image: url('http://cdn2.shouquanzhai.cn/@item.Holder.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar"></span>
+
+                        }
+                    </div>
+                    @if (item.Status == AssignmentStatus.FINISHED)
+                    {
+                        <div class="tm-view-info float-left tm-show-task-modal" style="opacity:0.6;" data-aid="@item.Id">
+                            <div class="tm-view-info-top">
+                                <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;&nbsp;
+                                <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                            </div>
+                            <div class="tm-view-info-bottom">
+                                @if (item.Deadline != null)
+                                {
+                                    <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                                }
+                                else
+                                {
+                                    <span class="color-gray">截止日期：无</span>
+                                }
+                                @if (item.Remarks != null)
+                                {
+                                    <span>&nbsp;&nbsp;&nbsp;描述：@Html.Encode(item.Remarks)</span>
+                                }
+                                else
+                                {
+                                    <span>&nbsp;&nbsp;&nbsp;描述：无</span>
+                                }
+                                @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                                {
+                                    <span title="展示子任务" data-toggle="tooltip" data-placement="top" class="subtask_show">
+                                        &nbsp; &nbsp;
+                                        <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                        <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                    </span>
+                                }
+
+                                @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                                {
+                                    <ul class="tm-subtask-ul hide-change">
+
+                                        @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
+                                        {
+                                            if (_item.Status == AssignmentStatus.FINISHED)
+                                            {
+                                                <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                                    <div class="clear-float">
+                                                        <div class="tm_item_left tm-span-75">
+                                                            子任务:【@Html.Encode(_item.TaskTitle)】
+                                                        </div>
+                                                        <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                            @if (_item.Executor.ImgUrl == null)
+                                                            {
+                                                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </li>
+
+                                            }
+                                            else if (_item.Status == AssignmentStatus.UNFINISHED)
+                                            {
+                                                <li class="tm-subtask-item tm-show-task-modal" style="border-color:#3da8f5" data-atid="@_item.Id">
+                                                    <div class="clear-float">
+                                                        <div class="tm_item_left tm-span-75">
+                                                            子任务:【@Html.Encode(_item.TaskTitle)】
+                                                        </div>
+                                                        <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                            @if (_item.Executor.ImgUrl == null)
+                                                            {
+                                                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </li>
+
+                                            }
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="tm-view-info float-left tm-show-task-modal" data-aid="@item.Id">
+                            <div class="tm-view-info-top">
+                                <span>任务:【@Html.Encode(item.AssignmentTitle)】</span>&nbsp;
+                                <span>归属于:【@Html.Encode(item.Subject.SubjectTitle)】</span>&nbsp;&nbsp;
+                            </div>
+                            <div class="tm-view-info-bottom">
+                                @if (item.Deadline != null)
+                                {
+                                    <span class="color-gray">截止日期：@Html.Encode(Convert.ToDateTime(item.Deadline).ToString("yyyy-MM-dd HH:ss"))</span>
+                                }
+                                else
+                                {
+                                    <span class="color-gray">截止日期：无</span>
+                                }
+                                @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                                {
+                                    <span title="展示子任务" data-toggle="tooltip" data-placement="top" class="subtask_show">
+                                        &nbsp; &nbsp;
+                                        <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                        <span class="finish_subtask color-green">@item.SubTask.Count(p => p.Status == AssignmentStatus.FINISHED)</span>/<span class="total_subtask">@item.SubTask.Count(p => p.Status > AssignmentStatus.DELETED)</span>
+                                    </span>
+                                }
+
+                                @if (item.SubTask.Where(m => m.Status > AssignmentStatus.DELETED).Count() > 0)
+                                {
+                                    <ul class="tm-subtask-ul hide-change">
+
+                                        @foreach (var _item in item.SubTask.OrderBy(m => m.Status))
+                                        {
+                                            if (_item.Status == AssignmentStatus.FINISHED)
+                                            {
+                                                <li class="tm_list-finish tm-subtask-item tm-show-task-modal" style="border-color:#259B24" data-atid="@_item.Id">
+                                                    <div class="clear-float">
+                                                        <div class="tm_item_left tm-span-75">
+                                                            子任务:【@Html.Encode(_item.TaskTitle)】
+                                                        </div>
+                                                        <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                            @if (_item.Executor.ImgUrl == null)
+                                                            {
+                                                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </li>
+
+                                            }
+                                            else if (_item.Status == AssignmentStatus.UNFINISHED)
+                                            {
+                                                <li class="tm-subtask-item tm-show-task-modal" style="border-color:#3da8f5" data-atid="@_item.Id">
+                                                    <div class="clear-float">
+                                                        <div class="tm_item_left tm-span-75">
+                                                            子任务:【@Html.Encode(_item.TaskTitle)】
+                                                        </div>
+                                                        <div class="tm_item_right tm-span-25" data-atid="@_item.Id" title="@_item.Executor.NickName" data-toggle="tooltip" data-placement="left">
+                                                            @if (_item.Executor.ImgUrl == null)
+                                                            {
+                                                                <span style="background-image:url('../../Content/images/defaultphoto.gif');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span style="background-image: url('http://cdn2.shouquanzhai.cn/@_item.Executor.ImgUrl');" class="tm_avatar tm_img-circle tm_item-avatar tm-item-sub-avatar"></span>
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </li>
+
+                                            }
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                </li>
+            }
+        </ul>
+        <div class="tm-view-nomore color-blue">-&nbsp;没有更多数据啦&nbsp;-</div>
+    }
+}
+
+<script>
+    //控制子任务展开(小图标)
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+    $(".subtask_show").unbind("click");
+    $("#my-app .subtask_show").on("click", function () {
+        $(this).parents("li").find(".tm-subtask-ul").slideToggle(300);
+        return false;
+    })
+</script>
+
+

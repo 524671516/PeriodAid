@@ -1,0 +1,28 @@
+﻿
+@model IEnumerable<PeriodAid.Models.Off_Checkin>
+
+<div class="list-group">
+    <ul>
+        @foreach (DateTime date in ViewBag.DateGroup)
+        {
+            <li class="list-group-title">@Html.Encode(date.ToString("yyyy-MM-dd"))</li>
+            foreach (var item in Model.Where(m => m.Off_Checkin_Schedule.Subscribe == date))
+            {
+                <li class="swipeout" data-url="@item.Id">
+                    <div class="swipeout-content">
+                        <a href="/Seller/Manager_CheckinConfirm?id=@item.Id" class="item-content item-link random-param">
+                            <div class="item-inner">
+                                <div class="item-title">@Html.Encode(item.Off_Checkin_Schedule.Off_Store.StoreName)</div>
+                                <div class="item-after">@Html.Encode(item.Off_Seller.Name)</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="swipeout-actions-right">
+                        <a href="/Seller/Manager_EditCheckin?id=@item.Id" class="bg-green random-param">修改</a>
+                        <a href="#" class="swipeout-delete" data-confirm="确定要作废该信息吗？" data-confirm-title="寿全斋" data-close-on-cancel="true">作废</a>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>

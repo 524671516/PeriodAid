@@ -1,0 +1,225 @@
+﻿
+@{
+    ViewBag.Title = "门店地图";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+    ViewBag.Current = "headingOne";
+}
+<div class="row">
+    <div class="col-xs-6">
+    </div>
+    <div class="col-xs-4">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="搜索行政区域" id="search-val">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="button" id="search-btn"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </div>
+    <div class="col-xs-2">
+        <div class="sel_container text-right"><strong id="curCity">上海市</strong> [<a id="curCityText" href="javascript:void(0)">更换城市</a>]</div>
+        <div class="map_popup" id="cityList" style="display:none;">
+            <div class="popup_main">
+                <div class="title">城市列表</div>
+                <div class="cityList" id="citylist_container"></div>
+                <button id="popup_close"></button>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-xs-2">
+        <select multiple id="storesystem" class="form-control input-sm" style="height:400px;">
+        </select>
+        <br />
+        <button class="btn btn-success btn-sm" id="storesystem-btn">选择</button>&nbsp;&nbsp;<button class="btn btn-default btn-sm" id="reset-btn">重置</button>
+        <br /><br />
+        <div id="mark-icon"></div>
+    </div>
+    <div class="col-xs-10">
+        <div id="container" style="width:100%; height:700px;"></div>
+    </div>
+</div>
+<br />
+
+@section scripts{
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=XVa3iy9AFIZBX9QQApmHonEG"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/library/CityList/1.2/src/CityList_min.js"></script>
+<script type="text/javascript">
+    var map = new BMap.Map("container");          // 创建地图实例
+    var point = new BMap.Point(121.390247, 31.181764);  // 创建点坐标
+    map.centerAndZoom(point, 15);
+    map.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+    map.enableContinuousZoom();// 初始化地图，设置中心点坐标和地图级别
+    map.addControl(new BMap.NavigationControl());
+    var opts = {
+        width : 250,     // 信息窗口宽度
+        height: 80,     // 信息窗口高度
+        title : "地图信息" , // 信息窗口标题
+        enableMessage:true//设置允许信息窗发送短息
+    };
+    $(function () {
+        $("#search-btn").click(function () {
+            if ($("#search-val").val() != "")
+                getBoundary($("#search-val").val());
+        });
+        $("#storesystem-btn").click(function () {
+            //alert($("#storesystem").val().toString());
+            $.ajax({
+                url: "/OfflineSales/JsonStoreList",
+                data: {
+                    storesystem: $("#storesystem").val().toString()
+                },
+                success:function(data){
+                    if (data.result == "SUCCESS") {
+                        map.clearOverlays();
+                        addMarks(data.list, $("#storesystem").val().toString().split(','));
+                    }
+                }
+            })
+        });
+        $("#reset-btn").click(function () {
+            $("#storesystem>option").removeAttr("selected");
+        })
+        $.ajax({
+            url: "/OfflineSales/ajax_StoreSystem",
+            type: "post",
+            success: function (data) {
+                for(var i=0; i<data.storesystem.length;i++){
+                    $("#storesystem").append("<option value='" + data.storesystem[i] + "'>" + data.storesystem[i] + "</option>");
+                }
+            }
+        });
+        $.ajax({
+            url: "/OfflineSales/JsonStoreList",
+            data: {
+                storesystem: ""
+            },
+            success: function(data) {
+                if (data.result == "SUCCESS") {
+                    map.clearOverlays();
+                    addMarks(data.list);
+                }
+            }
+        });
+    });
+    function addClickHandler(content, marker) {
+        marker.addEventListener("click", function (e) {
+            openInfo(content, e)
+        }
+        );
+    }
+    function openInfo(content, e) {
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow, point); //开启信息窗口
+    }
+    // 创建CityList对象，并放在citylist_container节点内
+    var myCl = new BMapLib.CityList({ container: "citylist_container", map: map });
+
+    // 给城市点击时，添加相关操作
+    myCl.addEventListener("cityclick", function (e) {
+        // 修改当前城市显示
+        document.getElementById("curCity").innerHTML = e.name;
+
+        // 点击后隐藏城市列表
+        document.getElementById("cityList").style.display = "none";
+    });
+    // 给“更换城市”链接添加点击操作
+    document.getElementById("curCityText").onclick = function () {
+        var cl = document.getElementById("cityList");
+        if (cl.style.display == "none") {
+            cl.style.display = "";
+        } else {
+            cl.style.display = "none";
+        }
+    };
+    // 给城市列表上的关闭按钮添加点击操作
+    document.getElementById("popup_close").onclick = function () {
+        var cl = document.getElementById("cityList");
+        if (cl.style.display == "none") {
+            cl.style.display = "";
+        } else {
+            cl.style.display = "none";
+        }
+    };
+
+    function getBoundary(info) {
+        map.clearOverlays();
+        var bdary = new BMap.Boundary();
+        bdary.get(info, function (rs) {       //获取行政区域
+            //map.clearOverlays();        //清除地图覆盖物       
+            var count = rs.boundaries.length; //行政区域的点有多少个
+            if (count === 0) {
+                alert('未能获取当前输入行政区域');
+                return;
+            }
+            var pointArray = [];
+            for (var i = 0; i < count; i++) {
+                var ply = new BMap.Polygon(rs.boundaries[i], { strokeWeight: 2, strokeColor: "#ff0000" }); //建立多边形覆盖物
+                map.addOverlay(ply);  //添加覆盖物
+                pointArray = pointArray.concat(ply.getPath());
+            }
+            map.setViewport(pointArray);    //调整视野                 
+        });
+    }
+
+    function addMarks(storelist, storesystem) {
+        $("#mark-icon").html("");
+        if (storesystem != null) {
+            if (storesystem.length > 5) {
+                for (var i = 0; i < storelist.length; i++) {
+                    var content = storelist[i].StoreName + ":" + storelist[i].Address;
+                    var icon = new BMap.Icon("/Content/images/mark_0.png", new BMap.Size(20, 25), {
+                        anchor: new BMap.Size(10, 25)
+                    });
+                    var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
+                        icon: icon
+                    });  // 创建标注
+                    map.addOverlay(marker);               // 将标注添加到地图中
+                    addClickHandler(content, marker);
+                }
+            }
+            else {
+                for (var i = 0; i < storesystem.length; i++) {
+                    $("#mark-icon").append("<h6 class='text-sm'><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;&nbsp;" + storesystem[i] + "</h6>");
+                }
+                for (var i = 0; i < storelist.length; i++) {
+                    var content = storelist[i].StoreName + ":" + storelist[i].Address;
+                    var icon_url = "";
+                    for(var j=0;j<storesystem.length;j++){
+                        if(storelist[i].StoreSystem == storesystem[j])
+                            icon_url = "/Content/images/mark_" + j + ".png"
+                    }
+                    var icon = new BMap.Icon(icon_url, new BMap.Size(20, 25), {
+                        anchor: new BMap.Size(10, 25)
+                    });
+                    var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
+                        icon: icon
+                    });  // 创建标注
+                    map.addOverlay(marker);               // 将标注添加到地图中
+                    addClickHandler(content, marker);
+                    //$("#mark-icon").append("<div><img src='/Content/images/mark_" + i + ".png' class='img-responsiv' />&nbsp;" + storelist[i].StoreName + "</div>");
+                }
+            }
+        }
+        else {
+            for (var i = 0; i < storelist.length; i++) {
+                var content = storelist[i].StoreName + ":" + storelist[i].Address;
+                var icon = new BMap.Icon("/Content/images/mark_0.png", new BMap.Size(20, 25), {
+                    anchor: new BMap.Size(10, 25)
+                });
+                var marker = new BMap.Marker(new BMap.Point(parseFloat(storelist[i].Longitude), parseFloat(storelist[i].Latitude)), {
+                    icon: icon
+                });  // 创建标注
+                map.addOverlay(marker);               // 将标注添加到地图中
+                addClickHandler(content, marker);
+            }
+        }
+        
+    }
+</script>
+    }
+
+
