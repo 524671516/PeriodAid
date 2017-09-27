@@ -76,7 +76,18 @@ namespace PeriodAid.Controllers
             return PartialView(list);
         }
 
-        private bool Read_InsertFile(string filename, DateTime date)
+        [HttpPost]
+        public ActionResult UploadFile(HttpPostedFileBase file)
+        {
+            var fileName = file.FileName;
+            var filePath = Server.MapPath(string.Format("~/{0}", "/Content/xlsx"));
+            file.SaveAs(Path.Combine(filePath, fileName));
+            ViewBag.filename = fileName;
+            ViewBag.filedate = DateTime.Now;
+            return View();
+        }
+
+        public bool Read_InsertFile(string filename, DateTime date)
         {
             string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
             StreamReader reader = new StreamReader(folder + filename, System.Text.Encoding.GetEncoding("GB2312"), false);
@@ -227,35 +238,62 @@ namespace PeriodAid.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult PlattformInventory_form() {
+        public ActionResult PlattformInventory_form(DateTime? select_date) {
             var storage = from m in _db.SS_Storage                         
                           select m;
             ViewBag.storage = storage;
-            var DataDate = (from m in _db.SS_Product
-                            select m).Take(1);
+            var DataDate = (from m in _db.SS_SalesRecord
+                            select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            var SalesRecord = from m in _db.SS_SalesRecord
-                              group m by m.SS_Product into g
-                              select new Product_SummaryViewModel
-                              {
-                                  Product = g.Key,
-                                  Sales_Sum = g.Sum(m => m.Sales_Count),
-                                  Inventory_Sum = g.Sum(m => m.Storage_Count)
-                              };
-            return View(SalesRecord);
+            if (select_date != null)
+            {
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.SalesRecord_Date == select_date
+                                  group m by m.SS_Product into g
+                                  select new Product_SummaryViewModel
+                                  {
+                                      Product = g.Key,
+                                      Sales_Sum = g.Sum(m => m.Sales_Count),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                  };
+
+                return View(SalesRecord);
+            }
+            else {
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  group m by m.SS_Product into g
+                                  select new Product_SummaryViewModel
+                                  {
+                                      Product = g.Key,
+                                      Sales_Sum = g.Sum(m => m.Sales_Count),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                  };
+
+                return View(SalesRecord);
+            }
         }
 
-        public ActionResult StorageShow(int Storage) {
+        public ActionResult StorageShow(int Storage,DateTime? select_date) {
             var storage = from m in _db.SS_Storage
                           select m;
             ViewBag.storage = storage;
-            var SalesRecord = from m in _db.SS_SalesRecord
-                          where m.Storage_Id == Storage
-                          select m;
-            ViewBag.SalesRecord = SalesRecord;
-            var DataDate = (from m in _db.SS_Product
-                            select m).Take(1);
+            var DataDate = (from m in _db.SS_SalesRecord
+                            select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
+            if (select_date == null)
+            {
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.Storage_Id == Storage
+                                  select m;
+                ViewBag.SalesRecord = SalesRecord;
+            }
+            else {
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.SalesRecord_Date==select_date
+                                  select m;
+                ViewBag.SalesRecord = SalesRecord;
+
+            }
             return PartialView();
         }
 
