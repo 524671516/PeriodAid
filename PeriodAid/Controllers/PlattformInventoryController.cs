@@ -88,11 +88,11 @@ namespace PeriodAid.Controllers
                 file.SaveAs(Path.Combine(filePath, fileName));
                 var date_time = form["file-date"].ToString();
                 Read_InsertFile(fileName, Convert.ToDateTime(date_time));
-                return Json(new { result = "SUCCESS" });
+                return View();
             }
             else
             {
-                return Json(new { result = "FAIL" });
+                return View();
             }
         }
         public ActionResult Calc_Storage(int plattformId)
@@ -301,6 +301,7 @@ namespace PeriodAid.Controllers
                           select m;
             ViewBag.storage = storage;
             var DataDate = (from m in _db.SS_SalesRecord
+
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
             if (select_date == null)

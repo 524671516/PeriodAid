@@ -5,13 +5,14 @@
 }
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
 <div>
-    @using (Html.BeginForm("UploadFile", "PlattformInventory", FormMethod.Post, new { enctype = "multipart/form-data", id = "file-from" }))
-    {
+    <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
         <input type="text" id="file-date" name="file-date" />
         <input type="file" id="file-name" name="file-name" />
-        <input type="submit" class="btn btn-danger" />
-    }
+        <input type="submit" class="btn btn-danger" id="file-form-sub" />
+    </form>
 </div>
+
+    
 
 <br />
 <div id="tm-calendar-view">
@@ -30,6 +31,12 @@
             </div>
         </div>
     </div>
+    <div class="tm-view-content-container  tm-view-container" id="file-loading">
+        <div class="tm-veiw-loading text-center" id="tm-view-loading" >
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
+            <span class="sr-only">正在加载...</span>
+        </div>
+    </div>
 </div>
 
 @section scripts
@@ -39,6 +46,7 @@
         TmDatePicker.Init({
             container: "#tm-calendar-view-wrap",
             onpagechanged: function (e) {
+                $("#file-loading").hide()
                 $.ajax({
                     url: "/PlattformInventory/CustomUploadFilePartial",
                     type: "post",
@@ -65,8 +73,10 @@
                 });
             }
         });
-
-
+        
+        $('#file-form-sub').click(function () {
+            $('#file-loading').show()
+        })
 
         // 重置时间显示格式
         String.prototype.ToString = function (format) {

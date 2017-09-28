@@ -4,20 +4,12 @@
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
 <h2>上传成功！</h2>
-<input type="hidden" id="file_name" value="@ViewBag.filename" />
-<input type="hidden" id="file_date" value="@ViewBag.filedate" />
+
 <script>
     $(function () {
-        $.ajax({
-            url: "/PlattformInventory/Read_InsertFile",
-            data: {
-                filename: $("#file_name").val(),
-                date: $("#file_date").val(),
-            },
-            success: function (data) {
-                alert("数据存储成功！");
-                window.location.href = '/PlattformInventory/PlattformInventory_form/';
-            }
-        })
+        setTimeout(function () {
+            window.location.href = '/PlattformInventory/CustomUploadFile?plattformId=1'
+        },1000)
+        
     })
 </script>

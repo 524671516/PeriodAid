@@ -1324,7 +1324,6 @@ a.btn_subtask_detail{
 .tm-view-content-container{
     width:100%;
     height:calc(100% - 47px);
-    overflow-y:scroll;
 }
 .tm-view-content .tm-view-header{
     margin:0 20px;
@@ -1610,6 +1609,15 @@ a.btn_subtask_detail{
 #up-file-form .up-file-file{
     display:initial;
     color: #337ab7
+}
+
+#file-loading{
+    position: absolute;
+    top:90px;
+    z-index:100;
+    background:#fff;
+    opacity:0.7;
+
 }
 
 
