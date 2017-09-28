@@ -3,7 +3,6 @@
     ViewBag.Title = "CustomUploadFile";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
 <div id="tm-calendar-view">
     <div class="tm-calendar-view tm-view" style="display:block;position: relative;top:0;height: 521px;width: 960px;">
@@ -31,109 +30,101 @@
             <div class="tm-view-content-wrap  tm-view-wrap tm-calendar-view-wrap" id="tm-calendar-view-wrap">
             </div>
         </div>
-
     </div>
 </div>
 
  <script>
-     $(function () {
          // 初始化日历
          TmDatePicker.Init({
              container: "#tm-calendar-view-wrap",
              onpagechanged: function (e) {
-             }
-         });
-         var nowDate = function () {
-             var mydate = new Date();
-             var str = "" + mydate.getFullYear() + '-';
-             str += (mydate.getMonth() + 1) + "-";
-             str += 1;
-             return str;
-         }
-         console.log(nowDate())
-         $.ajax({
-             url: "/PlattformInventory/CustomUploadFilePartial",
-             type: "post",
-             data: {
-                 plattformId: 1,
-                 month: nowDate()
-             },
-             success: function (data) {
-                 console.log(data)
-                 var dataDate = $('.tm-calendar-monthofdate')
-                 for (var i = 0; i < dataDate.length; i++) {
-                     var nowDate = dataDate.eq(i).attr('date-day');
-                     for (var j = 0; j < data.length; j++) {
-                         record = data[j].record_date.ToString("yyyy-MM-dd");
-                         if (record == nowDate) {
-                             dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
-                         }
-                     }
-
+                 var nowDate = function () {
+                     var mydate = new Date();
+                     var str = "" + mydate.getFullYear() + '-';
+                     str += (mydate.getMonth()+1) + "-";
+                     str += 1;
+                     return str;
                  }
-             },
-             error: function () {
-                 ErrorAlert("请求数据失败。");
-             }
-         });
-
-         console.log(perDate)
-         $('.glyphicon.glyphicon-chevron-left').on('click', function () {           
-             $.ajax({
-                 url: "/PlattformInventory/CustomUploadFilePartial",
-                 type: "post",
-                 data: {
-                     plattformId: 1,
-                     month: perDate
-                 },
-                 success: function (data) {
-                     var dataDate = $('.tm-calendar-monthofdate')
-                     for (var i = 0; i < dataDate.length; i++) {
-                         var nowDate = dataDate.eq(i).attr('date-day');
-                         for (var j = 0; j < data.length; j++) {
-                             record = data[j].record_date.ToString("yyyy-MM-dd");
-                             if (record == nowDate) {
-                                 dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                 //console.log(nowDate())
+                 $.ajax({
+                     url: "/PlattformInventory/CustomUploadFilePartial",
+                     type: "post",
+                     data: {
+                         plattformId: 1,
+                         month: nowDate()
+                     },
+                     success: function (data) {
+                         //console.log(data)
+                         var dataDate = $('.tm-calendar-monthofdate')
+                         for (var i = 0; i < dataDate.length; i++) {
+                             var nowDate = dataDate.eq(i).attr('date-day');
+                             for (var j = 0; j < data.length; j++) {
+                                 record = data[j].record_date.ToString("yyyy-MM-dd");
+                                 if (record == nowDate) {
+                                     dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                 }
                              }
                          }
-
+                     },
+                     error: function () {
+                         ErrorAlert("请求数据失败。");
                      }
-                 },
-                 error: function () {
-                     ErrorAlert("请求数据失败。");
-                 }
-             });
-         });
-         $('.glyphicon.glyphicon-chevron-right').on('click', function () {             
-             console.log(futureDate)
-             $.ajax({
-                 url: "/PlattformInventory/CustomUploadFilePartial",
-                 type: "post",
-                 data: {
-                     plattformId: 1,
-                     month: nowDate()
-                 },
-                 success: function (data) {
-                     var dataDate = $('.tm-calendar-monthofdate')
-                     for (var i = 0; i < dataDate.length; i++) {
-                         var nowDate = dataDate.eq(i).attr('date-day');
-                         for (var j = 0; j < data.length; j++) {
-                             record = data[j].record_date.ToString("yyyy-MM-dd");
-                             if (record == nowDate) {
-                                 dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                 });
+                 var changeDate = $('.tm-calendar-view-control.tm-calendar-currentmonth.color-blue').text()
+                 console.log(changeDate+'-'+1)
+                 $('.glyphicon.glyphicon-chevron-left').on('click', function () {                    
+                     $.ajax({
+                         url: "/PlattformInventory/CustomUploadFilePartial",
+                         type: "post",
+                         data: {
+                             plattformId: 1,
+                             month: changeDate + '-' + 1
+                         },
+                         success: function (data) {
+                             var dataDate = $('.tm-calendar-monthofdate')
+                             for (var i = 0; i < dataDate.length; i++) {
+                                 var nowDate = dataDate.eq(i).attr('date-day');
+                                 for (var j = 0; j < data.length; j++) {
+                                     record = data[j].record_date.ToString("yyyy-MM-dd");
+                                     if (record == nowDate) {
+                                         dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                     }
+                                 }
                              }
+                         },
+                         error: function () {
+                             ErrorAlert("请求数据失败。");
                          }
-
-                     }
-                 },
-                 error: function () {
-                     ErrorAlert("请求数据失败。");
-                 }
-             });
-         })
-
-     })
-
+                     });
+                 });
+                 $('.glyphicon.glyphicon-chevron-right').on('click', function () {
+                     $.ajax({
+                         url: "/PlattformInventory/CustomUploadFilePartial",
+                         type: "post",
+                         data: {
+                             plattformId: 1,
+                             month: changeDate + '-' + 1
+                         },
+                         success: function (data) {
+                             var dataDate = $('.tm-calendar-monthofdate')
+                             for (var i = 0; i < dataDate.length; i++) {
+                                 var nowDate = dataDate.eq(i).attr('date-day');
+                                 for (var j = 0; j < data.length; j++) {
+                                     record = data[j].record_date.ToString("yyyy-MM-dd");
+                                     if (record == nowDate) {
+                                         dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                     }
+                                 }
+                             }
+                         },
+                         error: function () {
+                             ErrorAlert("请求数据失败。");
+                         }
+                     });
+                 })
+             }
+         });
+         
 
 
      // 重置时间显示格式
