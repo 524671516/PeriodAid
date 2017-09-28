@@ -1131,6 +1131,7 @@
     <Content Include="Views\PlattformInventory\StorageShow.cshtml" />
     <Content Include="Views\PlattformInventory\CustomUploadFile.cshtml" />
     <Content Include="Views\PlattformInventory\CustomUploadFilePartial.cshtml" />
+    <Content Include="Views\PlattformInventory\Calc_Storage.cshtml" />
     <Content Include="Views\PlattformInventory\UploadFile.cshtml" />
   </ItemGroup>
   <ItemGroup>

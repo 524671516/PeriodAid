@@ -87,8 +87,22 @@ namespace PeriodAid.Controllers
             ViewBag.filedate = DateTime.Now;
             return View();
         }
-
-        public bool Read_InsertFile(string filename, DateTime date)
+        public ActionResult Calc_Storage(int plattformId)
+        {
+            var upload_record = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
+            if (upload_record != null)
+            {
+                DateTime end = upload_record.SalesRecord_Date;
+                DateTime start = end.AddDays(-30);
+                var content = from m in _db.SS_SalesRecord
+                              where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end
+                              && m.SS_Product.Plattform_Id == 1
+                              group m by m.SS_Product into g
+                              select new { Product = g.Key, Sales_Count_30 = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count) };
+            }
+            return View();
+        }
+        private bool Read_InsertFile(string filename, DateTime date)
         {
             string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
             StreamReader reader = new StreamReader(folder + filename, System.Text.Encoding.GetEncoding("GB2312"), false);
