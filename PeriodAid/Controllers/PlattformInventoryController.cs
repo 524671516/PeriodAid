@@ -78,14 +78,22 @@ namespace PeriodAid.Controllers
         }
 
         [HttpPost]
-        public ActionResult UploadFile(HttpPostedFileBase file)
+        public ActionResult UploadFile(FormCollection form)
         {
-            var fileName = file.FileName;
-            var filePath = Server.MapPath(string.Format("~/{0}", "/Content/xlsx"));
-            file.SaveAs(Path.Combine(filePath, fileName));
-            ViewBag.filename = fileName;
-            ViewBag.filedate = DateTime.Now;
-            return View();
+            var file = Request.Files[0];
+            if (file != null)
+            {
+                var fileName = DateTime.Now.Ticks + ".csv";
+                var filePath = Server.MapPath("/Content/xlsx");
+                file.SaveAs(Path.Combine(filePath, fileName));
+                var date_time = form["file-date"].ToString();
+                Read_InsertFile(fileName, Convert.ToDateTime(date_time));
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
         public ActionResult Calc_Storage(int plattformId)
         {

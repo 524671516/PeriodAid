@@ -1124,14 +1124,13 @@
     <Content Include="Views\TaskManagement\Subject_CollaboratorAddPartial.cshtml" />
     <Content Include="Views\TaskManagement\SubjectCompletedAssignmentListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\LeadingIn.cshtml" />
-    <Content Include="Views\PlattformInventory\Index.cshtml" />
     <Content Include="Views\Shared\_PlattformInventory.cshtml" />
     <Content Include="Views\PlattformInventory\PlattformInventory_form.cshtml" />
-    <Content Include="Views\PlattformInventory\Index.cshtml" />
     <Content Include="Views\PlattformInventory\StorageShow.cshtml" />
     <Content Include="Views\PlattformInventory\CustomUploadFile.cshtml" />
     <Content Include="Views\PlattformInventory\Calc_Storage.cshtml" />
     <Content Include="Views\PlattformInventory\UploadFile.cshtml" />
+    <Content Include="Views\PlattformInventory\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
