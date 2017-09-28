@@ -18,7 +18,7 @@
                         <span onclick="$('#excel_sub').click();">确认提交</span>
                         <input type="button" name="submit" id="excel_sub" style="display:none" />
                     </a>
-                </form>*@                 
+                </form>*@                
             </div>
             <div class="tm-calendar-view-control tm-view-control">
                 <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
@@ -38,20 +38,13 @@
          TmDatePicker.Init({
              container: "#tm-calendar-view-wrap",
              onpagechanged: function (e) {
-                 var nowDate = function () {
-                     var mydate = new Date();
-                     var str = "" + mydate.getFullYear() + '-';
-                     str += (mydate.getMonth()+1) + "-";
-                     str += 1;
-                     return str;
-                 }
-                 //console.log(nowDate())
+                 console.log(e.currentyear+'-'+e.currentmonth)
                  $.ajax({
                      url: "/PlattformInventory/CustomUploadFilePartial",
                      type: "post",
                      data: {
                          plattformId: 1,
-                         month: nowDate()
+                         month: e.currentyear + '-' + e.currentmonth
                      },
                      success: function (data) {
                          //console.log(data)
@@ -70,62 +63,10 @@
                          ErrorAlert("请求数据失败。");
                      }
                  });
-                 var changeDate = $('.tm-calendar-view-control.tm-calendar-currentmonth.color-blue').text()
-                 console.log(changeDate+'-'+1)
-                 $('.glyphicon.glyphicon-chevron-left').on('click', function () {                    
-                     $.ajax({
-                         url: "/PlattformInventory/CustomUploadFilePartial",
-                         type: "post",
-                         data: {
-                             plattformId: 1,
-                             month: changeDate + '-' + 1
-                         },
-                         success: function (data) {
-                             var dataDate = $('.tm-calendar-monthofdate')
-                             for (var i = 0; i < dataDate.length; i++) {
-                                 var nowDate = dataDate.eq(i).attr('date-day');
-                                 for (var j = 0; j < data.length; j++) {
-                                     record = data[j].record_date.ToString("yyyy-MM-dd");
-                                     if (record == nowDate) {
-                                         dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
-                                     }
-                                 }
-                             }
-                         },
-                         error: function () {
-                             ErrorAlert("请求数据失败。");
-                         }
-                     });
-                 });
-                 $('.glyphicon.glyphicon-chevron-right').on('click', function () {
-                     $.ajax({
-                         url: "/PlattformInventory/CustomUploadFilePartial",
-                         type: "post",
-                         data: {
-                             plattformId: 1,
-                             month: changeDate + '-' + 1
-                         },
-                         success: function (data) {
-                             var dataDate = $('.tm-calendar-monthofdate')
-                             for (var i = 0; i < dataDate.length; i++) {
-                                 var nowDate = dataDate.eq(i).attr('date-day');
-                                 for (var j = 0; j < data.length; j++) {
-                                     record = data[j].record_date.ToString("yyyy-MM-dd");
-                                     if (record == nowDate) {
-                                         dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
-                                     }
-                                 }
-                             }
-                         },
-                         error: function () {
-                             ErrorAlert("请求数据失败。");
-                         }
-                     });
-                 })
+                 
+                 
              }
          });
-         
-
 
      // 重置时间显示格式
      String.prototype.ToString = function (format) {
