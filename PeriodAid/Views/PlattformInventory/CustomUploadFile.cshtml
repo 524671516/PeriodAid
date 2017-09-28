@@ -23,7 +23,7 @@
             </div>
             <div class="tm-calendar-view-control tm-view-control">
                 <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                <span class="tm-calendar-view-control tm-calendar-currentmonth color-blue" >@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
+                <span id="current-date" class="tm-calendar-view-control tm-calendar-currentmonth color-blue" >@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
                 <a href="javascript:;" class="tm-calendar-view-control tm-calendar-next"><span class="glyphicon glyphicon-chevron-right"></span></a>
             </div>
         </div>
@@ -50,7 +50,7 @@
              str += 1;
              return str;
          }
-         console.log(nowDate())
+         //console.log(nowDate())
          $.ajax({
              url: "/PlattformInventory/CustomUploadFilePartial",
              type: "post",
@@ -77,14 +77,16 @@
              }
          });
 
-         console.log(perDate)
-         $('.glyphicon.glyphicon-chevron-left').on('click', function () {           
+         $('.glyphicon.glyphicon-chevron-left').on('click', function () {
+             
+             var current_date = new Date($("#current-date").text());
+             current_date.a
              $.ajax({
                  url: "/PlattformInventory/CustomUploadFilePartial",
                  type: "post",
                  data: {
                      plattformId: 1,
-                     month: perDate
+                     month: $("#current-date").text()
                  },
                  success: function (data) {
                      var dataDate = $('.tm-calendar-monthofdate')
