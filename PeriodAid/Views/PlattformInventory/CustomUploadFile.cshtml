@@ -10,7 +10,7 @@
         <div class="tm-view-header tm-calendar-view-header">
             <div class="tm-view-header-select">
                 @*<span class="tm-view-calendar-task-num" id="tm-view-calendar-task-num" style="padding:0 8px 0 0 "><span>上传总数:</span>&nbsp;<strong>12</strong></span>&nbsp;*@
-                <form id="excel-form" enctype="multipart/form-data">
+                @*<form id="excel-form" enctype="multipart/form-data">
                     <a href="#" id="rel_excel_in" class="tm-view-calendar-btn">
                         <span onclick="$('#excel_in').click();">导入Excel文件</span>
                         <input type="file" name="fileName" id="excel_in" style="display:none" />
@@ -19,13 +19,11 @@
                         <span onclick="$('#excel_sub').click();">确认提交</span>
                         <input type="button" name="submit" id="excel_sub" style="display:none" />
                     </a>
-                </form>
-                 
+                </form>*@                 
             </div>
-
             <div class="tm-calendar-view-control tm-view-control">
                 <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                <span class="tm-calendar-view-control tm-calendar-currentmonth color-blue">@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
+                <span class="tm-calendar-view-control tm-calendar-currentmonth color-blue" >@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
                 <a href="javascript:;" class="tm-calendar-view-control tm-calendar-next"><span class="glyphicon glyphicon-chevron-right"></span></a>
             </div>
         </div>
@@ -38,21 +36,21 @@
 </div>
 
  <script>
-
+     $(function () {
          // 初始化日历
          TmDatePicker.Init({
              container: "#tm-calendar-view-wrap",
              onpagechanged: function (e) {
              }
          });
-         var nowDate=function(){
+         var nowDate = function () {
              var mydate = new Date();
              var str = "" + mydate.getFullYear() + '-';
              str += (mydate.getMonth() + 1) + "-";
              str += 1;
              return str;
          }
-     console.log(nowDate())
+         console.log(nowDate())
          $.ajax({
              url: "/PlattformInventory/CustomUploadFilePartial",
              type: "post",
@@ -79,62 +77,64 @@
              }
          });
 
-
-         $('.glyphicon.glyphicon-chevron-left').on('click', function () {
-         $.ajax({
-             url: "/PlattformInventory/CustomUploadFilePartial",
-             type: "post",
-             data: {
-                 plattformId: 1,
-                 month: nowDate()
-             },
-             success: function (data) {
-                 var dataDate = $('.tm-calendar-monthofdate')
-                 for (var i = 0; i < dataDate.length; i++) {
-                     var nowDate = dataDate.eq(i).attr('date-day');
-                     for (var j = 0; j < data.length; j++) {
-                         record = data[j].record_date.ToString("yyyy-MM-dd");
-                         if (record == nowDate) {
-                             dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+         console.log(perDate)
+         $('.glyphicon.glyphicon-chevron-left').on('click', function () {           
+             $.ajax({
+                 url: "/PlattformInventory/CustomUploadFilePartial",
+                 type: "post",
+                 data: {
+                     plattformId: 1,
+                     month: perDate
+                 },
+                 success: function (data) {
+                     var dataDate = $('.tm-calendar-monthofdate')
+                     for (var i = 0; i < dataDate.length; i++) {
+                         var nowDate = dataDate.eq(i).attr('date-day');
+                         for (var j = 0; j < data.length; j++) {
+                             record = data[j].record_date.ToString("yyyy-MM-dd");
+                             if (record == nowDate) {
+                                 dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                             }
                          }
-                     }
 
+                     }
+                 },
+                 error: function () {
+                     ErrorAlert("请求数据失败。");
                  }
-             },
-             error: function () {
-                 ErrorAlert("请求数据失败。");
-             }
+             });
          });
-     });
-         $('.glyphicon.glyphicon-chevron-right').on('click', function () {
-             var futureDate = $('.tm-calendar-view-control.tm-calendar-currentmonth.color-blue').text()
+         $('.glyphicon.glyphicon-chevron-right').on('click', function () {             
              console.log(futureDate)
-         $.ajax({
-             url: "/PlattformInventory/CustomUploadFilePartial",
-             type: "post",
-             data: {
-                 plattformId: 1,
-                 month: nowDate()
-             },
-             success: function (data) {
-                 var dataDate = $('.tm-calendar-monthofdate')
-                 for (var i = 0; i < dataDate.length; i++) {
-                     var nowDate = dataDate.eq(i).attr('date-day');
-                     for (var j = 0; j < data.length; j++) {
-                         record = data[j].record_date.ToString("yyyy-MM-dd");
-                         if (record == nowDate) {
-                             dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+             $.ajax({
+                 url: "/PlattformInventory/CustomUploadFilePartial",
+                 type: "post",
+                 data: {
+                     plattformId: 1,
+                     month: nowDate()
+                 },
+                 success: function (data) {
+                     var dataDate = $('.tm-calendar-monthofdate')
+                     for (var i = 0; i < dataDate.length; i++) {
+                         var nowDate = dataDate.eq(i).attr('date-day');
+                         for (var j = 0; j < data.length; j++) {
+                             record = data[j].record_date.ToString("yyyy-MM-dd");
+                             if (record == nowDate) {
+                                 dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                             }
                          }
-                     }
 
+                     }
+                 },
+                 error: function () {
+                     ErrorAlert("请求数据失败。");
                  }
-             },
-             error: function () {
-                 ErrorAlert("请求数据失败。");
-             }
-         });
+             });
+         })
+
      })
-   
+
+
 
      // 重置时间显示格式
      String.prototype.ToString = function (format) {
@@ -149,5 +149,4 @@
          format = format.replace("ms", dateTime.getMilliseconds())
          return format;
      };
-
 </script>
