@@ -1,0 +1,75 @@
+﻿@model PeriodAid.Models.Sales_Data
+
+<h4>确认删除此条销售记录吗?</h4>
+<hr />
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            日期
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sales_Date)
+        </dd>
+
+        <dt>
+            门店名称
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Store.Store_Name)
+        </dd>
+        <dt>
+            销售提报数
+        </dt>
+        <dd>
+            @Model.Sales_Details.Sum(m=>m.Report_Num)
+        </dd>
+        <dt>
+            销售核验数
+        </dt>
+        <dd>
+            @Model.Sales_Details.Sum(m => m.Checkout_Num)
+        </dd>
+        <dt>
+            试饮数
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Trial_Count)
+        </dd>
+
+        <dt>
+            销售员
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Seller.Name)
+        </dd>
+
+        <dt>
+            最高销售数
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Max_Sale)
+        </dd>
+
+        <dt>
+            消费年龄
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Comsumption_Age)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="删除销售记录" class="btn btn-default btn-danger" />
+            @Html.ActionLink("返回列表", "List_Sales_Data", new { }, new { @class="btn btn-default"})
+        </div>
+    }
+</div>

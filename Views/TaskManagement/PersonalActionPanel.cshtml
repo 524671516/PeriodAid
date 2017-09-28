@@ -1,0 +1,51 @@
+﻿@model PeriodAid.Models.Employee
+<div id="tm-my-view" class="tm-my-view tm-view">
+    <div class="tm-view-header tm-my-view-header">
+        <div class="tm-my-view-control tm-view-control">
+            <a href="javascript:;" class="tm-view-control-link active" data-href="/TaskManagement/PersonalTaskPartial">我的任务</a>
+            <a href="javascript:;" class="tm-view-control-link" data-href="/TaskManagement/PersonlRecentPartial">近期的事</a>
+            @*<a href="javascript:;" class="tm-view-control-link">文件</a>*@
+        </div>
+        <div class="tm-hidden-view tm-view-header-close">
+            <button type="button" class="close"><span aria-hidden="true">×</span></button>
+        </div>
+    </div>
+    <div class="center-block tm-view-content tm-my-view-content" style="width:70%;height:91%;right:10%;left:10%;">
+        <div class="tm-view-content-wrap  tm-view-wrap tm-my-view-wrap">
+        </div>
+    </div>
+    <script>
+    $(function () {
+        //初始化加载数据地址
+        var init_link = $(".tm-my-view-header .tm-view-control-link.active").attr("data-href");
+        if (init_link) {
+            //获取初始化数据
+            GetTemplate(init_link, {}, function (data) {
+                //成功
+                $(".tm-my-view-wrap").html(data);
+            }, function (data) {
+                //失败
+            });
+        }
+
+        //我的任务导航控制    近期的事和任务
+        $(".tm-my-view-control").on("click", ".tm-view-control-link", function () {
+            var that = $(this);
+            if (!that.hasClass("active")) {
+                $(".tm-my-view-control .tm-view-control-link").removeClass("active");
+                var _link = that.attr("data-href");
+                if (_link) {
+                    //获取数据模板
+                    GetTemplate(_link, {}, function (data) {
+                        //成功
+                        $(".tm-my-view-wrap").html(data);
+                        that.addClass("active");
+                    }, function (data) {
+                        //失败
+                    });
+                }
+            }
+        });
+    });
+    </script>
+</div>

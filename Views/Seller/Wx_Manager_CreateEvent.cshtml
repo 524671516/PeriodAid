@@ -1,0 +1,97 @@
+﻿@model PeriodAid.Models.Wx_ManagerCreateScheduleViewModel
+
+@{
+    ViewBag.Title = "督导管理 工具";
+    ViewBag.Current = 2;
+    Layout = "~/Views/Seller/_Wx_Manager_Layout.cshtml";
+}
+
+    <div class="hd">
+        <h3 class="page_title text-center">新建活动</h3>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("错误", new { @id="error-message", @class="hidden"})
+        <div class="weui_cells_title">添加活动信息</div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">店铺</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.DropDownListFor(m=>m.Off_Store_Id, ViewBag.StoreList as SelectList,"- 请选择 -", new { @class="weui_input"})
+                </div>
+                <div class="weui_cell_ft">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">模板</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.DropDownListFor(m => m.Off_Template_Id, ViewBag.TemplateList as SelectList, "- 请选择 -", new { @class = "weui_input" })
+                </div>
+                <div class="weui_cell_ft">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">时间</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input text-box single-line" data-val="true" data-val-date="字段 Subscribe 必须是日期。" data-val-required="Subscribe 字段是必需的。" id="Subscribe" name="Subscribe" placeholder="请输入数量" type="date" value="@Html.Encode(Model.Subscribe.ToString("yyyy-MM-dd"))" />
+                   
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">签到</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Standard_CheckIn, new { htmlAttributes = new { @class = "weui_input", type = "time", placeholder = "请输入数量" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">签退</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Standard_CheckOut, new { htmlAttributes = new { @class = "weui_input", type = "time", placeholder = "请输入数量" } })
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label for="" class="weui_label">工资</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    @Html.EditorFor(m => m.Standard_Salary, new { htmlAttributes = new { @class = "weui_input", type = "number", placeholder = "请输入数量" } })
+                </div>
+            </div>
+        </div>
+       <br />
+        <div class="container">
+            <button href="javascript:;" class="weui_btn weui_btn_primary" id="submit-btn">
+                确认并添加
+            </button>
+            <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default" style="margin-top:5px;">
+                返回首页
+            </a>
+        </div>
+    }
+    <div class="error-label container" style="display:none;">
+        <div class="col-xs-12 text-center" id="error-label-text">提交错误，请根据提示修改</div>
+        <span class="col-xs-12 text-right" id="error-label-close"><i class="fa fa-times"></i></span>
+    </div>
+    <br /><br />
+@section scripts{
+    <script>
+        $(function () {
+            if ($("#error-message").find("li").length > 0) {
+                if ($(".input-validation-error").length > 0) {
+                    $("#error-label-text").text("提交错误，请根据提示修改");
+                    $(".input-validation-error").closest(".weui_cell").addClass("weui_cell_warn");
+                    $(".error-label").show();
+                    setTimeout(function () {
+                        $(".error-label").fadeOut(1000)
+                    }, 3000);
+                }
+                else if ($("#error-message").find("li").first().text() != "") {
+                    $("#error-label-text").text("店铺当天活动已存在，无法添加");
+                    $(".error-label").show();
+                    setTimeout(function () {
+                        $(".error-label").fadeOut(1000)
+                    }, 3000);
+                }
+            }
+        });
+    </script>
+    }

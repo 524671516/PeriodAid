@@ -1,0 +1,193 @@
+﻿@model PeriodAid.Models.AccountSetting_ViewModel
+
+@{
+    ViewBag.Title = "AccountSetting";
+    Layout = "~/Views/Shared/_OffLayout.cshtml";
+}
+
+<h2>设置</h2>
+
+@using (Html.BeginForm("AccountSettingAjax", "OffCommon", FormMethod.Post, new { @id = "offaccount-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.BankList)
+    @Html.HiddenFor(m => m.AreaList)
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="col-md-2">公司名称：</label>
+            <div class="col-md-6">@Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })</div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">公司图标：</label>
+            <div class="col-md-2"><a class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i>&nbsp;&nbsp;上传</a>@Html.HiddenFor(model => model.CompanyAvatar, new { htmlAttributes = new { @class = "form-control" } })</div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">上下班时间：</label>
+            <div class="col-md-2">@Html.EditorFor(model => model.AttendanceAllow, new { htmlAttributes = new { @class = "form-control", @type = "number" } })</div>
+            <div class="col-md-1"><b>分钟</b></div>
+            </div>
+        <div class="form-group">
+            <label class="col-md-2">密码：</label>
+            <div class="col-md-8"><a class="btn btn-info btn-sm" href="/Manage/ChangePassword">更改密码</a></div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">系统切换：</label>
+            <div class="col-md-8">
+                @foreach(var item in ViewBag.SystemList)
+                {
+                    @Html.ActionLink((string)item.SystemName, "ChangeSystem", "OffCommon", new { id = item.Id }, new { @class = "btn btn-sm btn-info"})
+                    @Html.Encode(" ")
+                }
+            </div>
+        </div>
+        <hr />
+        @*银行列表*@
+        <h5><b>@Html.LabelFor(model => model.BankList, htmlAttributes: new { @class = "control-label" })</b></h5><br />
+        <div>
+            <ul class="list-inline list-unstyled">
+                <li class="offline-input offline-input-con">
+                    <ul class="list-inline list-unstyled" id="bank-box">
+                        <li>
+
+                        </li>
+                    </ul>
+                </li>
+                <li class='offline-input'>
+                    <input class='form-control offline-search-inline' id='bank-list' type='text'>&nbsp;&nbsp;<a class='btn btn-info' id='offcommon-add-bank'><i class='fa fa-plus' aria-hidden='true'></i>&nbsp;&nbsp;添加</a>
+                </li>
+            </ul>
+        </div>
+        @*区域列表*@
+        <hr />
+        <h5><b>@Html.LabelFor(model => model.AreaList, htmlAttributes: new { @class = "control-label" })</b></h5><br />
+        <div>
+            <ul class="list-inline list-unstyled">
+                <li class="offline-input offline-input-con">
+                    <ul class="list-inline list-unstyled" id="area-box">
+                        <li>
+
+                        </li>
+                    </ul>
+                </li>
+                <li class='offline-input'>
+                    <input class='form-control offline-search-inline' id='area-list' type='text'>&nbsp;&nbsp;<a class='btn btn-info' id='offcommon-add-area'><i class='fa fa-plus' aria-hidden='true'></i>&nbsp;&nbsp;添加</a>
+                </li>
+            </ul>
+        </div>
+        <hr />
+        <h5><b>链接地址</b></h5><br />
+        <div class="form-group">
+            <label class="col-md-2">促销员登录地址：</label>
+            <div class="col-md-4"><input id="seller-url" class="form-control" readonly="readonly" value="http://webapp.shouquanzhai.cn/Seller/LoginManager?systemid=@ViewBag.CurrentSystem" /></div>
+            <div class="col-md-2"><a href="javascript:;" class="btn btn-info" onClick="copyUr01()">复制</a></div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">暗促登录地址：</label>
+            <div class="col-md-4"><input id="tempseller-url" class="form-control" readonly="readonly" value="http://webapp.shouquanzhai.cn/SellerTask/LoginManager?systemid=@ViewBag.CurrentSystem" /></div>
+            <div class="col-md-2"><a href="javascript:;" class="btn btn-info" onClick="copyUr02()">复制</a></div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <div class="col-md-10">
+                <button class="btn btn-success" id="offaccount-submit">保存</button>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        var bankCon = $("#BankList").val();
+        var bankArry = bankCon.split(",");
+        var bankText = "";
+        for (var i = 0; i < bankArry.length; i++) {
+            bankText = bankText + "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-banklist'>" + bankArry[i] + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>"
+        };
+        $("#bank-box").html(bankText);
+        var areaCon = $("#AreaList").val();
+        var areaArry = areaCon.split(",");
+        var areaText = "";
+        for (var i = 0; i < areaArry.length; i++) {
+            areaText = areaText + "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-arealist'>" + areaArry[i] + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>"
+        };
+        $("#area-box").html(areaText);
+        input();
+        bank();
+        area();
+    });
+    $(document).delegate("#offcommon-add-bank", "click", function () {
+        var bankCon = $("#bank-list").val();
+        var bankTxt = "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-banklist'>" + bankCon + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>";
+        if (bankCon == "") {
+            alert("不能为空");
+        } else {
+            $("#bank-box").append(bankTxt);
+            $("#bank-list").val("")
+            input();
+            bank();
+        };
+    });
+    $(document).delegate("#offcommon-add-area", "click", function () {
+        var areaCon = $("#area-list").val();
+        var areaTxt = "<li class='offline-input offline-input-con input-con'><div class='form-control offaccount-arealist'>" + areaCon + "</div><i class='fa fa-times-circle hidden offline-input-close input-del' aria-hidden='true'></i></li>";
+        if (areaCon == "") {
+            alert("不能为空")
+        } else {
+            $("#area-box").append(areaTxt);
+            $("#area-list").val("")
+            input();
+            area();
+        };
+    });
+    function input() {
+        $(document).delegate(".input-con", "mouseenter", function () {
+            $(this).children(".input-del").removeClass("hidden")
+        });
+        $(document).delegate(".input-con", "mouseleave", function () {
+            $(this).children(".input-del").addClass("hidden")
+        });
+        $(document).delegate(".input-del", "click", function () {
+            $(this).parent(".input-con").remove();
+            bank();
+            area();
+        });
+    };
+    function bank() {
+        var bankList = new Array();
+        $(".offaccount-banklist").each(function () {
+            bankList.push($(this).text());
+        });
+        $("#BankList").val(bankList.toString());
+    };
+    function area() {
+        var areaList = new Array();
+        $(".offaccount-arealist").each(function () {
+            areaList.push($(this).text());
+        });
+        $("#AreaList").val(areaList.toString());
+    };
+    $("#offaccount-submit").click(function () {
+        var $btn = $(this);
+        $btn.attr("disabled", "disabled").text("保存中...");
+        setTimeout(function () {
+            $('#offaccount-form').ajaxSubmit(function () {
+                alert("保存成功");
+                $btn.text("保存").removeAttr("disabled");
+            });
+        }, 1000);
+        return false;
+    });
+    function copyUr01() {
+        var Url2 = document.getElementById("seller-url");
+        Url2.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        alert("已复制好，可贴粘。");
+    }
+    function copyUr02() {
+        var Url2 = document.getElementById("tempseller-url");
+        Url2.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        alert("已复制好，可贴粘。");
+    }
+</script>

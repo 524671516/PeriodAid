@@ -1,0 +1,165 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+<input type="hidden" id="checkout_status" value="false" />
+@if (Model != null)
+{
+    <input type="hidden" id="checkin_status" value="@Model.Status" />
+    <input type="hidden" id="checkout_location" />
+}
+<div class="weui_cells_title">今日任务</div>
+<div class="weui_panel weui_panel_access" style="margin-top:0;">
+    <div class="weui_panel_bd">
+        <div class="weui_media_box weui_media_text">
+            <p class="weui_media_title h4"><b>店铺同期平均销量：&nbsp;<span class="text-primary">@Html.Encode(ViewBag.AVG_Info)</span>&nbsp;盒</b></p>
+            @if (ViewBag.CheckIn)
+            {
+                if (Model != null)
+                {
+                    if (Model.Status == 0)
+                    {
+                        <p class="weui_media_desc">今日未签到</p>
+                    }
+                    else if (Model.Status == 1)
+                    {
+                        <p class="weui_media_desc"><b class="text-success">已签到</b>&nbsp;&nbsp;&nbsp;&nbsp;您已于今日 @Html.Encode(Convert.ToDateTime(Model.CheckinTime).ToString("HH:mm")) 签到成功</p>
+                    }
+                    else if(Model.Status ==2)
+                    {
+                        <p class="weui_media_desc"><b class="text-success">已签退</b>&nbsp;&nbsp;&nbsp;&nbsp;您已于今日 @Html.Encode(Convert.ToDateTime(Model.CheckoutTime).ToString("HH:mm")) 签退成功</p>
+                    }
+                    else
+                    {
+                        <p class="weui_media_desc"><b class="text-success">已提报</b>&nbsp;&nbsp;&nbsp;&nbsp;您已于今日 @Html.Encode(Convert.ToDateTime(Model.Report_Time).ToString("HH:mm")) 提报销量</p>
+                    }
+                }
+                else
+                {
+                    <p class="weui_media_desc">今日未签到</p>
+                }
+            }
+            else
+            {
+                <p class="weui_media_desc">今日无日程</p>
+            }
+        </div>
+    </div>
+    
+    <div class="weui_cells weui_cells_access" style="margin-top:0;">
+        @if (ViewBag.CheckIn)
+        {
+            if (Model != null)
+            {
+                if (Model.Status == 0)
+                {
+                    <a class="weui_cell checkin-btn" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = ViewBag.ScheduleId, SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>开始签到</p>
+                        </div>
+                        <div class="weui_cell_ft">可签到</div>
+                    </a>
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount)</div>
+                    </a>
+                }
+                else if (Model.Status == 1)
+                {
+                    <a class="weui_cell checkout_btn" href="@Url.Action("Wx_Seller_CheckOut", "Seller", new { SellerId = ViewBag.SellerId, CheckId = Model.Id })">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>今日签退</p>
+                        </div>
+                        <div class="weui_cell_ft">可签退</div>
+                    </a>
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+                    </a>
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = ViewBag.ScheduleId, SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>更多操作</p>
+                        </div>
+                        <div class="weui_cell_ft">重新签到</div>
+                    </a>
+                }
+                else if(Model.Status ==2)
+                {
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+                    </a>
+                    <a class="weui_cell checkout_btn" href="@Url.Action("Wx_Seller_CheckOut", "Seller", new { SellerId = ViewBag.SellerId,CheckId = Model.Id})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>更多操作</p>
+                        </div>
+                        <div class="weui_cell_ft">重新签退</div>
+                    </a>
+                }
+                else
+                {
+                    <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p>销售报表</p>
+                        </div>
+                        <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <a class="weui_cell" href="@Url.Action("Wx_Seller_CheckIn","Seller", new { ScheduleId = ViewBag.ScheduleId, SellerId = ViewBag.SellerId})">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>开始签到</p>
+                    </div>
+                    <div class="weui_cell_ft">可签到</div>
+                </a>
+                <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>销售报表</p>
+                    </div>
+                    <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+                </a>
+            }
+        }
+        else
+        {
+            <a class="weui_cell" href="@Url.Action("Wx_Seller_Report", "Seller", new { SellerId = ViewBag.SellerId})">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>销售报表</p>
+                </div>
+                <div class="weui_cell_ft">待提交:&nbsp;@Html.Encode(ViewBag.ReportCount) </div>
+            </a>
+        }
+
+    </div>
+</div>
+
+<div class="weui_cells_title">工具</div>
+<div class="weui_cells weui_cells_access">
+    <a class="weui_cell" href="@Url.Action("Wx_Seller_ScheduleList", "Seller", new { SellerId = ViewBag.SellerId})">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>排班表</p>
+        </div>
+        <div class="weui_cell_ft">
+        </div>
+    </a>
+    <a class="weui_cell" href="@Url.Action("Wx_Seller_ConfirmedData","Seller", new { SellerId= ViewBag.SellerId})">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>考勤数据</p>
+        </div>
+        <div class="weui_cell_ft">
+        </div>
+    </a>
+    <a class="weui_cell" href="@Url.Action("Wx_Seller_CreditInfo","Seller", new { SellerId= ViewBag.SellerId})">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>完善账户信息</p>
+        </div>
+        <div class="weui_cell_ft">
+        </div>
+    </a>
+</div>

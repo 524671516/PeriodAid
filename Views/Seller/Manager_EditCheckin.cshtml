@@ -1,0 +1,176 @@
+﻿@model PeriodAid.Models.Off_Checkin
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>备注信息</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="manager-editcheckin">
+        <div class="page-content">
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">@Html.Encode(Model.Off_Checkin_Schedule.Off_Store.StoreName)</div>
+                                <div class="item-after">@Html.Encode(Model.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            @using (Html.BeginForm("Manager_EditCheckIn", "Seller", FormMethod.Post, new { @id = "editcheckin-form", @class = "validate-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.Off_Schedule_Id)
+                @Html.HiddenFor(m => m.Proxy)
+                @Html.HiddenFor(m => m.CheckinLocation)
+                @Html.HiddenFor(m => m.CheckinTime)
+                @Html.HiddenFor(m => m.CheckoutLocation)
+                @Html.HiddenFor(m => m.CheckoutTime)
+                @Html.HiddenFor(m => m.Report_Time)
+                @Html.HiddenFor(m => m.Off_Seller_Id)
+                <div class="content-block-title">基本信息</div>
+                <div class="list-block">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">促销员</div>
+                                <div class="item-after">@Html.Encode(Model.Off_Seller.Name)</div>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar="true" data-searchbar-placeholder="签到状态" data-searchbar-cancel="取消">
+                                @Html.DropDownListFor(m => m.Status, ViewBag.StatusSelectList as SelectList)
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">签到状态</div>
+                                        <div class="item-after"></div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li id="confirmremark-area">
+                            <div class="item-content">
+                                @Html.TextAreaFor(model => model.Confirm_Remark, new { placeholder = "请输入代签到备注信息" })
+                            </div>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title"></div>
+                                    <div class="item-after">
+                                        <span id="confirmremark-length">0</span>/<span>500</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-block accordion-list">
+                    <ul>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">照片更新</div>
+                                </div>
+                            </a>
+
+                            <div class="accordion-item-content item-example">
+                                <div style="font-size:1.2em" id="checkinphoto-area">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">上传签到照片</div>
+                                            <div class="item-after"><abbr id="checkin-current-image">0</abbr>/1</div>
+                                        </div>
+                                    </div>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="hidden">
+                                                @Html.EditorFor(m => m.CheckinPhoto)
+                                            </div>
+                                            <ul class="rep-imglist" id="manager-checkin-imglist"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="font-size:1.2em" id="checkoutphoto-area">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">上传签退照片</div>
+                                            <div class="item-after"><abbr id="checkout-current-image">0</abbr>/1</div>
+                                        </div>
+                                    </div>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="hidden">
+                                                @Html.EditorFor(m => m.CheckoutPhoto)
+                                            </div>
+                                            <ul class="rep-imglist" id="manager-checkout-imglist"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="font-size:1.2em" id="reportphoto-area">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">上传提报照片</div>
+                                            <div class="item-after"><abbr id="report-current-image">0</abbr>/7</div>
+                                        </div>
+                                    </div>
+                                    <div class="item-content" id="photo-list">
+                                        <div class="item-inner">
+                                            <div class="hidden">
+                                                @Html.EditorFor(m => m.Rep_Image)
+                                            </div>
+                                            <ul class="rep-imglist" id="manager-report-imglist"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">
+                                        修改销量数据
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content item-example">
+                                <ul style="font-size:1.2em;">
+                                    @{
+                                        Html.RenderAction("Manager_EditReport_Item", new { id = Model.Id, ScheduleId=0 });
+                                    }
+                                </ul>
+
+                            </div>
+                        </li>
+                        <li class="accordion-item">
+                            <a href="" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">
+                                        促销员备注信息
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="accordion-item-content item-example">
+                                <p style="margin-left:1em">@Html.Encode(Model.Remark)</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="content-block">
+                    <a href="javascript:;" class="button button-big button-fill" id="editcheckin-btn">提交</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+

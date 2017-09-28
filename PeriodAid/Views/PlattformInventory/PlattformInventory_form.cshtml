@@ -10,47 +10,41 @@
             <li role="presentation" class="form-select-li active all-form-select"><a href="#" role="tab" data-toggle="tab" class="form-select-a">所有仓库</a></li>
             @foreach (var item in ViewBag.storage)
             {               
-                <li role="presentation" class="form-select-li"><a href="#"  role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a">@item.Storage_Name</a></li>
+                <li role="presentation" class="form-select-li" style="margin-top:1px"><a href="#"  role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a" style="margin-right:0">@item.Storage_Name</a></li>
             }
         </ul>
     </div>
     <div style="padding:20px 0;">
     
-        <div class="text-center h2">销量清单</div>
+        <div class="text-center h2">每日数据</div>
     </div>
-    <div id="storage_show">
-        <div class="form-view-header clear-float">
-            <div>
-                <div class="tm-view-control">
-                    <ul class="nav nav-pills" style="float:right">
-                        <li class="tm-view-control-sort dropdown">
-                            <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
-                                <span class="tm-select-title">选择日期</span>
-                                <span class="caret"></span>
-                            </a>
-                                <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" style="text-align:center">
-                                    @foreach (var item in ViewBag.DataDate)
-                                    {
-                                        <li><a href="#" class="tm-select-range tm-select form-date-select" data-date="">@item.Inventory_Date.ToString("yyyy年MM月dd日")</a></li>
-                                    }
-                                </ul>
-                        </li>
-                        <li>
-                            <a href="#" id="rel_excel_in">
-                                <span onclick="$('#excel_in').click();">导入Excel文件</span>
-                                 <input type="file" name="fileName" id="excel_in" style="display:none"/>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" id="rel_excel_out">
-                                <span onclick="$('#excel_out').click();">导出Excel文件</span>
-                                <input type="file" name="fileName" id="excel_out" style="display:none" />
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+    <div class="form-view-header clear-float">
+        <div>
+            <div class="tm-view-control">
+                <ul class="nav nav-pills" style="float:right">
+                    <li class="tm-view-control-sort dropdown">
+                        <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
+                            <span class="tm-select-title"style="font-size:14px" >选择日期</span>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" style="text-align:center">
+                            @foreach (var item in ViewBag.DataDate)
+                            {
+                                <li><a href="#" class="tm-select-range tm-select form-date-select" data-date="@item">@item.ToString("yyyy年MM月dd日")</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li>
+                        <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
+                           <input type="file" name="file" class="up-file-file"  />
+                           <input type="submit" value="提交" class="up-file-sub"/>
+                        </form>
+                    </li>                   
+                </ul>
             </div>
         </div>
+    </div>
+    <div id="storage_show">
         <div class="center-block" id="my-form-content">
             <!-- Tab panes -->
             <div class="tab-content">
@@ -92,7 +86,7 @@
                     
                 },
                 success: function (data) {
-                    console.log(data)
+
                 }
             })       
     })
@@ -122,26 +116,26 @@
                     })
                 }               
             })
-    // 选择日期
+            // 选择日期
             $(".form-date-select").click(function () {
                 var that = $(this);
                 if (!that.hasClass('selected')) {
-
                     that.parent().parent().find(".tm-select.selected").removeClass("selected");
-
                     that.addClass("selected");
                     $('.tm-select-title').html($('.selected').text());
                 }
+                console.log($(".form-date-select").val());
                 $.ajax({
                     url: '/PlattformInventory/StorageShow/',
                     type: 'post',
                     data: {
-
+                        Storage: 1,
+                        select_date: $(".form-date-select.selected").attr("data-date")
                     },
                     success: function (data) {
+                        $(".form-date-select.selected").attr("data-date");
                         $("#storage_show").html(data);
-
                     }
                 })
-            })        
+            })     
 </script>

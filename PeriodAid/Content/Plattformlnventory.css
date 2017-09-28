@@ -214,7 +214,7 @@ body,html{
     display:table;
 }
 .clear-float:after { clear:both; }/* For IE 6/7 (trigger hasLayout) */
-.clear-float { zoom:1; }
+.clear-float { zoom:1; margin:0}
 .padding-10{
     padding:10px;
 }
@@ -1443,8 +1443,7 @@ a.btn_subtask_detail{
     border-bottom:1px solid #E5E5E5;
 }
 .tm-calendar-inner-header{
-    overflow-y:scroll;
-    height:41px;
+
 }
 .tm-calendar-inner-header ul li:not(:last-child){
     border-right:1px solid #E5E5E5;
@@ -1456,7 +1455,6 @@ a.btn_subtask_detail{
 }
 .tm-calendar-inner-body{
     height:calc(100% - 41px);
-    overflow:auto;
 }
 .tm-calendar-weekofmonth{
     border-bottom:1px solid #E5E5E5;
@@ -1470,8 +1468,8 @@ a.btn_subtask_detail{
     text-align:center;
     padding:10px 0;
     width:14.2222222%;
-    height:200px;
     float:left;
+    height:70px
 }
 .tm-calendar-monthofdate{
     line-height: 30px;
@@ -1490,7 +1488,7 @@ a.btn_subtask_detail{
     background-color:rgba(229,229,229,.3)
 }
 .tm-calendar-weekofday{
-    overflow:auto;
+
 }
 .tm-calendar-task,.tm-calendar-subtask{
     margin-bottom:2px;
@@ -1597,7 +1595,22 @@ a.btn_subtask_detail{
     position:relative;
     padding:10px 5px
 }
-
+/*excel提交form*/
+#up-file-form{
+    position: relative;
+    top: 10px;
+}
+#up-file-form .up-file-sub{
+    position:absolute;
+    top:2px;
+    right:16px;
+    height:22px;
+    line-height:19px
+}
+#up-file-form .up-file-file{
+    display:initial;
+    color: #337ab7
+}
 
 
 

@@ -1,0 +1,128 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_BonusRequest>
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+
+<div class="h3">累计红包：@Html.Encode(Model.Sum(m => m.ReceiveAmount) / 100)元</div><br />
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:8%">
+            状态
+        </th>
+        <th style="width:10%">
+            活动时间
+        </th>
+        <th style="width:12%">
+            系统名称
+        </th>
+        <th style="width:15%">
+            店铺名称
+        </th>
+        <th style="width:10%">
+            促销员姓名
+        </th>
+        <th style="width:10%">
+            红包金额
+        </th>
+        <th style="width:15%">
+            发放时间
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="ellipsis">
+                @if (item.Status == 1)
+                {
+                    <span class="text-muted">已发送</span>
+                }
+                else if (item.Status == 2)
+                {
+                    <span class="text-success">已收款</span>
+                }
+                else if (item.Status == 3)
+                {
+                    <span class="text-danger">错误</span>
+                }
+                else if (item.Status == 4)
+                {
+                    <span class="text-danger">已退款</span>
+                }
+                else
+                {
+                    <span class="text-danger">未知</span>
+                }
+            </td>
+            <td  class="ellipsis">
+                @Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("yyyy-MM-dd"))
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Checkin_Schedule.Off_Store.Off_StoreSystem.SystemName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.Off_Checkin.Off_Seller.Name)
+            </td>
+            <td class="ellipsis">
+                @Html.Encode((double)item.ReceiveAmount / 100)
+            </td>
+            <td class="ellipsis">
+                @Html.DisplayFor(modelItem => item.RequestTime)
+            </td>
+            <td class="ellipsis">
+                @if (item.Status == 1)
+                {
+                    <button class="btn btn-info btn-xs" id="redpack-edit" data-target="@item.Id">更新状态</button>
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("BonusListPartial", new { page }))</div>
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        l = l + "&query=" + $("#bonus-redpack-query").val();
+        $.ajax({
+            url: l,
+            success: function (data) {
+                if ($("#bonus-redpack-query").val() == "") {
+                    $("#bonus-list").html(data);
+                } else {
+                    $("#bonus-list").html(data);
+                }
+            }
+        })
+        return false;
+    });
+    //刷新状态
+    $("#redpack-edit").click(function () {
+        var link_url = "/OffBonus/RefreshBonusStatus";
+        $.ajax({
+            url: link_url,
+            data:{
+                id:$(this).attr("data-target")
+            },
+            type:"post",
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    var query = $("#bonus-redpack-query").val();
+                    $.ajax({
+                        url: "/OffBonus/BonusListPartial",
+                        data: {
+                            query: query
+                        },
+                        success: function (html) {
+                            $("#bonus-list").html(html)
+                        }
+                    })
+                }
+            }
+        })
+    })
+</script>

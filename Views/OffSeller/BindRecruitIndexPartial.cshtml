@@ -1,0 +1,140 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.Off_Recruit>
+@using PagedList.Mvc;
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:5%">
+            姓名
+        </th>
+        <th style="width:10%">
+            联系方式
+        </th>
+        <th style="width:18%">
+            地址
+        </th>
+        <th style="width:15%">
+            注册时间
+        </th>
+        <th style="width:15%">
+            身份证号码
+        </th>
+        <th style="width:25%;">
+            可工作时间
+        </th>
+        <th style="width:15%;">
+            操作
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mobile)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Area)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApplyTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdNumber)
+            </td>
+            <td>
+                @Html.HiddenFor(modelItem => item.WorkType)
+                <input type="checkbox" name="my-checkbox" disabled data-checked="" id="weekend">周末
+                <input type="checkbox" name="my-checkbox" disabled data-checked="" id="holiday">节假日
+                <input type="checkbox" name="my-checkbox" disabled data-checked="" id="weekday">工作日
+            </td>
+            <td>
+               
+              @if (item.Status==0)
+              {
+                @Html.ActionLink("绑定", "BindRecruitForm", new { id = item.Id }, new { @class = "btn btn-xs btn-info offseller-bindrecruit-edit" })      
+              }
+              else
+              {
+               @Html.ActionLink("修改", "BindRecruitForm", new { id = item.Id }, new { @class = "btn btn-xs btn-info offseller-bindrecruit-edit" })
+              }
+            </td>         
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("BindRecruitIndexPartial", new { page }))</div>
+<script>
+    $(function () {
+        //选择项
+        $("input[name=\"item.WorkType\"]").each(function () {
+            var worktype = $(this).val()
+            var weekday = worktype.substr(worktype.indexOf(":") + 1, 1);
+            var weekend = worktype.substr(worktype.indexOf(":", worktype.indexOf(":") + 1) + 1, 1);
+            var holiday = worktype.substr(worktype.indexOf(":", worktype.indexOf(":", worktype.indexOf(":") + 1) + 1) + 1, 1)
+            $(this).parent().find("#weekday").attr("data-checked", weekday)
+            $(this).parent().find("#weekend").attr("data-checked", weekend)
+            $(this).parent().find("#holiday").attr("data-checked", holiday)
+            $(this).parent().children("input").each(function () {
+                if ($(this).attr("data-checked") == "T") {
+                    $(this).prop("checked", "checked");
+                }
+            });
+        })
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    query: $("#offseller-bindrecruit-query").val(),
+                    bind: $("#offseller-bindrecruit-bool").val()
+                },
+                success: function (data) {
+                    $("#offseller-bindrecruit-list").html(data);
+                }
+            });
+            return false;
+        });
+        //修改
+        $(".offseller-bindrecruit-edit").click(function () {
+            var link_url = $(this).attr("href");
+            $.ajax({
+                url: link_url,
+                success: function (data) {
+                    $(".modal-box").modal();
+                    $(".modal-con").html(data);
+                    $(".modal-head").text("修改绑定信息");
+                }
+            });
+            return false;
+        });
+        // 删除用户
+        $(".offseller-bindrecruit-delregister").click(function () {
+            var link_url = $(this).attr("href");
+            var result = confirm("是否删除促销员");
+            if (result) {
+                $.ajax({
+                    url: link_url,
+                    type: "post",
+                    success: function (data) {
+                        if (getDeleteResult(data)) {
+                            $.ajax({
+                                url: "/OffSeller/BindRecruitIndexPartial",
+                                data: {
+                                    query: $("#offseller-bindrecruit-query").val(),
+                                    bind: $("#offseller-bindrecruit-bool").val()
+                                },
+                                success: function (data) {
+                                    $("#offseller-bindrecruit-list").html(data);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+    })
+   
+</script>

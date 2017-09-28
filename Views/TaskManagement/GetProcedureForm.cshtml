@@ -1,0 +1,68 @@
+﻿@model PeriodAid.Models.Procedure
+<ul class="tm_dropdown_control">
+    <li class="text-center clear-float">
+        <a class="tm-show-listmenu" style="position:absolute;" href="javascript:;">
+            <span class="glyphicon glyphicon-chevron-left color-gray" aria-hidden="true"></span>
+        </a>
+        <div>
+            <strong class="color-blue">修改名称</strong>
+        </div>
+    </li>
+    <li role="separator" class="divider"></li>
+    <li class="text-center">
+        @using (Html.BeginForm("Edit_Procedure", "TaskManagement", FormMethod.Post, new { @id = "edit_procedure_form", @class = "validate-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.Sort)
+            @Html.HiddenFor(m => m.Status)
+            @Html.HiddenFor(m => m.TemplateId)
+            <input name="SubjectId" id="SubjectId" value="@ViewBag.sid" type="hidden"/>
+            <input name="OldTitle" id="OldTitle" value="@Model.ProcedureTitle" type="hidden" />
+            @Html.TextBoxFor(m => m.ProcedureTitle, new { @class= "form-control", @placeholder = "请输入任务名称",@value=Model.ProcedureTitle })
+        }
+    </li>
+    <li role="separator" class="divider"></li>
+    <li class="text-center"><a href="javascript:;" class="btn" id="btn_edit_procedure"><span class="color-blue">确认修改</span></a></li>
+</ul>
+<script>
+    //修改任务列表验证
+    $("#edit_procedure_form").validate({
+        debug: false,
+        rules: {
+            ProcedureTitle: {
+                required: true,
+                maxlength: 128
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data.result == "SUCCESS") {
+                    UnimportantAlert(data.msg);
+                    //更新现有的任务列表名称
+                    $("#edit_procedure_form").parents(".ajax-procedure").find(".tm_procedure-title").html($(".tm_dropdown_control #ProcedureTitle").val());
+                    $("#btn_edit_procedure").removeClass("disabled");
+                } else {
+                    ErrorAlert(data.errmsg);
+                    $("#btn_edit_procedure").removeClass("disabled");
+                }
+                $(".tm-dropdown-menu").hide();
+                $(".tm-show-listmenu").removeClass("open");
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#btn_edit_procedure").removeClass("disabled");
+        }
+    });
+
+    //修改任务列表的提交
+    $("#btn_edit_procedure").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#edit_procedure_form").submit();
+        }
+    });
+</script>

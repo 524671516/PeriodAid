@@ -1,0 +1,89 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/weui.min.css" rel="stylesheet" />
+    <link href="~/Content/example.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <style type="text/css">
+        body {
+            padding-bottom: 60px;
+        }
+
+        .weui_tabbar_icon {
+            font-size: 20px;
+            height: 24px;
+        }
+        .navbar{
+            border-top:solid 1px #ccc;
+            background-color:#fafafa;
+        }
+        .navbar .weui_bar_item_on .text-muted{
+            color:#c80d3a;
+        }
+        .navbar .weui_bar_item_on .weui_tabbar_label{
+            color:#c80d3a;
+        }
+    </style>
+    @RenderSection("header", false)
+
+</head>
+<body>
+    <input type="hidden" value="@ViewBag.Current" id="current_page" />
+    @RenderBody()
+    
+    <div class="navbar navbar-fixed-bottom periodaid-navbar-bottom">
+        <div class="container container-body">
+            <div class="row">
+                <div class="col-xs-3 text-center">
+                    <a href="/Seller/Wx_Manager_Task" class="weui_tabbar_item">
+                        <div class="weui_tabbar_icon text-center text-muted">
+                            <i class="fa fa-map-marker"></i>
+                        </div>
+                        <p class="weui_tabbar_label">签到</p>
+                    </a>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <a href="/Seller/Wx_Manager_Home" class="weui_tabbar_item">
+                        <div class="weui_tabbar_icon text-center text-muted">
+                            <i class="fa fa-street-view"></i>
+                        </div>
+                        <p class="weui_tabbar_label">巡店</p>
+                    </a>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <a href="/Seller/Wx_Manager_Tools" class="weui_tabbar_item">
+                        <div class="weui_tabbar_icon text-center text-muted">
+                            <i class="fa fa-cog"></i>
+                        </div>
+                        <p class="weui_tabbar_label">管理</p>
+                    </a>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <a href="javascript:;" class="weui_tabbar_item">
+                        <div class="weui_tabbar_icon text-center text-muted">
+                            <i class="fa fa-bars"></i>
+                        </div>
+                        <p class="weui_tabbar_label">我</p>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+        $(function () {
+            var current = $("#current_page").val();
+            var item = $(".weui_tabbar_item").get(current);
+            $(item).addClass("weui_bar_item_on");
+        });
+    </script>
+    @RenderSection("scripts", false)
+</body>
+</html>

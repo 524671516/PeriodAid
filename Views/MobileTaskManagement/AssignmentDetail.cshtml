@@ -1,0 +1,89 @@
+﻿@model PeriodAid.Models.Assignment
+@using PeriodAid.Models
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>@Html.Encode(Model.AssignmentTitle)</strong></div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="breakdowndetails" id="breakdowndetails">
+        <div class="page-content">
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">负责人</div>
+                                <div class="item-after">@Html.Encode(Model.Holder.NickName)</div>
+                            </div>
+                        </div>
+
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">任务状态</div>
+                                <div class="item-after">@Html.Encode(Model.Status == AssignmentStatus.FINISHED ? "完成":Model.Status==AssignmentStatus.UNFINISHED?"未完成":"未知状态")</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">创建时间</div>
+                                <div class="item-after">@Html.Encode(Model.CreateTime.ToString("yyyy-MM-dd HH:ss"))</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">权重</div>
+                                <div class="item-after">@Html.Encode(Model.Priority==1?"一般":Model.Priority==2?"急需":"未知权重")</div>
+                            </div>
+                        </div>
+
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">截止时间</div>
+                                <div class="item-after">@Html.Encode(Model.Deadline==null?"未设置":Convert.ToDateTime(Model.Deadline).ToString("yyyy-MM-dd HH:ss"))</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">提醒时间</div>
+                                <div class="item-after">@Html.Encode(Model.RemindDate==null?"未设置":Convert.ToDateTime(Model.RemindDate).ToString("yyyy-MM-dd HH:ss"))</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">任务重复</div>
+                                <div class="item-after">@Html.Encode(Model.Repeat==false?"否":"是")</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content middle-content">
+                            <textarea class="required input-textarea" style="color:gray">@Html.Encode(Model.Remarks==null?"负责人没有留下任务描述":Model.Remarks)</textarea>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+         
+        </div>
+    </div>
+</div>

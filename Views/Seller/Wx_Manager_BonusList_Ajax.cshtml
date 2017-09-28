@@ -1,0 +1,27 @@
+﻿@model IEnumerable<PeriodAid.Models.Off_BonusRequest>
+<div class="weui_cells_title">待确认红包列表</div>
+<div class="weui_cells weui_cells_checkbox">
+    @foreach (var item in Model)
+    {
+    <label class="weui_cell weui_check_label" for="@item.Id">
+        <div class="weui_cell_hd">
+            <input type="checkbox" class="weui_check" name="checkbox1" id="@item.Id">
+            <i class="weui_icon_checked"></i>
+        </div>
+        <div class="weui_cell_bd weui_cell_primary" style="font-weight:normal;">
+            <p>@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Off_Store.StoreName)</p>
+        </div>
+        <div class="weui_cell_ft" style="font-weight:normal;">@Html.Encode(item.Off_Checkin.Off_Checkin_Schedule.Subscribe.ToString("MM-dd")+": "+item.Off_Checkin.Bonus)</div>
+    </label>
+        
+    }
+    
+</div>
+<br />
+<div class="container">
+    <button id="confirm_bonus" class="weui_btn weui_btn_primary weui_btn_disabled" disabled>确认红包并发放</button>
+    <button id="dismiss_bonus" class="weui_btn weui_btn_warn weui_btn_disabled" disabled style="margin-top:5px;">驳回红包</button>
+    <a href="/Seller/Wx_Manager_Tools" class="weui_btn weui_btn_default" style="margin-top:5px;">
+        返回首页
+    </a>
+</div>

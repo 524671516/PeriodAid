@@ -1,0 +1,46 @@
+﻿@model IEnumerable<PeriodAid.Models.Seller>
+
+@{
+    ViewBag.Title = "促销员列表";
+    Layout = "~/Views/Shared/_OfflineSalesLayout.cshtml";
+}
+
+<h4>促销员列表</h4>
+<hr />
+
+<table class="table table-striped h6">
+    <tr>
+        <th>
+            姓名
+        </th>
+        <th>
+            性别
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @if (item.Sex==true)
+            {
+                <span>男</span>
+            }
+            else
+            {
+                <span>女</span>
+            }
+        </td>
+        <td>
+            <div class="text-right">
+                @Html.ActionLink("修改", "Edit_Seller", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                @Html.ActionLink("删除", "Delete_Seller", new { id = item.Id }, new { @class = "btn btn-danger btn-xs" })
+            </div>
+        </td>
+    </tr>
+}
+
+</table>
