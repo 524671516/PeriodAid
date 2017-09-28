@@ -88,11 +88,11 @@ namespace PeriodAid.Controllers
                 file.SaveAs(Path.Combine(filePath, fileName));
                 var date_time = form["file-date"].ToString();
                 Read_InsertFile(fileName, Convert.ToDateTime(date_time));
-                return View();
+                return Json(new { result = "SUCCESS" });
             }
             else
             {
-                return View();
+                return Json(new { result = "FAIL" });
             }
         }
         public ActionResult Calc_Storage(int plattformId)

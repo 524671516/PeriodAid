@@ -15,10 +15,9 @@
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    
     @RenderSection("header", required: false)
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    
     
 </head>
 <body>
@@ -131,16 +130,16 @@
         </footer>
         
     </div>
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery.form.min.js"></script>
-    <script src="~/Scripts/ajaxfileupload.js"></script>
     <script src="~/Scripts/jquery-confirm.js"></script>
-    <script src="~/Scripts/Sortable.min.js"></script>
     <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
     <script src="~/Scripts/bootstrap-select.js"></script>
     <script src="~/Scripts/defaults-zh_CN.min.js"></script>
-    <script src="~/Scripts/TaskManagement.js"></script>
     <script src="~/Scripts/TaskManagementCalendar.js"></script>
     @RenderSection("scripts", required: false)
 </body>

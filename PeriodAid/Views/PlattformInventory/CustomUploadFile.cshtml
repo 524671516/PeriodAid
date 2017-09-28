@@ -3,6 +3,9 @@
     ViewBag.Title = "CustomUploadFile";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
+@section header{
+<link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    }
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
 <div>
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
@@ -41,39 +44,90 @@
 
 @section scripts
 {
+    <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
     <script>
         // 初始化日历
-        TmDatePicker.Init({
-            container: "#tm-calendar-view-wrap",
-            onpagechanged: function (e) {
-                $("#file-loading").hide()
-                $.ajax({
-                    url: "/PlattformInventory/CustomUploadFilePartial",
-                    type: "post",
-                    data: {
-                        plattformId: 1,
-                        month: e.currentyear + "-" + e.currentmonth
-                    },
-                    success: function (data) {
-                        //console.log(data)
-                        var dataDate = $('.tm-calendar-monthofdate')
-                        for (var i = 0; i < dataDate.length; i++) {
-                            var nowDate = dataDate.eq(i).attr('date-day');
-                            for (var j = 0; j < data.length; j++) {
-                                record = data[j].record_date.ToString("yyyy-MM-dd");
-                                if (record == nowDate) {
-                                    dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+        $(function () {
+            $("#file-date").datepicker();
+            TmDatePicker.Init({
+                container: "#tm-calendar-view-wrap",
+                onpagechanged: function (e) {
+                    $("#file-loading").hide()
+                    $.ajax({
+                        url: "/PlattformInventory/CustomUploadFilePartial",
+                        type: "post",
+                        data: {
+                            plattformId: 1,
+                            month: e.currentyear + "-" + e.currentmonth
+                        },
+                        success: function (data) {
+                            //console.log(data)
+                            var dataDate = $('.tm-calendar-monthofdate')
+                            for (var i = 0; i < dataDate.length; i++) {
+                                var nowDate = dataDate.eq(i).attr('date-day');
+                                for (var j = 0; j < data.length; j++) {
+                                    record = data[j].record_date.ToString("yyyy-MM-dd");
+                                    if (record == nowDate) {
+                                        dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                    }
                                 }
                             }
+                        },
+                        error: function () {
+                            ErrorAlert("请求数据失败。");
                         }
-                    },
-                    error: function () {
-                        ErrorAlert("请求数据失败。");
+                    });
+                }
+            });
+            $("#file-form-sub").click(function () {
+                $('#file-loading').show()
+                $("form").ajaxSubmit({
+                    url: "/PlattformInventory/UploadFile",
+                    type: "post",
+                    success: function (msg) {
+                        console.log(msg);
+                        //msg = JSON.stringify(msg);
+                        if (msg.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/PlattformInventory/CustomUploadFilePartial",
+                                type: "post",
+                                data: {
+                                    plattformId: 1,
+                                    month: $("#current-date").text() + "-01"
+                                },
+                                success: function (data) {
+                                    //console.log(data)
+                                    var dataDate = $('.tm-calendar-monthofdate')
+                                    for (var i = 0; i < dataDate.length; i++) {
+                                        var nowDate = dataDate.eq(i).attr('date-day');
+                                        for (var j = 0; j < data.length; j++) {
+                                            record = data[j].record_date.ToString("yyyy-MM-dd");
+                                            if (record == nowDate) {
+                                                dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                            }
+                                        }
+                                    }
+                                    $("#file-loading").hide();
+                                    console.log(111)
+                                },
+                                error: function () {
+                                    ErrorAlert("请求数据失败。");
+                                    $("#file-loading").hide();
+                                }
+                            });
+                        }
+                        else {
+                            alert("上传失败");
+                            $("#file-loading").hide();
+
+                        }
+                        //$("#file-loading").hide();
                     }
                 });
-            }
+                return false;
+            });
         });
-        
+
         // 重置时间显示格式
         String.prototype.ToString = function (format) {
             var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
