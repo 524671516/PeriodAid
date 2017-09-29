@@ -318,16 +318,31 @@ namespace PeriodAid.Controllers
             ViewBag.DataDate = DataDate;
             if (Storage.ToString() != "")
             {
-                var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SalesRecord_Date == select_date && m.Storage_Id==Storage
-                                  group m by m.SS_Product into g
-                                  select new Product_SummaryViewModel
-                                  {
-                                      Product = g.Key,
-                                      Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
-                                  };
-                return PartialView(SalesRecord);
+                if (Storage.ToString() == "0")
+                {
+                    var SalesRecord = from m in _db.SS_SalesRecord
+                                      where m.SalesRecord_Date == select_date
+                                      group m by m.SS_Product into g
+                                      select new Product_SummaryViewModel
+                                      {
+                                          Product = g.Key,
+                                          Sales_Sum = g.Sum(m => m.Sales_Count),
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      };
+                    return PartialView(SalesRecord);
+                }
+                else {
+                    var SalesRecord = from m in _db.SS_SalesRecord
+                                      where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                      group m by m.SS_Product into g
+                                      select new Product_SummaryViewModel
+                                      {
+                                          Product = g.Key,
+                                          Sales_Sum = g.Sum(m => m.Sales_Count),
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      };
+                    return PartialView(SalesRecord);
+                }
             }
             else {
                 var SalesRecord = from m in _db.SS_SalesRecord
