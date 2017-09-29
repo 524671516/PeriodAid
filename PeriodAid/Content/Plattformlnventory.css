@@ -1484,7 +1484,7 @@ a.btn_subtask_detail{
     border-radius: 50%;
 }
 .tm-calendar-nextmonth-weekofday,.tm-calendar-prevmonth-weekofday{
-    background-color:rgba(229,229,229,.3)
+    background-color:rgba(53, 60, 51, 0.28)
 }
 .tm-calendar-weekofday{
 
@@ -1617,8 +1617,46 @@ a.btn_subtask_detail{
     z-index:100;
     background:#fff;
     opacity:0.7;
-
 }
-
-
+#up-file-form input{
+    display:inline-block
+}
+#form-view-content{
+    position:relative;
+    top:-13px
+}
+#upload{
+    padding: 4px 10px;
+    display: inline-block;
+    height: 27px;
+    line-height: 17px;
+    position: relative;
+    border: 1px solid #999;
+    text-decoration: none;
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 2px;
+    margin-left: 5px;
+    
+}
+#file-name{
+    position: absolute;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    width: 73px;
+    height: 22px;
+    opacity: 0;
+}
+#file-form-sub{
+    margin-left: 14px;
+    width: 54px;
+    height: 27px;
+    line-height: 9px;
+    margin-top: -2px;
+}
 

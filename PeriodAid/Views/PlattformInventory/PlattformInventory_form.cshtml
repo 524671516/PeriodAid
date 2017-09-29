@@ -33,13 +33,7 @@
                                 <li><a href="#" class="tm-select-range tm-select form-date-select" data-date="@item">@item.ToString("yyyy年MM月dd日")</a></li>
                             }
                         </ul>
-                    </li>
-                    @*<li>
-                        <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
-                           <input type="file" name="file" class="up-file-file"  />
-                           <input type="submit" value="提交" class="up-file-sub"/>
-                        </form>
-                    </li>*@                   
+                    </li>                
                 </ul>
             </div>
         </div>
@@ -77,6 +71,8 @@
         </div>
     </div>
 </div>
+@section scripts{
+
 <script>
     // 初始化数据
     $(function () {     
@@ -139,3 +135,4 @@
                 })
             })     
 </script>
+}

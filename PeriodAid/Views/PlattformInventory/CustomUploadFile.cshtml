@@ -5,18 +5,22 @@
 }
 @section header{
 <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
-    }
+    <style>
+        div{
+            z-index:52;
+        }
+    </style>
+}
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
-<div>
+<div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
-        <input type="text" id="file-date" name="file-date" />
-        <input type="file" id="file-name" name="file-name" />
+        <input type="text"id="file-date" name="file-date" style="height:26px" />   
+        <a href="javascript:;" id="upload">选择文件
+            <input type="file" id="file-name" name="file-name" />
+        </a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
-    </form>
+</form>
 </div>
-
-    
-
 <br />
 <div id="tm-calendar-view">
     <div class="tm-calendar-view tm-view" style="display:block;position: relative;top:0;height: 521px;width: 960px;">
@@ -43,16 +47,21 @@
 </div>
 
 @section scripts
-{
-    <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
+{   
     <script>
         // 初始化日历
         $(function () {
+            //日期格式改变  
+            $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
+            //星期格式汉化  
+            $("#file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+            //月份格式汉化  
+            $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
             $("#file-date").datepicker();
             TmDatePicker.Init({
                 container: "#tm-calendar-view-wrap",
                 onpagechanged: function (e) {
-                    $("#file-loading").hide()
+                    $("#file-loading").hide()                    
                     $.ajax({
                         url: "/PlattformInventory/CustomUploadFilePartial",
                         type: "post",
@@ -79,51 +88,58 @@
                     });
                 }
             });
-            $("#file-form-sub").click(function () {
-                $('#file-loading').show()
-                $("form").ajaxSubmit({
-                    url: "/PlattformInventory/UploadFile",
-                    type: "post",
-                    success: function (msg) {
-                        console.log(msg);
-                        //msg = JSON.stringify(msg);
-                        if (msg.result == "SUCCESS") {
-                            $.ajax({
-                                url: "/PlattformInventory/CustomUploadFilePartial",
-                                type: "post",
-                                data: {
-                                    plattformId: 1,
-                                    month: $("#current-date").text() + "-01"
-                                },
-                                success: function (data) {
-                                    //console.log(data)
-                                    var dataDate = $('.tm-calendar-monthofdate')
-                                    for (var i = 0; i < dataDate.length; i++) {
-                                        var nowDate = dataDate.eq(i).attr('date-day');
-                                        for (var j = 0; j < data.length; j++) {
-                                            record = data[j].record_date.ToString("yyyy-MM-dd");
-                                            if (record == nowDate) {
-                                                dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+            $("#file-form-sub").click(function () {              
+                var dataVal = ($('#file-date').val())
+                var fileVal=$('#file-name').val()
+                if (dataVal && fileVal != null) {
+                    $('#file-loading').show()
+                    $('#file-form-sub').attr('disabled', 'disabled')
+                    $("form").ajaxSubmit({
+                        url: "/PlattformInventory/UploadFile",
+                        type: "post",
+                        success: function (msg) {
+                            if (msg.result == "SUCCESS") {
+                                $.ajax({
+                                    url: "/PlattformInventory/CustomUploadFilePartial",
+                                    type: "post",
+                                    data: {
+                                        plattformId: 1,
+                                        month: $("#current-date").text() + "-01"
+                                    },
+                                    success: function (data) {
+                                        var dataDate = $('.tm-calendar-monthofdate')
+                                        for (var i = 0; i < dataDate.length; i++) {
+                                            var nowDate = dataDate.eq(i).attr('date-day');
+                                            for (var j = 0; j < data.length; j++) {
+                                                record = data[j].record_date.ToString("yyyy-MM-dd");
+                                                if (record == nowDate) {
+                                                    dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                                }
                                             }
                                         }
+                                        $("#file-loading").hide();
+                                        $('#file-date').val('')
+                                        $('#file-form-sub').removeAttr('disabled')
+                                    },
+                                    error: function () {
+                                        ErrorAlert("请求数据失败。");
+                                        $("#file-loading").hide();
+                                        $('#file-form-sub').removeAttr('disabled')
+                                        $('#file-date').val('')
                                     }
-                                    $("#file-loading").hide();
-                                    console.log(111)
-                                },
-                                error: function () {
-                                    ErrorAlert("请求数据失败。");
-                                    $("#file-loading").hide();
-                                }
-                            });
+                                });
+                            }
+                            else {
+                                alert("上传失败");
+                                $("#file-loading").hide();
+                                $('#file-date').val('')
+                                $('#file-form-sub').removeAttr('disabled')
+                            }
                         }
-                        else {
-                            alert("上传失败");
-                            $("#file-loading").hide();
-
-                        }
-                        //$("#file-loading").hide();
-                    }
-                });
+                    });
+                } else {
+                    alert('请选择日期或上传文件')
+                }
                 return false;
             });
         });

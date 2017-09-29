@@ -14,11 +14,8 @@
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
-    @Styles.Render("~/Content/css")
-    
-    @RenderSection("header", required: false)
-    
-    
+    @Styles.Render("~/Content/css")    
+    @RenderSection("header", required: false)   
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -49,7 +46,6 @@
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
                             工具　<span class="caret"></span>
                         </a>
-
                         <ul class="dropdown-menu">
                             <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
                             <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
@@ -141,6 +137,7 @@
     <script src="~/Scripts/bootstrap-select.js"></script>
     <script src="~/Scripts/defaults-zh_CN.min.js"></script>
     <script src="~/Scripts/TaskManagementCalendar.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
