@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
+                <div class="col-md-offset-10 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
@@ -83,16 +83,31 @@
 
     <script>
         $('#save-btn').click(function () {
-            console.log(111)
-            $("#product-form").ajaxSubmit({
+             $("#product-form").ajaxSubmit({
                 url: '/PlattformInventory/EditProductInfo',
                 type: 'post',
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $('#modal-body').html('<h3>保存成功</h3>')
+                        $('#modal-body').html('<h3>保存成功</h3>'),
+                         
                         setTimeout(function () {
                             $("#myModal").modal('hide');
-                        },1000)                        
+                            $.ajax({
+                                url: "/PlattformInventory/ProductListPartial",
+                                data: {
+                                    plattformId: $("#PlattformId").val(),
+                                    page: 1,
+                                },
+                                success: function (data) {
+                                    $("#product_list_content").html(data);
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
+                                }
+
+                            });
+                        }, 1000)
+                    } else {
+                        $('#modal-body').html('<h3>保存失败</h3>')
                     }
                 }   
             })
