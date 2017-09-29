@@ -91,7 +91,7 @@
             $("#file-form-sub").click(function () {              
                 var dataVal = ($('#file-date').val())
                 var fileVal=$('#file-name').val()
-                if (dataVal && fileVal != null) {
+                if (dataVal && fileVal != '') {
                     $('#file-loading').show()
                     $('#file-form-sub').attr('disabled', 'disabled')
                     $("form").ajaxSubmit({
