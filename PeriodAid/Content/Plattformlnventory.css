@@ -1659,4 +1659,13 @@ a.btn_subtask_detail{
     line-height: 9px;
     margin-top: -2px;
 }
-
+#download_calc{
+    position: relative;
+    top: -10px;
+}
+#date-select{
+    display: inline-block;
+    float: right;
+    position: relative;
+    top: -10px;
+}
