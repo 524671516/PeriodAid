@@ -24,15 +24,12 @@
                 <ul class="nav nav-pills" style="float:right">
                     <li class="tm-view-control-sort dropdown">
                         <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
-                            <span class="tm-select-title"style="font-size:14px" >选择日期</span>
+                            <span class="tm-select-title hasDatepicker" style="font-size:14px">选择日期</span>
                             <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" style="text-align:center">
-                            @foreach (var item in ViewBag.DataDate)
-                            {
-                                <li><a href="#" class="tm-select-range tm-select form-date-select" data-date="@item">@item.ToString("yyyy年MM月dd日")</a></li>
-                            }
-                        </ul>
+                        <div id="show-date" class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" style="text-align:center">
+
+                        </div>
                     </li>                
                 </ul>
             </div>
@@ -74,6 +71,16 @@
 @section scripts{
 
 <script>
+    // 初始化日历
+    $(function () {
+        //日期格式改变  
+        $("#show-date").datepicker({ dateFormat: "yy-mm-dd" });
+        //星期格式汉化  
+        $("#show-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+        //月份格式汉化  
+        $("#show-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+        $("#show-date").datepicker();
+    });
     // 初始化数据
     $(function () {     
             $.ajax({
