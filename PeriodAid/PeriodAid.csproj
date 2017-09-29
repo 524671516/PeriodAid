@@ -510,7 +510,6 @@
     <Content Include="Content\bootstrap-select.css.map" />
     <Content Include="Scripts\framework7.js.map" />
     <Content Include="Scripts\framework7.min.js.map" />
-    <Content Include="Content\xlsx\201709221540.csv" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\highcharts.js" />
