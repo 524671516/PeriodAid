@@ -1130,6 +1130,9 @@
     <Content Include="Views\PlattformInventory\Calc_Storage.cshtml" />
     <Content Include="Views\PlattformInventory\UploadFile.cshtml" />
     <Content Include="Views\PlattformInventory\Index.cshtml" />
+    <Content Include="Views\PlattformInventory\EditProductInfo.cshtml" />
+    <Content Include="Views\PlattformInventory\ProductList.cshtml" />
+    <Content Include="Views\PlattformInventory\ProductListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

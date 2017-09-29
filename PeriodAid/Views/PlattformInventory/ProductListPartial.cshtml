@@ -1,0 +1,64 @@
+﻿
+@model PagedList.IPagedList<PeriodAid.Models.SS_Product>
+@using PagedList.Mvc;
+
+<table class="table">
+    <tr>
+        <th>
+            系统编码
+        </th>
+        <th>产品编码
+        </th>
+        <th>产品名称</th>
+        <th>箱规</th>
+        <th>结算金额</th>
+        <th>库存日期</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.System_Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Item_Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Item_Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Carton_Spec)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Purchase_Price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inventory_Date)
+        </td>
+        <td>
+            @Html.ActionLink("编辑", "EditProductInfo", new { productId=item.Id })
+        </td>
+    </tr>
+}
+    
+
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))</div>
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        console.log(l)
+        $.ajax({
+            url: l,
+            data:{
+                plattformId:$("#PlattformId").val()
+            },
+            success: function (data) {
+                $("#product_list_content").html(data);
+            }
+        });
+        return false;
+    });
+    </script>

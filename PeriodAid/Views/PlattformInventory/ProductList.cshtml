@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "ProductList";
+    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
+}
+
+<h2>ProductList</h2>
+@Html.Hidden("PlattformId", (int)ViewBag.PlattformId)
+<div id="product_list_content"></div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/PlattformInventory/ProductListPartial",
+                data: {
+                    plattformId: $("#PlattformId").val(),
+                    page: 1
+                },
+                success: function (data) {
+                    $("#product_list_content").html(data);
+                }
+
+            });
+        });
+    </script>}
+
