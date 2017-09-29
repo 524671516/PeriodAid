@@ -1,8 +1,74 @@
 ﻿
+@model IEnumerable<PeriodAid.Models.CalcStorageViewModel>
+
 @{
     ViewBag.Title = "Calc_Storage";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
 
-<h2>Calc_Storage</h2>
+<h2></h2>
+<div id="storage_show">
+    <div class="center-block" id="my-form-content">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active">
+                <a class="btn btn-default" href="javascript:;" id="download_calc">下载完整预估表</a>
+                <br />
+                <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>产品编号</th>
+                                <th>商品编号</th>
+                                <th>商品名称</th>
+                                <th>30天销售数据</th>
+                                <th>仓库库存</th>
+                                <th>参数值</th>
+                                <th>累计补货数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderByDescending(m => m.Sales_Count))
+                            {
+                                <tr>
+                                    <th scope="row">@item.Product.System_Code</th>
+                                    <td>@Html.Encode(item.Product.Item_Code)</td>
+                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                    <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
+                                    <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                                    <td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate", type = "number" })</td>
+                                    <td class="calc_value"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $(".calc_rate").change(function () {
+                $(this).parent().siblings(".calc_value").text(calc_value(this));
+            })
+            $(".calc_rate").each(function () {
+                $(this).parent().siblings(".calc_value").text(calc_value(this));
+            });
+            $("#download_calc").click(function () {
+                $("form").submit();
+            });
+        });
+        function calc_value(obj) {
+            var sales = $(obj).parent().siblings(".calc_sales").html();
+            var storage = $(obj).parent().siblings(".calc_storage").text();
+            var rate = $(obj).val();
+            return (sales * rate) - storage <= 0 ? 0 : (sales * rate) - storage;
+        }
+
+    </script>
+    }
+
+
 

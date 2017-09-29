@@ -7,11 +7,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CsvHelper;
-using System.Text;
 using Microsoft.AspNet.Identity.Owin;
 using PeriodAid.Models;
-using System.Web.Script.Serialization;
-using NPOI.XSSF.UserModel;
+using PeriodAid.DAL;
 
 namespace PeriodAid.Controllers
 {
@@ -84,8 +82,8 @@ namespace PeriodAid.Controllers
             if (file != null)
             {
                 var fileName = DateTime.Now.Ticks + ".csv";
-                var filePath = Server.MapPath("/Content/xlsx");
-                file.SaveAs(Path.Combine(filePath, fileName));
+                AliOSSUtilities util = new AliOSSUtilities();
+                util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
                 var date_time = form["file-date"].ToString();
                 Read_InsertFile(fileName, Convert.ToDateTime(date_time));
                 return Json(new { result = "SUCCESS" });
@@ -106,14 +104,15 @@ namespace PeriodAid.Controllers
                               where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end
                               && m.SS_Product.Plattform_Id == 1
                               group m by m.SS_Product into g
-                              select new { Product = g.Key, Sales_Count_30 = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count) };
+                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count) };
+                return View(content);
             }
             return View();
         }
         private bool Read_InsertFile(string filename, DateTime date)
         {
-            string folder = HttpContext.Server.MapPath("~/Content/xlsx/");
-            StreamReader reader = new StreamReader(folder + filename, System.Text.Encoding.GetEncoding("GB2312"), false);
+            AliOSSUtilities util = new AliOSSUtilities();
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
             CsvReader csv_reader = new CsvReader(reader);
             int row_count = 0;
             List<string> headers = new List<string>();
@@ -188,12 +187,13 @@ namespace PeriodAid.Controllers
             return true;
         }
         // 获取仓库表格
+        [HttpPost]
         public ActionResult getInventoryExcel(FormCollection form)
         {
             /*string pstr = System.Web.HttpContext.Current.Request.Form["Param"];
             JavaScriptSerializer s = new JavaScriptSerializer(); //继承自 System.Web.Script.Serialization;
             List<CalcStorageParmsViewModel> jr = s.Deserialize<List<CalcStorageParmsViewModel>>(pstr); //只要你的JSON串没问题就可以转*/
-            XSSFWorkbook book = new XSSFWorkbook();
+            HSSFWorkbook book = new HSSFWorkbook();
             ISheet sheet = book.CreateSheet("Total");
             var inventory_list = _db.SS_Storage.Where(m => m.Plattform_Id == 1);
             var product_list = _db.SS_Product.Where(m => m.Plattform_Id == 1);
@@ -210,7 +210,7 @@ namespace PeriodAid.Controllers
             }
             // 写产品列
             int row_pos = 1;
-            foreach(var product in product_list)
+            foreach(var product in product_list.Where(m=>m.Id==317))
             {
                 NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
@@ -218,37 +218,43 @@ namespace PeriodAid.Controllers
                 cell_pos++;
                 single_row.CreateCell(cell_pos).SetCellValue(product.Item_Name);
                 cell_pos++;
-                DateTime current_date = new DateTime(2017,9,25);
+                DateTime current_date = DateTime.Now.Date;
                 DateTime first_date = product.Inventory_Date.AddDays(-30);
-                foreach (var inventory in inventory_list.OrderBy(m=>m.Id))
+                // 最近库存
+                var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
+                if (form["p_rate_" + product.Id] != null)
                 {
-                    // 最新库存
-                    var last_inventory = _db.SS_SalesRecord.SingleOrDefault(m => m.Product_Id == product.Id && m.Storage_Id == inventory.Id && m.SalesRecord_Date == current_date);
-                    int storage_count;
-                    if (last_inventory != null)
+                    var _rate = Convert.ToDecimal(form["p_rate_" + product.Id].ToString());
+                    foreach (var inventory in inventory_list.OrderBy(m => m.Id))
                     {
-                        storage_count = last_inventory.Storage_Count;
+                        // 最新库存
+                        var last_inventory = _db.SS_SalesRecord.SingleOrDefault(m => m.Product_Id == product.Id && m.Storage_Id == inventory.Id && m.SalesRecord_Date == upload_record.SalesRecord_Date);
+                        int storage_count;
+                        if (last_inventory != null)
+                        {
+                            storage_count = last_inventory.Storage_Count;
+                        }
+                        else
+                        {
+                            storage_count = 0;
+                        }
+                        var period_sales_count = (from m in _db.SS_SalesRecord
+                                                  where m.Product_Id == product.Id && m.Storage_Id == inventory.Id
+                                                  && m.SalesRecord_Date >= first_date && m.SalesRecord_Date <= current_date
+                                                  select m).Sum(m => m.Sales_Count);
+                        int recommand_storage = ((int)(period_sales_count * _rate) - storage_count) > 0 ? ((int)(period_sales_count * _rate) - storage_count) : 0;
+                        single_row.CreateCell(cell_pos).SetCellValue(recommand_storage);
+                        cell_pos++;
                     }
-                    else
-                    {
-                        storage_count = 0;
-                    }
-                    var period_sales_count = (from m in _db.SS_SalesRecord
-                                              where m.Product_Id == product.Id && m.Storage_Id == inventory.Id
-                                              && m.SalesRecord_Date >= first_date && m.SalesRecord_Date <= current_date
-                                              select m).Sum(m=>m.Sales_Count);
-                    int recommand_storage = (period_sales_count - storage_count) > 0 ? (period_sales_count - storage_count) : 0;
-                    single_row.CreateCell(cell_pos).SetCellValue(recommand_storage);
-                    cell_pos++;
+                    row_pos++;
                 }
-                row_pos++;
             }
 
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", DateTime.Now.ToString("yyyyMMddHHmmss")+"库存表.xlsx");
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss")+"库存表.xls");
 
 
         }

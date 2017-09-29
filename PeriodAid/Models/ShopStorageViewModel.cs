@@ -15,4 +15,13 @@ namespace PeriodAid.Models
 
         public decimal params_rate { get; set; }
     }
+
+    public class CalcStorageViewModel
+    {
+        public SS_Product Product { get; set; }
+
+        public int Sales_Count { get; set; }
+
+        public int Storage_Count { get; set; }
+    }
 }
