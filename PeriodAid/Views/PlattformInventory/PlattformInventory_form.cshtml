@@ -31,16 +31,10 @@
             <div class="tm-view-control">
                 <ul class="nav nav-pills" style="float:right">
                     <li class="tm-view-control-sort dropdown" style="position:relative">
-                        <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
+                        <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
                             <span class="tm-select-title" id="form-date-select" style="font-size:14px">选择日期</span>
                             <input type="text" id="file-date" name="file-date" style="height: 48px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
                             <span class="caret"></span>
-                            <span id="date-show" >
-                                @foreach (var item in ViewBag.DataDate)
-                                {
-                                    <span href="#" data-date="@item">@item.ToString("yyyy年MM月dd日")</span>
-                                }
-                            </span>
                         </a>
                     </li>
                 </ul>
@@ -62,7 +56,7 @@
                                 <th>仓库库存</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        @*<tbody>
                             @foreach (var item in Model)
                             {
                                 <tr>
@@ -73,10 +67,16 @@
                                     <td>@item.Inventory_Sum</td>
                                 </tr>
                             }
-                        </tbody>
+                        </tbody>*@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="tm-view-content-container  tm-view-container" id="file-loading" style="top:282px">
+        <div class="tm-veiw-loading text-center" id="tm-view-loading">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
+            <span class="sr-only">正在加载...</span>
         </div>
     </div>
 </div>
@@ -84,8 +84,7 @@
 
     <script>
     // 初始化数据
-        $(function () {
-            //$(".date-show").hide();
+        $(function () {           
         //日期格式改变
         $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -93,6 +92,43 @@
         //月份格式汉化
         $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
         $("#file-date").datepicker();
+        TmDatePicker.Init({
+            container: "#tm-calendar-view-wrap",
+            onpagechanged: function (e) {
+                $.ajax({
+                    url: "/PlattformInventory/CustomUploadFilePartial",
+                    type: "post",
+                    data: {
+                        plattformId: 1,
+                        month: e.currentyear + "-" + e.currentmonth
+                    },
+                    success: function (data) {for (var i = 0; i < data.length; i++) {
+                        var record = data[i].record_date.ToString("yyyy-MM-dd");
+                        //console.log(record)  
+                    }
+                        $('#form-date-select').text(record)
+                        $.ajax({
+                            url: '/PlattformInventory/StorageShow/',
+                            type: 'post',
+                            data: {
+                                Storage: 1,
+                                select_date: $('#form-date-select').text()
+                            },
+                            success: function (data) {
+                                //console.log(data)
+                                $('#storage_show').html(data)
+                                $('#file-loading').hide()
+                            }
+                        })
+                        
+                    },
+                    error: function () {
+                        ErrorAlert("请求数据失败。");
+                    }
+                });
+            }
+        });
+
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
@@ -103,10 +139,12 @@
 
                     },
                     success: function (data) {
-                        window.location.href = '/PlattformInventory/PlattformInventory_form/'
+                        //console.log(data)
+                        //window.location.href = '/PlattformInventory/PlattformInventory_form/'
                     }
                 })
             } else {
+                $('#file-loading').show()
                 $.ajax({
                     url: "/PlattformInventory/StorageShow/",
                     data: {
@@ -115,18 +153,17 @@
                     success: function (data) {
                         that.children('.form-select-a').addClass("active");
                         $("#storage_show").html(data);
+                        $('#file-loading').hide()
                     }
                 })
             }
         })
-        $("#file-date").on("click", function () {
-            $("#date-select").attr("data-did");
-            console.log($("#date-show span").attr("data-date"));
-            $("#ui-datepicker-div .ui-datepicker-calendar a").attr("style", "color:red");
-        })
         // 选择日期
         $('#file-date').change(function () {
-            $('#form-date-select').text($(this).val());
+            $('#file-loading').show()
+            console.log($(this).val())
+            $('#form-date-select').text($(this).val())
+            console.log($('#form-date-select').text())
             $.ajax({
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
@@ -135,11 +172,25 @@
                     select_date: $('#form-date-select').text()
                 },
                 success: function (data) {
-                    $('#storage_show').html(data);
+                    console.log(data)
+                    $('#storage_show').html(data)
+                    $('#file-loading').hide()
                 }
             })
         })
     })
-
+    // 重置时间显示格式
+    String.prototype.ToString = function (format) {
+        var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
+        format = format.replace("yyyy", dateTime.getFullYear());
+        format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
+        format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
+        format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
+        format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
+        format = format.replace("mm", dateTime.getMinutes());
+        format = format.replace("ss", dateTime.getSeconds());
+        format = format.replace("ms", dateTime.getMilliseconds())
+        return format;
+    };
     </script>
 }

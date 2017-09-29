@@ -10,6 +10,7 @@ using CsvHelper;
 using Microsoft.AspNet.Identity.Owin;
 using PeriodAid.Models;
 using PeriodAid.DAL;
+using PagedList;
 
 namespace PeriodAid.Controllers
 {
@@ -58,12 +59,13 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
+        // 上传销售记录页面
         public ActionResult CustomUploadFile(int plattformId)
         {
             ViewBag.PlattformId = plattformId;
             return View();
         }
+        // 获取已上传列表
         [HttpPost]
         public ActionResult CustomUploadFilePartial(int plattformId, string month)
         {
@@ -75,6 +77,7 @@ namespace PeriodAid.Controllers
             return Json(list);
         }
 
+        // 上传销售记录
         [HttpPost]
         public ActionResult UploadFile(FormCollection form)
         {
@@ -93,6 +96,7 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+        // 库存预估
         public ActionResult Calc_Storage(int plattformId)
         {
             var upload_record = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
@@ -109,6 +113,7 @@ namespace PeriodAid.Controllers
             }
             return View();
         }
+        // 分析EXCEL文件
         private bool Read_InsertFile(string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
@@ -264,7 +269,7 @@ namespace PeriodAid.Controllers
         }*/
 
         /// <summary>
-        /// 
+        /// 当前库存页面
         /// </summary>
         /// <returns></returns>
         public ActionResult PlattformInventory_form(DateTime? select_date) {
@@ -329,6 +334,43 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
 
+        public ActionResult ProductList(int plattformId)
+        {
+            ViewBag.PlattformId = plattformId;
+            return View();
+        }
+
+        public ActionResult ProductListPartial(int plattformId, int? page)
+        {
+            int _page = page ?? 1;
+            var productlist = (from m in _db.SS_Product
+                               where m.Plattform_Id == plattformId
+                               orderby m.Id
+                               select m).ToPagedList(_page, 15);
+            return PartialView(productlist);
+        }
+
+        public ActionResult EditProductInfo(int productId)
+        {
+            var item = _db.SS_Product.SingleOrDefault(m => m.Id == productId);
+            return PartialView(item);
+        }
+
+        [HttpPost]
+        public ActionResult EditProductInfo(SS_Product model)
+        {
+            if (ModelState.IsValid)
+            {
+                SS_Product item = new SS_Product();
+                if (TryUpdateModel(item))
+                {
+                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
     }
     
 }
