@@ -2,7 +2,7 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4>修改产品信息</h4>
+    <h2>商品详情</h2>
 </div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditProductInfo","PlattformInventory", FormMethod.Post, new { @id="product-form"}))
@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
+                <div class="col-md-offset-10 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
@@ -75,27 +75,44 @@
     }
 </div>
 
-<script>
-    $('#save-btn').click(function () {
-        $("#product-form").ajaxSubmit({
-            url: '/PlattformInventory/EditProductInfo',
-            type: 'post',
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    $('#modal-body').html('<h3>保存成功</h3>')
-                    setTimeout(function () {
-                        $("#myModal").modal('hide');
-                    }, 1000)
-                }
-            }
+<div class="modal-footer">
+    <div>
+        @Html.ActionLink("返回列表", "PlattformInventory_form")
+    </div>
+</div>
+
+    <script>
+        $('#save-btn').click(function () {
+             $("#product-form").ajaxSubmit({
+                url: '/PlattformInventory/EditProductInfo',
+                type: 'post',
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $('#modal-body').html('<h3>保存成功</h3>'),
+                         
+                        setTimeout(function () {
+                            $("#myModal").modal('hide');
+                            $.ajax({
+                                url: "/PlattformInventory/ProductListPartial",
+                                data: {
+                                    plattformId: $("#PlattformId").val(),
+                                    page: 1,
+                                },
+                                success: function (data) {
+                                    $("#product_list_content").html(data);
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
+                                }
+
+                            });
+                        }, 1000)
+                    } else {
+                        $('#modal-body').html('<h3>保存失败</h3>')
+                    }
+                }   
+            })
+            return false;
         })
-        return false;
-    })
-</script>
-
-
-
-    
-    
+    </script>    
 
 
