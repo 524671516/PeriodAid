@@ -307,6 +307,8 @@ namespace PeriodAid.Controllers
             }
         }
 
+
+
         public ActionResult StorageShow(int Storage,DateTime? select_date) {
             var storage = from m in _db.SS_Storage
                           select m;
