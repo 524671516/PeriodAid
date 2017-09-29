@@ -35,6 +35,12 @@
                             <span class="tm-select-title" id="form-date-select" style="font-size:14px">选择日期</span>
                             <input type="text" id="file-date" name="file-date" style="height: 48px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
                             <span class="caret"></span>
+                            <span id="date-show" >
+                                @foreach (var item in ViewBag.DataDate)
+                                {
+                                    <span href="#" data-date="@item">@item.ToString("yyyy年MM月dd日")</span>
+                                }
+                            </span>
                         </a>
                     </li>
                 </ul>
@@ -78,7 +84,8 @@
 
     <script>
     // 初始化数据
-    $(function () {
+        $(function () {
+            //$(".date-show").hide();
         //日期格式改变
         $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -86,16 +93,6 @@
         //月份格式汉化
         $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
         $("#file-date").datepicker();
-        $.ajax({
-
-                url: "/PlattformInventory/PlattformInventory_form/",
-                data: {
-
-                },
-                success: function (data) {
-
-                }
-        })
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
@@ -122,12 +119,14 @@
                 })
             }
         })
+        $("#file-date").on("click", function () {
+            $("#date-select").attr("data-did");
+            console.log($("#date-show span").attr("data-date"));
+            $("#ui-datepicker-div .ui-datepicker-calendar a").attr("style", "color:red");
+        })
         // 选择日期
         $('#file-date').change(function () {
-            
-            console.log($(this).val())
-            $('#form-date-select').text($(this).val())
-            console.log($('#form-date-select').text())
+            $('#form-date-select').text($(this).val());
             $.ajax({
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
@@ -136,8 +135,7 @@
                     select_date: $('#form-date-select').text()
                 },
                 success: function (data) {
-                    console.log(data)
-                    $('#storage_show').html(data)
+                    $('#storage_show').html(data);
                 }
             })
         })
