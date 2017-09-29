@@ -12,7 +12,7 @@
         <!-- Tab panes -->
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active">
-                <a class="btn btn-default" href="javascript:;" id="download_calc">下载完整预估表</a>
+                <a class="btn btn-primary float-right" href="javascript:;" id="download_calc">下载完整预估表</a>
                 <br />
                 <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
                     <table class="table table-bordered table-hover">
@@ -60,7 +60,7 @@
                 $("form").submit();
             });
         });
-        function calc_value(obj) {
+        function calc_value(obj) {           
             var sales = $(obj).parent().siblings(".calc_sales").html();
             var storage = $(obj).parent().siblings(".calc_storage").text();
             var rate = $(obj).val();
