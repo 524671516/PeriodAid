@@ -4,13 +4,12 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>商品详情</h2>
 </div>
-<div class="modal-body">
-    @using (Html.BeginForm())
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("EditProductInfo","PlattformInventory", FormMethod.Post, new { @id="product-form"}))
     {
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
-            <h4>SS_Product</h4>
-            <hr />
+            <h4 style="display:none">SS_Product</h4>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
             @Html.HiddenFor(model => model.Plattform_Id)
@@ -61,7 +60,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 @Html.LabelFor(model => model.Plattform_Id, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
 
@@ -69,7 +68,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="保存" class="btn btn-default" />
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
         </div>
@@ -81,5 +80,24 @@
         @Html.ActionLink("返回列表", "PlattformInventory_form")
     </div>
 </div>
+
+    <script>
+        $('#save-btn').click(function () {
+            console.log(111)
+            $("#product-form").ajaxSubmit({
+                url: '/PlattformInventory/EditProductInfo',
+                type: 'post',
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $('#modal-body').html('<h3>保存成功</h3>')
+                        setTimeout(function () {
+                            $("#myModal").modal('hide');
+                        },1000)                        
+                    }
+                }   
+            })
+            return false;
+        })
+    </script>    
 
 
