@@ -15,7 +15,7 @@
     <div id="nav-table-show">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs nav-pills" role="tablist" style="font-size:14px">
-            <li role="presentation" class="form-select-li active all-form-select"><a href="#" id="all-storage" role="tab" data-toggle="tab" class="form-select-a">所有仓库</a></li>
+            <li role="presentation" class="form-select-li active all-form-select"><a href="#"  role="tab" data-toggle="tab" data-ssid="0" class="form-select-a">所有仓库</a></li>
             @foreach (var item in ViewBag.storage)
             {
                 <li role="presentation" class="form-select-li" style="margin-top:1px"><a href="#" role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a" style="margin-right:0">@item.Storage_Name</a></li>
@@ -128,57 +128,38 @@
                 });
             }
         });
-        $("#all-storage").on("click", function () {
-            $.ajax({
-                url: '/PlattformInventory/StorageShow/',
-                type: 'post',
-                data: {
-                    plattformId: 1,
-                    select_date: $('#form-date-select').text()
-                },
-                success: function (data) {
-                    //console.log(data)
-                    $('#storage_show').html(data)
-                    $('#file-loading').hide()
-                }
-            })
-        })
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
-            if (that.hasClass('all-form-select')) {
-            } else {
-                $('#file-loading').show()
-                $.ajax({
-                    url: "/PlattformInventory/StorageShow/",
-                    data: {
-                        plattformId:1,
-                        Storage: that.children('.form-select-a').attr('data-ssid'),
-                        select_date: $('#form-date-select').text()
-                    },
-                    success: function (data) {
-                        that.children('.form-select-a').addClass("active");
-                        $("#storage_show").html(data);
-                        $('#file-loading').hide()
-                    }
-                })
-            }
+            $('#file-loading').show()
+            $.ajax({
+                url: "/PlattformInventory/StorageShow/",
+                data: {
+                    plattformId: 1,
+                    Storage: that.children('.form-select-a').attr('data-ssid'),
+                    select_date: $('#form-date-select').text()
+                },
+                success: function (data) {
+                    that.children('.form-select-a').addClass("active");
+                    $("#storage_show").html(data);
+                    $('#file-loading').hide()
+                }
+            })
         })
         // 选择日期
         $('#file-date').change(function () {
             $('#file-loading').show()
             console.log($(this).val())
             $('#form-date-select').text($(this).val())
-            console.log($('#form-date-select').text())
             $.ajax({
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
                 data: {
-                    plattformId:1,
+                    plattformId: 1,
+                    Storage: $("#nav-table-show ul li").children('.form-select-li.active a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },
                 success: function (data) {
-                    console.log(data)
                     $('#storage_show').html(data)
                     $('#file-loading').hide()
                 }
