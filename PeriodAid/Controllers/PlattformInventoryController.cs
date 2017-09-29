@@ -356,7 +356,7 @@ namespace PeriodAid.Controllers
             if (query != null)
             {
                 var SearchResult = (from m in _db.SS_Product
-                                   where m.Item_Name.Contains(query)
+                                   where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
                                    orderby m.Id descending
                                    select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
