@@ -24,4 +24,11 @@ namespace PeriodAid.Models
 
         public int Storage_Count { get; set; }
     }
+
+    public class ProductStatisticViewModel
+    {
+        public DateTime salesdate { get; set; }
+
+        public int salescount { get; set; }
+    }
 }

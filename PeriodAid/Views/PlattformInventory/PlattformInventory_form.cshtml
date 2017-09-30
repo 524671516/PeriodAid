@@ -87,7 +87,7 @@
 
     <script>
     // 初始化数据
-        $(function () {           
+        $(function () {
         //日期格式改变
         $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -107,7 +107,7 @@
                     },
                     success: function (data) {for (var i = 0; i < data.length; i++) {
                         var record = data[i].record_date.ToString("yyyy-MM-dd");
-                        //console.log(record)  
+                        //console.log(record)
                     }
                         $('#form-date-select').text(record)
                         $.ajax({
@@ -123,7 +123,7 @@
                                 $('#file-loading').hide()
                             }
                         })
-                        
+
                     },
                     error: function () {
                         ErrorAlert("请求数据失败。");
@@ -133,12 +133,39 @@
         });
 
         $("#form-date-show").on("click", function () {
-            //$(".ui-state-default").attr("style", "color:red;");
             for (i = 0; i < $(".date_show").length; i++) {
-                var arry =@Html.Raw(Json.Encode(ViewBag.DataDate))
-                console.log(arry[i].ToString('yyyy-MM-dd'));
-                console.log($("#form-date-select").text());
+                var arry =@Html.Raw(Json.Encode(ViewBag.DataDate));
+                var arrydata = arry[i].ToString('yyyy-MM-dd');
+                var year = arrydata.substring(0, 4);
+                var show_year = parseInt($(".ui-state-default").parent().attr("data-year"));
+                var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
+                var show_day = parseInt($(".ui-state-default").text())
+                if (show_month < 10) {
+                    console.log(arrydata);
+                    var _first = parseInt(arrydata.indexOf('-')) + 2;
+                    var _end = parseInt(arrydata.indexOf('-')) + 3;
+                    var month = arrydata.substring(_first, _end);
+                }
+                else {
+                    var _first = parseInt(arrydata.indexOf('-')) + 1;
+                    var _end = parseInt(arrydata.indexOf('-')) + 3;
+                    var month = arrydata.substring(_first, _end);
+                }
+                if (year == show_year) {
+                    if (month == show_month) {
+                        var day = arrydata.substring(8, 10);
+                        if (day >= 10) {
+                            day = arrydata.substring(8, 10);
+                            $(".ui-state-default").parent("[data-day=" + day + "]").children().attr("style", "background:#f7b03c");
+                        }
+                        else {
+                            day = arrydata.substring(9, 10);
+                            $(".ui-state-default").parent("[data-day=" + day + "]").children().attr("style", "background:#f7b03c");
+                        }
+                    }
+                }
             }
+
 
         })
 

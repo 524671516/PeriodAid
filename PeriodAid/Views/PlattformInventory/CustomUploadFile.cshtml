@@ -88,13 +88,13 @@
                     });
                 }
             });
-               $("#file-form-sub").click(function () {              
-                var dataVal = ($('#file-date').val())
+            $("#file-form-sub").click(function () {              
+                var dataVal = $('#file-date').val()
                 var fileVal=$('#file-name').val()
                 if (dataVal && fileVal != '') {
                     $('#file-loading').show()
                     $('#file-form-sub').attr('disabled', 'disabled')
-                    $("form").ajaxSubmit({
+                    $("#up-file-form").ajaxSubmit({
                         url: "/PlattformInventory/UploadFile",
                         type: "post",
                         success: function (msg) {
