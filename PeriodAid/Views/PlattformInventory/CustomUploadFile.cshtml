@@ -71,7 +71,6 @@
                             month: e.currentyear + "-" + e.currentmonth
                         },
                         success: function (data) {
-                            console.log(data)
                             var dataDate = $('.tm-calendar-monthofdate')
                             for (var i = 0; i < dataDate.length; i++) {
                                 var nowDate = dataDate.eq(i).attr('date-day');
