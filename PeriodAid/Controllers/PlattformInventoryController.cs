@@ -88,8 +88,11 @@ namespace PeriodAid.Controllers
                 AliOSSUtilities util = new AliOSSUtilities();
                 util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
                 var date_time = form["file-date"].ToString();
-                Read_InsertFile(fileName, Convert.ToDateTime(date_time));
-                return Json(new { result = "SUCCESS" });
+                var result = Read_InsertFile(fileName, Convert.ToDateTime(date_time));
+                if (result)
+                    return Json(new { result = "SUCCESS" });
+                else
+                    return Json(new { result = "FAIL" });
             }
             else
             {
@@ -136,34 +139,47 @@ namespace PeriodAid.Controllers
                         break;
                     }
                     var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
-                    if(product != null)
+                    if(product == null)
                     {
-                        foreach(var inventory in storage_list)
+                        string p_code;
+                        string p_name;
+                        product = new SS_Product()
                         {
-                            var exist_item = _db.SS_SalesRecord.SingleOrDefault(m => m.SalesRecord_Date == date && m.Product_Id == product.Id && m.Storage_Id == inventory.Id);
-                            if (exist_item != null)
+                            System_Code = csv_reader.TryGetField<string>("商品编号", out p_code) ? p_code : "NaN",
+                            Item_Name = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(0,p_name.Length>15?15:p_name.Length) : "NaN",
+                            Carton_Spec=0,
+                            Inventory_Date = date,
+                            Item_Code = "",
+                            Plattform_Id = 1,
+                            Purchase_Price = 0
+                        };
+                        _db.SS_Product.Add(product);
+                    }
+                    foreach (var inventory in storage_list)
+                    {
+                        var exist_item = _db.SS_SalesRecord.SingleOrDefault(m => m.SalesRecord_Date == date && m.Product_Id == product.Id && m.Storage_Id == inventory.Id);
+                        if (exist_item != null)
+                        {
+                            exist_item.Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0;
+                            exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;
+                            _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        else
+                        {
+                            SS_SalesRecord record = new SS_SalesRecord()
                             {
-                                exist_item.Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0;
-                                exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;
-                                _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
-                            }
-                            else
-                            {
-                                SS_SalesRecord record = new SS_SalesRecord()
-                                {
-                                    Product_Id = product.Id,
-                                    SalesRecord_Date = date,
-                                    Storage_Id = inventory.Id,
-                                    Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0,
-                                    Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0
-                                };
-                                _db.SS_SalesRecord.Add(record);
-                            }
-                            if (date > product.Inventory_Date)
-                            {
-                                product.Inventory_Date = date;
-                                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                            }
+                                SS_Product = product,
+                                SalesRecord_Date = date,
+                                Storage_Id = inventory.Id,
+                                Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0,
+                                Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0
+                            };
+                            _db.SS_SalesRecord.Add(record);
+                        }
+                        if (date > product.Inventory_Date)
+                        {
+                            product.Inventory_Date = date;
+                            _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
                     row_count++;
@@ -417,12 +433,29 @@ namespace PeriodAid.Controllers
         {
             DateTime _start = Convert.ToDateTime(start);
             DateTime _end = Convert.ToDateTime(end);
-            var data = from m in _db.SS_SalesRecord
+            var info_data = from m in _db.SS_SalesRecord
                        where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
                        && m.Product_Id == productId
                        group m by m.SalesRecord_Date into g
                        orderby g.Key
-                       select new { salesdate = g.Key, salescount = g.Sum(m=>m.Sales_Count) };
+                       select new ProductStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m=>m.Sales_Count) };
+            DateTime current_date = _start;
+            var data = new List<ProductStatisticViewModel>();
+            while (current_date <= _end)
+            {
+                int _salescount = 0;
+                var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+                if (item != null)
+                {
+                    _salescount = item.salescount;
+                }
+                data.Add(new ProductStatisticViewModel()
+                {
+                    salescount = _salescount,
+                    salesdate = current_date
+                });
+                current_date = current_date.AddDays(1);
+            }
             return Json(new { result = "SUCCESS", data = data });
         }
     }
