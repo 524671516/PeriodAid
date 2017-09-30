@@ -133,13 +133,13 @@
         });
 
         $("#form-date-show").on("click", function () {
-            $(".ui-state-default").attr("style", "color:red;");
+            //$(".ui-state-default").attr("style", "color:red;");
             for (i = 0; i < $(".date_show").length; i++) {
-                
+                var arry =@Html.Raw(Json.Encode(ViewBag.DataDate))
+                console.log(arry[i].ToString('yyyy-MM-dd'));
+                console.log($("#form-date-select").text());
             }
-            var arry =@Html.Raw(Json.Encode(ViewBag.DataDate))
-                console.log(arry.substr(0,2));
-            console.log($("#form-date-select").text());
+
         })
 
         // tab 切换
