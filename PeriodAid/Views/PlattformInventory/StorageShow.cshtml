@@ -1,31 +1,32 @@
-﻿<div class="center-block" id="my-form-content">
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>产品编号</th>
-                        <th>商品编号</th>
-                        <th>商品名称</th>
-                        <th>销售数据</th>
-                        <th>仓库库存</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in ViewBag.SalesRecord)
-                    {
+﻿@model IEnumerable<PeriodAid.Models.Product_SummaryViewModel>
+    <div class="center-block" id="my-form-content">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active">
+                <table class="table table-bordered table-hover">
+                    <thead>
                         <tr>
-                            <th scope="row">@item.SS_Product.System_Code</th>
-                            <td></td>
-                            <td><a href="#">@item.SS_Product.Item_Name</a></td>
-                            <td>@item.Sales_Count</td>
-                            <td>@item.Storage_Count</td>
+                            <th>产品编号</th>
+                            <th>商品编号</th>
+                            <th>商品名称</th>
+                            <th>销售数据</th>
+                            <th>仓库库存</th>
                         </tr>
-                    }
-                </tbody>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <th scope="row">@item.Product.System_Code</th>
+                                <td></td>
+                                <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                <td>@item.Sales_Sum</td>
+                                <td>@item.Inventory_Sum</td>
+                            </tr>
+                        }
+                    </tbody>
 
-            </table>
+                </table>
+            </div>
         </div>
     </div>
-</div>

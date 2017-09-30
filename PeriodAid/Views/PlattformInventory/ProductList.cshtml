@@ -3,8 +3,16 @@
     ViewBag.Title = "ProductList";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-
-<h2>ProductList</h2>
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>产品名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="storage-product-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<h2>产品列表</h2>
 @Html.Hidden("PlattformId", (int)ViewBag.PlattformId)
 <div id="product_list_content"></div>
 
@@ -15,13 +23,27 @@
                 url: "/PlattformInventory/ProductListPartial",
                 data: {
                     plattformId: $("#PlattformId").val(),
-                    page: 1
+                    page: 1,
                 },
                 success: function (data) {
                     $("#product_list_content").html(data);
                 }
 
             });
+        });
+        //搜索
+        $("#storage-product-search").click(function () {
+            $.ajax({
+                url: "/PlattformInventory/ProductListPartial",
+                data: {
+                    plattformId: $("#PlattformId").val(),
+                    page: 1,
+                    query: $("#storage-product-query").val()
+                },
+                success: function (data) {
+                    $("#product_list_content").html(data);
+                }
+            })
         });
     </script>}
 

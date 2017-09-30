@@ -15,7 +15,7 @@
     <div id="nav-table-show">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs nav-pills" role="tablist" style="font-size:14px">
-            <li role="presentation" class="form-select-li active all-form-select"><a href="#" role="tab" data-toggle="tab" class="form-select-a">所有仓库</a></li>
+            <li role="presentation" class="form-select-li active all-form-select"><a href="#"  role="tab" data-toggle="tab" data-ssid="0" class="form-select-a">所有仓库</a></li>
             @foreach (var item in ViewBag.storage)
             {
                 <li role="presentation" class="form-select-li" style="margin-top:1px"><a href="#" role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a" style="margin-right:0">@item.Storage_Name</a></li>
@@ -31,10 +31,10 @@
             <div class="tm-view-control">
                 <ul class="nav nav-pills" style="float:right">
                     <li class="tm-view-control-sort dropdown" style="position:relative">
-                        <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer">
-                            <span class="tm-select-title" id="form-date-select" style="font-size:14px">选择日期</span>
+                        <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
+                            <span class="tm-select-title active" id="form-date-select" style="color:white;font-size:14px;">选择日期</span>
                             <input type="text" id="file-date" name="file-date" style="height: 48px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
-                            <span class="caret"></span>
+                            <span class="caret color-white"></span>
                         </a>
                     </li>
                 </ul>
@@ -56,7 +56,7 @@
                                 <th>仓库库存</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        @*<tbody>
                             @foreach (var item in Model)
                             {
                                 <tr>
@@ -67,10 +67,16 @@
                                     <td>@item.Inventory_Sum</td>
                                 </tr>
                             }
-                        </tbody>
+                        </tbody>*@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="tm-view-content-container  tm-view-container" id="file-loading" style="top:282px">
+        <div class="tm-veiw-loading text-center" id="tm-view-loading">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
+            <span class="sr-only">正在加载...</span>
         </div>
     </div>
 </div>
@@ -78,7 +84,7 @@
 
     <script>
     // 初始化数据
-    $(function () {
+        $(function () {           
         //日期格式改变
         $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -86,62 +92,92 @@
         //月份格式汉化
         $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
         $("#file-date").datepicker();
-        $.ajax({
-
-                url: "/PlattformInventory/PlattformInventory_form/",
-                data: {
-
-                },
-                success: function (data) {
-
-                }
-        })
+        TmDatePicker.Init({
+            container: "#tm-calendar-view-wrap",
+            onpagechanged: function (e) {
+                $.ajax({
+                    url: "/PlattformInventory/CustomUploadFilePartial",
+                    type: "post",
+                    data: {
+                        plattformId: 1,
+                        month: e.currentyear + "-" + e.currentmonth
+                    },
+                    success: function (data) {for (var i = 0; i < data.length; i++) {
+                        var record = data[i].record_date.ToString("yyyy-MM-dd");
+                        //console.log(record)  
+                    }
+                        $('#form-date-select').text(record)
+                        $.ajax({
+                            url: '/PlattformInventory/StorageShow/',
+                            type: 'post',
+                            data: {
+                                plattformId:1,
+                                select_date: $('#form-date-select').text()
+                            },
+                            success: function (data) {
+                                //console.log(data)
+                                $('#storage_show').html(data)
+                                $('#file-loading').hide()
+                            }
+                        })
+                        
+                    },
+                    error: function () {
+                        ErrorAlert("请求数据失败。");
+                    }
+                });
+            }
+        });
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
-            if (that.hasClass('all-form-select')) {
-                $.ajax({
-                    url: "/PlattformInventory/PlattformInventory_form/",
-                    data: {
-
-                    },
-                    success: function (data) {
-                        window.location.href = '/PlattformInventory/PlattformInventory_form/'
-                    }
-                })
-            } else {
-                $.ajax({
-                    url: "/PlattformInventory/StorageShow/",
-                    data: {
-                        Storage: that.children('.form-select-a').attr('data-ssid')
-                    },
-                    success: function (data) {
-                        that.children('.form-select-a').addClass("active");
-                        $("#storage_show").html(data);
-                    }
-                })
-            }
+            $('#file-loading').show()
+            $.ajax({
+                url: "/PlattformInventory/StorageShow/",
+                data: {
+                    plattformId: 1,
+                    Storage: that.children('.form-select-a').attr('data-ssid'),
+                    select_date: $('#form-date-select').text()
+                },
+                success: function (data) {
+                    that.children('.form-select-a').addClass("active");
+                    $("#storage_show").html(data);
+                    $('#file-loading').hide()
+                }
+            })
         })
         // 选择日期
         $('#file-date').change(function () {
-            
+            $('#file-loading').show()
             console.log($(this).val())
             $('#form-date-select').text($(this).val())
-            console.log($('#form-date-select').text())
             $.ajax({
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
                 data: {
-                    Storage:1,
+                    plattformId: 1,
+                    Storage: $("#nav-table-show ul li").children('.form-select-li.active a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },
                 success: function (data) {
-                    console.log(data)
                     $('#storage_show').html(data)
+                    $('#file-loading').hide()
                 }
             })
         })
     })
-
+    // 重置时间显示格式
+    String.prototype.ToString = function (format) {
+        var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
+        format = format.replace("yyyy", dateTime.getFullYear());
+        format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
+        format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
+        format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
+        format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
+        format = format.replace("mm", dateTime.getMinutes());
+        format = format.replace("ss", dateTime.getSeconds());
+        format = format.replace("ms", dateTime.getMilliseconds())
+        return format;
+    };
     </script>
 }

@@ -49,7 +49,7 @@
 @section scripts
 {   
     <script>
-        // 初始化日历
+        
         $(function () {
             //日期格式改变  
             $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
@@ -58,6 +58,7 @@
             //月份格式汉化  
             $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
             $("#file-date").datepicker();
+            // 初始化日历
             TmDatePicker.Init({
                 container: "#tm-calendar-view-wrap",
                 onpagechanged: function (e) {
@@ -70,7 +71,7 @@
                             month: e.currentyear + "-" + e.currentmonth
                         },
                         success: function (data) {
-                            //console.log(data)
+                            console.log(data)
                             var dataDate = $('.tm-calendar-monthofdate')
                             for (var i = 0; i < dataDate.length; i++) {
                                 var nowDate = dataDate.eq(i).attr('date-day');

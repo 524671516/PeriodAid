@@ -1,20 +1,21 @@
 ﻿
 @model PagedList.IPagedList<PeriodAid.Models.SS_Product>
 @using PagedList.Mvc;
-
-<table class="table">
-    <tr>
-        <th>
-            系统编码
-        </th>
-        <th>产品编码
-        </th>
-        <th>产品名称</th>
-        <th>箱规</th>
-        <th>结算金额</th>
-        <th>库存日期</th>
-        <th></th>
-    </tr>
+<div>
+    <table class="table">
+        <tr>
+            <th>
+                系统编码
+            </th>
+            <th>
+                产品编码
+            </th>
+            <th>产品名称</th>
+            <th>箱规</th>
+            <th>结算金额</th>
+            <th>库存日期</th>
+            <th></th>
+        </tr>
 
 @foreach (var item in Model) {
     <tr>
@@ -44,8 +45,17 @@
 }
     
 
-</table>
-<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))</div>
+    </table>
+    <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))</div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+
+        </div>
+    </div>
+</div>
 <script>
     //页码
     $(".pagination > li > a").click(function () {
@@ -58,8 +68,23 @@
             },
             success: function (data) {
                 $("#product_list_content").html(data);
+
             }
         });
         return false;
     });
-    </script>
+    $('.select-a').click(function () {
+        console.log($(this).attr('data-val'))
+        $.ajax({
+            url: '/PlattformInventory/EditProductInfo',
+            data: {
+                productId: $(this).attr('data-val')
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
+    })
+
+</script>

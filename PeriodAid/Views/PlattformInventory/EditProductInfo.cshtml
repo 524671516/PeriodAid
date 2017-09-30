@@ -1,86 +1,118 @@
 ﻿@model PeriodAid.Models.SS_Product
 
-@{
-    ViewBag.Title = "EditProductInfo";
-    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
-}
-
-<h2>EditProductInfo</h2>
-
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>SS_Product</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-        @Html.HiddenFor(model => model.Plattform_Id)
-
-        <div class="form-group">
-            <label class="control-label col-md-2">系统编码</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">商品编码</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">产品名称</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">箱规</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Carton_Spec, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Carton_Spec, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">结算价格</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Purchase_Price, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Purchase_Price, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">库存日期</label>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Inventory_Date, new { htmlAttributes = new { @class = "form-control disabled" } })
-                @Html.ValidationMessageFor(model => model.Inventory_Date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Plattform_Id, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>修改产品信息</h2>
 </div>
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("EditProductInfo","PlattformInventory", FormMethod.Post, new { @id="product-form"}))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <h4 style="display:none">SS_Product</h4>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.Plattform_Id)
+            <div class="form-group">
+                <label class="control-label col-md-2">系统编码</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">商品编码</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">产品名称</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">箱规</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Carton_Spec, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Carton_Spec, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">结算价格</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Purchase_Price, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Purchase_Price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">库存日期</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Inventory_Date, new { htmlAttributes = new { @class = "form-control disabled" } })
+                    @Html.ValidationMessageFor(model => model.Inventory_Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="display:none">
+                @Html.LabelFor(model => model.Plattform_Id, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-10 col-md-10">
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal-footer">
+    <div>
+        @Html.ActionLink("返回列表", "PlattformInventory_form")
+    </div>
+</div>
+
+    <script>
+        $('#save-btn').click(function () {
+             $("#product-form").ajaxSubmit({
+                url: '/PlattformInventory/EditProductInfo',
+                type: 'post',
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $('#modal-body').html('<h3>保存成功</h3>'),
+                         
+                        setTimeout(function () {
+                            $("#myModal").modal('hide');
+                            $.ajax({
+                                url: "/PlattformInventory/ProductListPartial",
+                                data: {
+                                    plattformId: $("#PlattformId").val(),
+                                    page: 1,
+                                },
+                                success: function (data) {
+                                    $("#product_list_content").html(data);
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
+                                }
+
+                            });
+                        }, 1000)
+                    } else {
+                        $('#modal-body').html('<h3>保存失败</h3>')
+                    }
+                }   
+            })
+            return false;
+        })
+    </script>    
+
+

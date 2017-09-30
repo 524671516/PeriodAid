@@ -307,29 +307,56 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult StorageShow(int Storage,DateTime? select_date) {
+
+
+        public ActionResult StorageShow(int plattformId,int? Storage,DateTime select_date) {
             var storage = from m in _db.SS_Storage
                           select m;
             ViewBag.storage = storage;
             var DataDate = (from m in _db.SS_SalesRecord
-
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date == null)
+            if (Storage.ToString() != "")
             {
-                var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.Storage_Id == Storage
-                                  select m;
-                ViewBag.SalesRecord = SalesRecord;
+                if (Storage.ToString() == "0")
+                {
+                    var SalesRecord = from m in _db.SS_SalesRecord
+                                      where m.SalesRecord_Date == select_date
+                                      group m by m.SS_Product into g
+                                      select new Product_SummaryViewModel
+                                      {
+                                          Product = g.Key,
+                                          Sales_Sum = g.Sum(m => m.Sales_Count),
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      };
+                    return PartialView(SalesRecord);
+                }
+                else {
+                    var SalesRecord = from m in _db.SS_SalesRecord
+                                      where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                      group m by m.SS_Product into g
+                                      select new Product_SummaryViewModel
+                                      {
+                                          Product = g.Key,
+                                          Sales_Sum = g.Sum(m => m.Sales_Count),
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      };
+                    return PartialView(SalesRecord);
+                }
             }
             else {
                 var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SalesRecord_Date==select_date
-                                  select m;
-                ViewBag.SalesRecord = SalesRecord;
+                                  where m.SalesRecord_Date == select_date
+                                  group m by m.SS_Product into g
+                                  select new Product_SummaryViewModel
+                                  {
+                                      Product = g.Key,
+                                      Sales_Sum = g.Sum(m => m.Sales_Count),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                  };
+                return PartialView(SalesRecord);
 
             }
-            return PartialView();
         }
 
         public ActionResult ProductList(int plattformId)
@@ -338,14 +365,24 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult ProductListPartial(int plattformId, int? page)
+        public ActionResult ProductListPartial(int plattformId, int? page,string query)
         {
             int _page = page ?? 1;
-            var productlist = (from m in _db.SS_Product
-                               where m.Plattform_Id == plattformId
-                               orderby m.Id
-                               select m).ToPagedList(_page, 15);
-            return PartialView(productlist);
+            if (query != null)
+            {
+                var SearchResult = (from m in _db.SS_Product
+                                   where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
+                                   orderby m.Id descending
+                                   select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
+            }
+            else {
+                var productlist = (from m in _db.SS_Product
+                                   where m.Plattform_Id == plattformId
+                                   orderby m.Id
+                                   select m).ToPagedList(_page, 15);
+                return PartialView(productlist);
+            }
         }
 
         public ActionResult EditProductInfo(int productId)
