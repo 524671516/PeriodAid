@@ -25,6 +25,9 @@
     <div style="padding:20px 0;">
 
         <div class="text-center h2">每日数据</div>
+        @foreach (var item in ViewBag.DataDate) {
+            <h5 class="date_show" hidden>@item</h5>
+        }
     </div>
     <div class="form-view-header clear-float">
         <div>
@@ -128,6 +131,17 @@
                 });
             }
         });
+
+        $("#form-date-show").on("click", function () {
+            //$(".ui-state-default").attr("style", "color:red;");
+            for (i = 0; i < $(".date_show").length; i++) {
+                var arry =@Html.Raw(Json.Encode(ViewBag.DataDate))
+                console.log(arry[i].ToString('yyyy-MM-dd'));
+                console.log($("#form-date-select").text());
+            }
+
+        })
+
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
@@ -149,7 +163,6 @@
         // 选择日期
         $('#file-date').change(function () {
             $('#file-loading').show()
-            console.log($(this).val())
             $('#form-date-select').text($(this).val())
             $.ajax({
                 url: '/PlattformInventory/StorageShow/',

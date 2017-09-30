@@ -38,7 +38,8 @@
             @Html.DisplayFor(modelItem => item.Inventory_Date)
         </td>
         <td>
-            @Html.ActionLink("编辑", "EditProductInfo", new { productId = item.Id }) &nbsp;|&nbsp; 
+            <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp; 
+            @*<a class="chart-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">数据统计</a>*@
             @Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })
         </td>
     </tr>
@@ -52,7 +53,6 @@
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="modal-content">
-
         </div>
     </div>
 </div>
@@ -60,7 +60,7 @@
     //页码
     $(".pagination > li > a").click(function () {
         var l = $(this).attr("href");
-        console.log(l)
+
         $.ajax({
             url: l,
             data:{
@@ -74,17 +74,33 @@
         return false;
     });
     $('.select-a').click(function () {
-        console.log($(this).attr('data-val'))
+        //console.log($(this).attr('data-val'))
         $.ajax({
             url: '/PlattformInventory/EditProductInfo',
             data: {
                 productId: $(this).attr('data-val')
             },
             success: function (data) {
+                console.log(data)
                 $('#modal-content').html(data)
                 $("#myModal").modal('show')
             }
         })
     })
 
+    //$('.chart-a').click(function () {
+    //    console.log($(this).attr('data-val'))
+    //    $.ajax({
+    //        url: '/PlattformInventory/ViewProductStatistic',
+    //        type:'get',
+    //        data: {
+    //            productId: $(this).attr('data-val'),
+    //        },
+    //        success: function (data) {
+    //            //console.log(data)
+    //            $('#modal-content').html(data)
+    //            $("#myModal").modal('show')
+    //        }
+    //    })
+    //})
 </script>
