@@ -17,33 +17,33 @@
             <th></th>
         </tr>
 
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.System_Code)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Item_Code)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Item_Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Carton_Spec)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Purchase_Price)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Inventory_Date)
-                </td>
-                <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                </td>
-            </tr>
-        }
-
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.System_Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Item_Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Item_Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Carton_Spec)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Purchase_Price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inventory_Date)
+        </td>
+        <td>
+            @Html.ActionLink("编辑", "EditProductInfo", new { productId = item.Id }) &nbsp;|&nbsp; 
+            @Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })
+        </td>
+    </tr>
+}
+    
 
     </table>
     <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))</div>
