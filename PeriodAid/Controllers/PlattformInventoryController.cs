@@ -88,8 +88,11 @@ namespace PeriodAid.Controllers
                 AliOSSUtilities util = new AliOSSUtilities();
                 util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
                 var date_time = form["file-date"].ToString();
-                Read_InsertFile(fileName, Convert.ToDateTime(date_time));
-                return Json(new { result = "SUCCESS" });
+                var result = Read_InsertFile(fileName, Convert.ToDateTime(date_time));
+                if (result)
+                    return Json(new { result = "SUCCESS" });
+                else
+                    return Json(new { result = "FAIL" });
             }
             else
             {
@@ -143,7 +146,12 @@ namespace PeriodAid.Controllers
                         product = new SS_Product()
                         {
                             System_Code = csv_reader.TryGetField<string>("商品编号", out p_code) ? p_code : "NaN",
-                            Item_Name = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(0,15) : "NaN",
+                            Item_Name = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(0,p_name.Length>15?15:p_name.Length) : "NaN",
+                            Carton_Spec=0,
+                            Inventory_Date = date,
+                            Item_Code = "",
+                            Plattform_Id = 1,
+                            Purchase_Price = 0
                         };
                         _db.SS_Product.Add(product);
                     }
