@@ -131,14 +131,6 @@
                 });
             }
         });
-
-        $(".ui-corner-all").on("click", function () {
-            data_date();
-        })
-        $("#form-date-show").on("click", function () {
-            data_date();
-        })
-
         function data_date() {
             for (i = 0; i < $(".date_show").length; i++) {
                 var arry =@Html.Raw(Json.Encode(ViewBag.DataDate));
@@ -148,6 +140,7 @@
                 var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
                 var show_day = parseInt($(".ui-state-default").text())
                 if (show_month < 10) {
+                    console.log(arrydata);
                     var _first = parseInt(arrydata.indexOf('-')) + 2;
                     var _end = parseInt(arrydata.indexOf('-')) + 3;
                     var month = arrydata.substring(_first, _end);
@@ -172,6 +165,15 @@
                 }
             }
         }
+
+        $("#form-date-show").on("click", function() {
+            data_date()
+
+        })
+        $('.ui-corner-all').on('click',function(){
+            data_date()
+        })
+
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);

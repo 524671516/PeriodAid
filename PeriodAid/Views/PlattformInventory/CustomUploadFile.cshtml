@@ -88,6 +88,14 @@
                     });
                 }
             });
+            // 显示文件名
+            $('#file-name').change(function () {
+                var file = $("#file-name").val();
+                var fileName = file.lastIndexOf('\\')
+                var strName = file.substring(fileName + 1)
+                $('#upload').html(strName)
+            })
+           
             $("#file-form-sub").click(function () {              
                 var dataVal = $('#file-date').val()
                 var fileVal=$('#file-name').val()
@@ -120,9 +128,10 @@
                                         $("#file-loading").hide();
                                         $('#file-date').val('')
                                         $('#file-form-sub').removeAttr('disabled')
+                                        alert('上传成功')
                                     },
                                     error: function () {
-                                        ErrorAlert("请求数据失败。");
+                                        errorAlert("请求数据失败。");
                                         $("#file-loading").hide();
                                         $('#file-form-sub').removeAttr('disabled')
                                         $('#file-date').val('')
@@ -130,7 +139,7 @@
                                 });
                             }
                             else {
-                                alert("上传失败");
+                                errorAlert("上传失败");
                                 $("#file-loading").hide();
                                 $('#file-date').val('')
                                 $('#file-form-sub').removeAttr('disabled')
@@ -138,7 +147,7 @@
                         }
                     });
                 } else {
-                    alert1('请选择日期或上传文件')
+                    errorAlert('请选择日期或上传文件')
                 }
                 return false;
             });
