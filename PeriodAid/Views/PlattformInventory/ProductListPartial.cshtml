@@ -38,8 +38,7 @@
             @Html.DisplayFor(modelItem => item.Inventory_Date)
         </td>
         <td>
-            <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
- &nbsp;|&nbsp; 
+            <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp; 
             @Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })
         </td>
     </tr>

@@ -4,9 +4,9 @@
 }
 
 <input type="hidden" id="productId" name="plattformId" value="@ViewBag.ProductId" />
-<input type="text" id="start_time" name="start_time" />
-<input type="text" id="end_time" name="end_time" />
-<input type="button" id="statistic_btn" name="statistic_btn" value="查询"/>
+<input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择日期"/>
+<input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择日期" />
+<input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px"/>
 
 <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
 
@@ -14,11 +14,19 @@
     <script src="~/Scripts/highcharts.js"></script>
     <script type="text/javascript">
         $(function () {
+            var fileDate = $('.file-data')
+            for (var i = 0; i < fileDate.length; i++) {
+                fileDate.eq(i).datepicker({ dateFormat: "yy-mm-dd" });
+                //星期格式汉化  
+                fileDate.eq(i).datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+                //月份格式汉化  
+                fileDate.eq(i).datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+                fileDate.eq(i).datepicker();
+            }
             var current_date = showdate(-1);
             var start_date = showdate(-31);
             $("#end_time").val(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" + current_date.getDate());
             $("#start_time").val(start_date.getFullYear() + "-" + (start_date.getMonth() + 1) + "-" + start_date.getDate());
-
             $.ajax({
                 url: "/PlattformInventory/ViewProductStatisticPartial",
                 type:"post",
@@ -31,17 +39,26 @@
                 }
             });
             $("#statistic_btn").click(function () {
-                $.ajax({
-                    url: "/PlattformInventory/ViewProductStatisticPartial",
-                    type: "post",
-                    data: {
-                        productId: $("#productId").val(),
-                        start: $("#start_time").val(),
-                        end: $("#end_time").val()
-                    }, success: function (data) {
-                        showstatistic(data);
-                    }
-                });
+                console.log($("#start_time").val())
+                console.log($("#end_time").val())
+                if ($("#start_time").val() < $("#end_time").val()) {
+                    $.ajax({
+                        url: "/PlattformInventory/ViewProductStatisticPartial",
+                        type: "post",
+                        data: {
+                            productId: $("#productId").val(),
+                            start: $("#start_time").val(),
+                            end: $("#end_time").val()
+                        }, success: function (data) {
+                            showstatistic(data);
+                            $("#start_time").val('');
+                            $("#end_time").val('');
+                        }
+                    });
+                } else {
+                    alert1('请选择正确日期')
+                }
+                
             })
         });
         function showstatistic(data) {
@@ -99,5 +116,6 @@
                     fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return fmt;
         };
+       
     </script>
 }
