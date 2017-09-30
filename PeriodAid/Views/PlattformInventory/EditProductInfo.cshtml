@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-md-offset-10 col-md-10">
+                <div class="col-md-offset-2 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
@@ -76,9 +76,7 @@
 </div>
 
 <div class="modal-footer">
-    <div>
-        @Html.ActionLink("返回列表", "PlattformInventory_form")
-    </div>
+
 </div>
 
     <script>
@@ -88,11 +86,9 @@
                 type: 'post',
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $('#modal-body').html('<h3>保存成功</h3>'),
-                         
-                        setTimeout(function () {
-                            $("#myModal").modal('hide');
-                            $.ajax({
+                        alert('保存成功')
+                        $("#myModal").modal('hide');
+                             $.ajax({
                                 url: "/PlattformInventory/ProductListPartial",
                                 data: {
                                     plattformId: $("#PlattformId").val(),
@@ -103,11 +99,10 @@
                                     $('.modal-backdrop.in').remove()
                                     $('body').removeClass('modal-open')
                                 }
-
                             });
-                        }, 1000)
+                        
                     } else {
-                        $('#modal-body').html('<h3>保存失败</h3>')
+                        alert1('保存失败')
                     }
                 }   
             })
