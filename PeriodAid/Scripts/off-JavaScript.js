@@ -802,7 +802,7 @@ if (typeof $ === 'function') {
                 $(".BeAlert_overlay,.BeAlert_box").remove();
             }
         };
-        window.alert1 = function (title, message, callback, opts) {
+        window.errorAlert = function (title, message, callback, opts) {
             BeAlert.open(title, message, callback, opts);
         };
         var _confirm = window.confirm;
