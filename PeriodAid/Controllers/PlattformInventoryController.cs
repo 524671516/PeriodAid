@@ -369,6 +369,25 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
+        // 产品数据图表
+        public ActionResult ViewProductStatistic(int productId)
+        {
+            ViewBag.ProductId = productId;
+            return View();
+        }
+        [HttpPost]
+        public JsonResult ViewProductStatisticPartial(int productId, string start, string end)
+        {
+            DateTime _start = Convert.ToDateTime(start);
+            DateTime _end = Convert.ToDateTime(end);
+            var data = from m in _db.SS_SalesRecord
+                       where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
+                       && m.Product_Id == productId
+                       group m by m.SalesRecord_Date into g
+                       orderby g.Key
+                       select new { salesdate = g.Key, salescount = g.Sum(m=>m.Sales_Count) };
+            return Json(new { result = "SUCCESS", data = data });
+        }
     }
     
 }

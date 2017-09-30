@@ -1133,6 +1133,7 @@
     <Content Include="Views\PlattformInventory\EditProductInfo.cshtml" />
     <Content Include="Views\PlattformInventory\ProductList.cshtml" />
     <Content Include="Views\PlattformInventory\ProductListPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\ViewProductStatistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
