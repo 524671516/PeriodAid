@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "产品数据统计";
+    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
+}
+
+<input type="hidden" id="productId" name="plattformId" value="@ViewBag.ProductId" />
+<input type="text" id="start_time" name="start_time" />
+<input type="text" id="end_time" name="end_time" />
+<input type="button" id="statistic_btn" name="statistic_btn" value="查询"/>
+
+<div id="myChart_Bar" style="min-width:500px;height:400px"></div>
+
+@section scripts{
+    <script src="~/Scripts/highcharts.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var current_date = showdate(-1);
+            var start_date = showdate(-31);
+            $("#end_time").val(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" + current_date.getDate());
+            $("#start_time").val(start_date.getFullYear() + "-" + (start_date.getMonth() + 1) + "-" + start_date.getDate());
+
+            $.ajax({
+                url: "/PlattformInventory/ViewProductStatisticPartial",
+                type:"post",
+                data: {
+                    productId: $("#productId").val(),
+                    start: $("#start_time").val(),
+                    end: $("#end_time").val()
+                }, success: function (data) {
+                    showstatistic(data);
+                }
+            });
+            $("#statistic_btn").click(function () {
+                $.ajax({
+                    url: "/PlattformInventory/ViewProductStatisticPartial",
+                    type: "post",
+                    data: {
+                        productId: $("#productId").val(),
+                        start: $("#start_time").val(),
+                        end: $("#end_time").val()
+                    }, success: function (data) {
+                        showstatistic(data);
+                    }
+                });
+            })
+        });
+        function showstatistic(data) {
+            var resultdata = data.data;
+            var totalarray = new Array();
+            var datearray = new Array();
+            for (var i = 0; i < resultdata.length; i++) {
+                var deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
+                var dee = new Date(deeint)
+                datearray.push(dee.Format("MM-dd"));
+                var totaltemp = resultdata[i].salescount
+                totalarray.push(totaltemp);
+            }
+            $("#myChart_Bar").highcharts({
+                chart: {
+                },
+                title: {
+                    text: "产品销售曲线"
+                },
+                xAxis: {
+                    categories: datearray
+                },
+                series: [{
+                    type: 'spline',
+                    name: '销售额度',
+                    data: totalarray,
+                    marker: {
+                        lineWidth: 2,
+                        lineColor: Highcharts.getOptions().colors[3],
+                        fillColor: 'white'
+                    }
+                }]
+            });
+        }
+
+        function showdate(n) {
+            var uom = new Date(new Date() - 0 + n * 86400000);
+            //uom = uom.getFullYear() + "-" + (uom.getMonth() + 1) + "-" + uom.getDate();
+            return uom;
+        }
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1,                 //月份
+                "d+": this.getDate(),                    //日
+                "h+": this.getHours(),                   //小时
+                "m+": this.getMinutes(),                 //分
+                "s+": this.getSeconds(),                 //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds()             //毫秒
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        };
+    </script>
+}
