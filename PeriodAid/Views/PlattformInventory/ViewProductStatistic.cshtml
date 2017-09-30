@@ -16,14 +16,12 @@
 <script type="text/javascript">
         $(function () {
             var fileDate = $('.file-data')
-            for (var i = 0; i < fileDate.length; i++) {
-                fileDate.eq(i).datepicker({ dateFormat: "yy-mm-dd" });
+                fileDate.datepicker({ dateFormat: "yy-mm-dd" });
                 //星期格式汉化  
-                fileDate.eq(i).datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+                fileDate.datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
                 //月份格式汉化  
-                fileDate.eq(i).datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
-                fileDate.eq(i).datepicker();
-            }
+                fileDate.datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+                fileDate.datepicker();
             var current_date = showdate(-1);
             var start_date = showdate(-30);
             $("#end_time").val(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" + current_date.getDate());

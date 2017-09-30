@@ -131,8 +131,7 @@
                 });
             }
         });
-
-        $("#form-date-show").on("click", function () {
+        function data_date() {
             for (i = 0; i < $(".date_show").length; i++) {
                 var arry =@Html.Raw(Json.Encode(ViewBag.DataDate));
                 var arrydata = arry[i].ToString('yyyy-MM-dd');
@@ -165,8 +164,14 @@
                     }
                 }
             }
+        }
 
+        $("#form-date-show").on("click", function() {
+            data_date()
 
+        })
+        $('.ui-corner-all').on('click',function(){
+            data_date()
         })
 
         // tab 切换
