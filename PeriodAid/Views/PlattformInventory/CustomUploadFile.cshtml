@@ -67,7 +67,7 @@
                         url: "/PlattformInventory/CustomUploadFilePartial",
                         type: "post",
                         data: {
-                            plattformId: 1,
+                            plattformId: $('.select-button').attr('data-bind'),
                             month: e.currentyear + "-" + e.currentmonth
                         },
                         success: function (data) {
@@ -111,7 +111,7 @@
                                     url: "/PlattformInventory/CustomUploadFilePartial",
                                     type: "post",
                                     data: {
-                                        plattformId: 1,
+                                        plattformId: $('.select-button').attr('data-bind'),
                                         month: $("#current-date").text() + "-01"
                                     },
                                     success: function (data) {
