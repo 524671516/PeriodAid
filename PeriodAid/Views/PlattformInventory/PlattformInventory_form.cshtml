@@ -88,6 +88,7 @@
     <script>
     // 初始化数据
         $(function () {
+
         //日期格式改变
         $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -114,7 +115,7 @@
                             url: '/PlattformInventory/StorageShow/',
                             type: 'post',
                             data: {
-                                plattformId:2,
+                                plattformId:$('.select-button').attr('data-bind'),
                                 select_date: $('#form-date-select').text()
                             },
                             success: function (data) {
