@@ -19,10 +19,14 @@
 @section scripts{
     <script>
         $(function () {
+            console.log($('.select-button').attr('data-bind'))
+            //$('.select-button').on('click', function () {
+            //    console.log($(this).attr('data-bind'))
+            //})
             $.ajax({
                 url: "/PlattformInventory/ProductListPartial",
                 data: {
-                    plattformId: $("#PlattformId").val(),
+                    plattformId: $('.select-button').attr('data-bind'),
                     page: 1,
                 },
                 success: function (data) {
@@ -36,7 +40,7 @@
             $.ajax({
                 url: "/PlattformInventory/ProductListPartial",
                 data: {
-                    plattformId: $("#PlattformId").val(),
+                    plattformId: $('.select-button').attr('data-bind'),
                     page: 1,
                     query: $("#storage-product-query").val()
                 },

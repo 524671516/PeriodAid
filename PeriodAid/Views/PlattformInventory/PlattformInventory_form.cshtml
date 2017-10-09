@@ -98,23 +98,32 @@
         TmDatePicker.Init({
             container: "#tm-calendar-view-wrap",
             onpagechanged: function (e) {
+                
+                //console.log(e)
                 $.ajax({
                     url: "/PlattformInventory/CustomUploadFilePartial",
                     type: "post",
                     data: {
-                        plattformId: 1,
+                        plattformId: $('.select-button').attr('data-bind'),
                         month: e.currentyear + "-" + e.currentmonth
                     },
-                    success: function (data) {for (var i = 0; i < data.length; i++) {
-                        var record = data[i].record_date.ToString("yyyy-MM-dd");
-                        //console.log(record)
-                    }
+                    success: function (data) {
+                        if(data!=''){
+                            console.log(data)
+                            for (var i = 0; i < data.length; i++) {
+                                var record = data[i].record_date.ToString("yyyy-MM-dd");
+                                //console.log(record)
+                            }
+                        }
+                        else{
+                            errorAlert('本月还未上传数据')
+                        }
                         $('#form-date-select').text(record)
                         $.ajax({
                             url: '/PlattformInventory/StorageShow/',
                             type: 'post',
                             data: {
-                                plattformId:1,
+                                plattformId:$('.select-button').attr('data-bind'),
                                 select_date: $('#form-date-select').text()
                             },
                             success: function (data) {
@@ -126,7 +135,7 @@
 
                     },
                     error: function () {
-                        ErrorAlert("请求数据失败。");
+                        errorAlert("请求数据失败。");
                     }
                 });
             }
@@ -181,7 +190,7 @@
             $.ajax({
                 url: "/PlattformInventory/StorageShow/",
                 data: {
-                    plattformId: 1,
+                    plattformId: $('.select-button').attr('data-bind'),
                     Storage: that.children('.form-select-a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },
@@ -200,7 +209,7 @@
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
                 data: {
-                    plattformId: 1,
+                    plattformId: $('.select-button').attr('data-bind'),
                     Storage: $("#nav-table-show ul li").children('.form-select-li.active a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },
