@@ -14,11 +14,9 @@
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
 <div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
-        <input type="text" id="file-date" name="file-date" style="height:26px" />   
-        <a href="javascript:;">
-            <span id="upload">选择文件</span>
-            <input type="file" id="file-name" name="file-name" />
-        </a>
+        <input type="text"id="file-date" name="file-date" style="height:26px" />
+        <input type="file" id="file-name" name="file-name" />   
+        <a href="javascript:;" id="upload">选择文件</a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
     </form>
 </div>
@@ -68,7 +66,7 @@
                         url: "/PlattformInventory/CustomUploadFilePartial",
                         type: "post",
                         data: {
-                            plattformId: 1,
+                            plattformId: $('.select-button').attr('data-bind'),
                             month: e.currentyear + "-" + e.currentmonth
                         },
                         success: function (data) {
@@ -90,16 +88,17 @@
                 }
             });
             // 显示文件名
-            $('#file-name').change(function () {
+              
+               $('#file-name').change(function () {
                 var file = $("#file-name").val();
                 var fileName = file.lastIndexOf('\\')
                 var strName = file.substring(fileName + 1)
                 $('#upload').text(strName)
             })
-           
             $("#file-form-sub").click(function () {              
                 var dataVal = $('#file-date').val()
-                var fileVal=$('#file-name').val()
+                var fileVal = $("#file-name").val()
+                console.log(fileVal)
                 if (dataVal && fileVal != '') {
                     $('#file-loading').show()
                     $('#file-form-sub').attr('disabled', 'disabled')
@@ -112,7 +111,7 @@
                                     url: "/PlattformInventory/CustomUploadFilePartial",
                                     type: "post",
                                     data: {
-                                        plattformId: 1,
+                                        plattformId: $('.select-button').attr('data-bind'),
                                         month: $("#current-date").text() + "-01"
                                     },
                                     success: function (data) {
@@ -128,6 +127,7 @@
                                         }
                                         $("#file-loading").hide();
                                         $('#file-date').val('')
+                                        $('#upload').text('选择文件')
                                         $('#file-form-sub').removeAttr('disabled')
                                         alert('上传成功')
                                     },
@@ -136,6 +136,7 @@
                                         $("#file-loading").hide();
                                         $('#file-form-sub').removeAttr('disabled')
                                         $('#file-date').val('')
+                                        $('#upload').text('选择文件')
                                     }
                                 });
                             }
@@ -143,6 +144,7 @@
                                 errorAlert("上传失败");
                                 $("#file-loading").hide();
                                 $('#file-date').val('')
+                                $('#upload').text('选择文件')
                                 $('#file-form-sub').removeAttr('disabled')
                             }
                         }
