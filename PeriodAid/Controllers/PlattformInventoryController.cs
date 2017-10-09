@@ -14,6 +14,7 @@ using PagedList;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize]
     public class PlattformInventoryController : Controller
     {
         // GET: PlattformInventory
