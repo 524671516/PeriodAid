@@ -288,17 +288,18 @@ namespace PeriodAid.Controllers
         /// 当前库存页面
         /// </summary>
         /// <returns></returns>
-        public ActionResult PlattformInventory_form(DateTime? select_date) {
-            var storage = from m in _db.SS_Storage                         
-                          select m;
-            ViewBag.storage = storage;
+        public ActionResult PlattformInventory_form(int? plattformId, DateTime? select_date) {
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date != null)
+            if (plattformId != null)
             {
+                var storage = from m in _db.SS_Storage
+                              where m.Plattform_Id == plattformId
+                              select m;
+                ViewBag.storage = storage;
                 var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SalesRecord_Date == select_date
+                                  where m.SS_Storage.SS_Plattform.Id == plattformId && m.SS_Product.Plattform_Id == plattformId
                                   group m by m.SS_Product into g
                                   select new Product_SummaryViewModel
                                   {
@@ -310,7 +311,12 @@ namespace PeriodAid.Controllers
                 return View(SalesRecord);
             }
             else {
+                var storage = from m in _db.SS_Storage
+                              where m.Plattform_Id == 1
+                              select m;
+                ViewBag.storage = storage;
                 var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.SS_Product.Plattform_Id == 1
                                   group m by m.SS_Product into g
                                   select new Product_SummaryViewModel
                                   {
@@ -325,16 +331,45 @@ namespace PeriodAid.Controllers
 
 
 
-        public ActionResult StorageShow(int plattformId,int? Storage,DateTime select_date) {
+        public ActionResult StorageShow(int plattformId,int? Storage,DateTime? select_date) {
             var storage = from m in _db.SS_Storage
                           select m;
             ViewBag.storage = storage;
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (Storage.ToString() != "")
+            if (select_date != null || select_date.ToString()=="选择日期")
             {
-                if (Storage.ToString() == "0")
+                if (Storage.ToString() != "")
+                {
+                    if (Storage.ToString() == "0")
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          where m.SalesRecord_Date == select_date
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                    else
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                }
+                else
                 {
                     var SalesRecord = from m in _db.SS_SalesRecord
                                       where m.SalesRecord_Date == select_date
@@ -346,10 +381,41 @@ namespace PeriodAid.Controllers
                                           Inventory_Sum = g.Sum(m => m.Storage_Count)
                                       };
                     return PartialView(SalesRecord);
+
                 }
-                else {
+            }
+            else {
+                if (Storage.ToString() != "")
+                {
+                    if (Storage.ToString() == "0")
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                    else
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          where m.Storage_Id == Storage
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                }
+                else
+                {
                     var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
                                       group m by m.SS_Product into g
                                       select new Product_SummaryViewModel
                                       {
@@ -358,21 +424,10 @@ namespace PeriodAid.Controllers
                                           Inventory_Sum = g.Sum(m => m.Storage_Count)
                                       };
                     return PartialView(SalesRecord);
+
                 }
             }
-            else {
-                var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SalesRecord_Date == select_date
-                                  group m by m.SS_Product into g
-                                  select new Product_SummaryViewModel
-                                  {
-                                      Product = g.Key,
-                                      Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
-                                  };
-                return PartialView(SalesRecord);
 
-            }
         }
 
         public ActionResult ProductList(int plattformId)

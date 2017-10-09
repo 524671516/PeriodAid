@@ -24,7 +24,7 @@
     </div>
     <div style="padding:20px 0;">
 
-        <div class="text-center h2">每日数据</div>
+        <div class="text-center h2">产品数据</div>
         @foreach (var item in ViewBag.DataDate) {
             <h5 class="date_show" hidden>@item</h5>
         }
@@ -114,7 +114,7 @@
                             url: '/PlattformInventory/StorageShow/',
                             type: 'post',
                             data: {
-                                plattformId:1,
+                                plattformId:2,
                                 select_date: $('#form-date-select').text()
                             },
                             success: function (data) {
@@ -140,7 +140,6 @@
                 var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
                 var show_day = parseInt($(".ui-state-default").text())
                 if (show_month < 10) {
-                    console.log(arrydata);
                     var _first = parseInt(arrydata.indexOf('-')) + 2;
                     var _end = parseInt(arrydata.indexOf('-')) + 3;
                     var month = arrydata.substring(_first, _end);
@@ -177,7 +176,7 @@
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
-            $('#file-loading').show()
+            $('#file-loading').show();
             $.ajax({
                 url: "/PlattformInventory/StorageShow/",
                 data: {
