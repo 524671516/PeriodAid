@@ -14,8 +14,9 @@
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
 <div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
-        <input type="text"id="file-date" name="file-date" style="height:26px" />   
-        <a href="javascript:;" id="upload">选择文件
+        <input type="text" id="file-date" name="file-date" style="height:26px" />   
+        <a href="javascript:;">
+            <span id="upload">选择文件</span>
             <input type="file" id="file-name" name="file-name" />
         </a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
@@ -67,7 +68,7 @@
                         url: "/PlattformInventory/CustomUploadFilePartial",
                         type: "post",
                         data: {
-                            plattformId: $('.select-button').attr('data-bind'),
+                            plattformId: 1,
                             month: e.currentyear + "-" + e.currentmonth
                         },
                         success: function (data) {
@@ -83,7 +84,7 @@
                             }
                         },
                         error: function () {
-                            ErrorAlert("请求数据失败。");
+                            errorAlert("请求数据失败。");
                         }
                     });
                 }
@@ -93,7 +94,7 @@
                 var file = $("#file-name").val();
                 var fileName = file.lastIndexOf('\\')
                 var strName = file.substring(fileName + 1)
-                $('#upload').html(strName)
+                $('#upload').text(strName)
             })
            
             $("#file-form-sub").click(function () {              
@@ -111,7 +112,7 @@
                                     url: "/PlattformInventory/CustomUploadFilePartial",
                                     type: "post",
                                     data: {
-                                        plattformId: $('.select-button').attr('data-bind'),
+                                        plattformId: 1,
                                         month: $("#current-date").text() + "-01"
                                     },
                                     success: function (data) {
