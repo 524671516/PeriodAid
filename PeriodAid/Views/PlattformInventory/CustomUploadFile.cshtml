@@ -88,6 +88,14 @@
                     });
                 }
             });
+            // 显示文件名
+            $('#file-name').change(function () {
+                var file = $("#file-name").val();
+                var fileName = file.lastIndexOf('\\')
+                var strName = file.substring(fileName + 1)
+                $('#upload').html(strName)
+            })
+           
             $("#file-form-sub").click(function () {              
                 var dataVal = $('#file-date').val()
                 var fileVal=$('#file-name').val()
