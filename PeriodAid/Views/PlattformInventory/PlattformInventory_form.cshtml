@@ -23,7 +23,6 @@
         </ul>
     </div>
     <div style="padding:20px 0;">
-
         <div class="text-center h2">产品数据</div>
         @foreach (var item in ViewBag.DataDate) {
             <h5 class="date_show" hidden>@item</h5>
@@ -33,7 +32,7 @@
         <div>
             <div class="tm-view-control">
                 <ul class="nav nav-pills" style="float:right">
-                    <li class="tm-view-control-sort dropdown" style="position:relative">
+                    <li class="tm-view-control-sort dropdown">
                         <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
                             <span class="tm-select-title active" id="form-date-select" style="color:white;font-size:14px;">选择日期</span>
                             <input type="text" id="file-date" name="file-date" style="height: 48px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
@@ -88,7 +87,6 @@
     <script>
     // 初始化数据
         $(function () {
-
         //日期格式改变
         $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -103,7 +101,7 @@
                     url: "/PlattformInventory/CustomUploadFilePartial",
                     type: "post",
                     data: {
-                        plattformId: 1,
+                        plattformId: $('.select-button').attr('data-bind'),
                         month: e.currentyear + "-" + e.currentmonth
                     },
                     success: function (data) {for (var i = 0; i < data.length; i++) {
@@ -173,7 +171,7 @@
         $('.ui-corner-all').on('click',function(){
             data_date()
         })
-
+        
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
@@ -181,7 +179,7 @@
             $.ajax({
                 url: "/PlattformInventory/StorageShow/",
                 data: {
-                    plattformId: 1,
+                    plattformId: $('.select-button').attr('data-bind'),
                     Storage: that.children('.form-select-a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },
@@ -200,7 +198,7 @@
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
                 data: {
-                    plattformId: 1,
+                    plattformId: $('.select-button').attr('data-bind'),
                     Storage: $("#nav-table-show ul li").children('.form-select-li.active a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },

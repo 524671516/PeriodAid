@@ -19,8 +19,8 @@
 
 @foreach (var item in Model) {
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.System_Code)
+        <td style="position:relative">
+            @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Item_Code)
@@ -88,19 +88,4 @@
         })
     })
 
-    //$('.chart-a').click(function () {
-    //    console.log($(this).attr('data-val'))
-    //    $.ajax({
-    //        url: '/PlattformInventory/ViewProductStatistic',
-    //        type:'get',
-    //        data: {
-    //            productId: $(this).attr('data-val'),
-    //        },
-    //        success: function (data) {
-    //            //console.log(data)
-    //            $('#modal-content').html(data)
-    //            $("#myModal").modal('show')
-    //        }
-    //    })
-    //})
 </script>
