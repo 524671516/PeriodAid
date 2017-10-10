@@ -71,7 +71,7 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne" data-bind="1">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li> 
@@ -90,7 +90,7 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                        <div id="collapseTwo" class="collapse in" role="tabpanel" aria-labelledby="headingTwo" data-bind="2">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=2"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
@@ -105,11 +105,11 @@
                         <div class="panel-heading" role="tab" id="headingThree">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    天猫自营 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow select-button" aria-hidden="true" aria-labelledby="headingThree" data-bind="3"></i>
+                                    天猫菜鸟<i class="fa fa-chevron-right pull-right text-muted leftnav-arrow select-button" aria-hidden="true" aria-labelledby="headingThree" data-bind="3"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                        <div id="collapseThree" class="collapse in" role="tabpanel" aria-labelledby="headingThree" data-bind="3">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=3"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
@@ -146,9 +146,5 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
-<script>
-    $(function () {
-        $('.panel-collapse').eq(0).addClass('in')    
-    })
-</script>
+
 

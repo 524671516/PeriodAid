@@ -6,14 +6,19 @@
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
 
-<h2></h2>
+<h2>入库预估</h2>
 <div id="storage_show">
     <div class="center-block" id="my-form-content">
         <!-- Tab panes -->
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active">
-                <a class="btn btn-primary float-right" href="javascript:;" id="download_calc">下载完整预估表</a>
-                <br />
+                <div class="btn-group float-right" role="group">
+                    <button type="button" class="btn btn-primary" data-date="7">7天</button>
+                    <button type="button" class="btn btn-primary" data-date="15">15天</button>
+                    <button type="button" class="btn btn-primary" data-date="30">30天</button>
+                </div>
+                @*<a class="btn btn-primary float-right" href="javascript:;" id="download_calc">下载完整预估表</a>
+                <br />*@
                 <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
                     <table class="table table-bordered table-hover">
                         <thead>
@@ -21,17 +26,16 @@
                                 <th>产品编号</th>
                                 <th>商品编号</th>
                                 <th>商品名称</th>
-                                <th>30天销售数据</th>
+                                <th>销售数据</th>
                                 <th>仓库库存</th>
                                 <th>参数值</th>
-                                <th>累计补货数量</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.OrderByDescending(m => m.Sales_Count))
                             {
                                 <tr>
-                                    <th scope="row">@item.Product.System_Code</th>
+                                    <th scope="row" style="position:relative">@item.Product.System_Code<a class="fire-box"></a></th>
                                     <td>@Html.Encode(item.Product.Item_Code)</td>
                                     <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                     <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
@@ -56,9 +60,9 @@
             $(".calc_rate").each(function () {
                 $(this).parent().siblings(".calc_value").text(calc_value(this));
             });
-            $("#download_calc").click(function () {
-                $("form").submit();
-            });
+            //$("#download_calc").click(function () {
+            //    $("form").submit();
+            //});
         });
         function calc_value(obj) {           
             var sales = $(obj).parent().siblings(".calc_sales").html();

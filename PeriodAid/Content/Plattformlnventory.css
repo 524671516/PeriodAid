@@ -1676,3 +1676,12 @@ a.btn_subtask_detail{
     width:110px;
     margin-left:10px
 }
+.fire-box{
+    position: absolute;
+    width: 20px;
+    height: 17px;
+    left:62px;
+    top: 6px;
+    background: url(../../Content/images/fire.svg) center center;
+    background-size: cover;
+}

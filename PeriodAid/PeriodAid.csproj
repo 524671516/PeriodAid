@@ -319,6 +319,7 @@
     <Content Include="Content\images\cover-default.jpg" />
     <Content Include="Content\images\crown.svg" />
     <Content Include="Content\images\defaultphoto.gif" />
+    <Content Include="Content\images\fire.svg" />
     <Content Include="Content\images\img_1.jpg" />
     <Content Include="Content\images\benefits_flow_01.png" />
     <Content Include="Content\images\benefits_flow_02.png" />
