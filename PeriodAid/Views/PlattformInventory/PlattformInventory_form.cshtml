@@ -23,7 +23,6 @@
         </ul>
     </div>
     <div style="padding:20px 0;">
-
         <div class="text-center h2">产品数据</div>
         @foreach (var item in ViewBag.DataDate) {
             <h5 class="date_show" hidden>@item</h5>
@@ -172,11 +171,7 @@
         $('.ui-corner-all').on('click',function(){
             data_date()
         })
-        // 7天 15天 30天
-        $('.date-select-button').on('click',function(){
-            alert($(this).find('.tm-select-title').attr('data-date'))
-        })
-
+        
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);

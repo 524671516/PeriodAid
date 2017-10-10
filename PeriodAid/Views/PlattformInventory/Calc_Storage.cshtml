@@ -7,17 +7,17 @@
 }
 
 <h2>入库预估</h2>
+<div class="btn-group" role="group" style="position:absolute;top:23px;right:16px">
+    <button type="button" class="btn btn-primary date-select" data-date="7">7天</button>
+    <button type="button" class="btn btn-primary date-select" data-date="15">15天</button>
+    <button type="button" class="btn btn-primary date-select" data-date="30">30天</button>
+</div>
 <div id="storage_show">
     <div class="center-block" id="my-form-content">
         <!-- Tab panes -->
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active">
-                <div class="btn-group float-right" role="group">
-                    <button type="button" class="btn btn-primary" data-date="7">7天</button>
-                    <button type="button" class="btn btn-primary" data-date="15">15天</button>
-                    <button type="button" class="btn btn-primary" data-date="30">30天</button>
-                </div>
-                @*<a class="btn btn-primary float-right" href="javascript:;" id="download_calc">下载完整预估表</a>
+              @*<a class="btn btn-primary float-right" href="javascript:;" id="download_calc">下载完整预估表</a>
                 <br />*@
                 <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
                     <table class="table table-bordered table-hover">
@@ -26,9 +26,9 @@
                                 <th>产品编号</th>
                                 <th>商品编号</th>
                                 <th>商品名称</th>
-                                <th>销售数据</th>
+                                <th><i style="font-style:normal" class="date-view-select"></i>销售数据</th>
                                 <th>仓库库存</th>
-                                <th>参数值</th>
+                                <th style="width:26%"><i style="position:relative;top:6px;font-style:normal">周转数</i><input type="number" id="top-control" value="55" class = "form-control calc_rate" style="font-weight:500;width:80%;position:relative;top:4px;margin-left:5px;display:inline-block"/></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,7 +41,6 @@
                                     <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
                                     <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
                                     <td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate", type = "number" })</td>
-                                    <td class="calc_value"></td>
                                 </tr>
                             }
                         </tbody>
@@ -54,23 +53,33 @@
 @section scripts{
     <script>
         $(function () {
-            $(".calc_rate").change(function () {
-                $(this).parent().siblings(".calc_value").text(calc_value(this));
+            $('.calc_rate').val($('#top-control').val())
+            $('#top-control').change(function () {
+                $('.calc_rate').val($(this).val())
             })
-            $(".calc_rate").each(function () {
-                $(this).parent().siblings(".calc_value").text(calc_value(this));
-            });
+            //$('.date-view-select').html($('.date-select').eq(0).attr('data-date') + '天')
+            
+            //$(".calc_rate").change(function () {
+            //    $(this).parent().siblings(".calc_value").text(calc_value(this));
+            //})
+            //$(".calc_rate").each(function () {
+            //    $(this).parent().siblings(".calc_value").text(calc_value(this));
+            //});
             //$("#download_calc").click(function () {
             //    $("form").submit();
             //});
         });
-        function calc_value(obj) {           
-            var sales = $(obj).parent().siblings(".calc_sales").html();
-            var storage = $(obj).parent().siblings(".calc_storage").text();
-            var rate = $(obj).val();
-            return (sales * rate) - storage <= 0 ? 0 : (sales * rate) - storage;
-        }
+        //function calc_value(obj) {           
+        //    var sales = $(obj).parent().siblings(".calc_sales").html();
+        //    var storage = $(obj).parent().siblings(".calc_storage").text();
+        //    var rate = $(obj).val();
+        //    return (sales * rate) - storage <= 0 ? 0 : (sales * rate) - storage;
+        //}
 
+        // 7天 15天 30天
+        $('.date-select').on('click', function () {
+            $('.date-view-select').html($(this).attr('data-date')+'天')
+        })
     </script>
     }
 
