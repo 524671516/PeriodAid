@@ -22,7 +22,7 @@
             $.ajax({
                 url: "/PlattformInventory/ProductListPartial",
                 data: {
-                    plattformId: $("#PlattformId").val(),
+                    plattformId: $('.select-button').attr('data-bind'),
                     page: 1,
                 },
                 success: function (data) {
@@ -36,7 +36,7 @@
             $.ajax({
                 url: "/PlattformInventory/ProductListPartial",
                 data: {
-                    plattformId: $("#PlattformId").val(),
+                    plattformId: $('.select-button').attr('data-bind'),
                     page: 1,
                     query: $("#storage-product-query").val()
                 },

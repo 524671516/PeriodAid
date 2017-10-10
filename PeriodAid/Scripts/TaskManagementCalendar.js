@@ -17,7 +17,7 @@
         var day = today.getDate();
         var hour = today.getHours();
         var minute = today.getMinutes();
-        var showmonth = parseInt(month) < 10 ? "0" + parseInt(month) : parseInt(month + 1);
+        var showmonth = parseInt(month) < 10 ? "0" + parseInt(month) : parseInt(month);
         var showday = parseInt(day) < 10 ? "0" + parseInt(day) : parseInt(day);
         var date = year + "-" + showmonth + "-" + showday;
         return {
