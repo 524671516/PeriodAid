@@ -14,7 +14,7 @@
                         <th><i style="font-style:normal" class="date-view-select"></i>销售数据</th>
                         <th>仓库库存</th>
                         <th>日均销量</th>
-                        <th style="width:26%"><i style="position:relative;top:6px;font-style:normal">周转数</i><input type="number" id="top-control" value="55" class="form-control calc_rate" style="font-weight:500;width:80%;position:relative;top:4px;margin-left:5px;display:inline-block" /></th>
+                        <th style="width:26%"><i style="position:relative;top:6px;font-style:normal">周转数</i><input type="number" id="top-control" value="55" class="form-control calc_rate" style="font-weight:500;width:80%;position:relative;top:4px;margin-left:5px;display:inline-block;height:30px" /></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,8 +36,9 @@
     </div>
 </div>
 <script>
-    $('.date-select').on('click', function () {
-        $('.date-view-select').html($(this).attr('data-date') + '天')
+    $('.calc_rate').val($('#top-control').val())
+    $('#top-control').change(function () {
+        $('.calc_rate').val($(this).val())
     })
 </script>
 

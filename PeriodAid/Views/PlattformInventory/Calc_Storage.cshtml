@@ -3,8 +3,8 @@
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
 
-<h2>入库预估</h2>
-<div class="btn-group" role="group" style="position:absolute;top:23px;right:16px">
+<h2 style="position:relative;top:42px">入库预估</h2>
+<div class="btn-group" role="group" style="position:absolute;top:63px;right:147px">
     <button type="button" class="btn btn-primary date-select" data-date="7">7天</button>
     <button type="button" class="btn btn-primary date-select" data-date="15">15天</button>
     <button type="button" class="btn btn-primary date-select" data-date="30">30天</button>
@@ -14,7 +14,6 @@
 <div id="storage_show">
     <div class="center-block" id="my-form-content">
         <!-- Tab panes -->
-        
     </div>
 </div>
 @section scripts{
@@ -26,14 +25,33 @@
             $(".calc_rate").each(function () {
                 $(this).parent().siblings(".calc_value").text(calc_value(this));
             });*/
+            
             $.ajax({
                 url: '/PlattformInventory/Calc_StoragePartial',
                 data: {
-                    plattformId: $("#PlattformId").val()
+                    plattformId: $("#PlattformId").val(),
+                    days: $('.date-select').eq(1).attr('data-date')
                 },
                 success: function (data) {
                     $("#my-form-content").html(data);
+                    $('.date-view-select').html($('.date-select').eq(1).attr('data-date') + '天')
                 }
+            })
+
+            $('.date-select').on('click', function () {
+                var that=$(this)
+                $.ajax({
+                    url: '/PlattformInventory/Calc_StoragePartial',
+                    data: {
+                        plattformId: $("#PlattformId").val(),
+                        days: that.attr('data-date')
+                    },
+                    success: function (data) {
+                        $("#my-form-content").html(data);
+                        $('.date-view-select').html(that.attr('data-date') + '天')
+                    }
+                })
+                
             })
         });
         /*function calc_value(obj) {           
@@ -43,7 +61,6 @@
             return (sales * rate) - storage <= 0 ? 0 : (sales * rate) - storage;
         }*/
 
-        // 7天 15天 30天
         
     </script>
     }
