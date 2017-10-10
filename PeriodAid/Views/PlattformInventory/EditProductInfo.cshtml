@@ -27,7 +27,6 @@
                     @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
                 </div>
             </div>
-
             <div class="form-group">
                 <label class="control-label col-md-2">产品名称</label>
                 <div class="col-md-10">
@@ -35,7 +34,13 @@
                     @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
-
+            <div class="form-group">
+                <label class="control-label col-md-2">产品类型</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m=>m.Product_Type, ViewBag.SelectList as SelectList, new { @class="form-control"})
+                    @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
             <div class="form-group">
                 <label class="control-label col-md-2">箱规</label>
                 <div class="col-md-10">

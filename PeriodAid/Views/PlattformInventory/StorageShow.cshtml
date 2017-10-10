@@ -14,7 +14,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.OrderByDescending(m=>m.Sales_Sum))
                         {
                             <tr>
                                 <th scope="row">@item.Product.System_Code</th>

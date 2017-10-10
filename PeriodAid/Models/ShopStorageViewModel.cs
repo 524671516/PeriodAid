@@ -23,6 +23,8 @@ namespace PeriodAid.Models
         public int Sales_Count { get; set; }
 
         public int Storage_Count { get; set; }
+
+        public double Sales_Avg { get; set; }
     }
 
     public class ProductStatisticViewModel

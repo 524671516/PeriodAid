@@ -1134,13 +1134,13 @@
     <Content Include="Views\PlattformInventory\ProductList.cshtml" />
     <Content Include="Views\PlattformInventory\ProductListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\ViewProductStatistic.cshtml" />
+    <Content Include="Views\PlattformInventory\Calc_StoragePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
-    <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

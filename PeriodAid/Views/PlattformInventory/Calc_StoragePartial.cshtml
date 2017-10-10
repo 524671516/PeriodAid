@@ -1,0 +1,38 @@
+﻿@model IEnumerable<PeriodAid.Models.CalcStorageViewModel>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active">
+        <a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载完整预估表</a>
+        <br />
+        <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
+            @Html.Hidden("calc_days", (int)ViewBag.Calc_Days)
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>产品编号</th>
+                        <th>商品编号</th>
+                        <th>商品名称</th>
+                        <th>x天销售数据</th>
+                        <th>仓库库存</th>
+                        <th>日均销量</th>
+                        <th>周转天数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderByDescending(m => m.Sales_Count))
+                    {
+                        <tr>
+                            <th scope="row">@item.Product.System_Code</th>
+                            <td>@Html.Encode(item.Product.Item_Code)</td>
+                            <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                            <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
+                            <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                            <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
+                            <td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
