@@ -1663,6 +1663,7 @@ a.btn_subtask_detail{
 #download_calc{
     position: relative;
     top: -10px;
+    z-index:999;
 }
 #date-select{
     display: inline-block;
@@ -1680,7 +1681,7 @@ a.btn_subtask_detail{
     position: absolute;
     width: 20px;
     height: 17px;
-    left:62px;
+    left:59px;
     top: 6px;
     background: url(../../Content/images/fire.svg) center center;
     background-size: cover;

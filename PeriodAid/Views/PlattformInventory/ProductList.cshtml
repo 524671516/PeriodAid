@@ -27,8 +27,12 @@
                 },
                 success: function (data) {
                     $("#product_list_content").html(data);
+                    $('.hot-product').each(function () {
+                        if ($(this).attr('data-bind') > 0) {
+                            $(this).find('.box').addClass('fire-box')
+                        }
+                    })
                 }
-
             });
         });
         //搜索
@@ -42,6 +46,11 @@
                 },
                 success: function (data) {
                     $("#product_list_content").html(data);
+                    $('.hot-product').each(function () {
+                        if ($(this).attr('data-bind') > 0) {
+                            $(this).find('.box').addClass('fire-box')
+                        }
+                    })
                 }
             })
         });
