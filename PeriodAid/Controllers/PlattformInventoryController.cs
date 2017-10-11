@@ -348,14 +348,14 @@ namespace PeriodAid.Controllers
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date != null && select_date.ToString()!="选择日期")
+            if (select_date != null)
             {
                 if (Storage.ToString() != "")
                 {
                     if (Storage.ToString() == "0")
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date
+                                          where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -382,7 +382,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SalesRecord_Date == select_date
+                                      where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
                                       group m by m.SS_Product into g
                                       select new Product_SummaryViewModel
                                       {
@@ -426,6 +426,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SalesRecord = from m in _db.SS_SalesRecord
+                                      where m.SS_Storage.Plattform_Id == plattformId
                                       group m by m.SS_Product into g
                                       select new Product_SummaryViewModel
                                       {
