@@ -148,8 +148,8 @@ namespace PeriodAid.Controllers
                     {
                         break;
                     }
-                    var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
-                    if(product == null)
+                    var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == plattformId);
+                    if (product == null)
                     {
                         string p_code;
                         string p_name;
@@ -198,7 +198,7 @@ namespace PeriodAid.Controllers
                     return false;
                 }
             }
-            var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == 1 && m.SalesRecord_Date == date);
+            var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == plattformId && m.SalesRecord_Date == date);
             if (upload_record != null)
             {
                 upload_record.Upload_Date = DateTime.Now;

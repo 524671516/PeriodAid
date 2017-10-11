@@ -44,24 +44,7 @@
         </div>
     </div>
     <div id="storage_show">
-        <div class="center-block" id="my-form-content">
-            <!-- Tab panes -->
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>产品编号</th>
-                                <th>商品编号</th>
-                                <th>商品名称</th>
-                                <th>销售数据</th>
-                                <th>仓库库存</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        </div>
+        
     </div>
     <div class="tm-view-content-container  tm-view-container" id="file-loading" style="top:282px">
         <div class="tm-veiw-loading text-center" id="tm-view-loading">
@@ -97,15 +80,17 @@
                         //console.log(record)
                     }
                         $('#form-date-select').text(record)
+                        
                         $.ajax({
                             url: '/PlattformInventory/StorageShow/',
                             type: 'post',
                             data: {
                                 plattformId: getUrlParam('plattformId'),
-                                select_date: $('#form-date-select').text()
+                                select_date: $('#form-date-select').text(),
+                                
                             },
+                            
                             success: function (data) {
-                                //console.log(data)
                                 $('#storage_show').html(data)
                                 $('#file-loading').hide()
                                 $('.hot-product').each(function () {
