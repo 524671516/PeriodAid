@@ -200,11 +200,11 @@ namespace PeriodAid.Controllers
                 return View("Error");
         }
         #region 临时
-        /*
-        public async Task<ActionResult> ParaConfirm()
+        
+        public ActionResult ParaConfirm()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            DateTime date = new DateTime(2017, 9, 1);
+            DateTime date = new DateTime(2017, 10, 1);
             var list = from m in _offlineDB.Off_Checkin
                        where m.Off_Checkin_Schedule.Subscribe < date
                        && m.Status == 4
@@ -292,7 +292,7 @@ namespace PeriodAid.Controllers
             }
             var result = _offlineDB.SaveChanges();
             return Content(list.Count().ToString());
-        }*/
+        }
         #endregion
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<ActionResult> ConfirmCheckin(FormCollection form)

@@ -109,7 +109,7 @@ namespace PeriodAid.Controllers
         public ActionResult Calc_StoragePartial(int plattformId, int? days)
         {
             int _days = days ?? 15;//默认30天
-            var upload_record = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
+            var upload_record = _db.SS_UploadRecord.Where(m=>m.Plattform_Id == plattformId).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
             if (upload_record != null)
             {
                 ViewBag.Calc_Days = _days;
@@ -280,7 +280,6 @@ namespace PeriodAid.Controllers
                     row_pos++;
                 }
             }
-
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
