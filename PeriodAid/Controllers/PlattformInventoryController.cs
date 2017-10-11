@@ -339,7 +339,7 @@ namespace PeriodAid.Controllers
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date != null || select_date.ToString()=="选择日期")
+            if (select_date != null && select_date.ToString()!="选择日期")
             {
                 if (Storage.ToString() != "")
                 {

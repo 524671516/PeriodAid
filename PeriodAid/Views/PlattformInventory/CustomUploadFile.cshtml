@@ -15,8 +15,8 @@
 <div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
         <input type="text"id="file-date" name="file-date" style="height:26px" />
-        <input type="file" id="file-name" name="file-name" />   
-        <a href="javascript:;" id="upload">选择文件</a>
+        <input type="file" id="file-name" name="file-name" class="hidden" />
+        <a href="javascript:;" onclick="$('#file-name').trigger('click')" id="upload">选择文件</a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
     </form>
 </div>
@@ -50,6 +50,10 @@
     <script>
         
         $(function () {
+            $("#upload").click(function () {
+                console.log(1);
+                //$("#file-name").trigger("click");
+            });
             //日期格式改变  
             $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
             //星期格式汉化  
