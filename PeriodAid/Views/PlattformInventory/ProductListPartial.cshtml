@@ -11,6 +11,7 @@
                 产品编码
             </th>
             <th>产品名称</th>
+            <th>状态</th>
             <th>箱规</th>
             <th>结算金额</th>
             <th>库存日期</th>
@@ -27,6 +28,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Item_Name)
+        </td>
+        <td>
+            @Html.ProductTypeStatus(item.Product_Type)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Carton_Spec)

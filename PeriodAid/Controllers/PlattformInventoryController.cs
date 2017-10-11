@@ -116,7 +116,7 @@ namespace PeriodAid.Controllers
                 DateTime end = upload_record.SalesRecord_Date;
                 DateTime start = end.AddDays(0 - _days);
                 var content = from m in _db.SS_SalesRecord
-                              where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end
+                              where m.SalesRecord_Date > start && m.SalesRecord_Date <= end
                               && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0
                               group m by m.SS_Product into g
                               select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count), Sales_Avg = g.Average(m => m.Sales_Count) };
@@ -452,14 +452,14 @@ namespace PeriodAid.Controllers
             {
                 var SearchResult = (from m in _db.SS_Product
                                    where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
-                                   orderby m.Id descending
+                                   orderby m.Product_Type descending, m.Id descending
                                    select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
             else {
                 var productlist = (from m in _db.SS_Product
                                    where m.Plattform_Id == plattformId
-                                   orderby m.Id
+                                   orderby m.Product_Type descending, m.Id descending
                                    select m).ToPagedList(_page, 15);
                 return PartialView(productlist);
             }
