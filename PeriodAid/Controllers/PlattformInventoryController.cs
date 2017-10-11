@@ -103,20 +103,28 @@ namespace PeriodAid.Controllers
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
         {
+            ViewBag.PlattformId = plattformId;
+            return View();
+        }
+        public ActionResult Calc_StoragePartial(int plattformId, int? days)
+        {
+            int _days = days ?? 15;//默认30天
             var upload_record = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
             if (upload_record != null)
             {
+                ViewBag.Calc_Days = _days;
                 DateTime end = upload_record.SalesRecord_Date;
-                DateTime start = end.AddDays(-30);
+                DateTime start = end.AddDays(0 - _days);
                 var content = from m in _db.SS_SalesRecord
                               where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end
-                              && m.SS_Product.Plattform_Id == 1
+                              && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0
                               group m by m.SS_Product into g
-                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count) };
-                return View(content);
+                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count), Sales_Avg = g.Average(m => m.Sales_Count) };
+                return PartialView(content);
             }
-            return View();
+            return PartialView();
         }
+
         // 分析EXCEL文件
         private bool Read_InsertFile(string filename, DateTime date)
         {
@@ -226,13 +234,14 @@ namespace PeriodAid.Controllers
             cell_pos++;
             row.CreateCell(cell_pos).SetCellValue("产品名称");
             cell_pos++;
+            int days = Convert.ToInt32(form["calc_days"].ToString());
             foreach(var inventory in inventory_list.OrderBy(m=>m.Id)) {
                 row.CreateCell(cell_pos).SetCellValue(inventory.Storage_Name + "补货数量");
                 cell_pos++;
             }
             // 写产品列
             int row_pos = 1;
-            foreach(var product in product_list.Where(m=>m.Id==317))
+            foreach(var product in product_list)
             {
                 NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
@@ -241,12 +250,12 @@ namespace PeriodAid.Controllers
                 single_row.CreateCell(cell_pos).SetCellValue(product.Item_Name);
                 cell_pos++;
                 DateTime current_date = DateTime.Now.Date;
-                DateTime first_date = product.Inventory_Date.AddDays(-30);
+                DateTime first_date = product.Inventory_Date.AddDays(0 - days);
                 // 最近库存
                 var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
                 if (form["p_rate_" + product.Id] != null)
                 {
-                    var _rate = Convert.ToDecimal(form["p_rate_" + product.Id].ToString());
+                    var _rate = Convert.ToInt32(form["p_rate_" + product.Id].ToString());
                     foreach (var inventory in inventory_list.OrderBy(m => m.Id))
                     {
                         // 最新库存
@@ -263,7 +272,7 @@ namespace PeriodAid.Controllers
                         var period_sales_count = (from m in _db.SS_SalesRecord
                                                   where m.Product_Id == product.Id && m.Storage_Id == inventory.Id
                                                   && m.SalesRecord_Date >= first_date && m.SalesRecord_Date <= current_date
-                                                  select m).Sum(m => m.Sales_Count);
+                                                  select m).Average(m => m.Sales_Count);
                         int recommand_storage = ((int)(period_sales_count * _rate) - storage_count) > 0 ? ((int)(period_sales_count * _rate) - storage_count) : 0;
                         single_row.CreateCell(cell_pos).SetCellValue(recommand_storage);
                         cell_pos++;
@@ -428,7 +437,6 @@ namespace PeriodAid.Controllers
 
                 }
             }
-
         }
 
         public ActionResult ProductList(int plattformId)
@@ -460,6 +468,11 @@ namespace PeriodAid.Controllers
         public ActionResult EditProductInfo(int productId)
         {
             var item = _db.SS_Product.SingleOrDefault(m => m.Id == productId);
+            List<Object> selectvalue = new List<Object>();
+            selectvalue.Add(new { Text = "下架", Value = -1 });
+            selectvalue.Add(new { Text = "正常", Value = 0 });
+            selectvalue.Add(new { Text = "爆款", Value = 1 });
+            ViewBag.SelectList = new SelectList(selectvalue, "Value", "Text", item.Product_Type);
             return PartialView(item);
         }
 

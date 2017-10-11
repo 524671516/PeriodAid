@@ -71,6 +71,9 @@
         public string Item_Code { get; set; }
         [StringLength(16)]
         public string Item_Name { get; set; }
+
+        // 产品类型
+        public int Product_Type { get; set; }
         
         // 箱规
         public int Carton_Spec { get; set; }

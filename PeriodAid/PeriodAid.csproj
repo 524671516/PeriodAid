@@ -319,6 +319,7 @@
     <Content Include="Content\images\cover-default.jpg" />
     <Content Include="Content\images\crown.svg" />
     <Content Include="Content\images\defaultphoto.gif" />
+    <Content Include="Content\images\fire.svg" />
     <Content Include="Content\images\img_1.jpg" />
     <Content Include="Content\images\benefits_flow_01.png" />
     <Content Include="Content\images\benefits_flow_02.png" />
@@ -1134,13 +1135,13 @@
     <Content Include="Views\PlattformInventory\ProductList.cshtml" />
     <Content Include="Views\PlattformInventory\ProductListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\ViewProductStatistic.cshtml" />
+    <Content Include="Views\PlattformInventory\Calc_StoragePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
-    <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
