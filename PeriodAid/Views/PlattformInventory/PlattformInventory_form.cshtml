@@ -58,18 +58,6 @@
                                 <th>仓库库存</th>
                             </tr>
                         </thead>
-                        @*<tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <th scope="row">@item.Product.System_Code</th>
-                                    <td></td>
-                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                                    <td>@item.Sales_Sum</td>
-                                    <td>@item.Inventory_Sum</td>
-                                </tr>
-                            }
-                        </tbody>*@
                     </table>
                 </div>
             </div>
@@ -213,7 +201,7 @@
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
                 data: {
-                    plattformId: $('.select-button').attr('data-bind'),
+                    plattformId: getUrlParam('plattformId'),
                     Storage: $("#nav-table-show ul li").children('.form-select-li.active a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },
