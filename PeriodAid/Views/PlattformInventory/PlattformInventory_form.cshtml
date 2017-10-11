@@ -44,36 +44,7 @@
         </div>
     </div>
     <div id="storage_show">
-        <div class="center-block" id="my-form-content">
-            <!-- Tab panes -->
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>产品编号</th>
-                                <th>商品编号</th>
-                                <th>商品名称</th>
-                                <th>销售数据</th>
-                                <th>仓库库存</th>
-                            </tr>
-                        </thead>
-                        @*<tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <th scope="row">@item.Product.System_Code</th>
-                                    <td></td>
-                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                                    <td>@item.Sales_Sum</td>
-                                    <td>@item.Inventory_Sum</td>
-                                </tr>
-                            }
-                        </tbody>*@
-                    </table>
-                </div>
-            </div>
-        </div>
+        
     </div>
     <div class="tm-view-content-container  tm-view-container" id="file-loading" style="top:282px">
         <div class="tm-veiw-loading text-center" id="tm-view-loading">
@@ -101,7 +72,7 @@
                     url: "/PlattformInventory/CustomUploadFilePartial",
                     type: "post",
                     data: {
-                        plattformId: $('.select-button').attr('data-bind'),
+                        plattformId: getUrlParam('plattformId'),
                         month: e.currentyear + "-" + e.currentmonth
                     },
                     success: function (data) {for (var i = 0; i < data.length; i++) {
@@ -109,15 +80,17 @@
                         //console.log(record)
                     }
                         $('#form-date-select').text(record)
+                        
                         $.ajax({
                             url: '/PlattformInventory/StorageShow/',
                             type: 'post',
                             data: {
-                                plattformId:$('.select-button').attr('data-bind'),
-                                select_date: $('#form-date-select').text()
+                                plattformId: getUrlParam('plattformId'),
+                                select_date: $('#form-date-select').text(),
+                                
                             },
+                            
                             success: function (data) {
-                                //console.log(data)
                                 $('#storage_show').html(data)
                                 $('#file-loading').hide()
                                 $('.hot-product').each(function () {
@@ -130,7 +103,7 @@
 
                     },
                     error: function () {
-                        ErrorAlert("请求数据失败。");
+                        errorAlert("请求数据失败。");
                     }
                 });
             }
@@ -176,7 +149,12 @@
         $('.ui-corner-all').on('click',function(){
             data_date()
         })
-        
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
         // tab 切换
         $("#nav-table-show ul li").on("click", function () {
             var that = $(this);
@@ -184,7 +162,7 @@
             $.ajax({
                 url: "/PlattformInventory/StorageShow/",
                 data: {
-                    plattformId: $('.select-button').attr('data-bind'),
+                    plattformId: getUrlParam('plattformId'),
                     Storage: that.children('.form-select-a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },
@@ -208,7 +186,7 @@
                 url: '/PlattformInventory/StorageShow/',
                 type:'post',
                 data: {
-                    plattformId: $('.select-button').attr('data-bind'),
+                    plattformId: getUrlParam('plattformId'),
                     Storage: $("#nav-table-show ul li").children('.form-select-li.active a').attr('data-ssid'),
                     select_date: $('#form-date-select').text()
                 },

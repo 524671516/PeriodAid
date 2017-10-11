@@ -93,7 +93,7 @@
                     if (data.result == "SUCCESS") {
                         alert('保存成功')
                         $("#myModal").modal('hide');
-                             $.ajax({
+                            $.ajax({
                                 url: "/PlattformInventory/ProductListPartial",
                                 data: {
                                     plattformId: $("#PlattformId").val(),
@@ -103,6 +103,11 @@
                                     $("#product_list_content").html(data);
                                     $('.modal-backdrop.in').remove()
                                     $('body').removeClass('modal-open')
+                                    $('.hot-product').each(function () {
+                                        if ($(this).attr('data-bind') > 0) {
+                                            $(this).find('.box').addClass('fire-box')
+                                        }
+                                    })
                                 }
                             });
                         

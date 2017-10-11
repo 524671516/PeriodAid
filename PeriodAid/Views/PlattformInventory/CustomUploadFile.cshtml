@@ -65,12 +65,12 @@
             TmDatePicker.Init({
                 container: "#tm-calendar-view-wrap",
                 onpagechanged: function (e) {
-                    $("#file-loading").hide()                    
+                    $("#file-loading").hide()
                     $.ajax({
                         url: "/PlattformInventory/CustomUploadFilePartial",
                         type: "post",
                         data: {
-                            plattformId: $('.select-button').attr('data-bind'),
+                            plattformId: getUrlParam('plattformId'),
                             month: e.currentyear + "-" + e.currentmonth
                         },
                         success: function (data) {
@@ -91,6 +91,12 @@
                     });
                 }
             });
+            //获取url中的参数
+            function getUrlParam(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+                var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+                if (r != null) return unescape(r[2]); return null; //返回参数值
+            }
             // 显示文件名
               
                $('#file-name').change(function () {
@@ -105,16 +111,20 @@
                 if (dataVal && fileVal != '') {
                     $('#file-loading').show()
                     $('#file-form-sub').attr('disabled', 'disabled')
+                    
                     $("#up-file-form").ajaxSubmit({
                         url: "/PlattformInventory/UploadFile",
                         type: "post",
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                        },
                         success: function (msg) {
                             if (msg.result == "SUCCESS") {
                                 $.ajax({
                                     url: "/PlattformInventory/CustomUploadFilePartial",
                                     type: "post",
                                     data: {
-                                        plattformId: $('.select-button').attr('data-bind'),
+                                        plattformId: getUrlParam('plattformId'),
                                         month: $("#current-date").text() + "-01"
                                     },
                                     success: function (data) {

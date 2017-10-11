@@ -20,6 +20,7 @@
     @RenderSection("header", required: false)   
 </head>
 <body>
+    @RenderSection("menu", required:false)
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -38,7 +39,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li>@Html.ActionLink("库存管理系统", "PlattformInventory_form", "PlattformInventory")</li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
                         </ul>
                     </li>
                     <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
@@ -67,11 +68,11 @@
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    京东 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate select-button" aria-hidden="true" aria-labelledby="headingOne" data-bind="1"></i>
+                                    京东 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne" data-bind="1">
+                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li> 
@@ -86,16 +87,16 @@
                         <div class="panel-heading" role="tab" id="headingTwo">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    天猫超市 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow select-button" aria-hidden="true" aria-labelledby="headingTwo" data-bind="2"></i>
+                                    天猫超市 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseTwo" class="collapse in" role="tabpanel" aria-labelledby="headingTwo" data-bind="2">
+                        <div id="collapseTwo" class="collapse in" role="tabpanel" aria-labelledby="headingTwo">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=2"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=2"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=2"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a></li>
+                                    @*<li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=2"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a></li>*@
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=2"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传统计</a></li>           
                                 </ul>
                             </div>
@@ -105,11 +106,11 @@
                         <div class="panel-heading" role="tab" id="headingThree">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    天猫菜鸟<i class="fa fa-chevron-right pull-right text-muted leftnav-arrow select-button" aria-hidden="true" aria-labelledby="headingThree" data-bind="3"></i>
+                                    天猫菜鸟<i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingThree"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseThree" class="collapse in" role="tabpanel" aria-labelledby="headingThree" data-bind="3">
+                        <div id="collapseThree" class="collapse in" role="tabpanel" aria-labelledby="headingThree">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=3"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
