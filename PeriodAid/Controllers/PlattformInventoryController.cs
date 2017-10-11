@@ -74,13 +74,14 @@ namespace PeriodAid.Controllers
             DateTime end = start.AddMonths(1);
             var list = from m in _db.SS_UploadRecord
                        where m.SalesRecord_Date >= start && m.SalesRecord_Date < end
+                       && m.Plattform_Id == plattformId
                        select new { record_date = m.SalesRecord_Date};
             return Json(list);
         }
 
         // 上传销售记录
         [HttpPost]
-        public ActionResult UploadFile(FormCollection form)
+        public ActionResult UploadFile(FormCollection form,int plattformId)
         {
             var file = Request.Files[0];
             if (file != null)
@@ -89,7 +90,7 @@ namespace PeriodAid.Controllers
                 AliOSSUtilities util = new AliOSSUtilities();
                 util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
                 var date_time = form["file-date"].ToString();
-                var result = Read_InsertFile(fileName, Convert.ToDateTime(date_time));
+                var result = Read_InsertFile(plattformId,fileName, Convert.ToDateTime(date_time));
                 if (result)
                     return Json(new { result = "SUCCESS" });
                 else
@@ -109,7 +110,7 @@ namespace PeriodAid.Controllers
         public ActionResult Calc_StoragePartial(int plattformId, int? days)
         {
             int _days = days ?? 15;//默认30天
-            var upload_record = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
+            var upload_record = _db.SS_UploadRecord.OrderByDescending(m => m.Plattform_Id== plattformId).FirstOrDefault();
             if (upload_record != null)
             {
                 ViewBag.Calc_Days = _days;
@@ -126,7 +127,7 @@ namespace PeriodAid.Controllers
         }
 
         // 分析EXCEL文件
-        private bool Read_InsertFile(string filename, DateTime date)
+        private bool Read_InsertFile(int plattformId, string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
@@ -134,7 +135,7 @@ namespace PeriodAid.Controllers
             int row_count = 0;
             List<string> headers = new List<string>();
             var storage_list = from m in _db.SS_Storage
-                               where m.Plattform_Id == 1
+                               where m.Plattform_Id == plattformId
                                select m;
             int sales_field = 0;
             int inventory_field = 0;
@@ -159,7 +160,7 @@ namespace PeriodAid.Controllers
                             Carton_Spec=0,
                             Inventory_Date = date,
                             Item_Code = "",
-                            Plattform_Id = 1,
+                            Plattform_Id = plattformId,
                             Purchase_Price = 0
                         };
                         _db.SS_Product.Add(product);
@@ -207,7 +208,7 @@ namespace PeriodAid.Controllers
             {
                 upload_record = new SS_UploadRecord()
                 {
-                    Plattform_Id = 1,
+                    Plattform_Id = plattformId,
                     Upload_Date = DateTime.Now,
                     SalesRecord_Date = date
                 };

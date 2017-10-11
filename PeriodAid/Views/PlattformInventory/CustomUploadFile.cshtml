@@ -65,7 +65,7 @@
             TmDatePicker.Init({
                 container: "#tm-calendar-view-wrap",
                 onpagechanged: function (e) {
-                    $("#file-loading").hide()                    
+                    $("#file-loading").hide()
                     $.ajax({
                         url: "/PlattformInventory/CustomUploadFilePartial",
                         type: "post",
@@ -111,9 +111,13 @@
                 if (dataVal && fileVal != '') {
                     $('#file-loading').show()
                     $('#file-form-sub').attr('disabled', 'disabled')
+                    
                     $("#up-file-form").ajaxSubmit({
                         url: "/PlattformInventory/UploadFile",
                         type: "post",
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                        },
                         success: function (msg) {
                             if (msg.result == "SUCCESS") {
                                 $.ajax({
