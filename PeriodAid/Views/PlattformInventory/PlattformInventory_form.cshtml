@@ -101,7 +101,7 @@
                     url: "/PlattformInventory/CustomUploadFilePartial",
                     type: "post",
                     data: {
-                        plattformId: $('.select-button').attr('data-bind'),
+                        plattformId: getUrlParam('plattformId'),
                         month: e.currentyear + "-" + e.currentmonth
                     },
                     success: function (data) {for (var i = 0; i < data.length; i++) {
