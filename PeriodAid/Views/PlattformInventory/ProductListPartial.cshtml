@@ -19,8 +19,8 @@
 
 @foreach (var item in Model) {
     <tr>
-        <td style="position:relative">
-            @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
+        <td style="position:relative" data-bind="@item.Product_Type"  class="hot-product">
+            @Html.DisplayFor(modelItem => item.System_Code)<a class="box"></a>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Item_Code)
@@ -44,8 +44,6 @@
         </td>
     </tr>
 }
-    
-
     </table>
     <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))</div>
 </div>
@@ -60,7 +58,6 @@
     //页码
     $(".pagination > li > a").click(function () {
         var l = $(this).attr("href");
-
         $.ajax({
             url: l,
             data:{
@@ -68,7 +65,11 @@
             },
             success: function (data) {
                 $("#product_list_content").html(data);
-
+                $('.hot-product').each(function () {
+                    if ($(this).attr('data-bind') > 0) {
+                        $(this).find('.box').addClass('fire-box')
+                    }
+                })
             }
         });
         return false;

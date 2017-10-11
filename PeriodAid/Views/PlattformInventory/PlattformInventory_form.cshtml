@@ -23,7 +23,7 @@
         </ul>
     </div>
     <div style="padding:20px 0;">
-        <div class="text-center h2">产品数据</div>
+        <div class="text-center h2">数据统计</div>
         @foreach (var item in ViewBag.DataDate) {
             <h5 class="date_show" hidden>@item</h5>
         }
@@ -120,6 +120,11 @@
                                 //console.log(data)
                                 $('#storage_show').html(data)
                                 $('#file-loading').hide()
+                                $('.hot-product').each(function () {
+                                    if ($(this).attr('data-bind') > 0) {
+                                        $(this).find('.box').addClass('fire-box')
+                                    }
+                                })
                             }
                         })
 
@@ -187,6 +192,11 @@
                     that.children('.form-select-a').addClass("active");
                     $("#storage_show").html(data);
                     $('#file-loading').hide()
+                    $('.hot-product').each(function () {
+                        if ($(this).attr('data-bind') > 0) {
+                            $(this).find('.box').addClass('fire-box')
+                        }
+                    })
                 }
             })
         })
@@ -205,6 +215,11 @@
                 success: function (data) {
                     $('#storage_show').html(data)
                     $('#file-loading').hide()
+                    $('.hot-product').each(function () {
+                        if ($(this).attr('data-bind') > 0) {
+                            $(this).find('.box').addClass('fire-box')
+                        }
+                    })
                 }
             })
         })
