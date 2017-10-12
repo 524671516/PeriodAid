@@ -401,7 +401,9 @@ namespace PeriodAid.Controllers
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m=>m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m=>m.SubAccount_Price)
                                   };
 
                 return View(SalesRecord);
@@ -419,7 +421,9 @@ namespace PeriodAid.Controllers
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m => m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                   };
 
                 return View(SalesRecord);
@@ -449,7 +453,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -462,7 +468,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -476,7 +484,9 @@ namespace PeriodAid.Controllers
                                       {
                                           Product = g.Key,
                                           Sales_Sum = g.Sum(m => m.Sales_Count),
-                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                          Pay_Sum = g.Sum(m => m.Pay_Money),
+                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                       };
                     return PartialView(SalesRecord);
 
@@ -494,7 +504,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -507,7 +519,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -521,7 +535,9 @@ namespace PeriodAid.Controllers
                                       {
                                           Product = g.Key,
                                           Sales_Sum = g.Sum(m => m.Sales_Count),
-                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                          Pay_Sum = g.Sum(m => m.Pay_Money),
+                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                       };
                     return PartialView(SalesRecord);
 

@@ -166,6 +166,10 @@
         public int Sales_Sum { get; set; }
 
         public int Inventory_Sum { get; set; }
+
+        public decimal Pay_Sum { get; set; }
+
+        public decimal SubAccount_Sum { get; set; }
     }
     //public class MyEntity
     //{
