@@ -139,63 +139,135 @@ namespace PeriodAid.Controllers
                                select m;
             int sales_field = 0;
             int inventory_field = 0;
-            while (csv_reader.Read())
+            decimal pay_money = 0;
+            decimal subAccount = 0;
+            if (plattformId == 1)
             {
-                try
+                while (csv_reader.Read())
                 {
-                    string system_code = csv_reader.GetField<string>("商品编号");
-                    if(system_code == "合计")
+                    try
                     {
-                        break;
-                    }
-                    var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == plattformId);
-                    if (product == null)
-                    {
-                        string p_code;
-                        string p_name;
-                        product = new SS_Product()
+                        string system_code = csv_reader.GetField<string>("商品编号");
+                        if (system_code == "合计")
                         {
-                            System_Code = csv_reader.TryGetField<string>("商品编号", out p_code) ? p_code : "NaN",
-                            Item_Name = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(0,p_name.Length>15?15:p_name.Length) : "NaN",
-                            Carton_Spec=0,
-                            Inventory_Date = date,
-                            Item_Code = "",
-                            Plattform_Id = plattformId,
-                            Purchase_Price = 0
-                        };
-                        _db.SS_Product.Add(product);
-                    }
-                    foreach (var inventory in storage_list)
-                    {
-                        var exist_item = _db.SS_SalesRecord.SingleOrDefault(m => m.SalesRecord_Date == date && m.Product_Id == product.Id && m.Storage_Id == inventory.Id);
-                        if (exist_item != null)
-                        {
-                            exist_item.Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0;
-                            exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;
-                            _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
+                            break;
                         }
-                        else
+                        var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == plattformId);
+                        if (product == null)
                         {
-                            SS_SalesRecord record = new SS_SalesRecord()
+                            string p_code;
+                            string p_name;
+                            product = new SS_Product()
                             {
-                                SS_Product = product,
-                                SalesRecord_Date = date,
-                                Storage_Id = inventory.Id,
-                                Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0,
-                                Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0
+                                System_Code = csv_reader.TryGetField<string>("商品编号", out p_code) ? p_code : "NaN",
+                                Item_Name = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(0, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
+                                Carton_Spec = 0,
+                                Inventory_Date = date,
+                                Item_Code = "",
+                                Plattform_Id = plattformId,
+                                Purchase_Price = 0
                             };
-                            _db.SS_SalesRecord.Add(record);
+                            _db.SS_Product.Add(product);
                         }
-                        if (date > product.Inventory_Date)
+                        foreach (var inventory in storage_list)
                         {
-                            product.Inventory_Date = date;
-                            _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            var exist_item = _db.SS_SalesRecord.SingleOrDefault(m => m.SalesRecord_Date == date && m.Product_Id == product.Id && m.Storage_Id == inventory.Id);
+                            if (exist_item != null)
+                            {
+                                exist_item.Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0;
+                                exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;
+                                _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
+                            }
+                            else
+                            {
+                                SS_SalesRecord record = new SS_SalesRecord()
+                                {
+                                    SS_Product = product,
+                                    SalesRecord_Date = date,
+                                    Storage_Id = inventory.Id,
+                                    Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0,
+                                    Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0,
+                                };
+                                _db.SS_SalesRecord.Add(record);
+                            }
+                            if (date > product.Inventory_Date)
+                            {
+                                product.Inventory_Date = date;
+                                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            }
                         }
+                        row_count++;
                     }
-                    row_count++;
-                }catch(Exception)
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
+            }
+            if (plattformId == 2)
+            {
+                while (csv_reader.Read())
                 {
-                    return false;
+                    try
+                    {
+                        string system_code = csv_reader.GetField<string>("商品id");
+                        if (system_code == "" || system_code == null)
+                        {
+                            break;
+                        }
+                        var product = _db.SS_Product.FirstOrDefault(m => m.System_Code == system_code && m.Plattform_Id == plattformId);
+                        if (product == null)
+                        {
+                            string p_code;
+                            string p_name;
+                            product = new SS_Product()
+                            {
+                                System_Code = csv_reader.TryGetField<string>("商品id", out p_code) ? p_code : "NaN",
+                                Item_Name = csv_reader.TryGetField<string>("商品标题", out p_name) ? p_name.Substring(10, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
+                                Carton_Spec = 0,
+                                Inventory_Date = date,
+                                Item_Code = "",
+                                Plattform_Id = plattformId,
+                                Purchase_Price = 0
+                            };
+                            _db.SS_Product.Add(product);
+                        }
+                        foreach (var inventory in storage_list)
+                        {
+                            var exist_item = _db.SS_SalesRecord.SingleOrDefault(m => m.SalesRecord_Date == date && m.Product_Id == product.Id && m.Storage_Id == inventory.Id);
+                            if (exist_item != null)
+                            {
+                                exist_item.Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0;
+                                exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;
+                                _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
+                            }
+                            else
+                            {
+                                SS_SalesRecord record = new SS_SalesRecord()
+                                {
+                                    SS_Product = product,
+                                    SalesRecord_Date = date,
+                                    Storage_Id = inventory.Id,
+                                    Sales_Count = csv_reader.TryGetField<int>("销量", out sales_field) ? sales_field : 0,
+                                    Storage_Count = 0,
+                                    Pay_Money = csv_reader.TryGetField<decimal>("支付金额", out pay_money) ? pay_money : 0,
+                                    SubAccount_Price = csv_reader.TryGetField<decimal>("支付订单分账金额", out subAccount) ? subAccount : 0
+                                };
+                                _db.SS_SalesRecord.Add(record);
+                            }
+                            if (date > product.Inventory_Date)
+                            {
+                                product.Inventory_Date = date;
+                                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            }
+                        }
+                        row_count++;
+
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 }
             }
             var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == plattformId && m.SalesRecord_Date == date);
@@ -322,11 +394,11 @@ namespace PeriodAid.Controllers
             }
             else {
                 var storage = from m in _db.SS_Storage
-                              where m.Plattform_Id == 1
+                              where m.Plattform_Id == plattformId
                               select m;
                 ViewBag.storage = storage;
                 var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SS_Product.Plattform_Id == 1
+                                  where m.SS_Product.Plattform_Id == plattformId
                                   group m by m.SS_Product into g
                                   select new Product_SummaryViewModel
                                   {
