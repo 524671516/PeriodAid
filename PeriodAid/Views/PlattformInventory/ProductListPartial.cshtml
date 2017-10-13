@@ -21,7 +21,7 @@
 @foreach (var item in Model) {
     <tr>
         <td style="position:relative" data-bind="@item.Product_Type"  class="hot-product">
-            @Html.DisplayFor(modelItem => item.System_Code)<a class="box"></a>
+            @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Item_Code)
@@ -70,8 +70,11 @@
             success: function (data) {
                 $("#product_list_content").html(data);
                 $('.hot-product').each(function () {
-                    if ($(this).attr('data-bind') > 0) {
-                        $(this).find('.box').addClass('fire-box')
+                    if ($(this).attr('data-bind') != 1) {
+                        $(this).find('.fire-box').css('opacity', '0')
+                    } else if ($(this).attr('data-bind') == 0) {
+                        alert(1)
+                        $(this).find('.fire-box').remove();
                     }
                 })
             }
