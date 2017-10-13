@@ -171,6 +171,23 @@
 
         public decimal SubAccount_Sum { get; set; }
     }
+    // 分舱单
+    public class StorageOrder
+    {
+        public int Order_Nub { get; set; }
+        
+        public int Product_Nub { get; set; }
+
+        public string Product_Nam { get; set; }
+
+        public string Storage_Nam { get; set; }
+        
+        public string Sub_Str { get; set; }
+
+        public int Carton_Nub { get; set; }
+
+        public int Pay_Nub { get; set; }
+    }
     //public class MyEntity
     //{
     //    public int Id { get; set; }
