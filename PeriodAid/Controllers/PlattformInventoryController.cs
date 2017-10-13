@@ -109,8 +109,26 @@ namespace PeriodAid.Controllers
                 {
                     return Json(new { result = "FAIL" });
                 }
-
-
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+        // 上传分舱单
+        [HttpPost]
+        public ActionResult UploadFile1(FormCollection form, int plattformId)
+        {
+            var file = Request.Files[0];
+            if (file != null)
+            {
+                var fileName = DateTime.Now.Ticks + ".csv";
+                var date_time = form["file-date"].ToString();
+                var result = Read_JdFile(plattformId, fileName, Convert.ToDateTime(date_time));
+                    if (result)
+                        return Json(new { result = "SUCCESS" });
+                    else
+                        return Json(new { result = "FAIL" });
             }
             else
             {
@@ -201,6 +219,52 @@ namespace PeriodAid.Controllers
         }
 
         // 分析EXCEL文件
+        // 分仓单
+        public ActionResult Read_CartonFile(int plattformId, string filename, DateTime date)
+        {
+            AliOSSUtilities util = new AliOSSUtilities();
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+            CsvReader csv_reader = new CsvReader(reader);
+            int row_count = 0;
+            List<string> headers = new List<string>();
+            var storage_list = from m in _db.SS_Storage
+                               where m.Plattform_Id == 1
+                               select m;
+            while (csv_reader.Read())
+            {
+                try
+                {
+                    string system_code = csv_reader.GetField<string>("订单号");
+                    if (system_code == "" || system_code == null)
+                    {
+                        break;
+                    }
+                    int o_code;
+                    int p_code;
+                    string p_name;
+                    string s_name;
+                    string sub_name;
+                    int p_bay;
+                    StorageOrder storage = new StorageOrder()
+                    {
+                        Order_Nub = csv_reader.TryGetField<int>("订单号", out o_code) ? o_code : 0,
+                        Product_Nub = csv_reader.TryGetField<int>("商品编码", out p_code) ? p_code : 0,
+                        Product_Nam = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(3, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
+                        Storage_Nam = csv_reader.TryGetField<string>("分配机构", out s_name) ? s_name : "NaN",
+                        Sub_Str = csv_reader.TryGetField<string>("仓库", out sub_name) ? sub_name : "NaN",
+                        Pay_Nub = csv_reader.TryGetField<int>("采购数量", out p_bay) ? p_bay : 0,
+                        Carton_Nub = 1
+                    };
+                    row_count++;
+                    return View(storage);
+                }
+                catch (Exception)
+                {
+                    return View("error");
+                }
+            }
+            return View();
+        }
         // 京东
         private bool Read_JdFile(int plattformId, string filename, DateTime date)
         {
