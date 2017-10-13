@@ -47,6 +47,7 @@
                 success: function (data) {
                     $("#my-form-content").html(data);
                     $('.date-view-select').html($('.date-select').eq(1).attr('data-date') + '天')
+                    $('.date-select').eq(1).addClass('active')
                     $('.hot-product').each(function () {
                         if ($(this).attr('data-bind') > 0) {
                             $(this).find('.box').addClass('fire-box')
@@ -61,6 +62,7 @@
                 if (r != null) return unescape(r[2]); return null; //返回参数值
             }
             $('.date-select').on('click', function () {
+                $('.date-select').eq(1).removeClass('active')
                 var that=$(this)
                 $.ajax({
                     url: '/PlattformInventory/Calc_StoragePartial',

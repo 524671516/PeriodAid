@@ -75,13 +75,13 @@ namespace PeriodAid.Controllers
             var list = from m in _db.SS_UploadRecord
                        where m.SalesRecord_Date >= start && m.SalesRecord_Date < end
                        && m.Plattform_Id == plattformId
-                       select new { record_date = m.SalesRecord_Date};
+                       select new { record_date = m.SalesRecord_Date };
             return Json(list);
         }
 
         // 上传销售记录
         [HttpPost]
-        public ActionResult UploadFile(FormCollection form,int plattformId,int[] a)
+        public ActionResult UploadFile(FormCollection form, int plattformId)
         {
             var file = Request.Files[0];
             if (file != null)
@@ -90,7 +90,7 @@ namespace PeriodAid.Controllers
                 AliOSSUtilities util = new AliOSSUtilities();
                 util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
                 var date_time = form["file-date"].ToString();
-                var result = Read_InsertFile(plattformId,fileName, Convert.ToDateTime(date_time),a);
+                var result = Read_InsertFile(plattformId, fileName, Convert.ToDateTime(date_time));
                 if (result)
                     return Json(new { result = "SUCCESS" });
                 else
@@ -110,7 +110,7 @@ namespace PeriodAid.Controllers
         public ActionResult Calc_StoragePartial(int plattformId, int? days)
         {
             int _days = days ?? 15;//默认30天
-            var upload_record = _db.SS_UploadRecord.OrderByDescending(m => m.Plattform_Id== plattformId).FirstOrDefault();
+            var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == plattformId).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
             if (upload_record != null)
             {
                 ViewBag.Calc_Days = _days;
@@ -127,7 +127,7 @@ namespace PeriodAid.Controllers
         }
 
         // 分析EXCEL文件
-        private bool Read_InsertFile(int plattformId, string filename, DateTime date, int[] a)
+        private bool Read_InsertFile(int plattformId, string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
@@ -139,13 +139,15 @@ namespace PeriodAid.Controllers
                                select m;
             int sales_field = 0;
             int inventory_field = 0;
-            while (csv_reader.Read())
+            decimal pay_money = 0;
+            decimal subAccount = 0;
+            if (plattformId == 1)
             {
-                try
+                while (csv_reader.Read())
                 {
-                    if (plattformId == 1)
+                    try
                     {
-                        string system_code = csv_reader.GetField<string>(a[0]);
+                        string system_code = csv_reader.GetField<string>("商品编号");
                         if (system_code == "合计")
                         {
                             break;
@@ -157,8 +159,8 @@ namespace PeriodAid.Controllers
                             string p_name;
                             product = new SS_Product()
                             {
-                                System_Code = csv_reader.TryGetField<string>(a[0], out p_code) ? p_code : "NaN",
-                                Item_Name = csv_reader.TryGetField<string>(a[1], out p_name) ? p_name.Substring(0, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
+                                System_Code = csv_reader.TryGetField<string>("商品编号", out p_code) ? p_code : "NaN",
+                                Item_Name = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(0, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
                                 Carton_Spec = 0,
                                 Inventory_Date = date,
                                 Item_Code = "",
@@ -184,7 +186,7 @@ namespace PeriodAid.Controllers
                                     SalesRecord_Date = date,
                                     Storage_Id = inventory.Id,
                                     Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0,
-                                    Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0
+                                    Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0,
                                 };
                                 _db.SS_SalesRecord.Add(record);
                             }
@@ -196,10 +198,21 @@ namespace PeriodAid.Controllers
                         }
                         row_count++;
                     }
-                    else if (plattformId == 2)
+                    catch (Exception)
                     {
-                        string system_code = csv_reader.GetField<string>(a[2]);
-                        if (system_code == "" || system_code == null) {
+                        return false;
+                    }
+                }
+            }
+            if (plattformId == 2)
+            {
+                while (csv_reader.Read())
+                {
+                    try
+                    {
+                        string system_code = csv_reader.GetField<string>("商品id");
+                        if (system_code == "" || system_code == null)
+                        {
                             break;
                         }
                         var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == plattformId);
@@ -209,8 +222,8 @@ namespace PeriodAid.Controllers
                             string p_name;
                             product = new SS_Product()
                             {
-                                System_Code = csv_reader.TryGetField<string>(a[2], out p_code) ? p_code : "NaN",
-                                Item_Name = csv_reader.TryGetField<string>(a[3], out p_name) ? p_name.Substring(0, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
+                                System_Code = csv_reader.TryGetField<string>("商品id", out p_code) ? p_code : "NaN",
+                                Item_Name = csv_reader.TryGetField<string>("商品标题", out p_name) ? p_name.Substring(10, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
                                 Carton_Spec = 0,
                                 Inventory_Date = date,
                                 Item_Code = "",
@@ -219,42 +232,54 @@ namespace PeriodAid.Controllers
                             };
                             _db.SS_Product.Add(product);
                         }
-                        foreach (var inventory in storage_list)
+                        string inventory_name = csv_reader.GetField<string>("仓库编码");
+                        var inventory = _db.SS_Storage.SingleOrDefault(m => m.Inventory_Header == inventory_name && m.Plattform_Id == plattformId);
+                        if (inventory == null)
                         {
-                            var exist_item = _db.SS_SalesRecord.SingleOrDefault(m => m.SalesRecord_Date == date && m.Product_Id == product.Id && m.Storage_Id == inventory.Id);
-                            if (exist_item != null)
+                            inventory = new SS_Storage()
                             {
-                                exist_item.Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0;
-                                exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;
-                                _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
-                            }
-                            else
+                                Inventory_Header = inventory_name,
+                                Storage_Name = inventory_name,
+                                Plattform_Id = plattformId,
+                                Index = 0,
+                                Sales_Header = null
+                            };
+                            _db.SS_Storage.Add(inventory);
+                        }
+                        var exist_item = _db.SS_SalesRecord.SingleOrDefault(m => m.SalesRecord_Date == date && m.Product_Id == product.Id && m.Storage_Id == inventory.Id);
+                        if (exist_item != null)
+                        {
+                            exist_item.Sales_Count = csv_reader.TryGetField<int>("销量", out sales_field) ? sales_field : 0;
+                            exist_item.Pay_Money = csv_reader.TryGetField<decimal>("支付金额", out pay_money) ? pay_money : 0;
+                            exist_item.SubAccount_Price = csv_reader.TryGetField<decimal>("支付订单分账金额", out subAccount) ? subAccount : 0;
+                        }
+                        else
+                        {
+                            SS_SalesRecord record = new SS_SalesRecord()
                             {
-                                SS_SalesRecord record = new SS_SalesRecord()
-                                {
-                                    SS_Product = product,
-                                    SalesRecord_Date = date,
-                                    Storage_Id = inventory.Id,
-                                    Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0,
-                                    Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0
-                                };
-                                _db.SS_SalesRecord.Add(record);
-                            }
-                            if (date > product.Inventory_Date)
-                            {
-                                product.Inventory_Date = date;
-                                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                            }
+                                SS_Product = product,
+                                SalesRecord_Date = date,
+                                Storage_Id = inventory.Id,
+                                Sales_Count = csv_reader.TryGetField<int>("销量", out sales_field) ? sales_field : 0,
+                                Storage_Count = 0,
+                                Pay_Money = csv_reader.TryGetField<decimal>("支付金额", out pay_money) ? pay_money : 0,
+                                SubAccount_Price = csv_reader.TryGetField<decimal>("支付订单分账金额", out subAccount) ? subAccount : 0
+                            };
+                            _db.SS_SalesRecord.Add(record);
+                        }
+                        if (date > product.Inventory_Date)
+                        {
+                            product.Inventory_Date = date;
+                            _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
                         }
                         row_count++;
-                    }
-                    else {
 
                     }
-
-                }catch(Exception)
-                {
-                    return false;
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                    _db.SaveChanges();
                 }
             }
             var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == plattformId && m.SalesRecord_Date == date);
@@ -295,13 +320,14 @@ namespace PeriodAid.Controllers
             row.CreateCell(cell_pos).SetCellValue("产品名称");
             cell_pos++;
             int days = Convert.ToInt32(form["calc_days"].ToString());
-            foreach(var inventory in inventory_list.OrderBy(m=>m.Id)) {
+            foreach (var inventory in inventory_list.OrderBy(m => m.Id))
+            {
                 row.CreateCell(cell_pos).SetCellValue(inventory.Storage_Name + "补货数量");
                 cell_pos++;
             }
             // 写产品列
             int row_pos = 1;
-            foreach(var product in product_list)
+            foreach (var product in product_list)
             {
                 NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
@@ -340,12 +366,11 @@ namespace PeriodAid.Controllers
                     row_pos++;
                 }
             }
-
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss")+"库存表.xls");
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "库存表.xls");
 
 
         }
@@ -358,7 +383,8 @@ namespace PeriodAid.Controllers
         /// 当前库存页面
         /// </summary>
         /// <returns></returns>
-        public ActionResult PlattformInventory_form(int? plattformId, DateTime? select_date) {
+        public ActionResult PlattformInventory_form(int? plattformId, DateTime? select_date)
+        {
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
@@ -375,24 +401,29 @@ namespace PeriodAid.Controllers
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m=>m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m=>m.SubAccount_Price)
                                   };
 
                 return View(SalesRecord);
             }
-            else {
+            else
+            {
                 var storage = from m in _db.SS_Storage
-                              where m.Plattform_Id == 1
+                              where m.Plattform_Id == plattformId
                               select m;
                 ViewBag.storage = storage;
                 var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SS_Product.Plattform_Id == 1
+                                  where m.SS_Product.Plattform_Id == plattformId
                                   group m by m.SS_Product into g
                                   select new Product_SummaryViewModel
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m => m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                   };
 
                 return View(SalesRecord);
@@ -401,7 +432,8 @@ namespace PeriodAid.Controllers
 
 
 
-        public ActionResult StorageShow(int plattformId,int? Storage,DateTime? select_date) {
+        public ActionResult StorageShow(int plattformId, int? Storage, DateTime? select_date)
+        {
             var storage = from m in _db.SS_Storage
                           select m;
             ViewBag.storage = storage;
@@ -421,7 +453,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -434,7 +468,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -448,13 +484,16 @@ namespace PeriodAid.Controllers
                                       {
                                           Product = g.Key,
                                           Sales_Sum = g.Sum(m => m.Sales_Count),
-                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                          Pay_Sum = g.Sum(m => m.Pay_Money),
+                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                       };
                     return PartialView(SalesRecord);
 
                 }
             }
-            else {
+            else
+            {
                 if (Storage.ToString() != "")
                 {
                     if (Storage.ToString() == "0")
@@ -465,7 +504,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -478,7 +519,9 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                           };
                         return PartialView(SalesRecord);
                     }
@@ -492,7 +535,9 @@ namespace PeriodAid.Controllers
                                       {
                                           Product = g.Key,
                                           Sales_Sum = g.Sum(m => m.Sales_Count),
-                                          Inventory_Sum = g.Sum(m => m.Storage_Count)
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                          Pay_Sum = g.Sum(m => m.Pay_Money),
+                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                       };
                     return PartialView(SalesRecord);
 
@@ -506,18 +551,19 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult ProductListPartial(int plattformId, int? page,string query)
+        public ActionResult ProductListPartial(int plattformId, int? page, string query)
         {
             int _page = page ?? 1;
             if (query != null)
             {
                 var SearchResult = (from m in _db.SS_Product
-                                   where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
-                                   orderby m.Product_Type descending, m.Id descending
-                                   select m).ToPagedList(_page, 15);
+                                    where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
+                                    orderby m.Product_Type descending, m.Id descending
+                                    select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
-            else {
+            else
+            {
                 var productlist = (from m in _db.SS_Product
                                    where m.Plattform_Id == plattformId
                                    orderby m.Product_Type descending, m.Id descending
@@ -564,11 +610,11 @@ namespace PeriodAid.Controllers
             DateTime _start = Convert.ToDateTime(start);
             DateTime _end = Convert.ToDateTime(end);
             var info_data = from m in _db.SS_SalesRecord
-                       where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
-                       && m.Product_Id == productId
-                       group m by m.SalesRecord_Date into g
-                       orderby g.Key
-                       select new ProductStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m=>m.Sales_Count) };
+                            where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
+                            && m.Product_Id == productId
+                            group m by m.SalesRecord_Date into g
+                            orderby g.Key
+                            select new ProductStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m => m.Sales_Count) };
             DateTime current_date = _start;
             var data = new List<ProductStatisticViewModel>();
             while (current_date <= _end)
@@ -589,5 +635,5 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS", data = data });
         }
     }
-    
+
 }

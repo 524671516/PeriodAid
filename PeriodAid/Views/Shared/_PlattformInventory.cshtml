@@ -39,7 +39,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li>@Html.ActionLink("库存管理系统", "PlattformInventory_form", "PlattformInventory")</li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
                         </ul>
                     </li>
                     <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
@@ -96,7 +96,7 @@
                                 <ul class="list-unstyled">
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=2"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=2"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=2"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a></li>
+                                    @*<li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=2"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a></li>*@
                                     <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=2"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传统计</a></li>           
                                 </ul>
                             </div>

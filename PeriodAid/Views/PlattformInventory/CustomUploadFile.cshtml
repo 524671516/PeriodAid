@@ -99,11 +99,18 @@
             }
             // 显示文件名
               
-               $('#file-name').change(function () {
-                var file = $("#file-name").val();
-                var fileName = file.lastIndexOf('\\')
-                var strName = file.substring(fileName + 1)
-                $('#upload').text(strName)
+            $('#file-name').change(function () {
+                if ($(this).val() != "") {
+                    var file = $("#file-name").val();
+                    var fileName = file.lastIndexOf('\\')
+                    var strName = file.substring(fileName + 1)
+                    $('#upload').text(strName)
+                } else {
+                    $('#upload').text("选择文件")
+                }
+                    
+                
+                
             })
             $("#file-form-sub").click(function () {              
                 var dataVal = $('#file-date').val()
@@ -173,6 +180,8 @@
                     });
                 } else {
                     errorAlert('请选择日期或上传文件')
+                    $('#file-date').val('')
+                    $('#upload').text('选择文件')
                 }
                 return false;
             });

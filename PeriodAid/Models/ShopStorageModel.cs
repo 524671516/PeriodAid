@@ -138,6 +138,10 @@
 
         public int Storage_Id { get; set; }
 
+        public decimal Pay_Money { get; set; }
+
+        public decimal SubAccount_Price { get; set; }
+
         public virtual SS_Storage SS_Storage { get; set; }
     }
 
@@ -162,6 +166,10 @@
         public int Sales_Sum { get; set; }
 
         public int Inventory_Sum { get; set; }
+
+        public decimal Pay_Sum { get; set; }
+
+        public decimal SubAccount_Sum { get; set; }
     }
     //public class MyEntity
     //{
