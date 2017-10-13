@@ -90,15 +90,14 @@ namespace PeriodAid.Controllers
                 AliOSSUtilities util = new AliOSSUtilities();
                 util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
                 var date_time = form["file-date"].ToString();
-                if (plattformId == 1)
+                if(plattformId == 1)
                 {
                     var result = Read_JdFile(plattformId, fileName, Convert.ToDateTime(date_time));
                     if (result)
                         return Json(new { result = "SUCCESS" });
                     else
                         return Json(new { result = "FAIL" });
-                }
-                else if (plattformId == 2)
+                }else if(plattformId == 2)
                 {
                     var result = Read_TmFile(plattformId, fileName, Convert.ToDateTime(date_time));
                     if (result)
@@ -110,7 +109,8 @@ namespace PeriodAid.Controllers
                 {
                     return Json(new { result = "FAIL" });
                 }
-                
+
+
             }
             else
             {
@@ -143,7 +143,7 @@ namespace PeriodAid.Controllers
         }
 
         // 分析EXCEL文件
-        // 京东仓
+        // 京东
         private bool Read_JdFile(int plattformId, string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
@@ -216,8 +216,6 @@ namespace PeriodAid.Controllers
                         return false;
                     }
                 }
-            
-            
             var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == 1 && m.SalesRecord_Date == date);
             if (upload_record != null)
             {
@@ -237,7 +235,7 @@ namespace PeriodAid.Controllers
             _db.SaveChanges();
             return true;
         }
-        // 天猫仓
+        // 天猫
         private bool Read_TmFile(int plattformId, string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
@@ -326,7 +324,6 @@ namespace PeriodAid.Controllers
                     }
                     _db.SaveChanges();
                 }
-            
             var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == 2 && m.SalesRecord_Date == date);
             if (upload_record != null)
             {
@@ -615,7 +612,7 @@ namespace PeriodAid.Controllers
                 }else
                 {
                     var SearchResult = (from m in _db.SS_Product
-                                        where m.Plattform_Id == plattformId 
+                                        where m.Plattform_Id == plattformId
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
