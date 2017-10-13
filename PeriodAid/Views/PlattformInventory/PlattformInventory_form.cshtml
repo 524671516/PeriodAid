@@ -87,17 +87,33 @@
                             data: {
                                 plattformId: getUrlParam('plattformId'),
                                 select_date: $('#form-date-select').text(),
-                                
                             },
-                            
                             success: function (data) {
-                                $('#storage_show').html(data)
-                                $('#file-loading').hide()
-                                $('.hot-product').each(function () {
-                                    if ($(this).attr('data-bind') > 0) {
-                                        $(this).find('.box').addClass('fire-box')
-                                    }
-                                })
+                                if(getUrlParam('plattformId')==1){
+                                    $('#storage_show').html(data)
+                                    $('#file-loading').hide()
+                                    $('#view-head-tr').find('th').eq(5).addClass('hidden')
+                                    $('#view-head-tr').find('th').eq(6).addClass('hidden')
+                                    $('.view-body-tr').find('.sales-pay').addClass('hidden')
+                                    $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
+                                    $('.hot-product').each(function () {
+                                        if ($(this).attr('data-bind') == 1) {
+                                            $(this).find('.box').addClass('fire-box')
+                                        }
+                                    })
+                                }
+                                if(getUrlParam('plattformId')==2){
+                                    $('#storage_show').html(data)
+                                    $('#file-loading').hide()
+                                    $('#view-head-tr').find('th').eq(4).addClass('hidden')
+                                    $('.view-body-tr').find('.sales-storage').addClass('hidden')
+                                    $('.hot-product').each(function () {
+                                        if ($(this).attr('data-bind') == 1) {
+                                            $(this).find('.box').addClass('fire-box')
+                                        }
+                                    })
+                                }
+                                
                             }
                         })
 
@@ -141,10 +157,8 @@
                 }
             }
         }
-
         $("#form-date-show").on("click", function() {
             data_date()
-
         })
         $('.ui-corner-all').on('click',function(){
             data_date()
@@ -167,14 +181,30 @@
                     select_date: $('#form-date-select').text()
                 },
                 success: function (data) {
-                    that.children('.form-select-a').addClass("active");
-                    $("#storage_show").html(data);
-                    $('#file-loading').hide()
-                    $('.hot-product').each(function () {
-                        if ($(this).attr('data-bind') > 0) {
-                            $(this).find('.box').addClass('fire-box')
-                        }
-                    })
+                    if(getUrlParam('plattformId')==1){
+                        $('#storage_show').html(data)
+                        $('#file-loading').hide()
+                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
+                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
+                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
+                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
+                        $('.hot-product').each(function () {
+                            if ($(this).attr('data-bind') == 1) {
+                                $(this).find('.box').addClass('fire-box')
+                            }
+                        })
+                    }
+                    if(getUrlParam('plattformId')==2){
+                        $('#storage_show').html(data)
+                        $('#file-loading').hide()
+                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
+                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
+                        $('.hot-product').each(function () {
+                            if ($(this).attr('data-bind') == 1) {
+                                $(this).find('.box').addClass('fire-box')
+                            }
+                        })
+                    }
                 }
             })
         })
@@ -191,13 +221,30 @@
                     select_date: $('#form-date-select').text()
                 },
                 success: function (data) {
-                    $('#storage_show').html(data)
-                    $('#file-loading').hide()
-                    $('.hot-product').each(function () {
-                        if ($(this).attr('data-bind') > 0) {
-                            $(this).find('.box').addClass('fire-box')
-                        }
-                    })
+                    if(getUrlParam('plattformId') == 1){
+                        $('#storage_show').html(data)
+                        $('#file-loading').hide()
+                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
+                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
+                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
+                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
+                        $('.hot-product').each(function () {
+                            if ($(this).attr('data-bind') == 1) {
+                                $(this).find('.box').addClass('fire-box')
+                            }
+                        })
+                    }
+                    if(getUrlParam('plattformId')==2){
+                        $('#storage_show').html(data)
+                        $('#file-loading').hide()
+                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
+                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
+                        $('.hot-product').each(function () {
+                            if ($(this).attr('data-bind') == 1) {
+                                $(this).find('.box').addClass('fire-box')
+                            }
+                        })
+                    }
                 }
             })
         })

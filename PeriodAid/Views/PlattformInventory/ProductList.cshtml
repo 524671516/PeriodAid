@@ -28,7 +28,7 @@
                 success: function (data) {
                     $("#product_list_content").html(data);
                     $('.hot-product').each(function () {
-                        if ($(this).attr('data-bind') > 0) {
+                        if ($(this).attr('data-bind') == 1) {
                             $(this).find('.box').addClass('fire-box')
                         }
                     })
@@ -47,7 +47,7 @@
                 success: function (data) {
                     $("#product_list_content").html(data);
                     $('.hot-product').each(function () {
-                        if ($(this).attr('data-bind') > 0) {
+                        if ($(this).attr('data-bind') == 1) {
                             $(this).find('.box').addClass('fire-box')
                         }
                     })
