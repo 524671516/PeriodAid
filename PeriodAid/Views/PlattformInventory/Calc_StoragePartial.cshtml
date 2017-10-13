@@ -23,7 +23,7 @@
                     @foreach (var item in Model.OrderByDescending(m => m.Sales_Count))
                     {
                         <tr>    
-                            <th scope="row" style="position:relative" class="hot-product" data-bind="@item.Product.Product_Type">@item.Product.System_Code<a class="fire-box"></a></th>
+                            <th scope="row" style="position:relative" class="hot-product" data-bind="@item.Product.Product_Type">@item.Product.System_Code<a class="box"></a></th>
                             <td>@Html.Encode(item.Product.Item_Code)</td>
                             <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                             <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
