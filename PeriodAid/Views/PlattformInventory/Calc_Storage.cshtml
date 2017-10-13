@@ -10,9 +10,6 @@
         .table > tbody > tr > td{
             vertical-align: middle;
         }
-        .fire-box{
-            top:11px
-        }
     </style>
 }
 <h2 style="position:relative;top:30px">入库预估</h2>
@@ -49,8 +46,10 @@
                     $('.date-view-select').html($('.date-select').eq(1).attr('data-date') + '天')
                     $('.date-select').eq(1).addClass('active')
                     $('.hot-product').each(function () {
-                        if ($(this).attr('data-bind') > 0) {
-                            $(this).find('.box').addClass('fire-box')
+                        if ($(this).attr('data-bind') != 1) {
+                            $(this).find('.fire-box').css('opacity', '0')
+                        } else if ($(this).attr('data-bind') == 0) {
+                            $(this).find('.fire-box').remove();
                         }
                     })
                 }
@@ -76,6 +75,8 @@
                         $('.hot-product').each(function () {
                             if ($(this).attr('data-bind') > 0) {
                                 $(this).find('.box').addClass('fire-box')
+                            } else if ($(this).attr('data-bind') == 0) {
+                                $(this).find('.fire-box').remove();
                             }
                         })
                     }
