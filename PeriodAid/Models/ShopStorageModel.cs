@@ -171,6 +171,16 @@
 
         public decimal SubAccount_Sum { get; set; }
     }
+    //送货单导入
+    public class StorageOrder {
+        public int OrderId { get; set; }
+        public int ProductId { get; set; }
+        public string ProductName { get; set; }
+        public string StorageName { get; set; }
+        public string SubStoName { get; set; }
+        public int CartonSpec { get; set; }
+        public int OrderCount { get; set; }
+    }
     //public class MyEntity
     //{
     //    public int Id { get; set; }
