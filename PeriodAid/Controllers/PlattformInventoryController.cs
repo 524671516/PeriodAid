@@ -90,27 +90,11 @@ namespace PeriodAid.Controllers
                 AliOSSUtilities util = new AliOSSUtilities();
                 util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
                 var date_time = form["file-date"].ToString();
-                if (plattformId == 1)
-                {
-                    var result = Read_JdFile(plattformId, fileName, Convert.ToDateTime(date_time));
-                    if (result)
-                        return Json(new { result = "SUCCESS" });
-                    else
-                        return Json(new { result = "FAIL" });
-                }
-                else if (plattformId == 2)
-                {
-                    var result = Read_TmFile(plattformId, fileName, Convert.ToDateTime(date_time));
-                    if (result)
-                        return Json(new { result = "SUCCESS" });
-                    else
-                        return Json(new { result = "FAIL" });
-                }
+                var result = Read_InsertFile(plattformId, fileName, Convert.ToDateTime(date_time));
+                if (result)
+                    return Json(new { result = "SUCCESS" });
                 else
-                {
                     return Json(new { result = "FAIL" });
-                }
-                
             }
             else
             {
@@ -143,8 +127,7 @@ namespace PeriodAid.Controllers
         }
 
         // 分析EXCEL文件
-        // 京东仓
-        private bool Read_JdFile(int plattformId, string filename, DateTime date)
+        private bool Read_InsertFile(int plattformId, string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
@@ -152,11 +135,15 @@ namespace PeriodAid.Controllers
             int row_count = 0;
             List<string> headers = new List<string>();
             var storage_list = from m in _db.SS_Storage
-                               where m.Plattform_Id == 1
+                               where m.Plattform_Id == plattformId
                                select m;
             int sales_field = 0;
             int inventory_field = 0;
-            while (csv_reader.Read())
+            decimal pay_money = 0;
+            decimal subAccount = 0;
+            if (plattformId == 1)
+            {
+                while (csv_reader.Read())
                 {
                     try
                     {
@@ -165,7 +152,7 @@ namespace PeriodAid.Controllers
                         {
                             break;
                         }
-                        var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == 1);
+                        var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == plattformId);
                         if (product == null)
                         {
                             string p_code;
@@ -177,7 +164,7 @@ namespace PeriodAid.Controllers
                                 Carton_Spec = 0,
                                 Inventory_Date = date,
                                 Item_Code = "",
-                                Plattform_Id = 1,
+                                Plattform_Id = plattformId,
                                 Purchase_Price = 0
                             };
                             _db.SS_Product.Add(product);
@@ -216,42 +203,10 @@ namespace PeriodAid.Controllers
                         return false;
                     }
                 }
-            
-            
-            var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == 1 && m.SalesRecord_Date == date);
-            if (upload_record != null)
-            {
-                upload_record.Upload_Date = DateTime.Now;
-                _db.Entry(upload_record).State = System.Data.Entity.EntityState.Modified;
             }
-            else
+            if (plattformId == 2)
             {
-                upload_record = new SS_UploadRecord()
-                {
-                    Plattform_Id = 1,
-                    Upload_Date = DateTime.Now,
-                    SalesRecord_Date = date
-                };
-                _db.SS_UploadRecord.Add(upload_record);
-            }
-            _db.SaveChanges();
-            return true;
-        }
-        // 天猫仓
-        private bool Read_TmFile(int plattformId, string filename, DateTime date)
-        {
-            AliOSSUtilities util = new AliOSSUtilities();
-            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
-            CsvReader csv_reader = new CsvReader(reader);
-            int row_count = 0;
-            List<string> headers = new List<string>();
-            var storage_list = from m in _db.SS_Storage
-                               where m.Plattform_Id == 2
-                               select m;
-            int sales_field = 0;
-            decimal pay_money = 0;
-            decimal subAccount = 0;
-            while (csv_reader.Read())
+                while (csv_reader.Read())
                 {
                     try
                     {
@@ -260,7 +215,7 @@ namespace PeriodAid.Controllers
                         {
                             break;
                         }
-                        var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == 2);
+                        var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code && m.Plattform_Id == plattformId);
                         if (product == null)
                         {
                             string p_code;
@@ -272,20 +227,20 @@ namespace PeriodAid.Controllers
                                 Carton_Spec = 0,
                                 Inventory_Date = date,
                                 Item_Code = "",
-                                Plattform_Id = 2,
+                                Plattform_Id = plattformId,
                                 Purchase_Price = 0
                             };
                             _db.SS_Product.Add(product);
                         }
                         string inventory_name = csv_reader.GetField<string>("仓库编码");
-                        var inventory = _db.SS_Storage.SingleOrDefault(m => m.Inventory_Header == inventory_name && m.Plattform_Id == 2);
+                        var inventory = _db.SS_Storage.SingleOrDefault(m => m.Inventory_Header == inventory_name && m.Plattform_Id == plattformId);
                         if (inventory == null)
                         {
                             inventory = new SS_Storage()
                             {
                                 Inventory_Header = inventory_name,
                                 Storage_Name = inventory_name,
-                                Plattform_Id = 2,
+                                Plattform_Id = plattformId,
                                 Index = 0,
                                 Sales_Header = null
                             };
@@ -326,8 +281,8 @@ namespace PeriodAid.Controllers
                     }
                     _db.SaveChanges();
                 }
-            
-            var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == 2 && m.SalesRecord_Date == date);
+            }
+            var upload_record = _db.SS_UploadRecord.SingleOrDefault(m => m.Plattform_Id == plattformId && m.SalesRecord_Date == date);
             if (upload_record != null)
             {
                 upload_record.Upload_Date = DateTime.Now;
@@ -337,7 +292,7 @@ namespace PeriodAid.Controllers
             {
                 upload_record = new SS_UploadRecord()
                 {
-                    Plattform_Id = 2,
+                    Plattform_Id = plattformId,
                     Upload_Date = DateTime.Now,
                     SalesRecord_Date = date
                 };

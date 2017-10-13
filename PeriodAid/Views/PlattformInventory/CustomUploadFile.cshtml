@@ -118,21 +118,11 @@
                 if (dataVal && fileVal != '') {
                     $('#file-loading').show()
                     $('#file-form-sub').attr('disabled', 'disabled')
-                    if (getUrlParam('plattformId') == 1) {
-                        var arry = new Array("商品编号","合计","商品编号","商品名称");
-                    }
-                    else if (getUrlParam('plattformId') == 2) {
-                        var arry = new Array("商品id","","商品id","商品标题","仓库编码","销量","支付金额","支付订单分账金额");
-                    }
-                    else {
-                        var arry = new Array();
-                    }
                     $("#up-file-form").ajaxSubmit({
                         url: "/PlattformInventory/UploadFile",
                         type: "post",
                         data: {
                             plattformId: getUrlParam('plattformId'),
-                            a: arry,
                         },
                         success: function (msg) {
                             if (msg.result == "SUCCESS") {
