@@ -204,8 +204,12 @@ namespace PeriodAid.Controllers
                 var Product_list = from m in storageOrder
                                    where m.OrderId == danhao1.OrderId
                                    select m;
-               
-               
+                var Carton_Sum = 0;
+                foreach (var count in Product_list)
+                {
+                    var Carton_count = count.OrderCount / count.CartonSpec;
+                    Carton_Sum += Carton_count;
+                }
                 NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
                 single_row.CreateCell(cell_pos).SetCellValue("送货单号");
@@ -225,7 +229,7 @@ namespace PeriodAid.Controllers
                 cell_pos++;
                 single_row1.CreateCell(cell_pos).SetCellValue("总箱数");
                 cell_pos++;
-                single_row1.CreateCell(cell_pos).SetCellValue("0");
+                single_row1.CreateCell(cell_pos).SetCellValue(Carton_Sum);
                 cell_pos++;
                 row_pos++;
                 NPOI.SS.UserModel.IRow single_row2 = sheet.CreateRow(row_pos);
@@ -262,7 +266,7 @@ namespace PeriodAid.Controllers
                     {
                         NPOI.SS.UserModel.IRow single_row4 = sheet.CreateRow(row_pos++);
                         cell_pos = 0;
-                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + Carton_count + "箱");
+                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + Carton_Sum + "箱");
                         cell_pos++;
                         single_row4.CreateCell(cell_pos).SetCellValue(count.OrderId);
                         cell_pos++;
