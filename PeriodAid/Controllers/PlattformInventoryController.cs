@@ -148,50 +148,55 @@ namespace PeriodAid.Controllers
             CsvReader csv_reader = new CsvReader(reader);
             int row_count = 0;
             List<string> headers = new List<string>();
-            var product_list = from m in _db.SS_Product
-                               where m.Plattform_Id == 1
-                               select m.System_Code;
-            StorageOrder storageorder1 = new StorageOrder();
+            List<StorageOrder> StorageOrder = new List<Models.StorageOrder>();
+            StorageOrder storageorder = new StorageOrder();
             while (csv_reader.Read())
             {
                 try
                 {
-                    string OrderId = csv_reader.GetField<string>("订单号");
+                    int OrderId = csv_reader.GetField<int>("订单号");
                     if (OrderId.ToString() == "" || OrderId.ToString() == null)
                     {
                         break;
                     }
-                    string ProductId = csv_reader.GetField<string>("商品编码");
-                    int o_code;
-                    int p_code;
-                    string p_name;
-                    string s_name;
-                    string su_name;
-                    int o_count;
-                    foreach (var product in product_list)
+                    int ProductId = csv_reader.GetField<int>("商品编码");
+                    var product = _db.SS_Product.SingleOrDefault(m=>m.System_Code== ProductId.ToString());
+                    int o_code, p_code, o_count;
+                    string p_name, s_name, su_name;
+                    storageorder = new StorageOrder()
                     {
-                        StorageOrder storageorder = new StorageOrder()
-                        {
-                            OrderId = csv_reader.TryGetField<int>("订单号", out o_code) ? o_code : 0,
-                            ProductId = csv_reader.TryGetField<int>("商品编码", out p_code) ? p_code : 0,
-                            ProductName = csv_reader.TryGetField<string>("商品编码", out p_name) ? p_name.Substring(3, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
-                            StorageName = csv_reader.TryGetField<string>("分配机构", out s_name) ? s_name : "NaN",
-                            SubStoName = csv_reader.TryGetField<string>("仓库", out su_name) ? su_name : "NaN",
-                            CartonSpec = 1,
-                            OrderCount = csv_reader.TryGetField<int>("采购数量", out o_count) ? o_count : 0,
-                        };
-                        ViewBag.result = storageorder;
-                        storageorder1 = storageorder;
-                    }
+                        OrderId = csv_reader.TryGetField<int>("订单号", out o_code) ? o_code : 0,
+                        ProductId = csv_reader.TryGetField<int>("商品编码", out p_code) ? p_code : 0,
+                        ProductName = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(3, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
+                        StorageName = csv_reader.TryGetField<string>("分配机构", out s_name) ? s_name : "NaN",
+                        SubStoName = csv_reader.TryGetField<string>("仓库", out su_name) ? su_name : "NaN",
+                        CartonSpec = product.Carton_Spec,
+                        OrderCount = csv_reader.TryGetField<int>("采购数量", out o_count) ? o_count : 0,
+                    };
+                    StorageOrder.Add(storageorder);
                     row_count++;
-                    return Json(new { result = storageorder1 });
                 }
                 catch (Exception)
                 {
                     return View("error");
                 }
             }
-            return View(storageorder1);
+            HSSFWorkbook book = new HSSFWorkbook();
+            ISheet sheet = book.CreateSheet("Total");
+            // 写标题
+            IRow row = sheet.CreateRow(0);
+            int cell_pos = 0;
+            row.CreateCell(cell_pos).SetCellValue("送货单");
+            foreach (var item in StorageOrder) {
+                IRow row1 = sheet.CreateRow(1);
+                row1.CreateCell(cell_pos++).SetCellValue("送货单号");
+                row1.CreateCell(cell_pos++).SetCellValue(item.OrderId);
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "库存表.xls");
         }
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
@@ -219,52 +224,6 @@ namespace PeriodAid.Controllers
         }
 
         // 分析EXCEL文件
-        // 分仓单
-        public ActionResult Read_CartonFile(int plattformId, string filename, DateTime date)
-        {
-            AliOSSUtilities util = new AliOSSUtilities();
-            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
-            CsvReader csv_reader = new CsvReader(reader);
-            int row_count = 0;
-            List<string> headers = new List<string>();
-            var storage_list = from m in _db.SS_Storage
-                               where m.Plattform_Id == 1
-                               select m;
-            while (csv_reader.Read())
-            {
-                try
-                {
-                    string system_code = csv_reader.GetField<string>("订单号");
-                    if (system_code == "" || system_code == null)
-                    {
-                        break;
-                    }
-                    int o_code;
-                    int p_code;
-                    string p_name;
-                    string s_name;
-                    string sub_name;
-                    int p_bay;
-                    StorageOrder storage = new StorageOrder()
-                    {
-                        Order_Nub = csv_reader.TryGetField<int>("订单号", out o_code) ? o_code : 0,
-                        Product_Nub = csv_reader.TryGetField<int>("商品编码", out p_code) ? p_code : 0,
-                        Product_Nam = csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name.Substring(3, p_name.Length > 15 ? 15 : p_name.Length) : "NaN",
-                        Storage_Nam = csv_reader.TryGetField<string>("分配机构", out s_name) ? s_name : "NaN",
-                        Sub_Str = csv_reader.TryGetField<string>("仓库", out sub_name) ? sub_name : "NaN",
-                        Pay_Nub = csv_reader.TryGetField<int>("采购数量", out p_bay) ? p_bay : 0,
-                        Carton_Nub = 1
-                    };
-                    row_count++;
-                    return View(storage);
-                }
-                catch (Exception)
-                {
-                    return View("error");
-                }
-            }
-            return View();
-        }
         // 京东
         private bool Read_JdFile(int plattformId, string filename, DateTime date)
         {
@@ -519,7 +478,7 @@ namespace PeriodAid.Controllers
                             storage_count = last_inventory.Storage_Count;
                         }
                         else
-                        {
+                       {
                             storage_count = 0;
                         }
                         var period_sales_count = (from m in _db.SS_SalesRecord
@@ -538,7 +497,7 @@ namespace PeriodAid.Controllers
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "库存表.xls");
-
+ 
 
         }
 
