@@ -340,7 +340,6 @@ namespace PeriodAid.Controllers
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
             //getOrderExcel(storageOrder);
             //getAdhesiveStickerExcel(storageOrder);
-            //return View("sucess");
             
         }
         // 打印分舱单
