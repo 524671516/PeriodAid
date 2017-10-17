@@ -24,6 +24,15 @@
     </div>
     <div style="padding:20px 0;">
         <div class="text-center h2">数据统计</div>
+
+        <div id="form-view-content1">
+            <form action="/PlattformInventory/StorageOrder" method="post" enctype="multipart/form-data" id="up-file-form1">
+                <input type="text" id="file-date" name="file-date" style="height:26px" />
+                <input type="file" id="file-name" name="file-name" class="hidden" />
+                <a href="javascript:;" id="upload">选择文件</a>
+                <input type="submit" class="btn btn-danger" id="file-form-sub1" />
+            </form>
+</div>
         @foreach (var item in ViewBag.DataDate) {
             <h5 class="date_show" hidden>@item</h5>
         }
@@ -58,6 +67,9 @@
     <script>
     // 初始化数据
         $(function () {
+            $('#upload').click(function () {
+                $('#file-name').trigger('click')
+            })
         //日期格式改变
         $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -80,7 +92,7 @@
                         //console.log(record)
                     }
                         $('#form-date-select').text(record)
-                        
+
                         $.ajax({
                             url: '/PlattformInventory/StorageShow/',
                             type: 'post',
@@ -113,7 +125,7 @@
                                         }
                                     })
                                 }
-                                
+
                             }
                         })
 
@@ -261,6 +273,17 @@
         format = format.replace("ss", dateTime.getSeconds());
         format = format.replace("ms", dateTime.getMilliseconds())
         return format;
-    };
+        };
+
+        $("#file-form-sub1").click(function () {
+            $("#up-file-form1").ajaxSubmit({
+                url: "/PlattformInventory/StorageOrder",
+                data: {
+                },
+                success: function (msg) {
+                    console.log(msg)
+                }
+            });
+        });
     </script>
 }
