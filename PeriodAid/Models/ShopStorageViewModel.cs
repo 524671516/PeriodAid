@@ -33,4 +33,24 @@ namespace PeriodAid.Models
 
         public int salescount { get; set; }
     }
+
+    //送货单导入
+    public class StorageOrder
+    {
+        public int OrderId { get; set; }
+
+        public string SystemCode { get; set; }
+
+        public string ProductName { get; set; }
+
+        public string StorageName { get; set; }
+
+        public string SubStoName { get; set; }
+
+        public int CartonSpec { get; set; }
+
+        public int OrderCount { get; set; }
+
+        public int CartonCount { get; set; }
+    }
 }
