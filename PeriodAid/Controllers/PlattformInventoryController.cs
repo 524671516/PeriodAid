@@ -183,8 +183,7 @@ namespace PeriodAid.Controllers
                     return View("error");
                 }
             }
-
-            // 打印分货单
+            // 打印分舱单
             HSSFWorkbook book = new HSSFWorkbook();
             ISheet sheet = book.CreateSheet("Total");
             // 写标题
@@ -193,8 +192,7 @@ namespace PeriodAid.Controllers
             row.CreateCell(cell_pos).SetCellValue("送货单");
             cell_pos++;
             var danhao = (from m in storageOrder
-                         select m).Distinct().Take(1);
-           
+                          select m).Distinct().Take(1);
 
             // 写产品列
             int row_pos = 1;
@@ -278,14 +276,241 @@ namespace PeriodAid.Controllers
                     }
                 }
             }
-
+            // 打印不干胶
+            ISheet sheet2 = book.CreateSheet("Total2");
+            // 写标题
+            IRow row2 = sheet2.CreateRow(0);
+            int cell_pos2 = 0;
+            row2.CreateCell(cell_pos2).SetCellValue("采购单号");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("目的城市");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("目的DC");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("SKU");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("商品名称");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("实装数量");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("箱数序号");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("总箱数");
+            cell_pos2++;
+            // 写产品列
+            int row_pos2 = 1;
+            var Order_num = from m in storageOrder
+                            select m;
+            foreach (var item in Order_num)
+            {
+                var Order_num1 = storageOrder.FirstOrDefault(m => m.OrderId == item.OrderId);
+                var Product_list = from m in storageOrder
+                                   where m.OrderId == Order_num1.OrderId
+                                   select m;
+                foreach (var count in Product_list)
+                {
+                    var Carton_count = count.OrderCount / count.CartonSpec;
+                    for (var i = 1; i <= Carton_count; i++)
+                    {
+                        NPOI.SS.UserModel.IRow single_row = sheet2.CreateRow(row_pos2++);
+                        cell_pos = 0;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.OrderId);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.StorageName);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.SubStoName);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.ProductId);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.ProductName);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.CartonSpec);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(i);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(Carton_count);
+                        cell_pos++;
+                    }
+                }
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+            //getOrderExcel(storageOrder);
+            //getAdhesiveStickerExcel(storageOrder);
+            //return View("sucess");
+            
+        }
+        // 打印分舱单
+        private ActionResult getOrderExcel(List<StorageOrder> storageOrder)
+        {
+            // 打印分舱单
+            HSSFWorkbook book = new HSSFWorkbook();
+            ISheet sheet = book.CreateSheet("Total");
+            // 写标题
+            IRow row = sheet.CreateRow(0);
+            int cell_pos = 0;
+            row.CreateCell(cell_pos).SetCellValue("送货单");
+            cell_pos++;
+            var danhao = (from m in storageOrder
+                         select m).Distinct().Take(1);
+            
+            // 写产品列
+            int row_pos = 1;
+            foreach (var item in danhao)
+            {
+                var danhao1 = storageOrder.FirstOrDefault(m => m.OrderId == item.OrderId);
+                var Product_list = from m in storageOrder
+                                   where m.OrderId == danhao1.OrderId
+                                   select m;
+                var Carton_Sum = 0;
+                foreach (var count in Product_list)
+                {
+                    var Carton_count = count.OrderCount / count.CartonSpec;
+                    Carton_Sum += Carton_count;
+                }
+                NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
+                cell_pos = 0;
+                single_row.CreateCell(cell_pos).SetCellValue("送货单号");
+                cell_pos++;
+                single_row.CreateCell(cell_pos).SetCellValue("BJ1015");
+                cell_pos++;
+                single_row.CreateCell(cell_pos).SetCellValue("供应商名称");
+                cell_pos++;
+                single_row.CreateCell(cell_pos).SetCellValue("上海寿全斋电子商务有限公司");
+                cell_pos++;
+                row_pos++;
+                NPOI.SS.UserModel.IRow single_row1 = sheet.CreateRow(row_pos);
+                cell_pos = 0;
+                single_row1.CreateCell(cell_pos).SetCellValue("采购单号");
+                cell_pos++;
+                single_row1.CreateCell(cell_pos).SetCellValue(item.OrderId);
+                cell_pos++;
+                single_row1.CreateCell(cell_pos).SetCellValue("总箱数");
+                cell_pos++;
+                single_row1.CreateCell(cell_pos).SetCellValue(Carton_Sum);
+                cell_pos++;
+                row_pos++;
+                NPOI.SS.UserModel.IRow single_row2 = sheet.CreateRow(row_pos);
+                cell_pos = 0;
+                single_row2.CreateCell(cell_pos).SetCellValue("目的城市");
+                cell_pos++;
+                single_row2.CreateCell(cell_pos).SetCellValue(item.StorageName);
+                cell_pos++;
+                single_row2.CreateCell(cell_pos).SetCellValue("目的仓库");
+                cell_pos++;
+                single_row2.CreateCell(cell_pos).SetCellValue(item.SubStoName);
+                cell_pos++;
+                row_pos++;
+                NPOI.SS.UserModel.IRow single_row3 = sheet.CreateRow(row_pos);
+                cell_pos = 0;
+                single_row3.CreateCell(cell_pos).SetCellValue("箱号/箱号段");
+                cell_pos++;
+                single_row3.CreateCell(cell_pos).SetCellValue("sku");
+                cell_pos++;
+                single_row3.CreateCell(cell_pos).SetCellValue("商品名称");
+                cell_pos++;
+                single_row3.CreateCell(cell_pos).SetCellValue("箱规（个/箱）");
+                cell_pos++;
+                single_row3.CreateCell(cell_pos).SetCellValue("商品总数量/个");
+                cell_pos++;
+                single_row3.CreateCell(cell_pos).SetCellValue("备注");
+                cell_pos++;
+                row_pos++;
+                var count_num = 1;
+                foreach (var count in Product_list)
+                {
+                    var Carton_count = count.OrderCount / count.CartonSpec;
+                    for (var i = 1; i <= Carton_count; i++)
+                    {
+                        NPOI.SS.UserModel.IRow single_row4 = sheet.CreateRow(row_pos++);
+                        cell_pos = 0;
+                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + Carton_Sum + "箱");
+                        cell_pos++;
+                        single_row4.CreateCell(cell_pos).SetCellValue(count.OrderId);
+                        cell_pos++;
+                        single_row4.CreateCell(cell_pos).SetCellValue(count.ProductName);
+                        cell_pos++;
+                        single_row4.CreateCell(cell_pos).SetCellValue(count.CartonSpec);
+                        cell_pos++;
+                        single_row4.CreateCell(cell_pos).SetCellValue(count.OrderCount);
+                    }
+                }
+            }
+            ISheet sheet2 = book.CreateSheet("Total2");
+            // 写标题
+            IRow row2 = sheet2.CreateRow(0);
+            int cell_pos2 = 0;
+            row2.CreateCell(cell_pos2).SetCellValue("采购单号");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("目的城市");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("目的DC");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("SKU");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("商品名称");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("实装数量");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("箱数序号");
+            cell_pos2++;
+            row2.CreateCell(cell_pos2).SetCellValue("总箱数");
+            cell_pos2++;
+            // 写产品列
+            int row_pos2 = 1;
+            var Order_num = from m in storageOrder
+                            select m;
+            foreach (var item in Order_num)
+            {
+                var Order_num1 = storageOrder.FirstOrDefault(m => m.OrderId == item.OrderId);
+                var Product_list = from m in storageOrder
+                                   where m.OrderId == Order_num1.OrderId
+                                   select m;
+                foreach (var count in Product_list)
+                {
+                    var Carton_count = count.OrderCount / count.CartonSpec;
+                    for (var i = 1; i <= Carton_count; i++)
+                    {
+                        NPOI.SS.UserModel.IRow single_row = sheet2.CreateRow(row_pos2++);
+                        cell_pos = 0;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.OrderId);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.StorageName);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.SubStoName);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.ProductId);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.ProductName);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(count.CartonSpec);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(i);
+                        cell_pos++;
+                        single_row.CreateCell(cell_pos).SetCellValue(Carton_count);
+                        cell_pos++;
+                    }
+                }
+            }
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
         }
-        
+        // 打印不干胶
+        //private ActionResult getAdhesiveStickerExcel(List<StorageOrder> storageOrder)
+        //{
+           
+        //    MemoryStream _stream = new MemoryStream();
+        //    book.Write(_stream);
+        //    _stream.Flush();
+        //    _stream.Seek(0, SeekOrigin.Begin);
+        //    return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+        //}
 
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
