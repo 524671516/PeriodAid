@@ -13,7 +13,7 @@
     </tr>
 </table>
 <h2>产品列表</h2>
-@Html.Hidden("PlattformId", (int)ViewBag.PlattformId)
+
 <div id="product_list_content"></div>
 
 @section scripts{
@@ -60,5 +60,6 @@
             var r = window.location.search.substr(1).match(reg);  //匹配目标参数
             if (r != null) return unescape(r[2]); return null; //返回参数值
         }
+
     </script>}
 
