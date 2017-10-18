@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using PeriodAid.Models;
 using PeriodAid.DAL;
 using PagedList;
+using NPOI.SS.Util;
 
 namespace PeriodAid.Controllers
 {
@@ -177,6 +178,7 @@ namespace PeriodAid.Controllers
             foreach (var sendorder in sendorderlist)
             {
                 ISheet sheet = book.CreateSheet(sendorder.Key.StorageName + sendorder.Key.SubStoName);
+                ICellStyle style = book.CreateCellStyle();
                 // 基本信息
                 int cell_pos = 0;
                 int row_pos = 0;
