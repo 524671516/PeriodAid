@@ -12,7 +12,6 @@ using PeriodAid.Models;
 using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
-using NPOI.HSSF.Util;
 
 namespace PeriodAid.Controllers
 {
@@ -171,7 +170,7 @@ namespace PeriodAid.Controllers
                     return View("error");
                 }
             }
-            // 打印送货单
+            // 打印分舱单
             HSSFWorkbook book = new HSSFWorkbook();
             var sendorderlist = from m in storageOrder
                                 group m by new { OrderId = m.OrderId, StorageName = m.StorageName, SubStoName = m.SubStoName } into g
