@@ -1,0 +1,61 @@
+﻿@model IEnumerable<PeriodAid.Models.Product_SummaryViewModel>
+<div class="center-block" id="my-form-content">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active">
+            <table class="table table-bordered table-hover" id="sun_show">
+
+            </table>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr id="view-head-tr">
+                        <th>产品编号</th>
+                        <th>商品编号</th>
+                        <th>商品名称</th>
+                        <th>销售数据</th>
+                        <th>仓库库存</th>
+                        <th>支付金额</th>
+                        <th>支付订单分账金额</th>
+                        <th>结算单价</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderByDescending(m => m.Sales_Sum))
+                    {
+                        <tr class="view-body-tr">
+                            <th scope="row" data-bind="@item.Product.Product_Type" class="hot-product">@item.Product.System_Code<a class="box"></a></th>
+                            <td></td>
+                            <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                            <td class="product-count">@item.Sales_Sum</td>
+                            <td class="sales-storage">@item.Inventory_Sum</td>
+                            <td class="sales-pay">@item.Pay_Sum</td>
+                            <td class="sales-subAccount">@item.SubAccount_Sum</td>
+                            <td class="sales-subAccount">@Convert.ToInt32((item.SubAccount_Sum / item.Sales_Sum))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $.ajax({
+            url: '/PlattformInventory/TMShow_StorageShow/',
+            type: 'post',
+            data: {
+                plattformId: getUrlParam('plattformId'),
+            },
+            success: function (data) {
+                $("#sun_show").html(data);
+            }
+        })
+    })
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+</script>

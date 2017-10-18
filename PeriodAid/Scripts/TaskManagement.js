@@ -19,7 +19,18 @@
             ShowTmView($(this).attr("data-href"));
         }
     });
-
+    $("#my-app").on("click", ".tm-show-view-1", function () {
+        if ($(this).hasClass("tm_active")) {
+            HiddenTmView();
+            $(this).removeClass("tm_active");
+        } else {
+            $(".tm-show-view-1").removeClass("tm_active");
+            $(this).addClass("tm_active");
+            //根据data-href地址获取相应模板
+            var _data = { SubjectId: $("#panel-wrap").attr("data-sid") };
+            SubjectDailyShow($(this).attr("data-href"),_data);
+        }
+    });
     //控制view隐藏
     $("#my-app").on("click", ".tm-hidden-view", function () {
         HiddenTmView();             //主要功能函数
@@ -410,6 +421,29 @@ function ShowTmView(url) {
             });
         }
 }
+
+function SubjectDailyShow(url, _data) {
+    if ($(".tm-view").length > 0) {
+        HiddenTmView(function () {
+            //获取对应模板
+            GetTemplate(url, _data, function (data) {
+                $(".col-md-9.tm_modal_ul_wrap").html(data);
+                //$("body>div:last").after(data);
+                //$("body").addClass("tm-open-view");
+                //$(".tm-view").slideDown(500);
+            });
+        });
+    } else {
+        //获取对应模板
+        GetTemplate(url, _data, function (data) {
+            $(".col-md-9.tm_modal_ul_wrap").html(data);
+            //$("body>div:last").after(data);
+            //$("body").addClass("tm-open-view");
+            //$(".tm-view").slideDown(500);
+        });
+    }
+}
+
 
 //任务拖动事件注册函数 id(ul的id)
 function dragtask(id) {

@@ -170,8 +170,13 @@ namespace PeriodAid.Controllers
                     return View("error");
                 }
             }
-            // 打印分舱单
-            HSSFWorkbook book = new HSSFWorkbook();
+            var _stream = OutExcel(storageOrder);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+            //return Content("sss");
+
+        }
+        private HSSFWorkbook SetStorageList(HSSFWorkbook book, List<StorageOrder> storageOrder)
+        {
             var sendorderlist = from m in storageOrder
                                 group m by new { OrderId = m.OrderId, StorageName = m.StorageName, SubStoName = m.SubStoName } into g
                                 select g;
@@ -193,28 +198,24 @@ namespace PeriodAid.Controllers
                 var single_sendorder = from m in storageOrder
                                        where m.OrderId == sendorder.Key.OrderId
                                        select m;
-                NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
+                IRow single_row = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row.CreateCell(cell_pos).SetCellValue("送货单号");
                 single_row.CreateCell(++cell_pos).SetCellValue("");
                 single_row.CreateCell(++cell_pos).SetCellValue("供应商名称");
                 single_row.CreateCell(++cell_pos).SetCellValue("上海寿全斋电子商务有限公司");
-                row_pos++;
-                NPOI.SS.UserModel.IRow single_row1 = sheet.CreateRow(row_pos);
-                cell_pos = 0;
+                IRow single_row1 = sheet.CreateRow(++row_pos);
                 single_row1.CreateCell(cell_pos).SetCellValue("采购单号");
                 single_row1.CreateCell(++cell_pos).SetCellValue(sendorder.Key.OrderId);
                 single_row1.CreateCell(++cell_pos).SetCellValue("总箱数");
                 single_row1.CreateCell(++cell_pos).SetCellValue(single_sendorder.Sum(m => m.CartonCount));
-                row_pos++;
-                NPOI.SS.UserModel.IRow single_row2 = sheet.CreateRow(row_pos);
+                IRow single_row2 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row2.CreateCell(cell_pos).SetCellValue("目的城市");
                 single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.StorageName);
                 single_row2.CreateCell(++cell_pos).SetCellValue("目的仓库");
                 single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.SubStoName);
-                row_pos++;
-                NPOI.SS.UserModel.IRow single_row3 = sheet.CreateRow(row_pos);
+                IRow single_row3 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row3.CreateCell(cell_pos).SetCellValue("箱号/箱号段");
                 single_row3.CreateCell(++cell_pos).SetCellValue("sku");
@@ -222,28 +223,30 @@ namespace PeriodAid.Controllers
                 single_row3.CreateCell(++cell_pos).SetCellValue("箱规（个/箱）");
                 single_row3.CreateCell(++cell_pos).SetCellValue("商品总数量/个");
                 single_row3.CreateCell(++cell_pos).SetCellValue("备注");
-                row_pos++;
                 var count_num = 1;
                 foreach (var item in single_sendorder)
                 {
                     for (var i = 1; i <= item.CartonCount; i++)
                     {
-                        NPOI.SS.UserModel.IRow single_row4 = sheet.CreateRow(row_pos++);
+                        IRow single_row4 = sheet.CreateRow(row_pos++);
                         cell_pos = 0;
-                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + item.CartonCount + "箱");
+                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.OrderId);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.ProductName);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                     }
                 }
-                NPOI.SS.UserModel.IRow single_row5 = sheet.CreateRow(row_pos);
+                IRow single_row5 = sheet.CreateRow(row_pos);
                 cell_pos = 0;
                 single_row5.CreateCell(cell_pos).SetCellValue("合计");
-                single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount)+"箱");
+                single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
                 single_row5.CreateCell(4).SetCellValue(single_sendorder.Sum(m => m.OrderCount));
             }
-            
+            return book;
+        }
+        private HSSFWorkbook SetLabelList(HSSFWorkbook book , List<StorageOrder> storageOrder)
+        {
             // 打印不干胶
             ISheet _sheet = book.CreateSheet("不干胶");
             // 写标题
@@ -276,11 +279,19 @@ namespace PeriodAid.Controllers
                     single_row.CreateCell(++cell_pos).SetCellValue(item.OrderCount);
                 }
             }
+            return book;
+        }
+        private MemoryStream OutExcel(List<StorageOrder> storageOrder) {
+            // 打印分舱单
+            HSSFWorkbook book = new HSSFWorkbook();
+            SetStorageList(book, storageOrder);
+            SetLabelList(book, storageOrder);
+            
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+            return _stream;
         }
   
         // 库存预估
@@ -769,6 +780,134 @@ namespace PeriodAid.Controllers
 
                 }
             }
+        }
+
+        public ActionResult TMS_StorageShow(int plattformId, int? Storage, DateTime? select_date)
+        {
+            var storage = from m in _db.SS_Storage
+                          select m;
+            ViewBag.storage = storage;
+            var DataDate = (from m in _db.SS_SalesRecord
+                            select m.SalesRecord_Date).Distinct();
+            ViewBag.DataDate = DataDate;
+            if (select_date != null)
+            {
+                if (Storage.ToString() != "")
+                {
+                    if (Storage.ToString() == "0")
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                    else
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                }
+                else
+                {
+                    var SalesRecord = from m in _db.SS_SalesRecord
+                                      where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                      group m by m.SS_Product into g
+                                      select new Product_SummaryViewModel
+                                      {
+                                          Product = g.Key,
+                                          Sales_Sum = g.Sum(m => m.Sales_Count),
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                          Pay_Sum = g.Sum(m => m.Pay_Money),
+                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                      };
+                    return PartialView(SalesRecord);
+
+                }
+            }
+            else
+            {
+                if (Storage.ToString() != "")
+                {
+                    if (Storage.ToString() == "0")
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                    else
+                    {
+                        var SalesRecord = from m in _db.SS_SalesRecord
+                                          where m.Storage_Id == Storage
+                                          group m by m.SS_Product into g
+                                          select new Product_SummaryViewModel
+                                          {
+                                              Product = g.Key,
+                                              Sales_Sum = g.Sum(m => m.Sales_Count),
+                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Pay_Sum = g.Sum(m => m.Pay_Money),
+                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                          };
+                        return PartialView(SalesRecord);
+                    }
+                }
+                else
+                {
+                    var SalesRecord = from m in _db.SS_SalesRecord
+                                      where m.SS_Storage.Plattform_Id == plattformId
+                                      group m by m.SS_Product into g
+                                      select new Product_SummaryViewModel
+                                      {
+                                          Product = g.Key,
+                                          Sales_Sum = g.Sum(m => m.Sales_Count),
+                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                          Pay_Sum = g.Sum(m => m.Pay_Money),
+                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                      };
+                    return PartialView(SalesRecord);
+
+                }
+            }
+        }
+
+        public ActionResult TMShow_StorageShow(int plattformId)
+        {
+            var SalesRecord = from m in _db.SS_SalesRecord
+                              where m.SS_Storage.SS_Plattform.Id == plattformId
+                              group m by m.SS_Storage.SS_Plattform into g
+                              select new Product_SummaryViewModel
+                              {
+                                  Sales_Sum = g.Sum(m => m.Sales_Count),
+                                  Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                  Pay_Sum = g.Sum(m => m.Pay_Money),
+                                  SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                              };
+            return PartialView(SalesRecord);
         }
 
         public ActionResult ProductList(int plattformId)

@@ -169,6 +169,8 @@
                 if (data != "FAIL") {
                     $("#Create-Subject-Content").html(data);
                     $("#Add-Subject").modal();
+                    //var _data = { SubjectId: $("#panel-wrap").attr("data-sid") };
+                    //SubjectDailyShow("/TaskManagement/SubjectFinishProgressPartial", _data);
                 }
                 else {
                     ErrorAlert("操作失败。")
