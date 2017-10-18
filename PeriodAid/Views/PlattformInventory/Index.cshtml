@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-<div id="form-view-content1">
+<div id="form-view-content">
     <form action="/PlattformInventory/StorageOrder" method="post" enctype="multipart/form-data" id="up-file-form">
         <input type="file" id="file-name" name="file-name" class="hidden" />
         <a href="javascript:;" id="upload">选择文件</a>
@@ -24,21 +24,15 @@
             $('#upload').text("选择文件")
         }
     })
-    //$('#file-form-sub').on('click',function(){
-    //    var fileVal = $("#file-name").val();
-    //    if (fileVal != '') {
-    //        $('#up-file-form').ajaxSubmit({
-    //            url: '/PlattformInventory/StorageOrder',
-    //            data: {
-    //            },
-    //            success: function (data) {
-    //                console.log(data)
-    //            }
-    //        })
-    //    } else {
-    //        errorAlert('请选择上传文件')
-    //    }
-    //    return false;
-    //})
+    $('#file-form-sub').on('click', function () {
+        var fileVal = $('#file-name').val();
+        if (fileVal == '') {
+            errorAlert('请选择上传文件')
+            return false;
+        } else {
+            alert('提交成功')
+            $('#upload').text("选择文件")
+        }
+    })
 </script>
     }
