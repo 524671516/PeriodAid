@@ -91,41 +91,82 @@
                         //console.log(record)
                     }
                         $('#form-date-select').text(record)
-                        $.ajax({
-                            url: '/PlattformInventory/StorageShow/',
-                            type: 'post',
-                            data: {
-                                plattformId: getUrlParam('plattformId'),
-                                select_date: $('#form-date-select').text(),
-                            },
-                            success: function (data) {
-                                if(getUrlParam('plattformId')==1){
-                                    $('#storage_show').html(data)
-                                    $('#file-loading').hide()
-                                    $('#view-head-tr').find('th').eq(5).addClass('hidden')
-                                    $('#view-head-tr').find('th').eq(6).addClass('hidden')
-                                    $('.view-body-tr').find('.sales-pay').addClass('hidden')
-                                    $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
-                                    $('.hot-product').each(function () {
-                                        if ($(this).attr('data-bind') == 1) {
-                                            $(this).find('.box').addClass('fire-box')
-                                        }
-                                    })
-                                }
-                                if(getUrlParam('plattformId')==2){
-                                    $('#storage_show').html(data)
-                                    $('#file-loading').hide()
-                                    $('#view-head-tr').find('th').eq(4).addClass('hidden')
-                                    $('.view-body-tr').find('.sales-storage').addClass('hidden')
-                                    $('.hot-product').each(function () {
-                                        if ($(this).attr('data-bind') == 1) {
-                                            $(this).find('.box').addClass('fire-box')
-                                        }
-                                    })
-                                }
+ $('#form-date-select').text(record)
+                        if (getUrlParam('plattformId') == 2) {
+                            $.ajax({
+                                url: '/PlattformInventory/TMS_StorageShow/',
+                                type: 'post',
+                                data: {
+                                    plattformId: getUrlParam('plattformId'),
+                                    select_date: $('#form-date-select').text(),
+                                },
+                                success: function (data) {
+                                    if (getUrlParam('plattformId') == 1) {
+                                        $('#storage_show').html(data)
+                                        $('#file-loading').hide()
+                                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
+                                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
+                                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
+                                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
+                                        $('.hot-product').each(function () {
+                                            if ($(this).attr('data-bind') == 1) {
+                                                $(this).find('.box').addClass('fire-box')
+                                            }
+                                        })
+                                    }
+                                    if (getUrlParam('plattformId') == 2) {
+                                        $('#storage_show').html(data)
+                                        $('#file-loading').hide()
+                                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
+                                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
+                                        $('.hot-product').each(function () {
+                                            if ($(this).attr('data-bind') == 1) {
+                                                $(this).find('.box').addClass('fire-box')
+                                            }
+                                        })
+                                    }
 
-                            }
-                        })
+                                }
+                            })
+                        }
+                        else {
+                            $.ajax({
+                                url: '/PlattformInventory/StorageShow/',
+                                type: 'post',
+                                data: {
+                                    plattformId: getUrlParam('plattformId'),
+                                    select_date: $('#form-date-select').text(),
+                                },
+                                success: function (data) {
+                                    if (getUrlParam('plattformId') == 1) {
+                                        $('#storage_show').html(data)
+                                        $('#file-loading').hide()
+                                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
+                                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
+                                        $('#view-head-tr').find('th').eq(7).addClass('hidden')
+                                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
+                                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
+                                        $('.hot-product').each(function () {
+                                            if ($(this).attr('data-bind') == 1) {
+                                                $(this).find('.box').addClass('fire-box')
+                                            }
+                                        })
+                                    }
+                                    if (getUrlParam('plattformId') == 2) {
+                                        $('#storage_show').html(data)
+                                        $('#file-loading').hide()
+                                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
+                                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
+                                        $('.hot-product').each(function () {
+                                            if ($(this).attr('data-bind') == 1) {
+                                                $(this).find('.box').addClass('fire-box')
+                                            }
+                                        })
+                                    }
+
+                                }
+                            })
+                        }
 
                     },
                     error: function () {
@@ -198,6 +239,7 @@
                         $('#file-loading').hide()
                         $('#view-head-tr').find('th').eq(5).addClass('hidden')
                         $('#view-head-tr').find('th').eq(6).addClass('hidden')
+                        $('#view-head-tr').find('th').eq(7).addClass('hidden')
                         $('.view-body-tr').find('.sales-pay').addClass('hidden')
                         $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
                         $('.hot-product').each(function () {
@@ -239,6 +281,7 @@
                         $('#file-loading').hide()
                         $('#view-head-tr').find('th').eq(5).addClass('hidden')
                         $('#view-head-tr').find('th').eq(6).addClass('hidden')
+                        $('#view-head-tr').find('th').eq(7).addClass('hidden')
                         $('.view-body-tr').find('.sales-pay').addClass('hidden')
                         $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
                         $('.hot-product').each(function () {
@@ -261,7 +304,7 @@
                 }
             })
         })
-        
+
     })
     // 重置时间显示格式
     String.prototype.ToString = function (format) {
