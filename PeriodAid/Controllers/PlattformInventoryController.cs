@@ -529,11 +529,14 @@ namespace PeriodAid.Controllers
             int days = Convert.ToInt32(form["calc_days"].ToString());
             foreach (var inventory in inventory_list)
             {
-                row.CreateCell(++cell_pos).SetCellValue(days + "天销量");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "" + days + "天销量");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "库存");
-                row.CreateCell(++cell_pos).SetCellValue("周转数");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "周转数");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "补货");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "箱数");
             }
+            row.CreateCell(++cell_pos).SetCellValue("合计补货");
+            row.CreateCell(++cell_pos).SetCellValue("合计金额");
             // 写产品列
             int row_pos = 1;
             foreach (var product in product_list)
@@ -546,11 +549,13 @@ namespace PeriodAid.Controllers
                 cell_pos++;
                 DateTime current_date = product.Inventory_Date;
                 DateTime first_date = product.Inventory_Date.AddDays(0 - days);
+                int total_count = 0;
                 // 最近库存
                 var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
                 if (form["p_rate_" + product.Id] != null)
                 {
                     var _rate = Convert.ToInt32(form["p_rate_" + product.Id].ToString());
+
                     foreach (var inventory in inventory_list)
                     {
                         // 最新库存
@@ -569,11 +574,17 @@ namespace PeriodAid.Controllers
                                                   && m.SalesRecord_Date > first_date && m.SalesRecord_Date <= current_date
                                                   select m);
                         int recommand_storage = ((int)(period_sales_count.Average(m => m.Sales_Count) * _rate) - storage_count) > 0 ? ((int)(period_sales_count.Average(m => m.Sales_Count) * _rate) - storage_count) : 0;
+                        int carton_count = (recommand_storage % product.Carton_Spec) == 0 ? recommand_storage / product.Carton_Spec : (recommand_storage / product.Carton_Spec) + 1;
+                        int final_storage = carton_count * product.Carton_Spec;
                         single_row.CreateCell(++cell_pos).SetCellValue(period_sales_count.Sum(m => m.Sales_Count));
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
-                        single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);
+                        single_row.CreateCell(++cell_pos).SetCellValue(final_storage);
+                        single_row.CreateCell(++cell_pos).SetCellValue(carton_count);
+                        total_count += final_storage;
                     }
+                    single_row.CreateCell(++cell_pos).SetCellValue(total_count);
+                    single_row.CreateCell(++cell_pos).SetCellValue((double)(total_count * product.Purchase_Price));
                     row_pos++;
                 }
             }
