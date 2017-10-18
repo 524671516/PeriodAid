@@ -129,10 +129,6 @@ namespace PeriodAid.Controllers
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
             CsvReader csv_reader = new CsvReader(reader);
             int row_count = 0;
-            List<string> headers = new List<string>();
-            var product_list = from m in _db.SS_Product
-                               where m.Plattform_Id == 1
-                               select m.System_Code;
             List<StorageOrder> storageOrder = new List<StorageOrder>();
             while (csv_reader.Read())
             {
@@ -171,8 +167,13 @@ namespace PeriodAid.Controllers
                     return View("error");
                 }
             }
-            // 打印送货单
-            HSSFWorkbook book = new HSSFWorkbook();
+            var _stream = outExcel(storageOrder);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+
+        }
+        //打印送货单
+        private HSSFWorkbook setStorageList(HSSFWorkbook book, List<StorageOrder> storageOrder)
+        {
             var sendorderlist = from m in storageOrder
                                 group m by new { OrderId = m.OrderId, StorageName = m.StorageName, SubStoName = m.SubStoName } into g
                                 select g;
@@ -185,37 +186,37 @@ namespace PeriodAid.Controllers
                 IRow row = sheet.CreateRow(row_pos);
                 IRow row1 = sheet.CreateRow(0);
                 ICell cell1 = row1.CreateCell(0);
-                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));//合并单元格
                 ICellStyle cellstyle = book.CreateCellStyle();//设置垂直居中格式
+                IFont cellfont = book.CreateFont();// 设置字体
                 cellstyle.Alignment = HorizontalAlignment.Center;//水平对齐
+                cellfont.Boldweight = short.MaxValue;
+                cellstyle.SetFont(cellfont);//使用SetFont方法将字体样式添加到单元格样式中 
+                row1.HeightInPoints = 25;//行高
                 cell1.SetCellValue("送货单");
                 cell1.CellStyle = cellstyle;
-                row_pos++;
                 var single_sendorder = from m in storageOrder
                                        where m.OrderId == sendorder.Key.OrderId
                                        select m;
-                NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
+                IRow single_row = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row.CreateCell(cell_pos).SetCellValue("送货单号");
                 single_row.CreateCell(++cell_pos).SetCellValue("");
                 single_row.CreateCell(++cell_pos).SetCellValue("供应商名称");
                 single_row.CreateCell(++cell_pos).SetCellValue("上海寿全斋电子商务有限公司");
-                row_pos++;
-                NPOI.SS.UserModel.IRow single_row1 = sheet.CreateRow(row_pos);
+                IRow single_row1 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row1.CreateCell(cell_pos).SetCellValue("采购单号");
                 single_row1.CreateCell(++cell_pos).SetCellValue(sendorder.Key.OrderId);
                 single_row1.CreateCell(++cell_pos).SetCellValue("总箱数");
                 single_row1.CreateCell(++cell_pos).SetCellValue(single_sendorder.Sum(m => m.CartonCount));
-                row_pos++;
-                NPOI.SS.UserModel.IRow single_row2 = sheet.CreateRow(row_pos);
+                IRow single_row2 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row2.CreateCell(cell_pos).SetCellValue("目的城市");
                 single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.StorageName);
                 single_row2.CreateCell(++cell_pos).SetCellValue("目的仓库");
                 single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.SubStoName);
-                row_pos++;
-                NPOI.SS.UserModel.IRow single_row3 = sheet.CreateRow(row_pos);
+                IRow single_row3 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row3.CreateCell(cell_pos).SetCellValue("箱号/箱号段");
                 single_row3.CreateCell(++cell_pos).SetCellValue("sku");
@@ -223,28 +224,31 @@ namespace PeriodAid.Controllers
                 single_row3.CreateCell(++cell_pos).SetCellValue("箱规（个/箱）");
                 single_row3.CreateCell(++cell_pos).SetCellValue("商品总数量/个");
                 single_row3.CreateCell(++cell_pos).SetCellValue("备注");
-                row_pos++;
                 var count_num = 1;
                 foreach (var item in single_sendorder)
                 {
                     for (var i = 1; i <= item.CartonCount; i++)
                     {
-                        NPOI.SS.UserModel.IRow single_row4 = sheet.CreateRow(row_pos++);
+                        IRow single_row4 = sheet.CreateRow(++row_pos);
                         cell_pos = 0;
-                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + item.CartonCount + "箱");
+                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.OrderId);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.ProductName);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                     }
                 }
-                NPOI.SS.UserModel.IRow single_row5 = sheet.CreateRow(row_pos);
+                IRow single_row5 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row5.CreateCell(cell_pos).SetCellValue("合计");
-                single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount)+"箱");
+                single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
                 single_row5.CreateCell(4).SetCellValue(single_sendorder.Sum(m => m.OrderCount));
             }
-            
+            return book;
+        }
+        //打印不干胶
+        private HSSFWorkbook setLableList(HSSFWorkbook book, List<StorageOrder> storageOrder)
+        {
             // 打印不干胶
             ISheet _sheet = book.CreateSheet("不干胶");
             // 写标题
@@ -265,7 +269,7 @@ namespace PeriodAid.Controllers
                 int cell_pos;
                 for (var i = 1; i <= item.CartonCount; i++)
                 {
-                    NPOI.SS.UserModel.IRow single_row = _sheet.CreateRow(_row_pos++);
+                    IRow single_row = _sheet.CreateRow(_row_pos++);
                     cell_pos = 0;
                     single_row.CreateCell(cell_pos).SetCellValue(item.OrderId);
                     single_row.CreateCell(++cell_pos).SetCellValue(item.StorageName);
@@ -277,13 +281,20 @@ namespace PeriodAid.Controllers
                     single_row.CreateCell(++cell_pos).SetCellValue(item.OrderCount);
                 }
             }
+            return book;
+        }
+        // 打印集合
+        private MemoryStream outExcel(List<StorageOrder> storageOrder)
+        {
+            HSSFWorkbook book = new HSSFWorkbook();
+            setStorageList(book, storageOrder);
+            setLableList(book, storageOrder);
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+            return _stream;
         }
-  
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
         {
