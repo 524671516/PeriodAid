@@ -12,6 +12,7 @@ using PeriodAid.Models;
 using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
+using NPOI.HSSF.Util;
 
 namespace PeriodAid.Controllers
 {
@@ -170,7 +171,7 @@ namespace PeriodAid.Controllers
                     return View("error");
                 }
             }
-            // 打印分舱单
+            // 打印送货单
             HSSFWorkbook book = new HSSFWorkbook();
             var sendorderlist = from m in storageOrder
                                 group m by new { OrderId = m.OrderId, StorageName = m.StorageName, SubStoName = m.SubStoName } into g
@@ -182,7 +183,13 @@ namespace PeriodAid.Controllers
                 int cell_pos = 0;
                 int row_pos = 0;
                 IRow row = sheet.CreateRow(row_pos);
-                row.CreateCell(cell_pos).SetCellValue("送货单");
+                IRow row1 = sheet.CreateRow(0);
+                ICell cell1 = row1.CreateCell(0);
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+                ICellStyle cellstyle = book.CreateCellStyle();//设置垂直居中格式
+                cellstyle.Alignment = HorizontalAlignment.Center;//水平对齐
+                cell1.SetCellValue("送货单");
+                cell1.CellStyle = cellstyle;
                 row_pos++;
                 var single_sendorder = from m in storageOrder
                                        where m.OrderId == sendorder.Key.OrderId
