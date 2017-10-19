@@ -127,11 +127,7 @@ namespace PeriodAid.Controllers
             util.PutObject(file.InputStream, "ExcelUpload/" + filename);
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
             CsvReader csv_reader = new CsvReader(reader);
-            int row_count = 0;
             List<string> headers = new List<string>();
-            var product_list = from m in _db.SS_Product
-                               where m.Plattform_Id == 1
-                               select m.System_Code;
             List<StorageOrder> storageOrder = new List<StorageOrder>();
             while (csv_reader.Read())
             {
@@ -161,7 +157,6 @@ namespace PeriodAid.Controllers
                             OrderCount = order_count,
                             CartonCount = _carton_count
                         };
-                        row_count++;
                         storageOrder.Add(storageorder);
                     }
                 }
@@ -263,23 +258,32 @@ namespace PeriodAid.Controllers
             _row.CreateCell(++_cell_pos).SetCellValue("总箱数");
             // 写产品列
             int _row_pos = 1;
-            foreach (var item in storageOrder)
+            var order_list = from m in storageOrder
+                             group m by m.OrderId into g
+                             select g;
+            foreach(var order in order_list)
             {
-                int cell_pos;
-                for (var i = 1; i <= item.CartonCount; i++)
+                int count = 1;
+                foreach (var item in storageOrder.Where(m=>m.OrderId == order.Key))
                 {
-                    IRow single_row = _sheet.CreateRow(_row_pos++);
-                    cell_pos = 0;
-                    single_row.CreateCell(cell_pos).SetCellValue(item.OrderId);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.StorageName);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.SubStoName);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.ProductName);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
-                    single_row.CreateCell(++cell_pos).SetCellValue(i);
-                    single_row.CreateCell(++cell_pos).SetCellValue(storageOrder.Where(m=>m.OrderId == item.OrderId).Sum(m=>m.OrderCount));
+                    int cell_pos;
+                    for (var i = 1; i <= item.CartonCount; i++)
+                    {
+                        IRow single_row = _sheet.CreateRow(_row_pos++);
+                        cell_pos = 0;
+                        single_row.CreateCell(cell_pos).SetCellValue(item.OrderId);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.StorageName);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.SubStoName);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.ProductName);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
+                        single_row.CreateCell(++cell_pos).SetCellValue(count);
+                        single_row.CreateCell(++cell_pos).SetCellValue(storageOrder.Where(m => m.OrderId == item.OrderId).Sum(m => m.CartonCount));
+                        count++;
+                    }
                 }
             }
+            
             return book;
         }
         private MemoryStream OutExcel(List<StorageOrder> storageOrder) {
@@ -303,15 +307,13 @@ namespace PeriodAid.Controllers
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
             CsvReader csv_reader = new CsvReader(reader);
             List<string> headers = new List<string>();
-            var product_list = from m in _db.SS_Product
-                               where m.Plattform_Id == 2
-                               select m.System_Code;
+            int row_count = 0;
             List<TM_TransferringOrder> TM_transferringOrder = new List<TM_TransferringOrder>();
             while (csv_reader.Read())
             {
                 try
                 {
-                    string out_code = csv_reader.GetField<string>("序号");
+                    string out_code = csv_reader.GetField<string>("调出仓库编码");
                     if (out_code == "" || out_code == null)
                     {
                         break;
@@ -333,6 +335,7 @@ namespace PeriodAid.Controllers
                             CommitCount = commit_count,
                             BarCode = product.Bar_Code
                         };
+                        row_count++;
                         TM_transferringOrder.Add(TM_transferringorder);
                     }
                 }
