@@ -97,6 +97,7 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Event> SS_Event { get; set; }
+        public int Bar_Code { get; internal set; }
     }
     /// <summary>
     /// 仓库表

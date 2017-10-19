@@ -277,7 +277,7 @@ namespace PeriodAid.Controllers
                     single_row.CreateCell(++cell_pos).SetCellValue(item.ProductName);
                     single_row.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                     single_row.CreateCell(++cell_pos).SetCellValue(i);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.OrderCount);
+                    single_row.CreateCell(++cell_pos).SetCellValue(storageOrder.Where(m=>m.OrderId == item.OrderId).Sum(m=>m.OrderCount));
                 }
             }
             return book;
@@ -292,26 +292,94 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return _stream;
         }
-  
-        // 上传天猫调拨单数据
-        //public ActionResult TM_TransferringOrder(FormCollection form)
-        //{
-        //    var file = Request.Files[0];
-        //    var filename = DateTime.Now.Ticks + ".csv";
-        //    AliOSSUtilities util = new AliOSSUtilities();
-        //    util.PutObject(file.InputStream, "ExcelUpload/" + filename);
-        //    StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
-        //    CsvReader csv_reader = new CsvReader(reader);
-        //    int row_count = 0;
-        //    List<string> headers = new List<string>();
-        //    var product_list = from m in _db.SS_Product
-        //                       where m.Plattform_Id == 2
-        //                       select m.System_Code;
-        //    List<TM_TransferringOrder> TM_transferringOrder = new List<TM_TransferringOrder>();
-            
-        //    return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "调拨单.xls");
-        //}
 
+        // 上传天猫调拨单数据
+        public ActionResult TM_TransferringOrder(FormCollection form)
+        {
+            var file = Request.Files[0];
+            var filename = DateTime.Now.Ticks + ".csv";
+            AliOSSUtilities util = new AliOSSUtilities();
+            util.PutObject(file.InputStream, "ExcelUpload/" + filename);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+            CsvReader csv_reader = new CsvReader(reader);
+            List<string> headers = new List<string>();
+            var product_list = from m in _db.SS_Product
+                               where m.Plattform_Id == 2
+                               select m.System_Code;
+            List<TM_TransferringOrder> TM_transferringOrder = new List<TM_TransferringOrder>();
+            while (csv_reader.Read())
+            {
+                try
+                {
+                    string out_code = csv_reader.GetField<string>("序号");
+                    if (out_code == "" || out_code == null)
+                    {
+                        break;
+                    }
+                    int o_count;
+                    string str_code ;
+                    string system_code = csv_reader.GetField<string>("商品id");
+                    var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
+                    if (product != null)
+                    {
+                        
+                        int commit_count = csv_reader.TryGetField<int>("调拨数量", out o_count) ? o_count : 0;
+                        string storage_code = csv_reader.TryGetField<string>("调入仓库编码", out str_code) ? str_code : "NaN";
+                        TM_TransferringOrder TM_transferringorder = new TM_TransferringOrder()
+                        {
+                            StorageCode = storage_code,
+                            SystemCode = product.System_Code,
+                            ItemName = product.Item_Name,
+                            CommitCount = commit_count,
+                            BarCode = product.Bar_Code
+                        };
+                        TM_transferringOrder.Add(TM_transferringorder);
+                    }
+                }
+                catch (Exception)
+                {
+                    return View("error");
+                }
+            }
+            var _stream = TM_OutExcel(TM_transferringOrder);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "调拨单.xls");
+        }
+
+        // 调拨单
+        private HSSFWorkbook SetCommitCode(HSSFWorkbook book, List<TM_TransferringOrder> TM_transferringOrder)
+        {
+            // 打印不干胶
+            ISheet _sheet = book.CreateSheet("调拨单");
+            // 写标题
+            IRow _row = _sheet.CreateRow(0);
+            int _cell_pos = 0;
+            _row.CreateCell(_cell_pos).SetCellValue("商品名称");
+            _row.CreateCell(++_cell_pos).SetCellValue("商品编码");
+            _row.CreateCell(++_cell_pos).SetCellValue("条码");
+            // 写产品列
+            int _row_pos = 1;
+            foreach (var item in TM_transferringOrder)
+            {
+                int cell_pos;
+                    IRow single_row = _sheet.CreateRow(_row_pos++);
+                    cell_pos = 0;
+                    single_row.CreateCell(cell_pos).SetCellValue(item.ItemName);
+                    single_row.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
+                    single_row.CreateCell(++cell_pos).SetCellValue(item.StorageCode);
+            }
+            return book;
+        }
+        // 导出天猫调拨单
+        private MemoryStream TM_OutExcel(List<TM_TransferringOrder> TM_transferringOrder)
+        {
+            HSSFWorkbook book = new HSSFWorkbook();
+            
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return _stream;
+        }
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
         {
