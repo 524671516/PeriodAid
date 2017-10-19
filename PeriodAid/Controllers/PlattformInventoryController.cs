@@ -606,8 +606,9 @@ namespace PeriodAid.Controllers
                                                   && m.SalesRecord_Date > first_date && m.SalesRecord_Date <= current_date
                                                   select m);
                         int recommand_storage = ((int)(period_sales_count.Average(m => m.Sales_Count) * _rate) - storage_count) > 0 ? ((int)(period_sales_count.Average(m => m.Sales_Count) * _rate) - storage_count) : 0;
-                        int carton_count = (recommand_storage % product.Carton_Spec) == 0 ? recommand_storage / product.Carton_Spec : (recommand_storage / product.Carton_Spec) + 1;
-                        int final_storage = carton_count * product.Carton_Spec;
+                        int cartonspec = product.Carton_Spec == 0 ? 1 : product.Carton_Spec;
+                        int carton_count = (recommand_storage % cartonspec) == 0 ? recommand_storage / cartonspec : (recommand_storage / cartonspec) + 1;
+                        int final_storage = carton_count * cartonspec;
                         single_row.CreateCell(++cell_pos).SetCellValue(period_sales_count.Sum(m => m.Sales_Count));
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);

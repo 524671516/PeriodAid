@@ -53,12 +53,17 @@ namespace PeriodAid.Models
 
         public int CartonCount { get; set; }
     }
-
-    // 天猫调拨单导入
-    public class TM_TransferringOrder
+    // ViewModel
+    public class Product_SummaryViewModel
     {
-        public string SystemCode { get; set; }
+        public SS_Product Product { get; set; }
 
-        public int CommitCount { get; set; }
+        public int Sales_Sum { get; set; }
+
+        public int Inventory_Sum { get; set; }
+
+        public decimal Pay_Sum { get; set; }
+
+        public decimal SubAccount_Sum { get; set; }
     }
 }
