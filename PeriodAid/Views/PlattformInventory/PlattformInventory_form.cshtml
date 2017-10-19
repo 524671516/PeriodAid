@@ -9,9 +9,18 @@
         div {
             z-index: 52;
         }
+        .nav > li > a{
+            padding: 4px 15px;
+        }
+        #view-head-tr-1>th{
+            font-size:15px
+        }
+        .view-body-tr-1>td{
+            font-size:15px
+        }
     </style>
 }
-<div class="navbar-default tm_task-navbar" style="padding-top:10px">
+<div class="navbar-default tm_task-navbar" style="padding-top:10px;background-color:white">
     <div style="padding:20px 0;">
         <div class="text-center h2">数据统计</div>
         <div class="text-center h4"><span id="show-date"></span>&nbsp;&nbsp;&nbsp;<span id="show-storage"></span></div>
@@ -27,7 +36,7 @@
                     <li class="tm-view-control-sort dropdown">
                         <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
                             <span class="tm-select-title active" id="form-date-select" style="color:white;font-size:14px;">选择日期</span>
-                            <input type="text" id="file-date" name="file-date" style="height: 48px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
+                            <input type="text" id="file-date" name="file-date" style="height: 38px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
                             <span class="caret color-white"></span>
                         </a>
                     </li>
@@ -91,7 +100,6 @@
                         //console.log(record)
                     }
                         $('#form-date-select').text(record)
- $('#form-date-select').text(record)
                         if (getUrlParam('plattformId') == 2) {
                             $.ajax({
                                 url: '/PlattformInventory/TMS_StorageShow/',
@@ -101,31 +109,13 @@
                                     select_date: $('#form-date-select').text(),
                                 },
                                 success: function (data) {
-                                    if (getUrlParam('plattformId') == 1) {
                                         $('#storage_show').html(data)
                                         $('#file-loading').hide()
-                                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
-                                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
-                                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
-                                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
                                         $('.hot-product').each(function () {
                                             if ($(this).attr('data-bind') == 1) {
                                                 $(this).find('.box').addClass('fire-box')
                                             }
                                         })
-                                    }
-                                    if (getUrlParam('plattformId') == 2) {
-                                        $('#storage_show').html(data)
-                                        $('#file-loading').hide()
-                                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
-                                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
-                                        $('.hot-product').each(function () {
-                                            if ($(this).attr('data-bind') == 1) {
-                                                $(this).find('.box').addClass('fire-box')
-                                            }
-                                        })
-                                    }
-
                                 }
                             })
                         }
@@ -138,32 +128,14 @@
                                     select_date: $('#form-date-select').text(),
                                 },
                                 success: function (data) {
-                                    if (getUrlParam('plattformId') == 1) {
                                         $('#storage_show').html(data)
                                         $('#file-loading').hide()
-                                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
-                                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
-                                        $('#view-head-tr').find('th').eq(7).addClass('hidden')
-                                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
                                         $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
                                         $('.hot-product').each(function () {
                                             if ($(this).attr('data-bind') == 1) {
                                                 $(this).find('.box').addClass('fire-box')
                                             }
                                         })
-                                    }
-                                    if (getUrlParam('plattformId') == 2) {
-                                        $('#storage_show').html(data)
-                                        $('#file-loading').hide()
-                                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
-                                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
-                                        $('.hot-product').each(function () {
-                                            if ($(this).attr('data-bind') == 1) {
-                                                $(this).find('.box').addClass('fire-box')
-                                            }
-                                        })
-                                    }
-
                                 }
                             })
                         }
@@ -220,89 +192,93 @@
             var r = window.location.search.substr(1).match(reg);  //匹配目标参数
             if (r != null) return unescape(r[2]); return null; //返回参数值
         }
-        // tab 切换
+        // 选择城市
         $("#nav-table-show li").on("click", function () {
             var that = $(this);
             $('#file-loading').show();
             $('#storage-select').text(that.text())
             $('#show-storage').text($('#storage-select').text())
-            $.ajax({
-                url: "/PlattformInventory/StorageShow/",
-                data: {
-                    plattformId: getUrlParam('plattformId'),
-                    Storage: that.children('.form-select-a').attr('data-ssid'),
-                    select_date: $('#form-date-select').text()
-                },
-                success: function (data) {
-                    if(getUrlParam('plattformId')==1){
+            if(getUrlParam('plattformId')==2){
+                $.ajax({
+                    url: "/PlattformInventory/TMS_StorageShow/",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        Storage: that.children('.form-select-a').attr('data-ssid'),
+                        select_date: $('#form-date-select').text()
+                    },
+                    success: function (data) {
+                            $('#storage_show').html(data)
+                            $('#file-loading').hide()
+                            $('.hot-product').each(function () {
+                                if ($(this).attr('data-bind') == 1) {
+                                    $(this).find('.box').addClass('fire-box')
+                                }
+                            })
+                    }
+                })
+            }else{
+                $.ajax({
+                    url: '/PlattformInventory/StorageShow/',
+                    type: 'post',
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        select_date: $('#form-date-select').text(),
+                    },
+                    success: function (data) {
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
-                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
-                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
-                        $('#view-head-tr').find('th').eq(7).addClass('hidden')
-                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
-                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
                         $('.hot-product').each(function () {
                             if ($(this).attr('data-bind') == 1) {
                                 $(this).find('.box').addClass('fire-box')
                             }
                         })
                     }
-                    if(getUrlParam('plattformId')==2){
-                        $('#storage_show').html(data)
-                        $('#file-loading').hide()
-                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
-                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
-                        $('.hot-product').each(function () {
-                            if ($(this).attr('data-bind') == 1) {
-                                $(this).find('.box').addClass('fire-box')
-                            }
-                        })
-                    }
-                }
-            })
+                })
+            }
+            
         })
         // 选择日期
         $('#file-date').change(function () {
             $('#file-loading').show()
             $('#form-date-select').text($(this).val())
             $('#show-date').text($('#form-date-select').text())
-            $.ajax({
-                url: '/PlattformInventory/StorageShow/',
-                type:'post',
-                data: {
-                    plattformId: getUrlParam('plattformId'),
-                    Storage: $("#nav-table-show li").children('.form-select-li.active a').attr('data-ssid'),
-                    select_date: $('#form-date-select').text()
-                },
-                success: function (data) {
-                    if(getUrlParam('plattformId') == 1){
+            if(getUrlParam('plattformId')==2){
+                $.ajax({
+                    url: "/PlattformInventory/TMS_StorageShow/",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        Storage: that.children('.form-select-a').attr('data-ssid'),
+                        select_date: $('#form-date-select').text()
+                    },
+                    success: function (data) {
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
-                        $('#view-head-tr').find('th').eq(5).addClass('hidden')
-                        $('#view-head-tr').find('th').eq(6).addClass('hidden')
-                        $('#view-head-tr').find('th').eq(7).addClass('hidden')
-                        $('.view-body-tr').find('.sales-pay').addClass('hidden')
-                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
                         $('.hot-product').each(function () {
                             if ($(this).attr('data-bind') == 1) {
                                 $(this).find('.box').addClass('fire-box')
                             }
                         })
                     }
-                    if(getUrlParam('plattformId')==2){
+                })
+            }else{
+                $.ajax({
+                    url: '/PlattformInventory/StorageShow/',
+                    type: 'post',
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        select_date: $('#form-date-select').text(),
+                    },
+                    success: function (data) {
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
-                        $('#view-head-tr').find('th').eq(4).addClass('hidden')
-                        $('.view-body-tr').find('.sales-storage').addClass('hidden')
                         $('.hot-product').each(function () {
                             if ($(this).attr('data-bind') == 1) {
                                 $(this).find('.box').addClass('fire-box')
                             }
                         })
                     }
-                }
-            })
+                })
+            }
         })
 
     })

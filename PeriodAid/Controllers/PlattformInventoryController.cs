@@ -118,7 +118,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        //送货单导入
+        // 京东送货单导入
         public ActionResult StorageOrder(FormCollection form)
         {
             var file = Request.Files[0];
@@ -175,6 +175,7 @@ namespace PeriodAid.Controllers
             //return Content("sss");
 
         }
+        // 分仓单
         private HSSFWorkbook SetStorageList(HSSFWorkbook book, List<StorageOrder> storageOrder)
         {
             var sendorderlist = from m in storageOrder
@@ -245,6 +246,7 @@ namespace PeriodAid.Controllers
             }
             return book;
         }
+        // 不干胶
         private HSSFWorkbook SetLabelList(HSSFWorkbook book , List<StorageOrder> storageOrder)
         {
             // 打印不干胶
@@ -282,11 +284,9 @@ namespace PeriodAid.Controllers
             return book;
         }
         private MemoryStream OutExcel(List<StorageOrder> storageOrder) {
-            // 打印分舱单
             HSSFWorkbook book = new HSSFWorkbook();
             SetStorageList(book, storageOrder);
             SetLabelList(book, storageOrder);
-            
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
@@ -294,6 +294,9 @@ namespace PeriodAid.Controllers
             return _stream;
         }
   
+        // 上传天猫数据
+        
+
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
         {
@@ -521,9 +524,7 @@ namespace PeriodAid.Controllers
             _db.SaveChanges();
             return true;
         }
-
-
-
+        
         // 获取仓库表格
         [HttpPost]
         public ActionResult getInventoryExcel(FormCollection form)
