@@ -1,0 +1,18 @@
+﻿@model IEnumerable<PeriodAid.Models.Product_SummaryViewModel>
+<thead>
+    <tr id="view-head-tr-1">
+        <th>销售件数</th>
+        <th>销售余额</th>
+        <th>结算余额</th>
+    </tr>
+</thead>
+<tbody>
+    @foreach (var item in Model.OrderByDescending(m => m.Sales_Sum))
+    {
+        <tr class="view-body-tr-1">
+            <td class="product-count">@item.Sales_Sum</td>
+            <td class="sales-pay">@item.Pay_Sum</td>
+            <td class="sales-subAccount">@item.SubAccount_Sum</td>
+        </tr>
+    }
+</tbody>

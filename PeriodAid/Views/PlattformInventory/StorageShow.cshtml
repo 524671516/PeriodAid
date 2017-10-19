@@ -11,8 +11,6 @@
                             <th>商品名称</th>
                             <th>销售数据</th>
                             <th>仓库库存</th>
-                            <th>支付金额</th>
-                            <th>支付订单分账金额</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,8 +22,6 @@
                                 <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                 <td class="product-count">@item.Sales_Sum</td>
                                 <td class="sales-storage">@item.Inventory_Sum</td>
-                                <td class="sales-pay">@item.Pay_Sum</td>
-                                <td class="sales-subAccount">@item.SubAccount_Sum</td>
                             </tr>
                         }
                     </tbody>

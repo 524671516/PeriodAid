@@ -1136,6 +1136,8 @@
     <Content Include="Views\PlattformInventory\ProductListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\ViewProductStatistic.cshtml" />
     <Content Include="Views\PlattformInventory\Calc_StoragePartial.cshtml" />
+    <Content Include="Views\PlattformInventory\TMS_StorageShow.cshtml" />
+    <Content Include="Views\PlattformInventory\TMShow_StorageShow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
