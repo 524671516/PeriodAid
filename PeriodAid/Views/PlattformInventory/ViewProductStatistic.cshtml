@@ -78,6 +78,11 @@
                 xAxis: {
                     categories: datearray
                 },
+                tooltip: {
+                    useHTML: true,
+                    pointFormat: '销量:{point.y}'+'</br>'+ '参加活动 :'+ '&nbsp'+'聚划算'
+                                
+                },
                 series: [{
                     type: 'spline',
                     name: '销量',
@@ -86,13 +91,6 @@
                         lineWidth: 2,
                         lineColor: Highcharts.getOptions().colors[3],
                         fillColor: 'white'
-                    }
-                }, {
-                    type: 'scatter',
-                    name: '参与活动',
-                    data: totalarray,
-                    marker: {
-                        radius: 4
                     }
                 }]
             });

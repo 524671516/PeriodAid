@@ -53,4 +53,12 @@ namespace PeriodAid.Models
 
         public int CartonCount { get; set; }
     }
+
+    // 天猫调拨单导入
+    public class TM_TransferringOrder
+    {
+        public string SystemCode { get; set; }
+
+        public int CommitCount { get; set; }
+    }
 }

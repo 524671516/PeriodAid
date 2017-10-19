@@ -239,6 +239,7 @@
         })
         // 选择日期
         $('#file-date').change(function () {
+            var that = $(this);
             $('#file-loading').show()
             $('#form-date-select').text($(this).val())
             $('#show-date').text($('#form-date-select').text())

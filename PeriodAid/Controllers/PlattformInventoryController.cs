@@ -172,7 +172,6 @@ namespace PeriodAid.Controllers
             }
             var _stream = OutExcel(storageOrder);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
-            //return Content("sss");
 
         }
         // 分仓单
@@ -294,8 +293,24 @@ namespace PeriodAid.Controllers
             return _stream;
         }
   
-        // 上传天猫数据
-        
+        // 上传天猫调拨单数据
+        //public ActionResult TM_TransferringOrder(FormCollection form)
+        //{
+        //    var file = Request.Files[0];
+        //    var filename = DateTime.Now.Ticks + ".csv";
+        //    AliOSSUtilities util = new AliOSSUtilities();
+        //    util.PutObject(file.InputStream, "ExcelUpload/" + filename);
+        //    StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+        //    CsvReader csv_reader = new CsvReader(reader);
+        //    int row_count = 0;
+        //    List<string> headers = new List<string>();
+        //    var product_list = from m in _db.SS_Product
+        //                       where m.Plattform_Id == 2
+        //                       select m.System_Code;
+        //    List<TM_TransferringOrder> TM_transferringOrder = new List<TM_TransferringOrder>();
+            
+        //    return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "调拨单.xls");
+        //}
 
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
