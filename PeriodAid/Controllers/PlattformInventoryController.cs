@@ -308,37 +308,19 @@ namespace PeriodAid.Controllers
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
             CsvReader csv_reader = new CsvReader(reader);
             List<string> headers = new List<string>();
-            int row_count = 0;
             List<TM_TransferringOrder> TM_transferringOrder = new List<TM_TransferringOrder>();
             while (csv_reader.Read())
             {
                 try
                 {
                     string out_code = csv_reader.GetField<string>("调出仓库编码");
+                    
                     if (out_code == "" || out_code == null)
                     {
                         break;
                     }
-                    int o_count;
-                    string str_code ;
-                    string system_code = csv_reader.GetField<string>("商品id");
-                    var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
-                    if (product != null)
-                    {
-                        
-                        int commit_count = csv_reader.TryGetField<int>("调拨数量", out o_count) ? o_count : 0;
-                        string storage_code = csv_reader.TryGetField<string>("调入仓库编码", out str_code) ? str_code : "NaN";
-                        TM_TransferringOrder TM_transferringorder = new TM_TransferringOrder()
-                        {
-                            StorageCode = storage_code,
-                            SystemCode = product.System_Code,
-                            ItemName = product.Item_Name,
-                            CommitCount = commit_count,
-                            BarCode = product.Bar_Code
-                        };
-                        row_count++;
-                        TM_transferringOrder.Add(TM_transferringorder);
-                    }
+                    string system_code = csv_reader.GetField<string>("序号");
+
                 }
                 catch (Exception)
                 {
@@ -1101,6 +1083,12 @@ namespace PeriodAid.Controllers
                 current_date = current_date.AddDays(1);
             }
             return Json(new { result = "SUCCESS", data = data });
+        }
+
+        //活动打标
+        public ActionResult EventList()
+        {
+            return Content("");
         }
     }
 
