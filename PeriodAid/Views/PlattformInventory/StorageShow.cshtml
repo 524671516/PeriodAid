@@ -27,7 +27,7 @@
                                 <td class="sales-storage">@item.Inventory_Sum</td>
                                 <td class="sales-pay">@item.Pay_Sum</td>
                                 <td class="sales-subAccount">@item.SubAccount_Sum</td>
-                                <td class="sales-subAccount">@Convert.ToInt32((item.SubAccount_Sum / (item.Sales_Sum==0?1: item.Sales_Sum)))</td>
+                                <td class="sales-subAccount">@Convert.ToString((item.SubAccount_Sum / (item.Sales_Sum==0?1: item.Sales_Sum)))</td>
                             </tr>
                         }
                     </tbody>

@@ -91,7 +91,7 @@
                         //console.log(record)
                     }
                         $('#form-date-select').text(record)
- $('#form-date-select').text(record)
+                        $('#form-date-select').text(record)
                         if (getUrlParam('plattformId') == 2) {
                             $.ajax({
                                 url: '/PlattformInventory/TMS_StorageShow/',
@@ -227,7 +227,7 @@
             $('#storage-select').text(that.text())
             $('#show-storage').text($('#storage-select').text())
             $.ajax({
-                url: "/PlattformInventory/StorageShow/",
+                url: "/PlattformInventory/TMS_StorageShow/",
                 data: {
                     plattformId: getUrlParam('plattformId'),
                     Storage: that.children('.form-select-a').attr('data-ssid'),
@@ -268,7 +268,7 @@
             $('#form-date-select').text($(this).val())
             $('#show-date').text($('#form-date-select').text())
             $.ajax({
-                url: '/PlattformInventory/StorageShow/',
+                url: '/PlattformInventory/TMS_StorageShow/',
                 type:'post',
                 data: {
                     plattformId: getUrlParam('plattformId'),
