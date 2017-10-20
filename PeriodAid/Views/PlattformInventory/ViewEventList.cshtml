@@ -1,0 +1,30 @@
+﻿<div>
+    <table class="table">
+        <tr>
+            <th>活动名称</th>
+            <th>状态</th>
+            <th>商品编号</th>
+            <th>活动日期</th>
+        </tr>
+        @foreach(var item in ViewBag.eventList)
+        {
+            <tr>
+                <td>@item.EventName</td>
+                <td></td>
+                <td>@item.Product_Id</td>
+                <td>@item.EventDate</td>
+                <td>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                    @*<a class="chart-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">数据统计</a>*@
+                    @Html.ActionLink("数据统计", "ViewEventListPartial", new { productId = item.Id })
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>

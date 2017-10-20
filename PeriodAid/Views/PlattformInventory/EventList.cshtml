@@ -2,16 +2,33 @@
 @{
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>产品名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="storage-product-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<h2>活动列表</h2>
+<div id="event_list_content"></div>
+@section scripts{
 
-<!DOCTYPE html>
+<script src="~/Scripts/highcharts.js"></script>       
+<script type="text/javascript">
+            $.ajax({
+                url: '/PlattformInventory/ViewEventList',
+                data: {
+                    productId: 1593
+                },
+                success: function (data) {
+                    $('#event_list_content').html(data)
+                    
+                }
+            })
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>EventList</title>
-</head>
-<body>
-    <div> 
-    </div>
-</body>
-</html>
+            
+          
+</script>
+    }
