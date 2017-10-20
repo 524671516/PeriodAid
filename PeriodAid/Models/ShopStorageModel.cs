@@ -29,6 +29,7 @@
         public virtual DbSet<SS_Storage> SS_Storage { get; set; }
         public virtual DbSet<SS_SalesRecord> SS_SalesRecord { get; set; }
         public virtual DbSet<SS_UploadRecord> SS_UploadRecord { get; set; }
+        public virtual DbSet<SS_Event> SS_Event { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -37,6 +38,7 @@
             modelBuilder.Entity<SS_Storage>().HasMany(m => m.SS_SalesRecord).WithRequired(m => m.SS_Storage).HasForeignKey(m => m.Storage_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_Storage).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_UploadRecord).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_Event).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(true);
         }
     }
     /// <summary>
@@ -92,6 +94,10 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_SalesRecord> SS_SalesRecord { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_Event> SS_Event { get; set; }
+        public int Bar_Code { get; internal set; }
     }
     /// <summary>
     /// 仓库表
@@ -107,8 +113,12 @@
 
         public virtual SS_Plattform SS_Plattform { get; set; }
 
+        [StringLength(32)]
+        public string Storage_Code { get; set; }
+
         [StringLength(16)]
         public string Sales_Header { get; set; }
+
         [StringLength(16)]
         public string Inventory_Header { get; set; }
 
@@ -158,19 +168,25 @@
 
         public DateTime Upload_Date { get; set; }
     }
-    // ViewModel
-    public class Product_SummaryViewModel
+
+    /// <summary>
+    /// 活动表
+    /// </summary>
+    [Table("SS_Event")]
+    public partial class SS_Event
     {
-        public SS_Product Product { get; set; }
+        public int Id { get; set; }
 
-        public int Sales_Sum { get; set; }
+        [StringLength(32)]
+        public string EventName { get; set; }
 
-        public int Inventory_Sum { get; set; }
+        public int Product_Id { get; set; }
 
-        public decimal Pay_Sum { get; set; }
+        public virtual SS_Product SS_Product { get; set; }
 
-        public decimal SubAccount_Sum { get; set; }
+        public DateTime EventDate { get; set; }
     }
+    
     
     //public class MyEntity
     //{

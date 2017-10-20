@@ -118,7 +118,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        //送货单导入
+        // 京东送货单导入
         public ActionResult StorageOrder(FormCollection form)
         {
             var file = Request.Files[0];
@@ -127,11 +127,7 @@ namespace PeriodAid.Controllers
             util.PutObject(file.InputStream, "ExcelUpload/" + filename);
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
             CsvReader csv_reader = new CsvReader(reader);
-            int row_count = 0;
             List<string> headers = new List<string>();
-            var product_list = from m in _db.SS_Product
-                               where m.Plattform_Id == 1
-                               select m.System_Code;
             List<StorageOrder> storageOrder = new List<StorageOrder>();
             while (csv_reader.Read())
             {
@@ -161,7 +157,6 @@ namespace PeriodAid.Controllers
                             OrderCount = order_count,
                             CartonCount = _carton_count
                         };
-                        row_count++;
                         storageOrder.Add(storageorder);
                     }
                 }
@@ -172,9 +167,9 @@ namespace PeriodAid.Controllers
             }
             var _stream = OutExcel(storageOrder);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
-            //return Content("sss");
 
         }
+        // 分仓单
         private HSSFWorkbook SetStorageList(HSSFWorkbook book, List<StorageOrder> storageOrder)
         {
             var sendorderlist = from m in storageOrder
@@ -182,7 +177,7 @@ namespace PeriodAid.Controllers
                                 select g;
             foreach (var sendorder in sendorderlist)
             {
-                ISheet sheet = book.CreateSheet(sendorder.Key.StorageName + sendorder.Key.SubStoName);
+                ISheet sheet = book.CreateSheet(sendorder.Key.StorageName + sendorder.Key.OrderId);
                 // 基本信息
                 int cell_pos = 0;
                 int row_pos = 0;
@@ -194,7 +189,6 @@ namespace PeriodAid.Controllers
                 cellstyle.Alignment = HorizontalAlignment.Center;//水平对齐
                 cell1.SetCellValue("送货单");
                 cell1.CellStyle = cellstyle;
-                row_pos++;
                 var single_sendorder = from m in storageOrder
                                        where m.OrderId == sendorder.Key.OrderId
                                        select m;
@@ -204,6 +198,7 @@ namespace PeriodAid.Controllers
                 single_row.CreateCell(++cell_pos).SetCellValue("");
                 single_row.CreateCell(++cell_pos).SetCellValue("供应商名称");
                 single_row.CreateCell(++cell_pos).SetCellValue("上海寿全斋电子商务有限公司");
+                cell_pos = 0;
                 IRow single_row1 = sheet.CreateRow(++row_pos);
                 single_row1.CreateCell(cell_pos).SetCellValue("采购单号");
                 single_row1.CreateCell(++cell_pos).SetCellValue(sendorder.Key.OrderId);
@@ -228,7 +223,7 @@ namespace PeriodAid.Controllers
                 {
                     for (var i = 1; i <= item.CartonCount; i++)
                     {
-                        IRow single_row4 = sheet.CreateRow(row_pos++);
+                        IRow single_row4 = sheet.CreateRow(++row_pos);
                         cell_pos = 0;
                         single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.OrderId);
@@ -237,7 +232,7 @@ namespace PeriodAid.Controllers
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                     }
                 }
-                IRow single_row5 = sheet.CreateRow(row_pos);
+                IRow single_row5 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
                 single_row5.CreateCell(cell_pos).SetCellValue("合计");
                 single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
@@ -245,6 +240,7 @@ namespace PeriodAid.Controllers
             }
             return book;
         }
+        // 不干胶
         private HSSFWorkbook SetLabelList(HSSFWorkbook book , List<StorageOrder> storageOrder)
         {
             // 打印不干胶
@@ -262,30 +258,106 @@ namespace PeriodAid.Controllers
             _row.CreateCell(++_cell_pos).SetCellValue("总箱数");
             // 写产品列
             int _row_pos = 1;
-            foreach (var item in storageOrder)
+            var order_list = from m in storageOrder
+                             group m by m.OrderId into g
+                             select g;
+            foreach(var order in order_list)
             {
-                int cell_pos;
-                for (var i = 1; i <= item.CartonCount; i++)
+                int count = 1;
+                foreach (var item in storageOrder.Where(m=>m.OrderId == order.Key))
                 {
-                    NPOI.SS.UserModel.IRow single_row = _sheet.CreateRow(_row_pos++);
-                    cell_pos = 0;
-                    single_row.CreateCell(cell_pos).SetCellValue(item.OrderId);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.StorageName);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.SubStoName);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.ProductName);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
-                    single_row.CreateCell(++cell_pos).SetCellValue(i);
-                    single_row.CreateCell(++cell_pos).SetCellValue(item.OrderCount);
+                    int cell_pos;
+                    for (var i = 1; i <= item.CartonCount; i++)
+                    {
+                        IRow single_row = _sheet.CreateRow(_row_pos++);
+                        cell_pos = 0;
+                        single_row.CreateCell(cell_pos).SetCellValue(item.OrderId);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.StorageName);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.SubStoName);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.ProductName);
+                        single_row.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
+                        single_row.CreateCell(++cell_pos).SetCellValue(count);
+                        single_row.CreateCell(++cell_pos).SetCellValue(storageOrder.Where(m => m.OrderId == item.OrderId).Sum(m => m.CartonCount));
+                        count++;
+                    }
                 }
             }
+            
             return book;
         }
         private MemoryStream OutExcel(List<StorageOrder> storageOrder) {
-            // 打印分舱单
             HSSFWorkbook book = new HSSFWorkbook();
             SetStorageList(book, storageOrder);
             SetLabelList(book, storageOrder);
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return _stream;
+        }
+
+        // 上传天猫调拨单数据
+        public ActionResult TM_TransferringOrder(FormCollection form)
+        {
+            var file = Request.Files[0];
+            var filename = DateTime.Now.Ticks + ".csv";
+            AliOSSUtilities util = new AliOSSUtilities();
+            util.PutObject(file.InputStream, "ExcelUpload/" + filename);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+            CsvReader csv_reader = new CsvReader(reader);
+            List<string> headers = new List<string>();
+            List<TM_TransferringOrder> TM_transferringOrder = new List<TM_TransferringOrder>();
+            while (csv_reader.Read())
+            {
+                try
+                {
+                    string out_code = csv_reader.GetField<string>("调出仓库编码");
+                    
+                    if (out_code == "" || out_code == null)
+                    {
+                        break;
+                    }
+                    string system_code = csv_reader.GetField<string>("序号");
+
+                }
+                catch (Exception)
+                {
+                    return View("error");
+                }
+            }
+            var _stream = TM_OutExcel(TM_transferringOrder);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "调拨单.xls");
+        }
+
+        // 调拨单
+        private HSSFWorkbook SetCommitCode(HSSFWorkbook book, List<TM_TransferringOrder> TM_transferringOrder)
+        {
+            // 打印不干胶
+            ISheet _sheet = book.CreateSheet("调拨单");
+            // 写标题
+            IRow _row = _sheet.CreateRow(0);
+            int _cell_pos = 0;
+            _row.CreateCell(_cell_pos).SetCellValue("商品名称");
+            _row.CreateCell(++_cell_pos).SetCellValue("商品编码");
+            _row.CreateCell(++_cell_pos).SetCellValue("条码");
+            // 写产品列
+            int _row_pos = 1;
+            foreach (var item in TM_transferringOrder)
+            {
+                int cell_pos;
+                    IRow single_row = _sheet.CreateRow(_row_pos++);
+                    cell_pos = 0;
+                    single_row.CreateCell(cell_pos).SetCellValue(item.ItemName);
+                    single_row.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
+                    single_row.CreateCell(++cell_pos).SetCellValue(item.StorageCode);
+            }
+            return book;
+        }
+        // 导出天猫调拨单
+        private MemoryStream TM_OutExcel(List<TM_TransferringOrder> TM_transferringOrder)
+        {
+            HSSFWorkbook book = new HSSFWorkbook();
             
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
@@ -293,7 +365,6 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return _stream;
         }
-  
         // 库存预估
         public ActionResult Calc_Storage(int plattformId)
         {
@@ -521,9 +592,7 @@ namespace PeriodAid.Controllers
             _db.SaveChanges();
             return true;
         }
-
-
-
+        
         // 获取仓库表格
         [HttpPost]
         public ActionResult getInventoryExcel(FormCollection form)
@@ -590,8 +659,9 @@ namespace PeriodAid.Controllers
                                                   && m.SalesRecord_Date > first_date && m.SalesRecord_Date <= current_date
                                                   select m);
                         int recommand_storage = ((int)(period_sales_count.Average(m => m.Sales_Count) * _rate) - storage_count) > 0 ? ((int)(period_sales_count.Average(m => m.Sales_Count) * _rate) - storage_count) : 0;
-                        int carton_count = (recommand_storage % product.Carton_Spec) == 0 ? recommand_storage / product.Carton_Spec : (recommand_storage / product.Carton_Spec) + 1;
-                        int final_storage = carton_count * product.Carton_Spec;
+                        int cartonspec = product.Carton_Spec == 0 ? 1 : product.Carton_Spec;
+                        int carton_count = (recommand_storage % cartonspec) == 0 ? recommand_storage / cartonspec : (recommand_storage / cartonspec) + 1;
+                        int final_storage = carton_count * cartonspec;
                         single_row.CreateCell(++cell_pos).SetCellValue(period_sales_count.Sum(m => m.Sales_Count));
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
