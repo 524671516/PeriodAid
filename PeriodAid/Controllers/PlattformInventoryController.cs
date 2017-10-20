@@ -12,7 +12,6 @@ using PeriodAid.Models;
 using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
-using NPOI.
 
 namespace PeriodAid.Controllers
 {
@@ -1145,18 +1144,27 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddEventPartial(SS_Event model, FormCollection form)
         {
-            var item = new SS_Event();
-            string[] timelist = form["eventtime"].ToString().Split(',');
-            // 每天循环
-            for (int i = 0; i < timelist.Length; i++)
+            ModelState.Remove("EventDate");
+            if (ModelState.IsValid)
             {
-                item.EventName = model.EventName;
-                item.Product_Id = model.Product_Id;
-                item.EventDate = model.EventDate;
-                _db.SS_Event.Add(item);
+                string[] timelist = form["eventtime"].ToString().Split(',');
+                // 每天循环
+                for (int i = 0; i < timelist.Length; i++)
+                {
+                    var item = new SS_Event();
+                    item.EventName = model.EventName;
+                    item.Product_Id = model.Product_Id;
+                    item.EventDate = Convert.ToDateTime(timelist[i]);
+                    _db.SS_Event.Add(item);
+                }
                 _db.SaveChanges();
+                return Content("SUCCESS");
             }
-            return Content("SUCCESS");
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
         }
     }
 

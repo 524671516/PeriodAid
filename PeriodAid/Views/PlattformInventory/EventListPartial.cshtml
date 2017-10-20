@@ -35,7 +35,7 @@
         }
     </table>
     <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))
+        @Html.PagedListPager(Model, page => Url.Action("EventListPartial", new { page }))
     </div>
 </div>
 
@@ -52,7 +52,6 @@
         $.ajax({
             url: l,
             data:{
-                plattformId: getUrlParam('plattformId')
             },
             success: function (data) {
                 $("#event_list_content").html(data);
@@ -74,13 +73,14 @@
         })
     })
     $(".delete_event").on("click", function () {
+        var eid = $(this).attr("data-eid");
             confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
                         url: "/PlattformInventory/DeleteEvent",
                         type: "post",
                         data: {
-                            id: $(".delete_event").attr("data-eid"),
+                            id: eid,
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
