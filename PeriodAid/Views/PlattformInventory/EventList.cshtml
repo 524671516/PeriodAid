@@ -2,6 +2,7 @@
 @{
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
+
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
@@ -11,24 +12,31 @@
         </td>
     </tr>
 </table>
-<h2>活动列表</h2>
+<a class="btn btn-info btn-sm" id="add-event" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动记录</a>
 <div id="event_list_content"></div>
 @section scripts{
-
-<script src="~/Scripts/highcharts.js"></script>       
-<script type="text/javascript">
+    <script>
+        $(function () {
             $.ajax({
-                url: '/PlattformInventory/ViewEventList',
+                url: "/PlattformInventory/EventListPartial",
                 data: {
-                    productId: 1593
+                    page: 1,
                 },
                 success: function (data) {
-                    $('#event_list_content').html(data)
-                    
+                    $("#event_list_content").html(data);
                 }
             })
-
-            
-          
-</script>
-    }
+        })
+        $("#add-event").on("click", function () {
+            $.ajax({
+                url: '/PlattformInventory/AddEventPartial',
+                data: {
+                    eventId: $(this).attr('data-val')
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+    </script>}

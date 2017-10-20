@@ -1082,59 +1082,89 @@ namespace PeriodAid.Controllers
 
         //活动打标
         public ActionResult EventList()
-
         {
             return View();
         }
 
-        public ActionResult ViewEventList(int productId)
+        public ActionResult EventListPartial(int? page)
         {
-            var eventList = from m in _db.SS_Event
-                            select m;
-            ViewBag.eventList = eventList;
-            
-            return PartialView();
-            
+            int _page = page ?? 1;
+            var productlist = (from m in _db.SS_Event
+                               orderby m.EventDate descending, m.Id descending
+                               select m).ToPagedList(_page, 15);
+            return PartialView(productlist);
         }
 
-        public ActionResult ViewEventListPartial(int productId)
+        public ActionResult EditEventInfo(int eventId)
         {
-            ViewBag.ProductId = productId;
-            var eventList = from m in _db.SS_Event
-                            select m;
-            ViewBag.eventList = eventList;
-            return View();
+            var item = _db.SS_Event.SingleOrDefault(m => m.Id == eventId);
+            return PartialView(item);
         }
-        public JsonResult ViewEventStatisticPartial(int productId, string start, string end)
-        {
-            DateTime _start = Convert.ToDateTime(start);
-            DateTime _end = Convert.ToDateTime(end);
-            var info_data = from m in _db.SS_SalesRecord
-                            where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
-                            && m.Product_Id == productId
-                            group m by m.SalesRecord_Date into g
-                            orderby g.Key
-                            select new EventStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m => m.Sales_Count) };
-            
-            DateTime current_date = _start;
 
-            var data = new List<EventStatisticViewModel>();
-            while (current_date <= _end)
+        [HttpPost]
+        public ActionResult EditEventInfo(SS_Event model)
+        {
+            if (ModelState.IsValid)
             {
-                int _salescount = 0;
-                var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
-                if (item != null)
+                SS_Event item = new SS_Event();
+                if (TryUpdateModel(item))
                 {
-                    _salescount = item.salescount;
+                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
                 }
-                data.Add(new EventStatisticViewModel()
-                {
-                    salescount = _salescount,
-                    salesdate = current_date
-                });
-                current_date = current_date.AddDays(1);
             }
-            return Json(new { result = "SUCCESS", data = data });
+            return Json(new { result = "FAIL" });
+        }
+
+        [HttpPost]
+        public ActionResult DeleteEvent(int id)
+        {
+            var item = _db.SS_Event.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                try
+                {
+                    _db.SS_Event.Remove(item);
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                catch
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        public ActionResult AddEventPartial()
+        {
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddEventPartial(SS_Event model, FormCollection form)
+        {
+            ModelState.Remove("EventDate");
+            if (ModelState.IsValid)
+            {
+                string[] timelist = form["eventtime"].ToString().Split(',');
+                // 每天循环
+                for (int i = 0; i < timelist.Length; i++)
+                {
+                    var item = new SS_Event();
+                    item.EventName = model.EventName;
+                    item.Product_Id = model.Product_Id;
+                    item.EventDate = Convert.ToDateTime(timelist[i]);
+                    _db.SS_Event.Add(item);
+                }
+                _db.SaveChanges();
+                return Content("SUCCESS");
+            }
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
         }
     }
 

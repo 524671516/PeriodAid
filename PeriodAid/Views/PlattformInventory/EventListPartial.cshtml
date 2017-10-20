@@ -1,0 +1,116 @@
+﻿
+@model PagedList.IPagedList<PeriodAid.Models.SS_Event>
+@using PagedList.Mvc;
+<div>
+    <table class="table">
+        <tr>
+            <th>
+                活动名称
+            </th>
+            <th>
+                产品编码
+            </th>
+            <th>活动日期</th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EventName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product_Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EventDate)
+                </td>
+                <td>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                    @Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })&nbsp;|&nbsp;
+                    <a class="delete_event" href="#" style="color:red;" data-eid="@item.Id">删除记录</a>
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("EventListPartial", new { page }))
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data:{
+            },
+            success: function (data) {
+                $("#event_list_content").html(data);
+            }
+        });
+        return false;
+    });
+    $('.select-a').click(function () {
+        //console.log($(this).attr('data-val'))
+        $.ajax({
+            url: '/PlattformInventory/EditEventInfo',
+            data: {
+                eventId: $(this).attr('data-val')
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
+    })
+    $(".delete_event").on("click", function () {
+        var eid = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/PlattformInventory/DeleteEvent",
+                        type: "post",
+                        data: {
+                            id: eid,
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/PlattformInventory/EventListPartial",
+                                        data: {
+                                            page: 1,
+                                        },
+                                        success: function (data) {
+                                            $("#event_list_content").html(data);
+                                            $('.modal-backdrop.in').remove()
+                                            $('body').removeClass('modal-open')
+                                        }
+                                    });
+                                    alert("删除成功")
+                                }, 1000);
+                            } else if (data.result == "FAIL") {
+                                alert("删除失败", "", function () {
+                                }, { type: 'error' });
+                            }
+                        }
+                    })
+                }
+            });
+    })
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+</script>
