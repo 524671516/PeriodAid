@@ -12,6 +12,7 @@ using PeriodAid.Models;
 using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
+using NPOI.
 
 namespace PeriodAid.Controllers
 {
@@ -607,10 +608,9 @@ namespace PeriodAid.Controllers
             // 写标题
             IRow row = sheet.CreateRow(0);
             int cell_pos = 0;
-            row.CreateCell(++cell_pos).SetCellValue("产品编号");
-            //cell_pos++;
+            row.CreateCell(cell_pos).SetCellValue("产品编号");
             row.CreateCell(++cell_pos).SetCellValue("产品名称");
-            //cell_pos++;
+            row.CreateCell(++cell_pos).SetCellValue("商品编码");
             int days = Convert.ToInt32(form["calc_days"].ToString());
             foreach (var inventory in inventory_list)
             {
@@ -626,12 +626,11 @@ namespace PeriodAid.Controllers
             int row_pos = 1;
             foreach (var product in product_list)
             {
-                NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
+                IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
                 single_row.CreateCell(cell_pos).SetCellValue(product.System_Code);
-                cell_pos++;
-                single_row.CreateCell(cell_pos).SetCellValue(product.Item_Name);
-                cell_pos++;
+                single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Name);
+                single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Code);
                 DateTime current_date = product.Inventory_Date;
                 DateTime first_date = product.Inventory_Date.AddDays(0 - days);
                 int total_count = 0;
@@ -736,10 +735,8 @@ namespace PeriodAid.Controllers
                 return View(SalesRecord);
             }
         }
-
-
-
-        public ActionResult StorageShow(int plattformId, int? Storage, DateTime? select_date)
+        
+        public ActionResult StorageShow(int plattformId, int? Storage,DateTime? start,DateTime end)
         {
             var storage = from m in _db.SS_Storage
                           select m;
@@ -747,14 +744,14 @@ namespace PeriodAid.Controllers
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date != null)
+            if (end != null)
             {
                 if (Storage.ToString() != "")
                 {
                     if (Storage.ToString() == "0")
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -769,7 +766,7 @@ namespace PeriodAid.Controllers
                     else
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.Storage_Id == Storage
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -785,7 +782,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                      where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                       group m by m.SS_Product into g
                                       select new Product_SummaryViewModel
                                       {
@@ -852,7 +849,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult TMS_StorageShow(int plattformId, int? Storage, DateTime? select_date)
+        public ActionResult TMS_StorageShow(int plattformId, int? Storage, DateTime? start, DateTime end)
         {
             var storage = from m in _db.SS_Storage
                           select m;
@@ -860,14 +857,14 @@ namespace PeriodAid.Controllers
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date != null)
+            if (end != null)
             {
                 if (Storage.ToString() != "")
                 {
                     if (Storage.ToString() == "0")
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -882,7 +879,7 @@ namespace PeriodAid.Controllers
                     else
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.Storage_Id == Storage
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -898,7 +895,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                      where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                       group m by m.SS_Product into g
                                       select new Product_SummaryViewModel
                                       {
