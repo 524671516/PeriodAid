@@ -1083,6 +1083,12 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS", data = data });
         }
+
+        //活动打标
+        public ActionResult EventList()
+        {
+            return Content("");
+        }
     }
 
 }
