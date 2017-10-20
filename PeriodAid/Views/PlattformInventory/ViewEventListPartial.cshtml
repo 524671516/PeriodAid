@@ -2,7 +2,6 @@
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
 <div id="event_list_content">
-    <input type="hidden" id="productId" name="plattformId" value="@ViewBag.ProductId" />
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
     <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
     <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
@@ -34,7 +33,7 @@
                 url: "/PlattformInventory/ViewEventStatisticPartial",
                 type:"post",
                 data: {
-                    productId: 1593,
+                    productId: getUrlParam('productId'),
                     start: $("#start_time").val(),
                     end: $("#end_time").val()
                 }, success: function (data) {
@@ -42,13 +41,12 @@
                 }
             });
             $("#statistic_btn").click(function () {
-                console.log($("#start_time").val())
                 if ($("#start_time").val() <= $("#end_time").val()) {
                     $.ajax({
                         url: "/PlattformInventory/ViewEventStatisticPartial",
                         type: "post",
                         data: {
-                            productId: 1593,
+                            productId: getUrlParam('productId'),
                             start: $("#start_time").val(),
                             end: $("#end_time").val()
                         }, success: function (data) {
@@ -124,6 +122,11 @@
                     fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return fmt;
         };
-
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
     </script>
 }

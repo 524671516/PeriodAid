@@ -28,7 +28,7 @@
                 </td>
                 <td>
                     <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    @Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })&nbsp;|&nbsp;
+                    @Html.ActionLink("数据统计", "ViewEventListPartial", new { productId = item.Id })&nbsp;|&nbsp;
                     <a class="delete_event" href="#" style="color:red;" data-eid="@item.Id">删除记录</a>
                 </td>
             </tr>

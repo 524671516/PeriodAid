@@ -121,8 +121,8 @@
                                 type: 'post',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
-                                    start:$('#end-date').val(),
-                                    end: $('#start-date-select').text()
+                                    start:$('#start-date').val(),
+                                    end: $('#end-date').val(),
                                 },
                                 success: function (data) {
                                         $('#storage_show').html(data)

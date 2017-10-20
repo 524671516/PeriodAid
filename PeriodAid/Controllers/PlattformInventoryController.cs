@@ -1166,6 +1166,58 @@ namespace PeriodAid.Controllers
             }
             //return Content("ERROR1");
         }
-    }
+        
+        public ActionResult ViewEventList(int productId)
+        {
+            var eventList = from m in _db.SS_Event
+                            select m;
+            ViewBag.eventList = eventList;
 
+            return PartialView();
+
+        }
+
+        public ActionResult ViewEventListPartial(int productId)
+        {
+            ViewBag.ProductId = productId;
+            var eventList = from m in _db.SS_Event
+                            where m.Id == productId
+                            select m;
+            ViewBag.eventList = eventList;
+            return View();
+        }
+        public JsonResult ViewEventStatisticPartial(int productId, string start, string end)
+        {
+            DateTime _start = Convert.ToDateTime(start);
+            DateTime _end = Convert.ToDateTime(end);
+            var product_Id = _db.SS_Event.SingleOrDefault(m => m.Id == productId);
+            var info_data = from m in _db.SS_SalesRecord
+                            where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
+                            && m.Product_Id == product_Id.Product_Id
+                            group m by m.SalesRecord_Date into g
+                            orderby g.Key
+                            select new EventStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m => m.Sales_Count) };
+
+            DateTime current_date = _start;
+
+            var data = new List<EventStatisticViewModel>();
+            while (current_date <= _end)
+            {
+                int _salescount = 0;
+                var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+                if (item != null)
+                {
+                    _salescount = item.salescount;
+                }
+                data.Add(new EventStatisticViewModel()
+                {
+                    salescount = _salescount,
+                    salesdate = current_date
+                });
+                current_date = current_date.AddDays(1);
+            }
+            return Json(new { result = "SUCCESS", data = data });
+        }
+    }
 }
+
