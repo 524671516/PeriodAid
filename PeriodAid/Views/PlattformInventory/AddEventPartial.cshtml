@@ -1,0 +1,79 @@
+﻿@model PeriodAid.Models.SS_Event
+@{
+    Layout = null;
+}
+<link href="~/Content/Site.css" rel="stylesheet" />
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>新增活动记录</h2>
+</div>
+<div class="modal-body">
+    @using (Html.BeginForm("AddEventPartial", "PlattformInventory", FormMethod.Post, new { @id = "add-event-form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="col-md-3 control-label">活动名称</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.EventName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EventName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-3 control-label">产品编码</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Product_Id, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-3 control-label">活动日期</label>
+                <div class="col-md-9">
+                    <input class="form-control" id="eventtime" name="eventtime" type="date">
+                    @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit"/>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/Scripts/kalendae.standalone.js"></script>
+<script>
+    $(function () {
+        $('#add-event-form').ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                alert("添加成功");
+                $('.modal-box').modal('hide');
+                $.ajax({
+                    url: "/PlattformInventory/EventList",
+                    success: function (data) {
+                        //$("#event_list_content").html(data);
+                        $('body').removeClass('modal-open')
+                    }
+                });
+            }
+            else {
+                errorAlert("添加失败！");
+            }
+        });
+        window.moment = Kalendae.moment;
+        var k4 = new Kalendae.Input('eventtime', {
+            months: 2,
+            mode: 'multiple',
+            titleFormat: "MM月, YYYY年",
+            format: "YYYY-MM-DD"
+        });
+
+    });
+</script>
+

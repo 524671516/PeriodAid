@@ -1087,7 +1087,79 @@ namespace PeriodAid.Controllers
         //活动打标
         public ActionResult EventList()
         {
-            return Content("");
+            return View();
+        }
+
+        public ActionResult EventListPartial(int? page)
+        {
+            int _page = page ?? 1;
+            var productlist = (from m in _db.SS_Event
+                               orderby m.EventDate descending, m.Id descending
+                               select m).ToPagedList(_page, 15);
+            return PartialView(productlist);
+        }
+
+        public ActionResult EditEventInfo(int eventId)
+        {
+            var item = _db.SS_Event.SingleOrDefault(m => m.Id == eventId);
+            return PartialView(item);
+        }
+
+        [HttpPost]
+        public ActionResult EditEventInfo(SS_Event model)
+        {
+            if (ModelState.IsValid)
+            {
+                SS_Event item = new SS_Event();
+                if (TryUpdateModel(item))
+                {
+                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        [HttpPost]
+        public ActionResult DeleteEvent(int id)
+        {
+            var item = _db.SS_Event.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                try
+                {
+                    _db.SS_Event.Remove(item);
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                catch
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        public ActionResult AddEventPartial()
+        {
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddEventPartial(SS_Event model, FormCollection form)
+        {
+            var item = new SS_Event();
+            string[] timelist = form["eventtime"].ToString().Split(',');
+            // 每天循环
+            for (int i = 0; i < timelist.Length; i++)
+            {
+                item.EventName = model.EventName;
+                item.Product_Id = model.Product_Id;
+                item.EventDate = model.EventDate;
+                _db.SS_Event.Add(item);
+                _db.SaveChanges();
+            }
+            return Content("SUCCESS");
         }
     }
 
