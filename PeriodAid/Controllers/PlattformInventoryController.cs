@@ -181,68 +181,187 @@ namespace PeriodAid.Controllers
                 // 基本信息
                 int cell_pos = 0;
                 int row_pos = 0;
+                ICellStyle borderstyle = book.CreateCellStyle();//设置边框
+                borderstyle.BorderBottom = BorderStyle.Thin;
+                borderstyle.BorderLeft = BorderStyle.Thin;
+                borderstyle.BorderRight = BorderStyle.Thin;
+                borderstyle.BorderTop = BorderStyle.Thin;
+                borderstyle.Alignment = HorizontalAlignment.Center;
+                borderstyle.VerticalAlignment = VerticalAlignment.Center;
+                IFont border_font = book.CreateFont(); //创建一个字体样式对象
+                border_font.FontName = "宋体"; //和excel里面的字体对应
+                border_font.FontHeightInPoints = 10;//字体大小
+                borderstyle.SetFont(border_font);
+                for (int i = 0; i < 6; i++)
+                {
+                    int[] a = { 18, 27, 31, 18, 18, 14 };
+                    sheet.SetColumnWidth(i, a[i] * 256);
+                    sheet.SetDefaultColumnStyle(i, borderstyle);
+                }
                 IRow row = sheet.CreateRow(row_pos);
                 IRow row1 = sheet.CreateRow(0);
+                row1.Height = 27*20;
                 ICell cell1 = row1.CreateCell(0);
                 sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
-                ICellStyle cellstyle = book.CreateCellStyle();//设置垂直居中格式
-                cellstyle.Alignment = HorizontalAlignment.Center;//水平对齐
+                for (int i = 1; i < 5; i++)
+                {
+                    sheet.AddMergedRegion(new CellRangeAddress(i, i, 2, 3));
+                    sheet.AddMergedRegion(new CellRangeAddress(i, i, 4, 5));
+                }
+                ICellStyle Title_style = book.CreateCellStyle();//大标题
+                ICellStyle Left_style = book.CreateCellStyle();//左标题
+                Left_style.BorderBottom = BorderStyle.Thin;
+                Left_style.BorderLeft = BorderStyle.Thin;
+                Left_style.BorderRight = BorderStyle.Thin;
+                Left_style.BorderTop = BorderStyle.Thin;
+                ICellStyle Center_style = book.CreateCellStyle();//居中标题
+                Center_style.BorderBottom = BorderStyle.Thin;
+                Center_style.BorderLeft = BorderStyle.Thin;
+                Center_style.BorderRight = BorderStyle.Thin;
+                Center_style.BorderTop = BorderStyle.Thin;
+                Title_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
+                Title_style.Alignment = HorizontalAlignment.Center;//水平对齐
+                Left_style.VerticalAlignment = VerticalAlignment.Center;
+                Center_style.VerticalAlignment = VerticalAlignment.Center;
+                Center_style.Alignment = HorizontalAlignment.Center;
+                IFont Tfont = book.CreateFont(); //创建一个字体样式对象
+                IFont Left_font = book.CreateFont(); //创建一个字体样式对象
+                IFont Center_font = book.CreateFont(); //创建一个字体样式对象
+                Tfont.FontName = "宋体"; //和excel里面的字体对应
+                Tfont.FontHeightInPoints = 18;//字体大小
+                Tfont.Boldweight = short.MaxValue;
+                Left_font.FontName = "宋体"; //和excel里面的字体对应
+                Left_font.FontHeightInPoints = 11;//字体大小
+                Left_font.Boldweight = short.MaxValue;
+                Center_font.FontName = "宋体"; //和excel里面的字体对应
+                Center_font.FontHeightInPoints = 11;//字体大小
+                Center_font.Boldweight = short.MaxValue;
+                Title_style.SetFont(Tfont);
+                Left_style.SetFont(Left_font);
+                Center_style.SetFont(Center_font);
                 cell1.SetCellValue("送货单");
-                cell1.CellStyle = cellstyle;
+                cell1.CellStyle = Title_style;
                 var single_sendorder = from m in storageOrder
                                        where m.OrderId == sendorder.Key.OrderId
                                        select m;
                 IRow single_row = sheet.CreateRow(++row_pos);
+                sheet.SetDefaultColumnStyle(0,borderstyle);
                 cell_pos = 0;
-                single_row.CreateCell(cell_pos).SetCellValue("送货单号");
-                single_row.CreateCell(++cell_pos).SetCellValue("");
-                single_row.CreateCell(++cell_pos).SetCellValue("供应商名称");
-                single_row.CreateCell(++cell_pos).SetCellValue("上海寿全斋电子商务有限公司");
+                var s0 = single_row.CreateCell(cell_pos);
+                s0.SetCellValue("送货单号");
+                s0.CellStyle = Left_style;
+                single_row.CreateCell(++cell_pos).SetCellValue(sendorder.Key.StorageName+ DateTime.Now.Month+ DateTime.Now.Day);
+                var c0 = single_row.CreateCell(++cell_pos);
+                c0.SetCellValue("供应商名称");
+                c0.CellStyle = Center_style;
+                single_row.CreateCell(cell_pos+=2).SetCellValue("上海寿全斋电子商务有限公司");
                 cell_pos = 0;
                 IRow single_row1 = sheet.CreateRow(++row_pos);
-                single_row1.CreateCell(cell_pos).SetCellValue("采购单号");
+                var s1 = single_row1.CreateCell(cell_pos);
+                s1.SetCellValue("采购单号");
+                s1.CellStyle = Left_style;
                 single_row1.CreateCell(++cell_pos).SetCellValue(sendorder.Key.OrderId);
-                single_row1.CreateCell(++cell_pos).SetCellValue("总箱数");
-                single_row1.CreateCell(++cell_pos).SetCellValue(single_sendorder.Sum(m => m.CartonCount));
+                var c1 = single_row1.CreateCell(++cell_pos);
+                c1.SetCellValue("总箱数");
+                c1.CellStyle = Center_style;
+                single_row1.CreateCell(cell_pos += 2).SetCellValue(single_sendorder.Sum(m => m.CartonCount));
                 IRow single_row2 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
-                single_row2.CreateCell(cell_pos).SetCellValue("目的城市");
+                var s2 = single_row2.CreateCell(cell_pos);
+                s2.SetCellValue("目的城市");
+                s2.CellStyle = Left_style;
                 single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.StorageName);
-                single_row2.CreateCell(++cell_pos).SetCellValue("目的仓库");
-                single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.SubStoName);
+                var c2 = single_row2.CreateCell(++cell_pos);
+                c2.SetCellValue("目的仓库");
+                c2.CellStyle = Center_style;
+                single_row2.CreateCell(cell_pos += 2).SetCellValue(sendorder.Key.SubStoName);
                 IRow single_row3 = sheet.CreateRow(++row_pos);
                 cell_pos = 0;
-                single_row3.CreateCell(cell_pos).SetCellValue("箱号/箱号段");
-                single_row3.CreateCell(++cell_pos).SetCellValue("sku");
-                single_row3.CreateCell(++cell_pos).SetCellValue("商品名称");
-                single_row3.CreateCell(++cell_pos).SetCellValue("箱规（个/箱）");
-                single_row3.CreateCell(++cell_pos).SetCellValue("商品总数量/个");
-                single_row3.CreateCell(++cell_pos).SetCellValue("备注");
+                var s3 = single_row3.CreateCell(cell_pos++);
+                s3.SetCellValue("TC预约号");
+                s3.CellStyle = Left_style;
+                var c3 = single_row3.CreateCell(++cell_pos);
+                c3.SetCellValue("TC预约送货日期");
+                c3.CellStyle = Center_style;
+                IRow single_row4 = sheet.CreateRow(++row_pos);
+                cell_pos = 0;
+                var s4 = single_row4.CreateCell(cell_pos);
+                s4.SetCellValue("箱号/箱号段");
+                s4.CellStyle = Left_style;
+                var c4 = single_row4.CreateCell(++cell_pos);
+                c4.SetCellValue("sku");
+                c4.CellStyle = Center_style;
+                var c5 = single_row4.CreateCell(++cell_pos);
+                c5.SetCellValue("商品名称");
+                c5.CellStyle = Center_style;
+                var c6 = single_row4.CreateCell(++cell_pos);
+                c6.SetCellValue("箱规（个/箱）");
+                c6.CellStyle = Center_style;
+                var c7 = single_row4.CreateCell(++cell_pos);
+                c7.SetCellValue("商品总数量/个");
+                c7.CellStyle = Center_style;
+                var c8 = single_row4.CreateCell(++cell_pos);
+                c8.SetCellValue("备注");
+                c8.CellStyle = Center_style;
                 var count_num = 1;
                 foreach (var item in single_sendorder)
                 {
                     for (var i = 1; i <= item.CartonCount; i++)
                     {
-                        IRow single_row4 = sheet.CreateRow(++row_pos);
+                        IRow single_row5 = sheet.CreateRow(++row_pos);
                         cell_pos = 0;
-                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.ProductName);
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
+                        single_row5.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
+                        single_row5.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
+                        single_row5.CreateCell(++cell_pos).SetCellValue(item.ProductName);
+                        single_row5.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
+                        single_row5.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                     }
                 }
-                IRow single_row5 = sheet.CreateRow(++row_pos);
-                cell_pos = 0;
-                single_row5.CreateCell(cell_pos).SetCellValue("合计");
-                single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
-                single_row5.CreateCell(4).SetCellValue(single_sendorder.Sum(m => m.OrderCount));
                 IRow single_row6 = sheet.CreateRow(++row_pos);
-                single_row6.CreateCell(cell_pos).SetCellValue("供应商发货盖章:");
+                cell_pos = 0;
+                var s6 = single_row6.CreateCell(cell_pos);
+                s6.SetCellValue("合计");
+                s6.CellStyle = Left_style;
+                var c9 = single_row6.CreateCell(3);
+                c9.SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
+                c9.CellStyle = Center_style;
+                var c10 = single_row6.CreateCell(4);
+                c10.SetCellValue(single_sendorder.Sum(m => m.OrderCount));
+                c10.CellStyle = Center_style;
                 IRow single_row7 = sheet.CreateRow(++row_pos);
-                single_row7.CreateCell(cell_pos).SetCellValue("TC收货签章:");
+                var s7 = single_row7.CreateCell(cell_pos);
+                s7.SetCellValue("供应商发货盖章:");
+                s7.CellStyle = Left_style;
                 IRow single_row8 = sheet.CreateRow(++row_pos);
-                single_row8.CreateCell(cell_pos).SetCellValue("备注:");
+                var s8 = single_row8.CreateCell(cell_pos);
+                s8.SetCellValue("TC收货签章:");
+                s8.CellStyle = Left_style;
+                IRow single_row9 = sheet.CreateRow(++row_pos);
+                var s9 = single_row9.CreateCell(cell_pos);
+                s9.SetCellValue("备注:");
+                s9.CellStyle = Left_style;
+                for (int i = 1; i <= sheet.LastRowNum; i++)
+                {
+                    var default_row = sheet.GetRow(i);
+                    foreach (var column in default_row)
+                    {
+                        column.Row.Height = 19 * 20;
+                    }
+
+                }
+                for (int i= sheet.LastRowNum-2;i<= sheet.LastRowNum;i++) {
+                    sheet.AddMergedRegion(new CellRangeAddress(i, i, 0, 5));
+                }
+                for (int i = 6; i <= sheet.LastRowNum-4; i++)
+                {
+                    var default_row = sheet.GetRow(i);
+                    foreach (var column in default_row)
+                    {
+                        column.Row.Height = 19 * 20;
+                        column.CellStyle = borderstyle;
+                    }
+
+                }
             }
             return book;
         }
