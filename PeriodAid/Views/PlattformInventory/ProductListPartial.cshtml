@@ -44,7 +44,8 @@
         <td>
             <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp; 
             @*<a class="chart-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">数据统计</a>*@
-            @Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })
+            <a class="select-product" data-item="@item.Id" style="cursor:pointer">数据统计</a>
+            @*@Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })*@
         </td>
     </tr>
 }
@@ -92,6 +93,25 @@
                 $("#myModal").modal('show')
             }
         })
+    })
+    $('.select-product').on('click', function () {
+        var that = $(this)
+        if (getUrlParam('plattformId') == 2) {
+            $.ajax({
+                url: '/PlattformInventory/ViewProductStatisticPartial',
+                type:'post',
+                data: {
+                    productId: that.attr('data-item'),
+                    start: $("#start_time").val(),
+                    end: $("#end_time").val()
+                },
+                success: function (data) {
+                    console.log(data)
+                }
+            })
+        } else {
+            alert('京东')
+        }
     })
     //获取url中的参数
     function getUrlParam(name) {
