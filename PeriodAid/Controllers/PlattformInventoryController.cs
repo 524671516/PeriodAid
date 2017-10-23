@@ -226,7 +226,7 @@ namespace PeriodAid.Controllers
                         IRow single_row4 = sheet.CreateRow(++row_pos);
                         cell_pos = 0;
                         single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.OrderId);
+                        single_row4.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.ProductName);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                         single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
@@ -237,6 +237,12 @@ namespace PeriodAid.Controllers
                 single_row5.CreateCell(cell_pos).SetCellValue("合计");
                 single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
                 single_row5.CreateCell(4).SetCellValue(single_sendorder.Sum(m => m.OrderCount));
+                IRow single_row6 = sheet.CreateRow(++row_pos);
+                single_row6.CreateCell(cell_pos).SetCellValue("供应商发货盖章:");
+                IRow single_row7 = sheet.CreateRow(++row_pos);
+                single_row7.CreateCell(cell_pos).SetCellValue("TC收货签章:");
+                IRow single_row8 = sheet.CreateRow(++row_pos);
+                single_row8.CreateCell(cell_pos).SetCellValue("备注:");
             }
             return book;
         }
@@ -1201,14 +1207,17 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult ViewEventListPartial(int productId)
+        public ActionResult ViewEventListPartial(int productId,DateTime select_date)
         {
-            ViewBag.ProductId = productId;
-            var eventList = from m in _db.SS_Event
-                            where m.Id == productId
-                            select m;
-            ViewBag.eventList = eventList;
-            return View();
+            var item = from m in _db.SS_Event
+                       where m.Product_Id == productId && m.EventDate == select_date
+                       select m;
+            var count = from m in _db.SS_SalesRecord
+                        where m.Product_Id == productId && m.SalesRecord_Date == select_date
+                        select m;
+            ViewBag.eventList = item;
+            ViewBag.salesCount = count;
+            return PartialView(item);
         }
         public JsonResult ViewEventStatisticPartial(int productId, string start, string end)
         {

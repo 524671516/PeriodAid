@@ -1,132 +1,30 @@
-﻿@{
-    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
-}
-<div id="event_list_content">
-    <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
-    <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
-    <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
-
-    <div id="myChart_Bar" style="min-width:500px;height:400px">
-        @foreach (var item in ViewBag.eventList)
+﻿
+<div class="h2">产品活动详情</div>
+<div>
+    <table class="table table-hover">
+        <tr>
+            <th>产品名称</th>
+            <th>产品编号</th>
+            <th>活动名称</th>
+            <th>活动日期</th>
+            <th>当日销量</th>
+        </tr>
+        @foreach(var item in ViewBag.eventList)
         {
-            <div data-list="@item.EventName" class="hidden view-list"></div>
-        }
-    </div>
-</div>
-@section scripts{
-
-    <script src="~/Scripts/highcharts.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            var fileDate = $('.file-data')
-                fileDate.datepicker({ dateFormat: "yy-mm-dd" });
-                //星期格式汉化
-                fileDate.datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
-                //月份格式汉化
-                fileDate.datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
-                fileDate.datepicker();
-            var current_date = showdate(-1);
-            var start_date = showdate(-30);
-            $("#end_time").val(current_date.getFullYear() + "-" + ((current_date.getMonth() + 1) > 9 ? current_date.getMonth() + 1 : '0' + (current_date.getMonth() + 1)) + "-" + current_date.getDate());
-            $("#start_time").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0'+(start_date.getMonth() + 1)) + "-" + start_date.getDate());
-            $.ajax({
-                url: "/PlattformInventory/ViewEventStatisticPartial",
-                type:"post",
-                data: {
-                    productId: getUrlParam('productId'),
-                    start: $("#start_time").val(),
-                    end: $("#end_time").val()
-                }, success: function (data) {
-                    showstatistic(data);
-                }
-            });
-            $("#statistic_btn").click(function () {
-                if ($("#start_time").val() <= $("#end_time").val()) {
-                    $.ajax({
-                        url: "/PlattformInventory/ViewEventStatisticPartial",
-                        type: "post",
-                        data: {
-                            productId: getUrlParam('productId'),
-                            start: $("#start_time").val(),
-                            end: $("#end_time").val()
-                        }, success: function (data) {
-                            showstatistic(data);
-                            $("#start_time").val('');
-                            $("#end_time").val('');
-                        }
-                    });
-                } else {
-                    errorAlert('请选择正确日期')
-                }
-
-            })
-        });
-        function showstatistic(data) {
-            var resultdata = data.data;
-            var totalarray = new Array();
-            var datearray = new Array();
-            for (var i = 0; i < resultdata.length; i++) {
-                var deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
-                var dee = new Date(deeint)
-                datearray.push(dee.Format("MM-dd"));
-                var totaltemp = resultdata[i].salescount
-                totalarray.push(totaltemp);
-            }
-            $("#myChart_Bar").highcharts({
-                chart: {
-                },
-                title: {
-                    text: "产品销售曲线"
-                },
-                xAxis: {
-                    categories: datearray
-                },
-                tooltip: {
-                    useHTML: true,
-                    pointFormat: '销量:{point.y}' + '</br>' + '参加活动 :' + '&nbsp' + $('.view-list').attr('data-list')
-
-                },
-                series: [{
-                    type: 'spline',
-                    name: '销量',
-                    data: totalarray,
-                    marker: {
-                        lineWidth: 2,
-                        lineColor: Highcharts.getOptions().colors[3],
-                        fillColor: 'white'
+            <tr>
+                <td>@item.SS_Product.Item_Name</td>
+                <td>@item.Id</td>
+                <td>@item.EventName</td>
+                <td>@item.EventDate</td>
+                <td>
+                    @foreach (var count in ViewBag.salesCount)
+                    {
+                        @count.Sales_Count
                     }
-                }]
-            });
-        }
+                </td>
 
+            </tr>
+        }
+    </table>
+</div>
 
-        function showdate(n) {
-            var uom = new Date(new Date() - 0 + n * 86400000);
-            //uom = uom.getFullYear() + "-" + (uom.getMonth() + 1) + "-" + uom.getDate();
-            return uom;
-        }
-        Date.prototype.Format = function (fmt) { //author: meizz
-            var o = {
-                "M+": this.getMonth() + 1,                 //月份
-                "d+": this.getDate(),                    //日
-                "h+": this.getHours(),                   //小时
-                "m+": this.getMinutes(),                 //分
-                "s+": this.getSeconds(),                 //秒
-                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                "S": this.getMilliseconds()             //毫秒
-            };
-            if (/(y+)/.test(fmt))
-                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (var k in o)
-                if (new RegExp("(" + k + ")").test(fmt))
-                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-            return fmt;
-        };
-        //获取url中的参数
-        function getUrlParam(name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-            if (r != null) return unescape(r[2]); return null; //返回参数值
-        }
-    </script>
-}
