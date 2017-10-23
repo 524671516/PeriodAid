@@ -55,8 +55,17 @@
                 $.ajax({
                     url: "/PlattformInventory/EventList",
                     success: function (data) {
-                        //$("#event_list_content").html(data);
-                        $('body').removeClass('modal-open')
+                        $.ajax({
+                            url: "/PlattformInventory/EventListPartial",
+                            data: {
+                                page: 1,
+                            },
+                            success: function (data) {
+                                $("#event_list_content").html(data);
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
                     }
                 });
             }
