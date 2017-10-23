@@ -1086,13 +1086,37 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult EventListPartial(int? page)
+        public ActionResult EventListPartial(int? page,string query)
         {
             int _page = page ?? 1;
-            var productlist = (from m in _db.SS_Event
-                               orderby m.EventDate descending, m.Id descending
-                               select m).ToPagedList(_page, 15);
-            return PartialView(productlist);
+
+
+            if (query != null)
+            {
+                if (query != "")
+                {
+                    var productlist = (from m in _db.SS_Event
+                                       where m.EventName.Contains(query)
+                                       orderby m.EventDate descending, m.Id descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+                else
+                {
+                    var productlist = (from m in _db.SS_Event
+                                       orderby m.EventDate descending, m.Id descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+
+            }
+            else
+            {
+                var productlist = (from m in _db.SS_Event
+                                   orderby m.EventDate descending, m.Id descending
+                                   select m).ToPagedList(_page, 15);
+                return PartialView(productlist);
+            }
         }
 
         public ActionResult EditEventInfo(int eventId)
@@ -1217,6 +1241,16 @@ namespace PeriodAid.Controllers
                 current_date = current_date.AddDays(1);
             }
             return Json(new { result = "SUCCESS", data = data });
+        }
+
+        [HttpPost]
+        public JsonResult QueryProduct(string query)
+        {
+            var product = from m in _db.SS_Product
+                        where m.Plattform_Id == 2
+                        && m.Item_Name.Contains(query)
+                        select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "【编码:" + m.Id +"】" + "- " + m.Item_Name  };
+            return Json(product);
         }
     }
 }

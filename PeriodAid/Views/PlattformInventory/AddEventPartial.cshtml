@@ -3,6 +3,7 @@
     Layout = null;
 }
 <link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/prettify.css" rel="stylesheet" />
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>新增活动记录</h2>
@@ -24,7 +25,8 @@
             <div class="form-group">
                 <label class="col-md-3 control-label">产品编码</label>
                 <div class="col-md-9">
-                    @Html.EditorFor(model => model.Product_Id, new { htmlAttributes = new { @class = "form-control" } })
+                    <div id="product-input">@Html.EditorFor(model => model.Product_Id, new { htmlAttributes = new { @class = "form-control" } })</div>
+                    <input type="hidden" id="Product_Id" name="Product_Id" />
                     @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -46,19 +48,41 @@
     }
 </div>
 <script src="~/Scripts/kalendae.standalone.js"></script>
+<script src="~/Scripts/bootstrap-typeahead.js"></script>
 <script>
     $(function () {
+        $("#product-input input").attr("placeholder", "产品搜索");
+        $("#product-input input").attr("type", "text");
+        //产品搜索
+        function displayResult(item, val, text) {
+            $("#product-input input").val(val);
+        }
+        $('#product-input input').typeahead({
+            ajax: {
+                url: '/PlattformInventory/QueryProduct',
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'ProductName',
+            val: 'Id'
+        });
         $('#add-event-form').ajaxForm(function (data) {
             if (data == "SUCCESS") {
-                alert("添加成功");
                 $('.modal-box').modal('hide');
-                $.ajax({
-                    url: "/PlattformInventory/EventList",
-                    success: function (data) {
-                        //$("#event_list_content").html(data);
-                        $('body').removeClass('modal-open')
-                    }
-                });
+                setTimeout(function () {
+                    $.ajax({
+                        url: "/PlattformInventory/EventListPartial",
+                        data: {
+                            page: 1,
+                        },
+                        success: function (data) {
+                            $("#event_list_content").html(data);
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                        }
+                    });
+                    alert("添加成功")
+                }, 1000);
             }
             else {
                 errorAlert("添加失败！");

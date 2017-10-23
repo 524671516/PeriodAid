@@ -8,7 +8,7 @@
         <td class="pull-right">
             <label>产品名称：</label>
             <input class="form-control input-sm offline-search-inline" id="storage-product-query" placeholder="搜索内容" />
-            <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+            <a class="btn btn-info btn-sm" id="event-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
     </tr>
 </table>
@@ -39,4 +39,24 @@
                 }
             })
         })
+        //搜索
+        $("#event-product-search").click(function () {
+            $.ajax({
+                url: "/PlattformInventory/EventListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    query: $("#storage-product-query").val()
+                },
+                success: function (data) {
+                    $("#event_list_content").html(data);
+                }
+            })
+        });
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
     </script>}
