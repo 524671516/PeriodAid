@@ -1138,6 +1138,11 @@
     <Content Include="Views\PlattformInventory\TMS_StorageShow.cshtml" />
     <Content Include="Views\PlattformInventory\TMShow_StorageShow.cshtml" />
     <Content Include="Views\PlattformInventory\EventList.cshtml" />
+    <Content Include="Views\PlattformInventory\ViewEventList.cshtml" />
+    <Content Include="Views\PlattformInventory\ViewEventListPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\AddEventPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\EditEventInfo.cshtml" />
+    <Content Include="Views\PlattformInventory\EventListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

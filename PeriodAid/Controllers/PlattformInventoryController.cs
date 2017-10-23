@@ -624,10 +624,9 @@ namespace PeriodAid.Controllers
             // 写标题
             IRow row = sheet.CreateRow(0);
             int cell_pos = 0;
-            row.CreateCell(++cell_pos).SetCellValue("产品编号");
-            //cell_pos++;
+            row.CreateCell(cell_pos).SetCellValue("产品编号");
             row.CreateCell(++cell_pos).SetCellValue("产品名称");
-            //cell_pos++;
+            row.CreateCell(++cell_pos).SetCellValue("商品编码");
             int days = Convert.ToInt32(form["calc_days"].ToString());
             foreach (var inventory in inventory_list)
             {
@@ -643,12 +642,11 @@ namespace PeriodAid.Controllers
             int row_pos = 1;
             foreach (var product in product_list)
             {
-                NPOI.SS.UserModel.IRow single_row = sheet.CreateRow(row_pos);
+                IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
                 single_row.CreateCell(cell_pos).SetCellValue(product.System_Code);
-                cell_pos++;
-                single_row.CreateCell(cell_pos).SetCellValue(product.Item_Name);
-                cell_pos++;
+                single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Name);
+                single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Code);
                 DateTime current_date = product.Inventory_Date;
                 DateTime first_date = product.Inventory_Date.AddDays(0 - days);
                 int total_count = 0;
@@ -753,10 +751,8 @@ namespace PeriodAid.Controllers
                 return View(SalesRecord);
             }
         }
-
-
-
-        public ActionResult StorageShow(int plattformId, int? Storage, DateTime? select_date)
+        
+        public ActionResult StorageShow(int plattformId, int? Storage,DateTime? start,DateTime end)
         {
             var storage = from m in _db.SS_Storage
                           select m;
@@ -764,14 +760,14 @@ namespace PeriodAid.Controllers
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date != null)
+            if (end != null)
             {
                 if (Storage.ToString() != "")
                 {
                     if (Storage.ToString() == "0")
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -786,7 +782,7 @@ namespace PeriodAid.Controllers
                     else
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.Storage_Id == Storage
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -802,7 +798,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                      where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                       group m by m.SS_Product into g
                                       select new Product_SummaryViewModel
                                       {
@@ -869,7 +865,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult TMS_StorageShow(int plattformId, int? Storage, DateTime? select_date)
+        public ActionResult TMS_StorageShow(int plattformId, int? Storage, DateTime? start, DateTime end)
         {
             var storage = from m in _db.SS_Storage
                           select m;
@@ -877,14 +873,14 @@ namespace PeriodAid.Controllers
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
             ViewBag.DataDate = DataDate;
-            if (select_date != null)
+            if (end != null)
             {
                 if (Storage.ToString() != "")
                 {
                     if (Storage.ToString() == "0")
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -899,7 +895,7 @@ namespace PeriodAid.Controllers
                     else
                     {
                         var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date == select_date && m.Storage_Id == Storage
+                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.Storage_Id == Storage
                                           group m by m.SS_Product into g
                                           select new Product_SummaryViewModel
                                           {
@@ -915,7 +911,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SalesRecord_Date == select_date && m.SS_Storage.SS_Plattform.Id == plattformId
+                                      where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                       group m by m.SS_Product into g
                                       select new Product_SummaryViewModel
                                       {
@@ -1104,8 +1100,178 @@ namespace PeriodAid.Controllers
         //活动打标
         public ActionResult EventList()
         {
-            return Content("");
+            return View();
+        }
+
+        public ActionResult EventListPartial(int? page,string query)
+        {
+            int _page = page ?? 1;
+
+
+            if (query != null)
+            {
+                if (query != "")
+                {
+                    var productlist = (from m in _db.SS_Event
+                                       where m.EventName.Contains(query)
+                                       orderby m.EventDate descending, m.Id descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+                else
+                {
+                    var productlist = (from m in _db.SS_Event
+                                       orderby m.EventDate descending, m.Id descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+
+            }
+            else
+            {
+                var productlist = (from m in _db.SS_Event
+                                   orderby m.EventDate descending, m.Id descending
+                                   select m).ToPagedList(_page, 15);
+                return PartialView(productlist);
+            }
+        }
+
+        public ActionResult EditEventInfo(int eventId)
+        {
+            var item = _db.SS_Event.SingleOrDefault(m => m.Id == eventId);
+            return PartialView(item);
+        }
+
+        [HttpPost]
+        public ActionResult EditEventInfo(SS_Event model)
+        {
+            if (ModelState.IsValid)
+            {
+                SS_Event item = new SS_Event();
+                if (TryUpdateModel(item))
+                {
+                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        [HttpPost]
+        public ActionResult DeleteEvent(int id)
+        {
+            var item = _db.SS_Event.SingleOrDefault(m => m.Id == id);
+            if (item != null)
+            {
+                try
+                {
+                    _db.SS_Event.Remove(item);
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+                catch
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+
+        public ActionResult AddEventPartial()
+        {
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddEventPartial(SS_Event model, FormCollection form)
+        {
+            ModelState.Remove("EventDate");
+            if (ModelState.IsValid)
+            {
+                string[] timelist = form["eventtime"].ToString().Split(',');
+                // 每天循环
+                for (int i = 0; i < timelist.Length; i++)
+                {
+                    var item = new SS_Event();
+                    item.EventName = model.EventName;
+                    item.Product_Id = model.Product_Id;
+                    item.EventDate = Convert.ToDateTime(timelist[i]);
+                    _db.SS_Event.Add(item);
+                }
+                _db.SaveChanges();
+                return Content("SUCCESS");
+            }
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
+        }
+        
+        public ActionResult ViewEventList(int productId)
+        {
+            var eventList = from m in _db.SS_Event
+                            select m;
+            ViewBag.eventList = eventList;
+
+            return PartialView();
+
+        }
+
+        public ActionResult ViewEventListPartial(int productId,DateTime select_date)
+        {
+            var item = from m in _db.SS_Event
+                       where m.Product_Id == productId && m.EventDate == select_date
+                       select m;
+            var count = from m in _db.SS_SalesRecord
+                        where m.Product_Id == productId && m.SalesRecord_Date == select_date
+                        select m;
+            ViewBag.eventList = item;
+            ViewBag.salesCount = count;
+            return PartialView(item);
+        }
+        public JsonResult ViewEventStatisticPartial(int productId, string start, string end)
+        {
+            DateTime _start = Convert.ToDateTime(start);
+            DateTime _end = Convert.ToDateTime(end);
+            var product_Id = _db.SS_Event.SingleOrDefault(m => m.Id == productId);
+            var info_data = from m in _db.SS_SalesRecord
+                            where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
+                            && m.Product_Id == product_Id.Product_Id
+                            group m by m.SalesRecord_Date into g
+                            orderby g.Key
+                            select new EventStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m => m.Sales_Count) };
+
+            DateTime current_date = _start;
+
+            var data = new List<EventStatisticViewModel>();
+            while (current_date <= _end)
+            {
+                int _salescount = 0;
+                var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+                if (item != null)
+                {
+                    _salescount = item.salescount;
+                }
+                data.Add(new EventStatisticViewModel()
+                {
+                    salescount = _salescount,
+                    salesdate = current_date
+                });
+                current_date = current_date.AddDays(1);
+            }
+            return Json(new { result = "SUCCESS", data = data });
+        }
+
+        [HttpPost]
+        public JsonResult QueryProduct(string query)
+        {
+            var product = from m in _db.SS_Product
+                        where m.Plattform_Id == 2
+                        && m.Item_Name.Contains(query)
+                        select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "【编码:" + m.Id +"】" + "- " + m.Item_Name  };
+            return Json(product);
         }
     }
-
 }
+

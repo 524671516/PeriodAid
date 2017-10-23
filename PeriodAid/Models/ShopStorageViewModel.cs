@@ -36,6 +36,12 @@ namespace PeriodAid.Models
         public int salescount { get; set; }
     }
 
+    public class EventStatisticViewModel
+    {
+        public DateTime salesdate { get; set; }
+
+        public int salescount { get; set; }
+    }
     // 京东送货单导入
     public class StorageOrder
     {

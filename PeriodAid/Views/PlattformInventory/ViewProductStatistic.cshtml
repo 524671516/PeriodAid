@@ -8,7 +8,9 @@
 <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
 <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px"/>
 
-<div id="myChart_Bar" style="min-width:500px;height:400px"></div>
+<div id="myChart_Bar" style="min-width:500px;height:400px">
+    
+</div>
 
 @section scripts{
     
@@ -22,7 +24,7 @@
                 //月份格式汉化  
                 fileDate.datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
                 fileDate.datepicker();
-                var current_date = showdate(-1);
+            var current_date = showdate(-1);
             var start_date = showdate(-30);
             $("#end_time").val(current_date.getFullYear() + "-" + ((current_date.getMonth() + 1) > 9 ? current_date.getMonth() + 1 : '0' + (current_date.getMonth() + 1)) + "-" + current_date.getDate());
             $("#start_time").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0'+(start_date.getMonth() + 1)) + "-" + start_date.getDate());
@@ -80,7 +82,7 @@
                 },
                 tooltip: {
                     useHTML: true,
-                    pointFormat: '销量:{point.y}'+'</br>'+ '参加活动 :'+ '&nbsp'+'聚划算'
+                    //pointFormat: '销量:{point.y}'+'</br>'+ '参加活动 :'+ '&nbsp'+'聚划算'
                                 
                 },
                 series: [{

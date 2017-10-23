@@ -1,0 +1,31 @@
+﻿
+<div class="h2">产品活动详情</div>
+<div>
+    <table class="table table-hover">
+        <tr>
+            <th>产品名称</th>
+            <th>产品编号</th>
+            <th>活动名称</th>
+            <th>活动日期</th>
+            <th>当日销量</th>
+        </tr>
+        @foreach(var item in ViewBag.eventList)
+        {
+            <tr>
+                <td>@item.SS_Product.Item_Name</td>
+                <td>@item.Id</td>
+                <td>@item.EventName</td>
+                <td>@item.EventDate</td>
+                <td>
+                    @foreach (var count in ViewBag.salesCount)
+                    {
+                        @count.Sales_Count
+                    }
+                </td>
+
+            </tr>
+        }
+    </table>
+    <div class="float-right h5"><a class="fa fa-angle-double-left" style="cursor:pointer" href="/PlattformInventory/EventList">返回</a></div>
+</div>
+

@@ -1,0 +1,87 @@
+﻿@model PeriodAid.Models.SS_Event
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>修改活动信息</h2>
+</div>
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("EditEventInfo", "PlattformInventory", FormMethod.Post, new { @id = "event-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <h4 style="display:none">SS_Event</h4>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            <div class="form-group">
+                <label class="control-label col-md-2">活动名称</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EventName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EventName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">产品编码</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Product_Id, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">活动日期</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control",@readonly="readonly" } })
+                    @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal-footer">
+
+</div>
+
+<script>
+        $('#save-btn').click(function () {
+             $("#event-form").ajaxSubmit({
+                url: '/PlattformInventory/EditEventInfo',
+                type: 'post',
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert('保存成功')
+                        $("#myModal").modal('hide');
+                            $.ajax({
+                                url: "/PlattformInventory/EventListPartial",
+                                data: {
+                                    page: 1,
+                                },
+                                success: function (data) {
+                                    $("#event_list_content").html(data);
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
+                                }
+                            });
+
+                    } else {
+                        errorAlert('保存失败')
+                    }
+                }
+            })
+            return false;
+        })
+
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
+
+</script>
+
+

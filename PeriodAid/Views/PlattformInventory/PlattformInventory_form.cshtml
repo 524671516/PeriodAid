@@ -10,7 +10,7 @@
             z-index: 52;
         }
         .nav > li > a{
-            padding: 4px 15px;
+            padding: 0px 15px;
         }
         #view-head-tr-1>th{
             font-size:15px
@@ -23,25 +23,35 @@
 <div class="navbar-default tm_task-navbar" style="padding-top:10px;background-color:white">
     <div style="padding:20px 0;">
         <div class="text-center h2">数据统计</div>
-        <div class="text-center h4"><span id="show-date"></span>&nbsp;&nbsp;&nbsp;<span id="show-storage"></span></div>
+        <div class="text-center h4">
+            <span id="start-time"></span>
+            </br>
+            <span id="end-time"></span>
+            </br>
+            <span id="show-storage"></span>
+        </div>
         
-        @foreach (var item in ViewBag.DataDate) {
-            <h5 class="date_show" hidden>@item</h5>
-        }
     </div>
     <div class="form-view-header clear-float">
         <div>
             <div class="tm-view-control">
                 <ul class="nav nav-pills" style="float:right">
-                    <li class="tm-view-control-sort dropdown">
+                    @*<li class="tm-view-control-sort dropdown">
                         <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
-                            <span class="tm-select-title active" id="form-date-select" style="color:white;font-size:14px;">选择日期</span>
-                            <input type="text" id="file-date" name="file-date" style="height: 38px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
+                            <span class="tm-select-title active" id="start-date-select" style="color:white;font-size:14px;">选择日期</span>
+                            <input type="text" class="file-date" id="start-date" name="file-date" style="height: 38px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
                             <span class="caret color-white"></span>
                         </a>
                     </li>
                     <li class="tm-view-control-sort dropdown">
                         <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
+                            <span class="tm-select-title active" id="end-date-select" style="color:white;font-size:14px;">选择日期区间</span>
+                            <input type="text" class="file-date" id="end-date" name="file-date" style="height: 38px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
+                            <span class="caret color-white"></span>
+                        </a>
+                    </li>*@
+                    <li class="tm-view-control-sort dropdown">
+                        <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
                             <span class="tm-select-title active" id="storage-select" style="color:white;font-size:14px;">所有仓库</span>
                             <span class="caret color-white"></span>
                         </a>
@@ -58,12 +68,17 @@
 
                 </ul>
             </div>
-        </div>
+            <div>
+                <input type="text" class="file-date" id="start-date" name="file-date" placeholder="请选择起始日期" value="" />
+                <input type="text"class="file-date" id="end-date" name="file-date" placeholder="请选择结束日期" />
+                <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
+            </div>
+         </div>
     </div>
     <div id="storage_show">
         
     </div>
-    <div class="tm-view-content-container  tm-view-container" id="file-loading" style="top:190px">
+    <div class="tm-view-content-container  tm-view-container" id="file-loading" >
         <div class="tm-veiw-loading text-center" id="tm-view-loading">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
             <span class="sr-only">正在加载...</span>
@@ -79,12 +94,12 @@
                 $('#file-name').trigger('click')
             })
         //日期格式改变
-        $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
+            $(".file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
-        $("#file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+            $(".file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
         //月份格式汉化
-        $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
-        $("#file-date").datepicker();
+            $(".file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+            $(".file-date").datepicker();
         TmDatePicker.Init({
             container: "#tm-calendar-view-wrap",
             onpagechanged: function (e) {
@@ -97,16 +112,17 @@
                     },
                     success: function (data) {for (var i = 0; i < data.length; i++) {
                         var record = data[i].record_date.ToString("yyyy-MM-dd");
-                        //console.log(record)
                     }
-                        $('#form-date-select').text(record)
+                        $('#start-date').val(record)
+                        $('#end-date').val(record)
                         if (getUrlParam('plattformId') == 2) {
                             $.ajax({
                                 url: '/PlattformInventory/TMS_StorageShow/',
                                 type: 'post',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
-                                    select_date: $('#form-date-select').text(),
+                                    start:$('#start-date').val(),
+                                    end: $('#end-date').val(),
                                 },
                                 success: function (data) {
                                         $('#storage_show').html(data)
@@ -125,7 +141,8 @@
                                 type: 'post',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
-                                    select_date: $('#form-date-select').text(),
+                                    start:$('#start-date').val(),
+                                    end: $('#end-date').val()
                                 },
                                 success: function (data) {
                                         $('#storage_show').html(data)
@@ -165,19 +182,6 @@
                     var _end = parseInt(arrydata.indexOf('-')) + 3;
                     var month = arrydata.substring(_first, _end);
                 }
-                if (year == show_year) {
-                    if (month == show_month) {
-                        var day = arrydata.substring(8, 10);
-                        if (day >= 10) {
-                            day = arrydata.substring(8, 10);
-                            $(".ui-state-default").parent("[data-day=" + day + "]").children().attr("style", "background:#f7b03c");
-                        }
-                        else {
-                            day = arrydata.substring(9, 10);
-                            $(".ui-state-default").parent("[data-day=" + day + "]").children().attr("style", "background:#f7b03c");
-                        }
-                    }
-                }
             }
         }
         $("#form-date-show").on("click", function() {
@@ -204,7 +208,8 @@
                     data: {
                         plattformId: getUrlParam('plattformId'),
                         Storage: that.children('.form-select-a').attr('data-ssid'),
-                        select_date: $('#form-date-select').text()
+                        start:$('#start-date').val(),
+                        end: $('#end-date').val()
                     },
                     success: function (data) {
                             $('#storage_show').html(data)
@@ -222,7 +227,9 @@
                     type: 'post',
                     data: {
                         plattformId: getUrlParam('plattformId'),
-                        select_date: $('#form-date-select').text(),
+                        Storage: that.children('.form-select-a').attr('data-ssid'),
+                        start:$('#start-date').val(),
+                        end: $('#end-date').val()
                     },
                     success: function (data) {
                         $('#storage_show').html(data)
@@ -237,51 +244,107 @@
             }
             
         })
-        // 选择日期
-        $('#file-date').change(function () {
-            var that = $(this);
+            // 选择日期
+        $('#start-date').change(function(){
+            $('#start-time').text($(this).val())
+        })
+        $('#end-date').change(function(){
+            $('#end-time').text($(this).val())
+        })
+        $('#select-date-btn').click(function () {
+            var that=$(this)
             $('#file-loading').show()
-            $('#form-date-select').text($(this).val())
-            $('#show-date').text($('#form-date-select').text())
-            if(getUrlParam('plattformId')==2){
-                $.ajax({
-                    url: "/PlattformInventory/TMS_StorageShow/",
-                    data: {
-                        plattformId: getUrlParam('plattformId'),
-                        Storage: that.children('.form-select-a').attr('data-ssid'),
-                        select_date: $('#form-date-select').text()
-                    },
-                    success: function (data) {
-                        $('#storage_show').html(data)
-                        $('#file-loading').hide()
-                        $('.hot-product').each(function () {
-                            if ($(this).attr('data-bind') == 1) {
-                                $(this).find('.box').addClass('fire-box')
-                            }
-                        })
-                    }
-                })
+            if($('#start-date').val() <= $('#end-date').val()){
+                if(getUrlParam('plattformId')==2){
+                    $.ajax({
+                        url: "/PlattformInventory/TMS_StorageShow/",
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                            Storage: that.children('.form-select-a').attr('data-ssid'),
+                            start:$('#start-date').val(),
+                            end: $('#end-date').val()
+                        },
+                        success: function (data) {
+                            $('#storage_show').html(data)
+                            $('#file-loading').hide()
+                            $('.hot-product').each(function () {
+                                if ($(this).attr('data-bind') == 1) {
+                                    $(this).find('.box').addClass('fire-box')
+                                }
+                            })
+                        }
+                    })
+                }else{
+                    $.ajax({
+                        url: '/PlattformInventory/StorageShow/',
+                        type: 'post',
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                            start:$('#start-date').val(),
+                            end: $('#end-date').val()
+                        },
+                        success: function (data) {
+                            $('#storage_show').html(data)
+                            $('#file-loading').hide()
+                            $('.hot-product').each(function () {
+                                if ($(this).attr('data-bind') == 1) {
+                                    $(this).find('.box').addClass('fire-box')
+                                }
+                            })
+                        }
+                    })
+                }
             }else{
-                $.ajax({
-                    url: '/PlattformInventory/StorageShow/',
-                    type: 'post',
-                    data: {
-                        plattformId: getUrlParam('plattformId'),
-                        select_date: $('#form-date-select').text(),
-                    },
-                    success: function (data) {
-                        $('#storage_show').html(data)
-                        $('#file-loading').hide()
-                        $('.hot-product').each(function () {
-                            if ($(this).attr('data-bind') == 1) {
-                                $(this).find('.box').addClass('fire-box')
-                            }
-                        })
-                    }
-                })
+                errorAlert('请选择正确日期')
+                if(getUrlParam('plattformId')==2){
+                    $.ajax({
+                        url: "/PlattformInventory/TMS_StorageShow/",
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                            Storage: that.children('.form-select-a').attr('data-ssid'),
+                            start:$('#start-date').val(),
+                            end: $('#end-date').val()
+                        },
+                        success: function (data) {
+                            $('#storage_show').html(data)
+                            $('#file-loading').hide()
+                            $('.hot-product').each(function () {
+                                if ($(this).attr('data-bind') == 1) {
+                                    $(this).find('.box').addClass('fire-box')
+                                }
+                            })
+                            $('#start-date').val('')
+                            $('#end-date').val('')
+                            $('#start-time').text('')
+                            $('#end-time').text('')
+                        }
+                    })
+                }else{
+                    $.ajax({
+                        url: '/PlattformInventory/StorageShow/',
+                        type: 'post',
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                            start:$('#start-date').val(),
+                            end: $('#end-date').val()
+                        },
+                        success: function (data) {
+                            $('#storage_show').html(data)
+                            $('#file-loading').hide()
+                            $('.hot-product').each(function () {
+                                if ($(this).attr('data-bind') == 1) {
+                                    $(this).find('.box').addClass('fire-box')
+                                }
+                            })
+                            $('#start-date').val('')
+                            $('#end-date').val('')
+                            $('#start-time').text('')
+                            $('#end-time').text('')
+                        }
+                    })
+                }
             }
         })
-
     })
     // 重置时间显示格式
     String.prototype.ToString = function (format) {
