@@ -12,6 +12,7 @@ using PeriodAid.Models;
 using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace PeriodAid.Controllers
 {
@@ -142,13 +143,14 @@ namespace PeriodAid.Controllers
                     var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == ProductId);
                     if (product != null)
                     {
-                        int o_code, o_count;
+                        string o_code;
+                        int o_count;
                         string s_name, su_name;
                         int order_count = csv_reader.TryGetField<int>("采购数量", out o_count) ? o_count : 0;
                         int _carton_count = order_count / (product.Carton_Spec == 0 ? 1 : product.Carton_Spec);
                         StorageOrder storageorder = new StorageOrder()
                         {
-                            OrderId = csv_reader.TryGetField<int>("订单号", out o_code) ? o_code : 0,
+                            OrderId = csv_reader.TryGetField<string>("订单号", out o_code) ? o_code : "NaN",
                             SystemCode = product.System_Code,
                             ProductName = product.Item_Name,
                             StorageName = csv_reader.TryGetField<string>("分配机构", out s_name) ? s_name : "NaN",
@@ -166,89 +168,79 @@ namespace PeriodAid.Controllers
                 }
             }
             var _stream = OutExcel(storageOrder);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+            return File(_stream, "application/zip", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.zip");
 
         }
         // 分仓单
-        private HSSFWorkbook SetStorageList(HSSFWorkbook book, List<StorageOrder> storageOrder)
+        private HSSFWorkbook SetStorageList(string orderId, string storageName, string subStoName, List<StorageOrder> storageOrder)
         {
-            var sendorderlist = from m in storageOrder
-                                group m by new { OrderId = m.OrderId, StorageName = m.StorageName, SubStoName = m.SubStoName } into g
-                                select g;
-            foreach (var sendorder in sendorderlist)
+            HSSFWorkbook book = new HSSFWorkbook();
+            ISheet sheet = book.CreateSheet(storageName + orderId);
+            // 基本信息
+            int cell_pos = 0;
+            int row_pos = 0;
+            IRow row = sheet.CreateRow(row_pos);
+            IRow row1 = sheet.CreateRow(0);
+            ICell cell1 = row1.CreateCell(0);
+            sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+            ICellStyle cellstyle = book.CreateCellStyle();//设置垂直居中格式
+            cellstyle.Alignment = HorizontalAlignment.Center;//水平对齐
+            cell1.SetCellValue("送货单");
+            cell1.CellStyle = cellstyle;
+            var single_sendorder = from m in storageOrder
+                                   where m.OrderId == orderId
+                                   select m;
+            IRow single_row = sheet.CreateRow(++row_pos);
+            cell_pos = 0;
+            single_row.CreateCell(cell_pos).SetCellValue("送货单号");
+            single_row.CreateCell(++cell_pos).SetCellValue("");
+            single_row.CreateCell(++cell_pos).SetCellValue("供应商名称");
+            single_row.CreateCell(++cell_pos).SetCellValue("上海寿全斋电子商务有限公司");
+            cell_pos = 0;
+            IRow single_row1 = sheet.CreateRow(++row_pos);
+            single_row1.CreateCell(cell_pos).SetCellValue("采购单号");
+            single_row1.CreateCell(++cell_pos).SetCellValue(orderId);
+            single_row1.CreateCell(++cell_pos).SetCellValue("总箱数");
+            single_row1.CreateCell(++cell_pos).SetCellValue(single_sendorder.Sum(m => m.CartonCount));
+            IRow single_row2 = sheet.CreateRow(++row_pos);
+            cell_pos = 0;
+            single_row2.CreateCell(cell_pos).SetCellValue("目的城市");
+            single_row2.CreateCell(++cell_pos).SetCellValue(storageName);
+            single_row2.CreateCell(++cell_pos).SetCellValue("目的仓库");
+            single_row2.CreateCell(++cell_pos).SetCellValue(subStoName);
+            IRow single_row3 = sheet.CreateRow(++row_pos);
+            cell_pos = 0;
+            single_row3.CreateCell(cell_pos).SetCellValue("箱号/箱号段");
+            single_row3.CreateCell(++cell_pos).SetCellValue("sku");
+            single_row3.CreateCell(++cell_pos).SetCellValue("商品名称");
+            single_row3.CreateCell(++cell_pos).SetCellValue("箱规（个/箱）");
+            single_row3.CreateCell(++cell_pos).SetCellValue("商品总数量/个");
+            single_row3.CreateCell(++cell_pos).SetCellValue("备注");
+            var count_num = 1;
+            foreach (var item in single_sendorder)
             {
-                ISheet sheet = book.CreateSheet(sendorder.Key.StorageName + sendorder.Key.OrderId);
-                // 基本信息
-                int cell_pos = 0;
-                int row_pos = 0;
-                IRow row = sheet.CreateRow(row_pos);
-                IRow row1 = sheet.CreateRow(0);
-                ICell cell1 = row1.CreateCell(0);
-                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
-                ICellStyle cellstyle = book.CreateCellStyle();//设置垂直居中格式
-                cellstyle.Alignment = HorizontalAlignment.Center;//水平对齐
-                cell1.SetCellValue("送货单");
-                cell1.CellStyle = cellstyle;
-                var single_sendorder = from m in storageOrder
-                                       where m.OrderId == sendorder.Key.OrderId
-                                       select m;
-                IRow single_row = sheet.CreateRow(++row_pos);
-                cell_pos = 0;
-                single_row.CreateCell(cell_pos).SetCellValue("送货单号");
-                single_row.CreateCell(++cell_pos).SetCellValue("");
-                single_row.CreateCell(++cell_pos).SetCellValue("供应商名称");
-                single_row.CreateCell(++cell_pos).SetCellValue("上海寿全斋电子商务有限公司");
-                cell_pos = 0;
-                IRow single_row1 = sheet.CreateRow(++row_pos);
-                single_row1.CreateCell(cell_pos).SetCellValue("采购单号");
-                single_row1.CreateCell(++cell_pos).SetCellValue(sendorder.Key.OrderId);
-                single_row1.CreateCell(++cell_pos).SetCellValue("总箱数");
-                single_row1.CreateCell(++cell_pos).SetCellValue(single_sendorder.Sum(m => m.CartonCount));
-                IRow single_row2 = sheet.CreateRow(++row_pos);
-                cell_pos = 0;
-                single_row2.CreateCell(cell_pos).SetCellValue("目的城市");
-                single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.StorageName);
-                single_row2.CreateCell(++cell_pos).SetCellValue("目的仓库");
-                single_row2.CreateCell(++cell_pos).SetCellValue(sendorder.Key.SubStoName);
-                IRow single_row3 = sheet.CreateRow(++row_pos);
-                cell_pos = 0;
-                single_row3.CreateCell(cell_pos).SetCellValue("箱号/箱号段");
-                single_row3.CreateCell(++cell_pos).SetCellValue("sku");
-                single_row3.CreateCell(++cell_pos).SetCellValue("商品名称");
-                single_row3.CreateCell(++cell_pos).SetCellValue("箱规（个/箱）");
-                single_row3.CreateCell(++cell_pos).SetCellValue("商品总数量/个");
-                single_row3.CreateCell(++cell_pos).SetCellValue("备注");
-                var count_num = 1;
-                foreach (var item in single_sendorder)
+                for (var i = 1; i <= item.CartonCount; i++)
                 {
-                    for (var i = 1; i <= item.CartonCount; i++)
-                    {
-                        IRow single_row4 = sheet.CreateRow(++row_pos);
-                        cell_pos = 0;
-                        single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.SystemCode);
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.ProductName);
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
-                        single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
-                    }
+                    IRow single_row4 = sheet.CreateRow(++row_pos);
+                    cell_pos = 0;
+                    single_row4.CreateCell(cell_pos).SetCellValue("第" + count_num++ + "箱，共" + single_sendorder.Sum(m => m.CartonCount) + "箱");
+                    single_row4.CreateCell(++cell_pos).SetCellValue(item.OrderId);
+                    single_row4.CreateCell(++cell_pos).SetCellValue(item.ProductName);
+                    single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
+                    single_row4.CreateCell(++cell_pos).SetCellValue(item.CartonSpec);
                 }
-                IRow single_row5 = sheet.CreateRow(++row_pos);
-                cell_pos = 0;
-                single_row5.CreateCell(cell_pos).SetCellValue("合计");
-                single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
-                single_row5.CreateCell(4).SetCellValue(single_sendorder.Sum(m => m.OrderCount));
-                IRow single_row6 = sheet.CreateRow(++row_pos);
-                single_row6.CreateCell(cell_pos).SetCellValue("供应商发货盖章:");
-                IRow single_row7 = sheet.CreateRow(++row_pos);
-                single_row7.CreateCell(cell_pos).SetCellValue("TC收货签章:");
-                IRow single_row8 = sheet.CreateRow(++row_pos);
-                single_row8.CreateCell(cell_pos).SetCellValue("备注:");
             }
+            IRow single_row5 = sheet.CreateRow(++row_pos);
+            cell_pos = 0;
+            single_row5.CreateCell(cell_pos).SetCellValue("合计");
+            single_row5.CreateCell(3).SetCellValue(single_sendorder.Sum(m => m.CartonCount) + "箱");
+            single_row5.CreateCell(4).SetCellValue(single_sendorder.Sum(m => m.OrderCount));
             return book;
         }
         // 不干胶
-        private HSSFWorkbook SetLabelList(HSSFWorkbook book , List<StorageOrder> storageOrder)
+        private HSSFWorkbook SetLabelList(List<StorageOrder> storageOrder)
         {
+            HSSFWorkbook book = new HSSFWorkbook();
             // 打印不干胶
             ISheet _sheet = book.CreateSheet("不干胶");
             // 写标题
@@ -289,15 +281,34 @@ namespace PeriodAid.Controllers
                     }
                 }
             }
-            
             return book;
         }
-        private MemoryStream OutExcel(List<StorageOrder> storageOrder) {
-            HSSFWorkbook book = new HSSFWorkbook();
-            SetStorageList(book, storageOrder);
-            SetLabelList(book, storageOrder);
+        private MemoryStream OutExcel(List<StorageOrder> storageOrder)
+        {
             MemoryStream _stream = new MemoryStream();
-            book.Write(_stream);
+            ZipFile zip = ZipFile.Create(_stream);
+            var sendorderlist = from m in storageOrder
+                                group m by new { OrderId = m.OrderId, StorageName = m.StorageName, SubStoName = m.SubStoName } into g
+                                select g;
+            zip.BeginUpdate();
+            foreach(var sendorder in sendorderlist)
+            {
+                var book = SetStorageList(sendorder.Key.OrderId, sendorder.Key.StorageName, sendorder.Key.SubStoName, storageOrder);
+                MemoryStream file = new MemoryStream();
+                book.Write(file);
+                StreamDataSource sds = new StreamDataSource(file);
+                file.Flush();
+                file.Seek(0, SeekOrigin.Begin);
+                zip.Add(sds, sendorder.Key.StorageName + sendorder.Key.OrderId + ".xls");
+            }
+            var book2 = SetLabelList(storageOrder);
+            MemoryStream file2 = new MemoryStream();
+            book2.Write(file2);
+            StreamDataSource sds2 = new StreamDataSource(file2);
+            file2.Flush();
+            file2.Seek(0, SeekOrigin.Begin);
+            zip.Add(sds2, "分仓单.xls");
+            zip.CommitUpdate();
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
             return _stream;
