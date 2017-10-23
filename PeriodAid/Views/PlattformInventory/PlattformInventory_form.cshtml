@@ -252,6 +252,7 @@
             $('#end-time').text($(this).val())
         })
         $('#select-date-btn').click(function () {
+            var that=$(this)
             $('#file-loading').show()
             if($('#start-date').val() <= $('#end-date').val()){
                 if(getUrlParam('plattformId')==2){
