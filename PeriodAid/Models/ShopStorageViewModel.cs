@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 
@@ -37,7 +39,7 @@ namespace PeriodAid.Models
     // 京东送货单导入
     public class StorageOrder
     {
-        public int OrderId { get; set; }
+        public string OrderId { get; set; }
 
         public string SystemCode { get; set; }
 
@@ -82,5 +84,20 @@ namespace PeriodAid.Models
         public decimal Pay_Sum { get; set; }
 
         public decimal SubAccount_Sum { get; set; }
+    }
+
+    class StreamDataSource : IStaticDataSource
+    {
+        public byte[] bytes { get; set; }
+        public StreamDataSource(MemoryStream ms)
+        {
+            bytes = ms.GetBuffer();
+        }
+
+        public Stream GetSource()
+        {
+            Stream s = new MemoryStream(bytes);
+            return s;
+        }
     }
 }
