@@ -44,8 +44,9 @@
         <td>
             <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp; 
             @*<a class="chart-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">数据统计</a>*@
-            <a class="select-product" data-item="@item.Id" style="cursor:pointer">数据统计</a>
-            @*@Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })*@
+            @*<a class="select-product" data-item="@item.Id" style="cursor:pointer">数据统计</a>*@
+            <span class="JD-product">@Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })</span>
+            <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
         </td>
     </tr>
 }
@@ -62,61 +63,51 @@
     </div>
 </div>
 <script>
-    //页码
-    $(".pagination > li > a").click(function () {
-        var l = $(this).attr("href");
-        $.ajax({
-            url: l,
-            data:{
-                plattformId: getUrlParam('plattformId')
-            },
-            success: function (data) {
-                $("#product_list_content").html(data);
-                $('.hot-product').each(function () {
-                    if ($(this).attr('data-bind') == 1) {
-                        $(this).find('.box').addClass('fire-box')
-                    }
-                })
-            }
-        });
-        return false;
-    });
-    $('.select-a').click(function () {
-        //console.log($(this).attr('data-val'))
-        $.ajax({
-            url: '/PlattformInventory/EditProductInfo',
-            data: {
-                productId: $(this).attr('data-val')
-            },
-            success: function (data) {
-                $('#modal-content').html(data)
-                $("#myModal").modal('show')
-            }
-        })
-    })
-    $('.select-product').on('click', function () {
-        var that = $(this)
-        if (getUrlParam('plattformId') == 2) {
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
             $.ajax({
-                url: '/PlattformInventory/ViewProductStatisticPartial',
-                type:'post',
+                url: l,
                 data: {
-                    productId: that.attr('data-item'),
-                    start: $("#start_time").val(),
-                    end: $("#end_time").val()
+                    plattformId: getUrlParam('plattformId')
                 },
                 success: function (data) {
-                    console.log(data)
+                    $("#product_list_content").html(data);
+                    $('.hot-product').each(function () {
+                        if ($(this).attr('data-bind') == 1) {
+                            $(this).find('.box').addClass('fire-box')
+                        }
+                    })
+                }
+            });
+            return false;
+        });
+        if (getUrlParam('plattformId') == 2) {
+            $('.JD-product').addClass('hidden')
+        } else {
+            $('.TM-product').addClass('hidden')
+        }
+        $('.select-a').click(function () {
+            //console.log($(this).attr('data-val'))
+            $.ajax({
+                url: '/PlattformInventory/EditProductInfo',
+                data: {
+                    productId: $(this).attr('data-val')
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
                 }
             })
-        } else {
-            alert('京东')
+        })
+
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
         }
     })
-    //获取url中的参数
-    function getUrlParam(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-        if (r != null) return unescape(r[2]); return null; //返回参数值
-    }
+   
 </script>

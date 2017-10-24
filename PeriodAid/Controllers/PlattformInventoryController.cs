@@ -1381,20 +1381,27 @@ namespace PeriodAid.Controllers
             ViewBag.salesCount = count;
             return PartialView(item);
         }
+        // 产品数据图表
+        public ActionResult ViewEventStatistic(int productId)
+        {
+            var eventList = from m in _db.SS_Event
+                            where m.Product_Id == productId
+                            select m;
+            ViewBag.eventList = eventList;
+            return View();
+        }
+        [HttpPost]
         public JsonResult ViewEventStatisticPartial(int productId, string start, string end)
         {
             DateTime _start = Convert.ToDateTime(start);
             DateTime _end = Convert.ToDateTime(end);
-            var product_Id = _db.SS_Event.SingleOrDefault(m => m.Id == productId);
             var info_data = from m in _db.SS_SalesRecord
                             where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
-                            && m.Product_Id == product_Id.Product_Id
+                            && m.Product_Id == productId 
                             group m by m.SalesRecord_Date into g
                             orderby g.Key
                             select new EventStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m => m.Sales_Count) };
-
             DateTime current_date = _start;
-
             var data = new List<EventStatisticViewModel>();
             while (current_date <= _end)
             {

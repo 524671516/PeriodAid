@@ -14,7 +14,7 @@
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
 <div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
-        <input type="text" id="file-date" name="file-date" style="height:26px" />
+        <input type="text" id="file-date" autocomplete="off" name="file-date" style="height:26px" />
         <input type="file" id="file-name" name="file-name" class="hidden" />   
         <a href="javascript:;" id="upload">选择文件</a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
@@ -98,7 +98,6 @@
                 if (r != null) return unescape(r[2]); return null; //返回参数值
             }
             // 显示文件名
-              
             $('#file-name').change(function () {
                 if ($(this).val() != "") {
                     var file = $("#file-name").val();
@@ -172,6 +171,14 @@
                 }
                 return false;
             });
+            // 提示正确日期格式
+            $('#file-date').change(function () {
+                var that = $(this)
+                if(that.val() != that.val().ToString('yyyy-MM-dd')){
+                    errorAlert('请输入正确日期格式')
+                    that.val("")
+                };
+            })
         });
 
         // 重置时间显示格式

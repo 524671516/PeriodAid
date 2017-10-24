@@ -1143,6 +1143,7 @@
     <Content Include="Views\PlattformInventory\AddEventPartial.cshtml" />
     <Content Include="Views\PlattformInventory\EditEventInfo.cshtml" />
     <Content Include="Views\PlattformInventory\EventListPartial.cshtml" />
+    <Content Include="Views\PlattformInventory\ViewEventStatistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

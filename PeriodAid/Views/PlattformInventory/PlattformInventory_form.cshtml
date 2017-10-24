@@ -50,7 +50,7 @@
                             <span class="caret color-white"></span>
                         </a>
                     </li>*@
-                    <li class="tm-view-control-sort dropdown">
+                    <li class="tm-view-control-sort dropdown" style="top:-4px">
                         <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
                             <span class="tm-select-title active" id="storage-select" style="color:white;font-size:14px;">所有仓库</span>
                             <span class="caret color-white"></span>
@@ -69,8 +69,8 @@
                 </ul>
             </div>
             <div>
-                <input type="text" class="file-date" id="start-date" name="file-date" placeholder="请选择起始日期" value="" />
-                <input type="text"class="file-date" id="end-date" name="file-date" placeholder="请选择结束日期" />
+                <input type="text" class="file-date" autocomplete="off" id="start-date" name="file-date" placeholder="请选择起始日期" value="" />
+                <input type="text"class="file-date" autocomplete="off" id="end-date" name="file-date" placeholder="请选择结束日期" />
                 <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
             </div>
          </div>
@@ -247,9 +247,19 @@
             // 选择日期
         $('#start-date').change(function(){
             $('#start-time').text($(this).val())
+            var that = $(this)
+            if(that.val() != that.val().ToString('yyyy-MM-dd')){
+                errorAlert('请输入正确日期格式')
+                that.val("")
+            };
         })
         $('#end-date').change(function(){
             $('#end-time').text($(this).val())
+            var that = $(this)
+            if(that.val() != that.val().ToString('yyyy-MM-dd')){
+                errorAlert('请输入正确日期格式')
+                that.val("")
+            };
         })
         $('#select-date-btn').click(function () {
             var that=$(this)
