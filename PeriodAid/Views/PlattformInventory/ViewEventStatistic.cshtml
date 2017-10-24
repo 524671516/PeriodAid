@@ -6,33 +6,38 @@
 <input type="hidden" id="productId" name="plattformId" value="@ViewBag.ProductId" />
 <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
 <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
-<input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px"/>
+<input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
 
 <div id="myChart_Bar" style="min-width:500px;height:400px">
-    
+    <div class="hidden">
+        @foreach(var list in ViewBag.eventList)
+        {
+            <div class="view-activity" data-activity="@list.EventName" data-date="@list.EventDate.ToString("yyyy-MM-dd")"></div>
+        }
+    </div>
 </div>
-
 @section scripts{
-    
-<script src="~/Scripts/highcharts.js"></script>
-<script type="text/javascript">
+
+    <script src="~/Scripts/highcharts.js"></script>
+    <script type="text/javascript">
         $(function () {
+            
             var fileDate = $('.file-data')
-                fileDate.datepicker({ dateFormat: "yy-mm-dd" });
-                //星期格式汉化  
-                fileDate.datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
-                //月份格式汉化  
-                fileDate.datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
-                fileDate.datepicker();
+            fileDate.datepicker({ dateFormat: "yy-mm-dd" });
+            //星期格式汉化
+            fileDate.datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+            //月份格式汉化
+            fileDate.datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+            fileDate.datepicker();
             var current_date = showdate(-1);
             var start_date = showdate(-30);
             $("#end_time").val(current_date.getFullYear() + "-" + ((current_date.getMonth() + 1) > 9 ? current_date.getMonth() + 1 : '0' + (current_date.getMonth() + 1)) + "-" + current_date.getDate());
-            $("#start_time").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0'+(start_date.getMonth() + 1)) + "-" + start_date.getDate());
+            $("#start_time").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0' + (start_date.getMonth() + 1)) + "-" + start_date.getDate());
             $.ajax({
-                url: "/PlattformInventory/ViewProductStatisticPartial",
-                type:"post",
+                url: "/PlattformInventory/ViewEventStatisticPartial",
+                type: "post",
                 data: {
-                    productId: $("#productId").val(),
+                    productId: getUrlParam('productId'),
                     start: $("#start_time").val(),
                     end: $("#end_time").val()
                 }, success: function (data) {
@@ -42,10 +47,10 @@
             $("#statistic_btn").click(function () {
                 if ($("#start_time").val() < $("#end_time").val()) {
                     $.ajax({
-                        url: "/PlattformInventory/ViewProductStatisticPartial",
+                        url: "/PlattformInventory/ViewEventStatisticPartial",
                         type: "post",
                         data: {
-                            productId: $("#productId").val(),
+                            productId: getUrlParam('productId'),
                             start: $("#start_time").val(),
                             end: $("#end_time").val()
                         }, success: function (data) {
@@ -57,7 +62,7 @@
                 } else {
                     errorAlert('请选择正确日期')
                 }
-                
+
             })
         });
         function showstatistic(data) {
@@ -65,11 +70,23 @@
             var totalarray = new Array();
             var datearray = new Array();
             for (var i = 0; i < resultdata.length; i++) {
-                var deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
+               var deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
                 var dee = new Date(deeint)
                 datearray.push(dee.Format("MM-dd"));
-                var totaltemp = resultdata[i].salescount
-                totalarray.push(totaltemp);
+                var totaltemp = resultdata[i].salescount;
+                totalarray.push(['无', totaltemp]);
+            }
+            for (var i = 0; i < datearray.length; i++) {
+                $('.view-activity').each(function () {
+                    // 截取时间
+                    var datetime = $(this).attr('data-date')
+                    var dateTime = datetime.indexOf('-')
+                    var strTime = datetime.substring(dateTime + 1)
+                    var activityList = $(this).attr('data-activity')
+                    if (datearray[i] == strTime) {
+                        totalarray[i] = [activityList, totalarray[i][1]];
+                    }
+                });
             }
             $("#myChart_Bar").highcharts({
                 chart: {
@@ -78,7 +95,11 @@
                     text: "产品销售曲线"
                 },
                 xAxis: {
-                    categories: datearray
+                    categories: datearray,
+                },tooltip: {
+                    shared: true,
+                    useHTML: true,
+
                 },
                 series: [{
                     type: 'spline',
@@ -92,8 +113,6 @@
                 }]
             });
         }
-    
-
         function showdate(n) {
             var uom = new Date(new Date() - 0 + n * 86400000);
             //uom = uom.getFullYear() + "-" + (uom.getMonth() + 1) + "-" + uom.getDate();
@@ -116,6 +135,24 @@
                     fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return fmt;
         };
-       
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
+        // 重置时间显示格式
+        String.prototype.ToString = function (format) {
+            var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
+            format = format.replace("yyyy", dateTime.getFullYear());
+            format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
+            format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
+            format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
+            format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
+            format = format.replace("mm", dateTime.getMinutes());
+            format = format.replace("ss", dateTime.getSeconds());
+            format = format.replace("ms", dateTime.getMilliseconds())
+            return format;
+        };
     </script>
 }
