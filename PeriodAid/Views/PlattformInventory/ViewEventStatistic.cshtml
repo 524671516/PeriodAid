@@ -74,7 +74,7 @@
                 var dee = new Date(deeint)
                 datearray.push(dee.Format("MM-dd"));
                 var totaltemp = resultdata[i].salescount;
-                totalarray.push(['无', totaltemp]);
+                totalarray.push(['无活动', totaltemp]);
             }
             for (var i = 0; i < datearray.length; i++) {
                 $('.view-activity').each(function () {
@@ -84,7 +84,7 @@
                     var strTime = datetime.substring(dateTime + 1)
                     var activityList = $(this).attr('data-activity')
                     if (datearray[i] == strTime) {
-                        totalarray[i] = [activityList, totalarray[i][1]];
+                        totalarray[i] = ["活动："+activityList, totalarray[i][1]];
                     }
                 });
             }
