@@ -142,13 +142,13 @@ namespace PeriodAid.Controllers
                     var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == ProductId);
                     if (product != null)
                     {
-                        int o_code, o_count;
-                        string s_name, su_name;
+                        int  o_count;
+                        string o_code,s_name, su_name;
                         int order_count = csv_reader.TryGetField<int>("采购数量", out o_count) ? o_count : 0;
                         int _carton_count = order_count / (product.Carton_Spec == 0 ? 1 : product.Carton_Spec);
                         StorageOrder storageorder = new StorageOrder()
                         {
-                            OrderId = csv_reader.TryGetField<int>("订单号", out o_code) ? o_code : 0,
+                            OrderId = csv_reader.TryGetField<string>("订单号", out o_code) ? o_code : "NaN",
                             SystemCode = product.System_Code,
                             ProductName = product.Item_Name,
                             StorageName = csv_reader.TryGetField<string>("分配机构", out s_name) ? s_name : "NaN",
