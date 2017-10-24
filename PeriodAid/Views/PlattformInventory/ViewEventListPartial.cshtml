@@ -4,7 +4,7 @@
     <table class="table table-hover">
         <tr>
             <th>产品名称</th>
-            <th>产品编号</th>
+            <th>产品编码</th>
             <th>活动名称</th>
             <th>活动日期</th>
             <th>当日销量</th>
@@ -13,9 +13,9 @@
         {
             <tr>
                 <td>@item.SS_Product.Item_Name</td>
-                <td>@item.Id</td>
+                <td>@item.Product_Id</td>
                 <td>@item.EventName</td>
-                <td>@item.EventDate</td>
+                <td>@item.EventDate.ToString("yyyy-MM-dd")</td>
                 <td>
                     @foreach (var count in ViewBag.salesCount)
                     {
@@ -26,6 +26,6 @@
             </tr>
         }
     </table>
-    <h5 class="float-right"><span class="glyphicon glyphicon-chevron-left"></span><a style="cursor:pointer" href="/PlattformInventory/EventList">返回</a></h5>
+    <h5 class="float-right"><span ></span><a class="fa fa-angle-double-left" style="cursor:pointer" href="/PlattformInventory/EventList">返回</a></h5>
 </div>
 
