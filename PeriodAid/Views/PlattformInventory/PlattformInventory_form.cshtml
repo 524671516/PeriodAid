@@ -208,17 +208,17 @@
                     data: {
                         plattformId: getUrlParam('plattformId'),
                         Storage: that.children('.form-select-a').attr('data-ssid'),
-                        start:$('#start-date').val(),
+                        start: $('#start-date').val(),
                         end: $('#end-date').val()
                     },
                     success: function (data) {
-                            $('#storage_show').html(data)
-                            $('#file-loading').hide()
-                            $('.hot-product').each(function () {
-                                if ($(this).attr('data-bind') == 1) {
-                                    $(this).find('.box').addClass('fire-box')
-                                }
-                            })
+                        $('#storage_show').html(data)
+                        $('#file-loading').hide()
+                        $('.hot-product').each(function () {
+                            if ($(this).attr('data-bind') == 1) {
+                                $(this).find('.box').addClass('fire-box')
+                            }
+                        })
                     }
                 })
             }else{
