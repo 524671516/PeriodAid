@@ -1135,9 +1135,9 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult TMShow_StorageShow(int plattformId, int Storage)
+        public ActionResult TMShow_StorageShow(int plattformId,int Storage)
         {
-            if (Storage != 0)
+            if(Storage!= 0)
             {
                 var SalesRecord = from m in _db.SS_SalesRecord
                                   where m.SS_Storage.SS_Plattform.Id == plattformId && m.Storage_Id == Storage
@@ -1151,7 +1151,8 @@ namespace PeriodAid.Controllers
                                   };
                 return PartialView(SalesRecord);
             }
-            else {
+            else
+            {
                 var SalesRecord = from m in _db.SS_SalesRecord
                                   where m.SS_Storage.SS_Plattform.Id == plattformId
                                   group m by m.SS_Storage.SS_Plattform into g
@@ -1164,7 +1165,7 @@ namespace PeriodAid.Controllers
                                   };
                 return PartialView(SalesRecord);
             }
-
+            
         }
 
         public ActionResult ProductList(int plattformId)
