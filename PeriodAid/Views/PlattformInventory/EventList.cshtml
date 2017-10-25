@@ -21,6 +21,7 @@
                 url: "/PlattformInventory/EventListPartial",
                 data: {
                     page: 1,
+                    plattformId: getUrlParam('plattformId')
                 },
                 success: function (data) {
                     $("#event_list_content").html(data);
@@ -31,7 +32,8 @@
             $.ajax({
                 url: '/PlattformInventory/AddEventPartial',
                 data: {
-                    eventId: $(this).attr('data-val')
+                    eventId: $(this).attr('data-val'),
+                    plattformId: getUrlParam('plattformId')
                 },
                 success: function (data) {
                     $('#modal-content').html(data)

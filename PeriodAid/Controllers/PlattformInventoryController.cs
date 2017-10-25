@@ -1171,7 +1171,10 @@ namespace PeriodAid.Controllers
         // 产品数据图表
         public ActionResult ViewProductStatistic(int productId)
         {
-            ViewBag.ProductId = productId;
+            var eventList = from m in _db.SS_Event
+                            where m.Product_Id == productId
+                            select m;
+            ViewBag.eventList = eventList;
             return View();
         }
         [HttpPost]
@@ -1205,13 +1208,16 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS", data = data });
         }
 
-        //活动打标
-        public ActionResult EventList()
+        // 活动打标
+        public ActionResult EventList(int plattformId)
         {
+            var plattFormId = from m in _db.SS_Event
+                              where m.SS_Product.Plattform_Id == plattformId
+                              select m;
             return View();
         }
 
-        public ActionResult EventListPartial(int? page,string query)
+        public ActionResult EventListPartial(int? page,string query,int plattformId)
         {
             int _page = page ?? 1;
 
@@ -1221,7 +1227,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_Event
-                                       where m.EventName.Contains(query)
+                                       where m.EventName.Contains(query) && m.SS_Product.Plattform_Id == plattformId
                                        orderby m.EventDate descending, m.Id descending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
@@ -1229,6 +1235,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_Event
+                                       where m.SS_Product.Plattform_Id == plattformId
                                        orderby m.EventDate descending, m.Id descending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
@@ -1238,6 +1245,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var productlist = (from m in _db.SS_Event
+                                   where m.SS_Product.Plattform_Id == plattformId
                                    orderby m.EventDate descending, m.Id descending
                                    select m).ToPagedList(_page, 15);
                 return PartialView(productlist);
@@ -1246,7 +1254,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult EditEventInfo(int eventId)
         {
-            var item = _db.SS_Event.SingleOrDefault(m => m.Id == eventId);
+            var item =  _db.SS_Event.SingleOrDefault(m => m.Id == eventId);
             return PartialView(item);
         }
 
@@ -1286,8 +1294,11 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
 
-        public ActionResult AddEventPartial()
+        public ActionResult AddEventPartial(int plattformId)
         {
+            var plattFormId = from m in _db.SS_Event
+                              where m.SS_Product.Plattform_Id == plattformId
+                              select m;
             return PartialView();
         }
         [HttpPost]
@@ -1379,12 +1390,12 @@ namespace PeriodAid.Controllers
         }
 
         [HttpPost]
-        public JsonResult QueryProduct(string query)
+        public JsonResult QueryProduct(string query, int plattformId)
         {
             var product = from m in _db.SS_Product
-                        where m.Plattform_Id == 2
+                        where m.Plattform_Id == plattformId
                         && m.Item_Name.Contains(query)
-                        select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "【编码:" + m.Id +"】" + "- " + m.Item_Name  };
+                        select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "- " + m.Item_Name  };
             return Json(product);
         }
     }
