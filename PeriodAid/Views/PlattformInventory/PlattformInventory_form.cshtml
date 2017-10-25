@@ -52,7 +52,7 @@
                     </li>*@
                     <li class="tm-view-control-sort dropdown" style="top:-4px">
                         <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
-                            <span class="tm-select-title active" id="storage-select" style="color:white;font-size:14px;">所有仓库</span>
+                            <span class="tm-select-title active" id="storage-select" data-ssid="0" style="color:white;font-size:14px;">所有仓库</span>
                             <span class="caret color-white"></span>
                         </a>
                         <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" id="nav-table-show" style="height:300px;overflow-y:auto">
@@ -75,6 +75,7 @@
             </div>
          </div>
     </div>
+    <table class="table table-bordered table-hover" id="sun_show"></table>
     <div id="storage_show">
         
     </div>
@@ -125,6 +126,17 @@
                                     end: $('#end-date').val(),
                                 },
                                 success: function (data) {
+                                    $.ajax({
+                                        url: '/PlattformInventory/TMShow_StorageShow/',
+                                        type: 'post',
+                                        data: {
+                                            plattformId: getUrlParam('plattformId'),
+                                            Storage: $("#storage-select").attr("data-ssid")
+                                        },
+                                        success: function (data) {
+                                            $("#sun_show").html(data);
+                                        }
+                                    })
                                         $('#storage_show').html(data)
                                         $('#file-loading').hide()
                                         $('.hot-product').each(function () {
@@ -163,33 +175,7 @@
                     }
                 });
             }
-        });
-        function data_date() {
-            for (i = 0; i < $(".date_show").length; i++) {
-                var arry =@Html.Raw(Json.Encode(ViewBag.DataDate));
-                var arrydata = arry[i].ToString('yyyy-MM-dd');
-                var year = arrydata.substring(0, 4);
-                var show_year = parseInt($(".ui-state-default").parent().attr("data-year"));
-                var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
-                var show_day = parseInt($(".ui-state-default").text())
-                if (show_month < 10) {
-                    var _first = parseInt(arrydata.indexOf('-')) + 2;
-                    var _end = parseInt(arrydata.indexOf('-')) + 3;
-                    var month = arrydata.substring(_first, _end);
-                }
-                else {
-                    var _first = parseInt(arrydata.indexOf('-')) + 1;
-                    var _end = parseInt(arrydata.indexOf('-')) + 3;
-                    var month = arrydata.substring(_first, _end);
-                }
-            }
-        }
-        $("#form-date-show").on("click", function() {
-            data_date()
-        })
-        $('.ui-corner-all').on('click',function(){
-            data_date()
-        })
+            });
         //获取url中的参数
         function getUrlParam(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
@@ -201,6 +187,7 @@
             var that = $(this);
             $('#file-loading').show();
             $('#storage-select').text(that.text())
+            $('#storage-select').attr("data-ssid", that.children('.form-select-a').attr('data-ssid'))
             $('#show-storage').text($('#storage-select').text())
             if(getUrlParam('plattformId')==2){
                 $.ajax({
@@ -212,6 +199,17 @@
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $.ajax({
+                            url: '/PlattformInventory/TMShow_StorageShow/',
+                            type: 'post',
+                            data: {
+                                plattformId: getUrlParam('plattformId'),
+                                Storage: $("#storage-select").attr("data-ssid")
+                            },
+                            success: function (data) {
+                                $("#sun_show").html(data);
+                            }
+                        })
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
                         $('.hot-product').each(function () {
@@ -242,7 +240,7 @@
                     }
                 })
             }
-            
+
         })
             // 选择日期
         $('#start-date').change(function(){
@@ -359,6 +357,5 @@
         format = format.replace("ms", dateTime.getMilliseconds())
         return format;
         };
-
     </script>
 }

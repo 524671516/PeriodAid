@@ -1135,19 +1135,36 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult TMShow_StorageShow(int plattformId)
+        public ActionResult TMShow_StorageShow(int plattformId, int Storage)
         {
-            var SalesRecord = from m in _db.SS_SalesRecord
-                              where m.SS_Storage.SS_Plattform.Id == plattformId
-                              group m by m.SS_Storage.SS_Plattform into g
-                              select new Product_SummaryViewModel
-                              {
-                                  Sales_Sum = g.Sum(m => m.Sales_Count),
-                                  Inventory_Sum = g.Sum(m => m.Storage_Count),
-                                  Pay_Sum = g.Sum(m => m.Pay_Money),
-                                  SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
-                              };
-            return PartialView(SalesRecord);
+            if (Storage != 0)
+            {
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.SS_Storage.SS_Plattform.Id == plattformId && m.Storage_Id == Storage
+                                  group m by m.SS_Storage into g
+                                  select new Product_SummaryViewModel
+                                  {
+                                      Sales_Sum = g.Sum(m => m.Sales_Count),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m => m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                  };
+                return PartialView(SalesRecord);
+            }
+            else {
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.SS_Storage.SS_Plattform.Id == plattformId
+                                  group m by m.SS_Storage.SS_Plattform into g
+                                  select new Product_SummaryViewModel
+                                  {
+                                      Sales_Sum = g.Sum(m => m.Sales_Count),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m => m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                  };
+                return PartialView(SalesRecord);
+            }
+
         }
 
         public ActionResult ProductList(int plattformId)
