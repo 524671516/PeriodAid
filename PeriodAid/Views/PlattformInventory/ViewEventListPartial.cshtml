@@ -1,28 +1,31 @@
-﻿
-<div class="h2">产品活动详情</div>
+﻿<div class="h2">产品活动详情</div>
 <div>
     <table class="table table-hover">
-        <tr>
+        <tr class="tr-title">
             <th>产品名称</th>
             <th>产品编码</th>
             <th>活动名称</th>
             <th>活动日期</th>
             <th>当日销量</th>
+            <th class="table-hidden">销售金额</th>
+            <th class="table-hidden">分账金额</th>
+            <th class="table-hidden">结算单价</th>
         </tr>
         @foreach(var item in ViewBag.eventList)
         {
-            <tr>
+            <tr class="tr-body">
                 <td>@item.SS_Product.Item_Name</td>
                 <td>@item.Product_Id</td>
                 <td>@item.EventName</td>
                 <td>@item.EventDate.ToString("yyyy-MM-dd")</td>
-                <td>
-                    @foreach (var count in ViewBag.salesCount)
+                @foreach (var count in ViewBag.salesCount)
                     {
-                        @count.salescount
-                    }
-                </td>
-
+                        <td>@count.salescount</td>
+                        <td class="table-hidden">@count.Pay_Sum</td>
+                        <td class="table-hidden">@count.SubAccount_Sum</td>
+                        <td class="table-hidden">@Math.Round((count.SubAccount_Sum / (count.salescount == 0 ? 1 : count.salescount)), 2)</td>
+                }
+                
             </tr>
         }
     </table>
@@ -39,6 +42,7 @@
         }
         if (getUrlParam('plattformId') == 1) {
             $('.back-btn').eq(1).addClass('hidden')
+            $('.table-hidden').addClass('hidden')
         } else {
             $('.back-btn').eq(0).addClass('hidden')
         }

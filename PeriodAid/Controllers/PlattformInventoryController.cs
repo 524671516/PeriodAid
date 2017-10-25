@@ -1389,7 +1389,12 @@ namespace PeriodAid.Controllers
                         where m.Product_Id == productId && m.SalesRecord_Date == select_date
                         group m by m.Product_Id into g
                         orderby g.Key
-                        select new EventStatisticViewModel { productId = g.Key, salescount = g.Sum(m => m.Sales_Count) };
+                        select new EventStatisticViewModel {
+                            productId = g.Key,
+                            salescount = g.Sum(m => m.Sales_Count),
+                            Pay_Sum = g.Sum(m => m.Pay_Money),
+                            SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                        };
             ViewBag.eventList = item;
             ViewBag.salesCount = count;
             return PartialView(item);

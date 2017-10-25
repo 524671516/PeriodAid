@@ -43,6 +43,10 @@ namespace PeriodAid.Models
         public DateTime salesdate { get; set; }
 
         public int salescount { get; set; }
+
+        public decimal Pay_Sum { get; set; }
+
+        public decimal SubAccount_Sum { get; set; }
     }
     // 京东送货单导入
     public class StorageOrder
