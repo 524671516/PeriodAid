@@ -557,7 +557,7 @@ namespace PeriodAid.Controllers
             }
             return PartialView();
         }
-
+        
         // 分析EXCEL文件
 
         // 京东
@@ -1404,13 +1404,13 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult ViewEventListPartial(int productId,DateTime select_date)
+        public ActionResult ViewEventListPartial(int productId,DateTime select_date, int plattformId)
         {
             var item = from m in _db.SS_Event
                        where m.Product_Id == productId && m.EventDate == select_date
                        select m;
             var count = from m in _db.SS_SalesRecord
-                        where m.Product_Id == productId && m.SalesRecord_Date == select_date
+                        where m.Product_Id == productId && m.SalesRecord_Date == select_date && m.SS_Product.Plattform_Id == plattformId
                         group m by m.Product_Id into g
                         orderby g.Key
                         select new EventStatisticViewModel {

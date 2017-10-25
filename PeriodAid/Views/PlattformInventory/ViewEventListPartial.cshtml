@@ -25,12 +25,10 @@
                         <td class="table-hidden">@count.SubAccount_Sum</td>
                         <td class="table-hidden">@Math.Round((count.SubAccount_Sum / (count.salescount == 0 ? 1 : count.salescount)), 2)</td>
                 }
-                
             </tr>
         }
     </table>
-    <h5 class="float-right"><span></span><a class="fa fa-angle-double-left back-btn" href="/PlattformInventory/EventList?plattformId=1" style="cursor:pointer">返回</a></h5>
-    <h5 class="float-right"><span></span><a class="fa fa-angle-double-left back-btn" href="/PlattformInventory/EventList?plattformId=2" style="cursor:pointer">返回</a></h5>
+    <h5 class="float-right"><a class="fa fa-angle-double-left" id="back-btn"  style="cursor:pointer">返回</a></h5>
 </div>
 <script>
     $(function () {
@@ -41,10 +39,7 @@
             if (r != null) return unescape(r[2]); return null; //返回参数值
         }
         if (getUrlParam('plattformId') == 1) {
-            $('.back-btn').eq(1).addClass('hidden')
             $('.table-hidden').addClass('hidden')
-        } else {
-            $('.back-btn').eq(0).addClass('hidden')
         }
     })
 </script>

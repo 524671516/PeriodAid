@@ -8,7 +8,7 @@
                 活动名称
             </th>
             <th>
-                产品编码
+                产品名称
             </th>
             <th>
                 活动日期
@@ -19,13 +19,13 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EventName)
+                    @item.EventName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Product_Id)
+                    @item.SS_Product.Item_Name
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EventDate)
+                    @item.EventDate.ToString("yyyy-MM-dd")
                 </td>
                 <td>
                     <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
@@ -66,7 +66,8 @@
         $.ajax({
             url: '/PlattformInventory/EditEventInfo',
             data: {
-                eventId: $(this).attr('data-val')
+                eventId: $(this).attr('data-val'),
+                plattformId: getUrlParam("plattformId")
             },
             success: function (data) {
                 $('#modal-content').html(data)
@@ -117,11 +118,13 @@
         $.ajax({
             url: "/PlattformInventory/ViewEventListPartial",
             data: {
+                plattformId: getUrlParam("plattformId"),
                 productId: that.attr('data-item'),
-                select_date:that.attr('data-date')
+                select_date:that.attr('data-date'),
             },
             success: function (data) {
                 $(".col-md-10").html(data);
+                $('#back-btn').attr('href', "/PlattformInventory/EventList?plattformId="+getUrlParam("plattformId"))
             }
         })
     })
@@ -131,4 +134,17 @@
         var r = window.location.search.substr(1).match(reg);  //匹配目标参数
         if (r != null) return unescape(r[2]); return null; //返回参数值
     }
+    // 重置时间显示格式
+    String.prototype.ToString = function (format) {
+        var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
+        format = format.replace("yyyy", dateTime.getFullYear());
+        format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
+        format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
+        format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
+        format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
+        format = format.replace("mm", dateTime.getMinutes());
+        format = format.replace("ss", dateTime.getSeconds());
+        format = format.replace("ms", dateTime.getMilliseconds())
+        return format;
+    };
 </script>
