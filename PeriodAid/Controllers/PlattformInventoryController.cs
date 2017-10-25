@@ -927,7 +927,6 @@ namespace PeriodAid.Controllers
                                               Inventory_Sum = g.Sum(m => m.Storage_Count),
                                               Pay_Sum = g.Sum(m => m.Pay_Money),
                                               SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
-                                              Settlement = g.Sum(m=>m.SS_Product.Purchase_Price)/g.Count()
                                           };
                         return PartialView(SalesRecord);
                     }
