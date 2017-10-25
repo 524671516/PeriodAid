@@ -247,19 +247,9 @@
             // 选择日期
         $('#start-date').change(function(){
             $('#start-time').text($(this).val())
-            var that = $(this)
-            if(that.val() != that.val().ToString('yyyy-MM-dd')){
-                errorAlert('请输入正确日期格式')
-                that.val("")
-            };
         })
         $('#end-date').change(function(){
             $('#end-time').text($(this).val())
-            var that = $(this)
-            if(that.val() != that.val().ToString('yyyy-MM-dd')){
-                errorAlert('请输入正确日期格式')
-                that.val("")
-            };
         })
         $('#select-date-btn').click(function () {
             var that=$(this)

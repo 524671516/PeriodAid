@@ -45,7 +45,7 @@
                 }
             });
             $("#statistic_btn").click(function () {
-                if ($("#start_time").val() < $("#end_time").val()) {
+                if ($("#start_time").val() <= $("#end_time").val()) {
                     $.ajax({
                         url: "/PlattformInventory/ViewEventStatisticPartial",
                         type: "post",
@@ -96,10 +96,6 @@
                 },
                 xAxis: {
                     categories: datearray,
-                },tooltip: {
-                    shared: true,
-                    useHTML: true,
-
                 },
                 series: [{
                     type: 'spline',

@@ -59,6 +59,7 @@
                                 url: "/PlattformInventory/EventListPartial",
                                 data: {
                                     page: 1,
+                                    plattformId: getUrlParam("plattformId")
                                 },
                                 success: function (data) {
                                     $("#event_list_content").html(data);

@@ -171,16 +171,15 @@
                 }
                 return false;
             });
-            // 提示正确日期格式
+            // 
             $('#file-date').change(function () {
                 var that = $(this)
-                if(that.val() != that.val().ToString('yyyy-MM-dd')){
-                    errorAlert('请输入正确日期格式')
-                    that.val("")
-                };
+                var newDate = new Date(that.val());
+                var result = newDate.getFullYear() + '-' + (newDate.getMonth()+1) + '-' + newDate.getDate();
+                console.log(result);
+                
             })
         });
-
         // 重置时间显示格式
         String.prototype.ToString = function (format) {
             var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));

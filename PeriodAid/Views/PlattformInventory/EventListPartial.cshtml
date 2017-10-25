@@ -52,7 +52,8 @@
         var l = $(this).attr("href");
         $.ajax({
             url: l,
-            data:{
+            data: {
+                plattformId: getUrlParam('plattformId')
             },
             success: function (data) {
                 $("#event_list_content").html(data);
@@ -91,6 +92,7 @@
                                         url: "/PlattformInventory/EventListPartial",
                                         data: {
                                             page: 1,
+                                            plattformId: getUrlParam("plattformId")
                                         },
                                         success: function (data) {
                                             $("#event_list_content").html(data);

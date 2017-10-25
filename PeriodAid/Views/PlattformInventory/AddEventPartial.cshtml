@@ -23,9 +23,9 @@
             </div>
 
             <div class="form-group">
-                <label class="col-md-3 control-label">产品编码</label>
+                <label class="col-md-3 control-label">产品名称</label>
                 <div class="col-md-9">
-                    <div id="product-input">@Html.EditorFor(model => model.Product_Id, new { htmlAttributes = new { @class = "form-control" } })</div>
+                    <input id="product-input" type="text" class="span4 form-control" placeholder="搜索产品" autocomplete="off" name="product-input" />
                     <input type="hidden" id="Product_Id" name="Product_Id" />
                     @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
                 </div>
@@ -34,7 +34,7 @@
             <div class="form-group">
                 <label class="col-md-3 control-label">活动日期</label>
                 <div class="col-md-9">
-                    <input class="form-control" id="eventtime" name="eventtime" type="datetime">
+                    <input class="form-control" id="eventtime" name="eventtime" type="datetime" autocomplete="off">
                     @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -51,15 +51,13 @@
 <script src="~/Scripts/bootstrap-typeahead.js"></script>
 <script>
     $(function () {
-        $("#product-input input").attr("placeholder", "产品搜索");
-        $("#product-input input").attr("type", "text");
         //产品搜索
         function displayResult(item, val, text) {
-            $("#product-input input").val(val);
+            $("#Product_Id").val(val);
         }
-        $('#product-input input').typeahead({
+        $('#product-input').typeahead({
             ajax: {
-                url: '/PlattformInventory/QueryProduct',
+                url: '/PlattformInventory/QueryProduct?plattformId='+getUrlParam('plattformId'),
                 triggerLength: 1
             },
             itemSelected: displayResult,
@@ -74,6 +72,7 @@
                         url: "/PlattformInventory/EventListPartial",
                         data: {
                             page: 1,
+                            plattformId: getUrlParam('plattformId')
                         },
                         success: function (data) {
                             $("#event_list_content").html(data);
@@ -95,7 +94,12 @@
             titleFormat: "MM月, YYYY年",
             format: "YYYY-MM-DD"
         });
-
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
     });
 </script>
 
