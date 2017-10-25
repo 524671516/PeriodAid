@@ -1376,7 +1376,9 @@ namespace PeriodAid.Controllers
                        select m;
             var count = from m in _db.SS_SalesRecord
                         where m.Product_Id == productId && m.SalesRecord_Date == select_date
-                        select m;
+                        group m by m.Product_Id into g
+                        orderby g.Key
+                        select new EventStatisticViewModel { productId = g.Key, salescount = g.Sum(m => m.Sales_Count) };
             ViewBag.eventList = item;
             ViewBag.salesCount = count;
             return PartialView(item);

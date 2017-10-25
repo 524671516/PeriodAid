@@ -38,6 +38,8 @@ namespace PeriodAid.Models
 
     public class EventStatisticViewModel
     {
+        public int productId { get; set; }
+
         public DateTime salesdate { get; set; }
 
         public int salescount { get; set; }
