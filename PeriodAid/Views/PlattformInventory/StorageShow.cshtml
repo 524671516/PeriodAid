@@ -24,12 +24,13 @@
                                 <td class="product-count">@item.Sales_Sum</td>
                                 @if (item.Settlement == 0)
                                 {
-                                    <td>无</td>
+                                    <td>无结算金额</td>
                                 }
                                 else
                                 {
-                                    <td>@Math.Round(item.Sales_Sum / item.Settlement, 2)</td>
+                                    <td>@Math.Round((item.Sales_Sum / (item.Settlement == 0 ? 1 : item.Settlement)), 2)</td>
                                 }
+                                
                                 <td class="sales-storage">@item.Inventory_Sum</td>
                             </tr>
                         }

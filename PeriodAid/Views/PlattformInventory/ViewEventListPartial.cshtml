@@ -25,20 +25,13 @@
                         <td class="table-hidden">@count.SubAccount_Sum</td>
                         <td class="table-hidden">@Math.Round((count.SubAccount_Sum / (count.salescount == 0 ? 1 : count.salescount)), 2)</td>
                 }
-                
             </tr>
         }
     </table>
-    @foreach (var item in ViewBag.plattform_Id)
-    {
-        <input id="backId" value="@item.Id" hidden>
-    }
-    <h5 class="float-right"><span></span><a id="back-btn" class="fa fa-angle-double-left" href="#" style="cursor:pointer">返回</a></h5>
+    <h5 class="float-right"><a class="fa fa-angle-double-left" id="back-btn"  style="cursor:pointer">返回</a></h5>
 </div>
 <script>
     $(function () {
-        alert(1);
-        $("#back-btn").attr("href", "/PlattformInventory/EventList?plattformId=" + $("#backId").val() + "");
         //获取url中的参数
         function getUrlParam(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
@@ -47,7 +40,6 @@
         }
         if (getUrlParam('plattformId') == 1) {
             $('.table-hidden').addClass('hidden')
-        } else{
         }
     })
 </script>

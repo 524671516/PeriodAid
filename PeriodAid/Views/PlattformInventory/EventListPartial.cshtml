@@ -19,10 +19,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EventName)
+                    @item.EventName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SS_Product.Item_Name)
+                    @item.SS_Product.Item_Name
                 </td>
                 <td>
                     @item.EventDate.ToString("yyyy-MM-dd")
@@ -66,7 +66,8 @@
         $.ajax({
             url: '/PlattformInventory/EditEventInfo',
             data: {
-                eventId: $(this).attr('data-val')
+                eventId: $(this).attr('data-val'),
+                plattformId: getUrlParam("plattformId")
             },
             success: function (data) {
                 $('#modal-content').html(data)
@@ -117,17 +118,15 @@
         $.ajax({
             url: "/PlattformInventory/ViewEventListPartial",
             data: {
+                plattformId: getUrlParam("plattformId"),
                 productId: that.attr('data-item'),
-                select_date: that.attr('data-date'),
-                plattformId: getUrlParam("plattformId")
+                select_date:that.attr('data-date'),
             },
             success: function (data) {
-                console.log(data)
                 $(".col-md-10").html(data);
-
+                $('#back-btn').attr('href', "/PlattformInventory/EventList?plattformId="+getUrlParam("plattformId"))
             }
         })
-
     })
     //获取url中的参数
     function getUrlParam(name) {
@@ -135,4 +134,17 @@
         var r = window.location.search.substr(1).match(reg);  //匹配目标参数
         if (r != null) return unescape(r[2]); return null; //返回参数值
     }
+    // 重置时间显示格式
+    String.prototype.ToString = function (format) {
+        var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
+        format = format.replace("yyyy", dateTime.getFullYear());
+        format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
+        format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
+        format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
+        format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
+        format = format.replace("mm", dateTime.getMinutes());
+        format = format.replace("ss", dateTime.getSeconds());
+        format = format.replace("ms", dateTime.getMilliseconds())
+        return format;
+    };
 </script>

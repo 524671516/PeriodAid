@@ -141,6 +141,7 @@
                                     end: $('#end-date').val()
                                 },
                                 success: function (data) {
+                                    $('#sun_show').addClass('hidden')
                                         $('#storage_show').html(data)
                                         $('#file-loading').hide()
                                         $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
@@ -240,6 +241,7 @@
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $('#sun_show').addClass('hidden')
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
                         $('.hot-product').each(function () {
@@ -348,6 +350,7 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#sun_show').addClass('hidden')
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                             $('.hot-product').each(function () {
