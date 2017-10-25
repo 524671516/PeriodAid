@@ -21,7 +21,7 @@
     
 <script src="~/Scripts/highcharts.js"></script>
 <script type="text/javascript">
-        $(function () {
+    $(function () {
             var fileDate = $('.file-data')
                 fileDate.datepicker({ dateFormat: "yy-mm-dd" });
                 //星期格式汉化  
@@ -50,7 +50,7 @@
                         url: "/PlattformInventory/ViewProductStatisticPartial",
                         type: "post",
                         data: {
-                            productId: $("#productId").val(),
+                            productId: getUrlParam('productId'),
                             start: $("#start_time").val(),
                             end: $("#end_time").val()
                         }, success: function (data) {
