@@ -14,7 +14,7 @@
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
 <div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
-        <input type="text" id="file-date" autocomplete="off" name="file-date" style="height:26px" />
+        <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
         <input type="file" id="file-name" name="file-name" class="hidden" />   
         <a href="javascript:;" id="upload">选择文件</a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
@@ -171,14 +171,7 @@
                 }
                 return false;
             });
-            // 
-            $('#file-date').change(function () {
-                var that = $(this)
-                var newDate = new Date(that.val());
-                var result = newDate.getFullYear() + '-' + (newDate.getMonth()+1) + '-' + newDate.getDate();
-                console.log(result);
-                
-            })
+            
         });
         // 重置时间显示格式
         String.prototype.ToString = function (format) {
