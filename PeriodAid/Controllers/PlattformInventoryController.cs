@@ -1404,7 +1404,7 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult ViewEventListPartial(int productId,DateTime select_date)
+        public ActionResult ViewEventListPartial(int productId,DateTime select_date,int plattformId)
         {
             var item = from m in _db.SS_Event
                        where m.Product_Id == productId && m.EventDate == select_date
@@ -1419,6 +1419,10 @@ namespace PeriodAid.Controllers
                             Pay_Sum = g.Sum(m => m.Pay_Money),
                             SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                         };
+            var plattform_Id = from m in _db.SS_Plattform
+                               where m.Id==plattformId
+                               select m;
+            ViewBag.plattform_Id = plattform_Id;
             ViewBag.eventList = item;
             ViewBag.salesCount = count;
             return PartialView(item);

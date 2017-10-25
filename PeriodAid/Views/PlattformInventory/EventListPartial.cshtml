@@ -8,7 +8,7 @@
                 活动名称
             </th>
             <th>
-                产品编码
+                产品名称
             </th>
             <th>
                 活动日期
@@ -22,10 +22,10 @@
                     @Html.DisplayFor(modelItem => item.EventName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Product_Id)
+                    @Html.DisplayFor(modelItem => item.SS_Product.Item_Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EventDate)
+                    @item.EventDate.ToString("yyyy-MM-dd")
                 </td>
                 <td>
                     <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
@@ -118,12 +118,16 @@
             url: "/PlattformInventory/ViewEventListPartial",
             data: {
                 productId: that.attr('data-item'),
-                select_date:that.attr('data-date')
+                select_date: that.attr('data-date'),
+                plattformId: getUrlParam("plattformId")
             },
             success: function (data) {
+                console.log(data)
                 $(".col-md-10").html(data);
+
             }
         })
+
     })
     //获取url中的参数
     function getUrlParam(name) {
