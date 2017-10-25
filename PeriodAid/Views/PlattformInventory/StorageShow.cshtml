@@ -10,6 +10,7 @@
                             <th>商品编号</th>
                             <th>商品名称</th>
                             <th>销售数据</th>
+                            <th>结算单价</th>
                             <th>仓库库存</th>
                         </tr>
                     </thead>
@@ -21,6 +22,7 @@
                                 <td></td>
                                 <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                 <td class="product-count">@item.Sales_Sum</td>
+                                <td>@Math.Round((item.Sales_Sum / (item.Settlement == 0 ? 1 : item.Settlement)), 2)</td>
                                 <td class="sales-storage">@item.Inventory_Sum</td>
                             </tr>
                         }

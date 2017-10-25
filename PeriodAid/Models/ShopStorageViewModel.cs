@@ -96,6 +96,8 @@ namespace PeriodAid.Models
         public decimal Pay_Sum { get; set; }
 
         public decimal SubAccount_Sum { get; set; }
+
+        public decimal Settlement { get; set; }
     }
 
     class StreamDataSource : IStaticDataSource
