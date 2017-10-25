@@ -9,7 +9,7 @@
         div {
             z-index: 52;
         }
-        .nav > li > a{
+        .storage-nav > li > a{
             padding: 0px 15px;
         }
         #view-head-tr-1>th{
@@ -35,24 +35,10 @@
     <div class="form-view-header clear-float">
         <div>
             <div class="tm-view-control">
-                <ul class="nav nav-pills" style="float:right">
-                    @*<li class="tm-view-control-sort dropdown">
-                        <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
-                            <span class="tm-select-title active" id="start-date-select" style="color:white;font-size:14px;">选择日期</span>
-                            <input type="text" class="file-date" id="start-date" name="file-date" style="height: 38px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
-                            <span class="caret color-white"></span>
-                        </a>
-                    </li>
-                    <li class="tm-view-control-sort dropdown">
-                        <a data-toggle="dropdown" id="form-date-show" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
-                            <span class="tm-select-title active" id="end-date-select" style="color:white;font-size:14px;">选择日期区间</span>
-                            <input type="text" class="file-date" id="end-date" name="file-date" style="height: 38px;position:absolute;left: 0;width: 97px;top: 0;cursor:pointer;opacity:0" />
-                            <span class="caret color-white"></span>
-                        </a>
-                    </li>*@
+                <ul class="nav nav-pills storage-nav" style="float:right">
                     <li class="tm-view-control-sort dropdown" style="top:-4px">
                         <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
-                            <span class="tm-select-title active" id="storage-select" style="color:white;font-size:14px;">所有仓库</span>
+                            <span class="tm-select-title active" id="storage-select" data-ssid="0" style="color:white;font-size:14px;">所有仓库</span>
                             <span class="caret color-white"></span>
                         </a>
                         <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" id="nav-table-show" style="height:300px;overflow-y:auto">
@@ -75,9 +61,8 @@
             </div>
          </div>
     </div>
-    <div id="storage_show">
-        
-    </div>
+    <table class="table table-bordered table-hover" id="sun_show"></table>
+    <div id="storage_show"></div>
     <div class="tm-view-content-container  tm-view-container" id="file-loading" >
         <div class="tm-veiw-loading text-center" id="tm-view-loading">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
@@ -125,6 +110,17 @@
                                     end: $('#end-date').val(),
                                 },
                                 success: function (data) {
+                                    $.ajax({
+                                        url: '/PlattformInventory/TMShow_StorageShow/',
+                                        type: 'post',
+                                        data: {
+                                            plattformId: getUrlParam('plattformId'),
+                                            Storage:$('#storage-select').attr('data-ssid')
+                                        },
+                                        success: function (data) {
+                                            $("#sun_show").html(data);
+                                        }
+                                    })
                                         $('#storage_show').html(data)
                                         $('#file-loading').hide()
                                         $('.hot-product').each(function () {
@@ -202,6 +198,7 @@
             $('#file-loading').show();
             $('#storage-select').text(that.text())
             $('#show-storage').text($('#storage-select').text())
+            $('#storage-select').attr('data-ssid',that.children('.form-select-a').attr('data-ssid'))
             if(getUrlParam('plattformId')==2){
                 $.ajax({
                     url: "/PlattformInventory/TMS_StorageShow/",
@@ -212,6 +209,17 @@
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $.ajax({
+                            url: '/PlattformInventory/TMShow_StorageShow/',
+                            type: 'post',
+                            data: {
+                                plattformId: getUrlParam('plattformId'),
+                                Storage:$('#storage-select').attr('data-ssid')
+                            },
+                            success: function (data) {
+                                $("#sun_show").html(data);
+                            }
+                        })
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                             $('.hot-product').each(function () {
@@ -306,6 +314,17 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $.ajax({
+                                url: '/PlattformInventory/TMShow_StorageShow/',
+                                type: 'post',
+                                data: {
+                                    plattformId: getUrlParam('plattformId'),
+                                    Storage:$('#storage-select').attr('data-ssid')
+                                },
+                                success: function (data) {
+                                    $("#sun_show").html(data);
+                                }
+                            })
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                             $('.hot-product').each(function () {
