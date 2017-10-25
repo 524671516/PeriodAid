@@ -1,5 +1,4 @@
-﻿
-@model PagedList.IPagedList<PeriodAid.Models.SS_Event>
+﻿@model PagedList.IPagedList<PeriodAid.Models.SS_Event>
 @using PagedList.Mvc;
 <div>
     <table class="table">
@@ -124,7 +123,10 @@
             },
             success: function (data) {
                 $(".col-md-10").html(data);
-                $('#back-btn').attr('href', "/PlattformInventory/EventList?plattformId="+getUrlParam("plattformId"))
+                $('#back-btn').attr('href', "/PlattformInventory/EventList?plattformId=" + getUrlParam("plattformId"))
+                if (getUrlParam('plattformId') == 1) {
+                    $('.table-hidden').addClass('hidden')
+                }
             }
         })
     })
