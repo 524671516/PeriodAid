@@ -1134,12 +1134,12 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public ActionResult TMShow_StorageShow(int plattformId,int Storage)
+        public ActionResult TMShow_StorageShow(int plattformId,int Storage, DateTime start, DateTime end)
         {
             if(Storage!= 0)
             {
                 var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SS_Storage.SS_Plattform.Id == plattformId && m.Storage_Id == Storage
+                                  where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId && m.Storage_Id == Storage
                                   group m by m.SS_Storage into g
                                   select new Product_SummaryViewModel
                                   {
@@ -1153,7 +1153,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SS_Storage.SS_Plattform.Id == plattformId
+                                  where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                   group m by m.SS_Storage.SS_Plattform into g
                                   select new Product_SummaryViewModel
                                   {
@@ -1410,13 +1410,14 @@ namespace PeriodAid.Controllers
                        select m;
             var count = from m in _db.SS_SalesRecord
                         where m.Product_Id == productId && m.SalesRecord_Date == select_date && m.SS_Product.Plattform_Id == plattformId
-                        group m by m.Product_Id into g
+                        group m by m.SalesRecord_Date into g
                         orderby g.Key
                         select new EventStatisticViewModel {
-                            productId = g.Key,
+                            salesdate = g.Key,
                             salescount = g.Sum(m => m.Sales_Count),
                             Pay_Sum = g.Sum(m => m.Pay_Money),
-                            SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                            SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
+                            Sales_Price = g.Sum(m => m.SS_Product.Purchase_Price)/g.Count()
                         };
             ViewBag.eventList = item;
             ViewBag.salesCount = count;

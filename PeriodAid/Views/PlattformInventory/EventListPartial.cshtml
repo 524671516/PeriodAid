@@ -17,12 +17,8 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @item.EventName
-                </td>
-                <td>
-                    @item.SS_Product.Item_Name
-                </td>
+                <td>@item.EventName</td>
+                <td>@item.SS_Product.Item_Name</td>
                 <td>
                     @item.EventDate.ToString("yyyy-MM-dd")
                 </td>
@@ -71,6 +67,7 @@
             success: function (data) {
                 $('#modal-content').html(data)
                 $("#myModal").modal('show')
+                
             }
         })
     })
@@ -126,6 +123,8 @@
                 $('#back-btn').attr('href', "/PlattformInventory/EventList?plattformId=" + getUrlParam("plattformId"))
                 if (getUrlParam('plattformId') == 1) {
                     $('.table-hidden').addClass('hidden')
+                } else {
+                    $('.tm-hidden').addClass('hidden')
                 }
             }
         })

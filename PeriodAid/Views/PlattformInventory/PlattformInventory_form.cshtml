@@ -30,7 +30,6 @@
             </br>
             <span id="show-storage"></span>
         </div>
-        
     </div>
     <div class="form-view-header clear-float">
         <div>
@@ -51,11 +50,10 @@
                             }
                         </ul>
                     </li>
-
                 </ul>
             </div>
             <div>
-                <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="start-date" name="file-date" placeholder="请选择起始日期" value="" />
+                <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="start-date" name="file-date" placeholder="请选择起始日期"/>
                 <input type="text"class="file-date" readonly="readonly" autocomplete="off" id="end-date" name="file-date" placeholder="请选择结束日期" />
                 <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
             </div>
@@ -71,7 +69,6 @@
     </div>
 </div>
 @section scripts{
-
     <script>
     // 初始化数据
         $(function () {
@@ -115,7 +112,9 @@
                                         type: 'post',
                                         data: {
                                             plattformId: getUrlParam('plattformId'),
-                                            Storage:$('#storage-select').attr('data-ssid')
+                                            Storage:$('#storage-select').attr('data-ssid'),
+                                            start:$('#start-date').val(),
+                                            end: $('#end-date').val(),
                                         },
                                         success: function (data) {
                                             $("#sun_show").html(data);
@@ -210,12 +209,16 @@
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $('#start-time').text($('#start-date').val())
+                        $('#end-time').text($('#end-date').val())
                         $.ajax({
                             url: '/PlattformInventory/TMShow_StorageShow/',
                             type: 'post',
                             data: {
                                 plattformId: getUrlParam('plattformId'),
-                                Storage:$('#storage-select').attr('data-ssid')
+                                Storage:$('#storage-select').attr('data-ssid'),
+                                start:$('#start-date').val(),
+                                end: $('#end-date').val()
                             },
                             success: function (data) {
                                 $("#sun_show").html(data);
@@ -241,6 +244,8 @@
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $('#start-time').text($('#start-date').val())
+                        $('#end-time').text($('#end-date').val())
                         $('#sun_show').addClass('hidden')
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
@@ -254,7 +259,7 @@
             }
             
         })
-            // 选择日期
+        // 选择日期
         $('#start-date').change(function(){
             $('#start-time').text($(this).val())
         })
@@ -275,6 +280,22 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
+                            $.ajax({
+                                url: '/PlattformInventory/TMShow_StorageShow/',
+                                type: 'post',
+                                data: {
+                                    plattformId: getUrlParam('plattformId'),
+                                    Storage:$('#storage-select').attr('data-ssid'),
+                                    start:$('#start-date').val(),
+                                    end: $('#end-date').val(),
+                                },
+                                success: function (data) {
+                                    $("#sun_show").html(data);
+                                }
+                            })
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                             $('.hot-product').each(function () {
@@ -294,6 +315,9 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                             $('.hot-product').each(function () {
@@ -316,12 +340,17 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
                             $.ajax({
                                 url: '/PlattformInventory/TMShow_StorageShow/',
                                 type: 'post',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
-                                    Storage:$('#storage-select').attr('data-ssid')
+                                    Storage:$('#storage-select').attr('data-ssid'),
+                                    start:$('#start-date').val(),
+                                    end: $('#end-date').val(),
                                 },
                                 success: function (data) {
                                     $("#sun_show").html(data);
@@ -334,10 +363,6 @@
                                     $(this).find('.box').addClass('fire-box')
                                 }
                             })
-                            $('#start-date').val('')
-                            $('#end-date').val('')
-                            $('#start-time').text('')
-                            $('#end-time').text('')
                         }
                     })
                 }else{
@@ -350,6 +375,9 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
                             $('#sun_show').addClass('hidden')
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
@@ -358,10 +386,6 @@
                                     $(this).find('.box').addClass('fire-box')
                                 }
                             })
-                            $('#start-date').val('')
-                            $('#end-date').val('')
-                            $('#start-time').text('')
-                            $('#end-time').text('')
                         }
                     })
                 }

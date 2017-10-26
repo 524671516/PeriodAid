@@ -1,4 +1,5 @@
-﻿<div class="h2">产品活动详情</div>
+﻿@using PeriodAid.Models
+<div class="h2">产品活动详情</div>
 <div>
     <table class="table table-hover">
         <tr class="tr-title">
@@ -7,26 +8,41 @@
             <th>活动名称</th>
             <th>活动日期</th>
             <th>当日销量</th>
-            <th class="table-hidden">销售金额</th>
+            <th>销售金额</th>
             <th class="table-hidden">分账金额</th>
             <th class="table-hidden">结算单价</th>
         </tr>
-        @foreach(var item in ViewBag.eventList)
+        @foreach (var item in ViewBag.eventList)
         {
             <tr class="tr-body">
                 <td>@item.SS_Product.Item_Name</td>
                 <td>@item.Product_Id</td>
                 <td>@item.EventName</td>
                 <td>@item.EventDate.ToString("yyyy-MM-dd")</td>
-                @foreach (var count in ViewBag.salesCount)
+                @{
+                    IQueryable<EventStatisticViewModel> salesCount = ViewBag.salesCount as IQueryable<EventStatisticViewModel>;
+                    if (salesCount.Count() == 0)
                     {
-                        <td>@count.salescount</td>
-                        <td class="table-hidden">@count.Pay_Sum</td>
-                        <td class="table-hidden">@count.SubAccount_Sum</td>
-                        <td class="table-hidden">@Math.Round((count.SubAccount_Sum / (count.salescount == 0 ? 1 : count.salescount)), 2)</td>
+                        <td>0</td>
+                        <td>0.00</td>
+                        <td class="table-hidden">0.00</td>
+                        <td class="table-hidden">0.00</td>
+                    }
+                    else
+                    {
+                        foreach (var count in salesCount)
+                        {
+                            <td>@count.salescount</td>
+                            <td class="tm-hidden">@Math.Round((count.salescount * count.Sales_Price), 2)</td>
+                            <td class="table-hidden">@count.Pay_Sum</td>
+                            <td class="table-hidden">@count.SubAccount_Sum</td>
+                            <td class="table-hidden">@Math.Round((count.SubAccount_Sum / (count.salescount == 0 ? 1 : count.salescount)), 2)</td>
+                        }
+                    }
                 }
+
             </tr>
-        }
+                    }
     </table>
-    <h5 class="float-right"><a class="fa fa-angle-double-left" id="back-btn"  style="cursor:pointer">返回</a></h5>
+    <h5 class="float-right"><a class="fa fa-angle-double-left" id="back-btn" style="cursor:pointer">返回</a></h5>
 </div>
