@@ -98,26 +98,6 @@
             })
             return false;
         })
-        //获取url中的参数
-        function getUrlParam(name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-            if (r != null) return unescape(r[2]); return null; //返回参数值
-        }
-
-        // 重置时间显示格式
-        String.prototype.ToString = function (format) {
-            var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
-            format = format.replace("yyyy", dateTime.getFullYear());
-            format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
-            format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
-            format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
-            format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
-            format = format.replace("mm", dateTime.getMinutes());
-            format = format.replace("ss", dateTime.getSeconds());
-            format = format.replace("ms", dateTime.getMilliseconds())
-            return format;
-        };
     })
     
 </script>

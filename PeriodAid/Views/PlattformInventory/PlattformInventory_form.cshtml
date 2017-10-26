@@ -69,7 +69,8 @@
     </div>
 </div>
 @section scripts{
-    <script>
+
+<script>
     // 初始化数据
         $(function () {
             $('#upload').click(function () {
@@ -92,8 +93,9 @@
                         plattformId: getUrlParam('plattformId'),
                         month: e.currentyear + "-" + e.currentmonth
                     },
-                    success: function (data) {for (var i = 0; i < data.length; i++) {
-                        var record = data[i].record_date.ToString("yyyy-MM-dd");
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                        record = data[i].record_date.ToString("yyyy-MM-dd")
                     }
                         $('#start-date').val(record)
                         $('#end-date').val(record)
@@ -159,39 +161,7 @@
                     }
                 });
             }
-        });
-        function data_date() {
-            for (i = 0; i < $(".date_show").length; i++) {
-                var arry =@Html.Raw(Json.Encode(ViewBag.DataDate));
-                var arrydata = arry[i].ToString('yyyy-MM-dd');
-                var year = arrydata.substring(0, 4);
-                var show_year = parseInt($(".ui-state-default").parent().attr("data-year"));
-                var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
-                var show_day = parseInt($(".ui-state-default").text())
-                if (show_month < 10) {
-                    var _first = parseInt(arrydata.indexOf('-')) + 2;
-                    var _end = parseInt(arrydata.indexOf('-')) + 3;
-                    var month = arrydata.substring(_first, _end);
-                }
-                else {
-                    var _first = parseInt(arrydata.indexOf('-')) + 1;
-                    var _end = parseInt(arrydata.indexOf('-')) + 3;
-                    var month = arrydata.substring(_first, _end);
-                }
-            }
-        }
-        $("#form-date-show").on("click", function() {
-            data_date()
         })
-        $('.ui-corner-all').on('click',function(){
-            data_date()
-        })
-        //获取url中的参数
-        function getUrlParam(name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-            if (r != null) return unescape(r[2]); return null; //返回参数值
-        }
         // 选择城市
         $("#nav-table-show li").on("click", function () {
             var that = $(this);
@@ -392,19 +362,5 @@
             }
         })
     })
-    // 重置时间显示格式
-    String.prototype.ToString = function (format) {
-        var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
-        format = format.replace("yyyy", dateTime.getFullYear());
-        format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
-        format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
-        format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
-        format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
-        format = format.replace("mm", dateTime.getMinutes());
-        format = format.replace("ss", dateTime.getSeconds());
-        format = format.replace("ms", dateTime.getMilliseconds())
-        return format;
-        };
-
-    </script>
+</script>
 }

@@ -28,13 +28,6 @@
 @section scripts{
     <script>
         $(function () {
-            /*$(".calc_rate").change(function () {
-                $(this).parent().siblings(".calc_value").text(calc_value(this));
-            })
-            $(".calc_rate").each(function () {
-                $(this).parent().siblings(".calc_value").text(calc_value(this));
-            });*/
-            
             $.ajax({
                 url: '/PlattformInventory/Calc_StoragePartial',
                 data: {
@@ -52,12 +45,6 @@
                     })
                 }
             })
-            //获取url中的参数
-            function getUrlParam(name) {
-                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-                var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-                if (r != null) return unescape(r[2]); return null; //返回参数值
-            }
             $('.date-select').on('click', function () {
                 $('.date-select').eq(1).removeClass('active')
                 var that=$(this)
@@ -79,12 +66,6 @@
                 })
             })
         });
-        /*function calc_value(obj) {           
-            var sales = $(obj).parent().siblings(".calc_sales").html();
-            var storage = $(obj).parent().siblings(".calc_storage").text();
-            var rate = $(obj).val();
-            return (sales * rate) - storage <= 0 ? 0 : (sales * rate) - storage;
-        }*/
     </script>
     }
 
