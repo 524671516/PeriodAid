@@ -59,7 +59,9 @@
         $("#ProductId").val($("#Product_Id").val())
         // 修改日期格式
         var strDate = $("#EventDate").val().substring(0, 10)
-        $("#show-date input").attr("value", strDate)
+        var reg = /\//g
+        var newstrDate = strDate.replace(reg,"-")
+        $("#show-date input").attr("value", newstrDate)
         //产品搜索
         function displayResult(item, val, text) {
             $("#ProductId").val(val);

@@ -84,7 +84,9 @@
 <script>
     // 修改日期格式
     var strDate = $("#Inventory_Date").val().substring(0, 10)
-    $("#show-date input").attr("value", strDate)
+    var reg = /\//g
+    var newstrDate = strDate.replace(reg, "-")
+    $("#show-date input").attr("value", newstrDate)
     $('#save-btn').click(function () {
         $("#product-form").ajaxSubmit({
             url: '/PlattformInventory/EditProductInfo',
