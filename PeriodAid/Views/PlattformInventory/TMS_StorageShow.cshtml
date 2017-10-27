@@ -3,7 +3,6 @@
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active">
-            
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr id="view-head-tr">
@@ -19,15 +18,30 @@
                 <tbody>
                     @foreach (var item in Model.OrderByDescending(m => m.Sales_Sum))
                     {
-                        <tr class="view-body-tr">
-                            <th scope="row" data-bind="@item.Product.Product_Type" class="hot-product">@item.Product.System_Code<a class="box"></a></th>
-                            <td></td>
-                            <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                            <td class="product-count">@item.Sales_Sum</td>
-                            <td class="sales-pay">@item.Pay_Sum</td>
-                            <td class="sales-subAccount">@item.SubAccount_Sum</td>
-                            <td class="sales-subAccount">@Math.Round((item.SubAccount_Sum /(item.Sales_Sum == 0 ? 1: item.Sales_Sum)),2)</td>
-                        </tr>
+                        if (item.Product.Product_Type == 1)
+                        {
+                            <tr class="view-body-tr">
+                                <th scope="row" class="hot-product">@item.Product.System_Code<a class="fire-box"></a></th>
+                                <td></td>
+                                <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                <td class="product-count">@item.Sales_Sum</td>
+                                <td class="sales-pay">@item.Pay_Sum</td>
+                                <td>@item.SubAccount_Sum</td>
+                                <td>@Math.Round((item.SubAccount_Sum / (item.Sales_Sum == 0 ? 1 : item.Sales_Sum)), 2)</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr class="view-body-tr">
+                                <th scope="row" class="hot-product">@item.Product.System_Code<a></a></th>
+                                <td></td>
+                                <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                <td class="product-count">@item.Sales_Sum</td>
+                                <td class="sales-pay">@item.Pay_Sum</td>
+                                <td>@item.SubAccount_Sum</td>
+                                <td>@Math.Round((item.SubAccount_Sum / (item.Sales_Sum == 0 ? 1 : item.Sales_Sum)), 2)</td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
