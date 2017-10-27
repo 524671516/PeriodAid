@@ -855,168 +855,68 @@ namespace PeriodAid.Controllers
         /// 当前库存页面
         /// </summary>
         /// <returns></returns>
-        public ActionResult PlattformInventory_form(int? plattformId, DateTime? select_date)
+        public ActionResult PlattformInventory_form(int? plattformId)
         {
             var DataDate = (from m in _db.SS_SalesRecord
                             where m.SS_Storage.SS_Plattform.Id == plattformId && m.SS_Product.Plattform_Id == plattformId
-                            select m.SalesRecord_Date).Distinct();
+                            orderby m.SalesRecord_Date descending
+                            select m.SalesRecord_Date).FirstOrDefault();
             ViewBag.DataDate = DataDate;
-            if (plattformId != null)
-            {
-                var storage = from m in _db.SS_Storage
-                              where m.Plattform_Id == plattformId
-                              select m;
-                ViewBag.storage = storage;
-                var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SS_Storage.SS_Plattform.Id == plattformId && m.SS_Product.Plattform_Id == plattformId
-                                  group m by m.SS_Product into g
-                                  select new Product_SummaryViewModel
-                                  {
-                                      Product = g.Key,
-                                      Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
-                                      Pay_Sum = g.Sum(m => m.Pay_Money),
-                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
-                                  };
-
-                return View(SalesRecord);
-            }
-            else
-            {
-                var storage = from m in _db.SS_Storage
-                              where m.Plattform_Id == plattformId
-                              select m;
-                ViewBag.storage = storage;
-                var SalesRecord = from m in _db.SS_SalesRecord
-                                  where m.SS_Product.Plattform_Id == plattformId
-                                  group m by m.SS_Product into g
-                                  select new Product_SummaryViewModel
-                                  {
-                                      Product = g.Key,
-                                      Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
-                                      Pay_Sum = g.Sum(m => m.Pay_Money),
-                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
-                                  };
-
-                return View(SalesRecord);
-            }
-        }
-        
-        public ActionResult StorageShow(int plattformId, int? Storage,DateTime? start,DateTime end)
-        {
+            var _plattformId = plattformId ?? 1;
             var storage = from m in _db.SS_Storage
+                          where m.Plattform_Id == plattformId
                           select m;
             ViewBag.storage = storage;
+            return View();
+        }
+
+        public ActionResult StorageShow(int plattformId, int? Storage, DateTime start, DateTime end)
+        {
+            /*var storage = from m in _db.SS_Storage
+                          select m;
+            //ViewBag.storage = storage;
             var DataDate = (from m in _db.SS_SalesRecord
                             select m.SalesRecord_Date).Distinct();
-            ViewBag.DataDate = DataDate;
-            if (end != null)
+            ViewBag.DataDate = DataDate;*/
+            int _storage = Storage ?? 0;
+            if (_storage == 0)
             {
-                if (Storage.ToString() != "")
-                {
-                    if (Storage.ToString() == "0")
-                    {
-                        var inventory_Sum = (from m in _db.SS_SalesRecord
-                                            where m.SalesRecord_Date == end && m.SS_Storage.SS_Plattform.Id == plattformId
-                                            orderby m.SalesRecord_Date
-                                            select m).FirstOrDefault();
-                        var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
-                                          group m by m.SS_Product into g
-                                          select new Product_SummaryViewModel
-                                          {
-                                              Product = g.Key,
-                                              Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = inventory_Sum.Storage_Count,
-                                              Pay_Sum = g.Sum(m => m.Pay_Money),
-                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
-                                          };
-                        return PartialView(SalesRecord);
-                    }
-                    else
-                    {
-                        var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.Storage_Id == Storage
-                                          group m by m.SS_Product into g
-                                          select new Product_SummaryViewModel
-                                          {
-                                              Product = g.Key,
-                                              Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
-                                              Pay_Sum = g.Sum(m => m.Pay_Money),
-                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
-                                          };
-                        return PartialView(SalesRecord);
-                    }
-                }
-                else
-                {
-                    var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
-                                      group m by m.SS_Product into g
-                                      select new Product_SummaryViewModel
-                                      {
-                                          Product = g.Key,
-                                          Sales_Sum = g.Sum(m => m.Sales_Count),
-                                          Inventory_Sum = g.FirstOrDefault(m=>m.SalesRecord_Date==end).Storage_Count,
-                                          Pay_Sum = g.Sum(m => m.Pay_Money),
-                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
-                                      };
-                    return PartialView(SalesRecord);
-
-                }
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
+                                  && m.SS_Product.Product_Type>=0
+                                  group m by m.SS_Product into g
+                                  select new Product_SummaryViewModel
+                                  {
+                                      Product = g.Key,
+                                      Sales_Sum = g.Sum(m => m.Sales_Count),
+                                      Inventory_Sum = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m => m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
+                                      Settlement = g.Key.Purchase_Price
+                                      // 问题出在哪里？
+                                      // 理解意义
+                                      // 效率提升
+                                      // 去除无用代码
+                                      //Settlement = g.Sum(m => m.SS_Product.Purchase_Price) / g.Count()
+                                  };
+                return PartialView(SalesRecord);
             }
             else
             {
-                if (Storage.ToString() != "")
-                {
-                    if (Storage.ToString() == "0")
-                    {
-                        var SalesRecord = from m in _db.SS_SalesRecord
-                                          group m by m.SS_Product into g
-                                          select new Product_SummaryViewModel
-                                          {
-                                              Product = g.Key,
-                                              Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
-                                              Pay_Sum = g.Sum(m => m.Pay_Money),
-                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
-                                          };
-                        return PartialView(SalesRecord);
-                    }
-                    else
-                    {
-                        var SalesRecord = from m in _db.SS_SalesRecord
-                                          where m.Storage_Id == Storage
-                                          group m by m.SS_Product into g
-                                          select new Product_SummaryViewModel
-                                          {
-                                              Product = g.Key,
-                                              Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
-                                              Pay_Sum = g.Sum(m => m.Pay_Money),
-                                              SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
-                                          };
-                        return PartialView(SalesRecord);
-                    }
-                }
-                else
-                {
-                    var SalesRecord = from m in _db.SS_SalesRecord
-                                      where m.SS_Storage.Plattform_Id == plattformId
-                                      group m by m.SS_Product into g
-                                      select new Product_SummaryViewModel
-                                      {
-                                          Product = g.Key,
-                                          Sales_Sum = g.Sum(m => m.Sales_Count),
-                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
-                                          Pay_Sum = g.Sum(m => m.Pay_Money),
-                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
-                                      };
-                    return PartialView(SalesRecord);
-
-                }
+                var SalesRecord = from m in _db.SS_SalesRecord
+                                  where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.Storage_Id == Storage
+                                  && m.SS_Product.Product_Type >= 0
+                                  group m by m.SS_Product into g
+                                  select new Product_SummaryViewModel
+                                  {
+                                      Product = g.Key,
+                                      Sales_Sum = g.Sum(m => m.Sales_Count),
+                                      Inventory_Sum = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count),
+                                      Pay_Sum = g.Sum(m => m.Pay_Money),
+                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
+                                      Settlement = g.Key.Purchase_Price
+                                  };
+                return PartialView(SalesRecord);
             }
         }
 
