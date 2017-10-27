@@ -15,16 +15,31 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.OrderByDescending(m=>m.Sales_Sum))
+                        @foreach (var item in Model.OrderByDescending(m => m.Sales_Sum))
                         {
-                            <tr class="view-body-tr">
-                                <th scope="row" data-bind="@item.Product.Product_Type"  class="hot-product">@item.Product.System_Code<a class="box"></a></th>
-                                <td></td>
-                                <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                                <td class="product-count">@item.Sales_Sum</td>
-                                <td>@item.Product.Purchase_Price</td>
-                                <td class="sales-storage">@item.Inventory_Sum</td>
-                            </tr>
+                            if (item.Product.Product_Type == 1)
+                            {
+                                <tr class="view-body-tr">
+                                    <th scope="row" class="hot-product">@item.Product.System_Code<a class="fire-box"></a></th>
+                                    <td></td>
+                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                    <td class="product-count">@item.Sales_Sum</td>
+                                    <td>@item.Settlement</td>
+                                    <td class="sales-storage">@item.Inventory_Sum</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="view-body-tr">
+                                    <th scope="row" class="hot-product">@item.Product.System_Code<a></a></th>
+                                    <td></td>
+                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                    <td class="product-count">@item.Sales_Sum</td>
+                                    <td>@item.Settlement</td>
+                                    <td class="sales-storage">@item.Inventory_Sum</td>
+                                </tr>
+                            }
+
                         }
                     </tbody>
                 </table>

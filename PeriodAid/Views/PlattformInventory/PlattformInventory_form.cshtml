@@ -64,7 +64,6 @@
     </div>
 </div>
 @section scripts{
-
 <script>
     // 初始化数据
         $(function () {
@@ -98,7 +97,7 @@
                                 plattformId: getUrlParam('plattformId'),
                                 Storage: $('#storage-select').attr('data-ssid'),
                                 start: $('#start-date').val(),
-                                end: $('#end-date').val()
+                                end: $('#end-date').val(),
                             },
                             success: function (data) {
                                 $("#sun_show").html(data);
@@ -106,11 +105,6 @@
                         })
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
-                        $('.hot-product').each(function () {
-                            if ($(this).attr('data-bind') == 1) {
-                                $(this).find('.box').addClass('fire-box')
-                            }
-                        })
                     }
                 })
             }
@@ -127,72 +121,19 @@
                         $('#sun_show').addClass('hidden')
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
-                        $('.view-body-tr').find('.sales-subAccount').addClass('hidden')
-                        $('.hot-product').each(function () {
-                            if ($(this).attr('data-bind') == 1) {
-                                $(this).find('.box').addClass('fire-box')
-                            }
-                        })
                     }
                 })
             }
-        /*TmDatePicker.Init({
-            container: "#tm-calendar-view-wrap",
-            onpagechanged: function (e) {
-                $.ajax({
-                    url: "/PlattformInventory/CustomUploadFilePartial",
-                    type: "post",
-                    data: {
-                        plattformId: getUrlParam('plattformId'),
-                        month: e.currentyear + "-" + e.currentmonth
-                    },
-                    success: function (data) {for (var i = 0; i < data.length; i++) {
-                        var record = data[i].record_date.ToString("yyyy-MM-dd");
-                    }
-                        $
-
-                    },
-                    error: function () {
-                        errorAlert("请求数据失败。");
-                    }
-                });
-            }
-        });*/
-        /*function data_date() {
-            for (i = 0; i < $(".date_show").length; i++) {
-                
-                var arrydata = arry[i].ToString('yyyy-MM-dd');
-                var year = arrydata.substring(0, 4);
-                var show_year = parseInt($(".ui-state-default").parent().attr("data-year"));
-                var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
-                var show_day = parseInt($(".ui-state-default").text())
-                if (show_month < 10) {
-                    var _first = parseInt(arrydata.indexOf('-')) + 2;
-                    var _end = parseInt(arrydata.indexOf('-')) + 3;
-                    var month = arrydata.substring(_first, _end);
-                }
-                else {
-                    var _first = parseInt(arrydata.indexOf('-')) + 1;
-                    var _end = parseInt(arrydata.indexOf('-')) + 3;
-                    var month = arrydata.substring(_first, _end);
-                }
-            }
-        }*/
-        /*$("#form-date-show").on("click", function() {
-            data_date()
-        })
-        $('.ui-corner-all').on('click',function(){
-            data_date()
-        })*/
-        //获取url中的参数
-        
-        // 选择城市
+        // 选择仓库
         $("#nav-table-show li").on("click", function () {
             var that = $(this);
             $('#file-loading').show();
             $('#storage-select').text(that.text())
             $('#show-storage').text($('#storage-select').text())
-            $('#storage-select').attr('data-ssid',that.children('.form-select-a').attr('data-ssid'))
+            $('#storage-select').attr('data-ssid', that.children('.form-select-a').attr('data-ssid'))
+            if ($("#start-date").val() == "" || $("#end-date").val() == "") {
+                errorAlert("请输入正确日期");
+            }
             if(getUrlParam('plattformId')==2){
                 $.ajax({
                     url: "/PlattformInventory/TMS_StorageShow/",
@@ -220,11 +161,6 @@
                         })
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
-                            $('.hot-product').each(function () {
-                                if ($(this).attr('data-bind') == 1) {
-                                    $(this).find('.box').addClass('fire-box')
-                                }
-                            })
                     }
                 })
             }else{
@@ -243,11 +179,6 @@
                         $('#sun_show').addClass('hidden')
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
-                        $('.hot-product').each(function () {
-                            if ($(this).attr('data-bind') == 1) {
-                                $(this).find('.box').addClass('fire-box')
-                            }
-                        })
                     }
                 })
             }
@@ -261,8 +192,7 @@
             $('#end-time').text($(this).val())
         })
         $('#select-date-btn').click(function () {
-            var that=$(this)
-            
+            var that = $(this)
             if ($("#start-date").val() == "" || $("#end-date").val() == "") {
                 errorAlert("请输入正确日期");
             }
@@ -273,7 +203,7 @@
                         url: "/PlattformInventory/TMS_StorageShow/",
                         data: {
                             plattformId: getUrlParam('plattformId'),
-                            Storage: that.children('.form-select-a').attr('data-ssid'),
+                            Storage: $('#storage-select').attr('data-ssid'),
                             start:$('#start-date').val(),
                             end: $('#end-date').val()
                         },
@@ -286,9 +216,9 @@
                                 type: 'post',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
-                                    Storage:$('#storage-select').attr('data-ssid'),
-                                    start:$('#start-date').val(),
-                                    end: $('#end-date').val(),
+                                    Storage: $('#storage-select').attr('data-ssid'),
+                                    start: $('#start-date').val(),
+                                    end: $('#end-date').val()
                                 },
                                 success: function (data) {
                                     $("#sun_show").html(data);
@@ -296,11 +226,6 @@
                             })
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
-                            $('.hot-product').each(function () {
-                                if ($(this).attr('data-bind') == 1) {
-                                    $(this).find('.box').addClass('fire-box')
-                                }
-                            })
                         }
                     })
                 }else{
@@ -309,7 +234,8 @@
                         type: 'post',
                         data: {
                             plattformId: getUrlParam('plattformId'),
-                            start:$('#start-date').val(),
+                            Storage: $('#storage-select').attr('data-ssid'),
+                            start: $('#start-date').val(),
                             end: $('#end-date').val()
                         },
                         success: function (data) {
@@ -318,77 +244,61 @@
                             $("#show-storage").text($("#storage-select").text())
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
-                            $('.hot-product').each(function () {
-                                if ($(this).attr('data-bind') == 1) {
-                                    $(this).find('.box').addClass('fire-box')
-                                }
-                            })
                         }
                     })
                 }
             }else{
                 errorAlert('请选择正确日期')
-                /*if(getUrlParam('plattformId')==2){
-                    $.ajax({
-                        url: "/PlattformInventory/TMS_StorageShow/",
-                        data: {
-                            plattformId: getUrlParam('plattformId'),
-                            Storage: that.children('.form-select-a').attr('data-ssid'),
-                            start:$('#start-date').val(),
-                            end: $('#end-date').val()
-                        },
-                        success: function (data) {
-                            $('#start-time').text($('#start-date').val())
-                            $('#end-time').text($('#end-date').val())
-                            $("#show-storage").text($("#storage-select").text())
-                            $.ajax({
-                                url: '/PlattformInventory/TMShow_StorageShow/',
-                                type: 'post',
-                                data: {
-                                    plattformId: getUrlParam('plattformId'),
-                                    Storage:$('#storage-select').attr('data-ssid'),
-                                    start:$('#start-date').val(),
-                                    end: $('#end-date').val(),
-                                },
-                                success: function (data) {
-                                    $("#sun_show").html(data);
-                                }
-                            })
-                            $('#storage_show').html(data)
-                            $('#file-loading').hide()
-                            $('.hot-product').each(function () {
-                                if ($(this).attr('data-bind') == 1) {
-                                    $(this).find('.box').addClass('fire-box')
-                                }
-                            })
-                        }
-                    })
-                }else{
-                    $.ajax({
-                        url: '/PlattformInventory/StorageShow/',
-                        type: 'post',
-                        data: {
-                            plattformId: getUrlParam('plattformId'),
-                            start:$('#start-date').val(),
-                            end: $('#end-date').val()
-                        },
-                        success: function (data) {
-                            $('#start-time').text($('#start-date').val())
-                            $('#end-time').text($('#end-date').val())
-                            $("#show-storage").text($("#storage-select").text())
-                            $('#sun_show').addClass('hidden')
-                            $('#storage_show').html(data)
-                            $('#file-loading').hide()
-                            $('.hot-product').each(function () {
-                                if ($(this).attr('data-bind') == 1) {
-                                    $(this).find('.box').addClass('fire-box')
-                                }
-                            })
-                        }
-                    })
-                }*/
             }
         })
+        })
+    /*TmDatePicker.Init({
+           container: "#tm-calendar-view-wrap",
+           onpagechanged: function (e) {
+               $.ajax({
+                   url: "/PlattformInventory/CustomUploadFilePartial",
+                   type: "post",
+                   data: {
+                       plattformId: getUrlParam('plattformId'),
+                       month: e.currentyear + "-" + e.currentmonth
+                   },
+                   success: function (data) {for (var i = 0; i < data.length; i++) {
+                       var record = data[i].record_date.ToString("yyyy-MM-dd");
+                   }
+                       $
+
+                   },
+                   error: function () {
+                       errorAlert("请求数据失败。");
+                   }
+               });
+           }
+       });*/
+    /*function data_date() {
+        for (i = 0; i < $(".date_show").length; i++) {
+            
+            var arrydata = arry[i].ToString('yyyy-MM-dd');
+            var year = arrydata.substring(0, 4);
+            var show_year = parseInt($(".ui-state-default").parent().attr("data-year"));
+            var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
+            var show_day = parseInt($(".ui-state-default").text())
+            if (show_month < 10) {
+                var _first = parseInt(arrydata.indexOf('-')) + 2;
+                var _end = parseInt(arrydata.indexOf('-')) + 3;
+                var month = arrydata.substring(_first, _end);
+            }
+            else {
+                var _first = parseInt(arrydata.indexOf('-')) + 1;
+                var _end = parseInt(arrydata.indexOf('-')) + 3;
+                var month = arrydata.substring(_first, _end);
+            }
+        }
+    }*/
+    /*$("#form-date-show").on("click", function() {
+        data_date()
     })
+    $('.ui-corner-all').on('click',function(){
+        data_date()
+    })*/
 </script>
 }
