@@ -200,11 +200,9 @@ namespace PeriodAid.Controllers
             IRow row1 = sheet.CreateRow(0);
             row1.Height = 27 * 20;
             ICell cell1 = row1.CreateCell(0);
-            row1.CreateCell(1);
-            row1.CreateCell(2);
-            row1.CreateCell(3);
-            row1.CreateCell(4);
-            row1.CreateCell(5);
+            for (int i=1;i<=5;i++) {
+                row1.CreateCell(i);
+            }
             sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
             for (int i = 1; i < 5; i++)
             {
