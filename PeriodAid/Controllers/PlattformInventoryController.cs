@@ -917,6 +917,10 @@ namespace PeriodAid.Controllers
                 {
                     if (Storage.ToString() == "0")
                     {
+                        var inventory_Sum = (from m in _db.SS_SalesRecord
+                                            where m.SalesRecord_Date == end && m.SS_Storage.SS_Plattform.Id == plattformId
+                                            orderby m.SalesRecord_Date
+                                            select m).FirstOrDefault();
                         var SalesRecord = from m in _db.SS_SalesRecord
                                           where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
                                           group m by m.SS_Product into g
@@ -924,7 +928,7 @@ namespace PeriodAid.Controllers
                                           {
                                               Product = g.Key,
                                               Sales_Sum = g.Sum(m => m.Sales_Count),
-                                              Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                              Inventory_Sum = inventory_Sum.Storage_Count,
                                               Pay_Sum = g.Sum(m => m.Pay_Money),
                                               SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
                                           };
@@ -955,9 +959,9 @@ namespace PeriodAid.Controllers
                                       {
                                           Product = g.Key,
                                           Sales_Sum = g.Sum(m => m.Sales_Count),
-                                          Inventory_Sum = g.Sum(m => m.Storage_Count),
+                                          Inventory_Sum = g.FirstOrDefault(m=>m.SalesRecord_Date==end).Storage_Count,
                                           Pay_Sum = g.Sum(m => m.Pay_Money),
-                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
+                                          SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
                                       };
                     return PartialView(SalesRecord);
 
