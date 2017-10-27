@@ -96,7 +96,9 @@
                             type: 'post',
                             data: {
                                 plattformId: getUrlParam('plattformId'),
-                                Storage: $('#storage-select').attr('data-ssid')
+                                Storage: $('#storage-select').attr('data-ssid'),
+                                start: $('#start-date').val(),
+                                end: $('#end-date').val()
                             },
                             success: function (data) {
                                 $("#sun_show").html(data);

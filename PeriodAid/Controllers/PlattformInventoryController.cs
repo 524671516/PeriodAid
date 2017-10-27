@@ -922,12 +922,6 @@ namespace PeriodAid.Controllers
 
         public ActionResult TMS_StorageShow(int plattformId, int? Storage, DateTime? start, DateTime end)
         {
-            var storage = from m in _db.SS_Storage
-                          select m;
-            ViewBag.storage = storage;
-            var DataDate = (from m in _db.SS_SalesRecord
-                            select m.SalesRecord_Date).Distinct();
-            ViewBag.DataDate = DataDate;
             if (end != null)
             {
                 if (Storage.ToString() != "")
