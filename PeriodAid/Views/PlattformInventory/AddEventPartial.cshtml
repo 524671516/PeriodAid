@@ -58,7 +58,7 @@
         }
         $('#product-input').typeahead({
             ajax: {
-                url: '/PlattformInventory/QueryProduct?plattformId='+getUrlParam('plattformId'),
+                url: '/PlattformInventory/QueryProduct?plattformId=' + getUrlParam('plattformId'),
                 triggerLength: 1
             },
             itemSelected: displayResult,
@@ -96,7 +96,7 @@
             titleFormat: "MM月, YYYY年",
             format: "YYYY-MM-DD"
         });
-        
+
     });
 </script>
 
