@@ -10,7 +10,6 @@
 </div>
 @Html.HiddenFor(model => model.SS_Product.Item_Name)
 @Html.HiddenFor(model => model.Product_Id)
-@Html.HiddenFor(model => model.EventDate)
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditEventInfo", "PlattformInventory", FormMethod.Post, new { @id = "event-form" }))
     {

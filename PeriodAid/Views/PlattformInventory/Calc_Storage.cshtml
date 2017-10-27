@@ -38,11 +38,6 @@
                     $("#my-form-content").html(data);
                     $('.date-view-select').html($('.date-select').eq(1).attr('data-date') + '天')
                     $('.date-select').eq(1).addClass('active')
-                    $('.hot-product').each(function () {
-                        if ($(this).attr('data-bind') == 1) {
-                            $(this).find('.box').addClass('fire-box')
-                        }
-                    })
                 }
             })
             $('.date-select').on('click', function () {
@@ -57,11 +52,6 @@
                     success: function (data) {
                         $("#my-form-content").html(data);
                         $('.date-view-select').html(that.attr('data-date') + '天')
-                        $('.hot-product').each(function () {
-                            if ($(this).attr('data-bind') == 1) {
-                                $(this).find('.box').addClass('fire-box')
-                            }
-                        })
                     }
                 })
             })

@@ -1027,14 +1027,13 @@ namespace PeriodAid.Controllers
         public ActionResult EventListPartial(int? page,string query,int plattformId)
         {
             int _page = page ?? 1;
-
-
+            
             if (query != null)
             {
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_Event
-                                       where m.EventName.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                       where m.EventName.Contains(query) || m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId
                                        orderby m.EventDate descending, m.Id descending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
