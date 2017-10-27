@@ -51,6 +51,7 @@
 <script src="~/Scripts/bootstrap-typeahead.js"></script>
 <script>
     $(function () {
+        $("#add-submit").attr("disabled", false);
         //产品搜索
         function displayResult(item, val, text) {
             $("#Product_Id").val(val);
@@ -65,6 +66,7 @@
             val: 'Id'
         });
         $('#add-event-form').ajaxForm(function (data) {
+            $("#add-submit").attr("disabled", true);
             if (data == "SUCCESS") {
                 $('.modal-box').modal('hide');
                 setTimeout(function () {

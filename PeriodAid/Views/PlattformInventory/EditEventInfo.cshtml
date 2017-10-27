@@ -37,8 +37,8 @@
             <div class="form-group">
                 <label class="control-label col-md-2">活动日期</label>
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control",@readonly="readonly" } })
-                    @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
+                    <div id="Inventory_Date">@Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })</div>
                 </div>
             </div>
             <div class="form-group">
@@ -54,6 +54,8 @@
 <script src="~/Scripts/kalendae.standalone.js"></script>
 <script src="~/Scripts/bootstrap-typeahead.js"></script>
 <script>
+    var str = $("#EventDate").val().substring(0, 10)
+    $("#Inventory_Date input").attr("value", str)
     $(function () {
         $("#product-input").val($("#SS_Product_Item_Name").val())
         $("#ProductId").val($("#Product_Id").val())
