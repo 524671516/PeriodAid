@@ -29,7 +29,6 @@
             </br>
             <span id="show-storage"></span>
         </div>
-        
     </div>
     <div class="form-view-header clear-float">
         <div>
@@ -50,7 +49,6 @@
                             }
                         </ul>
                     </li>
-
                 </ul>
             </div>
             <div>
@@ -71,7 +69,7 @@
 </div>
 @section scripts{
 
-    <script>
+<script>
     // 初始化数据
         $(function () {
             $('#upload').click(function () {
@@ -207,12 +205,16 @@
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $('#start-time').text($('#start-date').val())
+                        $('#end-time').text($('#end-date').val())
                         $.ajax({
                             url: '/PlattformInventory/TMShow_StorageShow/',
                             type: 'post',
                             data: {
                                 plattformId: getUrlParam('plattformId'),
-                                Storage:$('#storage-select').attr('data-ssid')
+                                Storage:$('#storage-select').attr('data-ssid'),
+                                start:$('#start-date').val(),
+                                end: $('#end-date').val()
                             },
                             success: function (data) {
                                 $("#sun_show").html(data);
@@ -238,6 +240,8 @@
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $('#start-time').text($('#start-date').val())
+                        $('#end-time').text($('#end-date').val())
                         $('#sun_show').addClass('hidden')
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
@@ -251,7 +255,7 @@
             }
             
         })
-            // 选择日期
+        // 选择日期
         $('#start-date').change(function(){
             $('#start-time').text($(this).val())
         })
@@ -276,6 +280,22 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
+                            $.ajax({
+                                url: '/PlattformInventory/TMShow_StorageShow/',
+                                type: 'post',
+                                data: {
+                                    plattformId: getUrlParam('plattformId'),
+                                    Storage:$('#storage-select').attr('data-ssid'),
+                                    start:$('#start-date').val(),
+                                    end: $('#end-date').val(),
+                                },
+                                success: function (data) {
+                                    $("#sun_show").html(data);
+                                }
+                            })
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                             $('.hot-product').each(function () {
@@ -295,6 +315,9 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                             $('.hot-product').each(function () {
@@ -317,12 +340,17 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
                             $.ajax({
                                 url: '/PlattformInventory/TMShow_StorageShow/',
                                 type: 'post',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
-                                    Storage:$('#storage-select').attr('data-ssid')
+                                    Storage:$('#storage-select').attr('data-ssid'),
+                                    start:$('#start-date').val(),
+                                    end: $('#end-date').val(),
                                 },
                                 success: function (data) {
                                     $("#sun_show").html(data);
@@ -335,10 +363,6 @@
                                     $(this).find('.box').addClass('fire-box')
                                 }
                             })
-                            $('#start-date').val('')
-                            $('#end-date').val('')
-                            $('#start-time').text('')
-                            $('#end-time').text('')
                         }
                     })
                 }else{
@@ -351,6 +375,9 @@
                             end: $('#end-date').val()
                         },
                         success: function (data) {
+                            $('#start-time').text($('#start-date').val())
+                            $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
                             $('#sun_show').addClass('hidden')
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
@@ -359,29 +386,11 @@
                                     $(this).find('.box').addClass('fire-box')
                                 }
                             })
-                            $('#start-date').val('')
-                            $('#end-date').val('')
-                            $('#start-time').text('')
-                            $('#end-time').text('')
                         }
                     })
                 }*/
             }
         })
     })
-    // 重置时间显示格式
-    String.prototype.ToString = function (format) {
-        var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
-        format = format.replace("yyyy", dateTime.getFullYear());
-        format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
-        format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
-        format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
-        format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
-        format = format.replace("mm", dateTime.getMinutes());
-        format = format.replace("ss", dateTime.getSeconds());
-        format = format.replace("ms", dateTime.getMilliseconds())
-        return format;
-        };
-
-    </script>
+</script>
 }

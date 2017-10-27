@@ -47,6 +47,8 @@ namespace PeriodAid.Models
         public decimal Pay_Sum { get; set; }
 
         public decimal SubAccount_Sum { get; set; }
+
+        public decimal Sales_Price { get; set; }
     }
     // 京东送货单导入
     public class StorageOrder

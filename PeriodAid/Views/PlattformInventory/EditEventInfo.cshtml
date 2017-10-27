@@ -1,9 +1,15 @@
 ﻿@model PeriodAid.Models.SS_Event
-
+@{
+    Layout = null;
+}
+<link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/prettify.css" rel="stylesheet" />
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改活动信息</h2>
 </div>
+@Html.HiddenFor(model => model.SS_Product.Item_Name)
+@Html.HiddenFor(model => model.Product_Id)
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditEventInfo", "PlattformInventory", FormMethod.Post, new { @id = "event-form" }))
     {
@@ -17,12 +23,14 @@
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.EventName, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.EventName, "", new { @class = "text-danger" })
+
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-md-2">产品编码</label>
+                <label class="control-label col-md-2">产品名称</label>
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Product_Id, new { htmlAttributes = new { @class = "form-control" } })
+                    <input id="product-input" type="text" class="span4 form-control" placeholder="搜索产品"  autocomplete="off" name="product-input" />
+                    <input type="hidden" id="ProductId" name="Product_Id" />
                     @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -42,31 +50,46 @@
     }
 </div>
 
-<div class="modal-footer">
-
-</div>
-
+<div class="modal-footer"></div>
+<script src="~/Scripts/kalendae.standalone.js"></script>
+<script src="~/Scripts/bootstrap-typeahead.js"></script>
 <script>
+    $(function () {
+        $("#product-input").val($("#SS_Product_Item_Name").val())
+        $("#ProductId").val($("#Product_Id").val())
+        //产品搜索
+        function displayResult(item, val, text) {
+            $("#ProductId").val(val);
+        }
+        $('#product-input').typeahead({
+            ajax: {
+                url: '/PlattformInventory/QueryProduct?plattformId=' + getUrlParam('plattformId'),
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'ProductName',
+            val: 'Id'
+        });
         $('#save-btn').click(function () {
-             $("#event-form").ajaxSubmit({
+            $("#event-form").ajaxSubmit({
                 url: '/PlattformInventory/EditEventInfo',
                 type: 'post',
                 success: function (data) {
                     if (data.result == "SUCCESS") {
                         alert('保存成功')
                         $("#myModal").modal('hide');
-                            $.ajax({
-                                url: "/PlattformInventory/EventListPartial",
-                                data: {
-                                    page: 1,
-                                    plattformId: getUrlParam("plattformId")
-                                },
-                                success: function (data) {
-                                    $("#event_list_content").html(data);
-                                    $('.modal-backdrop.in').remove()
-                                    $('body').removeClass('modal-open')
-                                }
-                            });
+                        $.ajax({
+                            url: "/PlattformInventory/EventListPartial",
+                            data: {
+                                page: 1,
+                                plattformId: getUrlParam("plattformId")
+                            },
+                            success: function (data) {
+                                $("#event_list_content").html(data);
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
 
                     } else {
                         errorAlert('保存失败')
@@ -75,25 +98,8 @@
             })
             return false;
         })
-        //获取url中的参数
-        function getUrlParam(name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-            if (r != null) return unescape(r[2]); return null; //返回参数值
-        }
-        // 重置时间显示格式
-        String.prototype.ToString = function (format) {
-            var dateTime = new Date(parseInt(this.substring(6, this.length - 2)));
-            format = format.replace("yyyy", dateTime.getFullYear());
-            format = format.replace("yy", dateTime.getFullYear().toString().substr(2));
-            format = format.replace("MM", (dateTime.getMonth() + 1) < 10 ? "0" + (dateTime.getMonth() + 1) : (dateTime.getMonth() + 1))
-            format = format.replace("dd", dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
-            format = format.replace("hh", dateTime.getHours() < 10 ? "0" + dateTime.getHours() : dateTime.getHours());
-            format = format.replace("mm", dateTime.getMinutes());
-            format = format.replace("ss", dateTime.getSeconds());
-            format = format.replace("ms", dateTime.getMilliseconds())
-            return format;
-        };
+    })
+    
 </script>
 
 

@@ -22,16 +22,8 @@
                                 <td></td>
                                 <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                 <td class="product-count">@item.Sales_Sum</td>
-                                @if (item.Settlement == 0)
-                                {
-                                    <td>无结算金额</td>
-                                }
-                                else
-                                {
-                                    <td>@Math.Round((item.Sales_Sum / (item.Settlement == 0 ? 1 : item.Settlement)), 2)</td>
-                                }
-                                
-                                <td class="sales-storage">@item.Inventory_Sum</td>
+                                <td>@item.Product.Purchase_Price</td>
+                                <td class="sales-storage">0</td>
                             </tr>
                         }
                     </tbody>
