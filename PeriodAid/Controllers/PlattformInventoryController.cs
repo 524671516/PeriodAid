@@ -903,7 +903,7 @@ namespace PeriodAid.Controllers
             }
         }
         
-        public ActionResult StorageShow(int plattformId, int? Storage,DateTime? start,DateTime end)
+        public ActionResult StorageShow(int plattformId, int? Storage,DateTime start,DateTime end)
         {
             var storage = from m in _db.SS_Storage
                           select m;
