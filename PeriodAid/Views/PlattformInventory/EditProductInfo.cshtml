@@ -60,9 +60,9 @@
             <div class="form-group">
                 <label class="control-label col-md-2">库存日期</label>
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Inventory_Date, new { htmlAttributes = new { @class = "form-control disabled" } })
-                    @Html.ValidationMessageFor(model => model.Inventory_Date, "", new { @class = "text-danger" })
-                </div>
+                    <div id="show-date">@Html.EditorFor(model => model.Inventory_Date, new { htmlAttributes = new { @class = "form-control disabled" } })</div>
+                        @Html.ValidationMessageFor(model => model.Inventory_Date, "", new { @class = "text-danger" })
+                    </div>
             </div>
 
             <div class="form-group" style="display:none">
@@ -79,45 +79,43 @@
         </div>
     }
 </div>
+<div class="modal-footer"></div>
 
-<div class="modal-footer">
+<script>
+    // 修改日期格式
+    var strDate = $("#Inventory_Date").val().substring(0, 10)
+    $("#show-date input").attr("value", strDate)
+    $('#save-btn').click(function () {
+        $("#product-form").ajaxSubmit({
+            url: '/PlattformInventory/EditProductInfo',
+            type: 'post',
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    alert('保存成功')
+                    $("#myModal").modal('hide');
+                    $.ajax({
+                        url: "/PlattformInventory/ProductListPartial",
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                            page: 1,
+                        },
+                        success: function (data) {
+                            $("#product_list_content").html(data);
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                        }
+                    });
 
-</div>
-
-    <script>
-        $('#save-btn').click(function () {
-             $("#product-form").ajaxSubmit({
-                url: '/PlattformInventory/EditProductInfo',
-                type: 'post',
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        alert('保存成功')
-                        $("#myModal").modal('hide');
-                            $.ajax({
-                                url: "/PlattformInventory/ProductListPartial",
-                                data: {
-                                    plattformId: getUrlParam('plattformId'),
-                                    page: 1,
-                                },
-                                success: function (data) {
-                                    $("#product_list_content").html(data);
-                                    $('.modal-backdrop.in').remove()
-                                    $('body').removeClass('modal-open')
-                                    $('.hot-product').each(function () {
-                                        if ($(this).attr('data-bind') == 1) {
-                                            $(this).find('.box').addClass('fire-box')
-                                        }
-                                    })
-                                }
-                            });
-                        
-                    } else {
-                        errorAlert('保存失败')
-                    }
-                }   
-            })
-            return false;
+                } else {
+                    errorAlert('保存失败')
+                }
+            }
         })
-    </script>    
+        return false;
+    })
+</script>
+
+
+    
 
 

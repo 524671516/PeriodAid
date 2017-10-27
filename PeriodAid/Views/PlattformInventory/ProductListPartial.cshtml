@@ -18,37 +18,71 @@
             <th></th>
         </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td style="position:relative" data-bind="@item.Product_Type"  class="hot-product">
-            @Html.DisplayFor(modelItem => item.System_Code)<a class="box"></a>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Item_Code)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Item_Name)
-        </td>
-        <td>
-            @Html.ProductTypeStatus(item.Product_Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Carton_Spec)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Purchase_Price)
-        </td>
-        <td>
-            @item.Inventory_Date.ToString("yyyy-MM-dd")
-        </td>
-        <td>
-            <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp; 
-            @*<a class="chart-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">数据统计</a>*@
-            @*<a class="select-product" data-item="@item.Id" style="cursor:pointer">数据统计</a>*@
-            <span class="JD-product">@Html.ActionLink("数据统计","ViewProductStatistic", new { productId = item.Id })</span>
-            <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
-        </td>
-    </tr>
+@foreach (var item in Model)
+{
+    if (item.Product_Type == 1)
+    {
+        <tr>
+            <td style="position:relative" class="hot-product">
+                @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item_Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item_Name)
+            </td>
+            <td>
+                @Html.ProductTypeStatus(item.Product_Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Carton_Spec)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Purchase_Price)
+            </td>
+            <td>
+                @item.Inventory_Date.ToString("yyyy-MM-dd")
+            </td>
+            <td>
+                <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>
+                <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+            </td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td style="position:relative" class="hot-product">
+                @Html.DisplayFor(modelItem => item.System_Code)<a></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item_Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item_Name)
+            </td>
+            <td>
+                @Html.ProductTypeStatus(item.Product_Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Carton_Spec)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Purchase_Price)
+            </td>
+            <td>
+                @item.Inventory_Date.ToString("yyyy-MM-dd")
+            </td>
+            <td>
+                <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>
+                <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+            </td>
+        </tr>
+    }
+
 }
     </table>
     <div class="text-right">

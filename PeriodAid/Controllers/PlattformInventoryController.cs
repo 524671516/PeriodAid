@@ -887,7 +887,6 @@ namespace PeriodAid.Controllers
                                   select new Product_SummaryViewModel
                                   {
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
                                       Pay_Sum = g.Sum(m => m.Pay_Money),
                                       SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                   };
@@ -901,7 +900,6 @@ namespace PeriodAid.Controllers
                                   select new Product_SummaryViewModel
                                   {
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
                                       Pay_Sum = g.Sum(m => m.Pay_Money),
                                       SubAccount_Sum = g.Sum(m => m.SubAccount_Price)
                                   };
