@@ -43,7 +43,6 @@
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_UploadRecord).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_Event).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(true);
             // 新建
-            //modelBuilder.Entity<SS_Channel>().HasMany(e => e.SS_Terrace).WithOptional(e => e.channel).HasForeignKey(e => e.Channel_Id).WillCascadeOnDelete(false);
 
         }
     }
