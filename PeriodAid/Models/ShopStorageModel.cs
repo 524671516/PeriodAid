@@ -36,6 +36,8 @@
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<SS_Terrace>().HasMany(m => m.AttendChannel).WithMany(e => e.AttendTerrace).Map(m => { m.MapLeftKey("TerraceId"); m.MapRightKey("ChannelId"); m.ToTable("AttendTerrace_Channel"); });
+
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_Product).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_SalesRecord).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Storage>().HasMany(m => m.SS_SalesRecord).WithRequired(m => m.SS_Storage).HasForeignKey(m => m.Storage_Id).WillCascadeOnDelete(false);
@@ -64,6 +66,7 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_UploadRecord> SS_UploadRecord { get; set; }
+
     }
     /// <summary>
     /// 产品表
@@ -202,8 +205,9 @@
         public string Terrace_Name { get; set; }
 
         public int Channel_Id { get; set; }
-        
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_Channel> AttendChannel { get; set; }
     }
 
     [Table("SS_Channel")]
@@ -215,7 +219,9 @@
         public string Channel_Name { get; set; }
 
         public int Terrace_Id { get; set; }
-        
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_Terrace> AttendTerrace { get; set; }
     }
 
     [Table("SS_DateFlow")]
