@@ -36,8 +36,6 @@
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SS_Terrace>().HasMany(m => m.AttendChannel).WithMany(e => e.AttendTerrace).Map(m => { m.MapLeftKey("TerraceId"); m.MapRightKey("ChannelId"); m.ToTable("AttendTerrace_Channel"); });
-
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_Product).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_SalesRecord).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Storage>().HasMany(m => m.SS_SalesRecord).WithRequired(m => m.SS_Storage).HasForeignKey(m => m.Storage_Id).WillCascadeOnDelete(false);
@@ -45,7 +43,9 @@
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_UploadRecord).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_Event).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(true);
             // 新建
-
+            modelBuilder.Entity<SS_Terrace>().HasMany(m => m.AttendChannel).WithMany(e => e.AttendTerrace).Map(m => { m.MapLeftKey("TerraceId"); m.MapRightKey("ChannelId"); m.ToTable("AttendTerrace_Channel"); });
+            modelBuilder.Entity<SS_Channel>().HasMany(m => m.SS_DateFlow).WithRequired(m => m.SS_Channel).HasForeignKey(m => m.Channel_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SS_Terrace>().HasMany(m => m.SS_Product).WithRequired(m => m.SS_Terrace).HasForeignKey(m => m.Terrace_Id).WillCascadeOnDelete(false);
         }
     }
     /// <summary>
@@ -96,6 +96,10 @@
         public int Plattform_Id { get; set; }
 
         public virtual SS_Plattform SS_Plattform { get; set; }
+
+        public virtual SS_Terrace SS_Terrace { get; set; }
+
+        public int Terrace_Id { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Storage> SS_Storage { get; set; }
@@ -208,6 +212,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Channel> AttendChannel { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_Product> SS_Product { get; set; }
     }
 
     [Table("SS_Channel")]
@@ -222,6 +229,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Terrace> AttendTerrace { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_DateFlow> SS_DateFlow { get; set; }
     }
 
     [Table("SS_DateFlow")]
@@ -240,6 +250,10 @@
         public int Order_Count { get; set; }
 
         public decimal Convert_Ratio { get; set; }
+
+        public virtual SS_Channel SS_Channel { get; set; }
+
+        public int Channel_Id { get; set; }
     }
 
     //public class MyEntity
