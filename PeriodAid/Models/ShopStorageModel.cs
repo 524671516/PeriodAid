@@ -30,6 +30,9 @@
         public virtual DbSet<SS_SalesRecord> SS_SalesRecord { get; set; }
         public virtual DbSet<SS_UploadRecord> SS_UploadRecord { get; set; }
         public virtual DbSet<SS_Event> SS_Event { get; set; }
+        public virtual DbSet<SS_Terrace> SS_Terrace { get; set; }
+        public virtual DbSet<SS_Channel> SS_Channel { get; set; }
+        public virtual DbSet<SS_DateFlow> SS_DateFlow { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -39,6 +42,9 @@
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_Storage).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_UploadRecord).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_Event).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(true);
+            // 新建
+            //modelBuilder.Entity<SS_Channel>().HasMany(e => e.SS_Terrace).WithOptional(e => e.channel).HasForeignKey(e => e.Channel_Id).WillCascadeOnDelete(false);
+
         }
     }
     /// <summary>
@@ -187,7 +193,50 @@
         public DateTime EventDate { get; set; }
     }
     
-    
+    // 新建
+    [Table("SS_Terrace")]
+    public partial class SS_Terrace
+    {
+        public int Id { get; set; }
+
+        [StringLength(10)]
+        public string Terrace_Name { get; set; }
+
+        public int Channel_Id { get; set; }
+        
+
+    }
+
+    [Table("SS_Channel")]
+    public partial class SS_Channel
+    {
+        public int Id { get; set; }
+
+        [StringLength(16)]
+        public string Channel_Name { get; set; }
+
+        public int Terrace_Id { get; set; }
+        
+    }
+
+    [Table("SS_DateFlow")]
+    public partial class SS_DateFlow
+    {
+        public int Id { get; set; }
+
+        public DateTime DateFlow_Date { get; set; }
+
+        public int Product_Flow { get; set; }
+
+        public int Product_Visitor { get; set; }
+
+        public int Product_Customer { get; set; }
+
+        public int Order_Count { get; set; }
+
+        public decimal Convert_Ratio { get; set; }
+    }
+
     //public class MyEntity
     //{
     //    public int Id { get; set; }
