@@ -30,9 +30,9 @@
         public virtual DbSet<SS_SalesRecord> SS_SalesRecord { get; set; }
         public virtual DbSet<SS_UploadRecord> SS_UploadRecord { get; set; }
         public virtual DbSet<SS_Event> SS_Event { get; set; }
-        public virtual DbSet<SS_Terrace> SS_Terrace { get; set; }
-        public virtual DbSet<SS_Channel> SS_Channel { get; set; }
-        public virtual DbSet<SS_DateFlow> SS_DateFlow { get; set; }
+        public virtual DbSet<SS_TrafficPlattform> SS_TrafficPlattform { get; set; }
+        public virtual DbSet<SS_TrafficSource> SS_TrafficSource { get; set; }
+        public virtual DbSet<SS_TrafficData> SS_TrafficData { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -43,9 +43,8 @@
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_UploadRecord).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_Event).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(true);
             // 新建
-            modelBuilder.Entity<SS_Terrace>().HasMany(m => m.AttendChannel).WithMany(e => e.AttendTerrace).Map(m => { m.MapLeftKey("TerraceId"); m.MapRightKey("ChannelId"); m.ToTable("AttendTerrace_Channel"); });
-            modelBuilder.Entity<SS_Channel>().HasMany(m => m.SS_DateFlow).WithRequired(m => m.SS_Channel).HasForeignKey(m => m.Channel_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SS_Terrace>().HasMany(m => m.SS_Product).WithRequired(m => m.SS_Terrace).HasForeignKey(m => m.Terrace_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.AttendTrafficSource).WithMany(e => e.AttendTrafficPlattform).Map(m => { m.MapLeftKey("TrafficPlattformId"); m.MapRightKey("TrafficSourceId"); m.ToTable("AttendPlattform_Source"); });
+            modelBuilder.Entity<SS_TrafficSource>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_TrafficSource).HasForeignKey(m => m.TrafficSource_Id).WillCascadeOnDelete(false);
         }
     }
     /// <summary>
@@ -97,9 +96,9 @@
 
         public virtual SS_Plattform SS_Plattform { get; set; }
 
-        public virtual SS_Terrace SS_Terrace { get; set; }
+        public virtual SS_TrafficPlattform SS_TrafficPlattform { get; set; }
 
-        public int Terrace_Id { get; set; }
+        public int TrafficPlattform_Id { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Storage> SS_Storage { get; set; }
@@ -109,7 +108,11 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Event> SS_Event { get; set; }
+
         public int Bar_Code { get; internal set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_TrafficData> SS_TrafficData { get; set; }
     }
     /// <summary>
     /// 仓库表
@@ -200,42 +203,38 @@
     }
     
     // 新建
-    [Table("SS_Terrace")]
-    public partial class SS_Terrace
+    [Table("SS_TrafficPlattform")]
+    public partial class SS_TrafficPlattform
     {
         public int Id { get; set; }
 
         [StringLength(10)]
-        public string Terrace_Name { get; set; }
-
-        public int Channel_Id { get; set; }
+        public string TrafficPlattform_Name { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SS_Channel> AttendChannel { get; set; }
+        public virtual ICollection<SS_TrafficSource> AttendTrafficSource { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Product> SS_Product { get; set; }
     }
 
-    [Table("SS_Channel")]
-    public partial class SS_Channel
+    [Table("SS_TrafficSource")]
+    public partial class SS_TrafficSource
     {
         public int Id { get; set; }
 
         [StringLength(16)]
-        public string Channel_Name { get; set; }
-
-        public int Terrace_Id { get; set; }
+        public string TrafficSource_Name { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SS_Terrace> AttendTerrace { get; set; }
+        public virtual ICollection<SS_TrafficPlattform> AttendTrafficPlattform { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SS_DateFlow> SS_DateFlow { get; set; }
+        public virtual ICollection<SS_TrafficData> SS_TrafficData { get; set; }
     }
 
-    [Table("SS_DateFlow")]
-    public partial class SS_DateFlow
+    [Table("SS_TrafficData")]
+    public partial class SS_TrafficData
     {
         public int Id { get; set; }
 
@@ -251,9 +250,13 @@
 
         public decimal Convert_Ratio { get; set; }
 
-        public virtual SS_Channel SS_Channel { get; set; }
+        public virtual SS_TrafficSource SS_TrafficSource { get; set; }
 
-        public int Channel_Id { get; set; }
+        public int TrafficSource_Id { get; set; }
+
+        public virtual SS_Product SS_Product { get; set; }
+
+        public int Product_Id { get; set; }
     }
 
     //public class MyEntity

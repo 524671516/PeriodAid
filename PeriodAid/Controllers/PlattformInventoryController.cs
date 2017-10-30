@@ -1210,6 +1210,60 @@ namespace PeriodAid.Controllers
                         select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "- " + m.Item_Name  };
             return Json(product);
         }
+
+        // 京东流量统计
+        public ActionResult TrafficForm(FormCollection form)
+        {
+            var file = Request.Files[0];
+            var filename = DateTime.Now.Ticks + ".csv";
+            AliOSSUtilities util = new AliOSSUtilities();
+            util.PutObject(file.InputStream, "ExcelUpload/" + filename);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+            CsvReader csv_reader = new CsvReader(reader);
+            List<string> headers = new List<string>();
+            List<StorageOrder> storageOrder = new List<StorageOrder>();
+            while (csv_reader.Read())
+            {
+                try
+                {
+                    string OrderId = csv_reader.GetField<string>("订单号");
+                    if (OrderId.ToString() == "" || OrderId.ToString() == null)
+                    {
+                        break;
+                    }
+                    string ProductId = csv_reader.GetField<string>("商品编码");
+                    var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == ProductId);
+                    if (product != null)
+                    {
+                        int o_count;
+                        string s_name, o_code, su_name;
+                        int order_count = csv_reader.TryGetField<int>("采购数量", out o_count) ? o_count : 0;
+                        int _carton_count = order_count / (product.Carton_Spec == 0 ? 1 : product.Carton_Spec);
+                        StorageOrder storageorder = new StorageOrder()
+                        {
+                            OrderId = csv_reader.TryGetField<string>("订单号", out o_code) ? o_code : "NaN",
+                            SystemCode = product.System_Code,
+                            ProductName = product.Item_Name,
+                            StorageName = csv_reader.TryGetField<string>("分配机构", out s_name) ? s_name : "NaN",
+                            SubStoName = csv_reader.TryGetField<string>("仓库", out su_name) ? su_name : "NaN",
+                            CartonSpec = product.Carton_Spec,
+                            OrderCount = order_count,
+                            CartonCount = _carton_count
+                        };
+                        storageOrder.Add(storageorder);
+                    }
+                }
+                catch (Exception)
+                {
+                    return View("error");
+                }
+            }
+            var _stream = OutExcel(storageOrder);
+            return File(_stream, "application/zip", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.zip");
+
+        }
+
+
     }
 }
 
