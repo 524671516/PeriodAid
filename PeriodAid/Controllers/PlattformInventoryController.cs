@@ -1212,12 +1212,11 @@ namespace PeriodAid.Controllers
         }
 
         // 京东流量统计
-        private bool Read_TrafficFile(int plattformId,string filename, DateTime date,int trafficPlattformId)
+        private bool Read_TrafficFile(int plattformId,string filename, DateTime date,string plattformName)
         {
             AliOSSUtilities util = new AliOSSUtilities();
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.UTF8, false);
             CsvReader csv_reader = new CsvReader(reader);
-            int row_count = 0;
             List<string> headers = new List<string>();
             while (csv_reader.Read())
             {
@@ -1228,29 +1227,40 @@ namespace PeriodAid.Controllers
                     {
                         break;
                     }
-                    var traffic_source = _db.SS_TrafficSource.SingleOrDefault();
+                    string s_name;
+                    string source_name = csv_reader.GetField<string>("流量渠道");
+                    var traffic_source = _db.SS_TrafficSource.SingleOrDefault(m=>m.TrafficSource_Name == source_name);
                     if (traffic_source == null)
                     {
-                        string s_name;
                         traffic_source = new SS_TrafficSource()
                         {
                             TrafficSource_Name = csv_reader.TryGetField<string>("流量渠道", out s_name) ? s_name : "NaN",
                         };
                         _db.SS_TrafficSource.Add(traffic_source);
+                    }else
+                    {
+                        traffic_source.TrafficSource_Name = source_name;
+                        _db.Entry(traffic_source).State = System.Data.Entity.EntityState.Modified;
                     }
                     var traffic_plattform = _db.SS_TrafficPlattform.FirstOrDefault(m => m.Plattform_Id == 1);
                     if (traffic_plattform == null)
                     {
                         traffic_plattform = new SS_TrafficPlattform()
                         {
-                            TrafficPlattform_Name = "手Q",
+                            TrafficPlattform_Name = plattformName,
                             Plattform_Id = 1,
                             AttendTrafficSource = new List<SS_TrafficSource>()
                         };
                         _db.SS_TrafficPlattform.Add(traffic_plattform);
                         traffic_plattform.AttendTrafficSource.Add(traffic_source);
+                        _db.SaveChanges();
+                    }else
+                    {
+                        traffic_plattform.AttendTrafficSource.Add(traffic_source);
+                        traffic_plattform.TrafficPlattform_Name = plattformName;
+                        _db.Entry(traffic_plattform).State = System.Data.Entity.EntityState.Modified;
                     }
-                    var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.DateFlow_Date == date && m.TrafficSource_Id == traffic_source.Id);
+                    var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficSource_Id == traffic_source.Id);
                     if (traffic_data == null)
                     {
                         string s_code;
@@ -1262,7 +1272,7 @@ namespace PeriodAid.Controllers
                             decimal c_ratio;
                             traffic_data = new SS_TrafficData()
                             {
-                                DateFlow_Date = date,
+                                Update = date,
                                 Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
                                 Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
                                 Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0,
@@ -1274,7 +1284,6 @@ namespace PeriodAid.Controllers
                             _db.SS_TrafficData.Add(traffic_data);
                         }
                     }
-                    row_count++;
                 }
                 catch (Exception)
                 {
@@ -1285,7 +1294,7 @@ namespace PeriodAid.Controllers
             return true;
         }
         [HttpPost]
-        public ActionResult UploadFile1(FormCollection form, int plattformId,int trafficPlattformId)
+        public ActionResult UploadFile1(FormCollection form, int plattformId,string plattformName)
         {
             var file = Request.Files[0];
             if (file != null)
@@ -1296,7 +1305,7 @@ namespace PeriodAid.Controllers
                 var date_time = form["file-date"].ToString();
                 if (plattformId == 1)
                 {
-                    var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), trafficPlattformId);
+                    var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
                     if (result)
                         return Json(new { result = "SUCCESS" });
                     else

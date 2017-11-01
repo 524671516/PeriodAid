@@ -244,7 +244,7 @@
     {
         public int Id { get; set; }
 
-        public DateTime DateFlow_Date { get; set; }
+        public DateTime Update { get; set; }
 
         public int Product_Flow { get; set; }
 

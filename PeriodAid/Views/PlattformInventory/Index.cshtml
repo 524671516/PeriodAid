@@ -62,18 +62,8 @@
             var fileName = file.lastIndexOf('\\')
             strName = file.substring(fileName + 1)
             $('#upload').text(strName)
-            var plattformName = strName.substring(0, 2)
-            if (plattformName == "手Q") {
-                $(this).attr("data-id","13")
-            } else if (plattformName == "微信") {
-                $(this).attr("data-id", "14")
-            } else if (plattformName == "PC") {
-                $(this).attr("data-id", "15")
-            } else if (plattformName == "M站") {
-                $(this).attr("data-id", "16")
-            } else {
-                $(this).attr("data-id", "17")
-            }
+            var plattformName = strName.substring(0, strName.indexOf("."))
+            $(this).attr("data-name", plattformName)
         } else {
             $('#upload').text("选择文件")
         }
@@ -90,7 +80,7 @@
                 type: "post",
                 data: {
                     plattformId: 1,
-                    trafficPlattformId: $('#file-name').attr("data-id")
+                    plattformName: $('#file-name').attr("data-name")
                 },
                 success: function (msg) {
                     console.log(1)
