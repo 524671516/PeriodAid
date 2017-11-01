@@ -274,9 +274,9 @@
         public int Product_Flow { get; set; }
         public int Product_Visitor { get; set; }
         public int Product_Customer { get; set; }
-        public decimal Product_Times { get; set; }
+        public string Product_Times { get; set; }
         public int Order_Count { get; set; }
-        public decimal Convert_Ratio { get; set; }
+        public string Convert_Ratio { get; set; }
     }
     //public class MyEntity
     //{
