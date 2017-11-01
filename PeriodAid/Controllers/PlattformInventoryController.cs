@@ -1263,7 +1263,71 @@ namespace PeriodAid.Controllers
 
         }
 
+        // 京东渠道统计
+        public ActionResult Read_JDFile(FormCollection form)
+        {
+            var file = Request.Files[0];
+            var filename = file.FileName;
+            AliOSSUtilities util = new AliOSSUtilities();
+            util.PutObject(file.InputStream, "ExcelUpload/" + filename);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.UTF8, false);
+            CsvReader csv_reader = new CsvReader(reader);
+            List<TrafficData> trafficData = new List<TrafficData>();
+            int p_code,p_flow,p_visitor,p_times,p_count,p_ratio;
+            string p_name,d_source;
+            while (csv_reader.Read())
+            {
+                try
+                {
+                    string data_end = csv_reader.GetField<string>(0);
+                    if (data_end.ToString() == "" || data_end.ToString() == null)
+                    {
+                        break;
+                    }
+                    TrafficData s1 = new TrafficData()
+                    {
+                        T_date = DateTime.Now,
+                        Product_Id= csv_reader.TryGetField<int>("商品编码", out p_code) ? p_code : 0,
+                        Product_Name= csv_reader.TryGetField<string>("商品名称", out p_name) ? p_name : "NaN",
+                        Date_Source= csv_reader.TryGetField<string>("流量渠道", out d_source) ? d_source : "NaN",
+                        Product_Flow= csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
+                        Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
+                        Product_Times= csv_reader.TryGetField<int>("商品访次", out p_times) ? p_times : 0,
+                        Order_Count = csv_reader.TryGetField<int>("商品订单行", out p_count) ? p_count : 0,
+                        Convert_Ratio= csv_reader.TryGetField<int>("商品转化率", out p_ratio) ? p_ratio : 0
+                    };
+                    trafficData.Add(s1);
+                }
+                catch (Exception)
+                {
+                    return View("error");
+                }
+            }
 
+            HSSFWorkbook book = new HSSFWorkbook();
+            var sendorderlist = from m in trafficData
+                                group m by m.Product_Id into g
+                                select g;
+            foreach (var sendorder in trafficData)
+            {
+                ISheet sheet = book.CreateSheet(filename);
+                // 基本信息
+                int cell_pos = 0;
+                int row_pos = 0;
+                IRow single_row1 = sheet.CreateRow(row_pos);
+                cell_pos = 0;
+                single_row1.CreateCell(cell_pos).SetCellValue("日期");
+                cell_pos++;
+                single_row1.CreateCell(cell_pos).SetCellValue(sendorder.T_date);
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.xls");
+
+
+        }
     }
 }
 

@@ -259,6 +259,19 @@
         public int Product_Id { get; set; }
     }
 
+    public partial class TrafficData
+    {
+        public DateTime T_date { get; set; }
+        public int Product_Id { get; set; }
+        public string Product_Name { get; set; }
+        public string Date_Source { get; set; }
+        public int Product_Flow { get; set; }
+        public int Product_Visitor { get; set; }
+        public int Product_Customer { get; set; }
+        public decimal Product_Times { get; set; }
+        public int Order_Count { get; set; }
+        public decimal Convert_Ratio { get; set; }
+    }
     //public class MyEntity
     //{
     //    public int Id { get; set; }
