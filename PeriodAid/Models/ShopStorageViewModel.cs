@@ -69,23 +69,7 @@ namespace PeriodAid.Models
 
         public int CartonCount { get; set; }
     }
-
-    // 天猫调货单
-    public class TM_TransferringOrder
-    {
-        public string StorageCode { get; set; }
-
-        public string SystemCode { get; set; }
-
-        public string ItemName { get; set; }
-
-        public int CommitCount { get; set; }
-        
-        public int BarCode { get; set; }
-    }
-
-
-
+    
     // ViewModel
     public class Product_SummaryViewModel
     {
@@ -101,7 +85,7 @@ namespace PeriodAid.Models
 
         public decimal Settlement { get; set; }
     }
-
+    
     class StreamDataSource : IStaticDataSource
     {
         public byte[] bytes { get; set; }
