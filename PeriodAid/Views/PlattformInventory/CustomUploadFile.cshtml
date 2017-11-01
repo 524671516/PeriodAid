@@ -12,25 +12,14 @@
     </style>
 }
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
-@*<div id="form-view-content">
+<div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
         <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
         <input type="file" id="file-name" name="file-name" class="hidden" />   
         <a href="javascript:;" id="upload">选择文件</a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
     </form>
-</div>*@
-
-<div id="form-view-content">
-    <form action="/PlattformInventory/UploadFile1" method="post" enctype="multipart/form-data" id="up-file-form">
-        <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
-        <input type="file" id="file-name" name="file-name" class="hidden" />
-        <a href="javascript:;" id="upload">选择文件</a>
-        <input type="submit" class="btn btn-danger" id="file-form-sub" />
-    </form>
 </div>
-<a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载</a>
-<form method="post" id="calc_form" action="/PlattformInventory/getTrafficExcel"></form>
     <br />
     <div id="tm-calendar-view">
         <div class="tm-calendar-view tm-view" style="display:block;position: relative;top:0;height: 521px;width: 960px;">
@@ -119,67 +108,62 @@
                         $('#file-loading').show()
                         $('#file-form-sub').attr('disabled', 'disabled')
                         $("#up-file-form").ajaxSubmit({
-                            url: "/PlattformInventory/UploadFile1",
+                            url: "/PlattformInventory/UploadFile",
                             type: "post",
                             data: {
                                 plattformId: 1,
                             },
                             success: function (msg) {
-                                console.log(1)
-                                //if (msg.result == "SUCCESS") {
-                                //    $.ajax({
-                                //        url: "/PlattformInventory/CustomUploadFilePartial",
-                                //        type: "post",
-                                //        data: {
-                                //            plattformId: getUrlParam('plattformId'),
-                                //            month: $("#current-date").text() + "-01"
-                                //        },
-                                //        success: function (data) {
-                                //            var dataDate = $('.tm-calendar-monthofdate')
-                                //            for (var i = 0; i < dataDate.length; i++) {
-                                //                var nowDate = dataDate.eq(i).attr('date-day');
-                                //                for (var j = 0; j < data.length; j++) {
-                                //                    record = data[j].record_date.ToString("yyyy-MM-dd");
-                                //                    if (record == nowDate) {
-                                //                        dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
-                                //                    }
-                                //                }
-                                //            }
+                                if (msg.result == "SUCCESS") {
+                                    $.ajax({
+                                        url: "/PlattformInventory/CustomUploadFilePartial",
+                                        type: "post",
+                                        data: {
+                                            plattformId: getUrlParam('plattformId'),
+                                            month: $("#current-date").text() + "-01"
+                                        },
+                                        success: function (data) {
+                                            var dataDate = $('.tm-calendar-monthofdate')
+                                            for (var i = 0; i < dataDate.length; i++) {
+                                                var nowDate = dataDate.eq(i).attr('date-day');
+                                                for (var j = 0; j < data.length; j++) {
+                                                    record = data[j].record_date.ToString("yyyy-MM-dd");
+                                                    if (record == nowDate) {
+                                                        dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                                    }
+                                                }
+                                            }
                                 $("#file-loading").hide();
-                                //            $('#file-date').val('')
-                                //            $('#upload').text('选择文件')
-                                //            $('#file-form-sub').removeAttr('disabled')
-                                //            alert('上传成功')
-                                //        },
-                                //        error: function () {
-                                //            errorAlert("请求数据失败。");
-                                //            $("#file-loading").hide();
-                                //            $('#file-form-sub').removeAttr('disabled')
-                                //            $('#file-date').val('')
-                                //            $('#upload').text('选择文件')
-                                //        }
-                                //    });
-                                //}
-                                //else {
-                                //    errorAlert("上传失败");
-                                //    $("#file-loading").hide();
-                                //    $('#file-date').val('')
-                                //    $('#upload').text('选择文件')
-                                //    $('#file-form-sub').removeAttr('disabled')
-                                //}
+                                            $('#file-date').val('')
+                                            $('#upload').text('选择文件')
+                                            $('#file-form-sub').removeAttr('disabled')
+                                            alert('上传成功')
+                                        },
+                                        error: function () {
+                                            errorAlert("请求数据失败。");
+                                            $("#file-loading").hide();
+                                            $('#file-form-sub').removeAttr('disabled')
+                                            $('#file-date').val('')
+                                            $('#upload').text('选择文件')
+                                        }
+                                    });
+                                }
+                                else {
+                                    errorAlert("上传失败");
+                                    $("#file-loading").hide();
+                                    $('#file-date').val('')
+                                    $('#upload').text('选择文件')
+                                    $('#file-form-sub').removeAttr('disabled')
+                                }
                             }
                         });
                     } else {
-                        console.log(2)
                         errorAlert('请选择日期或上传文件')
                         $('#file-date').val('')
                         $('#upload').text('选择文件')
                     }
                     return false;
                 });
-
-
-
             });
         </script>
     }

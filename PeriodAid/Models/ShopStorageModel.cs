@@ -100,11 +100,7 @@
         public int Plattform_Id { get; set; }
 
         public virtual SS_Plattform SS_Plattform { get; set; }
-
-        public virtual SS_TrafficPlattform SS_TrafficPlattform { get; set; }
-
-        public int TrafficPlattform_Id { get; set; }
-
+        
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_Storage> SS_Storage { get; set; }
 
@@ -235,13 +231,12 @@
         [StringLength(16)]
         public string TrafficSource_Name { get; set; }
 
-        public DateTime Flow_Date { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficPlattform> AttendTrafficPlattform { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficData> SS_TrafficData { get; set; }
+        
     }
 
     [Table("SS_TrafficData")]

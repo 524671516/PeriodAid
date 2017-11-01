@@ -1,40 +1,108 @@
 ﻿@{
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-<div id="form-view-content">
-    <form action="/PlattformInventory/Read_JDFile" method="post" enctype="multipart/form-data" id="up-file-form">
+@*<div id="form-view-content">
+    <form action="/PlattformInventory/StorageOrder" method="post" enctype="multipart/form-data" id="up-file-form">
         <input type="file" id="file-name" name="file-name" class="hidden" />
         <a href="javascript:;" id="upload">选择文件</a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" style="padding:3px 12px;width:auto" value="提交并下载" />
     </form>
+</div>*@
+
+<div id="form-view-content">
+    <form action="/PlattformInventory/UploadFile1" method="post" enctype="multipart/form-data" id="up-file-form">
+        <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
+        <input type="file" id="file-name" name="file-name" class="hidden" />
+        <a href="javascript:;" id="upload">选择文件</a>
+        <input type="submit" class="btn btn-danger" id="file-form-sub" />
+    </form>
 </div>
+<a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载</a>
+<form method="post" id="calc_form" action="/PlattformInventory/getTrafficExcel"></form>
 @section scripts{
 <script>
-    $('#upload').on('click', function () {
+    //$('#upload').on('click', function () {
+    //    $('#file-name').trigger('click')
+    //})
+    //// 显示文件名
+    //$('#file-name').change(function () {
+    //    if ($(this).val() != "") {
+    //        var file = $("#file-name").val();
+    //        var fileName = file.lastIndexOf('\\')
+    //        var strName = file.substring(fileName + 1)
+    //        $('#upload').text(strName)
+    //    } else {
+    //        $('#upload').text("选择文件")
+    //    }
+    //})
+    //$('#file-form-sub').on('click', function () {
+    //    var fileVal = $('#file-name').val();
+    //    if (fileVal == '') {
+    //        errorAlert('请选择上传文件')
+    //        return false;
+    //    } else {
+    //        alert('提交成功')
+    //        $('#upload').text("选择文件")
+    //    }
+    //})
+    $('#upload').click(function () {
         $('#file-name').trigger('click')
     })
-    // 显示文件名
+    //日期格式改变
+    $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
+    //星期格式汉化
+    $("#file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+    //月份格式汉化
+    $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+    $("#file-date").datepicker();
+    // 截取文件名
     $('#file-name').change(function () {
         if ($(this).val() != "") {
             var file = $("#file-name").val();
             var fileName = file.lastIndexOf('\\')
-            var strName = file.substring(fileName + 1)
+            strName = file.substring(fileName + 1)
             $('#upload').text(strName)
+            var plattformName = strName.substring(0, 2)
+            if (plattformName == "手Q") {
+                $(this).attr("data-id","13")
+            } else if (plattformName == "微信") {
+                $(this).attr("data-id", "14")
+            } else if (plattformName == "PC") {
+                $(this).attr("data-id", "15")
+            } else if (plattformName == "M站") {
+                $(this).attr("data-id", "16")
+            } else {
+                $(this).attr("data-id", "17")
+            }
         } else {
             $('#upload').text("选择文件")
         }
     })
-    $('#file-form-sub').on('click', function () {
-        var fileVal = $('#file-name').val();
-        if (fileVal == '') {
-            errorAlert('请选择上传文件')
-            return false;
-        } else {
-            alert('提交成功')
-            $('#upload').text("选择文件")
-        }
-    })
-
     
+    $("#file-form-sub").click(function () {
+        var dataVal = $('#file-date').val()
+        var fileVal = $("#file-name").val()
+        if (dataVal && fileVal != '') {
+            $('#file-loading').show()
+            $('#file-form-sub').attr('disabled', 'disabled')
+            $("#up-file-form").ajaxSubmit({
+                url: "/PlattformInventory/UploadFile1",
+                type: "post",
+                data: {
+                    plattformId: 1,
+                    trafficPlattformId: $('#file-name').attr("data-id")
+                },
+                success: function (msg) {
+                    console.log(1)
+                }
+            });
+        } else {
+        console.log(2)
+            errorAlert('请选择日期或上传文件')
+            $('#file-date').val('')
+            $('#upload').text('选择文件')
+        }
+        return false;
+    });
 </script>
     }
