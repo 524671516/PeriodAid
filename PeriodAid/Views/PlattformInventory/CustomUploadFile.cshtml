@@ -12,159 +12,174 @@
     </style>
 }
 <input type="hidden" id="plattformId" value="@ViewBag.PlattformId" />
-<div id="form-view-content">
+@*<div id="form-view-content">
     <form action="/PlattformInventory/UploadFile" method="post" enctype="multipart/form-data" id="up-file-form">
         <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
         <input type="file" id="file-name" name="file-name" class="hidden" />   
         <a href="javascript:;" id="upload">选择文件</a>
         <input type="submit" class="btn btn-danger" id="file-form-sub" />
     </form>
-</div>
-<br />
-<div id="tm-calendar-view">
-    <div class="tm-calendar-view tm-view" style="display:block;position: relative;top:0;height: 521px;width: 960px;">
-        <div class="tm-view-header tm-calendar-view-header">
-            <div class="tm-view-header-select">
-            </div>
-            <div class="tm-calendar-view-control tm-view-control">
-                <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                <span id="current-date" class="tm-calendar-view-control tm-calendar-currentmonth color-blue">@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
-                <a href="javascript:;" class="tm-calendar-view-control tm-calendar-next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-        <div class="tm-view-content tm-calendar-view-content">
-            <div class="tm-view-content-wrap  tm-view-wrap tm-calendar-view-wrap" id="tm-calendar-view-wrap">
-            </div>
-        </div>
-    </div>
-    <div class="tm-view-content-container  tm-view-container" id="file-loading">
-        <div class="tm-veiw-loading text-center" id="tm-view-loading" >
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
-            <span class="sr-only">正在加载...</span>
-        </div>
-    </div>
-</div>
+</div>*@
 
-@section scripts
-{   
-<script>
-        $(function () {
-            // trigger 事件
-            $('#upload').click(function () {
-                $('#file-name').trigger('click')
-            })
-            //日期格式改变  
-            $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
-            //星期格式汉化  
-            $("#file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
-            //月份格式汉化  
-            $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
-            $("#file-date").datepicker();
-            // 初始化日历
-            TmDatePicker.Init({
-                container: "#tm-calendar-view-wrap",
-                onpagechanged: function (e) {
-                    $("#file-loading").hide()
-                    $.ajax({
-                        url: "/PlattformInventory/CustomUploadFilePartial",
-                        type: "post",
-                        data: {
-                            plattformId: getUrlParam('plattformId'),
-                            month: e.currentyear + "-" + e.currentmonth
-                        },
-                        success: function (data) {
-                            var dataDate = $('.tm-calendar-monthofdate')
-                            for (var i = 0; i < dataDate.length; i++) {
-                                var nowDate = dataDate.eq(i).attr('date-day');
-                                for (var j = 0; j < data.length; j++) {
-                                    record = data[j].record_date.ToString("yyyy-MM-dd");
-                                    if (record == nowDate) {
-                                        dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+<div id="form-view-content">
+    <form action="/PlattformInventory/UploadFile1" method="post" enctype="multipart/form-data" id="up-file-form">
+        <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
+        <input type="file" id="file-name" name="file-name" class="hidden" />
+        <a href="javascript:;" id="upload">选择文件</a>
+        <input type="submit" class="btn btn-danger" id="file-form-sub" />
+    </form>
+</div>
+<a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载</a>
+<form method="post" id="calc_form" action="/PlattformInventory/getTrafficExcel"></form>
+    <br />
+    <div id="tm-calendar-view">
+        <div class="tm-calendar-view tm-view" style="display:block;position: relative;top:0;height: 521px;width: 960px;">
+            <div class="tm-view-header tm-calendar-view-header">
+                <div class="tm-view-header-select">
+                </div>
+                <div class="tm-calendar-view-control tm-view-control">
+                    <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                    <span id="current-date" class="tm-calendar-view-control tm-calendar-currentmonth color-blue">@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
+                    <a href="javascript:;" class="tm-calendar-view-control tm-calendar-next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                </div>
+            </div>
+            <div class="tm-view-content tm-calendar-view-content">
+                <div class="tm-view-content-wrap  tm-view-wrap tm-calendar-view-wrap" id="tm-calendar-view-wrap">
+                </div>
+            </div>
+        </div>
+        <div class="tm-view-content-container  tm-view-container" id="file-loading">
+            <div class="tm-veiw-loading text-center" id="tm-view-loading">
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
+                <span class="sr-only">正在加载...</span>
+            </div>
+        </div>
+    </div>
+
+    @section scripts
+{
+        <script>
+            $(function () {
+                // trigger 事件
+                $('#upload').click(function () {
+                    $('#file-name').trigger('click')
+                })
+                //日期格式改变
+                $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
+                //星期格式汉化
+                $("#file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+                //月份格式汉化
+                $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+                $("#file-date").datepicker();
+                // 初始化日历
+                TmDatePicker.Init({
+                    container: "#tm-calendar-view-wrap",
+                    onpagechanged: function (e) {
+                        $("#file-loading").hide()
+                        $.ajax({
+                            url: "/PlattformInventory/CustomUploadFilePartial",
+                            type: "post",
+                            data: {
+                                plattformId: getUrlParam('plattformId'),
+                                month: e.currentyear + "-" + e.currentmonth
+                            },
+                            success: function (data) {
+                                var dataDate = $('.tm-calendar-monthofdate')
+                                for (var i = 0; i < dataDate.length; i++) {
+                                    var nowDate = dataDate.eq(i).attr('date-day');
+                                    for (var j = 0; j < data.length; j++) {
+                                        record = data[j].record_date.ToString("yyyy-MM-dd");
+                                        if (record == nowDate) {
+                                            dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                        }
                                     }
                                 }
+                            },
+                            error: function () {
+                                errorAlert("请求数据失败。");
                             }
-                        },
-                        error: function () {
-                            errorAlert("请求数据失败。");
-                        }
-                    });
-                }
-            });
-            // 截取文件名
-            $('#file-name').change(function () {
-                if ($(this).val() != "") {
-                    var file = $("#file-name").val();
-                    var fileName = file.lastIndexOf('\\')
-                    var strName = file.substring(fileName + 1)
-                    $('#upload').text(strName)
-                } else {
-                    $('#upload').text("选择文件")
-                }
-            })
-            $("#file-form-sub").click(function () {              
-                var dataVal = $('#file-date').val()
-                var fileVal = $("#file-name").val()
-                if (dataVal && fileVal != '') {
-                    $('#file-loading').show()
-                    $('#file-form-sub').attr('disabled', 'disabled')
-                    $("#up-file-form").ajaxSubmit({
-                        url: "/PlattformInventory/UploadFile",
-                        type: "post",
-                        data: {
-                            plattformId: getUrlParam('plattformId'),
-                        },
-                        success: function (msg) {
-                            if (msg.result == "SUCCESS") {
-                                $.ajax({
-                                    url: "/PlattformInventory/CustomUploadFilePartial",
-                                    type: "post",
-                                    data: {
-                                        plattformId: getUrlParam('plattformId'),
-                                        month: $("#current-date").text() + "-01"
-                                    },
-                                    success: function (data) {
-                                        var dataDate = $('.tm-calendar-monthofdate')
-                                        for (var i = 0; i < dataDate.length; i++) {
-                                            var nowDate = dataDate.eq(i).attr('date-day');
-                                            for (var j = 0; j < data.length; j++) {
-                                                record = data[j].record_date.ToString("yyyy-MM-dd");
-                                                if (record == nowDate) {
-                                                    dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
-                                                }
-                                            }
-                                        }
-                                        $("#file-loading").hide();
-                                        $('#file-date').val('')
-                                        $('#upload').text('选择文件')
-                                        $('#file-form-sub').removeAttr('disabled')
-                                        alert('上传成功')
-                                    },
-                                    error: function () {
-                                        errorAlert("请求数据失败。");
-                                        $("#file-loading").hide();
-                                        $('#file-form-sub').removeAttr('disabled')
-                                        $('#file-date').val('')
-                                        $('#upload').text('选择文件')
-                                    }
-                                });
-                            }
-                            else {
-                                errorAlert("上传失败");
+                        });
+                    }
+                });
+                // 截取文件名
+                $('#file-name').change(function () {
+                    if ($(this).val() != "") {
+                        var file = $("#file-name").val();
+                        var fileName = file.lastIndexOf('\\')
+                        var strName = file.substring(fileName + 1)
+                        $('#upload').text(strName)
+                    } else {
+                        $('#upload').text("选择文件")
+                    }
+                })
+                $("#file-form-sub").click(function () {
+                    var dataVal = $('#file-date').val()
+                    var fileVal = $("#file-name").val()
+                    if (dataVal && fileVal != '') {
+                        $('#file-loading').show()
+                        $('#file-form-sub').attr('disabled', 'disabled')
+                        $("#up-file-form").ajaxSubmit({
+                            url: "/PlattformInventory/UploadFile1",
+                            type: "post",
+                            data: {
+                                plattformId: 1,
+                            },
+                            success: function (msg) {
+                                console.log(1)
+                                //if (msg.result == "SUCCESS") {
+                                //    $.ajax({
+                                //        url: "/PlattformInventory/CustomUploadFilePartial",
+                                //        type: "post",
+                                //        data: {
+                                //            plattformId: getUrlParam('plattformId'),
+                                //            month: $("#current-date").text() + "-01"
+                                //        },
+                                //        success: function (data) {
+                                //            var dataDate = $('.tm-calendar-monthofdate')
+                                //            for (var i = 0; i < dataDate.length; i++) {
+                                //                var nowDate = dataDate.eq(i).attr('date-day');
+                                //                for (var j = 0; j < data.length; j++) {
+                                //                    record = data[j].record_date.ToString("yyyy-MM-dd");
+                                //                    if (record == nowDate) {
+                                //                        dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                //                    }
+                                //                }
+                                //            }
                                 $("#file-loading").hide();
-                                $('#file-date').val('')
-                                $('#upload').text('选择文件')
-                                $('#file-form-sub').removeAttr('disabled')
+                                //            $('#file-date').val('')
+                                //            $('#upload').text('选择文件')
+                                //            $('#file-form-sub').removeAttr('disabled')
+                                //            alert('上传成功')
+                                //        },
+                                //        error: function () {
+                                //            errorAlert("请求数据失败。");
+                                //            $("#file-loading").hide();
+                                //            $('#file-form-sub').removeAttr('disabled')
+                                //            $('#file-date').val('')
+                                //            $('#upload').text('选择文件')
+                                //        }
+                                //    });
+                                //}
+                                //else {
+                                //    errorAlert("上传失败");
+                                //    $("#file-loading").hide();
+                                //    $('#file-date').val('')
+                                //    $('#upload').text('选择文件')
+                                //    $('#file-form-sub').removeAttr('disabled')
+                                //}
                             }
-                        }
-                    });
-                } else {
-                    errorAlert('请选择日期或上传文件')
-                    $('#file-date').val('')
-                    $('#upload').text('选择文件')
-                }
-                return false;
+                        });
+                    } else {
+                        console.log(2)
+                        errorAlert('请选择日期或上传文件')
+                        $('#file-date').val('')
+                        $('#upload').text('选择文件')
+                    }
+                    return false;
+                });
+
+
+
             });
-            
-        });
-    </script>
-}
+        </script>
+    }

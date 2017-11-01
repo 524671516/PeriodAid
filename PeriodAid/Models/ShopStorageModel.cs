@@ -45,6 +45,8 @@
             // 新建
             modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.AttendTrafficSource).WithMany(e => e.AttendTrafficPlattform).Map(m => { m.MapLeftKey("TrafficPlattformId"); m.MapRightKey("TrafficSourceId"); m.ToTable("AttendPlattform_Source"); });
             modelBuilder.Entity<SS_TrafficSource>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_TrafficSource).HasForeignKey(m => m.TrafficSource_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_TrafficPlattform).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
         }
     }
     /// <summary>
@@ -65,6 +67,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_UploadRecord> SS_UploadRecord { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_TrafficPlattform> SS_TrafficPlattform { get; set; }
 
     }
     /// <summary>
@@ -211,6 +216,10 @@
         [StringLength(10)]
         public string TrafficPlattform_Name { get; set; }
 
+        public int Plattform_Id { get; set; }
+
+        public virtual SS_Plattform SS_Plattform { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficSource> AttendTrafficSource { get; set; }
 
@@ -225,6 +234,8 @@
 
         [StringLength(16)]
         public string TrafficSource_Name { get; set; }
+
+        public DateTime Flow_Date { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficPlattform> AttendTrafficPlattform { get; set; }
