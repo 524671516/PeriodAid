@@ -220,7 +220,7 @@
         public virtual ICollection<SS_TrafficSource> AttendTrafficSource { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SS_Product> SS_Product { get; set; }
+        public virtual ICollection<SS_TrafficSource> SS_TrafficSource { get; set; }
     }
 
     [Table("SS_TrafficSource")]
@@ -230,6 +230,10 @@
 
         [StringLength(16)]
         public string TrafficSource_Name { get; set; }
+
+        public int TrafficPlattform_Id { get; set; }
+
+        public virtual SS_TrafficPlattform SS_TrafficPlattform { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficPlattform> AttendTrafficPlattform { get; set; }
