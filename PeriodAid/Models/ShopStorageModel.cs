@@ -47,6 +47,7 @@
             modelBuilder.Entity<SS_TrafficSource>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_TrafficSource).HasForeignKey(m => m.TrafficSource_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_TrafficPlattform).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
         }
     }
     /// <summary>
@@ -221,6 +222,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficSource> SS_TrafficSource { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_TrafficData> SS_TrafficData { get; set; }
     }
 
     [Table("SS_TrafficSource")]
@@ -267,6 +271,10 @@
         public virtual SS_Product SS_Product { get; set; }
 
         public int Product_Id { get; set; }
+
+        public int TrafficPlattform_Id { get; set; }
+
+        public virtual SS_TrafficPlattform SS_TrafficPlattform { get; set; }
     }
 
     public partial class TrafficData

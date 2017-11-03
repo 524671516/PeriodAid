@@ -1280,7 +1280,8 @@ namespace PeriodAid.Controllers
                                 Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0,
                                 Convert_Ratio = csv_reader.TryGetField<decimal>("商品转化率", out c_ratio) ? c_ratio : 0,
                                 Product_Id = product.Id,
-                                SS_TrafficSource = traffic_source
+                                SS_TrafficSource = traffic_source,
+                                SS_TrafficPlattform = traffic_plattform
                             };
                             _db.SS_TrafficData.Add(traffic_data);
                         }
@@ -1341,35 +1342,36 @@ namespace PeriodAid.Controllers
             row.CreateCell(++cell_pos).SetCellValue("商品转化率");
             // 写产品列
             int row_pos = 1;
-            var traffic_plattform = _db.SS_TrafficPlattform.Where(m => m.Plattform_Id == 1);
-            foreach (var plattform in traffic_plattform)
+            var data_list = from m in _db.SS_TrafficData
+                            group m by m.SS_Product into g
+                            select g;
+            foreach (var data in data_list)
             {
-                var traffic_source = from m in _db.SS_TrafficSource
-                                     where m.TrafficPlattform_Id == plattform.Id
-                                     select m;
-                foreach (var source in traffic_source)
+                var source_list = from m in data
+                                  where m.Product_Id == data.Key.Id
+                                  group m by m.SS_TrafficSource into g
+                                  select g;
+                foreach(var source in source_list)
                 {
-                    var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.TrafficSource_Id == source.Id);
-                    var product_list = from m in _db.SS_Product
-                                       where m.Id == traffic_data.Product_Id 
-                                       select m;
-                    foreach (var product in product_list)
-                    {
-                        IRow single_row = sheet.CreateRow(row_pos);
-                        cell_pos = 0;
-                        single_row.CreateCell(cell_pos).SetCellValue("");
-                        single_row.CreateCell(++cell_pos).SetCellValue(traffic_data.SS_Product.System_Code);
-                        single_row.CreateCell(++cell_pos).SetCellValue(traffic_data.SS_Product.Item_Name);
-                        single_row.CreateCell(++cell_pos).SetCellValue(plattform.TrafficPlattform_Name);
-                        single_row.CreateCell(++cell_pos).SetCellValue(product.SS_TrafficData.Sum(m => m.Product_Flow));
-                        single_row.CreateCell(++cell_pos).SetCellValue(product.SS_TrafficData.Sum(m => m.Product_Visitor));
-                        single_row.CreateCell(++cell_pos).SetCellValue(product.SS_TrafficData.Sum(m => m.Product_Customer));
-                        single_row.CreateCell(++cell_pos).SetCellValue(product.SS_TrafficData.Sum(m => m.Order_Count));
-                        single_row.CreateCell(++cell_pos).SetCellValue(product.SS_TrafficData.Sum(m => m.Convert_Ratio).ToString("p2"));
-                    }
+                    IRow single_row = sheet.CreateRow(row_pos);
+                    cell_pos = 0;
+                    single_row.CreateCell(cell_pos).SetCellValue("");
+                    single_row.CreateCell(++cell_pos).SetCellValue(data.Key.System_Code);
+                    single_row.CreateCell(++cell_pos).SetCellValue(data.Key.Item_Name);
+                    single_row.CreateCell(++cell_pos).SetCellValue(source.Key.TrafficPlattform_Id);
+                    //single_row.CreateCell(++cell_pos).SetCellValue(data.Sum(m => m.Product_Flow));
+                    //single_row.CreateCell(++cell_pos).SetCellValue(data.Sum(m => m.Product_Visitor));
+                    //single_row.CreateCell(++cell_pos).SetCellValue(data.Sum(m => m.Product_Customer));
+                    //single_row.CreateCell(++cell_pos).SetCellValue(data.Sum(m => m.Order_Count));
+                    //single_row.CreateCell(++cell_pos).SetCellValue((data.Sum(m => m.Order_Count)/ (data.Sum(m => m.Product_Visitor) == 0 ? 1 : data.Sum(m => m.Product_Visitor))).ToString("p2"));
                     row_pos++;
+
+
                 }
+                
             }
+
+
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
