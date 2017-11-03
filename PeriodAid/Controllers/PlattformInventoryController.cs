@@ -1341,35 +1341,62 @@ namespace PeriodAid.Controllers
             row.CreateCell(++cell_pos).SetCellValue("商品转化率");
             // 写产品列
             int row_pos = 1;
-            var productlist = from m in _db.SS_Product
-                              group m by m.Item_Name into g
+            var productlist = from m in _db.SS_TrafficData
+                              group m by m.SS_Product into g
                               select g;
             foreach (var product in productlist) {
-                var productIn = from m in _db.SS_TrafficData
-                                where m.SS_Product.Item_Name == product.Key
-                                select m;
-                foreach (var productin in productIn) {
-                    var productOrder = from m in productIn
-                                       group m by m.SS_TrafficSource into g
-                                       select g;
-                    foreach (var productorder in productOrder) {
-                        var productFinal = from m in productorder
-                                           group m by m.SS_TrafficSource into g
-                                           select g;
-                        foreach (var productfinal in productFinal) {
-                            IRow single_row = sheet.CreateRow(row_pos);
-                            cell_pos = 0;
-                            single_row.CreateCell(++cell_pos).SetCellValue(productin.SS_Product.System_Code);
-                            single_row.CreateCell(++cell_pos).SetCellValue(productin.SS_Product.Item_Name);
-                            single_row.CreateCell(++cell_pos).SetCellValue(productfinal.Key.Id);
-                            row_pos++;
-                        }
 
-                       
+                var productOrder = from m in product
+                                   group m by m.SS_TrafficPlattform into g
+                                   select g;
+                bool firstCount=true;
+                ICellStyle Center_style = book.CreateCellStyle();//居中标题
+                Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
+                foreach (var productorder in productOrder)
+                {
+                    IRow single_row = sheet.CreateRow(row_pos);
+                    cell_pos = 0;
+                    var c0 = single_row.CreateCell(cell_pos);
+                    c0.SetCellValue(DateTime.Now.ToString("d"));
+                    var c1 = single_row.CreateCell(++cell_pos);
+                    c1.SetCellValue(product.Key.System_Code);
+                    var c2 = single_row.CreateCell(++cell_pos);
+                    c2.SetCellValue(product.Key.Item_Name);
+                    var rowCount = productOrder.Count();
+                    if (rowCount > 1 && firstCount==true)
+                    {
+                        var row0 = row_pos;
+                        var row1 = row_pos + rowCount-1;
+                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
+                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 1, 1));
+                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 2, 2));
+                        c0.CellStyle = Center_style;
+                        c1.CellStyle = Center_style;
+                        c2.CellStyle = Center_style;
+                        firstCount = false;
                     }
-                   
+                    single_row.CreateCell(++cell_pos).SetCellValue(productorder.Key.TrafficPlattform_Name);
+                    var orderCount = from m in productorder
+                                     group m by m.Product_Id into g
+                                     select new SS_TrafficData
+                                     { Product_Flow = g.Sum(m => m.Product_Flow),
+                                         Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                         Product_Customer = g.Sum(m => m.Product_Customer),
+                                         Order_Count = g.Sum(m => m.Order_Count),
+                                         Convert_Ratio = g.Sum(m => m.Order_Count) / (g.Sum(m => m.Product_Visitor) == 0 ? 1: g.Sum(m => m.Product_Visitor)),
+                                     };
+                    foreach (var count in orderCount) {
+                        single_row.CreateCell(++cell_pos).SetCellValue(count.Product_Flow);
+                        single_row.CreateCell(++cell_pos).SetCellValue(count.Product_Visitor);
+                        single_row.CreateCell(++cell_pos).SetCellValue(count.Product_Customer);
+                        single_row.CreateCell(++cell_pos).SetCellValue(count.Order_Count);
+                        single_row.CreateCell(++cell_pos).SetCellValue(count.Convert_Ratio.ToString("p2"));
+                    }
+                    row_pos++;
+
+
                 }
-                
+
             }
 
 
