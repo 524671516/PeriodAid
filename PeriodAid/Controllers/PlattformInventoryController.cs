@@ -1229,17 +1229,20 @@ namespace PeriodAid.Controllers
                     }
                     string s_name;
                     string source_name = csv_reader.GetField<string>("流量渠道");
-                    var traffic_source = _db.SS_TrafficSource.SingleOrDefault(m=>m.TrafficSource_Name == source_name);
+                    var traffic_source = from m in _db.SS_TrafficSource
+                                         where m.TrafficSource_Name== source_name
+                                         select m;
+                    SS_TrafficSource s1 = new SS_TrafficSource();
                     if (traffic_source == null)
                     {
-                        traffic_source = new SS_TrafficSource()
+                        s1=new SS_TrafficSource()
                         {
                             TrafficSource_Name = csv_reader.TryGetField<string>("流量渠道", out s_name) ? s_name : "NaN",
                         };
-                        _db.SS_TrafficSource.Add(traffic_source);
+                        _db.SS_TrafficSource.Add(s1);
                     }else
                     {
-                        traffic_source.TrafficSource_Name = source_name;
+                        s1.TrafficSource_Name = source_name;
                         _db.Entry(traffic_source).State = System.Data.Entity.EntityState.Modified;
                     }
                     var traffic_plattform = _db.SS_TrafficPlattform.FirstOrDefault(m => m.Plattform_Id == 1);
@@ -1252,11 +1255,11 @@ namespace PeriodAid.Controllers
                             AttendTrafficSource = new List<SS_TrafficSource>()
                         };
                         _db.SS_TrafficPlattform.Add(traffic_plattform);
-                        traffic_plattform.AttendTrafficSource.Add(traffic_source);
+                        traffic_plattform.AttendTrafficSource.Add(s1);
                         _db.SaveChanges();
                     }else
                     {
-                        traffic_plattform.AttendTrafficSource.Add(traffic_source);
+                        traffic_plattform.AttendTrafficSource.Add(s1);
                         traffic_plattform.TrafficPlattform_Name = plattformName;
                         _db.Entry(traffic_plattform).State = System.Data.Entity.EntityState.Modified;
                     }
@@ -1279,7 +1282,7 @@ namespace PeriodAid.Controllers
                                 Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0,
                                 Convert_Ratio = csv_reader.TryGetField<decimal>("商品转化率", out c_ratio) ? c_ratio : 0,
                                 Product_Id = product.Id,
-                                SS_TrafficSource = traffic_source
+                                SS_TrafficSource = s1
                             };
                             _db.SS_TrafficData.Add(traffic_data);
                         }
