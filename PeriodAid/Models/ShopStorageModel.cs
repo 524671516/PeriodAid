@@ -235,6 +235,8 @@
         [StringLength(16)]
         public string TrafficSource_Name { get; set; }
 
+        public DateTime Update_Date { get; set; }
+
         public int TrafficPlattform_Id { get; set; }
 
         public virtual SS_TrafficPlattform SS_TrafficPlattform { get; set; }

@@ -1641,9 +1641,35 @@ a.btn_subtask_detail{
     cursor: pointer;
     margin-top: 2px;
     margin-left: 5px;
-    
+}
+#upload-traffic{
+    padding: 4px 10px;
+    display: inline-block;
+    height: 27px;
+    line-height: 17px;
+    position: relative;
+    border: 1px solid #999;
+    text-decoration: none;
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 2px;
+    margin-left: 5px;
 }
 #file-name{
+    position: absolute;
+    overflow: hidden;
+    left: 158px;
+    top: 0;
+    width: 78px;
+    height: 29px;
+    opacity: 0;
+    z-index:100;
+}
+#traffic-name{
     position: absolute;
     overflow: hidden;
     left: 158px;
@@ -1660,10 +1686,20 @@ a.btn_subtask_detail{
     line-height: 9px;
     margin-top: -2px;
 }
+#traffic-form-sub{
+    margin-left: 14px;
+    width: 54px;
+    height: 27px;
+    line-height: 9px;
+}
 #download_calc{
     position: relative;
     top: -10px;
     z-index:999;
+}
+.traffic-submit{
+    width: 54px;
+    height: 27px;
 }
 #date-select{
     display: inline-block;
