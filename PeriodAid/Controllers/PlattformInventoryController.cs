@@ -1483,6 +1483,51 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return book;
         }
+
+        [HttpPost]
+        public ActionResult getHotProduct(FormCollection form) {
+            HSSFWorkbook book = new HSSFWorkbook();
+            var HotProduct = from m in _db.SS_Product
+                             where m.Product_Type == 1
+                             select m;
+            foreach (var hot in HotProduct) {
+                ISheet sheet = book.CreateSheet(hot.System_Code);
+                // 写标题
+                int cell_pos = 0;
+                IRow row0 = sheet.CreateRow(0);
+                row0.Height = 78 * 20;
+                row0.CreateCell(cell_pos).SetCellValue("活动备注");
+                IRow row1 = sheet.CreateRow(++cell_pos);
+                var r1c0 = row1.CreateCell(++cell_pos);
+                r1c0.SetCellValue(hot.Item_Name);
+                var HotDate = from m in _db.SS_TrafficData
+                              group m by m.Update into g
+                              orderby g.Key
+                              select g;
+                foreach (var hotdate in HotDate) {
+
+                    var r1 = row1.CreateCell(++cell_pos);
+                    r1.SetCellValue(hotdate.Key.Month+"."+hotdate.Key.Day);
+
+                }
+                row0.CreateCell(++cell_pos).SetCellValue("访客");
+                foreach (var hotdate in HotDate)
+                {
+                    var visiter = from m in _db.SS_TrafficData
+                                  group m by m.Update into g
+                                  select g;
+                    var r2 = row1.CreateCell(++cell_pos);
+                    r2.SetCellValue("666");
+
+                }
+
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
+        }
     }
 }
 
