@@ -1242,7 +1242,7 @@ namespace PeriodAid.Controllers
                     string s_name;
                     string source_name = csv_reader.GetField<string>("流量渠道");
                     var traffic_source = from m in _db.SS_TrafficSource
-                                         where m.TrafficPlattform_Id == traffic_plattform.Id
+                                         where m.TrafficPlattform_Id == traffic_plattform.Id && m.Update_Date == date
                                          select m;
                     SS_TrafficSource source = new SS_TrafficSource();
                     if (traffic_source.Count() == 0)
@@ -1250,6 +1250,7 @@ namespace PeriodAid.Controllers
                         source = new SS_TrafficSource()
                         {
                             TrafficSource_Name = csv_reader.TryGetField<string>("流量渠道", out s_name) ? s_name : "NaN",
+                            Update_Date = date,
                             TrafficPlattform_Id = traffic_plattform.Id
                         };
                         _db.SS_TrafficSource.Add(source);
@@ -1293,7 +1294,7 @@ namespace PeriodAid.Controllers
             return true;
         }
         [HttpPost]
-        public ActionResult UploadTraffic(FormCollection form, int plattformId,string plattformName)
+        public ActionResult UploadTrafficFile(FormCollection form, int plattformId,string plattformName)
         {
             var file = Request.Files[0];
             if (file != null)
@@ -1426,7 +1427,6 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
         }
-
         [HttpPost]
         public HSSFWorkbook getTrafficPlattform(FormCollection form,DateTime date) {
             var TrafficPlattform = from m in _db.SS_TrafficPlattform
@@ -1481,6 +1481,31 @@ namespace PeriodAid.Controllers
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
             return book;
+        }
+
+        [HttpPost]
+        public ActionResult getHotExcel(FormCollection form)
+        {
+            var product_list = from m in _db.SS_Product
+                               where m.Product_Type == 1
+                               select m;
+            HSSFWorkbook book = new HSSFWorkbook();
+            foreach (var product in product_list)
+            {
+                var sheetName = product.System_Code;
+                ISheet sheet = book.CreateSheet(sheetName);
+                IRow row0 = sheet.CreateRow(0);
+                int cell_pos = 0;
+                row0.Height = 70 * 20;
+                row0.CreateCell(cell_pos).SetCellValue("活动备注");
+                IRow row1 = sheet.CreateRow(++cell_pos);
+                row1.CreateCell(cell_pos).SetCellValue(product.Item_Name);
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
         }
     }
 }
