@@ -18,9 +18,12 @@
     </form>
 </div>
 <a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载</a>
-<form method="post" id="calc_form" action="/PlattformInventory/getTrafficExcel"></form>
+<form method="post" id="calc_form" action=""></form>
 @section scripts{
 <script>
+    $("#file-date").on("change", function () {
+        $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val()+"");
+    })
     //$('#upload').on('click', function () {
     //    $('#file-name').trigger('click')
     //})
