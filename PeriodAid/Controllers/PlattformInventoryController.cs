@@ -1293,7 +1293,7 @@ namespace PeriodAid.Controllers
             return true;
         }
         [HttpPost]
-        public ActionResult UploadFile1(FormCollection form, int plattformId,string plattformName)
+        public ActionResult UploadTraffic(FormCollection form, int plattformId,string plattformName)
         {
             var file = Request.Files[0];
             if (file != null)
@@ -1407,15 +1407,15 @@ namespace PeriodAid.Controllers
                            select g;
             foreach (var allData in data_all)
             {
-                IRow single_row = sheet.CreateRow(row_pos);
-                cell_pos = 4;
-                //var Ratio = (decimal)allData.Sum(m => m.Product_Customer) / (allData.Sum(m => m.Product_Visitor) == 0 ? 1 : allData.Sum(m => m.Product_Visitor));
-                single_row.CreateCell(cell_pos).SetCellValue(allData.Sum(m => m.Product_Flow));
+                IRow single_row = sheet.CreateRow(++row_pos);
+                cell_pos = 3;
+                var Ratio = (decimal)allData.Sum(m => m.Product_Customer) / (allData.Sum(m => m.Product_Visitor) == 0 ? 1 : allData.Sum(m => m.Product_Visitor));
+                single_row.CreateCell(cell_pos).SetCellValue("共计：");
+                single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Flow));
                 single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Visitor));
                 single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Customer));
                 single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Order_Count));
-                //single_row.CreateCell(++cell_pos).SetCellValue(allData.ToString("p2"));
-                row_pos++;
+                single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
             }
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
@@ -1472,9 +1472,7 @@ namespace PeriodAid.Controllers
                     }
                     row_pos++;
                 }
-                
             }
-            
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
