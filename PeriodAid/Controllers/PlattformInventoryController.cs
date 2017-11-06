@@ -1241,14 +1241,16 @@ namespace PeriodAid.Controllers
                     }else
                     {
                         traffic_plattform.TrafficPlattform_Name = plattformName;
+                        _db.Entry(traffic_plattform).State = System.Data.Entity.EntityState.Modified;
+
                     }
                     string s_name;
                     string source_name = csv_reader.GetField<string>("流量渠道");
                     var traffic_source = from m in _db.SS_TrafficSource
-                                         where m.SS_TrafficPlattform.TrafficPlattform_Name == plattformName && m.TrafficPlattform_Id == traffic_plattform.Id
+                                         where m.TrafficPlattform_Id == traffic_plattform.Id
                                          select m;
                     SS_TrafficSource source = new SS_TrafficSource();
-                    if (traffic_source == null)
+                    if (traffic_source.Count() == 0)
                     {
                         source = new SS_TrafficSource()
                         {
@@ -1258,22 +1260,18 @@ namespace PeriodAid.Controllers
                         _db.SS_TrafficSource.Add(source);
                         traffic_plattform.AttendTrafficSource.Add(source);
                     }
-                    else
-                    {
-                        source.TrafficSource_Name = source_name;
-                    }
                     string s_code;
                     string system_code = csv_reader.TryGetField<string>("商品编码", out s_code) ? s_code : "NaN";
                     var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
                     if (product != null)
                     {
                         var traffic_data = from m in _db.SS_TrafficData
-                                           where m.TrafficSource_Id == source.Id
+                                           where m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id
                                            select m;
                         int p_flow, p_visitor, p_customer, o_count;
                         decimal c_ratio;
                         SS_TrafficData data = new SS_TrafficData();
-                        if (traffic_data == null)
+                        if (traffic_data.Count() == 0)
                         {
                             data = new SS_TrafficData()
                             {
@@ -1288,13 +1286,6 @@ namespace PeriodAid.Controllers
                                 SS_TrafficPlattform = traffic_plattform
                             };
                             _db.SS_TrafficData.Add(data);
-                        }else
-                        {
-                            data.Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0;
-                            data.Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0;
-                            data.Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0;
-                            data.Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0;
-                            data.Convert_Ratio = csv_reader.TryGetField<decimal>("商品转化率", out c_ratio) ? c_ratio : 0;
                         }
                     }
                 }
