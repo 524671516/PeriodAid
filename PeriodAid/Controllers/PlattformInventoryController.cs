@@ -1248,7 +1248,7 @@ namespace PeriodAid.Controllers
                     string s_name;
                     string source_name = csv_reader.GetField<string>("流量渠道");
                     var traffic_source = from m in _db.SS_TrafficSource
-                                         where m.TrafficPlattform_Id == traffic_plattform.Id && m.Update_Date == date
+                                         where m.TrafficPlattform_Id == traffic_plattform.Id 
                                          select m;
                     SS_TrafficSource source = new SS_TrafficSource();
                     if (traffic_source.Count() == 0)
@@ -1256,7 +1256,6 @@ namespace PeriodAid.Controllers
                         source = new SS_TrafficSource()
                         {
                             TrafficSource_Name = csv_reader.TryGetField<string>("流量渠道", out s_name) ? s_name : "NaN",
-                            Update_Date = date,
                             TrafficPlattform_Id = traffic_plattform.Id
                         };
                         _db.SS_TrafficSource.Add(source);
