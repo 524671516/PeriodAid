@@ -1293,25 +1293,25 @@ namespace PeriodAid.Controllers
                 {
                     return false;
                 }
-                _db.SaveChanges();
-            }
-            var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficData_Update == date);
-            if (upload_traffic != null)
-            {
-                upload_traffic.Upload_Date = DateTime.Now;
-                _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
-            }
-            else
-            {
-                upload_traffic = new SS_UploadTraffic()
-                {
-                    TrafficPlattform_Id = traffic_plattform.Id,
-                    Upload_Date = DateTime.Now,
-                    TrafficData_Update = date
-                };
-                _db.SS_UploadTraffic.Add(upload_traffic);
             }
             _db.SaveChanges();
+            //var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficData_Update == date);
+            //if (upload_traffic != null)
+            //{
+            //    upload_traffic.Upload_Date = DateTime.Now;
+            //    _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
+            //}
+            //else
+            //{
+            //    upload_traffic = new SS_UploadTraffic()
+            //    {
+            //        TrafficPlattform_Id = traffic_plattform.Id,
+            //        Upload_Date = DateTime.Now,
+            //        TrafficData_Update = date
+            //    };
+            //    _db.SS_UploadTraffic.Add(upload_traffic);
+            //}
+            //_db.SaveChanges();
             return true;
         }
         [HttpPost]
