@@ -1640,7 +1640,7 @@ a.btn_subtask_detail{
     font-size: 14px;
     cursor: pointer;
     margin-top: 2px;
-    margin-left: 5px;
+    margin-left:5px;
 }
 #upload-traffic{
     padding: 4px 10px;
@@ -1659,6 +1659,7 @@ a.btn_subtask_detail{
     margin-top: 2px;
     margin-left: 5px;
 }
+
 #file-name{
     position: absolute;
     overflow: hidden;
@@ -1696,6 +1697,15 @@ a.btn_subtask_detail{
     position: relative;
     top: -10px;
     z-index:999;
+}
+#hot-download{
+    line-height:15px;
+    top:-28px;
+    width:110px;
+}
+#source-download{
+    line-height:15px;
+    width:110px;
 }
 .traffic-submit{
     width: 54px;

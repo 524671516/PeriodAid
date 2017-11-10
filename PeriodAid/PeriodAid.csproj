@@ -256,6 +256,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711080123297_123.cs" />
+    <Compile Include="Migrations\201711080123297_123.Designer.cs">
+      <DependentUpon>201711080123297_123.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppPay.cs" />
@@ -1144,6 +1148,7 @@
     <Content Include="Views\PlattformInventory\EditEventInfo.cshtml" />
     <Content Include="Views\PlattformInventory\EventListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\ViewEventStatistic.cshtml" />
+    <Content Include="Views\PlattformInventory\JD_Traffic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1157,6 +1162,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201711080123297_123.resx">
+      <DependentUpon>201711080123297_123.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

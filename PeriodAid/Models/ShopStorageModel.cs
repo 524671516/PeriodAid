@@ -48,6 +48,7 @@
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_TrafficPlattform).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
+            
         }
     }
     /// <summary>
@@ -130,6 +131,10 @@
 
         public virtual SS_Plattform SS_Plattform { get; set; }
 
+        // 常用仓库
+
+        public int Storage_Type { get; set; }
+
         [StringLength(32)]
         public string Storage_Code { get; set; }
 
@@ -170,6 +175,7 @@
         public decimal SubAccount_Price { get; set; }
 
         public virtual SS_Storage SS_Storage { get; set; }
+        
     }
 
     [Table("SS_UploadRecord")]
@@ -225,6 +231,7 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficData> SS_TrafficData { get; set; }
+        
     }
 
     [Table("SS_TrafficSource")]

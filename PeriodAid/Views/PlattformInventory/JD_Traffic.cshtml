@@ -1,0 +1,94 @@
+﻿@{
+    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
+}
+<div id="form-view-content">
+    <div id="traffic-view">
+        <div class="h2">数据统计表</div>
+        <div style="margin-bottom:10px">
+            <form action="/PlattformInventory/UploadTrafficFile" method="post" enctype="multipart/form-data" id="up-traffic-form">
+                <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
+                <input type="file" id="traffic-name" name="file-name" class="hidden" />
+                <a href="javascript:;" id="upload-traffic">选择文件</a>
+                <input type="submit" class="btn btn-danger" id="traffic-form-sub" />
+            </form>
+            <a class="btn btn-danger traffic-submit float-right disabled" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
+            <form method="post" id="calc_form"></form>
+        </div>
+
+        <div style="margin-bottom:10px">
+            <a class="btn btn-danger traffic-submit" href="javascript:;" id="hot-download" onclick="$('#hot_form').submit();">爆款统计下载</a>
+            <form method="post" id="hot_form" action="/PlattformInventory/getHotExcel"></form>
+        </div>
+        <div>
+            <a class="btn btn-danger traffic-submit" href="javascript:;" id="source-download" onclick="$('#source_form').submit();">渠道统计下载</a>
+            <form method="post" id="source_form" action="/PlattformInventory/getHotSourceExcel"></form>
+        </div>
+    </div>
+    <div class="tm-view-content-container  tm-view-container" id="file-loading" style="top:0;height:500px">
+        <div class="tm-veiw-loading text-center" id="tm-view-loading">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i>
+            <span class="sr-only">正在加载...</span>
+        </div>
+    </div>
+</div>
+@section scripts{
+<script>
+    $("#file-loading").hide()
+    $('#upload-traffic').click(function () {
+        $('#traffic-name').trigger('click')
+    })
+    //日期格式改变
+    $("#file-date").datepicker({ dateFormat: "yy-mm-dd" });
+    //星期格式汉化
+    $("#file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+    //月份格式汉化
+    $("#file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+    $("#file-date").datepicker();
+    // 截取文件名
+    $('#traffic-name').change(function () {
+        if ($(this).val() != "") {
+            var file = $("#traffic-name").val();
+            var fileName = file.lastIndexOf('\\')
+            strName = file.substring(fileName + 1)
+            $('#upload-traffic').text(strName)
+            var plattformName = strName.substring(0, strName.indexOf(".")).toUpperCase()
+            $(this).attr("data-name", plattformName)
+        } else {
+            $('#upload-traffic').text("选择文件")
+        }
+    })
+    // 上传
+    $("#traffic-form-sub").click(function () {
+        var dataVal = $('#file-date').val()
+        var fileVal = $("#traffic-name").val()
+        if (dataVal && fileVal != '') {
+            $('#file-loading').show()
+            $('#traffic-form-sub').attr('disabled', 'disabled')
+            $("#up-traffic-form").ajaxSubmit({
+                url: "/PlattformInventory/UploadTrafficFile",
+                type: "post",
+                data: {
+                    plattformId: 1,
+                    plattformName: $('#traffic-name').attr("data-name")
+                },
+                success: function (msg) {
+                    console.log(1)
+                    $('#file-loading').hide()
+                    $('#traffic-form-sub').removeAttr('disabled')
+                }
+            });
+        } else {
+            console.log(2)
+            errorAlert('请选择日期或上传文件')
+            $('#file-date').val('')
+            $('#upload-traffic').text('选择文件')
+        }
+        return false;
+    });
+    // 下载
+    $("#file-date").on("change", function () {
+        $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "");
+        $("#download_calc").removeClass("disabled")
+    })
+</script>
+}

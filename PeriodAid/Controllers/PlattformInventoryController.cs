@@ -632,7 +632,8 @@ namespace PeriodAid.Controllers
                             Storage_Name = inventory_name,
                             Plattform_Id = 2,
                             Index = 0,
-                            Sales_Header = null
+                            Sales_Header = null,
+                            Storage_Type = 0
                         };
                         _db.SS_Storage.Add(inventory);
                     }
@@ -642,6 +643,7 @@ namespace PeriodAid.Controllers
                         exist_item.Sales_Count = csv_reader.TryGetField<int>("销量", out sales_field) ? sales_field : 0;
                         exist_item.Pay_Money = csv_reader.TryGetField<decimal>("支付金额", out pay_money) ? pay_money : 0;
                         exist_item.SubAccount_Price = csv_reader.TryGetField<decimal>("支付订单分账金额", out subAccount) ? subAccount : 0;
+                        _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
                     }
                     else
                     {
@@ -663,7 +665,6 @@ namespace PeriodAid.Controllers
                         _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
                     }
                     row_count++;
-
                 }
                 catch (Exception)
                 {
@@ -1212,6 +1213,11 @@ namespace PeriodAid.Controllers
         }
 
         // 京东流量统计
+        public ActionResult JD_Traffic(int plattformId)
+        {
+            return View();
+        }
+
         private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
         {
             AliOSSUtilities util = new AliOSSUtilities();
@@ -1482,30 +1488,123 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return book;
         }
-
+        // 爆款统计
         [HttpPost]
         public ActionResult getHotExcel(FormCollection form)
         {
             var product_list = from m in _db.SS_Product
-                               where m.Product_Type == 1
+                               where m.Product_Type == 1 && m.Plattform_Id == 1
                                select m;
             HSSFWorkbook book = new HSSFWorkbook();
             foreach (var product in product_list)
             {
-                var sheetName = product.System_Code;
+                var sheetName = product.Item_Name;
                 ISheet sheet = book.CreateSheet(sheetName);
                 IRow row0 = sheet.CreateRow(0);
                 int cell_pos = 0;
                 row0.Height = 70 * 20;
                 row0.CreateCell(cell_pos).SetCellValue("活动备注");
-                IRow row1 = sheet.CreateRow(++cell_pos);
-                row1.CreateCell(cell_pos).SetCellValue(product.Item_Name);
+                IRow row = sheet.CreateRow(1);
+                row.CreateCell(++cell_pos).SetCellValue(product.Item_Name+product.System_Code);
+                row.CreateCell(++cell_pos).SetCellValue("访客");
+                row.CreateCell(++cell_pos).SetCellValue("订单");
+                row.CreateCell(++cell_pos).SetCellValue("商品数量");
+                row.CreateCell(++cell_pos).SetCellValue("客件数");
+                row.CreateCell(++cell_pos).SetCellValue("转化率");
+                row.CreateCell(++cell_pos).SetCellValue("销售成本");
+                row.CreateCell(++cell_pos).SetCellValue("uv价值");
+                var data_date = from m in _db.SS_TrafficData
+                                where m.Product_Id == product.Id
+                                group m by m.Update into g
+                                select g;
+                var row_pos = 2;
+                foreach (var dataDate in data_date)
+                {
+                    var dateTime =Convert.ToDateTime (dataDate.Key.Year + "/" + dataDate.Key.Month + "/" + dataDate.Key.Day+" 0:00:00");
+                    var traffic_data = from m in dataDate
+                                       group m by m.SS_TrafficPlattform.Plattform_Id into g
+                                       select g;
+                    foreach (var trafficData in traffic_data)
+                    {
+                        var sales_date = from m in _db.SS_SalesRecord
+                                         where m.Product_Id == product.Id && m.SalesRecord_Date == dateTime && m.SS_Storage.Storage_Type == 1
+                                         group m by m.Product_Id into g
+                                         select g;
+                        foreach(var salesDate in sales_date)
+                        {
+                            IRow single_row = sheet.CreateRow(row_pos);
+                            cell_pos = 1;
+                            var Count = (double)salesDate.Sum(m => m.Sales_Count) / trafficData.Sum(m => m.Order_Count);
+                            var Ratio = (double)trafficData.Sum(m => m.Order_Count) / trafficData.Sum(m => m.Product_Flow);
+                            var Cost =  salesDate.Sum(m => m.Sales_Count) * product.Purchase_Price;
+                            var uvValue = salesDate.Sum(m => m.Sales_Count) * product.Purchase_Price / trafficData.Sum(m => m.Product_Visitor);
+                            single_row.CreateCell(cell_pos).SetCellValue(dataDate.Key.Month + "." + dataDate.Key.Day);
+                            single_row.CreateCell(++cell_pos).SetCellValue(trafficData.Sum(m => m.Product_Visitor));
+                            single_row.CreateCell(++cell_pos).SetCellValue(trafficData.Sum(m => m.Order_Count));
+                            single_row.CreateCell(++cell_pos).SetCellValue(salesDate.Sum(m=>m.Sales_Count));
+                            single_row.CreateCell(++cell_pos).SetCellValue(Math.Round(Count,2));
+                            single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
+                            single_row.CreateCell(++cell_pos).SetCellValue(Cost.ToString("0.##"));
+                            single_row.CreateCell(++cell_pos).SetCellValue(uvValue.ToString("0.00"));
+                            row_pos++;
+                        }
+                    }
+
+                }
             }
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "爆款统计表.xls");
+        }
+        // 渠道统计
+        [HttpPost]
+        public ActionResult getHotSourceExcel(FormCollection form)
+        {
+            var product_list = from m in _db.SS_Product
+                               where m.Product_Type == 1 && m.Plattform_Id == 1
+                               select m;
+            HSSFWorkbook book = new HSSFWorkbook();
+            foreach (var product in product_list)
+            {
+                var sheetName = product.Item_Name;
+                ISheet sheet = book.CreateSheet(sheetName);
+                IRow row = sheet.CreateRow(0);
+                int cell_pos = 0;
+                var row_pos = 1;
+                row.CreateCell(cell_pos).SetCellValue("日期");
+                row.CreateCell(++cell_pos).SetCellValue("渠道名称");
+                row.CreateCell(++cell_pos).SetCellValue("商品访客");
+                row.CreateCell(++cell_pos).SetCellValue("商品转化率");
+                var source_data = from m in _db.SS_TrafficData
+                                  where m.TrafficPlattform_Id == 417 && m.Product_Id == product.Id
+                                  select m;
+                foreach (var sourceData in source_data)
+                {
+                    IRow single_row = sheet.CreateRow(row_pos);
+                    cell_pos = 0;
+                    single_row.CreateCell(cell_pos).SetCellValue(sourceData.Update.ToString("d"));
+                    single_row.CreateCell(++cell_pos).SetCellValue(sourceData.SS_TrafficSource.TrafficSource_Name);
+                    single_row.CreateCell(++cell_pos).SetCellValue(sourceData.Product_Customer);
+                    if (sourceData.Product_Visitor == 0)
+                    {
+                        var ConvertRatio = (decimal)0;
+                        single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
+                    }
+                    else
+                    {
+                        var ConvertRatio = (decimal)sourceData.Product_Customer / sourceData.Product_Visitor;
+                        single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
+                    }
+                    row_pos++;
+                }
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "渠道爆款统计表.xls");
         }
     }
 }
