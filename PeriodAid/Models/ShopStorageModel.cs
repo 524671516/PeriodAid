@@ -33,6 +33,7 @@
         public virtual DbSet<SS_TrafficPlattform> SS_TrafficPlattform { get; set; }
         public virtual DbSet<SS_TrafficSource> SS_TrafficSource { get; set; }
         public virtual DbSet<SS_TrafficData> SS_TrafficData { get; set; }
+        public virtual DbSet<SS_UploadTraffic> SS_UploadTraffic { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -271,8 +272,6 @@
         public int Product_Customer { get; set; }
 
         public int Order_Count { get; set; }
-
-        public decimal Convert_Ratio { get; set; }
 
         public virtual SS_TrafficSource SS_TrafficSource { get; set; }
 

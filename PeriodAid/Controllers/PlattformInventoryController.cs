@@ -1224,6 +1224,7 @@ namespace PeriodAid.Controllers
             StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.UTF8, false);
             CsvReader csv_reader = new CsvReader(reader);
             List<string> headers = new List<string>();
+            var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
             while (csv_reader.Read())
             {
                 try
@@ -1233,7 +1234,6 @@ namespace PeriodAid.Controllers
                     {
                         break;
                     }
-                    var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
                     if (traffic_plattform == null)
                     {
                         traffic_plattform = new SS_TrafficPlattform()
@@ -1270,7 +1270,6 @@ namespace PeriodAid.Controllers
                                            where m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id
                                            select m;
                         int p_flow, p_visitor, p_customer, o_count;
-                        decimal c_ratio;
                         SS_TrafficData data = new SS_TrafficData();
                         if (traffic_data.Count() == 0)
                         {
@@ -1281,7 +1280,6 @@ namespace PeriodAid.Controllers
                                 Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
                                 Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0,
                                 Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0,
-                                Convert_Ratio = csv_reader.TryGetField<decimal>("商品转化率", out c_ratio) ? c_ratio : 0,
                                 Product_Id = product.Id,
                                 SS_TrafficSource = source,
                                 SS_TrafficPlattform = traffic_plattform
@@ -1294,6 +1292,23 @@ namespace PeriodAid.Controllers
                 {
                     return false;
                 }
+                _db.SaveChanges();
+            }
+            var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficData_Update == date);
+            if (upload_traffic != null)
+            {
+                upload_traffic.Upload_Date = DateTime.Now;
+                _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
+            }
+            else
+            {
+                upload_traffic = new SS_UploadTraffic()
+                {
+                    TrafficPlattform_Id = traffic_plattform.Id,
+                    Upload_Date = DateTime.Now,
+                    TrafficData_Update = date
+                };
+                _db.SS_UploadTraffic.Add(upload_traffic);
             }
             _db.SaveChanges();
             return true;
