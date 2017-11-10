@@ -33,7 +33,7 @@
         public virtual DbSet<SS_TrafficPlattform> SS_TrafficPlattform { get; set; }
         public virtual DbSet<SS_TrafficSource> SS_TrafficSource { get; set; }
         public virtual DbSet<SS_TrafficData> SS_TrafficData { get; set; }
-        public virtual DbSet<SS_UploadTraffic> SS_UploadTraffic { get; set; }
+        
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -49,8 +49,7 @@
             modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_TrafficPlattform).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.SS_UploadTraffic).WithRequired(m => m.SS_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
-
+            
         }
     }
     /// <summary>
@@ -233,9 +232,7 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficData> SS_TrafficData { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SS_UploadTraffic> SS_UploadTraffic { get; set; }
+        
     }
 
     [Table("SS_TrafficSource")]
@@ -245,6 +242,8 @@
 
         [StringLength(16)]
         public string TrafficSource_Name { get; set; }
+
+        public DateTime Update_Date { get; set; }
 
         public int TrafficPlattform_Id { get; set; }
 
@@ -273,8 +272,6 @@
 
         public int Order_Count { get; set; }
 
-        public decimal Convert_Ratio { get; set; }
-
         public virtual SS_TrafficSource SS_TrafficSource { get; set; }
 
         public int TrafficSource_Id { get; set; }
@@ -301,20 +298,7 @@
         public int Order_Count { get; set; }
         public string Convert_Ratio { get; set; }
     }
-
-    [Table("SS_UploadTraffic")]
-    public partial class SS_UploadTraffic
-    {
-        public int Id { get; set; }
-
-        public DateTime TrafficData_Update { get; set; }
-
-        public int TrafficPlattform_Id { get; set; }
-
-        public virtual SS_TrafficPlattform SS_TrafficPlattform { get; set; }
-
-        public DateTime Upload_Date { get; set; }
-    }
+    
     //public class MyEntity
     //{
     //    public int Id { get; set; }
