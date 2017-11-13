@@ -1580,8 +1580,12 @@ namespace PeriodAid.Controllers
                                where m.Product_Type == 1 && m.Plattform_Id == 1
                                select m;
             HSSFWorkbook book = new HSSFWorkbook();
+            ICellStyle Center_style = book.CreateCellStyle();//居中标题
+            Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
             foreach (var product in product_list)
             {
+
+                bool firstProduct = true;
                 var sheetName = product.Item_Name;
                 ISheet sheet = book.CreateSheet(sheetName);
                 IRow row = sheet.CreateRow(0);
@@ -1594,11 +1598,18 @@ namespace PeriodAid.Controllers
                 var source_data = from m in _db.SS_TrafficData
                                   where m.TrafficPlattform_Id == 417 && m.Product_Id == product.Id
                                   select m;
+                var ProductRow = from m in source_data
+                                 group m by m.Update into g
+                                 select g;
+                int[] EndCount = new int[ProductRow.Count()];
+                int i = 0;
                 foreach (var sourceData in source_data)
                 {
                     IRow single_row = sheet.CreateRow(row_pos);
                     cell_pos = 0;
-                    single_row.CreateCell(cell_pos).SetCellValue(sourceData.Update.ToString("d"));
+                    var c0 = single_row.CreateCell(cell_pos);
+                    c0.SetCellValue(sourceData.Update.ToString("d"));
+                    c0.CellStyle = Center_style;
                     single_row.CreateCell(++cell_pos).SetCellValue(sourceData.SS_TrafficSource.TrafficSource_Name);
                     single_row.CreateCell(++cell_pos).SetCellValue(sourceData.Product_Customer);
                     if (sourceData.Product_Visitor == 0)
@@ -1612,6 +1623,29 @@ namespace PeriodAid.Controllers
                         single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
                     }
                     row_pos++;
+
+                }
+                foreach (var productrow in ProductRow)
+                {
+                    var DataCount = from m in productrow
+                                    select m;
+                    var datacount = DataCount.Count();
+                    if (datacount > 1 && firstProduct == true)
+                    {
+                        var row0 = 1;
+                        var row1 = datacount;
+                        EndCount[i] = row1;
+                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
+                        firstProduct = false;
+                    }
+                    else
+                    {
+                        var row2 = EndCount[i - 1] + 1;
+                        var row3 = datacount + row2 - 1;
+                        EndCount[i] = row3;
+                        sheet.AddMergedRegion(new CellRangeAddress(row2, row3, 0, 0));
+                    }
+                    i++;
                 }
             }
             MemoryStream _stream = new MemoryStream();
