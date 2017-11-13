@@ -11,15 +11,14 @@
                 <a href="javascript:;" id="upload-traffic">选择文件</a>
                 <input type="submit" class="btn btn-danger" id="traffic-form-sub" />
             </form>
-            <a class="btn btn-danger traffic-submit float-right disabled" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
+            <a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
             <form method="post" id="calc_form"></form>
         </div>
-
-        <div style="margin-bottom:10px">
+        <div style="padding:0" class="col-md-5">
             <a class="btn btn-danger traffic-submit" href="javascript:;" id="hot-download" onclick="$('#hot_form').submit();">爆款统计下载</a>
             <form method="post" id="hot_form" action="/PlattformInventory/getHotExcel"></form>
         </div>
-        <div>
+        <div class="col-md-5">
             <a class="btn btn-danger traffic-submit" href="javascript:;" id="source-download" onclick="$('#source_form').submit();">渠道统计下载</a>
             <form method="post" id="source_form" action="/PlattformInventory/getHotSourceExcel"></form>
         </div>
