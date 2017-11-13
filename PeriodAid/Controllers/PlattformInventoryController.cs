@@ -1295,23 +1295,6 @@ namespace PeriodAid.Controllers
                 }
             }
             _db.SaveChanges();
-            //var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficData_Update == date);
-            //if (upload_traffic != null)
-            //{
-            //    upload_traffic.Upload_Date = DateTime.Now;
-            //    _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
-            //}
-            //else
-            //{
-            //    upload_traffic = new SS_UploadTraffic()
-            //    {
-            //        TrafficPlattform_Id = traffic_plattform.Id,
-            //        Upload_Date = DateTime.Now,
-            //        TrafficData_Update = date
-            //    };
-            //    _db.SS_UploadTraffic.Add(upload_traffic);
-            //}
-            //_db.SaveChanges();
             return true;
         }
         [HttpPost]
@@ -1369,7 +1352,7 @@ namespace PeriodAid.Controllers
             foreach (var product in productlist)
             {
                 var productOrder = from m in product
-                                   where m.Update==date
+                                   where m.Update == date
                                    group m by m.SS_TrafficPlattform into g
                                    select g;
                 bool firstCount = true;
@@ -1405,11 +1388,27 @@ namespace PeriodAid.Controllers
                     single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
                     row_pos++;
                 }
-
+                var product_count = from m in product
+                                    where m.Update == date
+                                    group m by m.Update into g
+                                    select g;
+                foreach(var productCount in product_count)
+                {
+                    IRow single_row1 = sheet.CreateRow(row_pos);
+                    cell_pos = 4;
+                    var Ratio = (decimal)productCount.Sum(m => m.Product_Customer) / (productCount.Sum(m => m.Product_Visitor) == 0 ? 1 : productCount.Sum(m => m.Product_Visitor));
+                    single_row1.CreateCell(cell_pos).SetCellValue(productCount.Sum(m=>m.Product_Flow));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Visitor));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Customer));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Order_Count));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
+                }
+                row_pos++;
             }
+            row_pos++;
             // 各平台总和
             var data_each = from m in _db.SS_TrafficData
-                            where m.Update==date
+                            where m.Update == date
                             group m by m.SS_TrafficPlattform into g
                             select g;
             foreach (var eachData in data_each)
@@ -1427,7 +1426,7 @@ namespace PeriodAid.Controllers
             }
             // 平台总和
             var data_all = from m in _db.SS_TrafficData
-                           where m.Update==date
+                           where m.Update == date
                            group m by m.SS_TrafficPlattform.Plattform_Id into g
                            select g;
             foreach (var allData in data_all)
