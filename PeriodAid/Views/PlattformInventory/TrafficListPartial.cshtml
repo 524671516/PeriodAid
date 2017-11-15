@@ -9,6 +9,7 @@
             <th>渠道来源</th>
             <th>日期</th>
             <th>当日访客</th>
+            <th>商品转化率</th>
         </tr>
         @foreach(var item in Model)
         {
@@ -18,7 +19,14 @@
                 <td>@item.SS_TrafficPlattform.TrafficPlattform_Name</td>
                 <td>@item.SS_TrafficSource.TrafficSource_Name</td>
                 <td>@item.Update.ToString("yyyy-MM-dd")</td>
-                <td>@item.Product_Visitor</td>
+                <td>@item.Product_Customer</td>
+                @if (item.Product_Visitor == 0)
+                {
+                    <td>0</td>
+                }else
+                {
+                    <td>@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 2)</td>
+                }
             </tr>
         }
     </table>

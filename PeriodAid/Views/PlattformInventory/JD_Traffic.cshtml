@@ -17,6 +17,21 @@
             <a class="btn btn-danger traffic-submit" href="javascript:;" id="hot-download" onclick="$('#hot_form').submit();">爆款统计下载</a>
             <form method="post" id="hot_form" action="/PlattformInventory/getHotExcel"></form>
         </div>
+        <div class="tm-calendar-view tm-view" style="display:block;position: relative;top:0;height: 521px;width: 960px;z-index:0">
+            <div class="tm-view-header tm-calendar-view-header">
+                <div class="tm-view-header-select">
+                </div>
+                <div class="tm-calendar-view-control tm-view-control">
+                    <a href="javascript:;" class="tm-calendar-view-control tm-calendar-prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                    <span id="current-date" class="tm-calendar-view-control tm-calendar-currentmonth color-blue">@Html.Encode(DateTime.Now.ToString("yyyy-MM"))</span>
+                    <a href="javascript:;" class="tm-calendar-view-control tm-calendar-next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                </div>
+            </div>
+            <div class="tm-view-content tm-calendar-view-content">
+                <div class="tm-view-content-wrap  tm-view-wrap tm-calendar-view-wrap" id="tm-calendar-view-wrap">
+                </div>
+            </div>
+        </div>
         @*<div class="col-md-5">
             <a class="btn btn-danger traffic-submit" href="javascript:;" id="source-download" onclick="$('#source_form').submit();">渠道统计下载</a>
             <form method="post" id="source_form" action="/PlattformInventory/getHotSourceExcel"></form>
@@ -70,9 +85,42 @@
                     plattformName: $('#traffic-name').attr("data-name")
                 },
                 success: function (msg) {
-                    $('#file-loading').hide()
-                    $('#traffic-form-sub').removeAttr('disabled')
-                    alert("上传成功")
+                    console.log(msg)
+                    if (msg.result == "SUCCESS") {
+                        $.ajax({
+                            url: "/PlattformInventory/TrafficUploadFilePartial",
+                            type: "post",
+                            data: {
+                                plattformId: getUrlParam('plattformId'),
+                                month: $("#current-date").text() + "-01"
+                            },
+                            success: function (data) {
+                                var dataDate = $('.tm-calendar-monthofdate')
+                                for (var i = 0; i < dataDate.length; i++) {
+                                    var nowDate = dataDate.eq(i).attr('date-day');
+                                    for (var j = 0; j < data.length; j++) {
+                                        record = data[j].record_date.ToString("yyyy-MM-dd");
+                                        if (record == nowDate) {
+                                            dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                                        }
+                                    }
+                                }
+                                $('#file-loading').hide()
+                                $('#traffic-form-sub').removeAttr('disabled')
+                                alert("上传成功")
+                            },
+                            error: function () {
+                                errorAlert("请求数据失败。");
+                                $("#file-loading").hide();
+                                $('#traffic-form-sub').removeAttr('disabled')
+                            }
+                        });
+                    }
+                    else {
+                        errorAlert("上传失败");
+                        $("#file-loading").hide();
+                        $('#file-form-sub').removeAttr('disabled')
+                    }
                 }
             });
         } else {
@@ -87,5 +135,35 @@
         $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "");
         $("#download_calc").removeClass("disabled")
     })
+    // 初始化日历
+    TmDatePicker.Init({
+        container: "#tm-calendar-view-wrap",
+        onpagechanged: function (e) {
+            $("#file-loading").hide()
+            $.ajax({
+                url: "/PlattformInventory/TrafficUploadFilePartial",
+                type: "post",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    month: e.currentyear + "-" + e.currentmonth
+                },
+                success: function (data) {
+                    var dataDate = $('.tm-calendar-monthofdate')
+                    for (var i = 0; i < dataDate.length; i++) {
+                        var nowDate = dataDate.eq(i).attr('date-day');
+                        for (var j = 0; j < data.length; j++) {
+                            record = data[j].record_date.ToString("yyyy-MM-dd");
+                            if (record == nowDate) {
+                                dataDate.eq(i).parent().addClass('glyphicon glyphicon-star')
+                            }
+                        }
+                    }
+                },
+                error: function () {
+                    errorAlert("请求数据失败。");
+                }
+            });
+        }
+    });
 </script>
 }
