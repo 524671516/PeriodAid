@@ -11,16 +11,37 @@
             <th>日期</th>
             <th>当日访客</th>
         </tr>
-        @foreach(var list in ViewBag.trafficList)
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@list.SS_Product.System_Code</td>
-                <td>@list.SS_Product.Item_Name</td>
-                <td>@list.SS_TrafficPlattform.TrafficPlattform_Name</td>
-                <td>@list.SS_TrafficSource.TrafficSource_Name</td>
-                <td>@list.Update.ToString("yyyy-MM-dd")</td>
-                <td>@list.Product_Visitor</td>
+                <td>@item.SS_Product.System_Code</td>
+                <td>@item.SS_Product.Item_Name</td>
+                <td>@item.SS_TrafficPlattform.TrafficPlattform_Name</td>
+                <td>@item.SS_TrafficSource.TrafficSource_Name</td>
+                <td>@item.Update.ToString("yyyy-MM-dd")</td>
+                <td>@item.Product_Visitor</td>
             </tr>
         }
-    </table>
+    </table><input id="productId" value="@ViewBag.productId" hidden/>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("TrafficList", new { page }))
+    </div>
 </div>
+
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data: {
+                plattformId: getUrlParam('plattformId'),
+                productId: $("#productId").val()
+            },
+            success: function (data) {
+                $("#traffic-list").html(data);
+            }
+        });
+        return false;
+    });
+</script>

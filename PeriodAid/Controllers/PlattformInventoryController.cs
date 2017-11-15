@@ -2161,13 +2161,15 @@ namespace PeriodAid.Controllers
         }
 
         // TrafficList
-        public ActionResult TrafficList(int plattformId , int productId)
+        public ActionResult TrafficList(int plattformId , int productId,int? page)
         {
-            var trafficList = from m in _db.SS_TrafficData
+            int _page = page ?? 1;
+            var trafficList = (from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-                              select m;
-            ViewBag.trafficList = trafficList;
-            return PartialView();
+                              orderby m.Update
+                              select m).ToPagedList(_page, 15);
+            ViewBag.productId = productId;
+            return PartialView(trafficList);
         }
 
         //public ActionResult TrafficListPartial(int? plattformId, int? page)
