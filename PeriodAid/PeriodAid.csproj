@@ -1147,6 +1147,7 @@
     <Content Include="Views\PlattformInventory\JD_Traffic.cshtml" />
     <Content Include="Views\PlattformInventory\TrafficList.cshtml" />
     <Content Include="Views\PlattformInventory\ViewTrafficStatistic.cshtml" />
+    <Content Include="Views\PlattformInventory\TrafficListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

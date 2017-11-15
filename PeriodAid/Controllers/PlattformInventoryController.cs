@@ -2161,7 +2161,7 @@ namespace PeriodAid.Controllers
         }
 
         // TrafficList
-        public ActionResult TrafficList(int plattformId , int productId)
+        public ActionResult TrafficList(int plattformId,int productId)
         {
             var trafficList = from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
@@ -2170,14 +2170,39 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
 
-        //public ActionResult TrafficListPartial(int? plattformId, int? page)
-        //{
-        //    int _page = page ?? 1;
-        //    var productlist = (from m in _db.SS_TrafficData
-        //                       where m.SS_TrafficPlattform.Plattform_Id == plattformId
-        //                       select m).ToPagedList(_page, 15);
-        //    return PartialView(productlist);
-        //}
+        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId)
+        {
+            int _page = page ?? 1;
+
+            if (query != null)
+            {
+                if (query != "")
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
+                                       orderby m.Update descending, m.Product_Visitor descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+                else
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
+                                       orderby m.Update descending, m.Product_Visitor descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+
+            }
+            else
+            {
+                var productlist = (from m in _db.SS_TrafficData
+                                   where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
+                                   orderby m.Update descending, m.Product_Visitor descending
+                                   select m).ToPagedList(_page, 15);
+                return PartialView(productlist);
+            }
+        }
 
         // 产品数据图表
         public ActionResult ViewTrafficStatistic(int productId)
@@ -2187,6 +2212,49 @@ namespace PeriodAid.Controllers
                               select m;
             ViewBag.TrafficList = TrafficList;
             return View();
+        }
+
+        public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end)
+        {
+            DateTime _start = Convert.ToDateTime(start);
+            DateTime _end = Convert.ToDateTime(end);
+            var info_data = from m in _db.SS_TrafficData
+                            where m.Update >= _start && m.Update <= _end
+                            && m.Product_Id == productId
+                            group m by m.Update into g
+                            orderby g.Key
+                            select new TrafficStatisticViewModel { salesdate = g.Key, ordercount = g.Sum(m => m.Order_Count) };
+            DateTime current_date = _start;
+            var data = new List<TrafficStatisticViewModel>();
+            while (current_date <= _end)
+            {
+                int _salescount = 0;
+                var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+                if (item != null)
+                {
+                    _salescount = item.ordercount;
+                }
+                data.Add(new TrafficStatisticViewModel()
+                {
+                    ordercount = _salescount,
+                    salesdate = current_date
+                });
+                current_date = current_date.AddDays(1);
+            }
+            return Json(new { result = "SUCCESS", data = data });
+        }
+
+        // 统计上传日期
+        [HttpPost]
+        public ActionResult TrafficUploadFilePartial(int plattformId, string month)
+        {
+            DateTime start = Convert.ToDateTime(month);
+            DateTime end = start.AddMonths(1);
+            var list = from m in _db.SS_UploadTraffic
+                       where m.Traffic_Date >= start && m.Traffic_Date < end
+                       && m.SS_TrafficPlattform.Plattform_Id == plattformId
+                       select new { record_date = m.Traffic_Date };
+            return Json(list);
         }
     }
 }

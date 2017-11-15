@@ -25,7 +25,35 @@
             var start_date = showdate(-30);
             $("#end_time").val(current_date.getFullYear() + "-" + ((current_date.getMonth() + 1) > 9 ? current_date.getMonth() + 1 : '0' + (current_date.getMonth() + 1)) + "-" + current_date.getDate());
             $("#start_time").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0'+(start_date.getMonth() + 1)) + "-" + start_date.getDate());
-            
+            $.ajax({
+                url: "/PlattformInventory/ViewTrafficStatisticPartial",
+                type:"post",
+                data: {
+                    productId: getUrlParam('productId'),
+                    start: $("#start_time").val(),
+                    end: $("#end_time").val()
+                }, success: function (data) {
+                    showstatistic(data);
+                }
+            });
+            $("#statistic_btn").click(function () {
+                if ($("#start_time").val() <= $("#end_time").val()) {
+                    $.ajax({
+                        url: "/PlattformInventory/ViewTrafficStatisticPartial",
+                        type: "post",
+                        data: {
+                            productId: getUrlParam('productId'),
+                            start: $("#start_time").val(),
+                            end: $("#end_time").val()
+                        }, success: function (data) {
+                            showstatistic(data);
+                        }
+                    });
+                } else {
+                    errorAlert('请选择正确日期')
+                }
+
+            })
         });
         function showstatistic(data) {
             var resultdata = data.data;
@@ -35,20 +63,32 @@
                 var deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
                 var dee = new Date(deeint)
                 datearray.push(dee.Format("MM-dd"));
-                var totaltemp = resultdata[i].salescount
-                totalarray.push(['无活动', totaltemp]);
+                var totaltemp = resultdata[i].ordercount
+                totalarray.push(totaltemp);
             }
+            //for (var i = 0; i < datearray.length; i++) {
+            //    $('.view-activity').each(function () {
+            //        // 截取时间
+            //        var datetime = $(this).attr('data-date')
+            //        var dateTime = datetime.indexOf('-')
+            //        var strTime = datetime.substring(dateTime + 1)
+            //        var activityList = $(this).attr('data-activity')
+            //        if (datearray[i] == strTime) {
+            //            totalarray[i] = ["活动：" + activityList, totalarray[i][1]];
+            //        }
+            //    });
+            //}
             $("#myChart_Bar").highcharts({
                 chart: {
+                    type: 'column'
                 },
                 title: {
-                    text: "产品销售曲线"
+                    text: "产品渠道销售曲线"
                 },
                 xAxis: {
                     categories: datearray
                 },
                 series: [{
-                    type: 'spline',
                     name: '销量',
                     data: totalarray,
                     marker: {
