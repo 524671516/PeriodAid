@@ -49,6 +49,7 @@
                 <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>
                 <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
                 &nbsp;|&nbsp;<a class="JD-Traffic" data-val="@item.Id" style="cursor:pointer">来源分析</a>
+                &nbsp;|&nbsp;<span class="JD-Traffic-Order">@Html.ActionLink("销量曲线", "ViewTrafficStatistic", new { productId = item.Id })</span>
             </td>
         </tr>
     }
@@ -80,7 +81,6 @@
                 <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
                 <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>
                 <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
-                &nbsp;|&nbsp;
             </td>
         </tr>
     }
@@ -135,16 +135,29 @@
         
         // TrafficView
         $(".JD-Traffic").on("click", function () {
+            var product_Id = $(this).attr('data-val')
             $.ajax({
                 url: "/PlattformInventory/TrafficList",
                 data: {
                     plattformId: getUrlParam('plattformId'),
-                    productId: $(this).attr('data-val')
+                    productId: product_Id
                 },
                 success: function (data) {
                     $(".col-md-10").html(data)
+                    $("#traffic-list").attr("data-val", product_Id)
                 }
             })
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    productId: product_Id
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data)
+                }
+            });
         })
     })
 </script>

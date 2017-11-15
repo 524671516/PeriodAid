@@ -50,6 +50,14 @@ namespace PeriodAid.Models
 
         public decimal Sales_Price { get; set; }
     }
+
+    // 渠道销量
+    public class TrafficStatisticViewModel
+    {
+        public DateTime salesdate { get; set; }
+
+        public int ordercount { get; set; }
+    }
     // 京东送货单导入
     public class StorageOrder
     {

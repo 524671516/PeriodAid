@@ -1,47 +1,35 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.SS_TrafficData>
-@using PagedList.Mvc;
-<div id="traffic-list">
-    <div class="h2">渠道分析</div>
-    <table class="table table-hover">
-        <tr>
-            <th>系统编码</th>
-            <th>产品名称</th>
-            <th>平台名称</th>
-            <th>渠道来源</th>
-            <th>日期</th>
-            <th>当日访客</th>
-        </tr>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.SS_Product.System_Code</td>
-                <td>@item.SS_Product.Item_Name</td>
-                <td>@item.SS_TrafficPlattform.TrafficPlattform_Name</td>
-                <td>@item.SS_TrafficSource.TrafficSource_Name</td>
-                <td>@item.Update.ToString("yyyy-MM-dd")</td>
-                <td>@item.Product_Visitor</td>
-            </tr>
-        }
-    </table><input id="productId" value="@ViewBag.productId" hidden/>
-    <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("TrafficList", new { page }))
-    </div>
-</div>
+﻿<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>产品名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="traffic-product-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="traffic-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<h2>渠道分析</h2>
+<div id="traffic-list"></div>
 
 <script>
-    //页码
-    $(".pagination > li > a").click(function () {
-        var l = $(this).attr("href");
-        $.ajax({
-            url: l,
-            data: {
-                plattformId: getUrlParam('plattformId'),
-                productId: $("#productId").val()
-            },
-            success: function (data) {
-                $("#traffic-list").html(data);
-            }
+    $(function () {
+        // 搜索
+        $("#traffic-product-search").click(function () {
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    query: $("#traffic-product-query").val(),
+                    productId: $("#traffic-list").attr("data-val")
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data);
+                }
+            })
         });
-        return false;
-    });
-</script>
+    })
+</script> 
+
+
+    
+    
