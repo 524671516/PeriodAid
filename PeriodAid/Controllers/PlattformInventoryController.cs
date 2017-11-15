@@ -2075,7 +2075,6 @@ namespace PeriodAid.Controllers
             Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
             foreach (var product in product_list)
             {
-
                 bool firstProduct = true;
                 var sheetName = product.Item_Name;
                 ISheet sheet = book.CreateSheet(sheetName);
