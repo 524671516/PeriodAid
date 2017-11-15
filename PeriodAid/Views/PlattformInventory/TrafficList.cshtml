@@ -1,0 +1,26 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.SS_TrafficData>
+@using PagedList.Mvc;
+<div id="traffic-list">
+    <div class="h2">渠道分析</div>
+    <table class="table table-hover">
+        <tr>
+            <th>系统编码</th>
+            <th>产品名称</th>
+            <th>平台名称</th>
+            <th>渠道来源</th>
+            <th>日期</th>
+            <th>当日访客</th>
+        </tr>
+        @foreach(var list in ViewBag.trafficList)
+        {
+            <tr>
+                <td>@list.SS_Product.System_Code</td>
+                <td>@list.SS_Product.Item_Name</td>
+                <td>@list.SS_TrafficPlattform.TrafficPlattform_Name</td>
+                <td>@list.SS_TrafficSource.TrafficSource_Name</td>
+                <td>@list.Update.ToString("yyyy-MM-dd")</td>
+                <td>@list.Product_Visitor</td>
+            </tr>
+        }
+    </table>
+</div>

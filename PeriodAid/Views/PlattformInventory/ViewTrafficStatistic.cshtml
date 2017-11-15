@@ -1,67 +1,31 @@
-﻿@{
-    ViewBag.Title = "产品数据统计";
+﻿
+@{
+    ViewBag.Title = "ViewTrafficStatistic";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-
 <input type="hidden" id="productId" name="plattformId" value="@ViewBag.ProductId" />
 <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
 <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
-<input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px"/>
+<input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
 
-<div id="myChart_Bar" style="min-width:500px;height:400px">
-    <div class="hidden">
-        @foreach (var list in ViewBag.eventList)
-        {
-            <div class="view-activity" data-activity="@list.EventName" data-date="@list.EventDate.ToString("yyyy-MM-dd")"></div>
-        }
-    </div>
-</div>
-
+<div id="myChart_Bar" style="min-width:500px;height:400px"></div>
 @section scripts{
-    
-<script src="~/Scripts/highcharts.js"></script>
-<script type="text/javascript">
+
+    <script src="~/Scripts/highcharts.js"></script>
+    <script type="text/javascript">
     $(function () {
             var fileDate = $('.file-data')
                 fileDate.datepicker({ dateFormat: "yy-mm-dd" });
-                //星期格式汉化  
+                //星期格式汉化
                 fileDate.datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
-                //月份格式汉化  
+                //月份格式汉化
                 fileDate.datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
                 fileDate.datepicker();
             var current_date = showdate(-1);
             var start_date = showdate(-30);
             $("#end_time").val(current_date.getFullYear() + "-" + ((current_date.getMonth() + 1) > 9 ? current_date.getMonth() + 1 : '0' + (current_date.getMonth() + 1)) + "-" + current_date.getDate());
             $("#start_time").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0'+(start_date.getMonth() + 1)) + "-" + start_date.getDate());
-            $.ajax({
-                url: "/PlattformInventory/ViewProductStatisticPartial",
-                type:"post",
-                data: {
-                    productId: getUrlParam('productId'),
-                    start: $("#start_time").val(),
-                    end: $("#end_time").val()
-                }, success: function (data) {
-                    showstatistic(data);
-                }
-            });
-            $("#statistic_btn").click(function () {
-                if ($("#start_time").val() <= $("#end_time").val()) {
-                    $.ajax({
-                        url: "/PlattformInventory/ViewProductStatisticPartial",
-                        type: "post",
-                        data: {
-                            productId: getUrlParam('productId'),
-                            start: $("#start_time").val(),
-                            end: $("#end_time").val()
-                        }, success: function (data) {
-                            showstatistic(data);
-                        }
-                    });
-                } else {
-                    errorAlert('请选择正确日期')
-                }
-                
-            })
+            
         });
         function showstatistic(data) {
             var resultdata = data.data;
@@ -73,18 +37,6 @@
                 datearray.push(dee.Format("MM-dd"));
                 var totaltemp = resultdata[i].salescount
                 totalarray.push(['无活动', totaltemp]);
-            }
-            for (var i = 0; i < datearray.length; i++) {
-                $('.view-activity').each(function () {
-                    // 截取时间
-                    var datetime = $(this).attr('data-date')
-                    var dateTime = datetime.indexOf('-')
-                    var strTime = datetime.substring(dateTime + 1)
-                    var activityList = $(this).attr('data-activity')
-                    if (datearray[i] == strTime) {
-                        totalarray[i] = ["活动：" + activityList, totalarray[i][1]];
-                    }
-                });
             }
             $("#myChart_Bar").highcharts({
                 chart: {
@@ -107,7 +59,7 @@
                 }]
             });
         }
-    
+
         function showdate(n) {
             var uom = new Date(new Date() - 0 + n * 86400000);
             //uom = uom.getFullYear() + "-" + (uom.getMonth() + 1) + "-" + uom.getDate();

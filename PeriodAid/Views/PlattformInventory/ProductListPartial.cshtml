@@ -48,6 +48,7 @@
                 <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
                 <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>
                 <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+                &nbsp;|&nbsp;<a class="JD-Traffic" data-val="@item.Id" style="cursor:pointer">来源分析</a>
             </td>
         </tr>
     }
@@ -79,6 +80,7 @@
                 <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
                 <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>
                 <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+                &nbsp;|&nbsp;<a class="JD-Traffic" style="cursor:pointer">来源分析</a>
             </td>
         </tr>
     }
@@ -127,6 +129,20 @@
                 success: function (data) {
                     $('#modal-content').html(data)
                     $("#myModal").modal('show')
+                }
+            })
+        })
+        
+        // TrafficView
+        $(".JD-Traffic").on("click", function () {
+            $.ajax({
+                url: "/PlattformInventory/TrafficList",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    productId: $(this).attr('data-val')
+                },
+                success: function (data) {
+                    $(".col-md-10").html(data)
                 }
             })
         })

@@ -18,10 +18,10 @@
             <a class="btn btn-danger traffic-submit" href="javascript:;" id="hot-download" onclick="$('#hot_form').submit();">爆款统计下载</a>
             <form method="post" id="hot_form" action="/PlattformInventory/getHotExcel"></form>
         </div>
-        <div class="col-md-5">
+        @*<div class="col-md-5">
             <a class="btn btn-danger traffic-submit" href="javascript:;" id="source-download" onclick="$('#source_form').submit();">渠道统计下载</a>
             <form method="post" id="source_form" action="/PlattformInventory/getHotSourceExcel"></form>
-        </div>
+        </div>*@
     </div>
     <div class="tm-view-content-container  tm-view-container" id="file-loading" style="top:0;height:500px">
         <div class="tm-veiw-loading text-center" id="tm-view-loading">
@@ -73,6 +73,7 @@
                 success: function (msg) {
                     $('#file-loading').hide()
                     $('#traffic-form-sub').removeAttr('disabled')
+                    alert("上传成功")
                 }
             });
         } else {
