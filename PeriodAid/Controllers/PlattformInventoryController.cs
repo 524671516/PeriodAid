@@ -1731,6 +1731,7 @@ namespace PeriodAid.Controllers
                     {
                         var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
                         int p_flow, p_visitor, p_customer, o_count;
+                        double p_times;
                         if (traffic_data == null)
                         {
                             traffic_data = new SS_TrafficData()
@@ -1738,6 +1739,7 @@ namespace PeriodAid.Controllers
                                 Update = date,
                                 Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
                                 Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
+                                Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0,
                                 Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0,
                                 Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0,
                                 Product_Id = product.Id,
@@ -1751,6 +1753,7 @@ namespace PeriodAid.Controllers
                             traffic_data.Update = date;
                             traffic_data.Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0;
                             traffic_data.Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0;
+                            traffic_data.Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0;
                             traffic_data.Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0;
                             traffic_data.Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0;
                             traffic_data.Product_Id = product.Id;
@@ -1953,6 +1956,7 @@ namespace PeriodAid.Controllers
                 row.CreateCell(++cell_pos).SetCellValue("流量渠道");
                 row.CreateCell(++cell_pos).SetCellValue("商品流量");
                 row.CreateCell(++cell_pos).SetCellValue("商品访客");
+                row.CreateCell(++cell_pos).SetCellValue("商品访次");
                 row.CreateCell(++cell_pos).SetCellValue("商品消费者");
                 row.CreateCell(++cell_pos).SetCellValue("商品订单行");
                 row.CreateCell(++cell_pos).SetCellValue("商品转化率");
@@ -1972,6 +1976,7 @@ namespace PeriodAid.Controllers
                     single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.SS_TrafficSource.TrafficSource_Name);
                     single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Product_Flow);
                     single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Product_Visitor);
+                    single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Product_VisitTimes);
                     single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Product_Customer);
                     single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Order_Count);
                     if (trafficdata.Product_Visitor == 0)

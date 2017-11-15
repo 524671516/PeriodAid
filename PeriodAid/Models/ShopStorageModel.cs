@@ -274,6 +274,8 @@
 
         public int Product_Customer { get; set; }
 
+        public double Product_VisitTimes { get; set; }
+
         public int Order_Count { get; set; }
 
         public virtual SS_TrafficSource SS_TrafficSource { get; set; }
