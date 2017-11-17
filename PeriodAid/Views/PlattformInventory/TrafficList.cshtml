@@ -19,11 +19,12 @@
 <h2>渠道分析</h2>
 <div class="text-center h4" id="product-name"></div>
 <div class="text-center h4">
-    <a class="glyphicon glyphicon-chevron-left" href="javascript:;" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
-    
-    <span id="traffci-date-time" class="color-blue">@ViewBag.trafficDate.ToString("yyyy-MM-dd")</span>
-    
-    <a class="glyphicon glyphicon-chevron-right " href="javascript:;" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
+    <a class="glyphicon glyphicon-chevron-left" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
+    @foreach (var date in ViewBag.trafficDate)
+    {
+        <span class="traffci-date-time color-blue" date-time="@date.Year-@date.Month-@date.Day">@date.Year-@date.Month-@date.Day</span>
+    }
+    <a class="glyphicon glyphicon-chevron-right " style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
 <div class="float-right" style="margin-top:10px">
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
@@ -41,10 +42,15 @@
 <div id="traffic-list">
 </div>
 @section scripts{
+
 <script>
     $(function () {
-        var productName = $("#product-list-name").attr("data-name")
-        var start_time = $("#traffci-date-time").text()
+        $(".traffci-date-time").addClass("hidden");
+        var last = $(".traffci-date-time").last().index()-1;
+        $(".traffci-date-time:eq(" + last + ")").removeClass("hidden");
+        var productName = $("#product-list-name").attr("data-name");
+        var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+        var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
         var fileDate = $('.file-data')
         fileDate.datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -69,6 +75,8 @@
         });
         // 搜索
         $("#traffic-product-search").click(function () {
+            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+            var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
             $.ajax({
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
@@ -86,6 +94,8 @@
         });
         // 选平台
         $(".plattform-btn").on("click", function () {
+            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+            var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
             $.ajax({
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
@@ -103,9 +113,47 @@
         })
         // 选择日期
         $("#date-btn-left").on("click", function () {
-            
+            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+            $(".traffci-date-time:eq(" + nowP + ")").addClass("hidden");
+            var pos = nowP - 1;
+            $(".traffci-date-time:eq(" + pos + ")").removeClass("hidden");
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    query: $("#traffic-product-query").val(),
+                    productId: getUrlParam('productId'),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    start: $(".traffci-date-time:eq(" + pos + ")").html()
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data);
+                }
+            })
+        })
+        $("#date-btn-right").on("click", function () {
+            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+            $(".traffci-date-time:eq(" + nowP + ")").addClass("hidden");
+            var pos = nowP + 1;
+            $(".traffci-date-time:eq(" + pos + ")").removeClass("hidden");
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    query: $("#traffic-product-query").val(),
+                    productId: getUrlParam('productId'),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    start: $(".traffci-date-time:eq(" + pos + ")").html()
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data);
+                }
+            })
         })
     })
+
 </script> 
 }
 
