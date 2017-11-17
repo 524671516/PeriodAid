@@ -51,7 +51,6 @@
         var productName = $("#product-list-name").attr("data-name");
         var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
         var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
-        console.log(start_time)
         var fileDate = $('.file-data')
         fileDate.datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
