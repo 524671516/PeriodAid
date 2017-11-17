@@ -17,6 +17,7 @@
                 <td>@item.Product_Visitor</td>
                 <td>@item.Product_Customer</td>
                 <td>@item.Order_Count</td>
+                <td>@item.Update</td>
             </tr>
         }
     </table>
@@ -26,6 +27,8 @@
 </div>
 <script>
     $(function () {
+        // 页码
+        var start_time = $("#traffci-date-time").attr("date-time")
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
             $.ajax({
@@ -33,7 +36,9 @@
                 data: {
                     plattformId: getUrlParam('plattformId'),
                     productId: getUrlParam('productId'),
-                    query: $("#traffic-product-query").val()
+                    query: $("#traffic-product-query").val(),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    start:start_time
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);

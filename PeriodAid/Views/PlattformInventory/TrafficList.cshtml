@@ -18,24 +18,25 @@
 </table>
 <h2>渠道分析</h2>
 <div class="text-center h4" id="product-name"></div>
-<div class="text-center h4"><span class="glyphicon glyphicon-chevron-left" style="padding:0 40px"></span>
+<div class="text-center h4">
+    <span class="glyphicon glyphicon-chevron-left" style="padding:0 40px" id="date-btn-left"></span>
     @foreach (var date in ViewBag.trafficDate)
     {
-        <span>@date.Update.ToString("yyyy-MM-dd")</span>
+        <span id="traffci-date-time" date-time="@date.Update">@date.Update.ToString("yyyy-MM-dd")</span>
     }
-    <span class="glyphicon glyphicon-chevron-right" style="padding:0 40px"></span>
+    <span class="glyphicon glyphicon-chevron-right" style="padding:0 40px" id="date-btn-right"></span>
 </div>
-<div class="float-right" style="margin:10px">
+<div class="float-right" style="margin-top:10px">
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
     <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
     <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
 </div>
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="1" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
-    <li role="presentation"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="417" class="plattform-btn" style="cursor:pointer">APP</a></li>
-    <li role="presentation"><a aria-controls="messages" role="tab" data-toggle="tab" data-id="418" class="plattform-btn" style="cursor:pointer">M站</a></li>
-    <li role="presentation"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="419" class="plattform-btn" style="cursor:pointer">PC</a></li>
-    <li role="presentation"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="420" class="plattform-btn" style="cursor:pointer">手Q</a></li>
+    <li role="presentation" class="traffic-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="1" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
+    <li role="presentation" class="traffic-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="417" class="plattform-btn" style="cursor:pointer">APP</a></li>
+    <li role="presentation" class="traffic-list-li"><a aria-controls="messages" role="tab" data-toggle="tab" data-id="418" class="plattform-btn" style="cursor:pointer">M站</a></li>
+    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="419" class="plattform-btn" style="cursor:pointer">PC</a></li>
+    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="420" class="plattform-btn" style="cursor:pointer">手Q</a></li>
     <li role="presentation"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="421" class="plattform-btn" style="cursor:pointer">微信</a></li>
 </ul>
 <div id="traffic-list">
@@ -45,6 +46,7 @@
 <script>
     $(function () {
         var productName = $("#product-list-name").attr("data-name")
+        var start_time = $("#traffci-date-time").attr("date-time")
         var fileDate = $('.file-data')
         fileDate.datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
@@ -57,7 +59,8 @@
             data: {
                 plattformId: getUrlParam('plattformId'),
                 page: 1,
-                productId: getUrlParam('productId')
+                productId: getUrlParam('productId'),
+                start: start_time
             },
             success: function (data) {
                 $("#traffic-list").html(data)
@@ -73,16 +76,16 @@
                     page: 1,
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
-                    trafficPlattformId: $(".plattform-btn .active").attr("data-id"),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    start: start_time
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
                 }
             })
         });
-
+        // 选平台
         $(".plattform-btn").on("click", function () {
-            //console.log($(this).attr("data-id"))
             $.ajax({
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
@@ -91,6 +94,7 @@
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(this).attr("data-id"),
+                    start: start_time
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
@@ -98,6 +102,7 @@
             })
         })
     })
+
 </script> 
 }
 
