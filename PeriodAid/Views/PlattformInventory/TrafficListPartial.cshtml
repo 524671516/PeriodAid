@@ -32,7 +32,7 @@
                 url: l,
                 data: {
                     plattformId: getUrlParam('plattformId'),
-                    productId: $("#traffic-list").attr("data-val"),
+                    productId: getUrlParam('productId'),
                     query: $("#traffic-product-query").val()
                 },
                 success: function (data) {
