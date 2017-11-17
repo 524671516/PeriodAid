@@ -77,43 +77,81 @@
         $("#traffic-product-search").click(function () {
             var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
             var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
-            $.ajax({
-                url: "/PlattformInventory/TrafficListPartial",
-                data: {
-                    plattformId: getUrlParam('plattformId'),
-                    page: 1,
-                    query: $("#traffic-product-query").val(),
-                    productId: getUrlParam('productId'),
-                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
-                    single: start_time,
-                    start: $("#start_time").val(),
-                    end: $("#end_time").val(),
-                },
-                success: function (data) {
-                    $("#traffic-list").html(data);
-                }
-            })
+            if ($("#start_time").val() != "" && $("#end_time").val() != "") {
+                $.ajax({
+                    url: "/PlattformInventory/SumTrafficListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        page: 1,
+                        query: $("#traffic-product-query").val(),
+                        productId: getUrlParam('productId'),
+                        trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                        start: $("#start_time").val(),
+                        end: $("#end_time").val(),
+                    },
+                    success: function (data) {
+                        $("#traffic-list").html(data);
+                    }
+                })
+            } else {
+                $.ajax({
+                    url: "/PlattformInventory/TrafficListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        page: 1,
+                        query: $("#traffic-product-query").val(),
+                        productId: getUrlParam('productId'),
+                        trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                        single: start_time,
+                        start: $("#start_time").val(),
+                        end: $("#end_time").val(),
+                    },
+                    success: function (data) {
+                        $("#traffic-list").html(data);
+                    }
+                })
+            }
         });
         // 选平台
         $(".plattform-btn").on("click", function () {
             var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
             var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
-            $.ajax({
-                url: "/PlattformInventory/TrafficListPartial",
-                data: {
-                    plattformId: getUrlParam('plattformId'),
-                    page: 1,
-                    query: $("#traffic-product-query").val(),
-                    productId: getUrlParam('productId'),
-                    trafficPlattformId: $(this).attr("data-id"),
-                    single: start_time,
-                    start: $("#start_time").val(),
-                    end: $("#end_time").val(),
-                },
-                success: function (data) {
-                    $("#traffic-list").html(data);
-                }
-            })
+            if ($("#start_time").val() != "" && $("#end_time").val() != "") {
+
+                $.ajax({
+                    url: "/PlattformInventory/SumTrafficListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        page: 1,
+                        query: $("#traffic-product-query").val(),
+                        productId: getUrlParam('productId'),
+                        trafficPlattformId: $(this).attr("data-id"),
+                        start: $("#start_time").val(),
+                        end: $("#end_time").val(),
+                    },
+                    success: function (data) {
+                        $("#traffic-list").html(data);
+                    }
+                })
+            } else {
+
+                $.ajax({
+                    url: "/PlattformInventory/TrafficListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        page: 1,
+                        query: $("#traffic-product-query").val(),
+                        productId: getUrlParam('productId'),
+                        trafficPlattformId: $(this).attr("data-id"),
+                        single: start_time,
+                        start: $("#start_time").val(),
+                        end: $("#end_time").val(),
+                    },
+                    success: function (data) {
+                        $("#traffic-list").html(data);
+                    }
+                })
+            }
         })
         // 选择日期
         $("#date-btn-left").on("click", function () {
@@ -165,7 +203,7 @@
             {
                 $("#single_day").remove()
                 $.ajax({
-                    url: "/PlattformInventory/TrafficListPartial",
+                    url: "/PlattformInventory/SumTrafficListPartial",
                     data: {
                         plattformId: getUrlParam('plattformId'),
                         page: 1,

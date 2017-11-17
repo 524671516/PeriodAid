@@ -1,0 +1,52 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.TrafficData>
+@using PagedList.Mvc;
+<div>
+    <table class="table table-hover">
+        <tr>
+            <th>平台名称</th>
+            <th>商品流量</th>
+            <th>访客访次</th>
+            <th>买家数</th>
+            <th>订单数</th>
+        </tr>
+        @foreach (var item in Model.OrderByDescending(m=>m.Product_Flow))
+        {
+            <tr>
+                <td>@item.Date_Source</td>
+                <td>@item.Product_Flow</td>
+                <td>@item.Product_Visitor</td>
+                <td>@item.Product_Customer</td>
+                <td>@item.Order_Count</td>
+            </tr>
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("SumTrafficListPartial", new { page }))
+    </div>
+</div>
+<script>
+    $(function () {
+        // 页码 
+        var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+        var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
+        var traffic_Id = $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    productId: getUrlParam('productId'),
+                    query: $("#traffic-product-query").val(),
+                    trafficPlattformId: traffic_Id,
+                    start:$("#start_time").val(),
+                    end: $("#end_time").val(),
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data);
+                }
+            });
+            return false;
+        });
+    })
+</script>

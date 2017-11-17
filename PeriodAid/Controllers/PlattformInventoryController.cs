@@ -2173,126 +2173,130 @@ namespace PeriodAid.Controllers
                               where m.Plattform_Id == plattformId && m.Id == productId
                               select m;
             ViewBag.productList = productList;
-            var trafficDate = (from m in _db.SS_TrafficData
+            var trafficDate = from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
                               orderby m.Update descending
-                              select m.Update).FirstOrDefault();
+                              group m by m.Update into g
+                              select g.Key;
             ViewBag.trafficDate = trafficDate;
             return PartialView();
         }
         
-        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int trafficPlattformId,DateTime? single,DateTime? start,DateTime? end)
+        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int trafficPlattformId,DateTime? single)
         {
             int _page = page ?? 1;
             if (trafficPlattformId == 1)
             {
                 if (query != "")
                 {
-                    if (single != null)
-                    {
-                        var productlist = (from m in _db.SS_TrafficData
-                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId
-                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                           select m).ToPagedList(_page, 15);
-                        return PartialView(productlist);
-                    }
-                    else {
-                        var productlist = from m in _db.SS_TrafficData
-                                          where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId
-                                          orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                          select m;
-                        var productSum = (from m in productlist
-                                           group m by m.TrafficPlattform_Id into g
-                                           select new SS_TrafficData {
-                                               Product_Flow=g.Sum(m=>m.Product_Flow),
-                                               Product_Visitor=g.Sum(m=>m.Product_Visitor),
-                                               Product_Customer=g.Sum(m=>m.Product_Customer),
-                                               Order_Count=g.Sum(m=>m.Order_Count)
-                                           }).ToPagedList(_page, 15);
-                        return PartialView(productSum);
-                    }
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
                 }
                 else
                 {
-                    if (single != null)
-                    {
-                        var productlist = (from m in _db.SS_TrafficData
-                                           where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == single
-                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                           select m).ToPagedList(_page, 15);
-                        return PartialView(productlist);
-                    }
-                    else
-                    {
-                        var productlist = from m in _db.SS_TrafficData
-                                          where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update >= start && m.Update <= end
-                                          group m by m.TrafficSource_Id into g
-                                          select new SS_TrafficData
-                                          {
-                                              Product_Flow = g.Sum(m => m.Product_Flow),
-                                              Product_Visitor = g.Sum(m => m.Product_Visitor),
-                                              Product_Customer = g.Sum(m => m.Product_Customer),
-                                              Order_Count = g.Sum(m => m.Order_Count)
-                                          };
-                        return PartialView(productlist);
-                    }
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == single
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
                 }
             }
             else {
                 if (query != "")
                 {
-                    if (end == null)
-                    {
-                        var productlist = (from m in _db.SS_TrafficData
-                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                           select m).ToPagedList(_page, 15);
-                        return PartialView(productlist);
-                    }
-                    else
-                    {
-                        var productlist = from m in _db.SS_TrafficData
-                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                           group m by m.TrafficSource_Id into g
-                                           select new TrafficData
-                                           {
-                                               Product_Flow = g.Sum(m => m.Product_Flow),
-                                               Product_Visitor = g.Sum(m => m.Product_Visitor),
-                                               Product_Customer = g.Sum(m => m.Product_Customer),
-                                               Order_Count = g.Sum(m => m.Order_Count)
-                                           };
-                        return PartialView(productlist);
-                    }
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
                 }
                 else
                 {
-                    if (end == null)
-                    {
-                        var productlist = (from m in _db.SS_TrafficData
-                                           where m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                           select m).ToPagedList(_page, 15);
-                        return PartialView(productlist);
-                    }
-                    else
-                    {
-                        var productlist = (from m in _db.SS_TrafficData
-                                           where m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                           group m by m.TrafficPlattform_Id into g
-                                           select new SS_TrafficData
-                                           {
-                                               Product_Flow = g.Sum(m => m.Product_Flow),
-                                               Product_Visitor = g.Sum(m => m.Product_Visitor),
-                                               Product_Customer = g.Sum(m => m.Product_Customer),
-                                               Order_Count = g.Sum(m => m.Order_Count)
-                                           }).ToPagedList(_page, 15);
-                        return PartialView(productlist);
-                    }
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
                 }
             }
 
+        }
+
+        public ActionResult SumTrafficListPartial(int? page, string query, int plattformId, int productId, int trafficPlattformId, DateTime start,DateTime end)
+        {
+            int _page = page ?? 1;
+            if (trafficPlattformId == 1)
+            {
+                if (query != "")
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId
+                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
+                                       orderby g.Key descending
+                                       select new TrafficData {
+                                           Date_Source=g.Key,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+                else
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update >= start && m.Update <= end
+                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
+                                       orderby g.Key descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+            }
+            else
+            {
+                if (query != "")
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
+                                       orderby g.Key descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+                else
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
+                                       orderby g.Key descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+            }
         }
 
         // 产品数据图表
