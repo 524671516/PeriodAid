@@ -1,14 +1,6 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.SS_TrafficData>
 @using PagedList.Mvc;
 <div>
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#all" aria-controls="home" role="tab" data-toggle="tab">全部平台</a></li>
-        <li role="presentation"><a href="#APP" aria-controls="profile" role="tab" data-toggle="tab">APP</a></li>
-        <li role="presentation"><a href="#M站" aria-controls="messages" role="tab" data-toggle="tab">M站</a></li>
-        <li role="presentation"><a href="#PC" aria-controls="settings" role="tab" data-toggle="tab">PC</a></li>
-        <li role="presentation"><a href="#手Q" aria-controls="settings" role="tab" data-toggle="tab">手Q</a></li>
-        <li role="presentation"><a href="#微信" aria-controls="settings" role="tab" data-toggle="tab">微信</a></li>
-    </ul>
     <table class="table table-hover">
         <tr>
             <th>平台名称</th>
@@ -49,10 +41,5 @@
             });
             return false;
         });
-        //$(".source-btn").on("click", function () {
-        //    var product_Id = $(this).attr("data-id")
-        //    var source_Id = $(this).attr("data-source")
-        //    $(this).attr("href", "ViewTrafficStatistic?productId=" + 333 + "&sourceId=" + source_Id)
-        //})
     })
 </script>

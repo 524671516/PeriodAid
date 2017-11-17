@@ -2178,7 +2178,7 @@ namespace PeriodAid.Controllers
 
         
 
-        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId)
+        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int? trafficPlattformId)
         {
             int _page = page ?? 1;
 
@@ -2187,7 +2187,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId
                                        orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
@@ -2195,7 +2195,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId
                                        orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);

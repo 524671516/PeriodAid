@@ -8,7 +8,16 @@
     </tr>
 </table>
 <h2>渠道分析</h2>
-<div id="traffic-list"></div>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="1" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
+    <li role="presentation"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="417" class="plattform-btn" style="cursor:pointer">APP</a></li>
+    <li role="presentation"><a aria-controls="messages" role="tab" data-toggle="tab" data-id="418" class="plattform-btn" style="cursor:pointer">M站</a></li>
+    <li role="presentation"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="419" class="plattform-btn" style="cursor:pointer">PC</a></li>
+    <li role="presentation"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="420" class="plattform-btn" style="cursor:pointer">手Q</a></li>
+    <li role="presentation"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="421" class="plattform-btn" style="cursor:pointer">微信</a></li>
+</ul>
+<div id="traffic-list">
+</div>
 
 <script>
     $(function () {
@@ -20,13 +29,31 @@
                     plattformId: getUrlParam('plattformId'),
                     page: 1,
                     query: $("#traffic-product-query").val(),
-                    productId: $("#traffic-list").attr("data-val")
+                    productId: $("#traffic-list").attr("data-val"),
+                    trafficPlattformId: $(".plattform-btn .active").attr("data-id"),
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
                 }
             })
         });
+
+        $(".plattform-btn").on("click", function () {
+            //console.log($(this).attr("data-id"))
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    query: $("#traffic-product-query").val(),
+                    productId: $("#traffic-list").attr("data-val"),
+                    trafficPlattformId: $(this).attr("data-id"),
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data);
+                }
+            })
+        })
     })
 </script> 
 
