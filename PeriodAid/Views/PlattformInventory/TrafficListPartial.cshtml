@@ -1,32 +1,30 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.SS_TrafficData>
 @using PagedList.Mvc;
 <div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#all" aria-controls="home" role="tab" data-toggle="tab">全部平台</a></li>
+        <li role="presentation"><a href="#APP" aria-controls="profile" role="tab" data-toggle="tab">APP</a></li>
+        <li role="presentation"><a href="#M站" aria-controls="messages" role="tab" data-toggle="tab">M站</a></li>
+        <li role="presentation"><a href="#PC" aria-controls="settings" role="tab" data-toggle="tab">PC</a></li>
+        <li role="presentation"><a href="#手Q" aria-controls="settings" role="tab" data-toggle="tab">手Q</a></li>
+        <li role="presentation"><a href="#微信" aria-controls="settings" role="tab" data-toggle="tab">微信</a></li>
+    </ul>
     <table class="table table-hover">
         <tr>
-            <th>系统编码</th>
-            <th>产品名称</th>
             <th>平台名称</th>
-            <th>渠道来源</th>
-            <th>日期</th>
-            <th>当日访客</th>
-            <th>商品转化率</th>
+            <th>商品流量</th>
+            <th>访客访次</th>
+            <th>买家数</th>
+            <th>订单数</th>
         </tr>
         @foreach(var item in Model)
         {
             <tr>
-                <td>@item.SS_Product.System_Code</td>
-                <td>@item.SS_Product.Item_Name</td>
-                <td>@item.SS_TrafficPlattform.TrafficPlattform_Name</td>
                 <td>@item.SS_TrafficSource.TrafficSource_Name</td>
-                <td>@item.Update.ToString("yyyy-MM-dd")</td>
+                <td>@item.Product_Flow</td>
+                <td>@item.Product_Visitor</td>
                 <td>@item.Product_Customer</td>
-                @if (item.Product_Visitor == 0)
-                {
-                    <td>0</td>
-                }else
-                {
-                    <td>@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 2)</td>
-                }
+                <td>@item.Order_Count</td>
             </tr>
         }
     </table>
@@ -42,7 +40,8 @@
                 url: l,
                 data: {
                     plattformId: getUrlParam('plattformId'),
-                    productId: $("#traffic-list").attr("data-val")
+                    productId: $("#traffic-list").attr("data-val"),
+                    query: $("#traffic-product-query").val()
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
@@ -50,5 +49,10 @@
             });
             return false;
         });
+        //$(".source-btn").on("click", function () {
+        //    var product_Id = $(this).attr("data-id")
+        //    var source_Id = $(this).attr("data-source")
+        //    $(this).attr("href", "ViewTrafficStatistic?productId=" + 333 + "&sourceId=" + source_Id)
+        //})
     })
 </script>

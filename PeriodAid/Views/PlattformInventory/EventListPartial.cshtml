@@ -48,7 +48,8 @@
         $.ajax({
             url: l,
             data: {
-                plattformId: getUrlParam('plattformId')
+                plattformId: getUrlParam('plattformId'),
+                query: $("#storage-product-query").val()
             },
             success: function (data) {
                 $("#event_list_content").html(data);

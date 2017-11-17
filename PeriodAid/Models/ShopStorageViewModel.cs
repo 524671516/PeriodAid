@@ -56,7 +56,9 @@ namespace PeriodAid.Models
     {
         public DateTime salesdate { get; set; }
 
-        public int ordercount { get; set; }
+        public int productvisitor { get; set; }
+
+        public int productcustomer { get; set; }
     }
     // 京东送货单导入
     public class StorageOrder
