@@ -2173,10 +2173,11 @@ namespace PeriodAid.Controllers
                               where m.Plattform_Id == plattformId && m.Id == productId
                               select m;
             ViewBag.productList = productList;
-            var trafficDate = (from m in _db.SS_TrafficData
+            var trafficDate = from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
                               orderby m.Update descending
-                              select m).Take(1);
+                              group m by m.Update into g
+                              select g.Key;
             ViewBag.trafficDate = trafficDate;
             return PartialView();
         }

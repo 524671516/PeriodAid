@@ -27,8 +27,9 @@
 </div>
 <script>
     $(function () {
-        // 页码
-        var start_time = $("#traffci-date-time").attr("date-time")
+        // 页码 
+        var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+        var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
         var traffic_Id = $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
