@@ -2173,25 +2173,26 @@ namespace PeriodAid.Controllers
                               where m.Plattform_Id == plattformId && m.Id == productId
                               select m;
             ViewBag.productList = productList;
-            var trafficDate = (from m in _db.SS_TrafficData
-                              where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-                              orderby m.Update descending
-                              select m.Update).FirstOrDefault();
+            var trafficDate = from m in _db.SS_TrafficData
+                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
+                               orderby m.Update descending
+                               group m by m.Update into g
+                               select g.Key; 
             ViewBag.trafficDate = trafficDate;
             return PartialView();
         }
         
-        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int trafficPlattformId,DateTime? start,DateTime? end)
+        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int trafficPlattformId,DateTime? single,DateTime? start, DateTime? end)
         {
             int _page = page ?? 1;
             if (trafficPlattformId == 1)
             {
                 if (query != "")
                 {
-                    if (end == null)
+                    if (single != null)
                     {
                         var productlist = (from m in _db.SS_TrafficData
-                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == start && m.SS_Product.Plattform_Id == plattformId
+                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId
                                            orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                            select m).ToPagedList(_page, 15);
                         return PartialView(productlist);
@@ -2206,10 +2207,10 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    if (end == null)
+                    if (single != null)
                     {
                         var productlist = (from m in _db.SS_TrafficData
-                                           where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == start
+                                           where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == single
                                            orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                            select m).ToPagedList(_page, 15);
                         return PartialView(productlist);
@@ -2227,10 +2228,10 @@ namespace PeriodAid.Controllers
             else {
                 if (query != "")
                 {
-                    if (end == null)
+                    if (single != null)
                     {
                         var productlist = (from m in _db.SS_TrafficData
-                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == start && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                            orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                            select m).ToPagedList(_page, 15);
                         return PartialView(productlist);
@@ -2246,10 +2247,10 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    if (end == null)
+                    if (single != null)
                     {
                         var productlist = (from m in _db.SS_TrafficData
-                                           where m.Product_Id == productId && m.Update == start && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                           where m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                            orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                            select m).ToPagedList(_page, 15);
                         return PartialView(productlist);
