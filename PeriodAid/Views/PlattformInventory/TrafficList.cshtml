@@ -57,7 +57,9 @@
             data: {
                 plattformId: getUrlParam('plattformId'),
                 page: 1,
-                productId: getUrlParam('productId')
+                query:"",
+                productId: getUrlParam('productId'),
+                trafficPlattformId: 1,
             },
             success: function (data) {
                 $("#traffic-list").html(data)
@@ -70,9 +72,9 @@
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
                     plattformId: getUrlParam('plattformId'),
+                    productId: getUrlParam('productId'),
                     page: 1,
                     query: $("#traffic-product-query").val(),
-                    productId: getUrlParam('productId'),
                     trafficPlattformId: $(".plattform-btn .active").attr("data-id"),
                 },
                 success: function (data) {
@@ -80,9 +82,8 @@
                 }
             })
         });
-
+        //渠道
         $(".plattform-btn").on("click", function () {
-            //console.log($(this).attr("data-id"))
             $.ajax({
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
@@ -97,6 +98,8 @@
                 }
             })
         })
+        //页数
+      
     })
 </script> 
 }
