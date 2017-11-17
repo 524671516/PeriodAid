@@ -1,5 +1,12 @@
-﻿
-
+﻿@{
+    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
+}
+<div class="hidden">
+    @foreach(var list in ViewBag.productList)
+    {
+        <span id="product-list-name" data-name="@list.Item_Name"></span>
+    }
+</div>
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
@@ -10,7 +17,19 @@
     </tr>
 </table>
 <h2>渠道分析</h2>
-<div id="product-name">三红一黑</div>
+<div class="text-center h4" id="product-name"></div>
+<div class="text-center h4"><span class="glyphicon glyphicon-chevron-left" style="padding:0 40px"></span>
+    @foreach (var date in ViewBag.trafficDate)
+    {
+        <span>@date.Update.ToString("yyyy-MM-dd")</span>
+    }
+    <span class="glyphicon glyphicon-chevron-right" style="padding:0 40px"></span>
+</div>
+<div class="float-right" style="margin:10px">
+    <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
+    <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
+    <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
+</div>
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="1" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
     <li role="presentation"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="417" class="plattform-btn" style="cursor:pointer">APP</a></li>
@@ -21,22 +40,30 @@
 </ul>
 <div id="traffic-list">
 </div>
+@section scripts{
 
 <script>
     $(function () {
+        var productName = $("#product-list-name").attr("data-name")
+        var fileDate = $('.file-data')
+        fileDate.datepicker({ dateFormat: "yy-mm-dd" });
+        //星期格式汉化
+        fileDate.datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+        //月份格式汉化
+        fileDate.datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+        fileDate.datepicker();
         $.ajax({
             url: "/PlattformInventory/TrafficListPartial",
             data: {
                 plattformId: getUrlParam('plattformId'),
                 page: 1,
-                productId: product_Id,
-                trafficPlattformId: 1,
+                productId: getUrlParam('productId')
             },
             success: function (data) {
                 $("#traffic-list").html(data)
+                $("#product-name").text(productName)
             }
         });
-
         // 搜索
         $("#traffic-product-search").click(function () {
             $.ajax({
@@ -45,7 +72,7 @@
                     plattformId: getUrlParam('plattformId'),
                     page: 1,
                     query: $("#traffic-product-query").val(),
-                    productId: $("#traffic-list").attr("data-val"),
+                    productId: getUrlParam('productId'),
                     trafficPlattformId: $(".plattform-btn .active").attr("data-id"),
                 },
                 success: function (data) {
@@ -62,7 +89,7 @@
                     plattformId: getUrlParam('plattformId'),
                     page: 1,
                     query: $("#traffic-product-query").val(),
-                    productId: $("#traffic-list").attr("data-val"),
+                    productId: getUrlParam('productId'),
                     trafficPlattformId: $(this).attr("data-id"),
                 },
                 success: function (data) {
@@ -72,7 +99,7 @@
         })
     })
 </script> 
-
+}
 
     
     
