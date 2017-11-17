@@ -2173,10 +2173,11 @@ namespace PeriodAid.Controllers
                               where m.Plattform_Id == plattformId && m.Id == productId
                               select m;
             ViewBag.productList = productList;
-            var trafficDate = (from m in _db.SS_TrafficData
+            var trafficDate = from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
                               orderby m.Update descending
-                              select m).Take(1);
+                              group m by m.Update into g
+                              select g.Key;
             ViewBag.trafficDate = trafficDate;
             return PartialView();
         }
@@ -2184,13 +2185,31 @@ namespace PeriodAid.Controllers
         public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int? trafficPlattformId,DateTime? start)
         {
             int _page = page ?? 1;
-
-            if (query != null)
+            if(trafficPlattformId == 1)
             {
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == start
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+                else
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == start
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(productlist);
+                }
+            }
+            else
+            {
+                if (query != "")
+                {
+                    var productlist = (from m in _db.SS_TrafficData
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start
                                        orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
@@ -2203,16 +2222,8 @@ namespace PeriodAid.Controllers
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
-
             }
-            else
-            {
-                var productlist = (from m in _db.SS_TrafficData
-                                   where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == start
-                                   orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                   select m).ToPagedList(_page, 15);
-                return PartialView(productlist);
-            }
+            
         }
 
         // 产品数据图表

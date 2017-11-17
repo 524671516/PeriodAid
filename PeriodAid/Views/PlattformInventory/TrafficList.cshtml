@@ -10,7 +10,7 @@
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
-            <label>产品名称：</label>
+            <label>渠道名称：</label>
             <input class="form-control input-sm offline-search-inline" id="traffic-product-query" placeholder="搜索内容" />
             <a class="btn btn-info btn-sm" id="traffic-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
@@ -19,12 +19,12 @@
 <h2>渠道分析</h2>
 <div class="text-center h4" id="product-name"></div>
 <div class="text-center h4">
-    <span class="glyphicon glyphicon-chevron-left" style="padding:0 40px" id="date-btn-left"></span>
+    <a class="glyphicon glyphicon-chevron-left" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
     @foreach (var date in ViewBag.trafficDate)
     {
-        <span id="traffci-date-time" date-time="@date.Update">@date.Update.ToString("yyyy-MM-dd")</span>
+        <span id="traffci-date-time" date-time="@date.Year-@date.Month-@date.Day" class="color-blue">@date.Year-@date.Month-@date.Day</span>
     }
-    <span class="glyphicon glyphicon-chevron-right" style="padding:0 40px" id="date-btn-right"></span>
+    <a class="glyphicon glyphicon-chevron-right " style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
 <div class="float-right" style="margin-top:10px">
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
@@ -37,7 +37,7 @@
     <li role="presentation" class="traffic-list-li"><a aria-controls="messages" role="tab" data-toggle="tab" data-id="418" class="plattform-btn" style="cursor:pointer">M站</a></li>
     <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="419" class="plattform-btn" style="cursor:pointer">PC</a></li>
     <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="420" class="plattform-btn" style="cursor:pointer">手Q</a></li>
-    <li role="presentation"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="421" class="plattform-btn" style="cursor:pointer">微信</a></li>
+    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="421" class="plattform-btn" style="cursor:pointer">微信</a></li>
 </ul>
 <div id="traffic-list">
 </div>
@@ -60,7 +60,9 @@
                 plattformId: getUrlParam('plattformId'),
                 page: 1,
                 productId: getUrlParam('productId'),
-                start: start_time
+                start: start_time,
+                query: $("#traffic-product-query").val(),
+                trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
             },
             success: function (data) {
                 $("#traffic-list").html(data)
@@ -100,6 +102,10 @@
                     $("#traffic-list").html(data);
                 }
             })
+        })
+        // 选择日期
+        $("#date-btn-left").on("click", function () {
+            console.log($("#traffci-date-time").text())
         })
     })
 
