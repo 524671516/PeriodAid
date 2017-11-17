@@ -31,7 +31,8 @@
                 data: {
                     productId: getUrlParam('productId'),
                     start: $("#start_time").val(),
-                    end: $("#end_time").val()
+                    end: $("#end_time").val(),
+                    sourceId: getUrlParam('sourceId')
                 }, success: function (data) {
                     showstatistic(data);
                 }
@@ -59,47 +60,59 @@
             var resultdata = data.data;
             var totalarray = new Array();
             var datearray = new Array();
+            var rationarray = new Array();
             for (var i = 0; i < resultdata.length; i++) {
                 var deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
                 var dee = new Date(deeint)
                 datearray.push(dee.Format("MM-dd"));
-                var totaltemp = resultdata[i].ordercount
+                var totaltemp = resultdata[i].productvisitor
                 totalarray.push(totaltemp);
+                var customertemp = resultdata[i].productcustomer
+                var convertRatio = 0;
+                if (customertemp == 0) {
+                    convertRatio = 0
+                } else {
+                    convertRatio = parseFloat((customertemp / totaltemp).toFixed(4));
+                }
+                rationarray.push(convertRatio)
+
             }
-            //for (var i = 0; i < datearray.length; i++) {
-            //    $('.view-activity').each(function () {
-            //        // 截取时间
-            //        var datetime = $(this).attr('data-date')
-            //        var dateTime = datetime.indexOf('-')
-            //        var strTime = datetime.substring(dateTime + 1)
-            //        var activityList = $(this).attr('data-activity')
-            //        if (datearray[i] == strTime) {
-            //            totalarray[i] = ["活动：" + activityList, totalarray[i][1]];
-            //        }
-            //    });
-            //}
             $("#myChart_Bar").highcharts({
                 chart: {
-                    type: 'column'
+                    zoomType: 'xy'
                 },
                 title: {
-                    text: "产品渠道销售统计"
+                    text: '平台数据统计'
                 },
-                xAxis: {
-                    categories: datearray
+                xAxis: [{
+                    categories:datearray,
+                    crosshair: true
+                }],
+                yAxis: [{ // Primary yAxis
+                    title: {
+                        text: '转化率',
+                    }
+                }, { // Secondary yAxis
+                    title: {
+                        text: '访客',
+                    },
+                    opposite: true
+                }],
+                tooltip: {
+                    shared: true
                 },
                 series: [{
-                    name: '销量',
+                    name: '访客',
+                    type: 'column',
+                    yAxis: 1,
                     data: totalarray,
-                    marker: {
-                        lineWidth: 2,
-                        lineColor: Highcharts.getOptions().colors[3],
-                        fillColor: 'white'
-                    }
+                }, {
+                    name: '转化率',
+                    type: 'spline',
+                    data: rationarray,
                 }]
             });
         }
-
         function showdate(n) {
             var uom = new Date(new Date() - 0 + n * 86400000);
             //uom = uom.getFullYear() + "-" + (uom.getMonth() + 1) + "-" + uom.getDate();

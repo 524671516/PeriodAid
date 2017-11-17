@@ -918,21 +918,21 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             if (query != null)
             {
-                if (query == "all")
-                {
-                    var SearchResult = (from m in _db.SS_Product
-                                        where m.Plattform_Id == plattformId
-                                        orderby m.Id
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
+                if (query != "")
                 {
                     var product = (from m in _db.SS_Product
                                    where m.Plattform_Id == plattformId
                                    select m);
                     var SearchResult = (from m in product
                                         where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
+                                        orderby m.Product_Type descending, m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SS_Product
+                                        where m.Plattform_Id == plattformId
                                         orderby m.Product_Type descending, m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -1693,7 +1693,7 @@ namespace PeriodAid.Controllers
         private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
         {
             AliOSSUtilities util = new AliOSSUtilities();
-            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.UTF8, false);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
             CsvReader csv_reader = new CsvReader(reader);
             List<string> headers = new List<string>();
             var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
@@ -2070,86 +2070,86 @@ namespace PeriodAid.Controllers
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "爆款统计表.xls");
         }
         // 渠道统计
-        [HttpPost]
-        public ActionResult getHotSourceExcel(FormCollection form)
-        {
-            var product_list = from m in _db.SS_Product
-                               where m.Product_Type == 1 && m.Plattform_Id == 1
-                               select m;
-            HSSFWorkbook book = new HSSFWorkbook();
-            ICellStyle Center_style = book.CreateCellStyle();//居中标题
-            Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-            foreach (var product in product_list)
-            {
-                bool firstProduct = true;
-                var sheetName = product.Item_Name;
-                ISheet sheet = book.CreateSheet(sheetName);
-                IRow row = sheet.CreateRow(0);
-                int cell_pos = 0;
-                var row_pos = 1;
-                row.CreateCell(cell_pos).SetCellValue("日期");
-                row.CreateCell(++cell_pos).SetCellValue("渠道名称");
-                row.CreateCell(++cell_pos).SetCellValue("商品访客");
-                row.CreateCell(++cell_pos).SetCellValue("商品转化率");
-                var source_data = from m in _db.SS_TrafficData
-                                  where m.TrafficPlattform_Id == 417 && m.Product_Id == product.Id
-                                  select m;
-                var ProductRow = from m in source_data
-                                 group m by m.Update into g
-                                 select g;
-                int[] EndCount = new int[ProductRow.Count()];
-                int i = 0;
-                foreach (var sourceData in source_data)
-                {
-                    IRow single_row = sheet.CreateRow(row_pos);
-                    cell_pos = 0;
-                    var c0 = single_row.CreateCell(cell_pos);
-                    c0.SetCellValue(sourceData.Update.ToString("d"));
-                    c0.CellStyle = Center_style;
-                    single_row.CreateCell(++cell_pos).SetCellValue(sourceData.SS_TrafficSource.TrafficSource_Name);
-                    single_row.CreateCell(++cell_pos).SetCellValue(sourceData.Product_Customer);
-                    if (sourceData.Product_Visitor == 0)
-                    {
-                        var ConvertRatio = (decimal)0;
-                        single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
-                    }
-                    else
-                    {
-                        var ConvertRatio = (decimal)sourceData.Product_Customer / sourceData.Product_Visitor;
-                        single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
-                    }
-                    row_pos++;
+        //[HttpPost]
+        //public ActionResult getHotSourceExcel(FormCollection form)
+        //{
+        //    var product_list = from m in _db.SS_Product
+        //                       where m.Product_Type == 1 && m.Plattform_Id == 1
+        //                       select m;
+        //    HSSFWorkbook book = new HSSFWorkbook();
+        //    ICellStyle Center_style = book.CreateCellStyle();//居中标题
+        //    Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
+        //    foreach (var product in product_list)
+        //    {
+        //        bool firstProduct = true;
+        //        var sheetName = product.Item_Name;
+        //        ISheet sheet = book.CreateSheet(sheetName);
+        //        IRow row = sheet.CreateRow(0);
+        //        int cell_pos = 0;
+        //        var row_pos = 1;
+        //        row.CreateCell(cell_pos).SetCellValue("日期");
+        //        row.CreateCell(++cell_pos).SetCellValue("渠道名称");
+        //        row.CreateCell(++cell_pos).SetCellValue("商品访客");
+        //        row.CreateCell(++cell_pos).SetCellValue("商品转化率");
+        //        var source_data = from m in _db.SS_TrafficData
+        //                          where m.TrafficPlattform_Id == 417 && m.Product_Id == product.Id
+        //                          select m;
+        //        var ProductRow = from m in source_data
+        //                         group m by m.Update into g
+        //                         select g;
+        //        int[] EndCount = new int[ProductRow.Count()];
+        //        int i = 0;
+        //        foreach (var sourceData in source_data)
+        //        {
+        //            IRow single_row = sheet.CreateRow(row_pos);
+        //            cell_pos = 0;
+        //            var c0 = single_row.CreateCell(cell_pos);
+        //            c0.SetCellValue(sourceData.Update.ToString("d"));
+        //            c0.CellStyle = Center_style;
+        //            single_row.CreateCell(++cell_pos).SetCellValue(sourceData.SS_TrafficSource.TrafficSource_Name);
+        //            single_row.CreateCell(++cell_pos).SetCellValue(sourceData.Product_Customer);
+        //            if (sourceData.Product_Visitor == 0)
+        //            {
+        //                var ConvertRatio = (decimal)0;
+        //                single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
+        //            }
+        //            else
+        //            {
+        //                var ConvertRatio = (decimal)sourceData.Product_Customer / sourceData.Product_Visitor;
+        //                single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
+        //            }
+        //            row_pos++;
 
-                }
-                foreach (var productrow in ProductRow)
-                {
-                    var DataCount = from m in productrow
-                                    select m;
-                    var datacount = DataCount.Count();
-                    if (datacount > 1 && firstProduct == true)
-                    {
-                        var row0 = 1;
-                        var row1 = datacount;
-                        EndCount[i] = row1;
-                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
-                        firstProduct = false;
-                    }
-                    else
-                    {
-                        var row2 = EndCount[i - 1] + 1;
-                        var row3 = datacount + row2 - 1;
-                        EndCount[i] = row3;
-                        sheet.AddMergedRegion(new CellRangeAddress(row2, row3, 0, 0));
-                    }
-                    i++;
-                }
-            }
-            MemoryStream _stream = new MemoryStream();
-            book.Write(_stream);
-            _stream.Flush();
-            _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "渠道爆款统计表.xls");
-        }
+        //        }
+        //        foreach (var productrow in ProductRow)
+        //        {
+        //            var DataCount = from m in productrow
+        //                            select m;
+        //            var datacount = DataCount.Count();
+        //            if (datacount > 1 && firstProduct == true)
+        //            {
+        //                var row0 = 1;
+        //                var row1 = datacount;
+        //                EndCount[i] = row1;
+        //                sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
+        //                firstProduct = false;
+        //            }
+        //            else
+        //            {
+        //                var row2 = EndCount[i - 1] + 1;
+        //                var row3 = datacount + row2 - 1;
+        //                EndCount[i] = row3;
+        //                sheet.AddMergedRegion(new CellRangeAddress(row2, row3, 0, 0));
+        //            }
+        //            i++;
+        //        }
+        //    }
+        //    MemoryStream _stream = new MemoryStream();
+        //    book.Write(_stream);
+        //    _stream.Flush();
+        //    _stream.Seek(0, SeekOrigin.Begin);
+        //    return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "渠道爆款统计表.xls");
+        //}
 
         public ActionResult Temp_Action()
         {
@@ -2176,6 +2176,8 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
 
+        
+
         public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId)
         {
             int _page = page ?? 1;
@@ -2185,8 +2187,8 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
-                                       orderby m.Update descending, m.Product_Visitor descending
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -2194,7 +2196,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
-                                       orderby m.Update descending, m.Product_Visitor descending
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -2204,52 +2206,54 @@ namespace PeriodAid.Controllers
             {
                 var productlist = (from m in _db.SS_TrafficData
                                    where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
-                                   orderby m.Update descending, m.Product_Visitor descending
+                                   orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                    select m).ToPagedList(_page, 15);
                 return PartialView(productlist);
             }
         }
 
         // 产品数据图表
-        public ActionResult ViewTrafficStatistic(int productId)
-        {
-            var TrafficList = from m in _db.SS_TrafficData
-                              where m.Product_Id == productId
-                              select m;
-            ViewBag.TrafficList = TrafficList;
-            return View();
-        }
+        //public ActionResult ViewTrafficStatistic(int productId)
+        //{
+        //    var TrafficList = from m in _db.SS_TrafficData
+        //                      where m.Product_Id == productId
+        //                      select m;
+        //    ViewBag.TrafficList = TrafficList;
+        //    return View();
+        //}
 
-        public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end)
-        {
-            DateTime _start = Convert.ToDateTime(start);
-            DateTime _end = Convert.ToDateTime(end);
-            var info_data = from m in _db.SS_TrafficData
-                            where m.Update >= _start && m.Update <= _end
-                            && m.Product_Id == productId
-                            group m by m.Update into g
-                            orderby g.Key
-                            select new TrafficStatisticViewModel { salesdate = g.Key, ordercount = g.Sum(m => m.Order_Count) };
-            DateTime current_date = _start;
-            var data = new List<TrafficStatisticViewModel>();
-            while (current_date <= _end)
-            {
-                int _salescount = 0;
-                var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
-                if (item != null)
-                {
-                    _salescount = item.ordercount;
-                }
-                data.Add(new TrafficStatisticViewModel()
-                {
-                    ordercount = _salescount,
-                    salesdate = current_date
-                });
-                current_date = current_date.AddDays(1);
-            }
-            return Json(new { result = "SUCCESS", data = data });
-        }
-
+        //public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end,int sourceId)
+        //{
+        //    DateTime _start = Convert.ToDateTime(start);
+        //    DateTime _end = Convert.ToDateTime(end);
+        //    var info_data = from m in _db.SS_TrafficData
+        //                    where m.Update >= _start && m.Update <= _end
+        //                    && m.Product_Id == productId && m.TrafficSource_Id == sourceId
+        //                    group m by m.Update into g
+        //                    orderby g.Key
+        //                    select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum( m=>m.Product_Customer) };
+        //    DateTime current_date = _start;
+        //    var data = new List<TrafficStatisticViewModel>();
+        //    while (current_date <= _end)
+        //    {
+        //        int _productvisitor = 0;
+        //        int _productcustomer = 0;
+        //        var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+        //        if (item != null)
+        //        {
+        //            _productvisitor = item.productvisitor;
+        //            _productcustomer = item.productcustomer;
+        //        }
+        //        data.Add(new TrafficStatisticViewModel()
+        //        {
+        //            productvisitor = _productvisitor,
+        //            salesdate = current_date,
+        //            productcustomer = _productcustomer
+        //        });
+        //        current_date = current_date.AddDays(1);
+        //    }
+        //    return Json(new { result = "SUCCESS", data = data });
+        //}
         // 统计上传日期
         [HttpPost]
         public ActionResult TrafficUploadFilePartial(int plattformId, string month)
