@@ -19,12 +19,12 @@
 <h2>渠道分析</h2>
 <div class="text-center h4" id="product-name"></div>
 <div class="text-center h4">
-    <span class="glyphicon glyphicon-chevron-left" style="padding:0 40px" id="date-btn-left"></span>
+    <a class="glyphicon glyphicon-chevron-left" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
     @foreach (var date in ViewBag.trafficDate)
     {
-        <span id="traffci-date-time" date-time="@date.Update">@date.Update.ToString("yyyy-MM-dd")</span>
+        <span id="traffci-date-time" date-time="@date.Year-@date.Month-@date.Day" class="color-blue">@date.Year-@date.Month-@date.Day</span>
     }
-    <span class="glyphicon glyphicon-chevron-right" style="padding:0 40px" id="date-btn-right"></span>
+    <a class="glyphicon glyphicon-chevron-right " style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
 <div class="float-right" style="margin-top:10px">
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
@@ -59,10 +59,10 @@
             data: {
                 plattformId: getUrlParam('plattformId'),
                 page: 1,
-                query: "",
                 productId: getUrlParam('productId'),
                 start: start_time,
-                trafficPlattformId: 1,
+                query: $("#traffic-product-query").val(),
+                trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
             },
             success: function (data) {
                 $("#traffic-list").html(data)
@@ -102,6 +102,10 @@
                     $("#traffic-list").html(data);
                 }
             })
+        })
+        // 选择日期
+        $("#date-btn-left").on("click", function () {
+            console.log($("#traffci-date-time").text())
         })
     })
 

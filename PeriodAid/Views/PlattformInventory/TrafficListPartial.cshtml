@@ -29,6 +29,7 @@
     $(function () {
         // 页码
         var start_time = $("#traffci-date-time").attr("date-time")
+        var traffic_Id = $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
             $.ajax({
@@ -37,7 +38,7 @@
                     plattformId: getUrlParam('plattformId'),
                     productId: getUrlParam('productId'),
                     query: $("#traffic-product-query").val(),
-                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    trafficPlattformId: traffic_Id,
                     start:start_time
                 },
                 success: function (data) {
