@@ -40,7 +40,9 @@
                     productId: getUrlParam('productId'),
                     query: $("#traffic-product-query").val(),
                     trafficPlattformId: traffic_Id,
-                    start:start_time
+                    single: start_time,
+                    start:$("#start_time").val(),
+                    end: $("#end_time").val(),
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);

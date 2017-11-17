@@ -18,7 +18,7 @@
 </table>
 <h2>渠道分析</h2>
 <div class="text-center h4" id="product-name"></div>
-<div class="text-center h4">
+<div class="text-center h4" id="single_day">
     <a class="glyphicon glyphicon-chevron-left" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
     @foreach (var date in ViewBag.trafficDate)
     {
@@ -64,7 +64,7 @@
                 plattformId: getUrlParam('plattformId'),
                 page: 1,
                 productId: getUrlParam('productId'),
-                start: start_time,
+                single: start_time,
                 query: $("#traffic-product-query").val(),
                 trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
             },
@@ -85,7 +85,9 @@
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
-                    start: start_time
+                    single: start_time,
+                    start: $("#start_time").val(),
+                    end: $("#end_time").val(),
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
@@ -104,7 +106,9 @@
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(this).attr("data-id"),
-                    start: start_time
+                    single: start_time,
+                    start: $("#start_time").val(),
+                    end: $("#end_time").val(),
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
@@ -125,7 +129,7 @@
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
-                    start: $(".traffci-date-time:eq(" + pos + ")").html()
+                    single: $(".traffci-date-time:eq(" + pos + ")").html()
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
@@ -145,12 +149,37 @@
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
-                    start: $(".traffci-date-time:eq(" + pos + ")").html()
+                    single: $(".traffci-date-time:eq(" + pos + ")").html()
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
                 }
             })
+        })
+        //时间查询
+        $("#statistic_btn").on("click", function () {
+            if ($("#start_time").val() == "" || $("#end_time").val() == "") {
+                errorAlert("请选择日期！");
+            }
+            else
+            {
+                $("#single_day").remove()
+                $.ajax({
+                    url: "/PlattformInventory/TrafficListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        page: 1,
+                        query: $("#traffic-product-query").val(),
+                        productId: getUrlParam('productId'),
+                        trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                        start: $("#start_time").val(),
+                        end: $("#end_time").val(),
+                    },
+                    success: function (data) {
+                        $("#traffic-list").html(data);
+                    }
+                })
+            } 
         })
     })
 
