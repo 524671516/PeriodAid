@@ -2181,38 +2181,90 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         
-        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int? trafficPlattformId,DateTime? start)
+        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int trafficPlattformId,DateTime? start,DateTime? end)
         {
             int _page = page ?? 1;
-
-            if (query != null)
+            if (trafficPlattformId == 1)
             {
                 if (query != "")
                 {
-                    var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start
-                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                       select m).ToPagedList(_page, 15);
-                    return PartialView(productlist);
+                    if (end == null)
+                    {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == start && m.SS_Product.Plattform_Id == plattformId
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
+                    else {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
                 }
                 else
                 {
-                    var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start
-                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                       select m).ToPagedList(_page, 15);
-                    return PartialView(productlist);
+                    if (end == null)
+                    {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == start
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
+                    else
+                    {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update >= start && m.Update <= end
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
                 }
+            }
+            else {
+                if (query != "")
+                {
+                    if (end == null)
+                    {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == start && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
+                    else
+                    {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
+                }
+                else
+                {
+                    if (end == null)
+                    {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.Product_Id == productId && m.Update == start && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
+                    else
+                    {
+                        var productlist = (from m in _db.SS_TrafficData
+                                           where m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                           orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                           select m).ToPagedList(_page, 15);
+                        return PartialView(productlist);
+                    }
+                }
+            }
 
-            }
-            else
-            {
-                var productlist = (from m in _db.SS_TrafficData
-                                   where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == start
-                                   orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
-                                   select m).ToPagedList(_page, 15);
-                return PartialView(productlist);
-            }
         }
 
         // 产品数据图表
