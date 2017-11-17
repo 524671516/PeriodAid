@@ -2180,27 +2180,26 @@ namespace PeriodAid.Controllers
             ViewBag.trafficDate = trafficDate;
             return PartialView();
         }
-
-        public ActionResult TrafficListPartial(int? page, string query, int plattformId, int productId, int? trafficPlattformId, DateTime? S_date, DateTime? E_date)
+        
+        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int? trafficPlattformId,DateTime? start)
         {
             int _page = page ?? 1;
-            if (trafficPlattformId == 1)
+
+            if (query != null)
             {
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId
-                                       || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId
-                                      
-                                       orderby m.Product_Visitor descending
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
-                                       orderby m.Product_Visitor descending
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId && m.Update == start
+                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -2208,31 +2207,13 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                if (query != "")
-                {
-                    var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId
-                                       || m.SS_TrafficPlattform.TrafficPlattform_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.TrafficPlattform_Id == trafficPlattformId
-                                       && m.SS_TrafficPlattform.Id == trafficPlattformId
-                                       orderby m.Product_Visitor descending
-                                       select m).ToPagedList(_page, 15);
-                    return PartialView(productlist);
-                }
-                else
-                {
-                    var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId
-                                       && m.SS_TrafficPlattform.Id == trafficPlattformId 
-                                       orderby m.Product_Visitor descending
-                                       select m).ToPagedList(_page, 15);
-                    return PartialView(productlist);
-                }
+                var productlist = (from m in _db.SS_TrafficData
+                                   where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == start
+                                   orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                   select m).ToPagedList(_page, 15);
+                return PartialView(productlist);
             }
-
-
         }
-
-
 
         // 产品数据图表
         //public ActionResult ViewTrafficStatistic(int productId)
