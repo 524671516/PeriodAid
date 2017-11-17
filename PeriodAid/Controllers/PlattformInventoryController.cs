@@ -918,7 +918,15 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             if (query != null)
             {
-                if (query != "")
+                if (query == "all")
+                {
+                    var SearchResult = (from m in _db.SS_Product
+                                        where m.Plattform_Id == plattformId
+                                        orderby m.Id
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
                 {
                     var product = (from m in _db.SS_Product
                                    where m.Plattform_Id == plattformId
@@ -926,13 +934,6 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in product
                                         where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
                                         orderby m.Product_Type descending, m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-                    var SearchResult = (from m in _db.SS_Product
-                                        where m.Plattform_Id == plattformId
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }

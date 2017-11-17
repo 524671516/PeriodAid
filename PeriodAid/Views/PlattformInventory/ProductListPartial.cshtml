@@ -104,10 +104,16 @@
         //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
+            if ($("#storage-product-query").val() == "") {
+                var query = "all";
+            } else {
+                var query = $("#storage-product-query").val();
+            };
             $.ajax({
                 url: l,
                 data: {
-                    plattformId: getUrlParam('plattformId')
+                    plattformId: getUrlParam('plattformId'),
+                    query: query
                 },
                 success: function (data) {
                     $("#product_list_content").html(data);
