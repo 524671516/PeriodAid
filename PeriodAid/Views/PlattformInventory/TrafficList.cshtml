@@ -1,4 +1,6 @@
-﻿<table class="offline-search-box">
+﻿
+
+<table class="offline-search-box">
     <tr>
         <td class="pull-right">
             <label>产品名称：</label>
@@ -22,6 +24,19 @@
 
 <script>
     $(function () {
+        $.ajax({
+            url: "/PlattformInventory/TrafficListPartial",
+            data: {
+                plattformId: getUrlParam('plattformId'),
+                page: 1,
+                productId: product_Id,
+                trafficPlattformId: 1,
+            },
+            success: function (data) {
+                $("#traffic-list").html(data)
+            }
+        });
+
         // 搜索
         $("#traffic-product-search").click(function () {
             $.ajax({
