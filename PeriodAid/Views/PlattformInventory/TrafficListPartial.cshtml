@@ -37,7 +37,7 @@
     $(function () {
         // 页码 
         var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
-        var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
+        var single_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
         var traffic_Id = $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
@@ -48,7 +48,7 @@
                     productId: getUrlParam('productId'),
                     query: $("#traffic-product-query").val(),
                     trafficPlattformId: traffic_Id,
-                    single: start_time,
+                    single: single_time,
                     start:$("#start_time").val(),
                     end: $("#end_time").val(),
                 },
