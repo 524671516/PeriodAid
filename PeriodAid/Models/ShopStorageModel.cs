@@ -297,6 +297,7 @@
         public int Product_Id { get; set; }
         public string Product_Name { get; set; }
         public string Date_Source { get; set; }
+        public int Date_Source_Id { get; set; }
         public int Product_Flow { get; set; }
         public int Product_Visitor { get; set; }
         public int Product_Customer { get; set; }
