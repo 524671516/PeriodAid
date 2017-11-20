@@ -16,16 +16,7 @@
         </td>
     </tr>
 </table>
-<h2>渠道分析</h2>
-<a class="btn btn-info btn-sm" id="add-source"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道</a>
-<div id="source_list_content">
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            </div>
-        </div>
-    </div>
-</div>
+<h2>渠道分析</h2><a class="btn btn-info btn-sm" id="add-source" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道</a>
 <div class="text-center h4" id="product-name"></div>
 <div class="text-center h4" id="single_day">
     <a class="glyphicon glyphicon-chevron-left" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
@@ -50,6 +41,12 @@
     <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="421" class="plattform-btn" style="cursor:pointer">微信</a></li>
 </ul>
 <div id="traffic-list">
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
 </div>
 @section scripts{
 
@@ -79,6 +76,7 @@
             url: "/PlattformInventory/TrafficListPartial",
             data: {
                 plattformId: getUrlParam('plattformId'),
+                page: 1,
                 productId: getUrlParam('productId'),
                 single: start_time,
                 query: $("#traffic-product-query").val(),
@@ -115,6 +113,7 @@
                     url: "/PlattformInventory/TrafficListPartial",
                     data: {
                         plattformId: getUrlParam('plattformId'),
+                        page: 1,
                         query: $("#traffic-product-query").val(),
                         productId: getUrlParam('productId'),
                         trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
@@ -150,10 +149,12 @@
                     }
                 })
             } else {
+
                 $.ajax({
                     url: "/PlattformInventory/TrafficListPartial",
                     data: {
                         plattformId: getUrlParam('plattformId'),
+                        page: 1,
                         query: $("#traffic-product-query").val(),
                         productId: getUrlParam('productId'),
                         trafficPlattformId: $(this).attr("data-id"),
@@ -183,6 +184,7 @@
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
                     plattformId: getUrlParam('plattformId'),
+                    page: 1,
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
@@ -247,19 +249,18 @@
                 })
             }
         })
-        // 新增渠道
+        //新增渠道
         $("#add-source").on("click", function () {
             $.ajax({
-                url: '/PlattformInventory/AddSourcePartial',
+                url: '/PlattformInventory/AddTrafficSource',
                 data: {
                 },
                 success: function (data) {
-                    $('.modal-content').html(data)
+                    $('#modal-content').html(data)
                     $("#myModal").modal('show')
                 }
             })
         })
-        
     })
     </script>
 }

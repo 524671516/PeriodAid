@@ -1149,7 +1149,7 @@
     <Content Include="Views\PlattformInventory\ViewTrafficStatistic.cshtml" />
     <Content Include="Views\PlattformInventory\TrafficListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\SumTrafficListPartial.cshtml" />
-    <Content Include="Views\PlattformInventory\AddSourcePartial.cshtml" />
+    <Content Include="Views\PlattformInventory\AddTrafficSource.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

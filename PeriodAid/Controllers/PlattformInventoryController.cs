@@ -2290,6 +2290,37 @@ namespace PeriodAid.Controllers
             }
         }
 
+        //新增渠道
+        public ActionResult AddTrafficSource()
+        {
+            var TrafficPlattform = from m in _db.SS_TrafficPlattform
+                                   select m;
+            ViewBag.TrafficPlattform = new SelectList(TrafficPlattform,"Id", "TrafficPlattform_Name");
+            var SourceType = (from m in _db.SS_TrafficSource
+                              orderby m.Id descending
+                             select m.Source_Type).Distinct();
+            ViewBag.SourceType = new SelectList(SourceType, "Source_Type");
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddTrafficSource(SS_TrafficSource model,FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                var item = new SS_TrafficSource();
+                item.TrafficSource_Name = model.TrafficSource_Name;
+                item.TrafficPlattform_Id = model.TrafficPlattform_Id;
+                item.Source_Type = model.Source_Type;
+                _db.SS_TrafficSource.Add(item);
+                _db.SaveChanges();
+                return Content("SUCCESS");
+            }
+            else
+            {
+                return PartialView(model);
+            }
+        }
+
         //产品数据图表
         public ActionResult ViewTrafficStatistic(int productId,int sourceId,int trafficPlattformId)
         {

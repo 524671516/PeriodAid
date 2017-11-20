@@ -1,0 +1,77 @@
+﻿@model PeriodAid.Models.SS_TrafficSource
+@{
+    Layout = null;
+}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>新增渠道</h2>
+</div>
+<div class="modal-body">
+    @using (Html.BeginForm("AddTrafficSource", "PlattformInventory", FormMethod.Post, new { @id = "add-source-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="col-md-3 control-label">渠道名称</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.TrafficSource_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TrafficSource_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">所属平台</label>
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.TrafficPlattform_Id, ViewBag.TrafficPlattform as SelectList, "- 请选择 -", new { @class = "form-control", @required = "required" })
+                    @Html.ValidationMessageFor(model => model.TrafficPlattform_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">渠道类型</label>
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.Source_Type, ViewBag.SourceType as SelectList, "- 请选择 -", new { @class = "form-control", @required = "required" })
+                    @Html.ValidationMessageFor(model => model.Source_Type, "-1代表不常用，0代表其他，1代表常用", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $("#add-source-form").ajaxForm(function (data) {
+        var productName = $("#product-list-name").attr("data-name");
+        var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+        var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time");
+        if (data == "SUCCESS") {
+            $("#myModal").modal('hide')
+            setTimeout(function () {
+                $.ajax({
+                    url: "/PlattformInventory/TrafficListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        page: 1,
+                        productId: getUrlParam('productId'),
+                        single: start_time,
+                        query: $("#traffic-product-query").val(),
+                        trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
+                    },
+                    success: function (data) {
+                        $("#traffic-list").html(data)
+                        $("#product-name").text(productName)
+                        $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
+                    }
+                });
+                alert("添加成功！");
+            }, 800);
+        } else if (data.result == "FAIL") {
+            alert("删除失败", "", function () {
+            }, { type: 'error' });
+        }
+    })
+</script>
+
