@@ -8,6 +8,7 @@
             <th>访客访次</th>
             <th>买家数</th>
             <th>订单数</th>
+            <th>转化率</th>
         </tr>
         @foreach(var item in Model)
         {
@@ -17,7 +18,14 @@
                 <td>@item.Product_Visitor</td>
                 <td>@item.Product_Customer</td>
                 <td>@item.Order_Count</td>
-                <td>@item.Update</td>
+                @if (item.Product_Visitor == 0)
+                {
+                    <td>0</td>
+                }
+                else
+                {
+                    <td>@Math.Round(((decimal)item.Product_Customer/item.Product_Visitor),2)</td>
+                }
             </tr>
         }
     </table>
