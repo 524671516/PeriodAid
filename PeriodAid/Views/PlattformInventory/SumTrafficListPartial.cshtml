@@ -10,7 +10,7 @@
             <th>订单数</th>
             <td>转化率</td>
         </tr>
-        @foreach (var item in Model.OrderByDescending(m=>m.Product_Flow))
+        @foreach (var item in Model.OrderByDescending(m=>m.Product_Visitor))
         {
             <tr>
                 <td>@item.Date_Source</td>

@@ -26,6 +26,7 @@
     }
     <a class="glyphicon glyphicon-chevron-right " style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
+<div id="select-day" class="text-center h4"><span id="select-start-day" class="color-blue"></span>&nbsp;&nbsp;<span id="select-end-day" class="color-blue"></span></div>
 <div class="float-right" style="margin-top:10px">
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
     <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
@@ -201,9 +202,9 @@
             }
             else
             {
-                $(".traffci-date-time").html($("#start_time").val() + " 〜 " + $("#end_time").val())
-                $("#date-btn-right").remove()
-                $("#date-btn-left").remove()
+                $("#single_day").remove()
+                $("#select-start-day").text($("#start_time").val())
+                $("#select-end-day").text($("#end_time").val())
                 $.ajax({
                     url: "/PlattformInventory/SumTrafficListPartial",
                     data: {
