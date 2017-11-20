@@ -76,7 +76,6 @@
             url: "/PlattformInventory/TrafficListPartial",
             data: {
                 plattformId: getUrlParam('plattformId'),
-                page: 1,
                 productId: getUrlParam('productId'),
                 single: start_time,
                 query: $("#traffic-product-query").val(),
@@ -113,7 +112,6 @@
                     url: "/PlattformInventory/TrafficListPartial",
                     data: {
                         plattformId: getUrlParam('plattformId'),
-                        page: 1,
                         query: $("#traffic-product-query").val(),
                         productId: getUrlParam('productId'),
                         trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
@@ -154,7 +152,6 @@
                     url: "/PlattformInventory/TrafficListPartial",
                     data: {
                         plattformId: getUrlParam('plattformId'),
-                        page: 1,
                         query: $("#traffic-product-query").val(),
                         productId: getUrlParam('productId'),
                         trafficPlattformId: $(this).attr("data-id"),
@@ -184,7 +181,6 @@
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
                     plattformId: getUrlParam('plattformId'),
-                    page: 1,
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
@@ -210,7 +206,6 @@
                     url: "/PlattformInventory/TrafficListPartial",
                     data: {
                         plattformId: getUrlParam('plattformId'),
-                        page: 1,
                         query: $("#traffic-product-query").val(),
                         productId: getUrlParam('productId'),
                         trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),

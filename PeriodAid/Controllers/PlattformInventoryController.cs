@@ -2101,42 +2101,6 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         
-        // 增加渠道
-        public ActionResult AddSourcePartial()
-        {
-            return PartialView();
-        }
-        [HttpPost]
-        public ActionResult AddSourcePartial(SS_TrafficSource model, FormCollection form)
-        {
-            if (ModelState.IsValid)
-            {
-                var item = new SS_TrafficSource();
-                item.TrafficSource_Name = model.TrafficSource_Name;
-                item.TrafficPlattform_Id = model.TrafficPlattform_Id;
-                item.Source_Type = 1;
-                _db.SS_TrafficSource.Add(item);
-                _db.SaveChanges();
-
-                return Content("SUCCESS");
-            }
-            else
-            {
-                return PartialView(model);
-            }
-            //return Content("ERROR1");
-        }
-        [HttpPost]
-        public JsonResult QueryTraffic(string query, int plattformId)
-        {
-            var product = from m in _db.SS_TrafficPlattform
-                          where m.Plattform_Id == plattformId
-                          && m.TrafficPlattform_Name.Contains(query)
-                          select new { Id = m.Id, Traffic_Name = m.SS_Plattform.Plattform_Name + "- " + m.TrafficPlattform_Name };
-            return Json(product);
-        }
-
-
         public ActionResult TrafficListPartial(string query, int plattformId, int productId, int trafficPlattformId, DateTime? single)
         {
             if (trafficPlattformId == 1)
