@@ -2100,8 +2100,8 @@ namespace PeriodAid.Controllers
             ViewBag.trafficDate = trafficDate;
             return PartialView();
         }
-        
-        public ActionResult TrafficListPartial(int? page, string query, int plattformId,int productId,int trafficPlattformId,DateTime? single)
+
+        public ActionResult TrafficListPartial(int? page, string query, int plattformId, int productId, int trafficPlattformId, DateTime? single)
         {
             int _page = page ?? 1;
             if (trafficPlattformId == 1)
@@ -2115,7 +2115,7 @@ namespace PeriodAid.Controllers
                                        select new TrafficData
                                        {
                                            Date_Source = g.Key.TrafficSource_Name,
-                                           Date_Source_Id=g.Key.Id,
+                                           Date_Source_Id = g.Key.Id,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
                                            Product_Visitor = g.Sum(m => m.Product_Visitor),
                                            Product_Customer = g.Sum(m => m.Product_Customer),
@@ -2141,7 +2141,8 @@ namespace PeriodAid.Controllers
                     return PartialView(productlist);
                 }
             }
-            else {
+            else
+            {
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
@@ -2190,7 +2191,7 @@ namespace PeriodAid.Controllers
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId
                                        group m by m.SS_TrafficSource.TrafficSource_Name into g
-                                       orderby g.Sum(m => m.Product_Visitor) descending
+                                       orderby g.Sum(m=>m.Product_Visitor) descending
                                        select new TrafficData {
                                            Date_Source=g.Key,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
@@ -2254,48 +2255,92 @@ namespace PeriodAid.Controllers
             }
         }
 
-        // 产品数据图表
-        //public ActionResult ViewTrafficStatistic(int productId)
-        //{
-        //    var TrafficList = from m in _db.SS_TrafficData
-        //                      where m.Product_Id == productId
-        //                      select m;
-        //    ViewBag.TrafficList = TrafficList;
-        //    return View();
-        //}
+        //产品数据图表
+        public ActionResult ViewTrafficStatistic(int productId,int sourceId,int trafficPlattformId)
+        {
+            if(trafficPlattformId == 1)
+            {
+                var TrafficList = from m in _db.SS_TrafficData
+                                  where m.Product_Id == productId && m.TrafficSource_Id == sourceId
+                                  select m;
+                ViewBag.TrafficList = TrafficList;
+            }
+            else
+            {
+                var TrafficList = from m in _db.SS_TrafficData
+                                  where m.Product_Id == productId && m.TrafficSource_Id == sourceId && m.TrafficPlattform_Id == trafficPlattformId
+                                  select m;
+                ViewBag.TrafficList = TrafficList;
+            }
+            
+            return View();
+        }
 
-        //public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end,int sourceId)
-        //{
-        //    DateTime _start = Convert.ToDateTime(start);
-        //    DateTime _end = Convert.ToDateTime(end);
-        //    var info_data = from m in _db.SS_TrafficData
-        //                    where m.Update >= _start && m.Update <= _end
-        //                    && m.Product_Id == productId && m.TrafficSource_Id == sourceId
-        //                    group m by m.Update into g
-        //                    orderby g.Key
-        //                    select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum( m=>m.Product_Customer) };
-        //    DateTime current_date = _start;
-        //    var data = new List<TrafficStatisticViewModel>();
-        //    while (current_date <= _end)
-        //    {
-        //        int _productvisitor = 0;
-        //        int _productcustomer = 0;
-        //        var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
-        //        if (item != null)
-        //        {
-        //            _productvisitor = item.productvisitor;
-        //            _productcustomer = item.productcustomer;
-        //        }
-        //        data.Add(new TrafficStatisticViewModel()
-        //        {
-        //            productvisitor = _productvisitor,
-        //            salesdate = current_date,
-        //            productcustomer = _productcustomer
-        //        });
-        //        current_date = current_date.AddDays(1);
-        //    }
-        //    return Json(new { result = "SUCCESS", data = data });
-        //}
+        public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end, int sourceId,int trafficPlattformId)
+        {
+            DateTime _start = Convert.ToDateTime(start);
+            DateTime _end = Convert.ToDateTime(end);
+            if(trafficPlattformId == 1)
+            {
+                var info_data = from m in _db.SS_TrafficData
+                                where m.Update >= _start && m.Update <= _end
+                                && m.Product_Id == productId && m.TrafficSource_Id == sourceId
+                                group m by m.Update into g
+                                orderby g.Key
+                                select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
+                DateTime current_date = _start;
+                var data = new List<TrafficStatisticViewModel>();
+                while (current_date <= _end)
+                {
+                    int _productvisitor = 0;
+                    int _productcustomer = 0;
+                    var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+                    if (item != null)
+                    {
+                        _productvisitor = item.productvisitor;
+                        _productcustomer = item.productcustomer;
+                    }
+                    data.Add(new TrafficStatisticViewModel()
+                    {
+                        productvisitor = _productvisitor,
+                        salesdate = current_date,
+                        productcustomer = _productcustomer
+                    });
+                    current_date = current_date.AddDays(1);
+                }
+                return Json(new { result = "SUCCESS", data = data });
+            }
+            else
+            {
+                var info_data = from m in _db.SS_TrafficData
+                                where m.Update >= _start && m.Update <= _end
+                                && m.Product_Id == productId && m.TrafficSource_Id == sourceId && m.TrafficPlattform_Id == trafficPlattformId
+                                group m by m.Update into g
+                                orderby g.Key
+                                select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
+                DateTime current_date = _start;
+                var data = new List<TrafficStatisticViewModel>();
+                while (current_date <= _end)
+                {
+                    int _productvisitor = 0;
+                    int _productcustomer = 0;
+                    var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+                    if (item != null)
+                    {
+                        _productvisitor = item.productvisitor;
+                        _productcustomer = item.productcustomer;
+                    }
+                    data.Add(new TrafficStatisticViewModel()
+                    {
+                        productvisitor = _productvisitor,
+                        salesdate = current_date,
+                        productcustomer = _productcustomer
+                    });
+                    current_date = current_date.AddDays(1);
+                }
+                return Json(new { result = "SUCCESS", data = data });
+            }
+        }
         // 统计上传日期
         [HttpPost]
         public ActionResult TrafficUploadFilePartial(int plattformId, string month)

@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
 <div class="hidden">
-    @foreach(var list in ViewBag.productList)
+    @foreach (var list in ViewBag.productList)
     {
         <span id="product-list-name" data-name="@list.Item_Name"></span>
     }
@@ -44,7 +44,7 @@
 </div>
 @section scripts{
 
-<script>
+    <script>
     var first_nowP = true;
     $(function () {
         $(".traffci-date-time").addClass("hidden");
@@ -79,6 +79,7 @@
             success: function (data) {
                 $("#traffic-list").html(data)
                 $("#product-name").text(productName)
+                $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
             }
         });
         // 搜索
@@ -157,6 +158,7 @@
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
+                        $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                     }
                 })
             }
@@ -239,11 +241,11 @@
                         $("#traffic-list").html(data);
                     }
                 })
-            } 
+            }
         })
     })
-</script> 
+    </script>
 }
 
-    
-    
+
+

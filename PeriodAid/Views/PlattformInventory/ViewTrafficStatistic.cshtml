@@ -32,7 +32,8 @@
                     productId: getUrlParam('productId'),
                     start: $("#start_time").val(),
                     end: $("#end_time").val(),
-                    sourceId: getUrlParam('sourceId')
+                    sourceId: getUrlParam('sourceId'),
+                    trafficPlattformId: getUrlParam('trafficPlattformId')
                 }, success: function (data) {
                     showstatistic(data);
                 }
@@ -82,7 +83,7 @@
                     zoomType: 'xy'
                 },
                 title: {
-                    text: '平台数据统计'
+                    text: '渠道数据统计'
                 },
                 xAxis: [{
                     categories:datearray,

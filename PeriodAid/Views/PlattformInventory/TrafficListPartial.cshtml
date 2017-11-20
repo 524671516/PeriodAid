@@ -8,7 +8,7 @@
             <th>访客访次</th>
             <th>买家数</th>
             <th>订单数</th>
-            <td>转化率</td>
+            <th>转化率</th>
         </tr>
         @foreach (var item in Model.OrderByDescending(m => m.Product_Visitor))
         {
@@ -24,13 +24,16 @@
                 }
                 else
                 {
-                    <td>@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 2)</td>
+                    <td class="product-ratio">@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 2).ToString("p2")</td>
                 }
+                <td><a class="JD-Traffic-Order" style="cursor:pointer" data-source="@item.Date_Source_Id">销量曲线</a></td>
+                
+               
             </tr>
         }
     </table>
     <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("SumTrafficListPartial", new { page }))
+        @Html.PagedListPager(Model, page => Url.Action("TrafficListPartial", new { page }))
     </div>
 </div>
 <script>
@@ -58,5 +61,9 @@
             });
             return false;
         });
+        // 销量曲线
+        $(".JD-Traffic-Order").on("click", function () {
+            $(this).attr("href", "ViewTrafficStatistic?productId=" + getUrlParam('productId') + "&sourceId=" + $(this).attr("data-source") + "&trafficPlattformId=" + $(this).attr("data-traffic"))
+        })
     })
 </script>
