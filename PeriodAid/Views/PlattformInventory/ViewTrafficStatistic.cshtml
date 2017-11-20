@@ -36,6 +36,7 @@
                     trafficPlattformId: getUrlParam('trafficPlattformId')
                 }, success: function (data) {
                     showstatistic(data);
+                    console.log(data)
                 }
             });
             $("#statistic_btn").click(function () {

@@ -77,7 +77,7 @@
                             plattformId: getUrlParam('plattformId')
                         },
                         success: function (data) {
-                            $("#event_list_content").html(data);
+                            $("#traffic-list").html(data)
                             $('.modal-backdrop.in').remove()
                             $('body').removeClass('modal-open')
                         }

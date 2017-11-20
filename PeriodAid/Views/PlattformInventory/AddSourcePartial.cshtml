@@ -1,0 +1,77 @@
+﻿@model PeriodAid.Models.SS_TrafficSource
+@{
+    Layout = null;
+}
+<link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/prettify.css" rel="stylesheet" />
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>新增渠道信息</h2>
+</div>
+<div class="modal-body">
+    @using (Html.BeginForm("AddSourcePartial", "PlattformInventory", FormMethod.Post, new { @id = "add-source-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="col-md-3 control-label">渠道名称</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.TrafficSource_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TrafficSource_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">平台名称</label>
+                <div class="col-md-9">
+                    
+                    <input id="traffic-id" type="text" class="span4 form-control" placeholder="搜索平台" autocomplete="off" name="traffic-input" />
+                    <input type="hidden" id="TrafficPlattform_Id" name="TrafficPlattform_Id" />
+                    @Html.ValidationMessageFor(model => model.TrafficPlattform_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">产品类型</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.Source_Type, ViewBag.SelectList as SelectList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.TrafficSource_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/Scripts/kalendae.standalone.js"></script>
+<script src="~/Scripts/bootstrap-typeahead.js"></script>
+<script>
+    $(function () {
+        //产品搜索
+        function displayResult(item, val, text) {
+            $("#TrafficPlattform_Id").val(val);
+            //console.log($("#Traffic-Id").val())
+        }
+        $('#traffic-id').typeahead({
+            ajax: {
+                url: '/PlattformInventory/QueryTraffic?plattformId=' + getUrlParam('plattformId'),
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'Traffic_Name',
+            val: 'Id'
+        });
+        $('#add-source-form').ajaxForm(function (data) {
+            $("#add-submit").attr("disabled", true);
+            if (data == "SUCCESS") {
+                $('.modal-box').modal('hide');
+               console.log(1)
+            }
+            else {
+                errorAlert("添加失败！");
+            }
+        });
+    });
+</script>

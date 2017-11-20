@@ -1,5 +1,4 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.TrafficData>
-@using PagedList.Mvc;
+﻿@model IEnumerable<PeriodAid.Models.TrafficData>
 <div>
     <table class="table table-hover">
         <tr>
@@ -24,7 +23,7 @@
                 }
                 else
                 {
-                    <td class="product-ratio">@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 2).ToString("p2")</td>
+                    <td class="product-ratio">@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 4).ToString("p2")</td>
                 }
                 <td><a class="JD-Traffic-Order" style="cursor:pointer" data-source="@item.Date_Source_Id">销量曲线</a></td>
                 
@@ -32,9 +31,6 @@
             </tr>
         }
     </table>
-    <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("TrafficListPartial", new { page }))
-    </div>
 </div>
 <script>
     $(function () {
@@ -42,26 +38,6 @@
         var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
         var single_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
         var traffic_Id = $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
-        $(".pagination > li > a").click(function () {
-            var l = $(this).attr("href");
-            $.ajax({
-                url: l,
-                data: {
-                    plattformId: getUrlParam('plattformId'),
-                    productId: getUrlParam('productId'),
-                    query: $("#traffic-product-query").val(),
-                    trafficPlattformId: traffic_Id,
-                    single: single_time,
-                    start:$("#start_time").val(),
-                    end: $("#end_time").val(),
-                },
-                success: function (data) {
-                    $("#traffic-list").html(data);
-                }
-            });
-            return false;
-        });
-        // 销量曲线
         $(".JD-Traffic-Order").on("click", function () {
             $(this).attr("href", "ViewTrafficStatistic?productId=" + getUrlParam('productId') + "&sourceId=" + $(this).attr("data-source") + "&trafficPlattformId=" + $(this).attr("data-traffic"))
         })

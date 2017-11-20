@@ -24,7 +24,7 @@
                 }
                 else
                 {
-                    <td data-val="@item.Convert_Ratio">@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 2).ToString("p2")</td>
+                    <td data-val="@item.Convert_Ratio">@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 4).ToString("p2")</td>
                 }
             </tr>
         }
