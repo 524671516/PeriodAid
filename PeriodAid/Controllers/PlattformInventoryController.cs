@@ -2110,16 +2110,34 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId
-                                       orderby m.Product_Visitor descending
-                                       select m).ToPagedList(_page, 15);
+                                       group m by m.SS_TrafficSource into g
+                                       orderby g.Sum(m => m.Product_Visitor) descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key.TrafficSource_Name,
+                                           Date_Source_Id=g.Key.Id,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == single
-                                       orderby m.Product_Visitor descending
-                                       select m).ToPagedList(_page, 15);
+                                       group m by m.SS_TrafficSource into g
+                                       orderby g.Sum(m => m.Product_Visitor) descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key.TrafficSource_Name,
+                                           Date_Source_Id = g.Key.Id,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
             }
@@ -2128,16 +2146,34 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                       orderby m.Product_Visitor descending
-                                       select m).ToPagedList(_page, 15);
+                                       group m by m.SS_TrafficSource into g
+                                       orderby g.Sum(m => m.Product_Visitor) descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key.TrafficSource_Name,
+                                           Date_Source_Id = g.Key.Id,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                       orderby m.Product_Visitor descending
-                                       select m).ToPagedList(_page, 15);
+                                       group m by m.SS_TrafficSource into g
+                                       orderby g.Sum(m => m.Product_Visitor) descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key.TrafficSource_Name,
+                                           Date_Source_Id = g.Key.Id,
+                                           Product_Flow = g.Sum(m => m.Product_Flow),
+                                           Product_Visitor = g.Sum(m => m.Product_Visitor),
+                                           Product_Customer = g.Sum(m => m.Product_Customer),
+                                           Order_Count = g.Sum(m => m.Order_Count)
+                                       }).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
             }
@@ -2154,7 +2190,7 @@ namespace PeriodAid.Controllers
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId
                                        group m by m.SS_TrafficSource.TrafficSource_Name into g
-                                       orderby g.Key descending
+                                       orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData {
                                            Date_Source=g.Key,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
@@ -2169,7 +2205,7 @@ namespace PeriodAid.Controllers
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update >= start && m.Update <= end
                                        group m by m.SS_TrafficSource.TrafficSource_Name into g
-                                       orderby g.Key descending
+                                       orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
                                        {
                                            Date_Source = g.Key,
@@ -2188,7 +2224,7 @@ namespace PeriodAid.Controllers
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource.TrafficSource_Name into g
-                                       orderby g.Key descending
+                                       orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
                                        {
                                            Date_Source = g.Key,
@@ -2204,7 +2240,7 @@ namespace PeriodAid.Controllers
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource.TrafficSource_Name into g
-                                       orderby g.Key descending
+                                       orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
                                        {
                                            Date_Source = g.Key,

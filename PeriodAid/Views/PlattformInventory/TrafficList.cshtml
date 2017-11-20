@@ -24,7 +24,7 @@
     {
         <span class="traffci-date-time color-blue" date-time="@date.Year-@date.Month-@date.Day">@date.Year-@date.Month-@date.Day</span>
     }
-    <a class="glyphicon glyphicon-chevron-right " style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
+    <a class="glyphicon glyphicon-chevron-right" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
 <div id="select-day" class="text-center h4"><span id="select-start-day" class="color-blue"></span>&nbsp;&nbsp;<span id="select-end-day" class="color-blue"></span></div>
 <div class="float-right" style="margin-top:10px">
@@ -45,12 +45,19 @@
 @section scripts{
 
 <script>
+    var first_nowP = true;
     $(function () {
         $(".traffci-date-time").addClass("hidden");
         var last = $(".traffci-date-time").last().index()-1;
         $(".traffci-date-time:eq(" + last + ")").removeClass("hidden");
         var productName = $("#product-list-name").attr("data-name");
         var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+        var nowData = $(".traffci-date-time:eq(" + nowP + ")").html();
+        if ($(".traffci-date-time").not($(".traffci-date-time.hidden")).html() == nowData && first_nowP == true) {
+            $("#date-btn-right").addClass("color-gray");
+            $("#date-btn-right").unbind("click");
+            first_nowP == false;
+        }
         var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
         var fileDate = $('.file-data')
         fileDate.datepicker({ dateFormat: "yy-mm-dd" });
@@ -156,10 +163,15 @@
         })
         // 选择日期
         $("#date-btn-left").on("click", function () {
-            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
-            $(".traffci-date-time:eq(" + nowP + ")").addClass("hidden");
-            var pos = nowP - 1;
-            $(".traffci-date-time:eq(" + pos + ")").removeClass("hidden");
+            $("#date-btn-right").removeClass("color-gray");
+            var nowP_left = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+            $(".traffci-date-time:eq(" + nowP_left + ")").addClass("hidden");
+            var pos_left = nowP_left - 1;
+            $(".traffci-date-time:eq(" + pos_left + ")").removeClass("hidden");
+            if ($(".traffci-date-time").not($(".traffci-date-time.hidden")).html() == $(".traffci-date-time:eq(0)").html()) {
+                $("#date-btn-left").addClass("color-gray");
+                $("#date-btn-left").unbind("click");
+            }
             $.ajax({
                 url: "/PlattformInventory/TrafficListPartial",
                 data: {
@@ -168,37 +180,44 @@
                     query: $("#traffic-product-query").val(),
                     productId: getUrlParam('productId'),
                     trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
-                    single: $(".traffci-date-time:eq(" + pos + ")").html()
+                    single: $(".traffci-date-time:eq(" + pos_left + ")").html()
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
                 }
-            })
-        })
-        $("#date-btn-right").on("click", function () {
-            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
-            $(".traffci-date-time:eq(" + nowP + ")").addClass("hidden");
-            var pos = nowP + 1;
-            $(".traffci-date-time:eq(" + pos + ")").removeClass("hidden");
-            $.ajax({
-                url: "/PlattformInventory/TrafficListPartial",
-                data: {
-                    plattformId: getUrlParam('plattformId'),
-                    page: 1,
-                    query: $("#traffic-product-query").val(),
-                    productId: getUrlParam('productId'),
-                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
-                    single: $(".traffci-date-time:eq(" + pos + ")").html()
-                },
-                success: function (data) {
-                    $("#traffic-list").html(data);
+            });
+            $("#date-btn-right").unbind("click");
+            $("#date-btn-right").on("click", function () {
+                var nowP_right = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+                $(".traffci-date-time:eq(" + nowP_right + ")").addClass("hidden");
+                var pos_right = nowP_right + 1;
+                $(".traffci-date-time:eq(" + pos_right + ")").removeClass("hidden");
+                var productName = $("#product-list-name").attr("data-name");
+                var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+                if ($(".traffci-date-time").not($(".traffci-date-time.hidden")).html() == nowData) {
+                    $("#date-btn-right").addClass("color-gray");
+                    $("#date-btn-right").unbind("click");
                 }
+                $.ajax({
+                    url: "/PlattformInventory/TrafficListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        page: 1,
+                        query: $("#traffic-product-query").val(),
+                        productId: getUrlParam('productId'),
+                        trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                        single: $(".traffci-date-time:eq(" + pos_right + ")").html()
+                    },
+                    success: function (data) {
+                        $("#traffic-list").html(data);
+                    }
+                })
             })
         })
         //时间查询
         $("#statistic_btn").on("click", function () {
-            if ($("#start_time").val() == "" || $("#end_time").val() == "") {
-                errorAlert("请选择日期！");
+            if ($("#start_time").val() == "" || $("#end_time").val() == "" || $("#end_time").val() < $("#start_time").val()) {
+                errorAlert("请选择正确日期！");
             }
             else
             {
@@ -223,7 +242,6 @@
             } 
         })
     })
-
 </script> 
 }
 
