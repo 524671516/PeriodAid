@@ -2191,7 +2191,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId
-                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       orderby m.Update descending, m.Product_Visitor ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -2199,7 +2199,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update == single
-                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       orderby m.Update descending, m.Product_Visitor ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -2209,7 +2209,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       orderby m.Update descending, m.Product_Visitor ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -2217,7 +2217,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                       orderby m.Update descending, m.SS_TrafficPlattform.Id ascending
+                                       orderby m.Update descending, m.Product_Visitor ascending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }

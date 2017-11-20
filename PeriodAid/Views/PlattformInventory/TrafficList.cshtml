@@ -201,7 +201,9 @@
             }
             else
             {
-                $("#single_day").remove()
+                $(".traffci-date-time").html($("#start_time").val() + " 〜 " + $("#end_time").val())
+                $("#date-btn-right").remove()
+                $("#date-btn-left").remove()
                 $.ajax({
                     url: "/PlattformInventory/SumTrafficListPartial",
                     data: {
