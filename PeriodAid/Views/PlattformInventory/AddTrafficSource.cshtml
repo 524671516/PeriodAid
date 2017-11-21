@@ -20,13 +20,6 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label">所属平台</label>
-                <div class="col-md-9">
-                    @Html.DropDownListFor(model => model.TrafficPlattform_Id, ViewBag.TrafficPlattform as SelectList, "- 请选择 -", new { @class = "form-control", @required = "required" })
-                    @Html.ValidationMessageFor(model => model.TrafficPlattform_Id, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
                 <label class="col-md-3 control-label">渠道类型</label>
                 <div class="col-md-9">
                     @Html.DropDownListFor(model => model.Source_Type, ViewBag.SourceType as SelectList, "- 请选择 -", new { @class = "form-control", @required = "required" })

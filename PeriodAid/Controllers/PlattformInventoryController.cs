@@ -2194,7 +2194,6 @@ namespace PeriodAid.Controllers
                                        select new TrafficData
                                        {
                                            Date_Source = g.Key.TrafficSource_Name,
-                                           Date_Source_Id = g.Key.Id,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
                                            Product_Visitor = g.Sum(m => m.Product_Visitor),
                                            Product_Customer = g.Sum(m => m.Product_Customer),
