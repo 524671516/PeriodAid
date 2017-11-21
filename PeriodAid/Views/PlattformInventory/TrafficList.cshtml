@@ -191,6 +191,7 @@
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
+                    $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                 }
             });
             $("#date-btn-right").unbind("click");
@@ -216,6 +217,7 @@
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
+                        $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                     }
                 })
             })
