@@ -2094,8 +2094,8 @@ namespace PeriodAid.Controllers
             ViewBag.productList = productList;
             var trafficDate = from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-                              orderby m.Update descending
                               group m by m.Update into g
+                              orderby g.Key ascending
                               select g.Key;
             ViewBag.trafficDate = trafficDate;
             var trafficName = from m in _db.SS_TrafficPlattform
