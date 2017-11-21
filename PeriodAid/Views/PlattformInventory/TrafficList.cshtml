@@ -27,6 +27,7 @@
     <a class="glyphicon glyphicon-chevron-right" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
 <div id="select-day" class="text-center h4"><span id="select-start-day" class="color-blue"></span>&nbsp;&nbsp;<span id="select-end-day" class="color-blue"></span></div>
+<div class="text-center"><a style="cursor:pointer" id="back-day-btn">查看单日数据</a></div>
 <div class="float-right" style="margin-top:10px">
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
     <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
@@ -54,6 +55,7 @@
     var first_nowP = true;
     $(function () {
         $(".traffci-date-time").addClass("hidden");
+        $("#back-day-btn").addClass("hide")
         var last = $(".traffci-date-time").last().index()-1;
         $(".traffci-date-time:eq(" + last + ")").removeClass("hidden");
         var productName = $("#product-list-name").attr("data-name");
@@ -224,7 +226,7 @@
             }
             else
             {
-                $("#single_day").remove()
+                $("#single_day").addClass("hide")
                 $("#select-start-day").text($("#start_time").val())
                 $("#select-end-day").text($("#end_time").val())
                 $.ajax({
@@ -240,6 +242,7 @@
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
+                        $("#back-day-btn").removeClass("hide")
                     }
                 })
             }
@@ -255,6 +258,29 @@
                     $("#myModal").modal('show')
                 }
             })
+        })
+        // 返回单日数据
+        $("#back-day-btn").on('click', function () {
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    productId: getUrlParam('productId'),
+                    single: start_time,
+                    query: $("#traffic-product-query").val(),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data)
+                    $("#product-name").text(productName)
+                    $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
+                    $("#single_day").removeClass("hide")
+                    $("#select-day").addClass("hide")
+                    $("#start_time").val("")
+                    $("#end_time").val("")
+                    $("#back-day-btn").addClass("hide")
+                }
+            });
         })
     })
     </script>
