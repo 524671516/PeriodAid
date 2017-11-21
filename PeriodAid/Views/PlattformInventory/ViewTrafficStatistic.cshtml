@@ -36,7 +36,6 @@
                     trafficPlattformId: getUrlParam('trafficPlattformId')
                 }, success: function (data) {
                     showstatistic(data);
-                    console.log(data)
                 }
             });
             $("#statistic_btn").click(function () {
@@ -47,7 +46,9 @@
                         data: {
                             productId: getUrlParam('productId'),
                             start: $("#start_time").val(),
-                            end: $("#end_time").val()
+                            end: $("#end_time").val(),
+                            sourceId: getUrlParam('sourceId'),
+                            trafficPlattformId: getUrlParam('trafficPlattformId')
                         }, success: function (data) {
                             showstatistic(data);
                         }
@@ -74,7 +75,7 @@
                 if (customertemp == 0) {
                     convertRatio = 0
                 } else {
-                    convertRatio = parseFloat((customertemp / totaltemp).toFixed(4));
+                    convertRatio = parseFloat(((customertemp / totaltemp)*100).toFixed(2));
                 }
                 rationarray.push(convertRatio)
 
@@ -93,10 +94,15 @@
                 yAxis: [{ // Primary yAxis
                     title: {
                         text: '转化率',
+                    },
+                    labels: {
+                        format: '{value}%'
                     }
                 }, { // Secondary yAxis
                     title: {
                         text: '访客',
+                    }, labels: {
+                        format: '{value}次'
                     },
                     opposite: true
                 }],
@@ -108,10 +114,16 @@
                     type: 'column',
                     yAxis: 1,
                     data: totalarray,
+                    tooltip: {
+                        valueSuffix: '次'
+                    }
                 }, {
                     name: '转化率',
                     type: 'spline',
                     data: rationarray,
+                    tooltip: {
+                        valueSuffix: '%'
+                    }
                 }]
             });
         }

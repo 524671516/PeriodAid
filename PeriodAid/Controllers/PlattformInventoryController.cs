@@ -2260,10 +2260,11 @@ namespace PeriodAid.Controllers
             var TrafficPlattform = from m in _db.SS_TrafficPlattform
                                    select m;
             ViewBag.TrafficPlattform = new SelectList(TrafficPlattform,"Id", "TrafficPlattform_Name");
-            var SourceType = (from m in _db.SS_TrafficSource
-                              orderby m.Id descending
-                             select m.Source_Type).Distinct();
-            ViewBag.SourceType = new SelectList(SourceType, "Source_Type");
+            List<SelectListItem> itemlist = new List<SelectListItem>();
+            itemlist.Add(new SelectListItem() { Text = "常用", Value = "1" });
+            itemlist.Add(new SelectListItem() { Text = "其他", Value = "0" });
+            itemlist.Add(new SelectListItem() { Text = "不常用", Value = "-1" });
+            ViewBag.SourceType = new SelectList(itemlist, "Value", "Text");
             return PartialView();
         }
         [HttpPost]
