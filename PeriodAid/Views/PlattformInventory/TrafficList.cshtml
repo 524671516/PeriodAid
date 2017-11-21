@@ -56,6 +56,7 @@
     $(function () {
         $(".traffci-date-time").addClass("hidden");
         $("#back-day-btn").addClass("hide")
+        $("#select-day").addClass("hide")
         var last = $(".traffci-date-time").last().index()-1;
         $(".traffci-date-time:eq(" + last + ")").removeClass("hidden");
         var productName = $("#product-list-name").attr("data-name");
@@ -229,6 +230,7 @@
                 $("#single_day").addClass("hide")
                 $("#select-start-day").text($("#start_time").val())
                 $("#select-end-day").text($("#end_time").val())
+                $("#select-day").removeClass("hide")
                 $.ajax({
                     url: "/PlattformInventory/SumTrafficListPartial",
                     data: {
