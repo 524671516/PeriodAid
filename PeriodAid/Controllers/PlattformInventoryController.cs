@@ -2189,10 +2189,12 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId
-                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
-                                       orderby g.Sum(m=>m.Product_Visitor) descending
-                                       select new TrafficData {
-                                           Date_Source=g.Key,
+                                       group m by m.SS_TrafficSource into g
+                                       orderby g.Sum(m => m.Product_Visitor) descending
+                                       select new TrafficData
+                                       {
+                                           Date_Source = g.Key.TrafficSource_Name,
+                                           Date_Source_Id = g.Key.Id,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
                                            Product_Visitor = g.Sum(m => m.Product_Visitor),
                                            Product_Customer = g.Sum(m => m.Product_Customer),
@@ -2204,11 +2206,11 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Update >= start && m.Update <= end
-                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
+                                       group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
                                        {
-                                           Date_Source = g.Key,
+                                           Date_Source = g.Key.TrafficSource_Name,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
                                            Product_Visitor = g.Sum(m => m.Product_Visitor),
                                            Product_Customer = g.Sum(m => m.Product_Customer),
@@ -2223,11 +2225,11 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
+                                       group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
                                        {
-                                           Date_Source = g.Key,
+                                           Date_Source = g.Key.TrafficSource_Name,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
                                            Product_Visitor = g.Sum(m => m.Product_Visitor),
                                            Product_Customer = g.Sum(m => m.Product_Customer),
@@ -2239,11 +2241,11 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.Product_Id == productId && m.Update >= start && m.Update <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
-                                       group m by m.SS_TrafficSource.TrafficSource_Name into g
+                                       group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
                                        {
-                                           Date_Source = g.Key,
+                                           Date_Source = g.Key.TrafficSource_Name,
                                            Product_Flow = g.Sum(m => m.Product_Flow),
                                            Product_Visitor = g.Sum(m => m.Product_Visitor),
                                            Product_Customer = g.Sum(m => m.Product_Customer),
