@@ -2276,7 +2276,6 @@ namespace PeriodAid.Controllers
             {
                 var item = new SS_TrafficSource();
                 item.TrafficSource_Name = model.TrafficSource_Name;
-                item.TrafficPlattform_Id = model.TrafficPlattform_Id;
                 item.Source_Type = model.Source_Type;
                 _db.SS_TrafficSource.Add(item);
                 _db.SaveChanges();
