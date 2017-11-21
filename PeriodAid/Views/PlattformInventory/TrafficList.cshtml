@@ -34,12 +34,11 @@
     <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
 </div>
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="traffic-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="1" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="417" class="plattform-btn" style="cursor:pointer">APP</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="messages" role="tab" data-toggle="tab" data-id="418" class="plattform-btn" style="cursor:pointer">M站</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="419" class="plattform-btn" style="cursor:pointer">PC</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="420" class="plattform-btn" style="cursor:pointer">手Q</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="421" class="plattform-btn" style="cursor:pointer">微信</a></li>
+    <li role="presentation" class="traffic-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
+    @foreach (var list in ViewBag.trafficName)
+    {
+        <li role="presentation" class="traffic-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="@list.Id" class="plattform-btn" style="cursor:pointer">@list.TrafficPlattform_Name</a></li>
+    }
 </ul>
 <div id="traffic-list">
 </div>

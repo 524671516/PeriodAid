@@ -2070,20 +2070,20 @@ namespace PeriodAid.Controllers
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "爆款统计表.xls");
         }
 
-        public ActionResult Temp_Action()
-        {
-            var trafficsourcelist = _db.SS_TrafficSource;
-            var plattformlist = _db.SS_TrafficPlattform;
-            foreach (var item in trafficsourcelist)
-            {
-                foreach (var plattform in plattformlist)
-                {
-                    item.AttendTrafficPlattform.Add(plattform);
-                }
-            }
-            _db.SaveChanges();
-            return Content("SUCCESS");
-        }
+        //public ActionResult Temp_Action()
+        //{
+        //    var trafficsourcelist = _db.SS_TrafficSource;
+        //    var plattformlist = _db.SS_TrafficPlattform;
+        //    foreach (var item in trafficsourcelist)
+        //    {
+        //        foreach (var plattform in plattformlist)
+        //        {
+        //            item.AttendTrafficPlattform.Add(plattform);
+        //        }
+        //    }
+        //    _db.SaveChanges();
+        //    return Content("SUCCESS");
+        //}
 
         // TrafficList
         public ActionResult TrafficList(int plattformId,int productId)
@@ -2098,12 +2098,16 @@ namespace PeriodAid.Controllers
                               group m by m.Update into g
                               select g.Key;
             ViewBag.trafficDate = trafficDate;
+            var trafficName = from m in _db.SS_TrafficPlattform
+                              where m.Plattform_Id == plattformId
+                              select m;
+            ViewBag.trafficName = trafficName;
             return PartialView();
         }
         
         public ActionResult TrafficListPartial(string query, int plattformId, int productId, int trafficPlattformId, DateTime? single)
         {
-            if (trafficPlattformId == 1)
+            if (trafficPlattformId == 0)
             {
                 if (query != "")
                 {
@@ -2183,7 +2187,7 @@ namespace PeriodAid.Controllers
         public ActionResult SumTrafficListPartial(int? page, string query, int plattformId, int productId, int trafficPlattformId, DateTime start,DateTime end)
         {
             int _page = page ?? 1;
-            if (trafficPlattformId == 1)
+            if (trafficPlattformId == 0)
             {
                 if (query != "")
                 {
@@ -2269,13 +2273,19 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         [HttpPost]
-        public ActionResult AddTrafficSource(SS_TrafficSource model,FormCollection form)
+        public ActionResult AddTrafficSource(SS_TrafficSource model, FormCollection form)
         {
             if (ModelState.IsValid)
             {
                 var item = new SS_TrafficSource();
                 item.TrafficSource_Name = model.TrafficSource_Name;
                 item.Source_Type = model.Source_Type;
+                var plattformlist = _db.SS_TrafficPlattform.Where(m => m.Plattform_Id == 1);
+                item.AttendTrafficPlattform = new List<SS_TrafficPlattform>();
+                foreach (var plattform in plattformlist)
+                {
+                    item.AttendTrafficPlattform.Add(plattform);
+                }
                 _db.SS_TrafficSource.Add(item);
                 _db.SaveChanges();
                 return Content("SUCCESS");
@@ -2289,7 +2299,7 @@ namespace PeriodAid.Controllers
         //产品数据图表
         public ActionResult ViewTrafficStatistic(int productId,int sourceId,int trafficPlattformId)
         {
-            if(trafficPlattformId == 1)
+            if(trafficPlattformId == 0)
             {
                 var TrafficList = from m in _db.SS_TrafficData
                                   where m.Product_Id == productId && m.TrafficSource_Id == sourceId
@@ -2311,7 +2321,7 @@ namespace PeriodAid.Controllers
         {
             DateTime _start = Convert.ToDateTime(start);
             DateTime _end = Convert.ToDateTime(end);
-            if(trafficPlattformId == 1)
+            if(trafficPlattformId == 0)
             {
                 var info_data = from m in _db.SS_TrafficData
                                 where m.Update >= _start && m.Update <= _end
