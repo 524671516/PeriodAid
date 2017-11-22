@@ -58,8 +58,6 @@
         $(function () {
         $("#back-day-btn").addClass("hide")
         $("#select-day").addClass("hide")
-       
-        var dateFirst = $(".traffci-date-time").html();
         $("#date-btn-right").addClass("color-gray");
         var productName = $("#product-list-name").attr("data-name");
         var fileDate = $('.file-data')
@@ -82,7 +80,6 @@
                 $("#traffic-list").html(data)
                 $("#product-name").text(productName)
                 $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
-                $("#date-btn-right").hasClass("color-gray")
             }
         });
         // 搜索
