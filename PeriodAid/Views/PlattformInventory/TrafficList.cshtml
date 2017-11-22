@@ -19,26 +19,26 @@
 <h2>渠道分析</h2><a class="btn btn-info btn-sm" id="add-source" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道</a>
 <div class="text-center h4" id="product-name"></div>
 <div class="text-center h4" id="single_day">
-    <a class="glyphicon glyphicon-chevron-left" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
+    <a class="glyphicon glyphicon-chevron-left" style="padding-right:40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
     @foreach (var date in ViewBag.trafficDate)
     {
         <span class="traffci-date-time color-blue" date-time="@date.Year-@date.Month-@date.Day">@date.Year-@date.Month-@date.Day</span>
     }
-    <a class="glyphicon glyphicon-chevron-right" style="padding:0 40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
+    <a class="glyphicon glyphicon-chevron-right" style="padding-left:40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
 <div id="select-day" class="text-center h4"><span id="select-start-day" class="color-blue"></span>&nbsp;&nbsp;<span id="select-end-day" class="color-blue"></span></div>
+<div class="text-center"><a style="cursor:pointer" id="back-day-btn">查看单日数据</a></div>
 <div class="float-right" style="margin-top:10px">
     <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
     <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
     <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
 </div>
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="traffic-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="1" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="417" class="plattform-btn" style="cursor:pointer">APP</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="messages" role="tab" data-toggle="tab" data-id="418" class="plattform-btn" style="cursor:pointer">M站</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="419" class="plattform-btn" style="cursor:pointer">PC</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="420" class="plattform-btn" style="cursor:pointer">手Q</a></li>
-    <li role="presentation" class="traffic-list-li"><a aria-controls="settings" role="tab" data-toggle="tab" data-id="421" class="plattform-btn" style="cursor:pointer">微信</a></li>
+    <li role="presentation" class="traffic-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
+    @foreach (var list in ViewBag.trafficName)
+    {
+        <li role="presentation" class="traffic-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="@list.Id" class="plattform-btn" style="cursor:pointer">@list.TrafficPlattform_Name</a></li>
+    }
 </ul>
 <div id="traffic-list">
 </div>
@@ -54,6 +54,8 @@
     var first_nowP = true;
     $(function () {
         $(".traffci-date-time").addClass("hidden");
+        $("#back-day-btn").addClass("hide")
+        $("#select-day").addClass("hide")
         var last = $(".traffci-date-time").last().index()-1;
         $(".traffci-date-time:eq(" + last + ")").removeClass("hidden");
         var productName = $("#product-list-name").attr("data-name");
@@ -105,6 +107,7 @@
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
+                        $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                     }
                 })
             } else {
@@ -147,7 +150,6 @@
                     }
                 })
             } else {
-
                 $.ajax({
                     url: "/PlattformInventory/TrafficListPartial",
                     data: {
@@ -188,6 +190,7 @@
                 },
                 success: function (data) {
                     $("#traffic-list").html(data);
+                    $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                 }
             });
             $("#date-btn-right").unbind("click");
@@ -213,6 +216,7 @@
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
+                        $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                     }
                 })
             })
@@ -224,9 +228,10 @@
             }
             else
             {
-                $("#single_day").remove()
+                $("#single_day").addClass("hide")
                 $("#select-start-day").text($("#start_time").val())
                 $("#select-end-day").text($("#end_time").val())
+                $("#select-day").removeClass("hide")
                 $.ajax({
                     url: "/PlattformInventory/SumTrafficListPartial",
                     data: {
@@ -240,6 +245,7 @@
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
+                        $("#back-day-btn").removeClass("hide")
                     }
                 })
             }
@@ -255,6 +261,29 @@
                     $("#myModal").modal('show')
                 }
             })
+        })
+        // 返回单日数据
+        $("#back-day-btn").on('click', function () {
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    productId: getUrlParam('productId'),
+                    single: start_time,
+                    query: $("#traffic-product-query").val(),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data)
+                    $("#product-name").text(productName)
+                    $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
+                    $("#single_day").removeClass("hide")
+                    $("#select-day").addClass("hide")
+                    $("#start_time").val("")
+                    $("#end_time").val("")
+                    $("#back-day-btn").addClass("hide")
+                }
+            });
         })
     })
     </script>
