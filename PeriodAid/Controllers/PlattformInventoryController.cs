@@ -2259,11 +2259,11 @@ namespace PeriodAid.Controllers
         {
             var TrafficPlattform = from m in _db.SS_TrafficPlattform
                                    select m;
-            ViewBag.TrafficPlattform = new SelectList(TrafficPlattform,"Id", "TrafficPlattform_Name");
+            ViewBag.TrafficPlattform = new SelectList(TrafficPlattform ,"TrafficPlattform_Name");
             var SourceType = (from m in _db.SS_TrafficSource
                               orderby m.Id descending
                              select m.Source_Type).Distinct();
-            ViewBag.SourceType = new SelectList(SourceType, "Source_Type");
+            ViewBag.SourceType = new SelectList(SourceType, "Source_Type", "233");
             return PartialView();
         }
         [HttpPost]
