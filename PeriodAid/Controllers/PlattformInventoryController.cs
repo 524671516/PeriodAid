@@ -1861,7 +1861,7 @@ namespace PeriodAid.Controllers
                     if (rowCount > 1 && firstCount == true)
                     {
                         var row0 = row_pos;
-                        var row1 = row_pos + rowCount - 1;
+                        var row1 = row_pos + rowCount;
                         sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
                         sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 1, 1));
                         sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 2, 2));
