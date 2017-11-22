@@ -2031,7 +2031,7 @@ namespace PeriodAid.Controllers
                 var row_pos = 2;
                 foreach (var dataDate in data_date)
                 {
-                    var dateTime = Convert.ToDateTime(dataDate.Key.Year + "/" + dataDate.Key.Month + "/" + dataDate.Key.Day + " 0:00:00");
+                    var dateTime = Convert.ToDateTime(dataDate.Key.Year + "-" + dataDate.Key.Month + "-" + dataDate.Key.Day + " 00:00:00.000");
                     var traffic_data = from m in dataDate
                                        group m by m.SS_TrafficPlattform.Plattform_Id into g
                                        select g;
@@ -2092,12 +2092,17 @@ namespace PeriodAid.Controllers
                               where m.Plattform_Id == plattformId && m.Id == productId
                               select m;
             ViewBag.productList = productList;
-            var trafficDate = from m in _db.SS_TrafficData
+            var trafficDate = (from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-                              group m by m.Update into g
-                              orderby g.Key ascending
-                              select g.Key;
+                              orderby m.Update descending
+                              select m.Update).FirstOrDefault();
             ViewBag.trafficDate = trafficDate;
+            //var trafficDate = from m in _db.SS_TrafficData
+            //                  where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
+            //                  group m by m.Update into g
+            //                  orderby g.Key ascending
+            //                  select g.Key;
+            //ViewBag.trafficDate = trafficDate;
             var trafficName = from m in _db.SS_TrafficPlattform
                               where m.Plattform_Id == plattformId
                               select m;
