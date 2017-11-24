@@ -482,7 +482,12 @@ namespace PeriodAid.Controllers
                               where m.SalesRecord_Date > start && m.SalesRecord_Date <= end
                               && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0
                               group m by m.SS_Product into g
-                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count), Sales_Avg = g.Average(m => m.Sales_Count) };
+                              select new CalcStorageViewModel {
+                                  Product = g.Key,
+                                  Sales_Count = g.Sum(m => m.Sales_Count),
+                                  Storage_Count = g.Sum(m => m.Storage_Count),
+                                  Sales_Avg = g.Average(m => m.Sales_Count) };
+                var count = content.Count();
                 return PartialView(content);
             }
             return PartialView();
@@ -2092,11 +2097,16 @@ namespace PeriodAid.Controllers
                               where m.Plattform_Id == plattformId && m.Id == productId
                               select m;
             ViewBag.productList = productList;
-            var trafficDate = (from m in _db.SS_TrafficData
+            var trafficDateStart = (from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
                               orderby m.Update descending
                               select m.Update).FirstOrDefault();
-            ViewBag.trafficDate = trafficDate;
+            var trafficDateEnd = (from m in _db.SS_TrafficData
+                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
+                               orderby m.Update ascending
+                               select m.Update).FirstOrDefault();
+            ViewBag.trafficDateStart = trafficDateStart;
+            ViewBag.trafficDateEnd = trafficDateEnd;
             //var trafficDate = from m in _db.SS_TrafficData
             //                  where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
             //                  group m by m.Update into g
