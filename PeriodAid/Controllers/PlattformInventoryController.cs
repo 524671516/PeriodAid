@@ -1368,89 +1368,89 @@ namespace PeriodAid.Controllers
             return true;
         }
         //测试
-       [HttpPost]
-        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName, string upName)
+       //[HttpPost]
+       // public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName, string upName)
+       // {
+       //     var file = Request.Files[0];
+       //     if (file != null)
+       //     {
+       //         var ext = Path.GetExtension(upName).ToLower();
+       //         if (ext.Contains("xls"))
+       //         {
+       //             var fileName = DateTime.Now.Ticks + ".xls";
+       //             AliOSSUtilities util = new AliOSSUtilities();
+       //             util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+       //             var date_time = form["file-date"].ToString();
+       //             if (plattformId == 1)
+       //             {
+       //                 var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+       //                 if (result)
+       //                     return Json(new { result = "SUCCESS" });
+       //                 else
+       //                     return Json(new { result = "FAIL" });
+       //             }
+       //             else
+       //             {
+       //                 return Json(new { result = "FAIL" });
+       //             }
+       //         }
+       //         else
+       //         {
+       //             var fileName = DateTime.Now.Ticks + ".csv";
+       //             AliOSSUtilities util = new AliOSSUtilities();
+       //             util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+       //             var date_time = form["file-date"].ToString();
+       //             if (plattformId == 1)
+       //             {
+       //                 var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+       //                 if (result)
+       //                     return Json(new { result = "SUCCESS" });
+       //                 else
+       //                     return Json(new { result = "FAIL" });
+       //             }
+       //             else
+       //             {
+       //                 return Json(new { result = "FAIL" });
+       //             }
+       //         }
+
+       //     }
+       //     else
+       //     {
+       //         return Json(new { result = "FAIL" });
+       //     }
+
+       // }
+
+        //原版
+        [HttpPost]
+        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
         {
             var file = Request.Files[0];
             if (file != null)
             {
-                var ext = Path.GetExtension(upName).ToLower();
-                if (ext.Contains("xls"))
+                var fileName = DateTime.Now.Ticks + ".csv";
+                AliOSSUtilities util = new AliOSSUtilities();
+                util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+                var date_time = form["file-date"].ToString();
+                if (plattformId == 1)
                 {
-                    var fileName = DateTime.Now.Ticks + ".xls";
-                    AliOSSUtilities util = new AliOSSUtilities();
-                    util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
-                    var date_time = form["file-date"].ToString();
-                    if (plattformId == 1)
-                    {
-                        var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
-                        if (result)
-                            return Json(new { result = "SUCCESS" });
-                        else
-                            return Json(new { result = "FAIL" });
-                    }
+                    var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+                    if (result)
+                        return Json(new { result = "SUCCESS" });
                     else
-                    {
                         return Json(new { result = "FAIL" });
-                    }
                 }
                 else
                 {
-                    var fileName = DateTime.Now.Ticks + ".csv";
-                    AliOSSUtilities util = new AliOSSUtilities();
-                    util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
-                    var date_time = form["file-date"].ToString();
-                    if (plattformId == 1)
-                    {
-                        var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
-                        if (result)
-                            return Json(new { result = "SUCCESS" });
-                        else
-                            return Json(new { result = "FAIL" });
-                    }
-                    else
-                    {
-                        return Json(new { result = "FAIL" });
-                    }
+                    return Json(new { result = "FAIL" });
                 }
-
             }
             else
             {
                 return Json(new { result = "FAIL" });
             }
-
         }
-
-        ////原版
-        //[HttpPost]
-        //public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
-        //{
-        //    var file = Request.Files[0];
-        //    if (file != null)
-        //    {
-        //        var fileName = DateTime.Now.Ticks + ".csv";
-        //        AliOSSUtilities util = new AliOSSUtilities();
-        //        util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
-        //        var date_time = form["file-date"].ToString();
-        //        if (plattformId == 1)
-        //        {
-        //            var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
-        //            if (result)
-        //                return Json(new { result = "SUCCESS" });
-        //            else
-        //                return Json(new { result = "FAIL" });
-        //        }
-        //        else
-        //        {
-        //            return Json(new { result = "FAIL" });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return Json(new { result = "FAIL" });
-        //    }
-        //}
         [HttpPost]
         public ActionResult getTrafficExcel(FormCollection form, DateTime date)
         {
