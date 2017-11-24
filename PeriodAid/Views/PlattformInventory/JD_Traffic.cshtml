@@ -82,7 +82,8 @@
                 type: "post",
                 data: {
                     plattformId: 1,
-                    plattformName: $('#traffic-name').attr("data-name")
+                    plattformName: $('#traffic-name').attr("data-name"),
+                    upName: $('#upload-traffic').html()
                 },
                 success: function (msg) {
                     console.log(msg)

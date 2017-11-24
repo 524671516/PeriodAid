@@ -13,6 +13,8 @@ using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
 using ICSharpCode.SharpZipLib.Zip;
+using NPOI.XSSF.UserModel;
+using System.Data;
 
 namespace PeriodAid.Controllers
 {
@@ -482,7 +484,7 @@ namespace PeriodAid.Controllers
                               where m.SalesRecord_Date > start && m.SalesRecord_Date <= end
                               && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0
                               group m by m.SS_Product into g
-                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m => m.Sales_Count), Storage_Count = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count), Sales_Avg = g.Average(m => m.Sales_Count) };
+                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m=>m.Sales_Count), Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Average(m => m.Sales_Count) };
                 return PartialView(content);
             }
             return PartialView();
@@ -814,14 +816,8 @@ namespace PeriodAid.Controllers
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count),
-                                      Pay_Sum = g.Sum(m => m.Pay_Money),
-                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
                                       Settlement = g.Key.Purchase_Price
-                                      // 问题出在哪里？
-                                      // 理解意义
-                                      // 效率提升
-                                      // 去除无用代码
                                   };
                 return PartialView(SalesRecord);
             }
@@ -835,9 +831,7 @@ namespace PeriodAid.Controllers
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count),
-                                      Pay_Sum = g.Sum(m => m.Pay_Money),
-                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
                                       Settlement = g.Key.Purchase_Price
                                   };
                 return PartialView(SalesRecord);
@@ -1217,7 +1211,62 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        
+
+
+        //// 测试
+        //public bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
+        //{
+        //    IWorkbook workbook = null;
+        //    ISheet sheet = null;
+        //    DataTable dt = new DataTable();
+        //    AliOSSUtilities util = new AliOSSUtilities();
+        //    var fs = util.GetObject("ExcelUpload/" + filename);
+        //    workbook = WorkbookFactory.Create(fs);
+        //    sheet = workbook.GetSheetAt(0);
+        //    //表头  
+        //    IRow header = sheet.GetRow(sheet.FirstRowNum);
+        //    List<int> columns = new List<int>();
+        //    for (int i = 0; i < header.LastCellNum; i++)
+        //    {
+        //        object obj = (header.GetCell(i));
+        //        if (obj == null || obj.ToString() == string.Empty)
+        //        {
+        //            dt.Columns.Add(new DataColumn("Columns" + i.ToString()));
+        //        }
+        //        else
+        //            dt.Columns.Add(new DataColumn(obj.ToString()));
+        //        columns.Add(i);
+        //    }
+        //    //数据  
+        //    for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+        //    {
+        //        DataRow dr = dt.NewRow();
+        //        bool hasValue = false;
+        //        foreach (int j in columns)
+        //        {
+        //            dr[j] = (sheet.GetRow(i).GetCell(j));
+        //            if (dr[j] != null && dr[j].ToString() != string.Empty)
+        //            {
+        //                hasValue = true;
+        //            }
+        //        }
+        //        if (hasValue)
+        //        {
+        //            dt.Rows.Add(dr);
+        //        }
+        //    }
+
+
+        //    //for (int i = 0; i <= sheet.LastRowNum; i++)
+        //    //{
+        //    //    foreach (ICell cell in sheet.GetRow(i).Cells)
+        //    //    {
+        //    //        cell.SetCellType(CellType.String);
+        //    //    }
+        //    //}
+        //    return true;
+        //}
+        //原版
         private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
         {
             AliOSSUtilities util = new AliOSSUtilities();
@@ -1314,38 +1363,94 @@ namespace PeriodAid.Controllers
                     _db.SS_UploadTraffic.Add(upload_traffic);
                 }
                 _db.SaveChanges();
-              
+
             }
             return true;
         }
-        [HttpPost]
-        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
+        //测试
+       [HttpPost]
+        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName, string upName)
         {
             var file = Request.Files[0];
             if (file != null)
             {
-                var fileName = DateTime.Now.Ticks + ".csv";
-                AliOSSUtilities util = new AliOSSUtilities();
-                util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
-                var date_time = form["file-date"].ToString();
-                if (plattformId == 1)
+                var ext = Path.GetExtension(upName).ToLower();
+                if (ext.Contains("xls"))
                 {
-                    var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
-                    if (result)
-                        return Json(new { result = "SUCCESS" });
+                    var fileName = DateTime.Now.Ticks + ".xls";
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+                    var date_time = form["file-date"].ToString();
+                    if (plattformId == 1)
+                    {
+                        var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+                        if (result)
+                            return Json(new { result = "SUCCESS" });
+                        else
+                            return Json(new { result = "FAIL" });
+                    }
                     else
+                    {
                         return Json(new { result = "FAIL" });
+                    }
                 }
                 else
                 {
-                    return Json(new { result = "FAIL" });
+                    var fileName = DateTime.Now.Ticks + ".csv";
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+                    var date_time = form["file-date"].ToString();
+                    if (plattformId == 1)
+                    {
+                        var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+                        if (result)
+                            return Json(new { result = "SUCCESS" });
+                        else
+                            return Json(new { result = "FAIL" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
                 }
+
             }
             else
             {
                 return Json(new { result = "FAIL" });
             }
+
         }
+
+        ////原版
+        //[HttpPost]
+        //public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
+        //{
+        //    var file = Request.Files[0];
+        //    if (file != null)
+        //    {
+        //        var fileName = DateTime.Now.Ticks + ".csv";
+        //        AliOSSUtilities util = new AliOSSUtilities();
+        //        util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+        //        var date_time = form["file-date"].ToString();
+        //        if (plattformId == 1)
+        //        {
+        //            var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+        //            if (result)
+        //                return Json(new { result = "SUCCESS" });
+        //            else
+        //                return Json(new { result = "FAIL" });
+        //        }
+        //        else
+        //        {
+        //            return Json(new { result = "FAIL" });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return Json(new { result = "FAIL" });
+        //    }
+        //}
         [HttpPost]
         public ActionResult getTrafficExcel(FormCollection form, DateTime date)
         {
