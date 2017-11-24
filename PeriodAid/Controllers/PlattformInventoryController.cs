@@ -1214,14 +1214,16 @@ namespace PeriodAid.Controllers
 
 
         // 测试
-        public static DataTable Read_TrafficFile()
+        public static DataTable Read_TrafficFile(string filename)
         {
             IWorkbook workbook = null;
             ISheet sheet = null;
             DataTable dt = new DataTable();
             AliOSSUtilities util = new AliOSSUtilities();
-            //var fs = util.GetObject("ExcelUpload/" + filename);
-            workbook = WorkbookFactory.Create(@"D:\数据\京东\11月\明细11月1\11.21\手q.xls");
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
+            // 设置当前流的位置为流的开始
+            
+            workbook = WorkbookFactory.Create();
             sheet = workbook.GetSheetAt(0);
 
             //表头  
