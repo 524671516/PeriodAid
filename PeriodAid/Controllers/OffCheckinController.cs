@@ -1095,6 +1095,7 @@ namespace PeriodAid.Controllers
         }
 
         // Origin: Off_Add_Schedule
+        [Authorize(Roles ="SuperAdmin")]
         public ActionResult AddSchedule()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -1104,6 +1105,7 @@ namespace PeriodAid.Controllers
             ViewBag.SystemList = new SelectList(storesystem, "Id", "SystemName", storesystem.FirstOrDefault().Id);
             return View();
         }
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public ActionResult AddSchedule(FormCollection form)
         {
@@ -1216,6 +1218,7 @@ namespace PeriodAid.Controllers
         }
 
         // Origin: Off_EventDetails_ModifyInfo_batch
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public JsonResult EditScheduleBatchAjax(string ids, string starttime, string finishtime, decimal salary, string date)
         {

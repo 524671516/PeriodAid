@@ -1,6 +1,13 @@
 ﻿@{
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
+@section header{
+    <style>
+        .color-gray{
+            pointer-events:none; 
+        }
+    </style>
+}
 <div class="hidden">
     @foreach (var list in ViewBag.productList)
     {
@@ -20,19 +27,14 @@
 <div class="text-center h4" id="product-name"></div>
 <div class="text-center h4" id="single_day">
     <a class="glyphicon glyphicon-chevron-left" style="padding-right:40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
-    <span class="traffci-date-time color-blue" date-time="@ViewBag.trafficDateStart.ToString("yyyy-MM-dd")">@ViewBag.trafficDateStart.ToString("yyyy-MM-dd")</span>
-    <span class="traffci-date-time color-blue hidden" date-time="@ViewBag.trafficDateEnd.ToString("yyyy-MM-dd")">@ViewBag.trafficDateEnd.ToString("yyyy-MM-dd")</span>
-    @*@foreach (var date in ViewBag.trafficDate)
-    {
-        <span class="traffci-date-time color-blue" date-time="@date.Year-@date.Month-@date.Day">@date.Year-@date.Month-@date.Day</span>
-    }*@
+    <span class="traffci-date-time color-blue" date-time="@ViewBag.trafficDate.ToString("yyyy-MM-dd")">@ViewBag.trafficDate.ToString("yyyy-MM-dd")</span>
     <a class="glyphicon glyphicon-chevron-right" style="padding-left:40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
 </div>
 <div id="select-day" class="text-center h4"><span id="select-start-day" class="color-blue"></span>&nbsp;&nbsp;<span id="select-end-day" class="color-blue"></span></div>
 <div class="text-center"><a style="cursor:pointer" id="back-day-btn">查看单日数据</a></div>
 <div class="float-right" style="margin-top:10px">
-    <input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
-    <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
+    <input type="text" id="start_time" class="file-data" name="start_time" readonly="readonly" placeholder="请选择起始日期" />
+    <input type="text" id="end_time" class="file-data" name="end_time" readonly="readonly" placeholder="请选择结束日期" />
     <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
 </div>
 <ul class="nav nav-tabs" role="tablist">
@@ -54,11 +56,9 @@
 
     <script>
         $(function () {
-            var endDate = $(".traffci-date-time:eq(0)").text();
-            var startDate = $(".traffci-date-time hidden").text();
         $("#back-day-btn").addClass("hide")
         $("#select-day").addClass("hide")
-        var dateAttr = $(".traffci-date-time").attr("date-time")
+        $("#date-btn-right").addClass("color-gray");
         var productName = $("#product-list-name").attr("data-name");
         var fileDate = $('.file-data')
         fileDate.datepicker({ dateFormat: "yy-mm-dd" });
@@ -84,6 +84,8 @@
         });
         // 搜索
         $("#traffic-product-search").click(function () {
+            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
+            var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
             if ($("#start_time").val() != "" && $("#end_time").val() != "") {
                 $.ajax({
                     url: "/PlattformInventory/SumTrafficListPartial",
@@ -110,8 +112,6 @@
                         productId: getUrlParam('productId'),
                         trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
                         single: $(".traffci-date-time").html(),
-                        start: $("#start_time").val(),
-                        end: $("#end_time").val(),
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
@@ -148,8 +148,6 @@
                         productId: getUrlParam('productId'),
                         trafficPlattformId: $(this).attr("data-id"),
                         single: $(".traffci-date-time").html(),
-                        start: $("#start_time").val(),
-                        end: $("#end_time").val(),
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
@@ -161,6 +159,7 @@
         // 选择日期
         $("#date-btn-left").on("click", function () {
             var dateTime = $(".traffci-date-time").html()
+            $("#date-btn-right").removeClass("color-gray");
             var d = new Date(dateTime);
             d.setDate(d.getDate() - 1);
             var month = d.getMonth() + 1;
@@ -187,42 +186,39 @@
                     $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                 }
             });
-            $("#date-btn-right").unbind("click");
-            $("#date-btn-right").on("click", function () {
-                console.log($(".traffci-date-time").html());
-                console.log(endDate)
-                if ($(".traffci-date-time").html() == endDate)
-                {
-                    $("#date-btn-right").unbind("click");
+        })
+        $("#date-btn-right").on("click", function () {
+            var dateAttr = $(".traffci-date-time").attr("date-time")
+            var dateTime = $(".traffci-date-time").html()
+            var d = new Date(dateTime);
+            d.setDate(d.getDate() + 1);
+            var month = d.getMonth() + 1;
+            var day = d.getDate();
+            if (month < 10) {
+                month = "0" + month;
+            }
+            if (day < 10) {
+                day = "0" + day;
+            }
+            var val = d.getFullYear() + "-" + month + "-" + day;
+            $(".traffci-date-time").html(val)
+            if (val == dateAttr) {
+                $("#date-btn-right").addClass("color-gray");
+            }
+            $.ajax({
+                url: "/PlattformInventory/TrafficListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    query: $("#traffic-product-query").val(),
+                    productId: getUrlParam('productId'),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    single: $(".traffci-date-time").html()
+                },
+                success: function (data) {
+                    $("#traffic-list").html(data);
+                    $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
                 }
-                var dateTime = $(".traffci-date-time").html()
-                var d = new Date(dateTime);
-                d.setDate(d.getDate() + 1);
-                var month = d.getMonth() + 1;
-                var day = d.getDate();
-                if (month < 10) {
-                    month = "0" + month;
-                }
-                if (day < 10) {
-                    day = "0" + day;
-                }
-                var val = d.getFullYear() + "-" + month + "-" + day;
-                $(".traffci-date-time").html(val)
-                $.ajax({
-                    url: "/PlattformInventory/TrafficListPartial",
-                    data: {
-                        plattformId: getUrlParam('plattformId'),
-                        query: $("#traffic-product-query").val(),
-                        productId: getUrlParam('productId'),
-                        trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
-                        single: $(".traffci-date-time").html()
-                    },
-                    success: function (data) {
-                        $("#traffic-list").html(data);
-                        $(".JD-Traffic-Order").attr("data-traffic", $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
-                    }
-                });
-            })
+            });
         })
         //时间查询
         $("#statistic_btn").on("click", function () {

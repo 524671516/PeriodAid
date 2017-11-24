@@ -13,6 +13,8 @@ using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
 using ICSharpCode.SharpZipLib.Zip;
+using NPOI.XSSF.UserModel;
+using System.Data;
 
 namespace PeriodAid.Controllers
 {
@@ -482,12 +484,7 @@ namespace PeriodAid.Controllers
                               where m.SalesRecord_Date > start && m.SalesRecord_Date <= end
                               && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0
                               group m by m.SS_Product into g
-                              select new CalcStorageViewModel {
-                                  Product = g.Key,
-                                  Sales_Count = g.Sum(m => m.Sales_Count),
-                                  Storage_Count = g.Sum(m => m.Storage_Count),
-                                  Sales_Avg = g.Average(m => m.Sales_Count) };
-                var count = content.Count();
+                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m=>m.Sales_Count), Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Average(m => m.Sales_Count) };
                 return PartialView(content);
             }
             return PartialView();
@@ -819,14 +816,8 @@ namespace PeriodAid.Controllers
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count),
-                                      Pay_Sum = g.Sum(m => m.Pay_Money),
-                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
                                       Settlement = g.Key.Purchase_Price
-                                      // 问题出在哪里？
-                                      // 理解意义
-                                      // 效率提升
-                                      // 去除无用代码
                                   };
                 return PartialView(SalesRecord);
             }
@@ -840,9 +831,7 @@ namespace PeriodAid.Controllers
                                   {
                                       Product = g.Key,
                                       Sales_Sum = g.Sum(m => m.Sales_Count),
-                                      Inventory_Sum = g.Where(m => m.SalesRecord_Date == end).Sum(m => m.Storage_Count),
-                                      Pay_Sum = g.Sum(m => m.Pay_Money),
-                                      SubAccount_Sum = g.Sum(m => m.SubAccount_Price),
+                                      Inventory_Sum = g.Sum(m => m.Storage_Count),
                                       Settlement = g.Key.Purchase_Price
                                   };
                 return PartialView(SalesRecord);
@@ -1217,115 +1206,234 @@ namespace PeriodAid.Controllers
                         select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "- " + m.Item_Name  };
             return Json(product);
         }
+        
+        public ActionResult JD_Traffic(int plattformId)
+        {
+            return View();
+        }
 
-        // 京东流量统计
-        //public ActionResult JD_Traffic(int plattformId)
-        //{
-        //    return View();
-        //}
 
-        //private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
+        // 测试
+        public static DataTable Read_TrafficFile()
+        {
+            IWorkbook workbook = null;
+            ISheet sheet = null;
+            DataTable dt = new DataTable();
+            AliOSSUtilities util = new AliOSSUtilities();
+            //var fs = util.GetObject("ExcelUpload/" + filename);
+            workbook = WorkbookFactory.Create(@"D:\数据\京东\11月\明细11月1\11.21\手q.xls");
+            sheet = workbook.GetSheetAt(0);
+
+            //表头  
+            IRow header = sheet.GetRow(sheet.FirstRowNum);
+            List<int> columns = new List<int>();
+            for (int i = 0; i < header.LastCellNum; i++)
+            {
+                object obj = (header.GetCell(i));
+                if (obj == null || obj.ToString() == string.Empty)
+                {
+                    dt.Columns.Add(new DataColumn("Columns" + i.ToString()));
+                }
+                else
+                    dt.Columns.Add(new DataColumn(obj.ToString()));
+                columns.Add(i);
+            }
+            //数据  
+            for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+            {
+                DataRow dr = dt.NewRow();
+                bool hasValue = false;
+                foreach (int j in columns)
+                {
+                    dr[j] = (sheet.GetRow(i).GetCell(j));
+                    if (dr[j] != null && dr[j].ToString() != string.Empty)
+                    {
+                        hasValue = true;
+                    }
+                }
+                if (hasValue)
+                {
+                    dt.Rows.Add(dr);
+                }
+            }
+            return dt;
+        }
+        public ActionResult ReadExcel()
+        {
+            var dd = new DataTable();
+            dd = Read_TrafficFile();
+            for(int i=0;i< dd.Rows.Count; i++)
+            {
+                SS_TrafficXls traffic_plattform = new SS_TrafficXls()
+                {
+                    Product_Name = dd.Rows[i][2].ToString(),
+                    Source_Name = dd.Rows[i][3].ToString(),
+
+                };
+                            _db.SS_TrafficXls.Add(traffic_plattform);
+                            _db.SaveChanges();
+            }
+            return Content("success");
+        }
+        //测试
+        //[HttpPost]
+        //public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName, string upName)
         //{
-        //    AliOSSUtilities util = new AliOSSUtilities();
-        //    StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.UTF8, false);
-        //    CsvReader csv_reader = new CsvReader(reader);
-        //    List<string> headers = new List<string>();
-        //    var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
-        //    while (csv_reader.Read())
+        //    var file = Request.Files[0];
+        //    if (file != null)
         //    {
-        //        try
+        //        var ext = Path.GetExtension(upName).ToLower();
+        //        if (ext.Contains("xls"))
         //        {
-        //            string date_flow = csv_reader.GetField<string>("日期");
-        //            if (date_flow == "")
+        //            var fileName = DateTime.Now.Ticks + ".xls";
+        //            AliOSSUtilities util = new AliOSSUtilities();
+        //            util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+        //            var date_time = form["file-date"].ToString();
+        //            if (plattformId == 1)
         //            {
-        //                break;
+        //                var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+        //                if (result)
+        //                    return Json(new { result = "SUCCESS" });
+        //                else
+        //                    return Json(new { result = "FAIL" });
         //            }
-        //            if (traffic_plattform == null)
+        //            else
         //            {
-        //                traffic_plattform = new SS_TrafficPlattform()
-        //                {
-        //                    TrafficPlattform_Name = plattformName,
-        //                    Plattform_Id = 1,
-        //                    AttendTrafficSource = new List<SS_TrafficSource>()
-        //                };
-        //                _db.SS_TrafficPlattform.Add(traffic_plattform);
-        //                _db.SaveChanges();
-        //            }
-        //            //string s_name;
-        //            string source_name = csv_reader.GetField<string>("流量渠道");
-        //            var traffic_source = _db.SS_TrafficSource.SingleOrDefault(m => m.TrafficSource_Name == source_name);
-        //            if (traffic_source == null)
-        //            {
-        //                traffic_source = new SS_TrafficSource()
-        //                {
-        //                    TrafficSource_Name = source_name,
-        //                    TrafficPlattform_Id = traffic_plattform.Id,
-        //                    Source_Type = 0
-        //                };
-        //                _db.SS_TrafficSource.Add(traffic_source);
-        //                //traffic_plattform.AttendTrafficSource.Add(traffic_source);
-        //            }
-        //            _db.SaveChanges();
-        //            string s_code;
-        //            string system_code = csv_reader.TryGetField<string>("商品编码", out s_code) ? s_code : "NaN";
-        //            var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
-        //            if (product != null)
-        //            {
-        //                var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
-        //                int p_flow, p_visitor, p_customer, o_count;
-        //                if (traffic_data == null)
-        //                {
-        //                    traffic_data = new SS_TrafficData()
-        //                    {
-        //                        Update = date,
-        //                        Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
-        //                        Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
-        //                        Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0,
-        //                        Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0,
-        //                        Product_Id = product.Id,
-        //                        TrafficSource_Id = traffic_source.Id,
-        //                        SS_TrafficPlattform = traffic_plattform
-        //                    };
-        //                    _db.SS_TrafficData.Add(traffic_data);
-        //                }
-        //                //else
-        //                //{
-        //                //    traffic_data.Update = date;
-        //                //    traffic_data.Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0;
-        //                //    traffic_data.Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0;
-        //                //    traffic_data.Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0;
-        //                //    traffic_data.Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0;
-        //                //    traffic_data.Product_Id = product.Id;
-        //                //    traffic_data.TrafficSource_Id = traffic_source.Id;
-        //                //    traffic_data.SS_TrafficPlattform = traffic_plattform;
-        //                //    _db.Entry(traffic_data).State = System.Data.Entity.EntityState.Modified;
-        //                //}
+        //                return Json(new { result = "FAIL" });
         //            }
         //        }
-        //        catch (Exception)
+        //        else
         //        {
-        //            return false;
+        //            var fileName = DateTime.Now.Ticks + ".csv";
+        //            AliOSSUtilities util = new AliOSSUtilities();
+        //            util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+        //            var date_time = form["file-date"].ToString();
+        //            if (plattformId == 1)
+        //            {
+        //                var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+        //                if (result)
+        //                    return Json(new { result = "SUCCESS" });
+        //                else
+        //                    return Json(new { result = "FAIL" });
+        //            }
+        //            else
+        //            {
+        //                return Json(new { result = "FAIL" });
+        //            }
         //        }
-        //    }
-        //    var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.Traffic_Date == date);
-        //    if (upload_traffic != null)
-        //    {
-        //        upload_traffic.Upload_Date = DateTime.Now;
-        //        _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
+
         //    }
         //    else
         //    {
-        //        upload_traffic = new SS_UploadTraffic()
-        //        {
-        //            TrafficPlattform_Id = traffic_plattform.Id,
-        //            Upload_Date = DateTime.Now,
-        //            Traffic_Date = date
-        //        };
-        //        _db.SS_UploadTraffic.Add(upload_traffic);
+        //        return Json(new { result = "FAIL" });
         //    }
-        //    _db.SaveChanges();
+
+        //}
+
+
+        //原版
+        //private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
+        //{
+        //    AliOSSUtilities util = new AliOSSUtilities();
+        //    using (StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default))
+        //    {
+        //        CsvReader csv_reader = new CsvReader(reader);
+        //        List<string> headers = new List<string>();
+        //        var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
+        //        var other_source = _db.SS_TrafficSource.SingleOrDefault(m => m.Source_Type == 0);
+        //        while (csv_reader.Read())
+        //        {
+        //            try
+        //            {
+        //                string date_flow = csv_reader.GetField<string>("日期");
+        //                if (date_flow == "")
+        //                {
+        //                    break;
+        //                }
+        //                if (traffic_plattform == null)
+        //                {
+        //                    traffic_plattform = new SS_TrafficPlattform()
+        //                    {
+        //                        TrafficPlattform_Name = plattformName,
+        //                        Plattform_Id = 1,
+        //                        AttendTrafficSource = new List<SS_TrafficSource>()
+        //                    };
+        //                    _db.SS_TrafficPlattform.Add(traffic_plattform);
+        //                    _db.SaveChanges();
+        //                }
+        //                string source_name = csv_reader.GetField<string>("流量渠道");
+        //                var traffic_source = _db.SS_TrafficSource.SingleOrDefault(m => m.TrafficSource_Name == source_name && m.Source_Type == 1);
+        //                if (traffic_source == null)
+        //                {
+        //                    traffic_source = other_source;
+        //                }
+        //                string s_code;
+        //                string system_code = csv_reader.TryGetField<string>("商品编码", out s_code) ? s_code : "NaN";
+        //                var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
+        //                if (product != null)
+        //                {
+        //                    var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
+        //                    int p_flow, p_visitor, p_customer, o_count;
+        //                    double p_times;
+        //                    if (traffic_data == null)
+        //                    {
+        //                        traffic_data = new SS_TrafficData()
+        //                        {
+        //                            Update = date,
+        //                            Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
+        //                            Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
+        //                            Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0,
+        //                            Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0,
+        //                            Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0,
+        //                            Product_Id = product.Id,
+        //                            TrafficSource_Id = traffic_source.Id,
+        //                            SS_TrafficPlattform = traffic_plattform
+        //                        };
+        //                        _db.SS_TrafficData.Add(traffic_data);
+        //                    }
+        //                    else
+        //                    {
+        //                        traffic_data.Update = date;
+        //                        traffic_data.Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0;
+        //                        traffic_data.Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0;
+        //                        traffic_data.Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0;
+        //                        traffic_data.Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0;
+        //                        traffic_data.Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0;
+        //                        traffic_data.Product_Id = product.Id;
+        //                        traffic_data.TrafficSource_Id = traffic_source.Id;
+        //                        traffic_data.SS_TrafficPlattform = traffic_plattform;
+        //                        _db.Entry(traffic_data).State = System.Data.Entity.EntityState.Modified;
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception)
+        //            {
+        //                return false;
+        //            }
+        //        }
+        //        var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.Traffic_Date == date);
+        //        if (upload_traffic != null)
+        //        {
+        //            upload_traffic.Upload_Date = DateTime.Now;
+        //            _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
+        //        }
+        //        else
+        //        {
+        //            upload_traffic = new SS_UploadTraffic()
+        //            {
+        //                TrafficPlattform_Id = traffic_plattform.Id,
+        //                Upload_Date = DateTime.Now,
+        //                Traffic_Date = date
+        //            };
+        //            _db.SS_UploadTraffic.Add(upload_traffic);
+        //        }
+        //        _db.SaveChanges();
+
+        //    }
         //    return true;
         //}
+
+
         //[HttpPost]
         //public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
         //{
@@ -1354,473 +1462,6 @@ namespace PeriodAid.Controllers
         //        return Json(new { result = "FAIL" });
         //    }
         //}
-        //[HttpPost]
-        //public ActionResult getTrafficExcel(FormCollection form, DateTime date)
-        //{
-        //    HSSFWorkbook book = getTrafficPlattform(form, date);
-        //    ISheet sheet = book.CreateSheet(date.Month + "." + date.Day + "汇总");
-        //    // 写标题
-        //    IRow row = sheet.CreateRow(0);
-        //    int cell_pos = 0;
-        //    row.CreateCell(cell_pos).SetCellValue("日期");
-        //    row.CreateCell(++cell_pos).SetCellValue("商品编码");
-        //    row.CreateCell(++cell_pos).SetCellValue("商品名称");
-        //    row.CreateCell(++cell_pos).SetCellValue("流量渠道");
-        //    row.CreateCell(++cell_pos).SetCellValue("商品流量");
-        //    row.CreateCell(++cell_pos).SetCellValue("商品访客");
-        //    row.CreateCell(++cell_pos).SetCellValue("商品消费者");
-        //    row.CreateCell(++cell_pos).SetCellValue("商品订单行");
-        //    row.CreateCell(++cell_pos).SetCellValue("商品转化率");
-        //    // 写产品列
-        //    int row_pos = 1;
-        //    var productlist = from m in _db.SS_TrafficData
-        //                      group m by m.SS_Product into g
-        //                      select g;
-        //    ICellStyle Center_style = book.CreateCellStyle();//居中标题
-        //    Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-        //    foreach (var product in productlist)
-        //    {
-        //        var productOrder = from m in product
-        //                           where m.Update == date
-        //                           group m by m.SS_TrafficPlattform into g
-        //                           select g;
-        //        bool firstCount = true;
-        //        foreach (var productorder in productOrder)
-        //        {
-        //            IRow single_row = sheet.CreateRow(row_pos);
-        //            cell_pos = 0;
-        //            var c0 = single_row.CreateCell(cell_pos);
-        //            c0.SetCellValue(date.ToString("d"));
-        //            var c1 = single_row.CreateCell(++cell_pos);
-        //            c1.SetCellValue(product.Key.System_Code);
-        //            var c2 = single_row.CreateCell(++cell_pos);
-        //            c2.SetCellValue(product.Key.Item_Name);
-        //            var rowCount = productOrder.Count();
-        //            if (rowCount > 1 && firstCount == true)
-        //            {
-        //                var row0 = row_pos;
-        //                var row1 = row_pos + rowCount - 1;
-        //                sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
-        //                sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 1, 1));
-        //                sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 2, 2));
-        //                c0.CellStyle = Center_style;
-        //                c1.CellStyle = Center_style;
-        //                c2.CellStyle = Center_style;
-        //                firstCount = false;
-        //            }
-        //            single_row.CreateCell(++cell_pos).SetCellValue(productorder.Key.TrafficPlattform_Name);
-        //            var Ratio = (decimal)productorder.Sum(m => m.Product_Customer) / (productorder.Sum(m => m.Product_Visitor) == 0 ? 1 : productorder.Sum(m => m.Product_Visitor));
-        //            single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Flow));
-        //            single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Visitor));
-        //            single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Customer));
-        //            single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Order_Count));
-        //            single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-        //            row_pos++;
-        //        }
-        //        var product_count = from m in product
-        //                            where m.Update == date
-        //                            group m by m.Update into g
-        //                            select g;
-        //        foreach (var productCount in product_count)
-        //        {
-        //            IRow single_row1 = sheet.CreateRow(row_pos);
-        //            cell_pos = 4;
-        //            var Ratio = (decimal)productCount.Sum(m => m.Product_Customer) / (productCount.Sum(m => m.Product_Visitor) == 0 ? 1 : productCount.Sum(m => m.Product_Visitor));
-        //            single_row1.CreateCell(cell_pos).SetCellValue(productCount.Sum(m => m.Product_Flow));
-        //            single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Visitor));
-        //            single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Customer));
-        //            single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Order_Count));
-        //            single_row1.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-        //        }
-        //        row_pos++;
-        //    }
-        //    row_pos++;
-        //    // 各平台总和
-        //    var data_each = from m in _db.SS_TrafficData
-        //                    where m.Update == date
-        //                    group m by m.SS_TrafficPlattform into g
-        //                    select g;
-        //    foreach (var eachData in data_each)
-        //    {
-        //        IRow single_row = sheet.CreateRow(row_pos);
-        //        cell_pos = 3;
-        //        var Ratio = (decimal)eachData.Sum(m => m.Product_Customer) / (eachData.Sum(m => m.Product_Visitor) == 0 ? 1 : eachData.Sum(m => m.Product_Visitor));
-        //        single_row.CreateCell(cell_pos).SetCellValue(eachData.Key.TrafficPlattform_Name);
-        //        single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Flow));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Visitor));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Customer));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Order_Count));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-        //        row_pos++;
-        //    }
-        //    // 平台总和
-        //    var data_all = from m in _db.SS_TrafficData
-        //                   where m.Update == date
-        //                   group m by m.SS_TrafficPlattform.Plattform_Id into g
-        //                   select g;
-        //    foreach (var allData in data_all)
-        //    {
-        //        IRow single_row = sheet.CreateRow(++row_pos);
-        //        cell_pos = 3;
-        //        var Ratio = (decimal)allData.Sum(m => m.Product_Customer) / (allData.Sum(m => m.Product_Visitor) == 0 ? 1 : allData.Sum(m => m.Product_Visitor));
-        //        single_row.CreateCell(cell_pos).SetCellValue("共计：");
-        //        single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Flow));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Visitor));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Customer));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Order_Count));
-        //        single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-        //    }
-        //    MemoryStream _stream = new MemoryStream();
-        //    book.Write(_stream);
-        //    _stream.Flush();
-        //    _stream.Seek(0, SeekOrigin.Begin);
-        //    return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
-        //}
-        //[HttpPost]
-        //public HSSFWorkbook getTrafficPlattform(FormCollection form, DateTime date)
-        //{
-        //    var TrafficPlattform = from m in _db.SS_TrafficPlattform
-        //                           select m;
-        //    HSSFWorkbook book = new HSSFWorkbook();
-        //    foreach (var plattform in TrafficPlattform)
-        //    {
-        //        var sheetName = plattform.TrafficPlattform_Name;
-        //        ISheet sheet = book.CreateSheet(sheetName);
-        //        // 写标题
-        //        IRow row = sheet.CreateRow(0);
-        //        int cell_pos = 0;
-        //        row.CreateCell(cell_pos).SetCellValue("日期");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品编码");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品名称");
-        //        row.CreateCell(++cell_pos).SetCellValue("流量渠道");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品流量");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品访客");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品消费者");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品订单行");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品转化率");
-        //        // 写产品列
-        //        int row_pos = 1;
-        //        var TrafficData = from m in _db.SS_TrafficData
-        //                          where m.SS_TrafficPlattform.Id == plattform.Id && m.Update == date
-        //                          orderby m.Product_Id
-        //                          select m;
-        //        foreach (var trafficdata in TrafficData)
-        //        {
-        //            IRow single_row = sheet.CreateRow(row_pos);
-        //            cell_pos = 0;
-        //            single_row.CreateCell(cell_pos).SetCellValue(date.ToString("d"));
-        //            single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.SS_Product.System_Code);
-        //            single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.SS_Product.Item_Name);
-        //            single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.SS_TrafficSource.TrafficSource_Name);
-        //            single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Product_Flow);
-        //            single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Product_Visitor);
-        //            single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Product_Customer);
-        //            single_row.CreateCell(++cell_pos).SetCellValue(trafficdata.Order_Count);
-        //            if (trafficdata.Product_Visitor == 0)
-        //            {
-        //                var ConvertRatio = (decimal)0;
-        //                single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
-        //            }
-        //            else
-        //            {
-        //                var ConvertRatio = (decimal)trafficdata.Product_Customer / trafficdata.Product_Visitor;
-        //                single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
-        //            }
-        //            row_pos++;
-        //        }
-        //    }
-        //    MemoryStream _stream = new MemoryStream();
-        //    book.Write(_stream);
-        //    _stream.Flush();
-        //    _stream.Seek(0, SeekOrigin.Begin);
-        //    return book;
-        //}
-        //// 爆款统计
-        //[HttpPost]
-        //public ActionResult getHotExcel(FormCollection form)
-        //{
-        //    var product_list = from m in _db.SS_Product
-        //                       where m.Product_Type == 1 && m.Plattform_Id == 1
-        //                       select m;
-        //    HSSFWorkbook book = new HSSFWorkbook();
-        //    foreach (var product in product_list)
-        //    {
-        //        var sheetName = product.Item_Name;
-        //        ISheet sheet = book.CreateSheet(sheetName);
-        //        IRow row0 = sheet.CreateRow(0);
-        //        int cell_pos = 0;
-        //        row0.Height = 70 * 20;
-        //        row0.CreateCell(cell_pos).SetCellValue("活动备注");
-        //        IRow row = sheet.CreateRow(1);
-        //        row.CreateCell(++cell_pos).SetCellValue(product.Item_Name + product.System_Code);
-        //        row.CreateCell(++cell_pos).SetCellValue("访客");
-        //        row.CreateCell(++cell_pos).SetCellValue("订单");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品数量");
-        //        row.CreateCell(++cell_pos).SetCellValue("客件数");
-        //        row.CreateCell(++cell_pos).SetCellValue("转化率");
-        //        row.CreateCell(++cell_pos).SetCellValue("销售成本");
-        //        row.CreateCell(++cell_pos).SetCellValue("uv价值");
-        //        var data_date = from m in _db.SS_TrafficData
-        //                        where m.Product_Id == product.Id
-        //                        group m by m.Update into g
-        //                        select g;
-        //        var row_pos = 2;
-        //        foreach (var dataDate in data_date)
-        //        {
-        //            var dateTime = Convert.ToDateTime(dataDate.Key.Year + "/" + dataDate.Key.Month + "/" + dataDate.Key.Day + " 0:00:00");
-        //            var traffic_data = from m in dataDate
-        //                               group m by m.SS_TrafficPlattform.Plattform_Id into g
-        //                               select g;
-        //            foreach (var trafficData in traffic_data)
-        //            {
-        //                var sales_date = from m in _db.SS_SalesRecord
-        //                                 where m.Product_Id == product.Id && m.SalesRecord_Date == dateTime && m.SS_Storage.Storage_Type == 1
-        //                                 group m by m.Product_Id into g
-        //                                 select g;
-        //                foreach (var salesDate in sales_date)
-        //                {
-        //                    IRow single_row = sheet.CreateRow(row_pos);
-        //                    cell_pos = 1;
-        //                    var Count = (double)salesDate.Sum(m => m.Sales_Count) / trafficData.Sum(m => m.Order_Count);
-        //                    var Ratio = (double)trafficData.Sum(m => m.Order_Count) / trafficData.Sum(m => m.Product_Flow);
-        //                    var Cost = salesDate.Sum(m => m.Sales_Count) * product.Purchase_Price;
-        //                    var uvValue = salesDate.Sum(m => m.Sales_Count) * product.Purchase_Price / trafficData.Sum(m => m.Product_Visitor);
-        //                    single_row.CreateCell(cell_pos).SetCellValue(dataDate.Key.Month + "." + dataDate.Key.Day);
-        //                    single_row.CreateCell(++cell_pos).SetCellValue(trafficData.Sum(m => m.Product_Visitor));
-        //                    single_row.CreateCell(++cell_pos).SetCellValue(trafficData.Sum(m => m.Order_Count));
-        //                    single_row.CreateCell(++cell_pos).SetCellValue(salesDate.Sum(m => m.Sales_Count));
-        //                    single_row.CreateCell(++cell_pos).SetCellValue(Math.Round(Count, 2));
-        //                    single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-        //                    single_row.CreateCell(++cell_pos).SetCellValue(Cost.ToString("0.##"));
-        //                    single_row.CreateCell(++cell_pos).SetCellValue(uvValue.ToString("0.00"));
-        //                    row_pos++;
-        //                }
-        //            }
-
-        //        }
-        //    }
-        //    MemoryStream _stream = new MemoryStream();
-        //    book.Write(_stream);
-        //    _stream.Flush();
-        //    _stream.Seek(0, SeekOrigin.Begin);
-        //    return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "爆款统计表.xls");
-        //}
-        //// 渠道统计
-        //[HttpPost]
-        //public ActionResult getHotSourceExcel(FormCollection form)
-        //{
-        //    var product_list = from m in _db.SS_Product
-        //                       where m.Product_Type == 1 && m.Plattform_Id == 1
-        //                       select m;
-        //    HSSFWorkbook book = new HSSFWorkbook();
-        //    ICellStyle Center_style = book.CreateCellStyle();//居中标题
-        //    Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-        //    foreach (var product in product_list)
-        //    {
-
-        //        bool firstProduct = true;
-        //        var sheetName = product.Item_Name;
-        //        ISheet sheet = book.CreateSheet(sheetName);
-        //        IRow row = sheet.CreateRow(0);
-        //        int cell_pos = 0;
-        //        var row_pos = 1;
-        //        row.CreateCell(cell_pos).SetCellValue("日期");
-        //        row.CreateCell(++cell_pos).SetCellValue("渠道名称");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品访客");
-        //        row.CreateCell(++cell_pos).SetCellValue("商品转化率");
-        //        var source_data = from m in _db.SS_TrafficData
-        //                          where m.TrafficPlattform_Id == 417 && m.Product_Id == product.Id
-        //                          select m;
-        //        var ProductRow = from m in source_data
-        //                         group m by m.Update into g
-        //                         select g;
-        //        int[] EndCount = new int[ProductRow.Count()];
-        //        int i = 0;
-        //        foreach (var sourceData in source_data)
-        //        {
-        //            IRow single_row = sheet.CreateRow(row_pos);
-        //            cell_pos = 0;
-        //            var c0 = single_row.CreateCell(cell_pos);
-        //            c0.SetCellValue(sourceData.Update.ToString("d"));
-        //            c0.CellStyle = Center_style;
-        //            single_row.CreateCell(++cell_pos).SetCellValue(sourceData.SS_TrafficSource.TrafficSource_Name);
-        //            single_row.CreateCell(++cell_pos).SetCellValue(sourceData.Product_Customer);
-        //            if (sourceData.Product_Visitor == 0)
-        //            {
-        //                var ConvertRatio = (decimal)0;
-        //                single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
-        //            }
-        //            else
-        //            {
-        //                var ConvertRatio = (decimal)sourceData.Product_Customer / sourceData.Product_Visitor;
-        //                single_row.CreateCell(++cell_pos).SetCellValue(ConvertRatio.ToString("p2"));
-        //            }
-        //            row_pos++;
-
-        //        }
-        //        foreach (var productrow in ProductRow)
-        //        {
-        //            var DataCount = from m in productrow
-        //                            select m;
-        //            var datacount = DataCount.Count();
-        //            if (datacount > 1 && firstProduct == true)
-        //            {
-        //                var row0 = 1;
-        //                var row1 = datacount;
-        //                EndCount[i] = row1;
-        //                sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
-        //                firstProduct = false;
-        //            }
-        //            else
-        //            {
-        //                var row2 = EndCount[i - 1] + 1;
-        //                var row3 = datacount + row2 - 1;
-        //                EndCount[i] = row3;
-        //                sheet.AddMergedRegion(new CellRangeAddress(row2, row3, 0, 0));
-        //            }
-        //            i++;
-        //        }
-        //    }
-        //    MemoryStream _stream = new MemoryStream();
-        //    book.Write(_stream);
-        //    _stream.Flush();
-        //    _stream.Seek(0, SeekOrigin.Begin);
-        //    return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "渠道爆款统计表.xls");
-        //}
-
-
-         //11
-        public ActionResult JD_Traffic(int plattformId)
-        {
-            return View();
-        }
-
-        private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
-        {
-            AliOSSUtilities util = new AliOSSUtilities();
-            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
-            CsvReader csv_reader = new CsvReader(reader);
-            List<string> headers = new List<string>();
-            var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
-            var other_source = _db.SS_TrafficSource.SingleOrDefault(m => m.Source_Type == 0);
-            while (csv_reader.Read())
-            {
-                try
-                {
-                    string date_flow = csv_reader.GetField<string>("日期");
-                    if (date_flow == "")
-                    {
-                        break;
-                    }
-                    if (traffic_plattform == null)
-                    {
-                        traffic_plattform = new SS_TrafficPlattform()
-                        {
-                            TrafficPlattform_Name = plattformName,
-                            Plattform_Id = 1,
-                            AttendTrafficSource = new List<SS_TrafficSource>()
-                        };
-                        _db.SS_TrafficPlattform.Add(traffic_plattform);
-                        _db.SaveChanges();
-                    }
-                    
-                    string source_name = csv_reader.GetField<string>("流量渠道");
-                    var traffic_source = _db.SS_TrafficSource.SingleOrDefault(m => m.TrafficSource_Name == source_name && m.Source_Type == 1 );
-                    if (traffic_source == null)
-                    {
-                        traffic_source = other_source;
-                    }
-                    string s_code;
-                    string system_code = csv_reader.TryGetField<string>("商品编码", out s_code) ? s_code : "NaN";
-                    var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
-                    if (product != null)
-                    {
-                        var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
-                        int p_flow, p_visitor, p_customer, o_count;
-                        double p_times;
-                        if (traffic_data == null)
-                        {
-                            traffic_data = new SS_TrafficData()
-                            {
-                                Update = date,
-                                Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
-                                Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
-                                Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0,
-                                Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0,
-                                Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0,
-                                Product_Id = product.Id,
-                                TrafficSource_Id = traffic_source.Id,
-                                SS_TrafficPlattform = traffic_plattform
-                            };
-                            _db.SS_TrafficData.Add(traffic_data);
-                        }
-                        else
-                        {
-                            traffic_data.Update = date;
-                            traffic_data.Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0;
-                            traffic_data.Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0;
-                            traffic_data.Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0;
-                            traffic_data.Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0;
-                            traffic_data.Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0;
-                            traffic_data.Product_Id = product.Id;
-                            traffic_data.TrafficSource_Id = traffic_source.Id;
-                            traffic_data.SS_TrafficPlattform = traffic_plattform;
-                            _db.Entry(traffic_data).State = System.Data.Entity.EntityState.Modified;
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.Traffic_Date == date);
-            if (upload_traffic != null)
-            {
-                upload_traffic.Upload_Date = DateTime.Now;
-                _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
-            }
-            else
-            {
-                upload_traffic = new SS_UploadTraffic()
-                {
-                    TrafficPlattform_Id = traffic_plattform.Id,
-                    Upload_Date = DateTime.Now,
-                    Traffic_Date = date
-                };
-                _db.SS_UploadTraffic.Add(upload_traffic);
-            }
-            _db.SaveChanges();
-            return true;
-        }
-        [HttpPost]
-        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
-        {
-            var file = Request.Files[0];
-            if (file != null)
-            {
-                var fileName = DateTime.Now.Ticks + ".csv";
-                AliOSSUtilities util = new AliOSSUtilities();
-                util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
-                var date_time = form["file-date"].ToString();
-                if (plattformId == 1)
-                {
-                    var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
-                    if (result)
-                        return Json(new { result = "SUCCESS" });
-                    else
-                        return Json(new { result = "FAIL" });
-                }
-                else
-                {
-                    return Json(new { result = "FAIL" });
-                }
-            }
-            else
-            {
-                return Json(new { result = "FAIL" });
-            }
-        }
         [HttpPost]
         public ActionResult getTrafficExcel(FormCollection form, DateTime date)
         {
@@ -1866,7 +1507,7 @@ namespace PeriodAid.Controllers
                     if (rowCount > 1 && firstCount == true)
                     {
                         var row0 = row_pos;
-                        var row1 = row_pos + rowCount - 1;
+                        var row1 = row_pos + rowCount;
                         sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
                         sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 1, 1));
                         sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 2, 2));
@@ -2097,16 +1738,11 @@ namespace PeriodAid.Controllers
                               where m.Plattform_Id == plattformId && m.Id == productId
                               select m;
             ViewBag.productList = productList;
-            var trafficDateStart = (from m in _db.SS_TrafficData
+            var trafficDate = (from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
                               orderby m.Update descending
                               select m.Update).FirstOrDefault();
-            var trafficDateEnd = (from m in _db.SS_TrafficData
-                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-                               orderby m.Update ascending
-                               select m.Update).FirstOrDefault();
-            ViewBag.trafficDateStart = trafficDateStart;
-            ViewBag.trafficDateEnd = trafficDateEnd;
+            ViewBag.trafficDate = trafficDate;
             //var trafficDate = from m in _db.SS_TrafficData
             //                  where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
             //                  group m by m.Update into g

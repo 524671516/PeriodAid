@@ -111,7 +111,6 @@
             else {
                 $.ajax({
                     url: '/PlattformInventory/StorageShow/',
-                    type: 'post',
                     data: {
                         plattformId: getUrlParam('plattformId'),
                         start: $('#start-date').val(),
@@ -213,7 +212,6 @@
                             $("#show-storage").text($("#storage-select").text())
                             $.ajax({
                                 url: '/PlattformInventory/TMShow_StorageShow/',
-                                type: 'post',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
                                     Storage: $('#storage-select').attr('data-ssid'),
@@ -231,7 +229,6 @@
                 }else{
                     $.ajax({
                         url: '/PlattformInventory/StorageShow/',
-                        type: 'post',
                         data: {
                             plattformId: getUrlParam('plattformId'),
                             Storage: $('#storage-select').attr('data-ssid'),

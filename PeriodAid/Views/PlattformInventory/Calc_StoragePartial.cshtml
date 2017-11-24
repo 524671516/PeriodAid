@@ -20,7 +20,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.OrderByDescending(m => m.Sales_Count))
+                    @foreach (var item in Model.OrderByDescending(m=>m.Sales_Count))
                     {
                         if (item.Product.Product_Type == 1)
                         {
