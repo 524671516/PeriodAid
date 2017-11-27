@@ -34,7 +34,6 @@
         public virtual DbSet<SS_TrafficSource> SS_TrafficSource { get; set; }
         public virtual DbSet<SS_TrafficData> SS_TrafficData { get; set; }
         public virtual DbSet<SS_UploadTraffic> SS_UploadTraffic { get; set; }
-        public virtual DbSet<SS_TrafficXls> SS_TrafficXls { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -314,31 +313,7 @@
         public DateTime Upload_Date { get; set; }
     }
 
-    [Table ("SS_TrafficXls")]
-    public partial class SS_TrafficXls
-    {
-        public int Id { get; set; }
-
-        public int System_code { get; set; }
-
-        public string Product_Name { get; set; }
-
-        public string Source_Name { get; set; }
-
-        public int Product_Flow { get; set; }
-
-        public int Product_Visitor { get; set; }
-
-        public int Product_Customer { get; set; }
-
-        public string Product_Times { get; set; }
-
-        public int Order_Count { get; set; }
-
-        public string Convert_Ratio { get; set; }
-
-    }
-
+   
     //public class MyEntity
     //{
     //    public int Id { get; set; }
