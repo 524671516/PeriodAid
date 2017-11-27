@@ -1212,113 +1212,7 @@ namespace PeriodAid.Controllers
             return View();
         }
         
-        // 测试
-        public static DataTable Read_TrafficXls()
-        {
-            IWorkbook workbook = null;
-            ISheet sheet = null;
-            DataTable dt = new DataTable();
-            AliOSSUtilities util = new AliOSSUtilities();
-            //StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
-            // 设置当前流的位置为流的开始
-            
-            workbook = WorkbookFactory.Create(@"D:\数据\京东\11月\明细11月1\11.21\手q.xls");
-            sheet = workbook.GetSheetAt(0);
-
-            //表头  
-            IRow header = sheet.GetRow(sheet.FirstRowNum);
-            List<int> columns = new List<int>();
-            for (int i = 0; i < header.LastCellNum; i++)
-            {
-                object obj = (header.GetCell(i));
-                if (obj == null || obj.ToString() == string.Empty)
-                {
-                    dt.Columns.Add(new DataColumn("Columns" + i.ToString()));
-                }
-                else
-                    dt.Columns.Add(new DataColumn(obj.ToString()));
-                columns.Add(i);
-            }
-            //数据  
-            for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
-            {
-                DataRow dr = dt.NewRow();
-                bool hasValue = false;
-                foreach (int j in columns)
-                {
-                    dr[j] = (sheet.GetRow(i).GetCell(j));
-                    if (dr[j] != null && dr[j].ToString() != string.Empty)
-                    {
-                        hasValue = true;
-                    }
-                }
-                if (hasValue)
-                {
-                    dt.Rows.Add(dr);
-                }
-            }
-            return dt;
-        }
-        public bool ReadExcel(string plattformName, DateTime date)
-        {
-            var dd = new DataTable();
-            dd = Read_TrafficXls();
-            var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
-            var other_source = _db.SS_TrafficSource.SingleOrDefault(m => m.Source_Type == 0);
-            for (int i=0;i< dd.Rows.Count; i++)
-            {
-                string source_name = dd.Rows[i][3].ToString();
-                string system_code = dd.Rows[i][1].ToString();
-                var traffic_source = _db.SS_TrafficSource.SingleOrDefault(m => m.TrafficSource_Name == source_name && m.Source_Type == 1);
-                if (traffic_source == null)
-                {
-                    traffic_source = other_source;
-                }
-                var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
-                if(product != null)
-                {
-                   
-                    if (dd.Rows[i][3].ToString() == traffic_source.TrafficSource_Name && dd.Rows[i][1].ToString() == product.System_Code && plattformName == traffic_plattform.TrafficPlattform_Name)
-                    {
-                        var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
-                        if(traffic_data == null)
-                        {
-                            traffic_data = new SS_TrafficData()
-                            {
-                                TrafficPlattform_Id = Convert.ToInt32(traffic_plattform.Id),
-                                Product_Id = Convert.ToInt32(product.Id),
-                                TrafficSource_Id = Convert.ToInt32(traffic_source.Id),
-                                Update = Convert.ToDateTime(dd.Rows[i][0]),
-                                Product_Flow = Convert.ToInt32(dd.Rows[i][4]),
-                                Product_Visitor = Convert.ToInt32(dd.Rows[i][5]),
-                                Product_Customer = Convert.ToInt32(dd.Rows[i][7]),
-                                Order_Count = Convert.ToInt32(dd.Rows[i][8]),
-                                Product_VisitTimes = Convert.ToDouble(dd.Rows[i][6]),
-
-                            };
-                            _db.SS_TrafficData.Add(traffic_data);
-                        }
-                        else
-                        {
-                            traffic_data.Update = Convert.ToDateTime(dd.Rows[i][0]);
-                            traffic_data.Product_Flow = Convert.ToInt32(dd.Rows[i][4]);
-                            traffic_data.Product_Visitor = Convert.ToInt32(dd.Rows[i][5]);
-                            traffic_data.Product_VisitTimes = Convert.ToDouble(dd.Rows[i][6]);
-                            traffic_data.Product_Customer = Convert.ToInt32(dd.Rows[i][7]);
-                            traffic_data.Order_Count = Convert.ToInt32(dd.Rows[i][8]);
-                            traffic_data.Product_Id = product.Id;
-                            traffic_data.TrafficSource_Id = traffic_source.Id;
-                            traffic_data.SS_TrafficPlattform = traffic_plattform;
-                            _db.Entry(traffic_data).State = System.Data.Entity.EntityState.Modified;
-                        }
-                    }
-                }
-                
-                 _db.SaveChanges();
-            }
-            return true;
-        }
-        //测试
+        // 合并
         [HttpPost]
         public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName, string upName)
         {
@@ -1372,7 +1266,131 @@ namespace PeriodAid.Controllers
             }
 
         }
-        //原版
+
+        //读取xls
+        public static DataTable Read_TrafficXls()
+        {
+            IWorkbook workbook = null;
+            ISheet sheet = null;
+            DataTable dt = new DataTable();
+            AliOSSUtilities util = new AliOSSUtilities();
+            //StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
+            // 设置当前流的位置为流的开始
+
+            workbook = WorkbookFactory.Create(@"D:\数据\京东\11月\明细11月1\11.21\手q.xls");
+            sheet = workbook.GetSheetAt(0);
+
+            //表头  
+            IRow header = sheet.GetRow(sheet.FirstRowNum);
+            List<int> columns = new List<int>();
+            for (int i = 0; i < header.LastCellNum; i++)
+            {
+                object obj = (header.GetCell(i));
+                if (obj == null || obj.ToString() == string.Empty)
+                {
+                    dt.Columns.Add(new DataColumn("Columns" + i.ToString()));
+                }
+                else
+                    dt.Columns.Add(new DataColumn(obj.ToString()));
+                columns.Add(i);
+            }
+            //数据  
+            for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+            {
+                DataRow dr = dt.NewRow();
+                bool hasValue = false;
+                foreach (int j in columns)
+                {
+                    dr[j] = (sheet.GetRow(i).GetCell(j));
+                    if (dr[j] != null && dr[j].ToString() != string.Empty)
+                    {
+                        hasValue = true;
+                    }
+                }
+                if (hasValue)
+                {
+                    dt.Rows.Add(dr);
+                }
+            }
+            return dt;
+        }
+
+        public bool ReadExcel(string plattformName, DateTime date)
+        {
+            var dd = new DataTable();
+            dd = Read_TrafficXls();
+            var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
+            var other_source = _db.SS_TrafficSource.SingleOrDefault(m => m.Source_Type == 0);
+            for (int i = 0; i < dd.Rows.Count; i++)
+            {
+                string source_name = dd.Rows[i][3].ToString();
+                string system_code = dd.Rows[i][1].ToString();
+                var traffic_source = _db.SS_TrafficSource.SingleOrDefault(m => m.TrafficSource_Name == source_name && m.Source_Type == 1);
+                if (traffic_source == null)
+                {
+                    traffic_source = other_source;
+                }
+                var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
+                if (product != null)
+                {
+
+                    if (dd.Rows[i][3].ToString() == traffic_source.TrafficSource_Name && dd.Rows[i][1].ToString() == product.System_Code && plattformName == traffic_plattform.TrafficPlattform_Name)
+                    {
+                        var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
+                        if (traffic_data == null)
+                        {
+                            traffic_data = new SS_TrafficData()
+                            {
+                                TrafficPlattform_Id = Convert.ToInt32(traffic_plattform.Id),
+                                Product_Id = Convert.ToInt32(product.Id),
+                                TrafficSource_Id = Convert.ToInt32(traffic_source.Id),
+                                Update = Convert.ToDateTime(dd.Rows[i][0]),
+                                Product_Flow = Convert.ToInt32(dd.Rows[i][4]),
+                                Product_Visitor = Convert.ToInt32(dd.Rows[i][5]),
+                                Product_Customer = Convert.ToInt32(dd.Rows[i][7]),
+                                Order_Count = Convert.ToInt32(dd.Rows[i][8]),
+                                Product_VisitTimes = Convert.ToDouble(dd.Rows[i][6]),
+
+                            };
+                            _db.SS_TrafficData.Add(traffic_data);
+                        }
+                        else
+                        {
+                            traffic_data.Update = Convert.ToDateTime(dd.Rows[i][0]);
+                            traffic_data.Product_Flow = Convert.ToInt32(dd.Rows[i][4]);
+                            traffic_data.Product_Visitor = Convert.ToInt32(dd.Rows[i][5]);
+                            traffic_data.Product_VisitTimes = Convert.ToDouble(dd.Rows[i][6]);
+                            traffic_data.Product_Customer = Convert.ToInt32(dd.Rows[i][7]);
+                            traffic_data.Order_Count = Convert.ToInt32(dd.Rows[i][8]);
+                            traffic_data.Product_Id = product.Id;
+                            traffic_data.TrafficSource_Id = traffic_source.Id;
+                            traffic_data.SS_TrafficPlattform = traffic_plattform;
+                            _db.Entry(traffic_data).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+                }
+                var upload_traffic = _db.SS_UploadTraffic.SingleOrDefault(m => m.TrafficPlattform_Id == traffic_plattform.Id && m.Traffic_Date == date);
+                if (upload_traffic != null)
+                {
+                    upload_traffic.Upload_Date = DateTime.Now;
+                    _db.Entry(upload_traffic).State = System.Data.Entity.EntityState.Modified;
+                }
+                else
+                {
+                    upload_traffic = new SS_UploadTraffic()
+                    {
+                        TrafficPlattform_Id = traffic_plattform.Id,
+                        Upload_Date = DateTime.Now,
+                        Traffic_Date = date
+                    };
+                    _db.SS_UploadTraffic.Add(upload_traffic);
+                }
+
+                _db.SaveChanges();
+            }
+            return true;
+        }
+        // 读取csv
         private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
         {
             AliOSSUtilities util = new AliOSSUtilities();
