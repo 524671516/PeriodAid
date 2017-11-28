@@ -44,6 +44,10 @@ namespace PeriodAid.DAL
             OssObject downfile = client.GetObject("sqzcontent", filename);
             return downfile.Content;
         }
+        public void DeleteObject(string filename)
+        {
+            client.DeleteObject("offlinesales", filename);
+        }
 
     }
     
