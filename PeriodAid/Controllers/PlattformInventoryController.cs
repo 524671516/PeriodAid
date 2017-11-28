@@ -1211,13 +1211,12 @@ namespace PeriodAid.Controllers
         
         // 合并
         [HttpPost]
-        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName, string upName)
+        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
         {
             var file = Request.Files[0];
             if (file != null)
             {
-                var ext = Path.GetExtension(upName).ToLower();
-                if (ext.Contains("xls"))
+                if (file.ContentType.Contains("application/vnd.ms-excel"))
                 {
                     var fileName = DateTime.Now.Ticks + ".xls";
                     AliOSSUtilities util = new AliOSSUtilities();
@@ -1225,7 +1224,8 @@ namespace PeriodAid.Controllers
                     var date_time = form["file-date"].ToString();
                     if (plattformId == 1)
                     {
-                        var result = ReadExcel(plattformName, Convert.ToDateTime(date_time));
+                        var result = ReadExcel(plattformName, Convert.ToDateTime(date_time), fileName);
+                        util.DeleteObject("ExcelUpload/" + fileName);
                         if (result)
                             return Json(new { result = "SUCCESS" });
                         else
@@ -1236,7 +1236,7 @@ namespace PeriodAid.Controllers
                         return Json(new { result = "FAIL" });
                     }
                 }
-                else
+                else ///
                 {
                     var fileName = DateTime.Now.Ticks + ".csv";
                     AliOSSUtilities util = new AliOSSUtilities();
@@ -1265,14 +1265,22 @@ namespace PeriodAid.Controllers
         }
 
         //读取xls
-        public static DataTable Read_TrafficXls()
+        public static DataTable Read_TrafficXls(string filename)
         {
             IWorkbook workbook = null;
             ISheet sheet = null;
             DataTable dt = new DataTable();
             AliOSSUtilities util = new AliOSSUtilities();
-            //StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/"), System.Text.Encoding.Default);
-            workbook = WorkbookFactory.Create(@"D:\数据\京东\11月\明细11月1\11.21\手q.xls");
+            var stream = util.GetObject("ExcelUpload/" + filename);
+
+            byte[] buf = new byte[1024];
+            MemoryStream ms = new MemoryStream();
+            var len = 0;
+            while ((len = stream.Read(buf, 0, 1024)) != 0)
+            {
+                ms.Write(buf, 0, len);
+            }
+            workbook = WorkbookFactory.Create(ms);
             sheet = workbook.GetSheetAt(0);
             //表头  
             IRow header = sheet.GetRow(sheet.FirstRowNum);
@@ -1308,13 +1316,14 @@ namespace PeriodAid.Controllers
                     dt.Rows.Add(dr);
                 }
             }
+            ms.Close();
             return dt;
         }
 
-        public bool ReadExcel(string plattformName, DateTime date)
+        public bool ReadExcel(string plattformName, DateTime date, string filename)
         {
             var dd = new DataTable();
-            dd = Read_TrafficXls();
+            dd = Read_TrafficXls(filename);
             var traffic_plattform = _db.SS_TrafficPlattform.SingleOrDefault(m => m.TrafficPlattform_Name == plattformName);
             var other_source = _db.SS_TrafficSource.SingleOrDefault(m => m.Source_Type == 0);
             for (int i = 0; i < dd.Rows.Count; i++)
