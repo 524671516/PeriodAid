@@ -121,8 +121,7 @@
         });
         // 选平台
         $(".plattform-btn").on("click", function () {
-            var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
-            var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time")
+            console.log($(this).attr("data-id"))
             if ($("#start_time").val() != "" && $("#end_time").val() != "") {
                 $.ajax({
                     url: "/PlattformInventory/SumTrafficListPartial",
@@ -222,6 +221,7 @@
         })
         //时间查询
         $("#statistic_btn").on("click", function () {
+            $("#back-day-btn").removeClass("hide")
             if ($("#start_time").val() == "" || $("#end_time").val() == "" || $("#end_time").val() < $("#start_time").val()) {
                 errorAlert("请选择正确日期！");
             }
@@ -244,7 +244,6 @@
                     },
                     success: function (data) {
                         $("#traffic-list").html(data);
-                        $("#back-day-btn").removeClass("hide")
                     }
                 })
             }

@@ -15,6 +15,7 @@ using NPOI.SS.Util;
 using ICSharpCode.SharpZipLib.Zip;
 using NPOI.XSSF.UserModel;
 using System.Data;
+using System.Net;
 
 namespace PeriodAid.Controllers
 {
@@ -788,14 +789,13 @@ namespace PeriodAid.Controllers
         /// 当前库存页面
         /// </summary>
         /// <returns></returns>
-        public ActionResult PlattformInventory_form(int? plattformId)
+        public ActionResult PlattformInventory_form(int plattformId)
         {
             var DataDate = (from m in _db.SS_SalesRecord
                             where m.SS_Storage.SS_Plattform.Id == plattformId && m.SS_Product.Plattform_Id == plattformId
                             orderby m.SalesRecord_Date descending
                             select m.SalesRecord_Date).FirstOrDefault();
             ViewBag.DataDate = DataDate;
-            var _plattformId = plattformId ?? 1;
             var storage = from m in _db.SS_Storage
                           where m.Plattform_Id == plattformId
                           select m;
@@ -919,7 +919,7 @@ namespace PeriodAid.Controllers
                                    select m);
                     var SearchResult = (from m in product
                                         where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
-                                        orderby m.Product_Type descending, m.Id descending
+                                        orderby m.Product_Type descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
@@ -927,7 +927,7 @@ namespace PeriodAid.Controllers
                 {
                     var SearchResult = (from m in _db.SS_Product
                                         where m.Plattform_Id == plattformId
-                                        orderby m.Product_Type descending, m.Id descending
+                                        orderby m.Product_Type descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
@@ -937,7 +937,7 @@ namespace PeriodAid.Controllers
             {
                 var productlist = (from m in _db.SS_Product
                                    where m.Plattform_Id == plattformId
-                                   orderby m.Product_Type descending, m.Id descending
+                                   orderby m.Product_Type descending
                                    select m).ToPagedList(_page, 15);
                 return PartialView(productlist);
             }
@@ -1021,14 +1021,13 @@ namespace PeriodAid.Controllers
         public ActionResult EventListPartial(int? page,string query,int plattformId)
         {
             int _page = page ?? 1;
-            
             if (query != null)
             {
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_Event
                                        where m.EventName.Contains(query) || m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId
-                                       orderby m.EventDate descending, m.Id descending
+                                       orderby m.EventDate descending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -1036,7 +1035,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_Event
                                        where m.SS_Product.Plattform_Id == plattformId
-                                       orderby m.EventDate descending, m.Id descending
+                                       orderby m.EventDate descending
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
@@ -1046,7 +1045,7 @@ namespace PeriodAid.Controllers
             {
                 var productlist = (from m in _db.SS_Event
                                    where m.SS_Product.Plattform_Id == plattformId
-                                   orderby m.EventDate descending, m.Id descending
+                                   orderby m.EventDate descending
                                    select m).ToPagedList(_page, 15);
                 return PartialView(productlist);
             }
@@ -1132,9 +1131,7 @@ namespace PeriodAid.Controllers
             var eventList = from m in _db.SS_Event
                             select m;
             ViewBag.eventList = eventList;
-
             return PartialView();
-
         }
 
         public ActionResult ViewEventListPartial(int productId,DateTime select_date, int plattformId)
@@ -1274,12 +1271,9 @@ namespace PeriodAid.Controllers
             ISheet sheet = null;
             DataTable dt = new DataTable();
             AliOSSUtilities util = new AliOSSUtilities();
-            //StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
-            // 设置当前流的位置为流的开始
-
+            //StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/"), System.Text.Encoding.Default);
             workbook = WorkbookFactory.Create(@"D:\数据\京东\11月\明细11月1\11.21\手q.xls");
             sheet = workbook.GetSheetAt(0);
-
             //表头  
             IRow header = sheet.GetRow(sheet.FirstRowNum);
             List<int> columns = new List<int>();
@@ -1291,7 +1285,9 @@ namespace PeriodAid.Controllers
                     dt.Columns.Add(new DataColumn("Columns" + i.ToString()));
                 }
                 else
+                {
                     dt.Columns.Add(new DataColumn(obj.ToString()));
+                }
                 columns.Add(i);
             }
             //数据  
@@ -1333,7 +1329,6 @@ namespace PeriodAid.Controllers
                 var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
                 if (product != null)
                 {
-
                     if (dd.Rows[i][3].ToString() == traffic_source.TrafficSource_Name && dd.Rows[i][1].ToString() == product.System_Code && plattformName == traffic_plattform.TrafficPlattform_Name)
                     {
                         var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
@@ -1344,7 +1339,7 @@ namespace PeriodAid.Controllers
                                 TrafficPlattform_Id = Convert.ToInt32(traffic_plattform.Id),
                                 Product_Id = Convert.ToInt32(product.Id),
                                 TrafficSource_Id = Convert.ToInt32(traffic_source.Id),
-                                Update = Convert.ToDateTime(dd.Rows[i][0]),
+                                Update = Convert.ToDateTime(date),
                                 Product_Flow = Convert.ToInt32(dd.Rows[i][4]),
                                 Product_Visitor = Convert.ToInt32(dd.Rows[i][5]),
                                 Product_Customer = Convert.ToInt32(dd.Rows[i][7]),
@@ -1356,15 +1351,11 @@ namespace PeriodAid.Controllers
                         }
                         else
                         {
-                            traffic_data.Update = Convert.ToDateTime(dd.Rows[i][0]);
                             traffic_data.Product_Flow = Convert.ToInt32(dd.Rows[i][4]);
                             traffic_data.Product_Visitor = Convert.ToInt32(dd.Rows[i][5]);
                             traffic_data.Product_VisitTimes = Convert.ToDouble(dd.Rows[i][6]);
                             traffic_data.Product_Customer = Convert.ToInt32(dd.Rows[i][7]);
                             traffic_data.Order_Count = Convert.ToInt32(dd.Rows[i][8]);
-                            traffic_data.Product_Id = product.Id;
-                            traffic_data.TrafficSource_Id = traffic_source.Id;
-                            traffic_data.SS_TrafficPlattform = traffic_plattform;
                             _db.Entry(traffic_data).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
@@ -1414,8 +1405,7 @@ namespace PeriodAid.Controllers
                             traffic_plattform = new SS_TrafficPlattform()
                             {
                                 TrafficPlattform_Name = plattformName,
-                                Plattform_Id = 1,
-                                AttendTrafficSource = new List<SS_TrafficSource>()
+                                Plattform_Id = 1
                             };
                             _db.SS_TrafficPlattform.Add(traffic_plattform);
                             _db.SaveChanges();
@@ -1452,15 +1442,11 @@ namespace PeriodAid.Controllers
                             }
                             else
                             {
-                                traffic_data.Update = date;
                                 traffic_data.Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0;
                                 traffic_data.Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0;
                                 traffic_data.Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0;
                                 traffic_data.Product_Customer = csv_reader.TryGetField<int>("商品消费者", out p_customer) ? p_customer : 0;
                                 traffic_data.Order_Count = csv_reader.TryGetField<int>("商品订单行", out o_count) ? o_count : 0;
-                                traffic_data.Product_Id = product.Id;
-                                traffic_data.TrafficSource_Id = traffic_source.Id;
-                                traffic_data.SS_TrafficPlattform = traffic_plattform;
                                 _db.Entry(traffic_data).State = System.Data.Entity.EntityState.Modified;
                             }
                         }
@@ -1563,7 +1549,7 @@ namespace PeriodAid.Controllers
                     var c2 = single_row.CreateCell(++cell_pos);
                     c2.SetCellValue(product.Key.Item_Name);
                     var rowCount = productOrder.Count();
-                    if (rowCount > 1 && firstCount == true)
+                    if (rowCount >0 && firstCount == true)
                     {
                         var row0 = row_pos;
                         var row1 = row_pos + rowCount;
@@ -1765,7 +1751,6 @@ namespace PeriodAid.Controllers
                             row_pos++;
                         }
                     }
-
                 }
             }
             MemoryStream _stream = new MemoryStream();
@@ -1802,12 +1787,6 @@ namespace PeriodAid.Controllers
                               orderby m.Update descending
                               select m.Update).FirstOrDefault();
             ViewBag.trafficDate = trafficDate;
-            //var trafficDate = from m in _db.SS_TrafficData
-            //                  where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-            //                  group m by m.Update into g
-            //                  orderby g.Key ascending
-            //                  select g.Key;
-            //ViewBag.trafficDate = trafficDate;
             var trafficName = from m in _db.SS_TrafficPlattform
                               where m.Plattform_Id == plattformId
                               select m;
@@ -1822,7 +1801,8 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Update == single && m.SS_Product.Plattform_Id == plattformId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId 
+                                       && m.Update == single && m.SS_Product.Plattform_Id == plattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
