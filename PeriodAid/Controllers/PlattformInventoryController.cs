@@ -1039,7 +1039,6 @@ namespace PeriodAid.Controllers
                                        select m).ToPagedList(_page, 15);
                     return PartialView(productlist);
                 }
-
             }
             else
             {
@@ -1193,7 +1192,6 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS", data = data });
         }
-
         [HttpPost]
         public JsonResult QueryProduct(string query, int plattformId)
         {
@@ -1208,15 +1206,14 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        
         // 合并
         [HttpPost]
-        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName, string upName)
+        public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
         {
             var file = Request.Files[0];
             if (file != null)
             {
-                var ext = Path.GetExtension(upName).ToLower();
+                var ext = file.FileName;
                 if (ext.Contains("xls"))
                 {
                     var fileName = DateTime.Now.Ticks + ".xls";
@@ -1263,7 +1260,6 @@ namespace PeriodAid.Controllers
             }
 
         }
-
         //读取xls
         public static DataTable Read_TrafficXls()
         {
@@ -1271,7 +1267,8 @@ namespace PeriodAid.Controllers
             ISheet sheet = null;
             DataTable dt = new DataTable();
             AliOSSUtilities util = new AliOSSUtilities();
-            //StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/"), System.Text.Encoding.Default);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/"), System.Text.Encoding.Default);
+            //FileStream fs = new FileStream();
             workbook = WorkbookFactory.Create(@"D:\数据\京东\11月\明细11月1\11.21\手q.xls");
             sheet = workbook.GetSheetAt(0);
             //表头  
@@ -1376,7 +1373,6 @@ namespace PeriodAid.Controllers
                     };
                     _db.SS_UploadTraffic.Add(upload_traffic);
                 }
-
                 _db.SaveChanges();
             }
             return true;
@@ -1477,7 +1473,6 @@ namespace PeriodAid.Controllers
             }
             return true;
         }
-
         // 原版
         //[HttpPost]
         //public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
@@ -1759,7 +1754,6 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "爆款统计表.xls");
         }
-
         //public ActionResult Temp_Action()
         //{
         //    var trafficsourcelist = _db.SS_TrafficSource;
@@ -1794,7 +1788,7 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         
-        public ActionResult TrafficListPartial(string query, int plattformId, int productId, int trafficPlattformId, DateTime? single)
+        public ActionResult TrafficListPartial(string query, int plattformId, int productId, int trafficPlattformId, DateTime single)
         {
             if (trafficPlattformId == 0)
             {
@@ -1871,7 +1865,6 @@ namespace PeriodAid.Controllers
                     return PartialView(productlist);
                 }
             }
-
         }
 
         public ActionResult SumTrafficListPartial(int? page, string query, int plattformId, int productId, int trafficPlattformId, DateTime start,DateTime end)
@@ -1948,13 +1941,12 @@ namespace PeriodAid.Controllers
                 }
             }
         }
-
         //新增渠道
         public ActionResult AddTrafficSource()
         {
-            var TrafficPlattform = from m in _db.SS_TrafficPlattform
-                                   select m;
-            ViewBag.TrafficPlattform = new SelectList(TrafficPlattform,"Id", "TrafficPlattform_Name");
+            //var TrafficPlattform = from m in _db.SS_TrafficPlattform
+            //                       select m;
+            //ViewBag.TrafficPlattform = new SelectList(TrafficPlattform,"Id", "TrafficPlattform_Name");
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "常用", Value = "1" });
             itemlist.Add(new SelectListItem() { Text = "其他", Value = "0" });
@@ -1985,7 +1977,6 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
         }
-
         //产品数据图表
         public ActionResult ViewTrafficStatistic(int productId,int sourceId,int trafficPlattformId)
         {
@@ -2003,7 +1994,6 @@ namespace PeriodAid.Controllers
                                   select m;
                 ViewBag.TrafficList = TrafficList;
             }
-            
             return View();
         }
 

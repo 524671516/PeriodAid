@@ -121,7 +121,6 @@
         });
         // 选平台
         $(".plattform-btn").on("click", function () {
-            console.log($(this).attr("data-id"))
             if ($("#start_time").val() != "" && $("#end_time").val() != "") {
                 $.ajax({
                     url: "/PlattformInventory/SumTrafficListPartial",

@@ -82,11 +82,9 @@
                 type: "post",
                 data: {
                     plattformId: 1,
-                    plattformName: $('#traffic-name').attr("data-name"),
-                    upName: $('#upload-traffic').html()
+                    plattformName: $('#traffic-name').attr("data-name")
                 },
                 success: function (msg) {
-                    console.log(msg)
                     if (msg.result == "SUCCESS") {
                         $.ajax({
                             url: "/PlattformInventory/TrafficUploadFilePartial",
