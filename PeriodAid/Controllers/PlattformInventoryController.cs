@@ -13,9 +13,11 @@ using PeriodAid.DAL;
 using PagedList;
 using NPOI.SS.Util;
 using ICSharpCode.SharpZipLib.Zip;
-using NPOI.XSSF.UserModel;
 using System.Data;
-using System.Net;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.Configuration;
+using System.Diagnostics;
 
 namespace PeriodAid.Controllers
 {
@@ -98,6 +100,7 @@ namespace PeriodAid.Controllers
                 if (plattformId == 1)
                 {
                     var result = Read_JdFile(plattformId, fileName, Convert.ToDateTime(date_time));
+                    util.DeleteObject("ExcelUpload/" + fileName);
                     if (result)
                         return Json(new { result = "SUCCESS" });
                     else
@@ -106,6 +109,7 @@ namespace PeriodAid.Controllers
                 else if (plattformId == 2)
                 {
                     var result = Read_TmFile(plattformId, fileName, Convert.ToDateTime(date_time));
+                    util.DeleteObject("ExcelUpload/" + fileName);
                     if (result)
                         return Json(new { result = "SUCCESS" });
                     else
@@ -129,7 +133,7 @@ namespace PeriodAid.Controllers
             var filename = DateTime.Now.Ticks + ".csv";
             AliOSSUtilities util = new AliOSSUtilities();
             util.PutObject(file.InputStream, "ExcelUpload/" + filename);
-            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
             CsvReader csv_reader = new CsvReader(reader);
             List<string> headers = new List<string>();
             List<StorageOrder> storageOrder = new List<StorageOrder>();
@@ -170,8 +174,8 @@ namespace PeriodAid.Controllers
                 }
             }
             var _stream = OutExcel(storageOrder);
+            util.DeleteObject("ExcelUpload/" + filename);
             return File(_stream, "application/zip", DateTime.Now.ToString("yyyyMMddHHmmss") + "分仓表.zip");
-
         }
         // 分仓单
         private HSSFWorkbook SetStorageList(string orderId, string storageName, string subStoName, List<StorageOrder> storageOrder)
@@ -497,7 +501,7 @@ namespace PeriodAid.Controllers
         private bool Read_JdFile(int plattformId, string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
-            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
             CsvReader csv_reader = new CsvReader(reader);
             int row_count = 0;
             List<string> headers = new List<string>();
@@ -589,7 +593,7 @@ namespace PeriodAid.Controllers
         private bool Read_TmFile(int plattformId, string filename, DateTime date)
         {
             AliOSSUtilities util = new AliOSSUtilities();
-            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.GetEncoding("GB2312"), false);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
             CsvReader csv_reader = new CsvReader(reader);
             int row_count = 0;
             List<string> headers = new List<string>();
@@ -694,7 +698,6 @@ namespace PeriodAid.Controllers
             _db.SaveChanges();
             return true;
         }
-        
         // 获取仓库表格
         [HttpPost]
         public ActionResult getInventoryExcel(FormCollection form)
@@ -1198,9 +1201,9 @@ namespace PeriodAid.Controllers
         public JsonResult QueryProduct(string query, int plattformId)
         {
             var product = from m in _db.SS_Product
-                        where m.Plattform_Id == plattformId
-                        && m.Item_Name.Contains(query)
-                        select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "- " + m.Item_Name  };
+                          where m.Plattform_Id == plattformId
+                          && m.Item_Name.Contains(query)
+                          select new { Id = m.Id, ProductName = m.SS_Plattform.Plattform_Name + "- " + m.Item_Name  };
             return Json(product);
         }
         
@@ -1208,7 +1211,6 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-        
         // 合并
         [HttpPost]
         public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
@@ -1216,7 +1218,8 @@ namespace PeriodAid.Controllers
             var file = Request.Files[0];
             if (file != null)
             {
-                if (file.ContentType.Contains("application/vnd.ms-excel"))
+                var filename = file.FileName;
+                if (filename.Contains(".xls"))
                 {
                     var fileName = DateTime.Now.Ticks + ".xls";
                     AliOSSUtilities util = new AliOSSUtilities();
@@ -1236,7 +1239,7 @@ namespace PeriodAid.Controllers
                         return Json(new { result = "FAIL" });
                     }
                 }
-                else ///
+                else if(filename.Contains(".csv"))
                 {
                     var fileName = DateTime.Now.Ticks + ".csv";
                     AliOSSUtilities util = new AliOSSUtilities();
@@ -1245,6 +1248,7 @@ namespace PeriodAid.Controllers
                     if (plattformId == 1)
                     {
                         var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
+                        util.DeleteObject("ExcelUpload/" + fileName);
                         if (result)
                             return Json(new { result = "SUCCESS" });
                         else
@@ -1255,7 +1259,10 @@ namespace PeriodAid.Controllers
                         return Json(new { result = "FAIL" });
                     }
                 }
-
+                else
+                {
+                    return Json(new { result = "FAIL" });
+                }
             }
             else
             {
@@ -1272,7 +1279,6 @@ namespace PeriodAid.Controllers
             DataTable dt = new DataTable();
             AliOSSUtilities util = new AliOSSUtilities();
             var stream = util.GetObject("ExcelUpload/" + filename);
-
             byte[] buf = new byte[1024];
             MemoryStream ms = new MemoryStream();
             var len = 0;
@@ -1282,19 +1288,18 @@ namespace PeriodAid.Controllers
             }
             workbook = WorkbookFactory.Create(ms);
             sheet = workbook.GetSheetAt(0);
-            //表头  
             IRow header = sheet.GetRow(sheet.FirstRowNum);
             List<int> columns = new List<int>();
             for (int i = 0; i < header.LastCellNum; i++)
             {
-                object obj = (header.GetCell(i));
-                if (obj == null || obj.ToString() == string.Empty)
+                object traffic_header = (header.GetCell(i));
+                if (traffic_header == null || traffic_header.ToString() == string.Empty)
                 {
                     dt.Columns.Add(new DataColumn("Columns" + i.ToString()));
                 }
                 else
                 {
-                    dt.Columns.Add(new DataColumn(obj.ToString()));
+                    dt.Columns.Add(new DataColumn(traffic_header.ToString()));
                 }
                 columns.Add(i);
             }
@@ -1338,7 +1343,7 @@ namespace PeriodAid.Controllers
                 var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
                 if (product != null)
                 {
-                    if (dd.Rows[i][3].ToString() == traffic_source.TrafficSource_Name && dd.Rows[i][1].ToString() == product.System_Code && plattformName == traffic_plattform.TrafficPlattform_Name)
+                    if (dd.Rows[i][1].ToString() == product.System_Code && plattformName == traffic_plattform.TrafficPlattform_Name)
                     {
                         var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Update == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
                         if (traffic_data == null)
@@ -1353,8 +1358,7 @@ namespace PeriodAid.Controllers
                                 Product_Visitor = Convert.ToInt32(dd.Rows[i][5]),
                                 Product_Customer = Convert.ToInt32(dd.Rows[i][7]),
                                 Order_Count = Convert.ToInt32(dd.Rows[i][8]),
-                                Product_VisitTimes = Convert.ToDouble(dd.Rows[i][6]),
-
+                                Product_VisitTimes = Convert.ToDouble(dd.Rows[i][6])
                             };
                             _db.SS_TrafficData.Add(traffic_data);
                         }
@@ -1385,13 +1389,12 @@ namespace PeriodAid.Controllers
                     };
                     _db.SS_UploadTraffic.Add(upload_traffic);
                 }
-
                 _db.SaveChanges();
             }
             return true;
         }
         // 读取csv
-        private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName)
+        private bool Read_TrafficFile(int plattformId, string filename, DateTime date, string plattformName) 
         {
             AliOSSUtilities util = new AliOSSUtilities();
             using (StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default))
@@ -1482,40 +1485,10 @@ namespace PeriodAid.Controllers
                     _db.SS_UploadTraffic.Add(upload_traffic);
                 }
                 _db.SaveChanges();
-
             }
             return true;
         }
-
-        // 原版
-        //[HttpPost]
-        //public ActionResult UploadTrafficFile(FormCollection form, int plattformId, string plattformName)
-        //{
-        //    var file = Request.Files[0];
-        //    if (file != null)
-        //    {
-        //        var fileName = DateTime.Now.Ticks + ".csv";
-        //        AliOSSUtilities util = new AliOSSUtilities();
-        //        util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
-        //        var date_time = form["file-date"].ToString();
-        //        if (plattformId == 1)
-        //        {
-        //            var result = Read_TrafficFile(plattformId, fileName, Convert.ToDateTime(date_time), plattformName);
-        //            if (result)
-        //                return Json(new { result = "SUCCESS" });
-        //            else
-        //                return Json(new { result = "FAIL" });
-        //        }
-        //        else
-        //        {
-        //            return Json(new { result = "FAIL" });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return Json(new { result = "FAIL" });
-        //    }
-        //}
+        
         [HttpPost]
         public ActionResult getTrafficExcel(FormCollection form, DateTime date)
         {
@@ -1768,22 +1741,7 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "爆款统计表.xls");
         }
-
-        //public ActionResult Temp_Action()
-        //{
-        //    var trafficsourcelist = _db.SS_TrafficSource;
-        //    var plattformlist = _db.SS_TrafficPlattform;
-        //    foreach (var item in trafficsourcelist)
-        //    {
-        //        foreach (var plattform in plattformlist)
-        //        {
-        //            item.AttendTrafficPlattform.Add(plattform);
-        //        }
-        //    }
-        //    _db.SaveChanges();
-        //    return Content("SUCCESS");
-        //}
-
+        
         // TrafficList
         public ActionResult TrafficList(int plattformId,int productId)
         {
@@ -2093,6 +2051,301 @@ namespace PeriodAid.Controllers
                        select new { record_date = m.Traffic_Date };
             return Json(list);
         }
+
+        // 社群电商
+        //public ActionResult creatPdf()
+        //{
+        //    var plattform_name = from m in _db.SS_Product
+        //                         where m.Plattform_Id == 1
+        //                         select m;
+        //    var count = plattform_name.Count()+1;
+        //    Document document = new Document(PageSize.A3);
+        //    try
+        //    {
+        //        // 创建文档
+        //        PdfWriter.GetInstance(document, new FileStream(@"d:\Create.pdf", FileMode.Create));
+        //        BaseFont setFont = BaseFont.CreateFont(@"C:\Windows\Fonts\simfang.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        //        Font font = new Font(setFont, 16);
+        //        Font font1 = new Font(setFont, 12);
+        //        Font font2 = new Font(setFont, 10);
+        //        Paragraph title = new Paragraph("寿全斋[-订单发货-]审批单", font);
+        //        title.Alignment = 1;
+        //        // 打开文档
+        //        document.Open();
+        //        document.Add(title);
+        //        PdfPTable table = new PdfPTable(10);
+        //        PdfPCell cell;
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+        //        cell.Border = Rectangle.NO_BORDER;
+        //        cell.Colspan = 10;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+        //        cell.Border = Rectangle.NO_BORDER;
+        //        cell.Colspan = 5;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase("□有货就发", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+        //        cell.Border = Rectangle.NO_BORDER;
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase("□发货时间:", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+        //        cell.Border = Rectangle.NO_BORDER;
+        //        cell.Colspan = 3;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase("订单编号:", font1));
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase(" "));
+        //        cell.Colspan = 4;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase("客户名称:", font1));
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase(" "));
+        //        cell.Colspan = 4;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase("订单类型:", font1));
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase(" "));
+        //        cell.Colspan = 4;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase("业务对接:", font1));
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Phrase(" "));
+        //        cell.Colspan = 4;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+        //        cell.Border = Rectangle.NO_BORDER;
+        //        cell.Colspan = 10;
+        //        table.AddCell(cell);
+        //        // 产品标题
+        //        cell = new PdfPCell(new Paragraph("订单信息", font1));
+        //        cell.Colspan = 10;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("订货情况", font1));
+        //        cell.Rowspan = 1;
+        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("订单内容", font1));
+        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        cell.Rowspan = 1;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("产品代码", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("订货品种", font1));
+        //        cell.Colspan = 2;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("订货数量", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("订货单价", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("货款金额", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("备注", font1));
+        //        cell.Colspan = 2;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        //foreach(var name in plattform_name)
+        //        //{
+        //        //    cell = new PdfPCell(new Paragraph(name.System_Code.ToString(), font2));
+        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        //    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        //    table.AddCell(cell);
+        //        //    cell = new PdfPCell(new Paragraph(name.Item_Name.ToString(), font2));
+        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        //    cell.Colspan = 2;
+        //        //    table.AddCell(cell);
+        //        //    cell = new PdfPCell(new Paragraph(" "));
+        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        //    table.AddCell(cell);
+        //        //    cell = new PdfPCell(new Paragraph(name.Purchase_Price.ToString(), font2));
+        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        //    table.AddCell(cell);
+        //        //    cell = new PdfPCell(new Paragraph(" "));
+        //        //    table.AddCell(cell);
+        //        //    cell = new PdfPCell(new Paragraph(" "));
+        //        //    cell.Colspan = 2;
+        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        //    table.AddCell(cell);
+        //        //}
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("合计",font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("--"));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("数量",font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("--"));
+        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("价格", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        // 付款
+        //        cell = new PdfPCell(new Paragraph("付款内容",font1));
+        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        cell.Rowspan = 3;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("1"));
+        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("付款方式", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("开票内容", font1));
+        //        cell.Rowspan = 3;
+        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("1"));
+        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("开票类型"));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        // 2
+        //        cell = new PdfPCell(new Paragraph("2"));
+        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("付款时间", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("2"));
+        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("开票内容"));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        //3 
+        //        cell = new PdfPCell(new Paragraph("3"));
+        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("付款金额", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("3"));
+        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("开票时间"));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 2;
+        //        table.AddCell(cell);
+        //        // 收货
+        //        cell = new PdfPCell(new Paragraph("收货人信息",font1));
+        //        cell.Colspan = 2;
+        //        cell.Rowspan = 5;
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("收货人",font1));
+        //        cell.Colspan = 3;
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 5;
+        //        table.AddCell(cell);
+                
+        //        cell = new PdfPCell(new Paragraph("收货人联系电话", font1));
+        //        cell.Colspan = 3;
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 5;
+        //        table.AddCell(cell);
+                
+        //        cell = new PdfPCell(new Paragraph("收货地址", font1));
+        //        cell.Colspan = 3;
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph(" "));
+        //        cell.Colspan = 5;
+        //        table.AddCell(cell);
+                
+
+        //        cell = new PdfPCell(new Paragraph("运输方式（特批加急）", font1));
+        //        cell.Colspan = 3;
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("□快递-顺丰  □物流-德邦  □包车",font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        cell.Colspan = 5;
+        //        table.AddCell(cell);
+
+        //        cell = new PdfPCell(new Paragraph("最后收货期限", font1));
+        //        cell.Colspan = 3;
+        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
+        //        table.AddCell(cell);
+        //        cell = new PdfPCell(new Paragraph("     年     月     日", font1));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        cell.Colspan = 5;
+        //        table.AddCell(cell);
+
+
+
+
+
+
+
+        //        document.Add(table);
+        //    }
+        //    catch (DocumentException de)
+        //    {
+        //        Console.Error.WriteLine(de.Message);
+        //    }
+        //    catch (IOException ioe)
+        //    {
+        //        Console.Error.WriteLine(ioe.Message);
+        //    }
+        //    // 关闭文档
+        //    document.Close();
+        //    return Content("success");
+        //}
+
+
     }
 }
 
