@@ -26,7 +26,6 @@
             modelBuilder.Entity<SP_Plattform>().HasMany(m => m.SP_Seller).WithRequired(m => m.SP_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_TrafficPlattform>().HasMany(m => m.SP_Customer).WithRequired(m => m.SP_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_Customer).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SP_Customer>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Customer>().HasMany(m => m.SP_OfferSheet).WithRequired(m => m.SP_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
 
         }
@@ -119,9 +118,6 @@
         public virtual SP_TrafficPlattform SP_TrafficPlattform { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SP_Product> SP_Product { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_OfferSheet> SP_OfferSheet { get; set; }
     }
     /// <summary>
@@ -138,11 +134,7 @@
         public string Item_Name { get; set; }
 
         public int System_Code { get; set; }
-
-        public int Customer_Id { get; set; }
-
-        public virtual SP_Customer SP_Customer { get; set; }
-
+        
         public int Carton_Spec { get; set; }
 
         public int Purchase_Price { get; set; }
