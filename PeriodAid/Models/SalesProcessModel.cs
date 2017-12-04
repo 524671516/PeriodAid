@@ -132,7 +132,7 @@
     {
         public int Id { get; set; }
 
-        public int Item_Code { get; set; }
+        public string Item_Code { get; set; }
 
         [StringLength(16)]
         public string Item_Name { get; set; }
