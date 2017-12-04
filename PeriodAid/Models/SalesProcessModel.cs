@@ -80,7 +80,8 @@
         [StringLength(16)]
         public string Seller_Name { get; set; }
 
-        public int Seller_Mobile { get; set; }
+        [StringLength(16), RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
+        public string Seller_Mobile { get; set; } // 手机号码
 
         public int Seller_Type { get; set; }
         
@@ -102,7 +103,8 @@
         [StringLength(16)]
         public string Customer_Name { get; set; }
 
-        public int Customer_Mobile { get; set; }
+        [StringLength(16), RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
+        public string Customer_Mobile { get; set; } // 手机号码
 
         public int Customer_Type { get; set; }
 
