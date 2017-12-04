@@ -12,24 +12,24 @@
             : base("name=SalesProcessConnection")
         {
         }
-        public virtual DbSet<SF_Seller> SF_Seller { get; set; }
-        public virtual DbSet<SF_Customer> SF_Customer { get; set; }
-        public virtual DbSet<SF_Product> SF_Product { get; set; }
-        public virtual DbSet<SF_OfferSheet> SF_OfferSheet { get; set; }
+        public virtual DbSet<SP_Seller> SP_Seller { get; set; }
+        public virtual DbSet<SP_Customer> SP_Customer { get; set; }
+        public virtual DbSet<SP_Product> SP_Product { get; set; }
+        public virtual DbSet<SP_OfferSheet> SP_OfferSheet { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SF_Seller>().HasMany(m => m.SF_Customer).WithRequired(m => m.SF_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SF_Customer>().HasMany(m => m.SF_Product).WithRequired(m => m.SF_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SF_Customer>().HasMany(m => m.SF_OfferSheet).WithRequired(m => m.SF_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_Customer).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Customer>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Customer>().HasMany(m => m.SP_OfferSheet).WithRequired(m => m.SP_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
 
         }
     }
     /// <summary>
     /// 业务员
     /// </summary>
-    [Table("SF_Seller")]
-    public partial class SF_Seller
+    [Table("SP_Seller")]
+    public partial class SP_Seller
     {
         public int Id { get; set; }
 
@@ -41,13 +41,13 @@
         public int Seller_Type { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SF_Customer> SF_Customer { get; set; }
+        public virtual ICollection<SP_Customer> SP_Customer { get; set; }
     }
     /// <summary>
     /// 客户信息
     /// </summary>
-    [Table("SF_Customer")]
-    public partial class SF_Customer
+    [Table("SP_Customer")]
+    public partial class SP_Customer
     {
         public int Id { get; set; }
 
@@ -60,19 +60,19 @@
 
         public int Seller_Id { get; set; }
 
-        public virtual SF_Seller SF_Seller { get; set; }
+        public virtual SP_Seller SP_Seller { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SF_Product> SF_Product { get; set; }
+        public virtual ICollection<SP_Product> SP_Product { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SF_OfferSheet> SF_OfferSheet { get; set; }
+        public virtual ICollection<SP_OfferSheet> SP_OfferSheet { get; set; }
     }
     /// <summary>
     /// 产品信息
     /// </summary>
-    [Table("SF_Product")]
-    public partial class SF_Product
+    [Table("SP_Product")]
+    public partial class SP_Product
     {
         public int Id { get; set; }
 
@@ -85,7 +85,7 @@
 
         public int Customer_Id { get; set; }
 
-        public virtual SF_Customer SF_Customer { get; set; }
+        public virtual SP_Customer SP_Customer { get; set; }
 
         public int Carton_Spec { get; set; }
 
@@ -94,8 +94,8 @@
     /// <summary>
     /// 订货单产品信息
     /// </summary>
-    [Table ("SF_OfferSheet")]
-    public partial class SF_OfferSheet
+    [Table ("SP_OfferSheet")]
+    public partial class SP_OfferSheet
     {
         public int Id { get; set; }
 
@@ -105,7 +105,7 @@
 
         public int Customer_Id { get; set; }
 
-        public virtual SF_Customer SF_Customer { get; set; }
+        public virtual SP_Customer SP_Customer { get; set; }
 
         public int Order_Count { get; set; }
 
