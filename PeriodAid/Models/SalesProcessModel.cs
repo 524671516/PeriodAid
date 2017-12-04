@@ -137,7 +137,7 @@
         
         public int Carton_Spec { get; set; }
 
-        public int Purchase_Price { get; set; }
+        public decimal Purchase_Price { get; set; }
 
         public int Plattform_Id { get; set; }
 
@@ -151,7 +151,7 @@
     {
         public int Id { get; set; }
 
-        public int Quoted_Price { get; set; }
+        public decimal Quoted_Price { get; set; }
 
         public int Product_Id { get; set; }
 
