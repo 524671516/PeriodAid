@@ -14,7 +14,6 @@
         }
         public virtual DbSet<SP_Plattform> SP_Plattform { get; set; }
         public virtual DbSet<SP_TrafficPlattform> SP_TrafficPlattform { get; set; }
-        public virtual DbSet<SP_TrafficSource> SP_TrafficSource { get; set; }
         public virtual DbSet<SP_Seller> SP_Seller { get; set; }
         public virtual DbSet<SP_Customer> SP_Customer { get; set; }
         public virtual DbSet<SP_Product> SP_Product { get; set; }
@@ -25,8 +24,7 @@
             modelBuilder.Entity<SP_Plattform>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Plattform>().HasMany(m => m.SP_TrafficPlattform).WithRequired(m => m.SP_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Plattform>().HasMany(m => m.SP_Seller).WithRequired(m => m.SP_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SP_TrafficPlattform>().HasMany(m => m.SP_TrafficSource).WithRequired(m => m.SP_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SP_TrafficSource>().HasMany(m => m.SP_Customer).WithRequired(m => m.SP_TrafficSource).HasForeignKey(m => m.Source_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_TrafficPlattform>().HasMany(m => m.SP_Customer).WithRequired(m => m.SP_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_Customer).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Customer>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Customer>().HasMany(m => m.SP_OfferSheet).WithRequired(m => m.SP_Customer).HasForeignKey(m => m.Customer_Id).WillCascadeOnDelete(false);
@@ -69,26 +67,7 @@
         public virtual SP_Plattform SP_Plattform { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SP_TrafficSource> SP_TrafficSource { get; set; }
-    }
-    /// <summary>
-    /// 渠道
-    /// </summary>
-    [Table("SP_TrafficSource")]
-    public partial class SP_TrafficSource
-    {
-        public int Id { get; set; }
-
-        [StringLength(16)]
-        public string TrafficSource_Name { get; set; }
-
-        public int TrafficPlattform_Id { get; set; }
-
-        public virtual SP_TrafficPlattform SP_TrafficPlattform { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Customer> SP_Customer { get; set; }
-
     }
     /// <summary>
     /// 业务员
@@ -133,9 +112,9 @@
 
         public virtual SP_Seller SP_Seller { get; set; }
 
-        public int Source_Id { get; set; }
+        public int TrafficPlattform_Id { get; set; }
 
-        public virtual SP_TrafficSource SP_TrafficSource { get; set; }
+        public virtual SP_TrafficPlattform SP_TrafficPlattform { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Product> SP_Product { get; set; }
