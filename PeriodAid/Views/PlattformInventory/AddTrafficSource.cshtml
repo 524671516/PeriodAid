@@ -38,8 +38,6 @@
 <script>
     $("#add-source-form").ajaxForm(function (data) {
         var productName = $("#product-list-name").attr("data-name");
-        var nowP = $(".traffci-date-time").not($(".traffci-date-time.hidden")).index() - 1;
-        var start_time = $(".traffci-date-time:eq(" + nowP + ")").attr("date-time");
         if (data == "SUCCESS") {
             $("#myModal").modal('hide')
             setTimeout(function () {

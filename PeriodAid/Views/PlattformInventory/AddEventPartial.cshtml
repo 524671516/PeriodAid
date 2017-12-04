@@ -68,27 +68,26 @@
         $('#add-event-form').ajaxForm(function (data) {
             $("#add-submit").attr("disabled", true);
             if (data == "SUCCESS") {
+                alert("添加成功")
                 $('.modal-box').modal('hide');
-                setTimeout(function () {
-                    $.ajax({
-                        url: "/PlattformInventory/EventListPartial",
-                        data: {
-                            page: 1,
-                            plattformId: getUrlParam('plattformId')
-                        },
-                        success: function (data) {
-                            $("#traffic-list").html(data)
-                            $('.modal-backdrop.in').remove()
-                            $('body').removeClass('modal-open')
-                        }
-                    });
-                    alert("添加成功")
-                }, 1000);
+                $.ajax({
+                    url: "/PlattformInventory/EventListPartial",
+                    data: {
+                        page: 1,
+                        plattformId: getUrlParam('plattformId')
+                    },
+                    success: function (data) {
+                        $("#event_list_content").html(data)
+                        $('.modal-backdrop.in').remove()
+                        $('body').removeClass('modal-open')
+                    }
+                });
             }
             else {
                 errorAlert("添加失败！");
             }
         });
+      
         window.moment = Kalendae.moment;
         var k4 = new Kalendae.Input('eventtime', {
             months: 2,

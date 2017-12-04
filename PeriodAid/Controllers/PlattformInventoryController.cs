@@ -1098,9 +1098,6 @@ namespace PeriodAid.Controllers
 
         public ActionResult AddEventPartial(int plattformId)
         {
-            var plattFormId = from m in _db.SS_Event
-                              where m.SS_Product.Plattform_Id == plattformId
-                              select m;
             return PartialView();
         }
         [HttpPost]
