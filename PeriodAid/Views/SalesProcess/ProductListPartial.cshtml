@@ -1,0 +1,63 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Product>
+@using PagedList.Mvc;
+<div>
+    <table class="table">
+        <tr>
+            <th>
+                系统编码
+            </th>
+            <th>
+                产品编码
+            </th>
+            <th>产品名称</th>
+            <th>箱规</th>
+            <th>单价</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            if (item.Plattform_Id == 1)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.System_Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item_Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Carton_Spec)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Purchase_Price)
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))
+    </div>
+</div>
+<script>
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    query: $("#storage-product-query").val()
+                },
+                success: function (data) {
+                    $("#product_list_content").html(data);
+                }
+            });
+            return false;
+        });
+    })
+</script>

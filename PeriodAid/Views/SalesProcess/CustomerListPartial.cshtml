@@ -1,0 +1,89 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Customer>
+@using PagedList.Mvc;
+<div>
+    <table class="table">
+        <tr>
+            <th>
+                客户姓名
+            </th>
+            <th>
+                联系方式
+            </th>
+            <th>
+                邮寄地址
+            </th>
+            <th>
+                负责人
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            if (item.SP_TrafficPlattform.Plattform_Id == 1)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_Mobile)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cusromer_Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SP_Seller.Seller_Name)
+                    </td>
+                    <td>
+                        <a style="cursor:pointer" data-val="@item.Id" class="select-a" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                        <a style="cursor:pointer">删除</a>&nbsp;|&nbsp;
+                        <a style="cursor:pointer">订单详情</a>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("CustomerListPartial", new { page }))
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    query: $("#customer-query").val()
+                },
+                success: function (data) {
+                    $("#customer_list_content").html(data)
+                }
+            });
+            return false;
+        });
+        //
+        $('.select-a').click(function () {
+            //console.log($(this).attr('data-val'))
+            $.ajax({
+                url: '/SalesProcess/EditCustomerInfo',
+                data: {
+                    customerId: $(this).attr('data-val')
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+    })
+</script>

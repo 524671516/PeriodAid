@@ -1,0 +1,42 @@
+﻿@model PeriodAid.Models.SP_Customer
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>修改客户信息</h2>
+</div>
+@Html.HiddenFor(model => model.Id)
+<div class="modal-body" id="modal-body">
+   
+</div>  
+<div class="modal-footer"></div>
+<script>
+    $('#save-btn').click(function () {
+        $("#customer-form").ajaxSubmit({
+            url: '/SalesProcess/EditCustomerInfo',
+            type: 'post',
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    alert('保存成功')
+                    $("#myModal").modal('hide');
+                    $.ajax({
+                        url: "/SalesProcess/CustomerListPartial",
+                        data: {
+                            plattformId: getUrlParam('plattformId'),
+                            query: $("#customer-query").val(),
+                            productId: getUrlParam('productId'),
+                            trafficPlattformId: $(this).attr("data-id"),
+                        },
+                        success: function (data) {
+                            $("#customer_list_content").html(data);
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                        }
+                    });
+
+                } else {
+                    errorAlert('保存失败')
+                }
+            }
+        })
+        return false;
+    })
+</script>      

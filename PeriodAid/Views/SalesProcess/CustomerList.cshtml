@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "CustomerList";
+    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+}
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>客户名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="customer-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="customer-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<h2>客户列表</h2>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="traffic-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
+    @foreach (var list in ViewBag.trafficName)
+    {
+        <li role="presentation" class="traffic-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="@list.Id" class="plattform-btn" style="cursor:pointer">@list.TrafficPlattform_Name</a></li>
+    }
+</ul>
+<div id="customer_list_content"></div>
+@section scripts{
+    <script>
+        $(function () {
+            //console.log($(".traffic-list-li.active").children(".plattform-btn").attr("data-id"))
+            $.ajax({
+                url: "/SalesProcess/CustomerListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id"),
+                    query: $("#customer-query").val()
+                },
+                success: function (data) {
+                    $("#customer_list_content").html(data)
+                }
+            });
+        });
+        //搜索
+        $("#customer-search").click(function () {
+            $.ajax({
+                url: "/SalesProcess/CustomerListPartial",
+                data: {
+                    plattformId: getUrlParam('plattformId'),
+                    page: 1,
+                    query: $("#customer-query").val(),
+                    trafficPlattformId: $(".traffic-list-li.active").children(".plattform-btn").attr("data-id")
+                },
+                success: function (data) {
+                    $("#customer_list_content").html(data);
+                }
+            })
+        });
+        // 选平台
+        $(".plattform-btn").on("click", function () {
+                $.ajax({
+                    url: "/SalesProcess/CustomerListPartial",
+                    data: {
+                        plattformId: getUrlParam('plattformId'),
+                        query: $("#customer-query").val(),
+                        productId: getUrlParam('productId'),
+                        trafficPlattformId: $(this).attr("data-id"),
+                    },
+                    success: function (data) {
+                        $("#customer_list_content").html(data);
+                    }
+                })
+            
+        })
+    </script>
+}

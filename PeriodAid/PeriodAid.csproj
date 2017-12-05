@@ -238,6 +238,7 @@
     <Compile Include="Controllers\PeriodAidController.cs" />
     <Compile Include="Controllers\OffSalesController.cs" />
     <Compile Include="Controllers\PlattformInventoryController.cs" />
+    <Compile Include="Controllers\SalesProcessController.cs" />
     <Compile Include="Controllers\SellerController.cs" />
     <Compile Include="Controllers\SellerTaskController.cs" />
     <Compile Include="Controllers\TaskManagementController.cs" />
@@ -1155,6 +1156,13 @@
     <Content Include="Views\PlattformInventory\TrafficListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\SumTrafficListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\AddTrafficSource.cshtml" />
+    <Content Include="Views\Shared\_SalesProcessLayout.cshtml" />
+    <Content Include="Views\SalesProcess\Index.cshtml" />
+    <Content Include="Views\SalesProcess\ProductList.cshtml" />
+    <Content Include="Views\SalesProcess\ProductListPartial.cshtml" />
+    <Content Include="Views\SalesProcess\CustomerList.cshtml" />
+    <Content Include="Views\SalesProcess\CustomerListPartial.cshtml" />
+    <Content Include="Views\SalesProcess\EditCustomerInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
