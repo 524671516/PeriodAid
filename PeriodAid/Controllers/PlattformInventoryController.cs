@@ -1235,6 +1235,25 @@ namespace PeriodAid.Controllers
                     {
                         return Json(new { result = "FAIL" });
                     }
+                }else if (filename.Contains(".xlsx"))
+                {
+                    var fileName = DateTime.Now.Ticks + ".xlsx";
+                    AliOSSUtilities util = new AliOSSUtilities();
+                    util.PutObject(file.InputStream, "ExcelUpload/" + fileName);
+                    var date_time = form["file-date"].ToString();
+                    if (plattformId == 1)
+                    {
+                        var result = ReadExcel(plattformName, Convert.ToDateTime(date_time), fileName);
+                        util.DeleteObject("ExcelUpload/" + fileName);
+                        if (result)
+                            return Json(new { result = "SUCCESS" });
+                        else
+                            return Json(new { result = "FAIL" });
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL" });
+                    }
                 }
                 else if(filename.Contains(".csv"))
                 {

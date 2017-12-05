@@ -19,7 +19,6 @@
             $.ajax({
                 url: "/SalesProcess/ProductListPartial",
                 data: {
-                    plattformId: getUrlParam('plattformId'),
                     page: 1,
                 },
                 success: function (data) {
@@ -32,7 +31,6 @@
             $.ajax({
                 url: "/SalesProcess/ProductListPartial",
                 data: {
-                    plattformId: getUrlParam('plattformId'),
                     page: 1,
                     query: $("#storage-product-query").val()
                 },
