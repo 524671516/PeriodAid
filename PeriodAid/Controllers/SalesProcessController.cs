@@ -209,9 +209,10 @@ namespace PeriodAid.Controllers
             sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
 
-
-
-            ViewBag.ContactTypeList
+            List<SelectListItem> contacttypelist = new List<SelectListItem>();
+            contacttypelist.Add(new SelectListItem() { Text = "正常", Value = "0" });
+            contacttypelist.Add(new SelectListItem() { Text = "离职", Value = "-1" });
+            ViewBag.ContactTypeList= new SelectList(contacttypelist, "Value", "Text");
             return PartialView();
         }
 
