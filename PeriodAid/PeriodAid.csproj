@@ -1171,6 +1171,7 @@
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
+    <Folder Include="Views\SalesProcess\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
