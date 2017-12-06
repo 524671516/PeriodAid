@@ -70,7 +70,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddProductPartial(SP_Product model, FormCollection form)
         {
-            ModelState.Remove("EventDate");
             if (ModelState.IsValid)
             {
                 var item = new SP_Product();
@@ -199,6 +198,12 @@ namespace PeriodAid.Controllers
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
+            List<SelectListItem> plattformlist = new List<SelectListItem>();
+            plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
+            plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
+            plattformlist.Add(new SelectListItem() { Text = "代发货", Value = "3" });
+            ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
+
             List<SelectListItem> sellerlist = new List<SelectListItem>();
             sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
             sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
@@ -209,27 +214,25 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddClientPartial(SP_Contact model, FormCollection form)
         {
-            ModelState.Remove("SP_Client.Client_Type");
             ModelState.Remove("Contact_Name");
             ModelState.Remove("Contact_Mobile");
             ModelState.Remove("Contact_Address");
-            ModelState.Remove("SP_Client.SP_Seller.Seller_Type");
             if (ModelState.IsValid)
             {
-                var item = new SP_Contact();
                 var client = new SP_Client();
-                var seller = new SP_Seller();
                 client.Client_Name = model.SP_Client.Client_Name;
                 client.Client_Type = model.SP_Client.Client_Type;
-                client.Plattform_Id=model.
-                item.Contact_Name = model.Contact_Name;
-                item.Contact_Mobile = model.Contact_Mobile;
-                item.Contact_Address = model.Contact_Address;
-                item.Client_Id = model.Client_Id;
-                seller.Seller_Type = model.SP_Client.SP_Seller.Seller_Type;
-                _db.SP_Contact.Add(item);
+                client.Plattform_Id = model.SP_Client.Plattform_Id;
+                client.Seller_Id = model.SP_Client.Seller_Id;
                 _db.SP_Client.Add(client);
-                _db.SP_Seller.Add(seller);
+                _db.SaveChanges();
+                var clientId = _db.SP_Client.SingleOrDefault( m => m.Client_Name == client.Client_Name);
+                var contact = new SP_Contact();
+                contact.Client_Id = clientId.Id;
+                contact.Contact_Name = model.Contact_Name;
+                contact.Contact_Mobile = model.Contact_Mobile;
+                contact.Contact_Address = model.Contact_Address;
+                _db.SP_Contact.Add(contact);
                 _db.SaveChanges();
                 return Content("SUCCESS");
 
