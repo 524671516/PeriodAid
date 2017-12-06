@@ -12,6 +12,7 @@
     </tr>
 </table>
 <h2>产品列表</h2>
+<a class="btn btn-info btn-sm" id="add-product" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增产品信息</a>
 <div id="product_list_content"></div>
 @section scripts{
     <script>
@@ -26,6 +27,18 @@
                 }
             });
         });
+        //新增
+        $("#add-product").on("click", function () {
+            $.ajax({
+                url: '/SalesProcess/AddProductPartial',
+                data: {
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
         //搜索
         $("#storage-product-search").click(function () {
             $.ajax({

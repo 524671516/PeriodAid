@@ -1,0 +1,72 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Contact>
+@using PagedList.Mvc;
+<div>
+    <table class="table">
+        <tr>
+            <th>
+                客户名称
+            </th>
+            <th>
+                客户状态
+            </th>
+            <th>
+                联系人名称
+            </th>
+            <th>
+                联系人电话
+            </th>
+            <th>
+                邮寄地址
+            </th>
+            <th>
+                负责人
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SP_Client.Client_Name</td>
+                <td>@Html.PlattformTypeStatus(item.SP_Client.Client_Type)</td>
+                <td>@item.Contact_Name</td>
+                <td>@item.Contact_Mobile</td>
+                <td>@item.Contact_Address</td>
+                <td>@item.SP_Client.SP_Seller.Seller_Name</td>
+                <td>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
+                </td>
+            </tr>
+            
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("ClientListPartial", new { page }))
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                    page: 1,
+                    query: $("#client-query").val(),
+                    plattformType: getUrlParam('plattformType')
+                },
+                success: function (data) {
+                    $("#product_list_content").html(data);
+                }
+            });
+            return false;
+        });
+    })
+</script>

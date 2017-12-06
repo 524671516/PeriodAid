@@ -12,34 +12,43 @@
             <th>产品名称</th>
             <th>箱规</th>
             <th>单价</th>
+            <th></th>
         </tr>
 
         @foreach (var item in Model)
         {
-            if (item.Plattform_Id == 1)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.System_Code)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Item_Code)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Item_Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Carton_Spec)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Purchase_Price)
-                    </td>
-                </tr>
-            }
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.System_Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item_Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Carton_Spec)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Purchase_Price)
+                </td>
+                <td>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;&nbsp;|
+                    <a class="delete-product" href="#" style="color:red;" data-eid="@item.Id">删除记录</a>
+                </td>
+            </tr>
         }
     </table>
     <div class="text-right">
         @Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
     </div>
 </div>
 <script>
@@ -58,5 +67,57 @@
             });
             return false;
         });
+        // 编辑
+        $('.select-a').click(function () {
+            console.log($(this).attr('data-val'))
+            $.ajax({
+                url: '/SalesProcess/EditProductInfo',
+                data: {
+                    productId: $(this).attr('data-val'),
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+
+                }
+            })
+        })
+        // 删除
+        $(".delete-product").on("click", function () {
+            var P_id = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/SalesProcess/DeleteProduct",
+                        type: "post",
+                        data: {
+                            productId: P_id,
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/SalesProcess/ProductListPartial",
+                                        data: {
+                                            page: 1,
+                                            query: $("#storage-product-query").val()
+                                        },
+                                        success: function (data) {
+                                            $("#product_list_content").html(data);
+                                            $('.modal-backdrop.in').remove()
+                                            $('body').removeClass('modal-open')
+                                        }
+                                    });
+                                    alert("删除成功")
+                                }, 1000);
+                            } else if (data.result == "FAIL") {
+                                alert("删除失败", "", function () {
+                                }, { type: 'error' });
+                            }
+                        }
+                    })
+                }
+            });
+        })
     })
 </script>

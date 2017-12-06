@@ -182,6 +182,21 @@ namespace System.Web.Mvc
             }
         }
 
+        public static string PlattformTypeStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "待开发";
+                case 0:
+                    return "正常";
+                case 1:
+                    return "活跃";
+                default:
+                    return "未知";
+            }
+        }
+
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
             if (username == null)
