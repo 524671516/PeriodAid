@@ -194,8 +194,8 @@ namespace PeriodAid.Controllers
         {
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
-            itemlist.Add(new SelectListItem() { Text = "正常", Value = "0" });
-            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "-1" });
+            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
+            itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
             List<SelectListItem> plattformlist = new List<SelectListItem>();
@@ -245,13 +245,13 @@ namespace PeriodAid.Controllers
             //return Content("ERROR1");
         }
 
-        public ActionResult EditClientInfo(int clientId)
+        public ActionResult EditClientInfo(int contactId)
         {
-            var item = _db.SP_Contact.SingleOrDefault(m => m.Id == clientId);
+            var item = _db.SP_Contact.SingleOrDefault(m => m.Id == contactId);
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
-            itemlist.Add(new SelectListItem() { Text = "正常", Value = "0" });
-            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "-1" });
+            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
+            itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
             List<SelectListItem> plattformlist = new List<SelectListItem>();
@@ -272,20 +272,13 @@ namespace PeriodAid.Controllers
         {
             if (ModelState.IsValid)
             {
-                SP_Client client = new SP_Client();
-                if (TryUpdateModel(client))
+                SP_Contact contact = new SP_Contact();
+                if (TryUpdateModel(contact))
                 {
-                    _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
+                    _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
                     _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
                 }
-                SP_Contact item = new SP_Contact();
-                if (TryUpdateModel(item))
-                {
-                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
-                }
-                
-                return Json(new { result = "SUCCESS" });
             }
             return Json(new { result = "FAIL" });
         }
