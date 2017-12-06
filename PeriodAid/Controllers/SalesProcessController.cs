@@ -233,6 +233,7 @@ namespace PeriodAid.Controllers
                 contact.Contact_Mobile = model.Contact_Mobile;
                 contact.Contact_Address = model.Contact_Address;
                 _db.SP_Contact.Add(contact);
+                _db.Configuration.ValidateOnSaveEnabled = false;
                 _db.SaveChanges();
                 return Content("SUCCESS");
 
