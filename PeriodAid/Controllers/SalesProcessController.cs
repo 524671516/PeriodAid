@@ -290,27 +290,28 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-
+        [HttpPost]
         public ActionResult DeleteClientInfo(int ContactId) {
-            var Contant = _db.SP_Contact.SingleOrDefault(m => m.Id == ContactId && m.Contact_Type != -1);
-            var ContantCount = from m in _db.SP_Contact
-                               where m.Client_Id == Contant.Client_Id && m.Contact_Type != -1
+            var Contact = _db.SP_Contact.AsNoTracking().SingleOrDefault(m => m.Id == ContactId);
+            var ContactCount = from m in _db.SP_Contact
+                               where m.Client_Id == Contact.Client_Id && m.Contact_Type != -1
                                select m;
+            var Contactcount = ContactCount.Count();
             SP_Contact contact = new SP_Contact();
-            contact.Id = Contant.Id;
-            contact.Contact_Name = Contant.Contact_Name;
-            contact.Contact_Mobile = Contant.Contact_Mobile;
-            contact.Contact_Address = Contant.Contact_Address;
-            contact.Client_Id = Contant.Client_Id;
+            contact.Id = Contact.Id;
+            contact.Contact_Name = Contact.Contact_Name;
+            contact.Contact_Mobile = Contact.Contact_Mobile;
+            contact.Contact_Address = Contact.Contact_Address;
+            contact.Client_Id = Contact.Client_Id;
             contact.Contact_Type = -1;
             if (TryUpdateModel(contact))
             {
                 _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
                 _db.SaveChanges();
             }
-            if (ContantCount.Count() == 1)
+            if (Contactcount == 1)
             {
-                var Client = _db.SP_Client.SingleOrDefault(m => m.Id == Contant.Client_Id);
+                var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == Contact.Client_Id);
                 SP_Client client = new SP_Client();
                 client.Id = Client.Id;
                 client.Client_Name = Client.Client_Name;
@@ -323,7 +324,7 @@ namespace PeriodAid.Controllers
                     _db.SaveChanges();
                 }
             }
-            return View();
+            return Json(new { result = "SUCCESS" });
         }
     }
 }

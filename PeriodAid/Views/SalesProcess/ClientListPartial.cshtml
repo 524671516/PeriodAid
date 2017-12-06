@@ -89,12 +89,23 @@
         $(".delete-client").click(function () {
             $.ajax({
                 url: '/SalesProcess/DeleteClientInfo',
+                type:"post",
                 data: {
                     ContactId: $(this).attr('data-eid'),
                 }, success: function (data) {
                     alert("信息删除成功！");
-                    $('#modal-content').html(data)
-                    $("#myModal").modal('show')
+                    $.ajax({
+                        url: "/SalesProcess/ClientListPartial",
+                        data: {
+                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                            page: 1,
+                            query: $("#client-query").val(),
+                            plattformType: getUrlParam('plattformType')
+                        },
+                        success: function (data) {
+                            $("#client_list_content").html(data)
+                        }
+                    });
                 }
             })
         })
