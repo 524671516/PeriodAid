@@ -187,9 +187,9 @@ namespace System.Web.Mvc
             switch (status)
             {
                 case -1:
-                    return "待开发";
+                    return "解约";
                 case 0:
-                    return "正常";
+                    return "待开发";
                 case 1:
                     return "活跃";
                 default:

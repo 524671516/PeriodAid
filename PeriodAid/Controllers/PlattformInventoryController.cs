@@ -800,7 +800,7 @@ namespace PeriodAid.Controllers
                             select m.SalesRecord_Date).FirstOrDefault();
             ViewBag.DataDate = DataDate;
             var storage = from m in _db.SS_Storage
-                          where m.Plattform_Id == plattformId
+                          where m.Plattform_Id == plattformId && m.Storage_Type == 1
                           select m;
             ViewBag.storage = storage;
             return View();
@@ -813,7 +813,7 @@ namespace PeriodAid.Controllers
             {
                 var SalesRecord = from m in _db.SS_SalesRecord
                                   where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.SS_Storage.SS_Plattform.Id == plattformId
-                                  && m.SS_Product.Product_Type>=0
+                                  && m.SS_Product.Product_Type>=0 && m.SS_Storage.Storage_Type == 1
                                   group m by m.SS_Product into g
                                   select new Product_SummaryViewModel
                                   {
@@ -828,7 +828,7 @@ namespace PeriodAid.Controllers
             {
                 var SalesRecord = from m in _db.SS_SalesRecord
                                   where m.SalesRecord_Date >= start && m.SalesRecord_Date <= end && m.Storage_Id == Storage
-                                  && m.SS_Product.Product_Type >= 0
+                                  && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
                                   group m by m.SS_Product into g
                                   select new Product_SummaryViewModel
                                   {

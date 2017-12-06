@@ -77,7 +77,7 @@
             $.ajax({
                 url: '/SalesProcess/EditClientInfo',
                 data: {
-                    clientId: $(this).attr('data-val'),
+                    contactId: $(this).attr('data-val'),
                 },
                 success: function (data) {
                     $('#modal-content').html(data)
