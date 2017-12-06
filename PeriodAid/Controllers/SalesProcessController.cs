@@ -232,6 +232,7 @@ namespace PeriodAid.Controllers
                 contact.Contact_Name = model.Contact_Name;
                 contact.Contact_Mobile = model.Contact_Mobile;
                 contact.Contact_Address = model.Contact_Address;
+                contact.Contact_Type = model.Contact_Type;
                 _db.SP_Contact.Add(contact);
                 _db.Configuration.ValidateOnSaveEnabled = false;
                 _db.SaveChanges();
@@ -281,6 +282,41 @@ namespace PeriodAid.Controllers
                 }
             }
             return Json(new { result = "FAIL" });
+        }
+
+        public ActionResult DeleteClientInfo(int ContactId) {
+            var Contant = _db.SP_Contact.SingleOrDefault(m => m.Id == ContactId && m.Contact_Type != -1);
+            var ContantCount = from m in _db.SP_Contact
+                               where m.Client_Id == Contant.Client_Id && m.Contact_Type != -1
+                               select m;
+            SP_Contact contact = new SP_Contact();
+            contact.Id = Contant.Id;
+            contact.Contact_Name = Contant.Contact_Name;
+            contact.Contact_Mobile = Contant.Contact_Mobile;
+            contact.Contact_Address = Contant.Contact_Address;
+            contact.Client_Id = Contant.Client_Id;
+            contact.Contact_Type = -1;
+            if (TryUpdateModel(contact))
+            {
+                _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+            }
+            if (ContantCount.Count() == 1)
+            {
+                var Client = _db.SP_Client.SingleOrDefault(m => m.Id == Contant.Client_Id);
+                SP_Client client = new SP_Client();
+                client.Id = Client.Id;
+                client.Client_Name = Client.Client_Name;
+                client.Plattform_Id = Client.Plattform_Id;
+                client.Seller_Id = Client.Seller_Id;
+                client.Client_Type = -1;
+                if (TryUpdateModel(client))
+                {
+                    _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+            }
+            return View();
         }
     }
 }
