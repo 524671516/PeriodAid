@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>库存管理系统</title>
+    <title>销售管理系统</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
@@ -16,11 +16,11 @@
     <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
-    @Styles.Render("~/Content/css")    
-    @RenderSection("header", required: false)   
+    @Styles.Render("~/Content/css")
+    @RenderSection("header", required: false)
 </head>
 <body>
-    @RenderSection("menu", required:false)
+    @RenderSection("menu", required: false)
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -69,20 +69,15 @@
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    京东 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
+                                    线上 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li> 
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=1"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>  
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=1"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/EventList?plattformId=1"><i class="fa fa-tags"></i>&nbsp;&nbsp;活动列表</a></li> 
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=1"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传销售统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Index"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;上传下载分仓单</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/JD_Traffic?plattformId=1"><i class="fa fa-arrow-down"></i>&nbsp;&nbsp;上传下载渠道统计</a></li>
+                                    <li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
+                                    <li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ClientList?plattformType=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;客户信息</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -91,17 +86,14 @@
                         <div class="panel-heading" role="tab" id="headingTwo">
                             <h4 class="panel-title">
                                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    天猫超市 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
+                                    线下 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseTwo" class="collapse in" role="tabpanel" aria-labelledby="headingTwo">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=2"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=2"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=2"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/EventList?plattformId=2"><i class="fa fa-tags"></i>&nbsp;&nbsp;活动列表</a></li>                
+                                    <li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -132,5 +124,6 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
 
 

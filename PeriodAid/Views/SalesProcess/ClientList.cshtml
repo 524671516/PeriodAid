@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "ClientList";
+    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+}
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>客户信息：</label>
+            <input class="form-control input-sm offline-search-inline" id="client-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="client-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<h2>客户列表</h2>
+<a class="btn btn-info btn-sm" id="add-client" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增客户信息</a>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="client-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
+    @foreach (var list in ViewBag.trafficName)
+    {
+        <li role="presentation" class="client-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="@list.Id" class="plattform-btn" style="cursor:pointer">@list.Plattform_Name</a></li>
+    }
+</ul>
+<div id="client_list_content"></div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/SalesProcess/ClientListPartial",
+                data: {
+                    plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                    page: 1,
+                    query: $("#client-query").val(),
+                    plattformType: getUrlParam('plattformType')
+                },
+                success: function (data) {
+                    $("#client_list_content").html(data)
+                }
+            });
+        })
+        //搜索
+        $("#client-search").click(function () {
+            $.ajax({
+                url: "/SalesProcess/ClientListPartial",
+                data: {
+                    plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                    page: 1,
+                    query: $("#client-query").val(),
+                    plattformType: getUrlParam('plattformType')
+                },
+                success: function (data) {
+                    $("#client_list_content").html(data)
+                }
+            })
+        });
+        // 换平台
+        $(".plattform-btn").on("click", function () {
+            $.ajax({
+                url: "/SalesProcess/ClientListPartial",
+                data: {
+                    plattformId: $(this).attr("data-id"),
+                    page: 1,
+                    query: $("#client-query").val(),
+                    plattformType: getUrlParam('plattformType')
+                },
+                success: function (data) {
+                    $("#client_list_content").html(data)
+                    
+                }
+            })
+        })
+        //新增
+        $("#add-client").on("click", function () {
+            $.ajax({
+                url: '/SalesProcess/AddClientPartial',
+                data: {
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+    </script>
+    }

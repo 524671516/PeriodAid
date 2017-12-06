@@ -1156,6 +1156,15 @@
     <Content Include="Views\PlattformInventory\TrafficListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\SumTrafficListPartial.cshtml" />
     <Content Include="Views\PlattformInventory\AddTrafficSource.cshtml" />
+    <Content Include="Views\Shared\_SalesProcessLayout.cshtml" />
+    <Content Include="Views\SalesProcess\Index.cshtml" />
+    <Content Include="Views\SalesProcess\ProductList.cshtml" />
+    <Content Include="Views\SalesProcess\ProductListPartial.cshtml" />
+    <Content Include="Views\SalesProcess\AddProductPartial.cshtml" />
+    <Content Include="Views\SalesProcess\EditProductInfo.cshtml" />
+    <Content Include="Views\SalesProcess\ClientList.cshtml" />
+    <Content Include="Views\SalesProcess\ClientListPartial.cshtml" />
+    <Content Include="Views\SalesProcess\AddClientPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
