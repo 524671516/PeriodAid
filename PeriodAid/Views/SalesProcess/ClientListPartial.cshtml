@@ -1,46 +1,28 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Contact>
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Client>
 @using PagedList.Mvc;
 <div>
-    <table class="table">
-        <tr>
-            <th>
-                客户名称
-            </th>
-            <th>
-                客户状态
-            </th>
-            <th>
-                联系人名称
-            </th>
-            <th>
-                联系人电话
-            </th>
-            <th>
-                邮寄地址
-            </th>
-            <th>
-                负责人
-            </th>
+    <table class="table text-center">
+        <tr >
+            <th class="text-center">客户名称</th>
+            <th class="text-center">客户状态</th>
+            <th class="text-center">负责人</th>
             <th></th>
         </tr>
         @foreach (var item in Model)
         {
-            if (item.Contact_Type != -1)
+            if (item.Client_Type != -1)
             {
                 <tr>
-                    <td>@item.SP_Client.Client_Name</td>
-                    <td>@Html.PlattformTypeStatus(item.SP_Client.Client_Type)</td>
-                    <td>@item.Contact_Name</td>
-                    <td>@item.Contact_Mobile</td>
-                    <td>@item.Contact_Address</td>
-                    <td>@item.SP_Client.SP_Seller.Seller_Name</td>
+                    <td>@item.Client_Name</td>
+                    <td>@Html.PlattformTypeStatus(item.Client_Type)</td>
+                    <td>@item.SP_Seller.Seller_Name</td>
                     <td>
-                        <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;&nbsp;|
-                        <a class="delete-client" href="#" style="color:red;" data-eid="@item.Id">删除记录</a>
+                        <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                        <a class="delete-client" href="#" style="color:red;cursor:pointer" data-eid="@item.Id">删除记录</a>&nbsp;|&nbsp;
+                        <a style="cursor:pointer">联系人信息</a>
                     </td>
                 </tr>
             }
-            
         }
     </table>
     <div class="text-right">
@@ -67,17 +49,18 @@
                     plattformType: getUrlParam('plattformType')
                 },
                 success: function (data) {
-                    $("#product_list_content").html(data);
+                    $("#client_list_content").html(data)
                 }
             });
             return false;
         });
         // 编辑
         $('.select-a').click(function () {
+            console.log($(this).attr('data-val'))
             $.ajax({
                 url: '/SalesProcess/EditClientInfo',
                 data: {
-                    contactId: $(this).attr('data-val'),
+                    clientId: $(this).attr('data-val'),
                 },
                 success: function (data) {
                     $('#modal-content').html(data)
@@ -86,28 +69,44 @@
                 }
             })
         })
-        $(".delete-client").click(function () {
-            $.ajax({
-                url: '/SalesProcess/DeleteClientInfo',
-                type:"post",
-                data: {
-                    ContactId: $(this).attr('data-eid'),
-                }, success: function (data) {
-                    alert("信息删除成功！");
+        // 删除
+        $(".delete-client").on("click", function () {
+            var C_id = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+                if (isConfirm) {
                     $.ajax({
-                        url: "/SalesProcess/ClientListPartial",
+                        url: "/SalesProcess/DeleteClient",
+                        type: "post",
                         data: {
-                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
-                            page: 1,
-                            query: $("#client-query").val(),
-                            plattformType: getUrlParam('plattformType')
+                            clientId: C_id,
                         },
                         success: function (data) {
-                            $("#client_list_content").html(data)
+                            if (data.result == "SUCCESS") {
+                                setTimeout(function () {
+                                    $.ajax({
+                                        url: "/SalesProcess/ClientListPartial",
+                                        data: {
+                                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                                            page: 1,
+                                            query: $("#client-query").val(),
+                                            plattformType: getUrlParam('plattformType')
+                                        },
+                                        success: function (data) {
+                                            $("#client_list_content").html(data)
+                                            $('.modal-backdrop.in').remove()
+                                            $('body').removeClass('modal-open')
+                                        }
+                                    });
+                                    alert("删除成功")
+                                }, 1000);
+                            } else if (data.result == "FAIL") {
+                                alert("删除失败", "", function () {
+                                }, { type: 'error' });
+                            }
                         }
-                    });
+                    })
                 }
-            })
+            });
         })
     })
 </script>

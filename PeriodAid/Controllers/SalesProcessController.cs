@@ -148,19 +148,19 @@ namespace PeriodAid.Controllers
             {
                 if (query != "")
                 {
-                    var customer = (from m in _db.SP_Contact
-                                    where m.SP_Client.SP_Plattform.Plattform_Type == plattformType
+                    var customer = (from m in _db.SP_Client
+                                    where m.SP_Plattform.Plattform_Type == plattformType
                                     select m);
                     var SearchResult = (from m in customer
-                                        where m.SP_Client.Client_Name.Contains(query) || m.Contact_Name.Contains(query) || m.SP_Client.SP_Seller.Seller_Name.Contains(query)
+                                        where m.Client_Name.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
                 else
                 {
-                    var SearchResult = (from m in _db.SP_Contact
-                                        where m.SP_Client.SP_Plattform.Plattform_Type == plattformType
+                    var SearchResult = (from m in _db.SP_Client
+                                        where m.SP_Plattform.Plattform_Type == plattformType
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -170,19 +170,19 @@ namespace PeriodAid.Controllers
             {
                 if (query != "")
                 {
-                    var customer = (from m in _db.SP_Contact
-                                    where m.SP_Client.SP_Plattform.Plattform_Type == plattformType && m.SP_Client.Plattform_Id == plattformId
+                    var customer = (from m in _db.SP_Client
+                                    where m.SP_Plattform.Plattform_Type == plattformType && m.Plattform_Id == plattformId
                                     select m);
                     var SearchResult = (from m in customer
-                                        where m.SP_Client.Client_Name.Contains(query) || m.Contact_Name.Contains(query)|| m.SP_Client.SP_Seller.Seller_Name.Contains(query)
+                                        where m.Client_Name.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
                 else
                 {
-                    var SearchResult = (from m in _db.SP_Contact
-                                        where m.SP_Client.SP_Plattform.Plattform_Type == plattformType && m.SP_Client.Plattform_Id == plattformId
+                    var SearchResult = (from m in _db.SP_Client
+                                        where m.SP_Plattform.Plattform_Type == plattformType && m.Plattform_Id == plattformId
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -198,6 +198,11 @@ namespace PeriodAid.Controllers
             itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
+            //List<SelectListItem> contacttypelist = new List<SelectListItem>();
+            //contacttypelist.Add(new SelectListItem() { Text = "正常", Value = "0" });
+            //contacttypelist.Add(new SelectListItem() { Text = "离职", Value = "-1" });
+            //ViewBag.ContactTypeList= new SelectList(contacttypelist, "Value", "Text");
+
             List<SelectListItem> plattformlist = new List<SelectListItem>();
             plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
             plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
@@ -208,57 +213,23 @@ namespace PeriodAid.Controllers
             sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
             sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
-
-            List<SelectListItem> contacttypelist = new List<SelectListItem>();
-            contacttypelist.Add(new SelectListItem() { Text = "正常", Value = "0" });
-            contacttypelist.Add(new SelectListItem() { Text = "离职", Value = "-1" });
-            ViewBag.ContactTypeList= new SelectList(contacttypelist, "Value", "Text");
             return PartialView();
         }
 
         [HttpPost]
-        public ActionResult AddClientPartial(SP_Contact model, FormCollection form)
+        public ActionResult AddClientPartial(SP_Client model, FormCollection form)
         {
-            ModelState.Remove("Contact_Name");
-            ModelState.Remove("Contact_Mobile");
-            ModelState.Remove("Contact_Address");
-            ModelState.Remove("Contact_Type");
-            var contact = new SP_Contact();
+            
             if (ModelState.IsValid)
             {
-                var clientname = _db.SP_Client.SingleOrDefault(m => m.Client_Name == model.SP_Client.Client_Name);
-                if (clientname != null)
-                {
-                    var name = new SP_Contact();
-                    if (TryUpdateModel(name))
-                    {
-                        _db.Entry(name).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                    }
-                    contact.Client_Id = clientname.Id;
-
-                }
-                else
-                {
-                    var client = new SP_Client();
-                    client.Client_Name = model.SP_Client.Client_Name;
-                    client.Client_Type = model.SP_Client.Client_Type;
-                    client.Plattform_Id = model.SP_Client.Plattform_Id;
-                    client.Seller_Id = model.SP_Client.Seller_Id;
-                    _db.SP_Client.Add(client);
-                    _db.SaveChanges();
-                    var clientId = _db.SP_Client.SingleOrDefault(m => m.Id == client.Id);
-                    contact.Client_Id = clientId.Id; ;
-                }
-                contact.Contact_Name = model.Contact_Name;
-                contact.Contact_Mobile = model.Contact_Mobile;
-                contact.Contact_Address = model.Contact_Address;
-                contact.Contact_Type = model.Contact_Type;
-                _db.SP_Contact.Add(contact);
-                _db.Configuration.ValidateOnSaveEnabled = false;
+                var client = new SP_Client();
+                client.Client_Name = model.Client_Name;
+                client.Client_Type = model.Client_Type;
+                client.Plattform_Id = model.Plattform_Id;
+                client.Seller_Id = model.Seller_Id;
+                _db.SP_Client.Add(client);
                 _db.SaveChanges();
                 return Content("SUCCESS");
-
             }
             else
             {
@@ -267,25 +238,37 @@ namespace PeriodAid.Controllers
             //return Content("ERROR1");
         }
 
-        public ActionResult EditClientInfo(int contactId)
+        public ActionResult EditClientInfo(int clientId)
         {
-            var item = _db.SP_Contact.SingleOrDefault(m => m.Id == contactId);
+            var item = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
             List<SelectListItem> sellerlist = new List<SelectListItem>();
             sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
             sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
+
+            List<SelectListItem> itemlist = new List<SelectListItem>();
+            itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
+            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
+            itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
+            ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
+
+            List<SelectListItem> plattformlist = new List<SelectListItem>();
+            plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
+            plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
+            plattformlist.Add(new SelectListItem() { Text = "代发货", Value = "3" });
+            ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
             return PartialView(item);
         }
 
         [HttpPost]
-        public ActionResult EditClientInfo(SP_Contact model)
+        public ActionResult EditClientInfo(SP_Client model)
         {
             if (ModelState.IsValid)
             {
-                SP_Contact contact = new SP_Contact();
-                if (TryUpdateModel(contact))
+                SP_Client client = new SP_Client();
+                if (TryUpdateModel(client))
                 {
-                    _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+                    _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
                 }
@@ -293,40 +276,23 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
         [HttpPost]
-        public ActionResult DeleteClientInfo(int ContactId) {
-            var Contact = _db.SP_Contact.AsNoTracking().SingleOrDefault(m => m.Id == ContactId);
-            var ContactCount = from m in _db.SP_Contact
-                               where m.Client_Id == Contact.Client_Id && m.Contact_Type != -1
-                               select m;
-            var Contactcount = ContactCount.Count();
-            SP_Contact contact = new SP_Contact();
-            contact.Id = Contact.Id;
-            contact.Contact_Name = Contact.Contact_Name;
-            contact.Contact_Mobile = Contact.Contact_Mobile;
-            contact.Contact_Address = Contact.Contact_Address;
-            contact.Client_Id = Contact.Client_Id;
-            contact.Contact_Type = -1;
-            if (TryUpdateModel(contact))
+        public ActionResult DeleteClient(int clientId) {
+            var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == clientId);
+            SP_Client client = new SP_Client();
+            client.Id = Client.Id;
+            client.Client_Name = Client.Client_Name;
+            client.Plattform_Id = Client.Plattform_Id;
+            client.Seller_Id = Client.Seller_Id;
+            client.Client_Type = -1;
+            if (TryUpdateModel(client))
             {
-                _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+                _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
                 _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
             }
-            if (Contactcount == 1)
-            {
-                var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == Contact.Client_Id);
-                SP_Client client = new SP_Client();
-                client.Id = Client.Id;
-                client.Client_Name = Client.Client_Name;
-                client.Plattform_Id = Client.Plattform_Id;
-                client.Seller_Id = Client.Seller_Id;
-                client.Client_Type = -1;
-                if (TryUpdateModel(client))
-                {
-                    _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
-                }
-            }
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "FALL" });
+
         }
+
     }
 }

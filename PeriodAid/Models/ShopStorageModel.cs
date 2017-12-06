@@ -259,7 +259,7 @@
     {
         public int Id { get; set; }
 
-        public DateTime Update { get; set; }
+        public DateTime Up_Date { get; set; }
 
         public int Product_Flow { get; set; }
 
