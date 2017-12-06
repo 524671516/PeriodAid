@@ -208,6 +208,10 @@ namespace PeriodAid.Controllers
             sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
             sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
+
+
+
+            ViewBag.ContactTypeList
             return PartialView();
         }
 
@@ -217,6 +221,7 @@ namespace PeriodAid.Controllers
             ModelState.Remove("Contact_Name");
             ModelState.Remove("Contact_Mobile");
             ModelState.Remove("Contact_Address");
+            ModelState.Remove("Contact_Type");
             if (ModelState.IsValid)
             {
                 var client = new SP_Client();
@@ -226,7 +231,7 @@ namespace PeriodAid.Controllers
                 client.Seller_Id = model.SP_Client.Seller_Id;
                 _db.SP_Client.Add(client);
                 _db.SaveChanges();
-                var clientId = _db.SP_Client.SingleOrDefault( m => m.Client_Name == client.Client_Name);
+                var clientId = _db.SP_Client.SingleOrDefault( m => m.Id == client.Id);
                 var contact = new SP_Contact();
                 contact.Client_Id = clientId.Id;
                 contact.Contact_Name = model.Contact_Name;
