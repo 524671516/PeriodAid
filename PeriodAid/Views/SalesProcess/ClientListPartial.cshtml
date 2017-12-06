@@ -33,7 +33,8 @@
                 <td>@item.Contact_Address</td>
                 <td>@item.SP_Client.SP_Seller.Seller_Name</td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;&nbsp;|
+                    <a class="delete-client" href="#" style="color:red;" data-eid="@item.Id">删除记录</a>
                 </td>
             </tr>
             
@@ -68,5 +69,20 @@
             });
             return false;
         });
+        // 编辑
+        $('.select-a').click(function () {
+            console.log($(this).attr('data-val'))
+            $.ajax({
+                url: '/SalesProcess/EditClientInfo',
+                data: {
+                    clientId: $(this).attr('data-val'),
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+
+                }
+            })
+        })
     })
 </script>

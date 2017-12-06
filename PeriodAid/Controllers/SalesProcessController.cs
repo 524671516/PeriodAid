@@ -233,6 +233,7 @@ namespace PeriodAid.Controllers
                 contact.Contact_Mobile = model.Contact_Mobile;
                 contact.Contact_Address = model.Contact_Address;
                 _db.SP_Contact.Add(contact);
+                _db.Configuration.ValidateOnSaveEnabled = false;
                 _db.SaveChanges();
                 return Content("SUCCESS");
 
@@ -242,6 +243,51 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
             //return Content("ERROR1");
+        }
+
+        public ActionResult EditClientInfo(int clientId)
+        {
+            var item = _db.SP_Contact.SingleOrDefault(m => m.Id == clientId);
+            List<SelectListItem> itemlist = new List<SelectListItem>();
+            itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
+            itemlist.Add(new SelectListItem() { Text = "正常", Value = "0" });
+            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "-1" });
+            ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
+
+            List<SelectListItem> plattformlist = new List<SelectListItem>();
+            plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
+            plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
+            plattformlist.Add(new SelectListItem() { Text = "代发货", Value = "3" });
+            ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
+
+            List<SelectListItem> sellerlist = new List<SelectListItem>();
+            sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
+            sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
+            ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
+            return PartialView(item);
+        }
+
+        [HttpPost]
+        public ActionResult EditClientInfo(SP_Contact model)
+        {
+            if (ModelState.IsValid)
+            {
+                SP_Client client = new SP_Client();
+                if (TryUpdateModel(client))
+                {
+                    _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                SP_Contact item = new SP_Contact();
+                if (TryUpdateModel(item))
+                {
+                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FAIL" });
         }
     }
 }

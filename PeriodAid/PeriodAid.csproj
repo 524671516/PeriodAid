@@ -1165,13 +1165,13 @@
     <Content Include="Views\SalesProcess\ClientList.cshtml" />
     <Content Include="Views\SalesProcess\ClientListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddClientPartial.cshtml" />
+    <Content Include="Views\SalesProcess\EditClientInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
-    <Folder Include="Views\SalesProcess\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
