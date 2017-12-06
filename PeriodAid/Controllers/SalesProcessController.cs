@@ -217,18 +217,34 @@ namespace PeriodAid.Controllers
             ModelState.Remove("Contact_Name");
             ModelState.Remove("Contact_Mobile");
             ModelState.Remove("Contact_Address");
+            ModelState.Remove("Contact_Type");
+            var contact = new SP_Contact();
             if (ModelState.IsValid)
             {
-                var client = new SP_Client();
-                client.Client_Name = model.SP_Client.Client_Name;
-                client.Client_Type = model.SP_Client.Client_Type;
-                client.Plattform_Id = model.SP_Client.Plattform_Id;
-                client.Seller_Id = model.SP_Client.Seller_Id;
-                _db.SP_Client.Add(client);
-                _db.SaveChanges();
-                var clientId = _db.SP_Client.SingleOrDefault( m => m.Client_Name == client.Client_Name);
-                var contact = new SP_Contact();
-                contact.Client_Id = clientId.Id;
+                var clientname = _db.SP_Client.SingleOrDefault(m => m.Client_Name == model.SP_Client.Client_Name);
+                if(clientname != null)
+                {
+                    var name = new SP_Contact();
+                    if (TryUpdateModel(name))
+                    {
+                        _db.Entry(name).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                    }
+                    contact.Client_Id = clientname.Id;
+                   
+                }
+                else
+                {
+                    var client = new SP_Client();
+                    client.Client_Name = model.SP_Client.Client_Name;
+                    client.Client_Type = model.SP_Client.Client_Type;
+                    client.Plattform_Id = model.SP_Client.Plattform_Id;
+                    client.Seller_Id = model.SP_Client.Seller_Id;
+                    _db.SP_Client.Add(client);
+                    _db.SaveChanges();
+                    var clientId = _db.SP_Client.SingleOrDefault(m => m.Id == client.Id);
+                    contact.Client_Id = clientId.Id;;
+                }
                 contact.Contact_Name = model.Contact_Name;
                 contact.Contact_Mobile = model.Contact_Mobile;
                 contact.Contact_Address = model.Contact_Address;
