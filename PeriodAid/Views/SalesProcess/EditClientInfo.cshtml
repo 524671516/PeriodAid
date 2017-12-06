@@ -1,9 +1,12 @@
 ﻿@model PeriodAid.Models.SP_Contact
+<link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/prettify.css" rel="stylesheet" />
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改客户信息</h2>
 </div>
 @Html.HiddenFor(model => model.SP_Client.Client_Name)
+@Html.HiddenFor(model => model.Client_Id)
 <div class="modal-body">
     @using (Html.BeginForm("EditClientInfo", "SalesProcess", FormMethod.Post, new { @id = "client-form" }))
     {
@@ -31,13 +34,6 @@
                     @Html.EditorFor(model => model.SP_Client.Plattform_Id, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.SP_Client.Plattform_Id, "", new { @class = "text-danger" })
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-md-2">负责人</label>
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.SP_Client.Seller_Id, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.SP_Client.Seller_Id, "", new { @class = "text-danger" })
-                </div>
             </div>*@
             <div class="form-group">
                 <label class="control-label col-md-2">联系人姓名</label>
@@ -61,9 +57,17 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-md-2">平台</label>
+                <label class="control-label col-md-2">负责人</label>
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Client_Id, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.DropDownListFor(model => model.SP_Client.Seller_Id, ViewBag.SellerName as SelectList, new { @class = "form-control", @required = "required" })
+                    @Html.ValidationMessageFor(model => model.SP_Client.Seller_Id, " ", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">客户名称</label>
+                <div class="col-md-10">
+                    <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" readonly="readonly" />
+                    <input type="hidden" id="ClientId" name="Client_Id" />
                     @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -74,41 +78,42 @@
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
-
-
         </div>
     }  
 </div>
-
 <script>
-    $('#save-btn').click(function () {
-        $("#client-form").ajaxSubmit({
-            url: '/SalesProcess/EditClientInfo',
-            type: 'post',
-            success: function (data) {
-                if (data.result == "SUCCESS") {
-                    alert('保存成功')
-                    $("#myModal").modal('hide');
-                    $.ajax({
-                        url: "/SalesProcess/ClientListPartial",
-                        data: {
-                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
-                            page: 1,
-                            query: $("#client-query").val(),
-                            plattformType: getUrlParam('plattformType')
-                        },
-                        success: function (data) {
-                            $("#client_list_content").html(data);
-                            $('.modal-backdrop.in').remove()
-                            $('body').removeClass('modal-open')
-                        }
-                    });
+    $(function () {
+        $("#client-input").val($("#SP_Client_Client_Name").val())
+        $("#ClientId").val($("#Client_Id").val())
+        $('#save-btn').click(function () {
+            $("#client-form").ajaxSubmit({
+                url: '/SalesProcess/EditClientInfo',
+                type: 'post',
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert('保存成功')
+                        $("#myModal").modal('hide');
+                        $.ajax({
+                            url: "/SalesProcess/ClientListPartial",
+                            data: {
+                                plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                                page: 1,
+                                query: $("#client-query").val(),
+                                plattformType: getUrlParam('plattformType')
+                            },
+                            success: function (data) {
+                                $("#client_list_content").html(data);
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
 
-                } else {
-                    errorAlert('保存失败')
+                    } else {
+                        errorAlert('保存失败')
+                    }
                 }
-            }
+            })
+            return false;
         })
-        return false;
     })
 </script>
