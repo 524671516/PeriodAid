@@ -209,16 +209,27 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddClientPartial(SP_Contact model, FormCollection form)
         {
+            ModelState.Remove("SP_Client.Client_Type");
+            ModelState.Remove("Contact_Name");
+            ModelState.Remove("Contact_Mobile");
+            ModelState.Remove("Contact_Address");
+            ModelState.Remove("SP_Client.SP_Seller.Seller_Type");
             if (ModelState.IsValid)
             {
                 var item = new SP_Contact();
-                item.SP_Client.Client_Name = model.SP_Client.Client_Name;
-                item.SP_Client.Client_Type = model.SP_Client.Client_Type;
+                var client = new SP_Client();
+                var seller = new SP_Seller();
+                client.Client_Name = model.SP_Client.Client_Name;
+                client.Client_Type = model.SP_Client.Client_Type;
+                client.Plattform_Id=model.
                 item.Contact_Name = model.Contact_Name;
                 item.Contact_Mobile = model.Contact_Mobile;
                 item.Contact_Address = model.Contact_Address;
-                item.SP_Client.SP_Seller.Seller_Type = model.SP_Client.SP_Seller.Seller_Type;
+                item.Client_Id = model.Client_Id;
+                seller.Seller_Type = model.SP_Client.SP_Seller.Seller_Type;
                 _db.SP_Contact.Add(item);
+                _db.SP_Client.Add(client);
+                _db.SP_Seller.Add(seller);
                 _db.SaveChanges();
                 return Content("SUCCESS");
 
