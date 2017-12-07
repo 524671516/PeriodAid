@@ -336,7 +336,7 @@ namespace PeriodAid.Controllers
                 contact.Contact_Name = model.Contact_Name;
                 contact.Contact_Mobile = model.Contact_Mobile;
                 contact.Contact_Address = model.Contact_Address;
-                contact.Contact_Type = 1;
+                contact.Contact_Type = 0;
                 contact.Client_Id = model.Client_Id;
                 _db.SP_Contact.Add(contact);
                 _db.SaveChanges();
@@ -352,6 +352,10 @@ namespace PeriodAid.Controllers
         public ActionResult EditContactInfo(int contactId)
         {
             var item = _db.SP_Contact.SingleOrDefault(m => m.Id == contactId);
+            var contact = from m in _db.SP_Contact
+                         where m.Id == contactId
+                         select m;
+            ViewBag.ClientName = contact;
             return PartialView(item);
         }
         [HttpPost]
@@ -368,6 +372,26 @@ namespace PeriodAid.Controllers
                 }
             }
             return Json(new { result = "FAIL" });
+        }
+        [HttpPost]
+        public ActionResult DeleteContact(int contactId)
+        {
+            var Contact = _db.SP_Contact.AsNoTracking().SingleOrDefault(m => m.Id == contactId);
+            SP_Contact contact = new SP_Contact();
+            contact.Id = Contact.Id;
+            contact.Contact_Name = Contact.Contact_Name;
+            contact.Contact_Mobile = Contact.Contact_Mobile;
+            contact.Contact_Address = Contact.Contact_Address;
+            contact.Client_Id = Contact.Client_Id;
+            contact.Contact_Type = -1;
+            if (TryUpdateModel(contact))
+            {
+                _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FALL" });
+
         }
     }
 }
