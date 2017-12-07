@@ -48,8 +48,5 @@ namespace PeriodAid.DAL
         {
             client.DeleteObject("offlinesales", filename);
         }
-
     }
-    
-
 }

@@ -23,7 +23,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
+        /*
         public ActionResult ProductList(int plattformId)
         {
             ViewBag.PlattformId = plattformId;
@@ -161,6 +161,6 @@ namespace PeriodAid.Controllers
         //        }
         //    }
         //    return Json(new { result = "FAIL" });
-        //}
+        //}*/
     }
 }
