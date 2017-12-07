@@ -66,7 +66,6 @@ namespace PeriodAid.Controllers
         {
             return PartialView();
         }
-
         [HttpPost]
         public ActionResult AddProductPartial(SP_Product model, FormCollection form)
         {
@@ -95,7 +94,6 @@ namespace PeriodAid.Controllers
             var item = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
             return PartialView(item);
         }
-
         [HttpPost]
         public ActionResult EditProductInfo(SP_Product model)
         {
@@ -111,7 +109,6 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-
         [HttpPost]
         public ActionResult DeleteProduct(int productId)
         {
@@ -197,12 +194,7 @@ namespace PeriodAid.Controllers
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
             itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
-
-            //List<SelectListItem> contacttypelist = new List<SelectListItem>();
-            //contacttypelist.Add(new SelectListItem() { Text = "正常", Value = "0" });
-            //contacttypelist.Add(new SelectListItem() { Text = "离职", Value = "-1" });
-            //ViewBag.ContactTypeList= new SelectList(contacttypelist, "Value", "Text");
-
+            
             List<SelectListItem> plattformlist = new List<SelectListItem>();
             plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
             plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
@@ -215,7 +207,6 @@ namespace PeriodAid.Controllers
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
             return PartialView();
         }
-
         [HttpPost]
         public ActionResult AddClientPartial(SP_Client model, FormCollection form)
         {
@@ -259,7 +250,6 @@ namespace PeriodAid.Controllers
             ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
             return PartialView(item);
         }
-
         [HttpPost]
         public ActionResult EditClientInfo(SP_Client model)
         {
@@ -294,5 +284,90 @@ namespace PeriodAid.Controllers
 
         }
 
+        public ActionResult ContactList(int clientId)
+        {
+            var client = from m in _db.SP_Client
+                         where m.Id ==  clientId
+                         select m;
+            ViewBag.ClientName = client;
+            return View();
+        }
+
+        public ActionResult ContactListPartial(int clientId,int? page ,string query)
+        {
+            int _page = page ?? 1;
+            if (query != "")
+            {
+                var contact = (from m in _db.SP_Contact
+                               where m.Client_Id == clientId
+                               select m);
+                var SearchResult = (from m in contact
+                                    where m.Contact_Name.Contains(query) || m.Contact_Mobile.Contains(query)
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
+            }
+            else
+            {
+                var SearchResult = (from m in _db.SP_Contact
+                                    where m.Client_Id == clientId
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
+            }
+            
+        }
+
+        public ActionResult AddContactPartial(int clientId)
+        {
+            var client = from m in _db.SP_Client
+                         where m.Id == clientId
+                         select m;
+            ViewBag.ClientName = client;
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddContactPartial(SP_Contact model, FormCollection form)
+        {
+            ModelState.Remove("Contact_Mobile");
+            if (ModelState.IsValid)
+            {
+                var contact = new SP_Contact();
+                contact.Contact_Name = model.Contact_Name;
+                contact.Contact_Mobile = model.Contact_Mobile;
+                contact.Contact_Address = model.Contact_Address;
+                contact.Contact_Type = 1;
+                contact.Client_Id = model.Client_Id;
+                _db.SP_Contact.Add(contact);
+                _db.SaveChanges();
+                return Content("SUCCESS");
+            }
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
+        }
+
+        public ActionResult EditContactInfo(int contactId)
+        {
+            var item = _db.SP_Contact.SingleOrDefault(m => m.Id == contactId);
+            return PartialView(item);
+        }
+        [HttpPost]
+        public ActionResult EditContactInfo(SP_Contact model)
+        {
+            if (ModelState.IsValid)
+            {
+                SP_Contact contact = new SP_Contact();
+                if (TryUpdateModel(contact))
+                {
+                    _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
     }
 }

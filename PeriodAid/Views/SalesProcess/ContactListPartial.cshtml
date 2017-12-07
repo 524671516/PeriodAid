@@ -1,0 +1,45 @@
+﻿@model IEnumerable<PeriodAid.Models.SP_Contact>
+<div>
+    <table class="table">
+        <tr>
+            <th>姓名</th>
+            <th>联系电话</th>
+            <th>邮寄地址</th>
+            <th></th>
+        </tr>
+        @foreach(var list in Model)
+        {
+            <tr>
+                <td>@list.Contact_Name</td>
+                <td>@list.Contact_Mobile</td>
+                <td>@list.Contact_Address</td>
+                <td class="text-center">
+                    <a style="cursor:pointer" data-eid="@list.Id" class="select-contact">编辑</a>&nbsp;|&nbsp;
+                    <a class="delete-contact" style="color:red;cursor:pointer" data-eid="@list.Id">删除</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".select-contact").on("click", function () {
+            $.ajax({
+                url: "/SalesProcess/EditContactInfo",
+                data: {
+                    contactId: $(this).attr("data-eid")
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+    })
+</script>

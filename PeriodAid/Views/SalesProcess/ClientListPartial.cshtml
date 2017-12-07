@@ -19,7 +19,7 @@
                     <td>
                         <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
                         <a class="delete-client" href="#" style="color:red;cursor:pointer" data-eid="@item.Id">删除记录</a>&nbsp;|&nbsp;
-                        <a style="cursor:pointer">联系人信息</a>
+                        <a style="cursor:pointer" class="contact-btn" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
                     </td>
                 </tr>
             }
@@ -107,6 +107,11 @@
                     })
                 }
             });
+        })
+        // 选择联系人
+        $(".contact-btn").on("click", function () {
+            var C_id = $(this).attr("data-val")
+            $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
         })
     })
 </script>
