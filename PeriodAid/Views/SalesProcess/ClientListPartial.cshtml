@@ -1,50 +1,34 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Product>
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Client>
 @using PagedList.Mvc;
 <div>
-    <table class="table">
-        <tr>
-            <th>
-                系统编码
-            </th>
-            <th>
-                产品编码
-            </th>
-            <th>产品名称</th>
-            <th>箱规</th>
-            <th>单价</th>
+    <table class="table text-center">
+        <tr >
+            <th class="text-center">客户名称</th>
+            <th class="text-center">客户状态</th>
+            <th class="text-center">负责人</th>
             <th></th>
         </tr>
-
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.System_Code)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Item_Code)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Item_Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Carton_Spec)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Purchase_Price)
-                </td>
-                <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;&nbsp;|
-                    <a class="delete-product" href="#" style="color:red;" data-eid="@item.Id">删除记录</a>
-                </td>
-            </tr>
+            if (item.Client_Type != -1)
+            {
+                <tr>
+                    <td>@item.Client_Name</td>
+                    <td>@Html.PlattformTypeStatus(item.Client_Type)</td>
+                    <td>@item.SP_Seller.Seller_Name</td>
+                    <td>
+                        <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                        <a class="delete-client" href="#" style="color:red;cursor:pointer" data-eid="@item.Id">删除记录</a>&nbsp;|&nbsp;
+                        <a style="cursor:pointer" class="contact-btn" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
+                    </td>
+                </tr>
+            }
         }
     </table>
     <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("ProductListPartial", new { page }))
+        @Html.PagedListPager(Model, page => Url.Action("ClientListPartial", new { page }))
     </div>
 </div>
-
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="modal-content">
@@ -59,10 +43,13 @@
             $.ajax({
                 url: l,
                 data: {
-                    query: $("#storage-product-query").val()
+                    plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                    page: 1,
+                    query: $("#client-query").val(),
+                    plattformType: getUrlParam('plattformType')
                 },
                 success: function (data) {
-                    $("#product_list_content").html(data);
+                    $("#client_list_content").html(data)
                 }
             });
             return false;
@@ -71,9 +58,9 @@
         $('.select-a').click(function () {
             console.log($(this).attr('data-val'))
             $.ajax({
-                url: '/SalesProcess/EditProductInfo',
+                url: '/SalesProcess/EditClientInfo',
                 data: {
-                    productId: $(this).attr('data-val'),
+                    clientId: $(this).attr('data-val'),
                 },
                 success: function (data) {
                     $('#modal-content').html(data)
@@ -83,27 +70,29 @@
             })
         })
         // 删除
-        $(".delete-product").on("click", function () {
-            var P_id = $(this).attr("data-eid");
+        $(".delete-client").on("click", function () {
+            var C_id = $(this).attr("data-eid");
             confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: "/SalesProcess/DeleteProduct",
+                        url: "/SalesProcess/DeleteClient",
                         type: "post",
                         data: {
-                            productId: P_id,
+                            clientId: C_id,
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
                                 setTimeout(function () {
                                     $.ajax({
-                                        url: "/SalesProcess/ProductListPartial",
+                                        url: "/SalesProcess/ClientListPartial",
                                         data: {
+                                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
                                             page: 1,
-                                            query: $("#storage-product-query").val()
+                                            query: $("#client-query").val(),
+                                            plattformType: getUrlParam('plattformType')
                                         },
                                         success: function (data) {
-                                            $("#product_list_content").html(data);
+                                            $("#client_list_content").html(data)
                                             $('.modal-backdrop.in').remove()
                                             $('body').removeClass('modal-open')
                                         }
@@ -118,6 +107,11 @@
                     })
                 }
             });
+        })
+        // 选择联系人
+        $(".contact-btn").on("click", function () {
+            var C_id = $(this).attr("data-val")
+            $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
         })
     })
 </script>
