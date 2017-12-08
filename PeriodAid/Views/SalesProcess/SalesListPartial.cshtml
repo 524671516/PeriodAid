@@ -20,6 +20,7 @@
                 <td>@sales.System_Address</td>
                 <td>
                     <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
+                    <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价信息</a>
                     <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
                 </td>
             </tr>
@@ -32,3 +33,10 @@
         </div>
     </div>
 </div>
+<script>
+    // 报价信息
+    $(".quoted-info").on("click", function () {
+        var C_id = $(this).attr("data-eid")
+        $(this).attr("href", "/SalesProcess/QuotedList?SalesSystemId=" + C_id)
+    })
+</script>

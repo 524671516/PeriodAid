@@ -1,4 +1,5 @@
-﻿
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Quoted>
+@using PagedList.Mvc;
 @{
     ViewBag.Title = "QuotedList";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
@@ -22,7 +23,7 @@
                 url: "/SalesProcess/QuotedListPartial",
                 data: {
                     query: $("#quoted-query").val(),
-                    clientId: getUrlParam('clientId')
+                    SalesSystemId: getUrlParam('SalesSystemId')
                 },
                 success: function (data) {
                     $("#quoted_list_content").html(data)
@@ -34,7 +35,7 @@
             $.ajax({
                 url: '/SalesProcess/AddQuotedPartial',
                 data: {
-                    clientId: getUrlParam('clientId')
+                    SalesSystemId: getUrlParam('SalesSystemId')
                 },
                 success: function (data) {
                     $('#modal-content').html(data)
@@ -47,7 +48,7 @@
             $.ajax({
                 url: "/SalesProcess/QuotedListPartial",
                 data: {
-                    clientId: getUrlParam('clientId'),
+                    SalesSystemId: getUrlParam('SalesSystemId'),
                     query: $("#quoted-query").val()
                 },
                 success: function (data) {

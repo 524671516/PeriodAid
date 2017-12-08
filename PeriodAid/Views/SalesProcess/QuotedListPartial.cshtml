@@ -1,4 +1,5 @@
-﻿@model IEnumerable<PeriodAid.Models.SP_Quoted>
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Quoted>
+@using PagedList.Mvc;
 <style>
     .btn-xs {
         line-height: 1.4;
@@ -13,6 +14,7 @@
             <th>报价</th>
             <th>报价日期</th>
             <th>备注</th>
+            <th></th>
         </tr>
         @foreach(var item in Model)
         {
@@ -23,9 +25,16 @@
                 <td>@item.Quoted_Price</td>
                 <td>@item.Quoted_Date.ToString("yyyy-MM-dd")</td>
                 <td>@item.Remark</td>
+                <td>
+                    <a data-eid="@item.Id" class="quoted-edit btn btn-xs btn-success" role="button">编辑</a>
+                    <a class="quoted-delete btn btn-xs btn-danger" data-eid="@item.Id" role="button">删除</a>
+                </td>
             </tr>
         }
     </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("QuotedListPartial", new { page }))
+    </div>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -33,3 +42,73 @@
         </div>
     </div>
 </div>
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data: {
+                plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                page: 1,
+                query: $("#client-query").val(),
+                plattformType: getUrlParam('SalesSystemId')
+            },
+            success: function (data) {
+                $("#client_list_content").html(data)
+            }
+        });
+        return false;
+    });
+    //编辑
+    $('.quoted-edit').click(function () {
+        $.ajax({
+            url: '/SalesProcess/EditClientInfo',
+            data: {
+                clientId: $(this).attr('data-val'),
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+
+            }
+        })
+    })
+    // 删除
+    $(".delete-client").on("click", function () {
+        var C_id = $(this).attr("data-eid");
+        confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: "/SalesProcess/DeleteClient",
+                    type: "post",
+                    data: {
+                        clientId: C_id,
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/SalesProcess/ClientListPartial",
+                                data: {
+                                    plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                                    page: 1,
+                                    query: $("#client-query").val(),
+                                    plattformType: getUrlParam('plattformType')
+                                },
+                                success: function (data) {
+                                    $("#client_list_content").html(data)
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
+                                }
+                            });
+                            alert("删除成功")
+                        } else if (data.result == "FAIL") {
+                            alert("删除失败", "", function () {
+                            }, { type: 'error' });
+                        }
+                    }
+                })
+            }
+        });
+    })
+</script>
