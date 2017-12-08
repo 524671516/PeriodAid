@@ -70,7 +70,8 @@
                     $.ajax({
                         url: "/SalesProcess/ProductListPartial",
                         data: {
-                            page: 1,
+                            productType: $(".product-list-li.active").children(".type-btn").attr("data-id"),
+                            query: $("#storage-product-query").val()
                         },
                         success: function (data) {
                             $("#product_list_content").html(data);

@@ -60,6 +60,7 @@
             $.ajax({
                 url: l,
                 data: {
+                    productType: $(".product-list-li.active").children(".type-btn").attr("data-id"),
                     query: $("#storage-product-query").val()
                 },
                 success: function (data) {
@@ -101,6 +102,7 @@
                                         url: "/SalesProcess/ProductListPartial",
                                         data: {
                                             page: 1,
+                                            productType: $(".product-list-li.active").children(".type-btn").attr("data-id"),
                                             query: $("#storage-product-query").val()
                                         },
                                         success: function (data) {
