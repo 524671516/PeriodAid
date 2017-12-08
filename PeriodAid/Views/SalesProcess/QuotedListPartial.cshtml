@@ -1,0 +1,35 @@
+﻿@model IEnumerable<PeriodAid.Models.SP_Quoted>
+<style>
+    .btn-xs {
+        line-height: 1.4;
+    }
+</style>
+<div>
+    <table class="table">
+        <tr>
+            <th>系统编码</th>
+            <th>产品编码</th>
+            <th>产品名称</th>
+            <th>报价</th>
+            <th>报价日期</th>
+            <th>备注</th>
+        </tr>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@item.SP_Product.System_Code</td>
+                <td>@item.SP_Product.Item_Code</td>
+                <td>@item.SP_Product.Item_Name</td>
+                <td>@item.Quoted_Price</td>
+                <td>@item.Quoted_Date.ToString("yyyy-MM-dd")</td>
+                <td>@item.Remark</td>
+            </tr>
+        }
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>

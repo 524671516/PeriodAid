@@ -210,17 +210,25 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddClientPartial(SP_Client model, FormCollection form)
         {
-            
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name);
             if (ModelState.IsValid)
             {
-                var client = new SP_Client();
-                client.Client_Name = model.Client_Name;
-                client.Client_Type = model.Client_Type;
-                client.Plattform_Id = model.Plattform_Id;
-                client.Seller_Id = model.Seller_Id;
-                _db.SP_Client.Add(client);
-                _db.SaveChanges();
-                return Content("SUCCESS");
+                if (Client)
+                {
+                    return Content("FALL");
+                }
+                else
+                {
+                    var client = new SP_Client();
+                    client.Client_Name = model.Client_Name;
+                    client.Client_Type = model.Client_Type;
+                    client.Plattform_Id = model.Plattform_Id;
+                    client.Seller_Id = model.Seller_Id;
+                    _db.SP_Client.Add(client);
+                    _db.SaveChanges();
+                    return Content("SUCCESS");
+                };
+                
             }
             else
             {
@@ -392,6 +400,56 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FALL" });
 
+        }
+
+        public ActionResult QuotedList(int clientId)
+        {
+            var quoted = from m in _db.SP_Quoted
+                         where m.Client_Id == clientId
+                         select m;
+            ViewBag.Quoted = quoted;
+            return View();
+        }
+
+        public ActionResult QuotedListPartial(string query,int clientId)
+        {
+            if (query != null)
+            {
+                if (query != "")
+                {
+                    var product = (from m in _db.SP_Quoted
+                                   where m.Client_Id == clientId
+                                   select m);
+                    var SearchResult = from m in product
+                                       where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.Item_Code.Contains(query) || m.SP_Product.System_Code.Contains(query)
+                                       orderby m.Id descending
+                                       select m;
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = from m in _db.SP_Quoted
+                                       where m.Client_Id == clientId
+                                       orderby m.Id descending
+                                       select m;
+                    return PartialView(SearchResult);
+                }
+
+            }
+            else
+            {
+                var productlist = from m in _db.SP_Quoted
+                                  where m.Client_Id == clientId
+                                  orderby m.Id descending
+                                  select m;
+                return PartialView(productlist);
+            }
+        }
+
+        public ActionResult AddQuotedPartial(int clientId)
+        {
+            var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SP_Client.Id == clientId);
+            return PartialView(quoted);
         }
     }
 }

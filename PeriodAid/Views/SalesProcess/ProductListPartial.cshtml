@@ -1,5 +1,10 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Product>
 @using PagedList.Mvc;
+<style>
+    .btn-xs {
+        line-height: 1.4;
+    }
+</style>
 <div>
     <table class="table">
         <tr>
@@ -34,8 +39,8 @@
                     @Html.DisplayFor(modelItem => item.Purchase_Price)
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;&nbsp;|
-                    <a class="delete-product" href="#" style="color:red;" data-eid="@item.Id">删除记录</a>
+                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="delete-product btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
                 </td>
             </tr>
         }

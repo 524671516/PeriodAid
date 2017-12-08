@@ -1,5 +1,10 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Client>
 @using PagedList.Mvc;
+<style>
+    .btn-xs{
+        line-height:1.4
+    }
+</style>
 <div>
     <table class="table text-center">
         <tr >
@@ -17,9 +22,10 @@
                     <td>@Html.PlattformTypeStatus(item.Client_Type)</td>
                     <td>@item.SP_Seller.Seller_Name</td>
                     <td>
-                        <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                        <a class="delete-client" href="#" style="color:red;cursor:pointer" data-eid="@item.Id">删除记录</a>&nbsp;|&nbsp;
-                        <a style="cursor:pointer" class="contact-btn" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
+                        <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
+                        <a class="quoted-btn btn btn-xs btn-info" role="button" data-val="@item.Id">报价信息</a>
+                        <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
+                        <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
                     </td>
                 </tr>
             }
@@ -112,6 +118,11 @@
         $(".contact-btn").on("click", function () {
             var C_id = $(this).attr("data-val")
             $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
+        })
+        // 报价信息
+        $(".quoted-btn").on("click", function () {
+            var C_id = $(this).attr("data-val")
+            $(this).attr("href", "/SalesProcess/QuotedList?clientId=" + C_id)
         })
     })
 </script>

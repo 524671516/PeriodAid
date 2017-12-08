@@ -1170,6 +1170,9 @@
     <Content Include="Views\SalesProcess\ContactListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddContactPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditContactInfo.cshtml" />
+    <Content Include="Views\SalesProcess\QuotedList.cshtml" />
+    <Content Include="Views\SalesProcess\QuotedListPartial.cshtml" />
+    <Content Include="Views\SalesProcess\AddQuotedPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
