@@ -12,8 +12,8 @@
             : base("name=SalesProcessConnection")
         {
         }
-        public virtual DbSet<SP_Plattform> SP_Plattform { get; set; }
         public virtual DbSet<SP_Product> SP_Product { get; set; }
+        public virtual DbSet<SP_ProductType> SP_ProductType { get; set; }
         public virtual DbSet<SP_Seller> SP_Seller { get; set; }
         public virtual DbSet<SP_Client> SP_Client { get; set; }
         public virtual DbSet<SP_Contact> SP_Contact { get; set; }
@@ -23,30 +23,15 @@
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SP_Plattform>().HasMany(m => m.SP_Client).WithRequired(m => m.SP_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_Client).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_Contact).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_Quoted).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_Quoted).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_FinanceInfo).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_ProductType>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_ProductType).HasForeignKey(m => m.Type_Id).WillCascadeOnDelete(false);
         }
     }
-    /// <summary>
-    /// 平台
-    /// </summary>
-    [Table("SP_Plattform")]
-    public partial class SP_Plattform
-    {
-        public int Id { get; set; }
 
-        [StringLength(10)]
-        public string Plattform_Name { get; set; }
-
-        public int Plattform_Type { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SP_Client> SP_Client { get; set; }
-    }
     /// <summary>
     /// 产品信息
     /// </summary>
@@ -57,18 +42,54 @@
 
         public string Item_Code { get; set; }
 
+        public string System_Code { get; set; }
+
         [StringLength(16)]
         public string Item_Name { get; set; }
 
-        public string System_Code { get; set; }
+        public string Brand_Name { get; set; }
+
+        public string Item_ShortName { get; set; }
+
+        public string Supplier_Name { get; set; }
+
+        public string Bar_Code { get; set; }
+
+        public decimal Product_Weight { get; set; }
 
         public int Carton_Spec { get; set; }
 
         public decimal Purchase_Price { get; set; }
 
+        public decimal Supply_Price { get; set; }
+
+        public int Product_Status { get; set; }
+
+        public int Type_Id { get; set; }
+
+        public virtual SP_ProductType SP_ProductType { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Quoted> SP_Quoted { get; set; }
 
+    }
+    /// <summary>
+    /// 商品类别
+    /// </summary>
+    [Table("SP_ProductType")]
+    public partial class SP_ProductType
+    {
+        public int Id { get; set; }
+
+        [StringLength(16)]
+        public string Type_Name { get; set; }
+
+        public int ProductType_Status { get; set; }
+
+        public int Priority { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SP_Product> SP_Product { get; set; }
     }
     /// <summary>
     /// 业务员
@@ -100,12 +121,14 @@
         [StringLength(16)]
         public string Client_Name { get; set; }
         
+        public string Client_Address { get; set; }
+
+        public string Client_Area { get; set; }
+
+        public string Client_Phone { get; set; }
+
         public int Client_Type { get; set; }
         
-        public int Plattform_Id { get; set; }
-
-        public virtual SP_Plattform SP_Plattform { get; set; }
-
         public int Seller_Id { get; set; }
 
         public virtual SP_Seller SP_Seller { get; set; }
