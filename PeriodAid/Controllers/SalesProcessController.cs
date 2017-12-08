@@ -175,14 +175,14 @@ namespace PeriodAid.Controllers
                                     select m);
                     var SearchResult = (from m in customer
                                         where m.Client_Name.Contains(query) || m.SP_Seller.Seller_Name.Contains(query) || m.Client_Area.Contains(query)
-                                        orderby m.Client_Area descending
+                                        orderby m.Client_Name descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
                 else
                 {
                     var SearchResult = (from m in _db.SP_Client
-                                        orderby m.Client_Area descending
+                                        orderby m.Client_Name descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
@@ -196,11 +196,17 @@ namespace PeriodAid.Controllers
             itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
-            List<SelectListItem> plattformlist = new List<SelectListItem>();
-            plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
-            plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
-            plattformlist.Add(new SelectListItem() { Text = "代发货", Value = "3" });
-            ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
+            List<SelectListItem> salessystem = new List<SelectListItem>();
+            salessystem.Add(new SelectListItem() { Text = "华东", Value = "华东" });
+            salessystem.Add(new SelectListItem() { Text = "外区", Value = "外区" });
+            salessystem.Add(new SelectListItem() { Text = "华南", Value = "华南" });
+            salessystem.Add(new SelectListItem() { Text = "全国", Value = "全国" });
+            salessystem.Add(new SelectListItem() { Text = "西南", Value = "西南" });
+            salessystem.Add(new SelectListItem() { Text = "华中", Value = "华中" });
+            salessystem.Add(new SelectListItem() { Text = "东北", Value = "东北" });
+            salessystem.Add(new SelectListItem() { Text = "西北", Value = "西北" });
+            salessystem.Add(new SelectListItem() { Text = "华北", Value = "华北" });
+            ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
 
             List<SelectListItem> sellerlist = new List<SelectListItem>();
             sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
@@ -211,7 +217,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddClientPartial(SP_Client model, FormCollection form)
         {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name);
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area);
             if (ModelState.IsValid)
             {
                 if (Client)
@@ -252,18 +258,23 @@ namespace PeriodAid.Controllers
             itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
-            List<SelectListItem> plattformlist = new List<SelectListItem>();
-            plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
-            plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
-            plattformlist.Add(new SelectListItem() { Text = "代发货", Value = "3" });
-            ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
+            List<SelectListItem> salessystem = new List<SelectListItem>();
+            salessystem.Add(new SelectListItem() { Text = "华东", Value = "华东" });
+            salessystem.Add(new SelectListItem() { Text = "外区", Value = "外区" });
+            salessystem.Add(new SelectListItem() { Text = "华南", Value = "华南" });
+            salessystem.Add(new SelectListItem() { Text = "全国", Value = "全国" });
+            salessystem.Add(new SelectListItem() { Text = "西南", Value = "西南" });
+            salessystem.Add(new SelectListItem() { Text = "华中", Value = "华中" });
+            salessystem.Add(new SelectListItem() { Text = "东北", Value = "东北" });
+            salessystem.Add(new SelectListItem() { Text = "西北", Value = "西北" });
+            salessystem.Add(new SelectListItem() { Text = "华北", Value = "华北" });
+            ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
             return PartialView(item);
         }
-
         [HttpPost]
         public ActionResult EditClientInfo(SP_Client model)
         {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name);
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area);
             if (ModelState.IsValid)
             {
                 if (Client)
@@ -284,24 +295,25 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-        //[HttpPost]
-        //public ActionResult DeleteClient(int clientId) {
-        //    var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == clientId);
-        //    SP_Client client = new SP_Client();
-        //    client.Id = Client.Id;
-        //    client.Client_Name = Client.Client_Name;
-        //    client.Plattform_Id = Client.Plattform_Id;
-        //    client.Seller_Id = Client.Seller_Id;
-        //    client.Client_Type = -1;
-        //    if (TryUpdateModel(client))
-        //    {
-        //        _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
-        //        _db.SaveChanges();
-        //        return Json(new { result = "SUCCESS" });
-        //    }
-        //    return Json(new { result = "FALL" });
+        [HttpPost]
+        public ActionResult DeleteClient(int clientId)
+        {
+            var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == clientId);
+            SP_Client client = new SP_Client();
+            client.Id = Client.Id;
+            client.Client_Name = Client.Client_Name;
+            client.Seller_Id = Client.Seller_Id;
+            client.Client_Type = -1;
+            client.Client_Area = Client.Client_Area;
+            if (TryUpdateModel(client))
+            {
+                _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FALL" });
 
-        //}
+        }
 
         public ActionResult ContactList(int clientId)
         {
