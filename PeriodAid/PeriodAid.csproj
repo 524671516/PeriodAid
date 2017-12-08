@@ -1173,6 +1173,8 @@
     <Content Include="Views\SalesProcess\QuotedList.cshtml" />
     <Content Include="Views\SalesProcess\QuotedListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddQuotedPartial.cshtml" />
+    <Content Include="Views\SalesProcess\SalesList.cshtml" />
+    <Content Include="Views\SalesProcess\SalesListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
