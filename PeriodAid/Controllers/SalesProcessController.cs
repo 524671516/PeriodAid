@@ -64,6 +64,12 @@ namespace PeriodAid.Controllers
 
         public ActionResult AddProductPartial()
         {
+            List<SelectListItem> productType = new List<SelectListItem>();
+            productType.Add(new SelectListItem() { Text = "姜茶", Value = "1" });
+            productType.Add(new SelectListItem() { Text = "花草茶", Value = "2" });
+            productType.Add(new SelectListItem() { Text = "糕点", Value = "3" });
+            productType.Add(new SelectListItem() { Text = "其它", Value = "4" });
+            ViewBag.productType = new SelectList(productType, "Value", "Text");
             return PartialView();
         }
         [HttpPost]
@@ -75,8 +81,15 @@ namespace PeriodAid.Controllers
                 item.System_Code = model.System_Code;
                 item.Item_Code = model.Item_Code;
                 item.Item_Name = model.Item_Name;
+                item.Brand_Name = model.Brand_Name;
+                item.Item_ShortName = model.Item_ShortName;
+                item.Supplier_Name = model.Supplier_Name;
+                item.Bar_Code = model.Bar_Code;
+                item.Product_Weight = model.Product_Weight;
                 item.Carton_Spec = model.Carton_Spec;
                 item.Purchase_Price = model.Purchase_Price;
+                item.Supply_Price = model.Supply_Price;
+                item.Type_Id = model.Type_Id;
                 _db.SP_Product.Add(item);
                 _db.SaveChanges();
                 return Content("SUCCESS");
