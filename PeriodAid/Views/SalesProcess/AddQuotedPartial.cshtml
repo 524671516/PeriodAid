@@ -1,8 +1,108 @@
 ﻿@model PeriodAid.Models.SP_Quoted
+<link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/prettify.css" rel="stylesheet" />
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>新增报价信息</h2>
 </div>
+@foreach(var quoted in ViewBag.Quoted)
+{
+    <div class="hidden" id="product-name">@quoted.SP_Product.Item_Name</div>
+    <div class="hidden" id="product-id">@quoted.SP_Product.Id</div>
+    <div class="hidden" id="SalesSystem_name">@quoted.SP_SalesSystem.System_Name</div>
+    <div class="hidden" id="SalesSystem_Id">@quoted.SP_SalesSystem.Id</div>
+}
 <div class="modal-body">
-
+    @using (Html.BeginForm("AddQuotedPartial", "SalesProcess", FormMethod.Post, new { @id = "add-quoted-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            
+            <div class="form-group">
+                <label class="col-md-3 control-label">产品名称</label>
+                <div class="col-md-9">
+                    <input id="product-input" type="text" class="span4 form-control" autocomplete="off" name="product-input" />
+                    <input type="hidden" id="ProductId" name="Product_Id" />
+                    @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">报价</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Quoted_Price, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Quoted_Price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">报价日期</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Quoted_Date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Quoted_Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">备注</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Remark, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Remark, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">店铺名称</label>
+                <div class="col-md-9">
+                    <input id="salessystem-input" type="text" class="span4 form-control" autocomplete="off" name="salessystem-input" readonly="readonly" />
+                    <input type="hidden" id="SalesSystemId" name="SalesSystem_Id" />
+                    @Html.ValidationMessageFor(model => model.SalesSystem_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                </div>
+            </div>
+        </div>
+    }
 </div>
+<script src="~/Scripts/bootstrap-typeahead.js"></script>
+<script>
+    $(function () {
+        $("#ProductId").val($("#product-id").html())
+        $("#salessystem-input").val($("#SalesSystem_name").html())
+        $("#SalesSystemId").val($("#SalesSystem_Id").html())
+        //产品搜索
+        function displayResult(item, val, text) {
+            $("#ProductId").val(val);
+        }
+        $('#product-input').typeahead({
+            ajax: {
+                url: "/SalesProcess/QueryProduct",
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'ProductName',
+            val: 'Id'
+        });
+        $("#add-quoted-form").ajaxForm(function (data) {
+            if (data == "SUCCESS") {
+                $("#myModal").modal('hide')
+                $.ajax({
+                    url: "/SalesProcess/QuotedListPartial",
+                    data: {
+                        query: $("#quoted-query").val(),
+                        SalesSystemId: getUrlParam('SalesSystemId')
+                    },
+                    success: function (data) {
+                        $("#quoted_list_content").html(data)
+                        $('.modal-backdrop.in').remove()
+                        $('body').removeClass('modal-open')
+                    }
+                });
+                alert("添加成功！");
+            }
+            else {
+                errorAlert("添加失败！");
+            }
+        })
+    })
+</script>

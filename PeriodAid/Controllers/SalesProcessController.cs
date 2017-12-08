@@ -588,8 +588,50 @@ namespace PeriodAid.Controllers
 
         public ActionResult AddQuotedPartial(int SalesSystemId)
         {
-            var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SalesSystem_Id == SalesSystemId);
-            return PartialView(quoted);
+            var quoted = from m in _db.SP_Quoted
+                         where m.SalesSystem_Id == SalesSystemId
+                         select m;
+            ViewBag.Quoted = quoted;
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddQuotedPartial(SP_Quoted model, FormCollection form)
+        {
+            bool Quoted = _db.SP_Quoted.Any(m => m.SP_Product.Item_Name == model.SP_Product.Item_Name);
+            ModelState.Remove("Quoted_Date");
+            if (ModelState.IsValid)
+            {
+                if (Quoted)
+                {
+                    return Content("FALL");
+                }
+                else
+                {
+                    var quoted = new SP_Quoted();
+                    quoted.Quoted_Price = model.Quoted_Price;
+                    quoted.Quoted_Date = model.Quoted_Date;
+                    quoted.Product_Id = model.Product_Id;
+                    quoted.Remark = model.Remark;
+                    quoted.SalesSystem_Id = model.SalesSystem_Id;
+                    _db.SP_Quoted.Add(quoted);
+                    _db.SaveChanges();
+                    return Content("SUCCESS");
+                }
+            }
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
+        }
+        [HttpPost]
+        public JsonResult QueryProduct(string query)
+        {
+            var product = from m in _db.SP_Product
+                          where m.Product_Status == 0
+                          && m.Item_Name.Contains(query)
+                          select new { Id = m.Id, ProductName = m.Item_Name };
+            return Json(product);
         }
     }
 }
