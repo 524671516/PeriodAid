@@ -129,16 +129,12 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
 
-        //public ActionResult ClientList(int plattformType)
-        //{
-        //    var trafficName = from m in _db.SP_Plattform
-        //                      where m.Plattform_Type == plattformType
-        //                      select m;
-        //    ViewBag.trafficName = trafficName;
-        //    return View();
-        //}
+        public ActionResult ClientList()
+        {
+            return View();
+        }
 
-        //public ActionResult ClientListPartial(int plattformId, int? page, string query, int plattformType)
+        //public ActionResult ClientListPartial(int? page, string query, int plattformType)
         //{
         //    int _page = page ?? 1;
         //    if (plattformId == 0)
@@ -194,7 +190,7 @@ namespace PeriodAid.Controllers
         //    itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
         //    itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
         //    ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
-            
+
         //    List<SelectListItem> plattformlist = new List<SelectListItem>();
         //    plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
         //    plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
@@ -228,7 +224,7 @@ namespace PeriodAid.Controllers
         //            _db.SaveChanges();
         //            return Content("SUCCESS");
         //        };
-                
+
         //    }
         //    else
         //    {
