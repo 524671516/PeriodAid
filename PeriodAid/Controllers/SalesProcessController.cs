@@ -26,20 +26,23 @@ namespace PeriodAid.Controllers
 
         public ActionResult ProductList()
         {
+            var P_Type = from m in _db.SP_ProductType
+                         select m;
+            ViewBag.ProductType = P_Type;
             return View();
         }
 
-        public ActionResult ProductListPartial(int? page, string query)
+        public ActionResult ProductListPartial(int? page, string query,int productType)
         {
             int _page = page ?? 1;
-            if (query != null)
+            if (productType == 0)
             {
                 if (query != "")
                 {
                     var product = (from m in _db.SP_Product
                                    select m);
                     var SearchResult = (from m in product
-                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
+                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query) || m.SP_ProductType.Type_Name.Contains(query)
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -51,15 +54,30 @@ namespace PeriodAid.Controllers
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
-
-            }
-            else
+            }else
             {
-                var productlist = (from m in _db.SP_Product
-                                   orderby m.Id descending
-                                   select m).ToPagedList(_page, 15);
-                return PartialView(productlist);
+                if (query != "")
+                {
+                    var product = (from m in _db.SP_Product
+                                   where m.Type_Id == productType
+                                   select m);
+                    var SearchResult = (from m in product
+                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query) || m.SP_ProductType.Type_Name.Contains(query)
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_Product
+                                        where m.Type_Id == productType
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
+                
+
         }
 
         public ActionResult AddProductPartial()
