@@ -34,6 +34,55 @@
     </div>
 </div>
 <script>
+    // 编辑
+    $(".select-sales").on("click", function () {
+        $.ajax({
+            url: "/SalesProcess/EditSalesInfo",
+            data: {
+                salesId: $(this).attr("data-eid")
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
+    })
+    // 删除
+    $(".delete-sales").on("click", function () {
+        var S_id = $(this).attr("data-eid");
+        confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: "/SalesProcess/DeleteSales",
+                    type: "post",
+                    data: {
+                        salesId: S_id,
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/SalesProcess/SalesListPartial",
+                                data: {
+                                    page: 1,
+                                    query: $("#sales-query").val(),
+                                    clientId: getUrlParam("clientId")
+                                },
+                                success: function (data) {
+                                    $("#sales_list_content").html(data)
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
+                                }
+                            });
+                            alert("删除成功")
+                        } else if (data.result == "FAIL") {
+                            alert("删除失败", "", function () {
+                            }, { type: 'error' });
+                        }
+                    }
+                })
+            }
+        });
+    })
     // 报价信息
     $(".quoted-info").on("click", function () {
         var C_id = $(this).attr("data-eid")

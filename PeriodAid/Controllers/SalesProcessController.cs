@@ -545,54 +545,51 @@ namespace PeriodAid.Controllers
 
         }
 
-        //public ActionResult QuotedList(int clientId)
-        //{
-        //    var quoted = from m in _db.SP_Quoted
-        //                 where m.Client_Id == clientId
-        //                 select m;
-        //    ViewBag.Quoted = quoted;
-        //    return View();
-        //}
+        public ActionResult QuotedList()
+        {
+            return View();
+        }
 
-        //public ActionResult QuotedListPartial(string query,int clientId)
-        //{
-        //    if (query != null)
-        //    {
-        //        if (query != "")
-        //        {
-        //            var product = (from m in _db.SP_Quoted
-        //                           where m.Client_Id == clientId
-        //                           select m);
-        //            var SearchResult = from m in product
-        //                               where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.Item_Code.Contains(query) || m.SP_Product.System_Code.Contains(query)
-        //                               orderby m.Id descending
-        //                               select m;
-        //            return PartialView(SearchResult);
-        //        }
-        //        else
-        //        {
-        //            var SearchResult = from m in _db.SP_Quoted
-        //                               where m.Client_Id == clientId
-        //                               orderby m.Id descending
-        //                               select m;
-        //            return PartialView(SearchResult);
-        //        }
+        public ActionResult QuotedListPartial(int? page,string query, int SalesSystemId)
+        {
+            int _page = page ?? 1;
+            if (query != null)
+            {
+                if (query != "")
+                {
+                    var product = from m in _db.SP_Quoted
+                                  where m.SalesSystem_Id == SalesSystemId
+                                  select m;
+                    var SearchResult = (from m in product
+                                       where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.Item_Code.Contains(query) || m.SP_Product.System_Code.Contains(query)
+                                       orderby m.Id descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_Quoted
+                                       where m.SalesSystem_Id == SalesSystemId
+                                       orderby m.Id descending
+                                       select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
 
-        //    }
-        //    else
-        //    {
-        //        var productlist = from m in _db.SP_Quoted
-        //                          where m.Client_Id == clientId
-        //                          orderby m.Id descending
-        //                          select m;
-        //        return PartialView(productlist);
-        //    }
-        //}
+            }
+            else
+            {
+                var productlist = (from m in _db.SP_Quoted
+                                  where m.SalesSystem_Id == SalesSystemId
+                                  orderby m.Id descending
+                                  select m).ToPagedList(_page, 15);
+                return PartialView(productlist);
+            }
+        }
 
-        //public ActionResult AddQuotedPartial(int clientId)
-        //{
-        //    var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SP_Client.Id == clientId);
-        //    return PartialView(quoted);
-        //}
+        public ActionResult AddQuotedPartial(int SalesSystemId)
+        {
+            var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SalesSystem_Id == SalesSystemId);
+            return PartialView(quoted);
+        }
     }
 }
