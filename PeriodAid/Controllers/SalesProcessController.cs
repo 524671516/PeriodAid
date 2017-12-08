@@ -425,6 +425,34 @@ namespace PeriodAid.Controllers
 
         }
 
+        public ActionResult SalesList(int clientId)
+        {
+            return View();
+        }
+        public ActionResult SalesListPartial(int clientId, int? page, string query)
+        {
+            int _page = page ?? 1;
+            if (query != "")
+            {
+                var contact = (from m in _db.SP_Contact
+                               where m.Client_Id == clientId
+                               select m);
+                var SearchResult = (from m in contact
+                                    where m.Contact_Name.Contains(query) || m.Contact_Mobile.Contains(query)
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
+            }
+            else
+            {
+                var SearchResult = (from m in _db.SP_Contact
+                                    where m.Client_Id == clientId
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
+            }
+        }
+
         //public ActionResult QuotedList(int clientId)
         //{
         //    var quoted = from m in _db.SP_Quoted

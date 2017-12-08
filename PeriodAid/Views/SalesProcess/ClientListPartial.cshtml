@@ -6,12 +6,12 @@
     }
 </style>
 <div>
-    <table class="table">
-        <tr >
-            <th>客户名称</th>
-            <th>客户状态</th>
-            <th>所属区域</th>
-            <th>负责人</th>
+    <table class="table text-center">
+        <tr>
+            <th class="text-center">客户名称</th>
+            <th class="text-center">客户状态</th>
+            <th class="text-center">所属区域</th>
+            <th class="text-center">负责人</th>
             <th></th>
         </tr>
         @foreach (var item in Model)
@@ -23,9 +23,9 @@
                     <td>@Html.PlattformTypeStatus(item.Client_Type)</td>
                     <td>@item.Client_Area</td>
                     <td>@item.SP_Seller.Seller_Name</td>
-                    <td class="text-center">
+                    <td>
                         <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
-                        <a class="quoted-btn btn btn-xs btn-info" role="button" data-val="@item.Id">报价信息</a>
+                        <a class="sales-btn btn btn-xs btn-info" role="button" data-val="@item.Id">销售信息</a>
                         <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
                         <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
                     </td>
@@ -119,10 +119,10 @@
             var C_id = $(this).attr("data-val")
             $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
         })
-        // 报价信息
-        $(".quoted-btn").on("click", function () {
+        // 销售信息
+        $(".sales-btn").on("click", function () {
             var C_id = $(this).attr("data-val")
-            $(this).attr("href", "/SalesProcess/QuotedList?clientId=" + C_id)
+            $(this).attr("href", "/SalesProcess/SalesList?clientId=" + C_id)
         })
     })
 </script>
