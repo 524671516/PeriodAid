@@ -224,9 +224,7 @@ namespace PeriodAid.Controllers
                     client.Client_Name = model.Client_Name;
                     client.Client_Type = model.Client_Type;
                     client.Seller_Id = model.Seller_Id;
-                    client.Client_Address = model.Client_Address;
                     client.Client_Area = model.Client_Area;
-                    client.Client_Phone = model.Client_Phone;
                     _db.SP_Client.Add(client);
                     _db.SaveChanges();
                     return Content("SUCCESS");

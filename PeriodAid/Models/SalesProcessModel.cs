@@ -123,11 +123,7 @@
         [StringLength(16)]
         public string Client_Name { get; set; }
         
-        public string Client_Address { get; set; }
-
         public string Client_Area { get; set; }
-
-        public string Client_Phone { get; set; }
 
         public int Client_Type { get; set; }
         
