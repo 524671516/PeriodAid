@@ -13,13 +13,6 @@
 </table>
 <h2>客户列表</h2>
 <a class="btn btn-info btn-sm" id="add-client" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增客户信息</a>
-<ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="client-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="plattform-btn" style="cursor:pointer">全部平台</a></li>
-    @foreach (var list in ViewBag.trafficName)
-    {
-        <li role="presentation" class="client-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="@list.Id" class="plattform-btn" style="cursor:pointer">@list.Plattform_Name</a></li>
-    }
-</ul>
 <div id="client_list_content"></div>
 @section scripts{
     <script>
@@ -29,8 +22,7 @@
                 data: {
                     plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
                     page: 1,
-                    query: $("#client-query").val(),
-                    plattformType: getUrlParam('plattformType')
+                    query: $("#client-query").val()
                 },
                 success: function (data) {
                     $("#client_list_content").html(data)
