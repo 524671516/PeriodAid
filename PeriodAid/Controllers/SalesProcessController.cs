@@ -425,9 +425,14 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult SalesList(int clientId)
+        public ActionResult SalesList(int? page,int clientId)
         {
-            return View();
+            int _page = page ?? 1;
+            var salesList = (from m in _db.SP_SalesSystem
+                            where m.Client_Id == clientId
+                            orderby m.System_Name descending
+                            select m).ToPagedList(_page,15);
+            return View(salesList);
         }
         public ActionResult SalesListPartial(int clientId, int? page, string query)
         {
