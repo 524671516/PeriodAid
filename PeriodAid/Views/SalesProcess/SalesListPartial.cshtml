@@ -1,0 +1,34 @@
+﻿@model IEnumerable<PeriodAid.Models.SP_SalesSystem>
+<style>
+    .btn-xs {
+        line-height: 1.4;
+    }
+</style>
+<div>
+    <table class="table text-center">
+        <tr>
+            <th class="text-center">商铺名称</th>
+            <th class="text-center">联系电话</th>
+            <th class="text-center">地址</th>
+            <th></th>
+        </tr>
+        @foreach(var sales in Model)
+        {
+            <tr>
+                <td>@sales.System_Name</td>
+                <td>@sales.System_Phone</td>
+                <td>@sales.System_Address</td>
+                <td>
+                    <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
+                    <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>

@@ -425,37 +425,70 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult SalesList(int? page,int clientId)
+        public ActionResult SalesList()
         {
-            int _page = page ?? 1;
-            var salesList = (from m in _db.SP_SalesSystem
-                            where m.Client_Id == clientId
-                            orderby m.System_Name descending
-                            select m).ToPagedList(_page,15);
-            return View(salesList);
+            return View();
         }
+
         public ActionResult SalesListPartial(int clientId, int? page, string query)
         {
             int _page = page ?? 1;
             if (query != "")
             {
-                var contact = (from m in _db.SP_Contact
+                var sales = (from m in _db.SP_SalesSystem
                                where m.Client_Id == clientId
                                select m);
-                var SearchResult = (from m in contact
-                                    where m.Contact_Name.Contains(query) || m.Contact_Mobile.Contains(query)
+                var SearchResult = (from m in sales
+                                    where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
             else
             {
-                var SearchResult = (from m in _db.SP_Contact
+                var SearchResult = (from m in _db.SP_SalesSystem
                                     where m.Client_Id == clientId
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
+        }
+
+        public ActionResult AddSalesPartial(int clientId)
+        {
+            var client = from m in _db.SP_Client
+                         where m.Id == clientId
+                         select m;
+            ViewBag.ClientName = client;
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddSalesPartial(SP_SalesSystem model, FormCollection form)
+        {
+            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone);
+            if (ModelState.IsValid)
+            {
+                if (Sales)
+                {
+                    return Content("FALL");
+                }
+                else
+                {
+                    var sales = new SP_SalesSystem();
+                    sales.System_Name = model.System_Name;
+                    sales.System_Phone = model.System_Phone;
+                    sales.System_Address = model.System_Address;
+                    sales.Client_Id = model.Client_Id;
+                    _db.SP_SalesSystem.Add(sales);
+                    _db.SaveChanges();
+                    return Content("SUCCESS");
+                }
+            }
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
         }
 
         //public ActionResult QuotedList(int clientId)
