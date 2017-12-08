@@ -97,7 +97,6 @@
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
-                                setTimeout(function () {
                                     $.ajax({
                                         url: "/SalesProcess/ProductListPartial",
                                         data: {
@@ -112,7 +111,6 @@
                                         }
                                     });
                                     alert("删除成功")
-                                }, 1000);
                             } else if (data.result == "FAIL") {
                                 alert("删除失败", "", function () {
                                 }, { type: 'error' });

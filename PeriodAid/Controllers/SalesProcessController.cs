@@ -42,7 +42,8 @@ namespace PeriodAid.Controllers
                     var product = (from m in _db.SP_Product
                                    select m);
                     var SearchResult = (from m in product
-                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query) || m.SP_ProductType.Type_Name.Contains(query)
+                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
+                                        || m.SP_ProductType.Type_Name.Contains(query) || m.Brand_Name.Contains(query)
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -62,7 +63,8 @@ namespace PeriodAid.Controllers
                                    where m.Type_Id == productType
                                    select m);
                     var SearchResult = (from m in product
-                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query) || m.SP_ProductType.Type_Name.Contains(query)
+                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query) 
+                                        || m.SP_ProductType.Type_Name.Contains(query) || m.Brand_Name.Contains(query)
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -76,8 +78,6 @@ namespace PeriodAid.Controllers
                     return PartialView(SearchResult);
                 }
             }
-                
-
         }
 
         public ActionResult AddProductPartial()
@@ -165,104 +165,80 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        //public ActionResult ClientListPartial(int? page, string query, int plattformType)
-        //{
-        //    int _page = page ?? 1;
-        //    if (plattformId == 0)
-        //    {
-        //        if (query != "")
-        //        {
-        //            var customer = (from m in _db.SP_Client
-        //                            where m.SP_Plattform.Plattform_Type == plattformType
-        //                            select m);
-        //            var SearchResult = (from m in customer
-        //                                where m.Client_Name.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
-        //                                orderby m.Id descending
-        //                                select m).ToPagedList(_page, 15);
-        //            return PartialView(SearchResult);
-        //        }
-        //        else
-        //        {
-        //            var SearchResult = (from m in _db.SP_Client
-        //                                where m.SP_Plattform.Plattform_Type == plattformType
-        //                                orderby m.Id descending
-        //                                select m).ToPagedList(_page, 15);
-        //            return PartialView(SearchResult);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (query != "")
-        //        {
-        //            var customer = (from m in _db.SP_Client
-        //                            where m.SP_Plattform.Plattform_Type == plattformType && m.Plattform_Id == plattformId
-        //                            select m);
-        //            var SearchResult = (from m in customer
-        //                                where m.Client_Name.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
-        //                                orderby m.Id descending
-        //                                select m).ToPagedList(_page, 15);
-        //            return PartialView(SearchResult);
-        //        }
-        //        else
-        //        {
-        //            var SearchResult = (from m in _db.SP_Client
-        //                                where m.SP_Plattform.Plattform_Type == plattformType && m.Plattform_Id == plattformId
-        //                                orderby m.Id descending
-        //                                select m).ToPagedList(_page, 15);
-        //            return PartialView(SearchResult);
-        //        }
-        //    }
-        //}
+        public ActionResult ClientListPartial(int? page, string query)
+        {
+            int _page = page ?? 1;
+            
+                if (query != "")
+                {
+                    var customer = (from m in _db.SP_Client
+                                    select m);
+                    var SearchResult = (from m in customer
+                                        where m.Client_Name.Contains(query) || m.SP_Seller.Seller_Name.Contains(query) || m.Client_Area.Contains(query)
+                                        orderby m.Client_Area descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_Client
+                                        orderby m.Client_Area descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+            }
 
-        //public ActionResult AddClientPartial()
-        //{
-        //    List<SelectListItem> itemlist = new List<SelectListItem>();
-        //    itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
-        //    itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
-        //    itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
-        //    ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
+        public ActionResult AddClientPartial()
+        {
+            List<SelectListItem> itemlist = new List<SelectListItem>();
+            itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
+            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
+            itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
+            ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
-        //    List<SelectListItem> plattformlist = new List<SelectListItem>();
-        //    plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
-        //    plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
-        //    plattformlist.Add(new SelectListItem() { Text = "代发货", Value = "3" });
-        //    ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
+            List<SelectListItem> plattformlist = new List<SelectListItem>();
+            plattformlist.Add(new SelectListItem() { Text = "分销", Value = "1" });
+            plattformlist.Add(new SelectListItem() { Text = "代销", Value = "2" });
+            plattformlist.Add(new SelectListItem() { Text = "代发货", Value = "3" });
+            ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
 
-        //    List<SelectListItem> sellerlist = new List<SelectListItem>();
-        //    sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
-        //    sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
-        //    ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
-        //    return PartialView();
-        //}
-        //[HttpPost]
-        //public ActionResult AddClientPartial(SP_Client model, FormCollection form)
-        //{
-        //    bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name);
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (Client)
-        //        {
-        //            return Content("FALL");
-        //        }
-        //        else
-        //        {
-        //            var client = new SP_Client();
-        //            client.Client_Name = model.Client_Name;
-        //            client.Client_Type = model.Client_Type;
-        //            client.Plattform_Id = model.Plattform_Id;
-        //            client.Seller_Id = model.Seller_Id;
-        //            _db.SP_Client.Add(client);
-        //            _db.SaveChanges();
-        //            return Content("SUCCESS");
-        //        };
+            List<SelectListItem> sellerlist = new List<SelectListItem>();
+            sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
+            sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
+            ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddClientPartial(SP_Client model, FormCollection form)
+        {
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name);
+            if (ModelState.IsValid)
+            {
+                if (Client)
+                {
+                    return Content("FALL");
+                }
+                else
+                {
+                    var client = new SP_Client();
+                    client.Client_Name = model.Client_Name;
+                    client.Client_Type = model.Client_Type;
+                    client.Seller_Id = model.Seller_Id;
+                    client.Client_Address = model.Client_Address;
+                    client.Client_Area = model.Client_Area;
+                    client.Client_Phone = model.Client_Phone;
+                    _db.SP_Client.Add(client);
+                    _db.SaveChanges();
+                    return Content("SUCCESS");
+                };
 
-        //    }
-        //    else
-        //    {
-        //        return PartialView(model);
-        //    }
-        //    //return Content("ERROR1");
-        //}
+            }
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
+        }
 
         public ActionResult EditClientInfo(int clientId)
         {
@@ -285,18 +261,28 @@ namespace PeriodAid.Controllers
             ViewBag.PlattformList = new SelectList(plattformlist, "Value", "Text");
             return PartialView(item);
         }
+
         [HttpPost]
         public ActionResult EditClientInfo(SP_Client model)
         {
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name);
             if (ModelState.IsValid)
             {
-                SP_Client client = new SP_Client();
-                if (TryUpdateModel(client))
+                if (Client)
                 {
-                    _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
+                    return Json(new { result = "FAIL" });
                 }
+                else
+                {
+                    SP_Client client = new SP_Client();
+                    if (TryUpdateModel(client))
+                    {
+                        _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+                
             }
             return Json(new { result = "FAIL" });
         }
@@ -429,54 +415,54 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult QuotedList(int clientId)
-        {
-            var quoted = from m in _db.SP_Quoted
-                         where m.Client_Id == clientId
-                         select m;
-            ViewBag.Quoted = quoted;
-            return View();
-        }
+        //public ActionResult QuotedList(int clientId)
+        //{
+        //    var quoted = from m in _db.SP_Quoted
+        //                 where m.Client_Id == clientId
+        //                 select m;
+        //    ViewBag.Quoted = quoted;
+        //    return View();
+        //}
 
-        public ActionResult QuotedListPartial(string query,int clientId)
-        {
-            if (query != null)
-            {
-                if (query != "")
-                {
-                    var product = (from m in _db.SP_Quoted
-                                   where m.Client_Id == clientId
-                                   select m);
-                    var SearchResult = from m in product
-                                       where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.Item_Code.Contains(query) || m.SP_Product.System_Code.Contains(query)
-                                       orderby m.Id descending
-                                       select m;
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-                    var SearchResult = from m in _db.SP_Quoted
-                                       where m.Client_Id == clientId
-                                       orderby m.Id descending
-                                       select m;
-                    return PartialView(SearchResult);
-                }
+        //public ActionResult QuotedListPartial(string query,int clientId)
+        //{
+        //    if (query != null)
+        //    {
+        //        if (query != "")
+        //        {
+        //            var product = (from m in _db.SP_Quoted
+        //                           where m.Client_Id == clientId
+        //                           select m);
+        //            var SearchResult = from m in product
+        //                               where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.Item_Code.Contains(query) || m.SP_Product.System_Code.Contains(query)
+        //                               orderby m.Id descending
+        //                               select m;
+        //            return PartialView(SearchResult);
+        //        }
+        //        else
+        //        {
+        //            var SearchResult = from m in _db.SP_Quoted
+        //                               where m.Client_Id == clientId
+        //                               orderby m.Id descending
+        //                               select m;
+        //            return PartialView(SearchResult);
+        //        }
 
-            }
-            else
-            {
-                var productlist = from m in _db.SP_Quoted
-                                  where m.Client_Id == clientId
-                                  orderby m.Id descending
-                                  select m;
-                return PartialView(productlist);
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        var productlist = from m in _db.SP_Quoted
+        //                          where m.Client_Id == clientId
+        //                          orderby m.Id descending
+        //                          select m;
+        //        return PartialView(productlist);
+        //    }
+        //}
 
-        public ActionResult AddQuotedPartial(int clientId)
-        {
-            var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SP_Client.Id == clientId);
-            return PartialView(quoted);
-        }
+        //public ActionResult AddQuotedPartial(int clientId)
+        //{
+        //    var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SP_Client.Id == clientId);
+        //    return PartialView(quoted);
+        //}
     }
 }
