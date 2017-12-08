@@ -12,17 +12,21 @@
             <th class="text-center">地址</th>
             <th></th>
         </tr>
-        @foreach(var sales in Model)
+        @foreach (var sales in Model)
         {
-            <tr>
-                <td>@sales.System_Name</td>
-                <td>@sales.System_Phone</td>
-                <td>@sales.System_Address</td>
-                <td>
-                    <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
-                    <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
-                </td>
-            </tr>
+            if (sales.System_Type != -1)
+            {
+                <tr>
+                    <td>@sales.System_Name</td>
+                    <td>@sales.System_Phone</td>
+                    <td>@sales.System_Address</td>
+                    <td>
+                        <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
+                        <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
+                    </td>
+                </tr>
+            }
+
         }
     </table>
 </div>
@@ -32,3 +36,56 @@
         </div>
     </div>
 </div>
+<script>
+    $(function () {
+        // 编辑
+        $(".select-sales").on("click", function () {
+            $.ajax({
+                url: "/SalesProcess/EditSalesInfo",
+                data: {
+                    salesId: $(this).attr("data-eid")
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+        // 删除
+        $(".delete-sales").on("click", function () {
+            var S_id = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/SalesProcess/DeleteSales",
+                        type: "post",
+                        data: {
+                            salesId: S_id,
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                    $.ajax({
+                                        url: "/SalesProcess/SalesListPartial",
+                                        data: {
+                                            page: 1,
+                                            query: $("#sales-query").val(),
+                                            clientId: getUrlParam("clientId")
+                                        },
+                                        success: function (data) {
+                                            $("#sales_list_content").html(data)
+                                            $('.modal-backdrop.in').remove()
+                                            $('body').removeClass('modal-open')
+                                        }
+                                    });
+                                    alert("删除成功")
+                            } else if (data.result == "FAIL") {
+                                alert("删除失败", "", function () {
+                                }, { type: 'error' });
+                            }
+                        }
+                    })
+                }
+            });
+        })
+    })
+</script>

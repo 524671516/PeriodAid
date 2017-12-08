@@ -1,0 +1,90 @@
+﻿@model PeriodAid.Models.SP_SalesSystem
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>修改商铺信息</h2>
+</div>
+@foreach (var name in ViewBag.SalesName)
+{
+    <div class="hidden" id="Client-name">@name.SP_Client.Client_Name</div>
+    <div class="hidden" id="Client_Id">@name.Client_Id</div>
+}
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("EditSalesInfo", "SalesProcess", FormMethod.Post, new { @id = "sales-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            <div class="form-group">
+                <label class="control-label col-md-2">商铺姓名</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.System_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.System_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">联系电话</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.System_Phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.System_Phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">地址</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.System_Address, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.System_Address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">经销商</label>
+                <div class="col-md-10">
+                    <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" readonly="readonly" />
+                    <input type="hidden" id="ClientId" name="Client_Id" />
+                    @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" />
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+<script>
+    $(function () {
+        $("#client-input").val($("#Client-name").html())
+        $("#ClientId").val($("#Client_Id").html())
+    })
+    $('#save-btn').click(function () {
+        $("#sales-form").ajaxSubmit({
+            url: '/SalesProcess/EditSalesInfo',
+            type: 'post',
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    alert('保存成功')
+                    $("#myModal").modal('hide');
+                    $.ajax({
+                        url: "/SalesProcess/SalesListPartial",
+                        data: {
+                            page: 1,
+                            query: $("#sales-query").val(),
+                            clientId: getUrlParam("clientId")
+                        },
+                        success: function (data) {
+                            $("#sales_list_content").html(data);
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                        }
+                    });
+
+                } else {
+                    errorAlert('保存失败')
+                }
+            }
+        })
+        return false;
+    })
+</script>

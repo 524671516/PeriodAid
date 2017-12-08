@@ -154,6 +154,8 @@
 
         public string System_Phone { get; set; }
 
+        public int System_Type { get; set; }
+
         public int Client_Id { get; set; }
 
         public virtual SP_Client SP_Client { get; set; }

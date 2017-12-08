@@ -479,6 +479,7 @@ namespace PeriodAid.Controllers
                     sales.System_Phone = model.System_Phone;
                     sales.System_Address = model.System_Address;
                     sales.Client_Id = model.Client_Id;
+                    sales.System_Type = 0;
                     _db.SP_SalesSystem.Add(sales);
                     _db.SaveChanges();
                     return Content("SUCCESS");
@@ -489,6 +490,59 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
             //return Content("ERROR1");
+        }
+
+        public ActionResult EditSalesInfo(int salesId)
+        {
+            var item = _db.SP_SalesSystem.SingleOrDefault(m => m.Id == salesId);
+            var sales = from m in _db.SP_SalesSystem
+                        where m.Id == salesId
+                        select m;
+            ViewBag.SalesName = sales;
+            return PartialView(item);
+        }
+
+        [HttpPost]
+        public ActionResult EditSalesInfo(SP_SalesSystem model)
+        {
+            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone);
+            if (ModelState.IsValid)
+            {
+                if (Sales)
+                {
+                    return Json(new { result = "FALL" });
+                }
+                else{
+                    SP_SalesSystem sales = new SP_SalesSystem();
+                    if (TryUpdateModel(sales))
+                    {
+                        _db.Entry(sales).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+        [HttpPost]
+        public ActionResult DeleteSales(int salesId)
+        {
+            var Sales = _db.SP_SalesSystem.AsNoTracking().SingleOrDefault(m => m.Id == salesId);
+            SP_SalesSystem sales = new SP_SalesSystem();
+            sales.Id = Sales.Id;
+            sales.Client_Id = Sales.Client_Id;
+            sales.System_Name = Sales.System_Name;
+            sales.System_Phone = Sales.System_Phone;
+            sales.System_Address = Sales.System_Address;
+            sales.System_Type = -1;
+            if (TryUpdateModel(sales))
+            {
+                _db.Entry(sales).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FALL" });
+
         }
 
         //public ActionResult QuotedList(int clientId)
