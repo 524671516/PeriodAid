@@ -12,18 +12,22 @@
             <th class="text-center">地址</th>
             <th></th>
         </tr>
-        @foreach(var sales in Model)
+        @foreach (var sales in Model)
         {
-            <tr>
-                <td>@sales.System_Name</td>
-                <td>@sales.System_Phone</td>
-                <td>@sales.System_Address</td>
-                <td>
-                    <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
-                    <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价信息</a>
-                    <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
-                </td>
-            </tr>
+            if (sales.System_Status != -1)
+            {
+                <tr>
+                    <td>@sales.System_Name</td>
+                    <td>@sales.System_Phone</td>
+                    <td>@sales.System_Address</td>
+                    <td>
+                        <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
+                        <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价信息</a>
+                        <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
+                    </td>
+                </tr>
+
+            }
         }
     </table>
 </div>

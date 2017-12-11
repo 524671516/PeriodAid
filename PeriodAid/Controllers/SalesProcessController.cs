@@ -353,9 +353,9 @@ namespace PeriodAid.Controllers
             client.Id = Client.Id;
             client.Client_Name = Client.Client_Name;
             client.Seller_Id = Client.Seller_Id;
-            client.Client_Type = -1;
+            client.Client_Status = -1;
             client.Client_Area = Client.Client_Area;
-            client.Client_Status = Client.Client_Status;
+            client.Client_Type = Client.Client_Type;
             if (TryUpdateModel(client))
             {
                 _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
@@ -411,7 +411,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddContactPartial(SP_Contact model, FormCollection form)
         {
-            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile);
+            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Status == model.Contact_Status);
             ModelState.Remove("Contact_Mobile");
             if (ModelState.IsValid)
             {
@@ -428,6 +428,7 @@ namespace PeriodAid.Controllers
                     contact.Contact_Status = 0;
                     contact.Client_Id = model.Client_Id;
                     _db.SP_Contact.Add(contact);
+                    _db.Configuration.ValidateOnSaveEnabled = false;
                     _db.SaveChanges();
                     return Content("SUCCESS");
                 }
@@ -452,6 +453,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditContactInfo(SP_Contact model)
         {
             bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Address == model.Contact_Address);
+            ModelState.Remove("Contact_Mobile");
             if (ModelState.IsValid)
             {
                 if (Contact)
@@ -460,7 +462,6 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-
                     SP_Contact contact = new SP_Contact();
                     if (TryUpdateModel(contact))
                     {
@@ -573,7 +574,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditSalesInfo(SP_SalesSystem model)
         {
-            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address);
+            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address && m.System_Status == model.System_Status);
             if (ModelState.IsValid)
             {
                 if (Sales)
@@ -697,27 +698,6 @@ namespace PeriodAid.Controllers
             //return Content("ERROR1");
         }
         [HttpPost]
-        public ActionResult DeleteQuoted(int quotedId)
-        {
-            var Quoted = _db.SP_Quoted.AsNoTracking().SingleOrDefault(m => m.Id == quotedId);
-            SP_Quoted quoted = new SP_Quoted();
-            quoted.Id = Quoted.Id;
-            quoted.Quoted_Price = Quoted.Quoted_Price;
-            quoted.Quoted_Date = Quoted.Quoted_Date;
-            quoted.Remark = Quoted.Remark;
-            quoted.Product_Id = Quoted.Product_Id;
-            quoted.SalesSystem_Id = Quoted.SalesSystem_Id;
-            quoted.Quoted_Status = -1;
-            if (TryUpdateModel(quoted))
-            {
-                _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FALL" });
-
-        }
-        [HttpPost]
         public JsonResult QueryProduct(string query)
         {
             var product = from m in _db.SP_Product
@@ -736,7 +716,6 @@ namespace PeriodAid.Controllers
             ViewBag.Quoted = quoted;
             return PartialView(Quoted);
         }
-
         [HttpPost]
         public ActionResult EditQuotedInfo(SP_Quoted model)
         {
@@ -759,6 +738,27 @@ namespace PeriodAid.Controllers
                 }
             }
             return Json(new { result = "FAIL" });
+        }
+        [HttpPost]
+        public ActionResult DeleteQuoted(int quotedId)
+        {
+            var Quoted = _db.SP_Quoted.AsNoTracking().SingleOrDefault(m => m.Id == quotedId);
+            SP_Quoted quoted = new SP_Quoted();
+            quoted.Id = Quoted.Id;
+            quoted.Quoted_Price = Quoted.Quoted_Price;
+            quoted.Quoted_Date = Quoted.Quoted_Date;
+            quoted.Remark = Quoted.Remark;
+            quoted.Product_Id = Quoted.Product_Id;
+            quoted.SalesSystem_Id = Quoted.SalesSystem_Id;
+            quoted.Quoted_Status = -1;
+            if (TryUpdateModel(quoted))
+            {
+                _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FALL" });
+
         }
     }
 }
