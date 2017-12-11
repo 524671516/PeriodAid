@@ -196,6 +196,20 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
+        public static string ProductStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "下架";
+                case 0:
+                    return "在售";
+                case 1:
+                    return "爆款";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {

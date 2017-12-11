@@ -4,6 +4,11 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改产品信息</h2>
 </div>
+@foreach(var typename in ViewBag.productType)
+{
+    <div class="hidden" id="type-name">@typename.SP_ProductType.Type_Name</div>
+    <div class="hidden" id="type-id">@typename.SP_ProductType.Id</div>
+}
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditProductInfo", "SalesProcess", FormMethod.Post, new { @id = "product-form" }))
     {
@@ -33,6 +38,13 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="control-label col-md-2">产品重量</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Product_Weight, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Product_Weight, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="control-label col-md-2">箱规</label>
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Carton_Spec, new { htmlAttributes = new { @class = "form-control" } })
@@ -41,13 +53,34 @@
             </div>
 
             <div class="form-group">
-                <label class="control-label col-md-2">单价</label>
+                <label class="control-label col-md-2">标准零售价</label>
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Purchase_Price, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Purchase_Price, "", new { @class = "text-danger" })
                 </div>
             </div>
-
+            <div class="form-group">
+                <label class="control-label col-md-2">标准供货价</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Supply_Price, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Supply_Price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">条形码</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Bar_Code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">产品类别</label>
+                <div class="col-md-10">
+                    <input id="type-input" type="text" class="span4 form-control" autocomplete="off" name="type-input" readonly="readonly" />
+                    <input type="hidden" id="ProductTypeId" name="ProductType_Id" />
+                    @Html.ValidationMessageFor(model => model.ProductType_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
@@ -59,6 +92,10 @@
 <div class="modal-footer"></div>
 
 <script>
+    $(function () {
+        $("#type-input").val($("#type-name").html())
+        $("#ProductTypeId").val($("#type-id").html())
+    })
     $('#save-btn').click(function () {
         $("#product-form").ajaxSubmit({
             url: '/SalesProcess/EditProductInfo',

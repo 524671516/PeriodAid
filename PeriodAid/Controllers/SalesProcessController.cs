@@ -88,6 +88,12 @@ namespace PeriodAid.Controllers
             productType.Add(new SelectListItem() { Text = "糕点", Value = "3" });
             productType.Add(new SelectListItem() { Text = "其它", Value = "4" });
             ViewBag.productType = new SelectList(productType, "Value", "Text");
+
+            List<SelectListItem> productStatus = new List<SelectListItem>();
+            productStatus.Add(new SelectListItem() { Text = "爆款", Value = "1" });
+            productStatus.Add(new SelectListItem() { Text = "在售", Value = "0" });
+            productStatus.Add(new SelectListItem() { Text = "下架", Value = "-1" });
+            ViewBag.productStatus = new SelectList(productStatus, "Value", "Text");
             return PartialView();
         }
         [HttpPost]
@@ -115,6 +121,7 @@ namespace PeriodAid.Controllers
                     item.Purchase_Price = model.Purchase_Price;
                     item.Supply_Price = model.Supply_Price;
                     item.ProductType_Id = model.ProductType_Id;
+                    item.Product_Status = model.Product_Status;
                     _db.SP_Product.Add(item);
                     _db.SaveChanges();
                     return Content("SUCCESS");
@@ -131,6 +138,10 @@ namespace PeriodAid.Controllers
         public ActionResult EditProductInfo(int productId)
         {
             var item = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
+            var productType = from m in _db.SP_Product
+                              where m.Id == productId
+                              select m;
+            ViewBag.productType = productType;
             return PartialView(item);
         }
         [HttpPost]
@@ -704,11 +715,36 @@ namespace PeriodAid.Controllers
 
         public ActionResult EditQuotedInfo(int quotedId)
         {
+            var Quoted = _db.SP_Quoted.SingleOrDefault(m => m.Id == quotedId);
             var quoted = from m in _db.SP_Quoted
                          where m.Id == quotedId
                          select m;
             ViewBag.Quoted = quoted;
-            return PartialView();
+            return PartialView(Quoted);
+        }
+
+        [HttpPost]
+        public ActionResult EditQuotedInfo(SP_Quoted model)
+        {
+            bool Quoted = _db.SP_Quoted.Any(m =>m.Quoted_Price == model.Quoted_Price && m.Quoted_Date == model.Quoted_Date );
+            if (ModelState.IsValid)
+            {
+                if (Quoted)
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+                else
+                {
+                    SP_Quoted quoted = new SP_Quoted();
+                    if (TryUpdateModel(quoted))
+                    {
+                        _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+            }
+            return Json(new { result = "FAIL" });
         }
     }
 }
