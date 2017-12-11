@@ -66,9 +66,9 @@
     //编辑
     $('.quoted-edit').click(function () {
         $.ajax({
-            url: '/SalesProcess/EditClientInfo',
+            url: '/SalesProcess/EditQuotedInfo',
             data: {
-                clientId: $(this).attr('data-val'),
+                quotedId: $(this).attr('data-eid'),
             },
             success: function (data) {
                 $('#modal-content').html(data)
