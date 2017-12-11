@@ -18,44 +18,26 @@
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @RenderSection("header", required: false)
+    <style>
+        .navbar-default .navbar-nav > li > a {
+            color: #393232;
+        }
+    </style>
 </head>
 <body>
     @RenderSection("menu", required: false)
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar  navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a class="navbar-brand" href="/SalesProcess/ProductList?productType=0"><strong class="color-blue">销售管理</strong></a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            管理系统　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
-                            <li><a href="/SalesProcess/ProductList">销售管理系统</a></li>
-                        </ul>
-                    </li>
-                    <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
-                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
-                    <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            工具　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
-                            <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
-                            <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
-                        </ul>
-                    </li>
+                    <li><a href="/SalesProcess/ProductList">产品管理</a></li>
+                    <li><a href="/SalesProcess/ClientList">客户管理</a></li>
+                    <li><a style="cursor:pointer">业务员管理</a></li>
+                    <li><a style="cursor:pointer">订单管理</a></li>
+                    <li><a style="cursor:pointer">财务管理</a></li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -73,11 +55,10 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ClientList?plattformType=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;客户信息</a></li>
+                                    @*<li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>*@
                                 </ul>
                             </div>
                         </div>
@@ -90,10 +71,10 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseTwo" class="collapse in" role="tabpanel" aria-labelledby="headingTwo">
+                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
+                                    @*<li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>*@
                                 </ul>
                             </div>
                         </div>
