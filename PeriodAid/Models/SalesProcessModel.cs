@@ -28,7 +28,7 @@
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_Contact).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_Quoted).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_FinanceInfo).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SP_ProductType>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_ProductType).HasForeignKey(m => m.Type_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_ProductType>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_ProductType).HasForeignKey(m => m.ProductType_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_SalesSystem).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_SalesSystem>().HasMany(m => m.SP_Quoted).WithRequired(m => m.SP_SalesSystem).HasForeignKey(m => m.SalesSystem_Id).WillCascadeOnDelete(false);
         }
@@ -67,7 +67,7 @@
 
         public int Product_Status { get; set; }
 
-        public int Type_Id { get; set; }
+        public int ProductType_Id { get; set; }
 
         public virtual SP_ProductType SP_ProductType { get; set; }
 
@@ -109,6 +109,8 @@
 
         public int Seller_Type { get; set; }
 
+        public int Seller_Status { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Client> SP_Client { get; set; }
     }
@@ -126,7 +128,9 @@
         public string Client_Area { get; set; }
 
         public int Client_Type { get; set; }
-        
+
+        public int Client_Status { get; set; }
+
         public int Seller_Id { get; set; }
 
         public virtual SP_Seller SP_Seller { get; set; }
@@ -154,7 +158,7 @@
 
         public string System_Phone { get; set; }
 
-        public int System_Type { get; set; }
+        public int System_Status { get; set; }
 
         public int Client_Id { get; set; }
 
@@ -178,7 +182,7 @@
 
         public string Contact_Address { get; set; }
 
-        public int Contact_Type { get; set; }
+        public int Contact_Status { get; set; }
 
         public int Client_Id { get; set; }
 
@@ -205,6 +209,8 @@
         public int SalesSystem_Id { get; set; }
 
         public virtual SP_SalesSystem SP_SalesSystem { get; set; }
+
+        public int Quoted_Status { get; set; }
 
     }
     /// <summary>
