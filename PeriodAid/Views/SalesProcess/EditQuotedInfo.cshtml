@@ -7,6 +7,8 @@
 {
 <div class="hidden" id="product-name">@quoted.SP_Product.Item_Name</div>
 <div class="hidden" id="product-id">@quoted.SP_Product.Id</div>
+<div class="hidden" id="salessystem-id">@quoted.SalesSystem_Id</div>
+<div class="hidden" id="salessystem-name">@quoted.SP_SalesSystem.System_Name</div>
 }
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditQuotedInfo", "SalesProcess", FormMethod.Post, new { @id = "quoted-form" }))
@@ -35,9 +37,25 @@
                 <label class="control-label col-md-2">报价日期</label>
                 <div class="col-md-10">
                     <div id="show-date">
-                        @Html.EditorFor(model => model.Quoted_Date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.Quoted_Date, new { htmlAttributes = new { @class = "form-control"} })
                     </div>
                     @Html.ValidationMessageFor(model => model.Quoted_Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">备注</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Remark, new { htmlAttributes = new { @class = "form-control"} })
+                    @Html.ValidationMessageFor(model => model.Remark, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">店铺名称</label>
+                <div class="col-md-10">
+                    <input id="salessystem-input" type="text" class="span4 form-control" autocomplete="off" name="salessystem-input" readonly="readonly" />
+                    <input type="hidden" id="salessystemId" name="SalesSystem_Id" />
+                    @Html.ValidationMessageFor(model => model.SalesSystem_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -54,6 +72,8 @@
     $(function () {
         $("#product-input").val($("#product-name").html());
         $("#ProductId").val($("#product-id").html())
+        $("#salessystem-input").val($("#salessystem-name").html())
+        $("#salessystemId").val($("#salessystem-id").html())
         // 修改日期格式
         var strDate = $("#Quoted_Date").val().substring(0, 10)
         var reg = /\//g
