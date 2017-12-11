@@ -31,6 +31,13 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="control-label col-md-2">品牌</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Supplier_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Supplier_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="control-label col-md-2">产品名称</label>
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })

@@ -223,6 +223,12 @@ namespace PeriodAid.Controllers
             itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
 
+            List<SelectListItem> typelist = new List<SelectListItem>();
+            typelist.Add(new SelectListItem() { Text = "未知", Value = "0" });
+            typelist.Add(new SelectListItem() { Text = "大客户", Value = "1" });
+            typelist.Add(new SelectListItem() { Text = "经销商", Value = "2" });
+            ViewBag.ClientStatus = new SelectList(typelist, "Value", "Text");
+
             List<SelectListItem> salessystem = new List<SelectListItem>();
             salessystem.Add(new SelectListItem() { Text = "华东", Value = "华东" });
             salessystem.Add(new SelectListItem() { Text = "外区", Value = "外区" });
@@ -263,6 +269,7 @@ namespace PeriodAid.Controllers
                     client.Client_Type = model.Client_Type;
                     client.Seller_Id = model.Seller_Id;
                     client.Client_Area = model.Client_Area;
+                    client.Client_Status = model.Client_Status;
                     _db.SP_Client.Add(client);
                     _db.SaveChanges();
                     return Content("SUCCESS");
@@ -288,6 +295,12 @@ namespace PeriodAid.Controllers
             }
 
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
+
+            List<SelectListItem> typelist = new List<SelectListItem>();
+            typelist.Add(new SelectListItem() { Text = "未知", Value = "0" });
+            typelist.Add(new SelectListItem() { Text = "大客户", Value = "1" });
+            typelist.Add(new SelectListItem() { Text = "经销商", Value = "2" });
+            ViewBag.ClientStatus = new SelectList(typelist, "Value", "Text");
 
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
@@ -342,6 +355,7 @@ namespace PeriodAid.Controllers
             client.Seller_Id = Client.Seller_Id;
             client.Client_Type = -1;
             client.Client_Area = Client.Client_Area;
+            client.Client_Status = Client.Client_Status;
             if (TryUpdateModel(client))
             {
                 _db.Entry(client).State = System.Data.Entity.EntityState.Modified;

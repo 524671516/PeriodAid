@@ -16,11 +16,11 @@
         </tr>
         @foreach (var item in Model)
         {
-            if (item.Client_Type != -1)
+            if (item.Client_Status != -1)
             {
                 <tr>
                     <td>@item.Client_Name</td>
-                    <td>@Html.PlattformTypeStatus(item.Client_Type)</td>
+                    <td>@Html.ContactStatus(item.Client_Status)</td>
                     <td>@item.Client_Area</td>
                     <td>@item.SP_Seller.Seller_Name</td>
                     <td>
