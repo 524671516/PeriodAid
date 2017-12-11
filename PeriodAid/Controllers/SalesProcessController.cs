@@ -221,13 +221,13 @@ namespace PeriodAid.Controllers
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
             itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
-            ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
+            ViewBag.ClientStatus = new SelectList(itemlist, "Value", "Text");
 
             List<SelectListItem> typelist = new List<SelectListItem>();
             typelist.Add(new SelectListItem() { Text = "未知", Value = "0" });
             typelist.Add(new SelectListItem() { Text = "大客户", Value = "1" });
             typelist.Add(new SelectListItem() { Text = "经销商", Value = "2" });
-            ViewBag.ClientStatus = new SelectList(typelist, "Value", "Text");
+            ViewBag.ClientType = new SelectList(typelist, "Value", "Text");
 
             List<SelectListItem> salessystem = new List<SelectListItem>();
             salessystem.Add(new SelectListItem() { Text = "华东", Value = "华东" });
@@ -296,17 +296,17 @@ namespace PeriodAid.Controllers
 
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
 
-            List<SelectListItem> typelist = new List<SelectListItem>();
-            typelist.Add(new SelectListItem() { Text = "未知", Value = "0" });
-            typelist.Add(new SelectListItem() { Text = "大客户", Value = "1" });
-            typelist.Add(new SelectListItem() { Text = "经销商", Value = "2" });
-            ViewBag.ClientStatus = new SelectList(typelist, "Value", "Text");
-
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
             itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
-            ViewBag.ClientType = new SelectList(itemlist, "Value", "Text");
+            ViewBag.ClientStatus = new SelectList(itemlist, "Value", "Text");
+
+            List<SelectListItem> typelist = new List<SelectListItem>();
+            typelist.Add(new SelectListItem() { Text = "未知", Value = "0" });
+            typelist.Add(new SelectListItem() { Text = "大客户", Value = "1" });
+            typelist.Add(new SelectListItem() { Text = "经销商", Value = "2" });
+            ViewBag.ClientType = new SelectList(typelist, "Value", "Text");
 
             List<SelectListItem> salessystem = new List<SelectListItem>();
             salessystem.Add(new SelectListItem() { Text = "华东", Value = "华东" });

@@ -9,7 +9,8 @@
     <table class="table text-center">
         <tr>
             <th class="text-center">客户名称</th>
-            <th class="text-center">客户状态</th>
+            <th class="text-center">状态</th>
+            <th class="text-center">客户类型</th>
             <th class="text-center">所属区域</th>
             <th class="text-center">负责人</th>
             <th></th>
@@ -20,7 +21,8 @@
             {
                 <tr>
                     <td>@item.Client_Name</td>
-                    <td>@Html.ContactStatus(item.Client_Status)</td>
+                    <td>@Html.PlattformTypeStatus(item.Client_Status)</td>
+                    <td>@Html.ClientType(item.Client_Type)</td>
                     <td>@item.Client_Area</td>
                     <td>@item.SP_Seller.Seller_Name</td>
                     <td>
