@@ -803,7 +803,6 @@ namespace PeriodAid.Controllers
         public ActionResult AddSellerPartial(SP_Seller model, FormCollection form)
         {
             bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile);
-            ModelState.Remove("Seller_Mobile");
             if (ModelState.IsValid)
             {
                 if (Seller)
@@ -828,6 +827,60 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
             //return Content("ERROR1");
+        }
+        public ActionResult EditSellerInfo(int sellerId)
+        {
+            var Seller = _db.SP_Seller.SingleOrDefault(m => m.Id == sellerId);
+            List<SelectListItem> sellerlist = new List<SelectListItem>();
+            sellerlist.Add(new SelectListItem() { Text = "业务员", Value = "0" });
+            sellerlist.Add(new SelectListItem() { Text = "产品部", Value = "1" });
+            sellerlist.Add(new SelectListItem() { Text = "财务部", Value = "2" });
+            sellerlist.Add(new SelectListItem() { Text = "业务主管", Value = "3" });
+            sellerlist.Add(new SelectListItem() { Text = "管理员", Value = "4" });
+            ViewBag.Seller = new SelectList(sellerlist, "Value", "Text");
+            return PartialView(Seller);
+        }
+        [HttpPost]
+        public ActionResult EditSellerInfo(SP_Seller model)
+        {
+            bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type);
+            if (ModelState.IsValid)
+            {
+                if (Seller)
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+                else
+                {
+                    SP_Seller seller = new SP_Seller();
+                    if (TryUpdateModel(seller))
+                    {
+                        _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+        [HttpPost]
+        public ActionResult DeleteSeller(int sellerId)
+        {
+            var Seller = _db.SP_Seller.AsNoTracking().SingleOrDefault(m => m.Id == sellerId);
+            SP_Seller seller = new SP_Seller();
+            seller.Id = Seller.Id;
+            seller.Seller_Name = Seller.Seller_Name;
+            seller.Seller_Mobile = Seller.Seller_Mobile;
+            seller.Seller_Type = Seller.Seller_Type;
+            seller.Seller_Status = -1;
+            if (TryUpdateModel(seller))
+            {
+                _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FALL" });
+
         }
     }
 }

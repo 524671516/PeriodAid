@@ -21,7 +21,7 @@
                 <td>@Html.SellerType(item.Seller_Type)</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除业务员</a>
+                    <a class="delete-seller btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除业务员</a>
                 </td>
             </tr>
         }
@@ -58,9 +58,9 @@
         // 编辑
         $('.select-a').click(function () {
             $.ajax({
-                url: '/SalesProcess/EditClientInfo',
+                url: '/SalesProcess/EditSellerInfo',
                 data: {
-                    clientId: $(this).attr('data-val'),
+                    sellerId: $(this).attr('data-val'),
                 },
                 success: function (data) {
                     $('#modal-content').html(data)
@@ -70,28 +70,25 @@
             })
         })
         // 删除
-        $(".delete-client").on("click", function () {
+        $(".delete-seller").on("click", function () {
             var C_id = $(this).attr("data-eid");
             confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: "/SalesProcess/DeleteClient",
+                        url: "/SalesProcess/DeleteSeller",
                         type: "post",
                         data: {
-                            clientId: C_id,
+                            sellerId: C_id,
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
                                     $.ajax({
-                                        url: "/SalesProcess/ClientListPartial",
+                                        url: "/SalesProcess/SellerListPartial",
                                         data: {
-                                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
-                                            page: 1,
-                                            query: $("#client-query").val(),
-                                            plattformType: getUrlParam('plattformType')
+                                            query: $("#seller-query").val(),
                                         },
                                         success: function (data) {
-                                            $("#client_list_content").html(data)
+                                            $("#seller_list_content").html(data)
                                             $('.modal-backdrop.in').remove()
                                             $('body').removeClass('modal-open')
                                         }

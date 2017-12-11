@@ -1,0 +1,76 @@
+﻿@model PeriodAid.Models.SP_Seller
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>修改业务员信息</h2>
+</div>
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("EditSellerInfo", "SalesProcess", FormMethod.Post, new { @id = "seller-form" }))
+    {
+        @Html.AntiForgeryToken();
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            <div class="form-group">
+                <label class="control-label col-md-2">姓名</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Seller_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Seller_Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">手机号</label>
+                <div class="col-md-10">
+                    <div id="show-date">
+                        @Html.EditorFor(model => model.Seller_Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Seller_Mobile, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">类型</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Seller_Type, ViewBag.Seller as SelectList, new { @class = "form-control", @required = "required" })
+                    @Html.ValidationMessageFor(model => model.Seller_Type, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" />
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+<script>
+    $('#save-btn').click(function () {
+        $("#seller-form").ajaxSubmit({
+            url: '/SalesProcess/EditSellerInfo',
+            type: 'post',
+            success: function (data) {
+                if (data.result == "SUCCESS") {
+                    alert('保存成功')
+                    $("#myModal").modal('hide');
+                    $.ajax({
+                        url: "/SalesProcess/SellerListPartial",
+                        data: {
+                            page: 1,
+                            query: $("#seller-query").val()
+                        },
+                        success: function (data) {
+                            $("#seller_list_content").html(data);
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                        }
+                    });
+
+                } else if (data.result == "UNAUTHORIZED") {
+                    errorAlert('信息未修改')
+                } else {
+                    errorAlert('保存失败')
+                }
+            }
+        })
+        return false;
+    })
+</script>
