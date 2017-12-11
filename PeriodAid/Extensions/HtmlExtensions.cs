@@ -194,6 +194,21 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
+        
+        public static string ClientType(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "未知";
+                case 1:
+                    return "大客户";
+                case 2:
+                    return "经销商";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string PlattformTypeStatus(this HtmlHelper helper, int status)
         {
