@@ -151,21 +151,29 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult DeleteProduct(int productId)
         {
-            var item = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
-            if (item != null)
+            var Product = _db.SP_Product.AsNoTracking().SingleOrDefault(m => m.Id == productId);
+            SP_Product product = new SP_Product();
+            product.Id = Product.Id;
+            product.Item_Code = Product.Item_Code;
+            product.Item_Name = Product.Item_Name;
+            product.System_Code = Product.System_Code;
+            product.Carton_Spec = Product.Carton_Spec;
+            product.Purchase_Price = Product.Purchase_Price;
+            product.Brand_Name = Product.Brand_Name;
+            product.Item_ShortName = Product.Item_ShortName;
+            product.Supplier_Name = Product.Supplier_Name;
+            product.Bar_Code = Product.Bar_Code;
+            product.Product_Weight = Product.Product_Weight;
+            product.Supply_Price = Product.Supply_Price;
+            product.ProductType_Id = Product.ProductType_Id;
+            product.Product_Status = -1;
+            if (TryUpdateModel(product))
             {
-                try
-                {
-                    _db.SP_Product.Remove(item);
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-                catch
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
+                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
             }
-            return Json(new { result = "FAIL" });
+            return Json(new { result = "FALL" });
         }
 
         public ActionResult ClientList()
@@ -662,6 +670,27 @@ namespace PeriodAid.Controllers
                 return PartialView(model);
             }
             //return Content("ERROR1");
+        }
+        [HttpPost]
+        public ActionResult DeleteQuoted(int quotedId)
+        {
+            var Quoted = _db.SP_Quoted.AsNoTracking().SingleOrDefault(m => m.Id == quotedId);
+            SP_Quoted quoted = new SP_Quoted();
+            quoted.Id = Quoted.Id;
+            quoted.Quoted_Price = Quoted.Quoted_Price;
+            quoted.Quoted_Date = Quoted.Quoted_Date;
+            quoted.Remark = Quoted.Remark;
+            quoted.Product_Id = Quoted.Product_Id;
+            quoted.SalesSystem_Id = Quoted.SalesSystem_Id;
+            quoted.Quoted_Status = -1;
+            if (TryUpdateModel(quoted))
+            {
+                _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            return Json(new { result = "FALL" });
+
         }
         [HttpPost]
         public JsonResult QueryProduct(string query)

@@ -16,20 +16,23 @@
             <th>备注</th>
             <th></th>
         </tr>
-        @foreach(var item in Model)
+        @foreach (var item in Model)
         {
-            <tr>
-                <td>@item.SP_Product.System_Code</td>
-                <td>@item.SP_Product.Item_Code</td>
-                <td>@item.SP_Product.Item_Name</td>
-                <td>@item.Quoted_Price</td>
-                <td>@item.Quoted_Date.ToString("yyyy-MM-dd")</td>
-                <td>@item.Remark</td>
-                <td>
-                    <a data-eid="@item.Id" class="quoted-edit btn btn-xs btn-success" role="button">编辑</a>
-                    <a class="quoted-delete btn btn-xs btn-danger" data-eid="@item.Id" role="button">删除</a>
-                </td>
-            </tr>
+            if (item.Quoted_Status != -1)
+            {
+                <tr>
+                    <td>@item.SP_Product.System_Code</td>
+                    <td>@item.SP_Product.Item_Code</td>
+                    <td>@item.SP_Product.Item_Name</td>
+                    <td>@item.Quoted_Price</td>
+                    <td>@item.Quoted_Date.ToString("yyyy-MM-dd")</td>
+                    <td>@item.Remark</td>
+                    <td>
+                        <a data-eid="@item.Id" class="quoted-edit btn btn-xs btn-success" role="button">编辑</a>
+                        <a class="quoted-delete btn btn-xs btn-danger" data-eid="@item.Id" role="button">删除</a>
+                    </td>
+                </tr>
+            }
         }
     </table>
     <div class="text-right">
@@ -80,23 +83,21 @@
         confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
             if (isConfirm) {
                 $.ajax({
-                    url: "/SalesProcess/DeleteClient",
+                    url: "/SalesProcess/DeleteQuoted",
                     type: "post",
                     data: {
-                        clientId: C_id,
+                        quotedId: C_id,
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $.ajax({
-                                url: "/SalesProcess/ClientListPartial",
+                                url: "/SalesProcess/QuotedListPartial",
                                 data: {
-                                    plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
-                                    page: 1,
-                                    query: $("#client-query").val(),
-                                    plattformType: getUrlParam('plattformType')
+                                    query: $("#quoted-query").val(),
+                                    SalesSystemId: getUrlParam('SalesSystemId')
                                 },
                                 success: function (data) {
-                                    $("#client_list_content").html(data)
+                                    $("#quoted_list_content").html(data)
                                     $('.modal-backdrop.in').remove()
                                     $('body').removeClass('modal-open')
                                 }
