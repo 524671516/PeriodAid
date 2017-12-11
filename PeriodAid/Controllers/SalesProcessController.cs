@@ -60,7 +60,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var product = (from m in _db.SP_Product
-                                   where m.Type_Id == productType
+                                   where m.ProductType_Id == productType
                                    select m);
                     var SearchResult = (from m in product
                                         where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query) 
@@ -72,7 +72,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SearchResult = (from m in _db.SP_Product
-                                        where m.Type_Id == productType
+                                        where m.ProductType_Id == productType
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -114,7 +114,7 @@ namespace PeriodAid.Controllers
                     item.Carton_Spec = model.Carton_Spec;
                     item.Purchase_Price = model.Purchase_Price;
                     item.Supply_Price = model.Supply_Price;
-                    item.Type_Id = model.Type_Id;
+                    item.ProductType_Id = model.ProductType_Id;
                     _db.SP_Product.Add(item);
                     _db.SaveChanges();
                     return Content("SUCCESS");
@@ -392,7 +392,7 @@ namespace PeriodAid.Controllers
                     contact.Contact_Name = model.Contact_Name;
                     contact.Contact_Mobile = model.Contact_Mobile;
                     contact.Contact_Address = model.Contact_Address;
-                    contact.Contact_Type = 0;
+                    contact.Contact_Status = 0;
                     contact.Client_Id = model.Client_Id;
                     _db.SP_Contact.Add(contact);
                     _db.SaveChanges();
@@ -449,7 +449,7 @@ namespace PeriodAid.Controllers
             contact.Contact_Mobile = Contact.Contact_Mobile;
             contact.Contact_Address = Contact.Contact_Address;
             contact.Client_Id = Contact.Client_Id;
-            contact.Contact_Type = -1;
+            contact.Contact_Status = -1;
             if (TryUpdateModel(contact))
             {
                 _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
@@ -514,7 +514,7 @@ namespace PeriodAid.Controllers
                     sales.System_Phone = model.System_Phone;
                     sales.System_Address = model.System_Address;
                     sales.Client_Id = model.Client_Id;
-                    sales.System_Type = 0;
+                    sales.System_Status = 0;
                     _db.SP_SalesSystem.Add(sales);
                     _db.SaveChanges();
                     return Content("SUCCESS");
@@ -569,7 +569,7 @@ namespace PeriodAid.Controllers
             sales.System_Name = Sales.System_Name;
             sales.System_Phone = Sales.System_Phone;
             sales.System_Address = Sales.System_Address;
-            sales.System_Type = -1;
+            sales.System_Status = -1;
             if (TryUpdateModel(sales))
             {
                 _db.Entry(sales).State = System.Data.Entity.EntityState.Modified;
