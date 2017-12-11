@@ -1177,6 +1177,7 @@
     <Content Include="Views\SalesProcess\SalesListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddSalesPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditSalesInfo.cshtml" />
+    <Content Include="Views\SalesProcess\EditQuotedInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

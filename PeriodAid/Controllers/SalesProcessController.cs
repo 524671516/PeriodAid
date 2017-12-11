@@ -636,7 +636,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddQuotedPartial(SP_Quoted model, FormCollection form)
         {
-            bool Quoted = _db.SP_Quoted.Any(m => m.Product_Id == model.Product_Id);
+            bool Quoted = _db.SP_Quoted.Any(m => m.Product_Id == model.Product_Id && m.SalesSystem_Id == model.SalesSystem_Id);
             ModelState.Remove("Quoted_Date");
             if (ModelState.IsValid)
             {
@@ -671,6 +671,15 @@ namespace PeriodAid.Controllers
                           && m.Item_Name.Contains(query)
                           select new { Id = m.Id, ProductName = m.Item_Name };
             return Json(product);
+        }
+
+        public ActionResult EditQuotedInfo(int quotedId)
+        {
+            var quoted = from m in _db.SP_Quoted
+                         where m.Id == quotedId
+                         select m;
+            ViewBag.Quoted = quoted;
+            return PartialView();
         }
     }
 }
