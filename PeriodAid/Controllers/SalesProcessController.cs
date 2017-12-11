@@ -425,9 +425,10 @@ namespace PeriodAid.Controllers
                     contact.Contact_Name = model.Contact_Name;
                     contact.Contact_Mobile = model.Contact_Mobile;
                     contact.Contact_Address = model.Contact_Address;
-                    contact.Contact_Status = 0;
+                    contact.Contact_Status = model.Contact_Status;
                     contact.Client_Id = model.Client_Id;
                     _db.SP_Contact.Add(contact);
+                    _db.Configuration.ValidateOnSaveEnabled = false;
                     _db.SaveChanges();
                     return Content("SUCCESS");
                 }
