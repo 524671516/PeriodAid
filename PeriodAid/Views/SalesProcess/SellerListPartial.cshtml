@@ -58,9 +58,9 @@
         // 编辑
         $('.select-a').click(function () {
             $.ajax({
-                url: '/SalesProcess/EditClientInfo',
+                url: '/SalesProcess/EditSellerInfo',
                 data: {
-                    clientId: $(this).attr('data-val'),
+                    sellerId: $(this).attr('data-val'),
                 },
                 success: function (data) {
                     $('#modal-content').html(data)

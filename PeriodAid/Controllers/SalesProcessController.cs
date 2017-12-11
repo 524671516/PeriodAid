@@ -767,5 +767,49 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public ActionResult SellerListPartial(int? page)
+        {
+            int _page = page ?? 1;
+            var sellerList = (from m in _db.SP_Seller
+                              where m.Seller_Status != -1
+                              orderby m.Id
+                              select m).ToPagedList(_page, 15);
+            return PartialView(sellerList);
+        }
+        public ActionResult EditSellerInfo(int sellerId)
+        {
+            var Seller = _db.SP_Seller.SingleOrDefault(m => m.Id == sellerId);
+            List<SelectListItem> sellerlist = new List<SelectListItem>();
+            sellerlist.Add(new SelectListItem() { Text = "业务员", Value = "0" });
+            sellerlist.Add(new SelectListItem() { Text = "产品部", Value = "1" });
+            sellerlist.Add(new SelectListItem() { Text = "财务部", Value = "2" });
+            sellerlist.Add(new SelectListItem() { Text = "业务主管", Value = "3" });
+            sellerlist.Add(new SelectListItem() { Text = "管理员", Value = "4" });
+            ViewBag.Seller = new SelectList(sellerlist, "Value", "Text");
+            return PartialView(Seller);
+        }
+        [HttpPost]
+        public ActionResult EditSellerInfo(SP_Seller model)
+        {
+            bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type);
+            if (ModelState.IsValid)
+            {
+                if (Seller)
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+                else
+                {
+                    SP_Seller seller = new SP_Seller();
+                    if (TryUpdateModel(seller))
+                    {
+                        _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
     }
 }

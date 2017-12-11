@@ -13,7 +13,7 @@
 </table>
 <h2>业务员信息</h2>
 <a class="btn btn-info btn-sm" id="add-contact" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增业务员</a>
-<div id="contact_list_content"></div>
+<div id="seller_list_content"></div>
 @section scripts{
     <script>
         $(function () {
@@ -25,21 +25,21 @@
                     query: $("#contact-query").val(),
                 },
                 success: function (data) {
-                    $("#contact_list_content").html(data)
+                    $("#seller_list_content").html(data)
                 }
             });
         })
         // 搜索
         $("#contact-search").on("click", function () {
             $.ajax({
-                url: "/SalesProcess/ContactListPartial",
+                url: "/SalesProcess/SellerListPartial",
                 data:{
                     clientId: getUrlParam("clientId"),
                     page: 1,
                     query: $("#contact-query").val(),
                 },
                 success: function (data) {
-                    $("#contact_list_content").html(data)
+                    $("#seller_list_content").html(data)
                 }
             })
         })
