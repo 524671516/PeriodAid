@@ -5,12 +5,15 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>新增报价信息</h2>
 </div>
-@foreach(var quoted in ViewBag.Quoted)
+@foreach(var sales in ViewBag.Sales)
+{
+    <div class="hidden" id="SalesSystem_name">@sales.System_Name</div>
+    <div class="hidden" id="SalesSystem_Id">@sales.Id</div>
+}
+@foreach (var quoted in ViewBag.Quoted)
 {
     <div class="hidden" id="product-name">@quoted.SP_Product.Item_Name</div>
     <div class="hidden" id="product-id">@quoted.SP_Product.Id</div>
-    <div class="hidden" id="SalesSystem_name">@quoted.SP_SalesSystem.System_Name</div>
-    <div class="hidden" id="SalesSystem_Id">@quoted.SP_SalesSystem.Id</div>
 }
 <div class="modal-body">
     @using (Html.BeginForm("AddQuotedPartial", "SalesProcess", FormMethod.Post, new { @id = "add-quoted-form" }))
@@ -37,7 +40,7 @@
             <div class="form-group">
                 <label class="col-md-3 control-label">报价日期</label>
                 <div class="col-md-9">
-                    @Html.EditorFor(model => model.Quoted_Date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(model => model.Quoted_Date, new { htmlAttributes = new { @class = "form-control" ,@readonly ="readonly"} })
                     @Html.ValidationMessageFor(model => model.Quoted_Date, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -53,7 +56,6 @@
                 <div class="col-md-9">
                     <input id="salessystem-input" type="text" class="span4 form-control" autocomplete="off" name="salessystem-input" readonly="readonly" />
                     <input type="hidden" id="SalesSystemId" name="SalesSystem_Id" />
-                    @Html.EditorFor(model => model.Remark, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.SalesSystem_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -65,8 +67,8 @@
         </div>
     }
 </div>
-<script src="~/Scripts/bootstrap-typeahead.js"></script>
 <script src="~/Scripts/kalendae.standalone.js"></script>
+<script src="~/Scripts/bootstrap-typeahead.js"></script>
 <script>
     $(function () {
         $("#ProductId").val($("#product-id").html())
@@ -102,11 +104,12 @@
                 });
                 alert("添加成功！");
             }
-            else {
+            else if (data == "FALL") {
+                errorAlert("产品已存在请直接修改！");
+            } else {
                 errorAlert("添加失败！");
             }
-        })
-
+        });
         window.moment = Kalendae.moment;
         var k4 = new Kalendae.Input('Quoted_Date', {
             months: 1,
