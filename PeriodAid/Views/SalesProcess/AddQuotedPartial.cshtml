@@ -53,6 +53,7 @@
                 <div class="col-md-9">
                     <input id="salessystem-input" type="text" class="span4 form-control" autocomplete="off" name="salessystem-input" readonly="readonly" />
                     <input type="hidden" id="SalesSystemId" name="SalesSystem_Id" />
+                    @Html.EditorFor(model => model.Remark, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.SalesSystem_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -65,6 +66,7 @@
     }
 </div>
 <script src="~/Scripts/bootstrap-typeahead.js"></script>
+<script src="~/Scripts/kalendae.standalone.js"></script>
 <script>
     $(function () {
         $("#ProductId").val($("#product-id").html())
@@ -104,5 +106,13 @@
                 errorAlert("添加失败！");
             }
         })
+
+        window.moment = Kalendae.moment;
+        var k4 = new Kalendae.Input('Quoted_Date', {
+            months: 1,
+            mode: 'single',
+            titleFormat: "MM月, YYYY年",
+            format: "YYYY-MM-DD"
+        });
     })
 </script>
