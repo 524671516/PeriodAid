@@ -209,8 +209,11 @@ namespace PeriodAid.Controllers
             ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
 
             List<SelectListItem> sellerlist = new List<SelectListItem>();
-            sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
-            sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
+            var Seller = from m in _db.SP_Seller
+                         select m;
+            foreach (var seller in Seller) {
+                sellerlist.Add(new SelectListItem() { Text = seller.Seller_Name, Value = seller.Id.ToString() });
+            }
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
             return PartialView();
         }
@@ -505,12 +508,12 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditSalesInfo(SP_SalesSystem model)
         {
-            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone);
+            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address);
             if (ModelState.IsValid)
             {
                 if (Sales)
                 {
-                    return Json(new { result = "FALL" });
+                    return Json(new { result = "NOEDIT" });
                 }
                 else{
                     SP_SalesSystem sales = new SP_SalesSystem();

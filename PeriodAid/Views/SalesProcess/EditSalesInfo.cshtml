@@ -80,7 +80,11 @@
                         }
                     });
 
-                } else {
+                } else if (data.result == "NOEDIT")
+                {
+                    errorAlert('未修改任何信息！')
+                } else
+                {
                     errorAlert('保存失败')
                 }
             }
