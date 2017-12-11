@@ -121,7 +121,9 @@
                     }
                 });
             }
-            else {
+            else if(data == "FALL") {
+                errorAlert("产品已存在！");
+            } else {
                 errorAlert("添加失败！");
             }
         });

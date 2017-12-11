@@ -80,6 +80,8 @@
                         }
                     });
 
+                } else if (data.result == "UNAUTHORIZED") {
+                    errorAlert('信息未修改')
                 } else {
                     errorAlert('保存失败')
                 }
