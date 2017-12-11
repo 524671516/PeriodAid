@@ -77,7 +77,9 @@
                 });
                 alert("添加成功！");
             }
-            else {
+            else if (data == "UNAUTHORIZED") {
+                errorAlert("商铺已存在！");
+            } else {
                 errorAlert("添加失败！");
             }
         })

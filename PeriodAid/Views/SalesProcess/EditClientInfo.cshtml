@@ -27,7 +27,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">区域</label>
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Client_Area, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DropDownListFor(model => model.Client_Area,ViewBag.SalesList as SelectList,new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Client_Area, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -43,8 +43,6 @@
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
-
-
         </div>
     }
 </div>
@@ -70,6 +68,8 @@
                         }
                     });
 
+                } else if (data.result == "UNAUTHORIZED") {
+                    errorAlert('信息未修改')
                 } else {
                     errorAlert('保存失败')
                 }

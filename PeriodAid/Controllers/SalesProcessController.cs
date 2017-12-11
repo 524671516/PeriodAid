@@ -93,25 +93,33 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddProductPartial(SP_Product model, FormCollection form)
         {
+            bool Product = _db.SP_Product.Any(m => m.System_Code == model.System_Code);
             if (ModelState.IsValid)
             {
-                var item = new SP_Product();
-                item.System_Code = model.System_Code;
-                item.Item_Code = model.Item_Code;
-                item.Item_Name = model.Item_Name;
-                item.Brand_Name = model.Brand_Name;
-                item.Item_ShortName = model.Item_ShortName;
-                item.Supplier_Name = model.Supplier_Name;
-                item.Bar_Code = model.Bar_Code;
-                item.Product_Weight = model.Product_Weight;
-                item.Carton_Spec = model.Carton_Spec;
-                item.Purchase_Price = model.Purchase_Price;
-                item.Supply_Price = model.Supply_Price;
-                item.Type_Id = model.Type_Id;
-                _db.SP_Product.Add(item);
-                _db.SaveChanges();
-                return Content("SUCCESS");
+                if (Product)
+                {
+                    return Content("FALL");
+                }
+                else
+                {
+                    var item = new SP_Product();
+                    item.System_Code = model.System_Code;
+                    item.Item_Code = model.Item_Code;
+                    item.Item_Name = model.Item_Name;
+                    item.Brand_Name = model.Brand_Name;
+                    item.Item_ShortName = model.Item_ShortName;
+                    item.Supplier_Name = model.Supplier_Name;
+                    item.Bar_Code = model.Bar_Code;
+                    item.Product_Weight = model.Product_Weight;
+                    item.Carton_Spec = model.Carton_Spec;
+                    item.Purchase_Price = model.Purchase_Price;
+                    item.Supply_Price = model.Supply_Price;
+                    item.Type_Id = model.Type_Id;
+                    _db.SP_Product.Add(item);
+                    _db.SaveChanges();
+                    return Content("SUCCESS");
 
+                }
             }
             else
             {
@@ -211,9 +219,11 @@ namespace PeriodAid.Controllers
             List<SelectListItem> sellerlist = new List<SelectListItem>();
             var Seller = from m in _db.SP_Seller
                          select m;
-            foreach (var seller in Seller) {
+            foreach (var seller in Seller)
+            {
                 sellerlist.Add(new SelectListItem() { Text = seller.Seller_Name, Value = seller.Id.ToString() });
             }
+
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
             return PartialView();
         }
@@ -225,7 +235,7 @@ namespace PeriodAid.Controllers
             {
                 if (Client)
                 {
-                    return Content("FALL");
+                    return Content("UNAUTHORIZED");
                 }
                 else
                 {
@@ -251,8 +261,13 @@ namespace PeriodAid.Controllers
         {
             var item = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
             List<SelectListItem> sellerlist = new List<SelectListItem>();
-            sellerlist.Add(new SelectListItem() { Text = "孙楠楠", Value = "1" });
-            sellerlist.Add(new SelectListItem() { Text = "杨丽萌", Value = "2" });
+            var Seller = from m in _db.SP_Seller
+                         select m;
+            foreach (var seller in Seller)
+            {
+                sellerlist.Add(new SelectListItem() { Text = seller.Seller_Name, Value = seller.Id.ToString() });
+            }
+
             ViewBag.SellerName = new SelectList(sellerlist, "Value", "Text");
 
             List<SelectListItem> itemlist = new List<SelectListItem>();
@@ -277,12 +292,12 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditClientInfo(SP_Client model)
         {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area);
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Seller_Id == model.Seller_Id);
             if (ModelState.IsValid)
             {
                 if (Client)
                 {
-                    return Json(new { result = "FAIL" });
+                    return Json(new { result = "UNAUTHORIZED" });
                 }
                 else
                 {
@@ -363,18 +378,26 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddContactPartial(SP_Contact model, FormCollection form)
         {
+            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile);
             ModelState.Remove("Contact_Mobile");
             if (ModelState.IsValid)
             {
-                var contact = new SP_Contact();
-                contact.Contact_Name = model.Contact_Name;
-                contact.Contact_Mobile = model.Contact_Mobile;
-                contact.Contact_Address = model.Contact_Address;
-                contact.Contact_Type = 0;
-                contact.Client_Id = model.Client_Id;
-                _db.SP_Contact.Add(contact);
-                _db.SaveChanges();
-                return Content("SUCCESS");
+                if (Contact)
+                {
+                    return Content("UNAUTHORIZED");
+                }
+                else
+                {
+                    var contact = new SP_Contact();
+                    contact.Contact_Name = model.Contact_Name;
+                    contact.Contact_Mobile = model.Contact_Mobile;
+                    contact.Contact_Address = model.Contact_Address;
+                    contact.Contact_Type = 0;
+                    contact.Client_Id = model.Client_Id;
+                    _db.SP_Contact.Add(contact);
+                    _db.SaveChanges();
+                    return Content("SUCCESS");
+                }
             }
             else
             {
@@ -395,14 +418,23 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditContactInfo(SP_Contact model)
         {
+            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Address == model.Contact_Address);
             if (ModelState.IsValid)
             {
-                SP_Contact contact = new SP_Contact();
-                if (TryUpdateModel(contact))
+                if (Contact)
                 {
-                    _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+                else
+                {
+
+                    SP_Contact contact = new SP_Contact();
+                    if (TryUpdateModel(contact))
+                    {
+                        _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
                 }
             }
             return Json(new { result = "FAIL" });
@@ -473,7 +505,7 @@ namespace PeriodAid.Controllers
             {
                 if (Sales)
                 {
-                    return Content("FALL");
+                    return Content("UNAUTHORIZED");
                 }
                 else
                 {
@@ -513,7 +545,7 @@ namespace PeriodAid.Controllers
             {
                 if (Sales)
                 {
-                    return Json(new { result = "NOEDIT" });
+                    return Json(new { result = "UNAUTHORIZED" });
                 }
                 else{
                     SP_SalesSystem sales = new SP_SalesSystem();
@@ -610,7 +642,7 @@ namespace PeriodAid.Controllers
             {
                 if (Quoted)
                 {
-                    return Content("FALL");
+                    return Content("UNAUTHORIZED");
                 }
                 else
                 {

@@ -65,7 +65,9 @@
                 });
                 alert("添加成功！");
         }
-        else {
+        else if (data == "UNAUTHORIZED") {
+            errorAlert("客户已存在！");
+        } else {
             errorAlert("添加失败！");
         }
     })

@@ -80,11 +80,9 @@
                         }
                     });
 
-                } else if (data.result == "NOEDIT")
-                {
-                    errorAlert('未修改任何信息！')
-                } else
-                {
+                } else if (data.result == "UNAUTHORIZED") {
+                    errorAlert('信息未修改')
+                } else {
                     errorAlert('保存失败')
                 }
             }
