@@ -86,7 +86,6 @@ namespace PeriodAid.Controllers
                 _db.SaveChanges();
                 return Content("SUCCESS");
 
-                }
             }
             else
             {
@@ -94,6 +93,7 @@ namespace PeriodAid.Controllers
             }
             //return Content("ERROR1");
         }
+
 
         public ActionResult EditProductInfo(int productId)
         {
