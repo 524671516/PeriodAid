@@ -18,7 +18,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">产品名称</label>
                 <div class="col-md-10">
-                    <input id="product-input" type="text" class="span4 form-control" autocomplete="off" name="product-input" />
+                    <input id="product-input" type="text" class="span4 form-control" autocomplete="off" name="product-input" readonly="readonly" />
                     <input type="hidden" id="ProductId" name="Product_Id" />
                     @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
                 </div>
@@ -32,21 +32,34 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="control-label col-md-2">报价日期</label>
+                <div class="col-md-10">
+                    <div id="show-date">
+                        @Html.EditorFor(model => model.Quoted_Date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Quoted_Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
 
-
-
-
-
-
-
         </div>
     }
 </div>
+<script src="~/Scripts/kalendae.standalone.js"></script>
 <script>
+    $(function () {
+        $("#product-input").val($("#product-name").html());
+        $("#ProductId").val($("#product-id").html())
+        // 修改日期格式
+        var strDate = $("#Quoted_Date").val().substring(0, 10)
+        var reg = /\//g
+        var newstrDate = strDate.replace(reg, "-")
+        $("#show-date input").attr("value", newstrDate)
+    })
     $('#save-btn').click(function () {
         $("#quoted-form").ajaxSubmit({
             url: '/SalesProcess/EditQuotedInfo',
@@ -77,4 +90,11 @@
         })
         return false;
     })
+    window.moment = Kalendae.moment;
+    var k4 = new Kalendae.Input('Quoted_Date', {
+        months: 1,
+        mode: 'single',
+        titleFormat: "MM月, YYYY年",
+        format: "YYYY-MM-DD"
+    });
 </script>

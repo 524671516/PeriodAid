@@ -675,11 +675,36 @@ namespace PeriodAid.Controllers
 
         public ActionResult EditQuotedInfo(int quotedId)
         {
+            var Quoted = _db.SP_Quoted.SingleOrDefault(m => m.Id == quotedId);
             var quoted = from m in _db.SP_Quoted
                          where m.Id == quotedId
                          select m;
             ViewBag.Quoted = quoted;
-            return PartialView();
+            return PartialView(Quoted);
+        }
+
+        [HttpPost]
+        public ActionResult EditQuotedInfo(SP_Quoted model)
+        {
+            bool Quoted = _db.SP_Quoted.Any(m =>m.Quoted_Price == model.Quoted_Price && m.Quoted_Date == model.Quoted_Date );
+            if (ModelState.IsValid)
+            {
+                if (Quoted)
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+                else
+                {
+                    SP_Quoted quoted = new SP_Quoted();
+                    if (TryUpdateModel(quoted))
+                    {
+                        _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+            }
+            return Json(new { result = "FAIL" });
         }
     }
 }
