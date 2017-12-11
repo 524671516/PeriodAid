@@ -196,7 +196,6 @@ namespace PeriodAid.Controllers
         public ActionResult ClientListPartial(int? page, string query)
         {
             int _page = page ?? 1;
-
             if (query != "")
             {
                 var customer = (from m in _db.SP_Client
@@ -766,6 +765,69 @@ namespace PeriodAid.Controllers
         public ActionResult SellerList()
         {
             return View();
+        }
+
+        public ActionResult SellerListPartial(int? page,string query)
+        {
+            int _page = page ?? 1;
+            if (query != "")
+            {
+                var sellerList = (from m in _db.SP_Seller
+                                  where m.Seller_Status != -1 && m.Seller_Name.Contains(query) || m.Seller_Mobile.Contains(query)
+                                  orderby m.Id
+                                  select m).ToPagedList(_page, 15);
+                return PartialView(sellerList);
+            }
+            else
+            {
+                var SearchResult = (from m in _db.SP_Seller
+                                    where m.Seller_Status != -1
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
+            }
+        }
+
+        public ActionResult AddSellerPartial()
+        {
+            List<SelectListItem> sellerType = new List<SelectListItem>();
+            sellerType.Add(new SelectListItem() { Text = "业务员", Value = "0" });
+            sellerType.Add(new SelectListItem() { Text = "产品部", Value = "1" });
+            sellerType.Add(new SelectListItem() { Text = "财务部", Value = "2" });
+            sellerType.Add(new SelectListItem() { Text = "业务主管", Value = "3" });
+            sellerType.Add(new SelectListItem() { Text = "管理员", Value = "4" });
+            ViewBag.SellerType = new SelectList(sellerType, "Value", "Text");
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddSellerPartial(SP_Seller model, FormCollection form)
+        {
+            bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile);
+            ModelState.Remove("Seller_Mobile");
+            if (ModelState.IsValid)
+            {
+                if (Seller)
+                {
+                    return Content("UNAUTHORIZED");
+                }
+                else
+                {
+                    var seller = new SP_Seller();
+                    seller.Seller_Name = model.Seller_Name;
+                    seller.Seller_Mobile = model.Seller_Mobile;
+                    seller.Seller_Type = model.Seller_Type;
+                    seller.Seller_Status = 0;
+                    _db.SP_Seller.Add(seller);
+                    _db.Configuration.ValidateOnSaveEnabled = false;
+                    _db.SaveChanges();
+                    return Content("SUCCESS");
+                }
+            }
+            else
+            {
+                return PartialView(model);
+            }
+            //return Content("ERROR1");
         }
     }
 }
