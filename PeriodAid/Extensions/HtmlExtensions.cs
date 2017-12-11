@@ -182,6 +182,38 @@ namespace System.Web.Mvc
             }
         }
 
+        public static string SellerStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "离职";
+                case 0:
+                    return "在职";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string SellerType(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "业务员";
+                case 1:
+                    return "产品部";
+                case 2:
+                    return "财务部";
+                case 3:
+                    return "业务主管";
+                case 4:
+                    return "管理员";
+                default:
+                    return "未知";
+            }
+        }
+
         public static string ContactStatus(this HtmlHelper helper, int status)
         {
             switch (status)

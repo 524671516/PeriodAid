@@ -760,5 +760,17 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FALL" });
 
         }
+        public ActionResult SellerList() {
+            return View();
+        }
+        public ActionResult SellerListPartial(int? page)
+        {
+            int _page = page ?? 1;
+            var sellerList = (from m in _db.SP_Seller
+                             where m.Seller_Status != -1
+                             orderby m.Id
+                             select m).ToPagedList(_page,15);
+            return PartialView(sellerList);
+        }
     }
 }

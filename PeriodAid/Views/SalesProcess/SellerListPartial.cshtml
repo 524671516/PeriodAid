@@ -1,0 +1,120 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Seller>
+@using PagedList.Mvc;
+<style>
+    .btn-xs {
+        line-height: 1.4
+    }
+</style>
+<div>
+    <table class="table text-center">
+        <tr>
+            <th class="text-center">姓名</th>
+            <th class="text-center">手机号</th>
+            <th class="text-center">类型</th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Seller_Name</td>
+                <td>@item.Seller_Mobile</td>
+                <td>@Html.SellerType(item.Seller_Type)</td>
+                <td>
+                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除业务员</a>
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("ClientListPartial", new { page }))
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                    page: 1,
+                    query: $("#client-query").val(),
+                    plattformType: getUrlParam('plattformType')
+                },
+                success: function (data) {
+                    $("#client_list_content").html(data)
+                }
+            });
+            return false;
+        });
+        // 编辑
+        $('.select-a').click(function () {
+            $.ajax({
+                url: '/SalesProcess/EditClientInfo',
+                data: {
+                    clientId: $(this).attr('data-val'),
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+
+                }
+            })
+        })
+        // 删除
+        $(".delete-client").on("click", function () {
+            var C_id = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/SalesProcess/DeleteClient",
+                        type: "post",
+                        data: {
+                            clientId: C_id,
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                    $.ajax({
+                                        url: "/SalesProcess/ClientListPartial",
+                                        data: {
+                                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
+                                            page: 1,
+                                            query: $("#client-query").val(),
+                                            plattformType: getUrlParam('plattformType')
+                                        },
+                                        success: function (data) {
+                                            $("#client_list_content").html(data)
+                                            $('.modal-backdrop.in').remove()
+                                            $('body').removeClass('modal-open')
+                                        }
+                                    });
+                                    alert("删除成功")
+                            } else if (data.result == "FAIL") {
+                                alert("删除失败", "", function () {
+                                }, { type: 'error' });
+                            }
+                        }
+                    })
+                }
+            });
+        })
+        // 选择联系人
+        $(".contact-btn").on("click", function () {
+            var C_id = $(this).attr("data-val")
+            $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
+        })
+        // 销售信息
+        $(".sales-btn").on("click", function () {
+            var C_id = $(this).attr("data-val")
+            $(this).attr("href", "/SalesProcess/SalesList?clientId=" + C_id)
+        })
+    })
+</script>
