@@ -1,23 +1,28 @@
 ﻿@model IEnumerable<PeriodAid.Models.SP_Contact>
+<style>
+    .btn-xs {
+        line-height: 1.4;
+    }
+</style>
 <div>
-    <table class="table">
+    <table class="table text-center">
         <tr>
-            <th>姓名</th>
-            <th>联系电话</th>
-            <th>邮寄地址</th>
+            <th class="text-center">姓名</th>
+            <th class="text-center">联系电话</th>
+            <th class="text-center">邮寄地址</th>
             <th></th>
         </tr>
         @foreach (var list in Model)
         {
-            if (list.Contact_Type!= -1)
+            if (list.Contact_Status!= -1)
             {
                 <tr>
                     <td>@list.Contact_Name</td>
                     <td>@list.Contact_Mobile</td>
                     <td>@list.Contact_Address</td>
                     <td class="text-center">
-                        <a style="cursor:pointer" data-eid="@list.Id" class="select-contact">编辑</a>&nbsp;|&nbsp;
-                        <a class="delete-contact" style="color:red;cursor:pointer" data-eid="@list.Id">删除</a>
+                        <a data-eid="@list.Id" class="select-contact btn btn-xs btn-success" role="button">编辑</a>
+                        <a class="delete-contact btn btn-xs btn-danger" data-eid="@list.Id" role="button">删除</a>
                     </td>
                 </tr>
             }
@@ -59,7 +64,6 @@
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
-                                setTimeout(function () {
                                     $.ajax({
                                         url: "/SalesProcess/ContactListPartial",
                                         data: {
@@ -74,7 +78,6 @@
                                         }
                                     });
                                     alert("删除成功")
-                                }, 1000);
                             } else if (data.result == "FAIL") {
                                 alert("删除失败", "", function () {
                                 }, { type: 'error' });

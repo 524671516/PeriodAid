@@ -1,25 +1,35 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Client>
 @using PagedList.Mvc;
+<style>
+    .btn-xs{
+        line-height:1.4
+    }
+</style>
 <div>
     <table class="table text-center">
-        <tr >
+        <tr>
             <th class="text-center">客户名称</th>
-            <th class="text-center">客户状态</th>
+            <th class="text-center">状态</th>
+            <th class="text-center">客户类型</th>
+            <th class="text-center">所属区域</th>
             <th class="text-center">负责人</th>
             <th></th>
         </tr>
         @foreach (var item in Model)
         {
-            if (item.Client_Type != -1)
+            if (item.Client_Status != -1)
             {
                 <tr>
                     <td>@item.Client_Name</td>
-                    <td>@Html.PlattformTypeStatus(item.Client_Type)</td>
+                    <td>@Html.PlattformTypeStatus(item.Client_Status)</td>
+                    <td>@Html.ClientType(item.Client_Type)</td>
+                    <td>@item.Client_Area</td>
                     <td>@item.SP_Seller.Seller_Name</td>
                     <td>
-                        <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                        <a class="delete-client" href="#" style="color:red;cursor:pointer" data-eid="@item.Id">删除记录</a>&nbsp;|&nbsp;
-                        <a style="cursor:pointer" class="contact-btn" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
+                        <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
+                        <a class="sales-btn btn btn-xs btn-info" role="button" data-val="@item.Id">销售信息</a>
+                        <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
+                        <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
                     </td>
                 </tr>
             }
@@ -56,7 +66,6 @@
         });
         // 编辑
         $('.select-a').click(function () {
-            console.log($(this).attr('data-val'))
             $.ajax({
                 url: '/SalesProcess/EditClientInfo',
                 data: {
@@ -82,7 +91,6 @@
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
-                                setTimeout(function () {
                                     $.ajax({
                                         url: "/SalesProcess/ClientListPartial",
                                         data: {
@@ -98,7 +106,6 @@
                                         }
                                     });
                                     alert("删除成功")
-                                }, 1000);
                             } else if (data.result == "FAIL") {
                                 alert("删除失败", "", function () {
                                 }, { type: 'error' });
@@ -112,6 +119,11 @@
         $(".contact-btn").on("click", function () {
             var C_id = $(this).attr("data-val")
             $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
+        })
+        // 销售信息
+        $(".sales-btn").on("click", function () {
+            var C_id = $(this).attr("data-val")
+            $(this).attr("href", "/SalesProcess/SalesList?clientId=" + C_id)
         })
     })
 </script>

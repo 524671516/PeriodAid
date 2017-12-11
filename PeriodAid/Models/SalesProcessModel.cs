@@ -124,7 +124,7 @@
 
         [StringLength(16)]
         public string Client_Name { get; set; }
-
+        
         public string Client_Area { get; set; }
 
         public int Client_Type { get; set; }
@@ -151,9 +151,9 @@
     public partial class SP_SalesSystem
     {
         public int Id { get; set; }
-
+         
         public string System_Name { get; set; }
-
+        
         public string System_Address { get; set; }
 
         public string System_Phone { get; set; }
@@ -191,7 +191,7 @@
     /// <summary>
     /// 报价信息
     /// </summary>
-    [Table("SP_Quoted")]
+    [Table ("SP_Quoted")]
     public partial class SP_Quoted
     {
         public int Id { get; set; }

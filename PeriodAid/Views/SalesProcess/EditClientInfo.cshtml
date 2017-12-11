@@ -13,22 +13,29 @@
             <div class="form-group">
                 <label class="control-label col-md-2">客户名称</label>
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Client_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(model => model.Client_Name,new { htmlAttributes = new { @class = "form-control"} } )
                     @Html.ValidationMessageFor(model => model.Client_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-md-2">客户状态</label>
+                <label class="control-label col-md-2">状态</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Client_Status, ViewBag.ClientStatus as SelectList, new { @class = "form-control", @required = "required" })
+                    @Html.ValidationMessageFor(model => model.Client_Status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">客户类型</label>
                 <div class="col-md-10">
                     @Html.DropDownListFor(model => model.Client_Type, ViewBag.ClientType as SelectList, new { @class = "form-control", @required = "required" })
                     @Html.ValidationMessageFor(model => model.Client_Type, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">所属平台</label>
+                <label class="control-label col-md-2">区域</label>
                 <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Plattform_Id, ViewBag.PlattformList as SelectList, new { @class = "form-control", @required = "required" })
-                    @Html.ValidationMessageFor(model => model.Plattform_Id, " ", new { @class = "text-danger" })
+                    @Html.DropDownListFor(model => model.Client_Area,ViewBag.SalesList as SelectList,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Client_Area, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -43,8 +50,6 @@
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
-
-
         </div>
     }
 </div>
@@ -60,10 +65,8 @@
                     $.ajax({
                         url: "/SalesProcess/ClientListPartial",
                         data: {
-                            plattformId: $(".client-list-li.active").children(".plattform-btn").attr("data-id"),
                             page: 1,
-                            query: $("#client-query").val(),
-                            plattformType: getUrlParam('plattformType')
+                            query: $("#client-query").val()
                         },
                         success: function (data) {
                             $("#client_list_content").html(data);
@@ -72,6 +75,8 @@
                         }
                     });
 
+                } else if (data.result == "UNAUTHORIZED") {
+                    errorAlert('信息未修改')
                 } else {
                     errorAlert('保存失败')
                 }

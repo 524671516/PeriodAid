@@ -13,6 +13,13 @@
 </table>
 <h2>产品列表</h2>
 <a class="btn btn-info btn-sm" id="add-product" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增产品信息</a>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="product-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="type-btn" style="cursor:pointer">全部种类</a></li>
+    @foreach (var list in ViewBag.ProductType)
+    {
+        <li role="presentation" class="product-list-li"><a aria-controls="profile" role="tab" data-toggle="tab" data-id="@list.Id" class="type-btn" style="cursor:pointer">@list.Type_Name</a></li>
+    }
+</ul>
 <div id="product_list_content"></div>
 @section scripts{
     <script>
@@ -21,6 +28,8 @@
                 url: "/SalesProcess/ProductListPartial",
                 data: {
                     page: 1,
+                    productType: $(".product-list-li.active").children(".type-btn").attr("data-id"),
+                    query: $("#storage-product-query").val()
                 },
                 success: function (data) {
                     $("#product_list_content").html(data)
@@ -45,6 +54,7 @@
                 url: "/SalesProcess/ProductListPartial",
                 data: {
                     page: 1,
+                    productType: $(".product-list-li.active").children(".type-btn").attr("data-id"),
                     query: $("#storage-product-query").val()
                 },
                 success: function (data) {
@@ -52,5 +62,18 @@
                 }
             })
         });
+        // 选种类
+        $(".type-btn").on("click", function () {
+            $.ajax({
+                url: "/SalesProcess/ProductListPartial",
+                data: {
+                    productType: $(this).attr("data-id"),
+                    query: $("#storage-product-query").val()
+                },
+                success: function (data) {
+                    $("#product_list_content").html(data)
+                }
+            })
+        })
     </script>
 }

@@ -19,7 +19,7 @@
     @Styles.Render("~/Content/css")
     @RenderSection("header", required: false)
     <style>
-        .navbar-default .navbar-nav > li > a {
+        .navbar-default .navbar-nav > li > a{
             color: #393232;
         }
     </style>
@@ -27,22 +27,22 @@
 <body>
     @RenderSection("menu", required: false)
     <div class="navbar  navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/SalesProcess/ProductList?productType=0"><strong class="color-blue">销售管理</strong></a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="/SalesProcess/ProductList">产品管理</a></li>
-                    <li><a href="/SalesProcess/ClientList">客户管理</a></li>
-                    <li><a style="cursor:pointer">业务员管理</a></li>
-                    <li><a style="cursor:pointer">订单管理</a></li>
-                    <li><a style="cursor:pointer">财务管理</a></li>
-                </ul>
-                @Html.Partial("_LoginPartial")
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/SalesProcess/ProductList?productType=0"><strong class="color-blue">销售管理</strong></a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/SalesProcess/ProductList">产品管理</a></li>
+                        <li><a href="/SalesProcess/ClientList">客户管理</a></li>
+                        <li><a style="cursor:pointer">业务员管理</a></li>
+                        <li><a style="cursor:pointer">订单管理</a></li>
+                        <li><a style="cursor:pointer">财务管理</a></li>
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
             </div>
         </div>
-    </div>
     <div class="container body-content" style="padding:20px">
         <div class="row">
             <div class="col-md-2">

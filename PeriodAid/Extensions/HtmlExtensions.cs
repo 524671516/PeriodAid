@@ -182,6 +182,34 @@ namespace System.Web.Mvc
             }
         }
 
+        public static string ContactStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "离职";
+                case 0:
+                    return "正常";
+                default:
+                    return "未知";
+            }
+        }
+        
+        public static string ClientType(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "未知";
+                case 1:
+                    return "大客户";
+                case 2:
+                    return "经销商";
+                default:
+                    return "未知";
+            }
+        }
+
         public static string PlattformTypeStatus(this HtmlHelper helper, int status)
         {
             switch (status)
@@ -196,6 +224,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
+       
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
