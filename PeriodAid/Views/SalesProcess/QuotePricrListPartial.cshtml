@@ -1,5 +1,4 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.SP_Quoted>
-@using PagedList.Mvc;
+﻿@model IEnumerable<PeriodAid.Models.SP_QuotePrice>
 <style>
     .btn-xs {
         line-height: 1.4;
@@ -8,26 +7,24 @@
 <div>
     <table class="table">
         <tr>
-            <th>报价日期</th>
-            <th>报价单号</th>
-            <th>备注</th>
+            <th>系统编码</th>
+            <th>品牌</th>
+            <th>产品名称</th>
+            <th>报价</th>
             <th></th>
         </tr>
-        @foreach (var item in Model)
+        @foreach(var price in Model)
         {
-            if (item.Quoted_Status != -1)
-            {
-                <tr>
-                    <td>@item.Quoted_Date.ToString("yyyy-MM-dd")</td>
-                    <td>@item.Quotation_Num</td>
-                    <td>@item.Remark</td>
-                    <td class="text-center">
-                        <a data-eid="@item.Id" class="quoted-edit btn btn-xs btn-success" role="button">编辑</a>
-                        <a class="quotePrice-info btn btn-xs btn-info" data-eid="@item.Id" role="button">产品报价信息</a>
-                        <a class="quoted-delete btn btn-xs btn-danger" data-eid="@item.Id" role="button">删除</a>
-                    </td>
-                </tr>
-            }
+            <tr>
+                <td>@price.SP_Product.System_Code</td>
+                <td>@price.SP_Product.Brand_Name</td>
+                <td>@price.SP_Product.Item_Name</td>
+                <td>@price.Quote_Price</td>
+                <td class="text-center">
+                    <a data-eid="@price.Id" class="quotePrice-edit btn btn-xs btn-success" role="button">编辑</a>
+                    <a class="quotePrice-delete btn btn-xs btn-danger" data-eid="@price.Id" role="button">删除</a>
+                </td>
+            </tr>
         }
     </table>
 </div>
@@ -39,11 +36,11 @@
 </div>
 <script>
     //编辑
-    $('.quoted-edit').click(function () {
+    $('.quotePrice-edit').click(function () {
         $.ajax({
-            url: '/SalesProcess/EditQuotedInfo',
+            url: '/SalesProcess/EditQuotePriceInfo',
             data: {
-                quotedId: $(this).attr('data-eid'),
+                quotepriceId: $(this).attr('data-eid'),
             },
             success: function (data) {
                 $('#modal-content').html(data)
@@ -53,12 +50,12 @@
         })
     })
     // 删除
-    $(".quoted-delete").on("click", function () {
+    $(".quotePrice-delete").on("click", function () {
         var C_id = $(this).attr("data-eid");
         confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
             if (isConfirm) {
                 $.ajax({
-                    url: "/SalesProcess/DeleteQuoted",
+                    url: "/SalesProcess/DeleteQuotePrice",
                     type: "post",
                     data: {
                         quotedId: C_id,
@@ -66,13 +63,13 @@
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $.ajax({
-                                url: "/SalesProcess/QuotedListPartial",
+                                url: "/SalesProcess/QuotePricrListPartial",
                                 data: {
-                                    query: $("#quoted-query").val(),
-                                    SalesSystemId: getUrlParam('SalesSystemId')
+                                    query: $("#quotePrice-query").val(),
+                                    quotedId: getUrlParam('quotedId')
                                 },
                                 success: function (data) {
-                                    $("#quoted_list_content").html(data)
+                                    $("#quotePrice_list_content").html(data)
                                     $('.modal-backdrop.in').remove()
                                     $('body').removeClass('modal-open')
                                 }
@@ -86,10 +83,5 @@
                 })
             }
         });
-    })
-    // 产品报价
-    $(".quotePrice-info").on("click", function () {
-        var q_Id = $(this).attr("data-eid")
-        $(this).attr("href", "/SalesProcess/QuotePricrList?quotedId=" + q_Id)
     })
 </script>

@@ -5,22 +5,24 @@
     }
 </style>
 <div>
-    <table class="table text-center">
+    <table class="table">
         <tr>
-            <th class="text-center">姓名</th>
-            <th class="text-center">联系电话</th>
-            <th class="text-center">邮寄地址</th>
-            <th></th>
+            <th style="width:15%;">Id</th>
+            <th style="width:15%;">姓名</th>
+            <th style="width:20%;">联系电话</th>
+            <th style="width:30%;">邮寄地址</th>
+            <th style="width:20%;"></th>
         </tr>
         @foreach (var list in Model)
         {
             if (list.Contact_Status!= -1)
             {
                 <tr>
+                    <td>@list.Id</td>
                     <td>@list.Contact_Name</td>
                     <td>@list.Contact_Mobile</td>
                     <td>@list.Contact_Address</td>
-                    <td class="text-center">
+                    <td>
                         <a data-eid="@list.Id" class="select-contact btn btn-xs btn-success" role="button">编辑</a>
                         <a class="delete-contact btn btn-xs btn-danger" data-eid="@list.Id" role="button">删除</a>
                     </td>

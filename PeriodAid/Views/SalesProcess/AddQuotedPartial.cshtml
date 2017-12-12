@@ -1,20 +1,10 @@
 ﻿@model PeriodAid.Models.SP_Quoted
-<link href="~/Content/Site.css" rel="stylesheet" />
-<link href="~/Content/prettify.css" rel="stylesheet" />
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h2>新增报价信息</h2>
+    <h2>新增报价单信息</h2>
 </div>
-@foreach(var sales in ViewBag.Sales)
-{
-    <div class="hidden" id="SalesSystem_name">@sales.System_Name</div>
-    <div class="hidden" id="SalesSystem_Id">@sales.Id</div>
-}
-@foreach (var quoted in ViewBag.Quoted)
-{
-    <div class="hidden" id="product-name">@quoted.SP_Product.Item_Name</div>
-    <div class="hidden" id="product-id">@quoted.SP_Product.Id</div>
-}
+<div class="hidden" id="SalesSystem_name">@ViewBag.Sales.System_Name</div>
+<div class="hidden" id="SalesSystem_Id">@ViewBag.Sales.Id</div>
 <div class="modal-body">
     @using (Html.BeginForm("AddQuotedPartial", "SalesProcess", FormMethod.Post, new { @id = "add-quoted-form" }))
     {
@@ -23,25 +13,17 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             
             <div class="form-group">
-                <label class="col-md-3 control-label">产品名称</label>
-                <div class="col-md-9">
-                    <input id="product-input" type="text" class="span4 form-control" autocomplete="off" name="product-input" />
-                    <input type="hidden" id="ProductId" name="Product_Id" />
-                    @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">报价</label>
-                <div class="col-md-9">
-                    @Html.EditorFor(model => model.Quoted_Price, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Quoted_Price, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
                 <label class="col-md-3 control-label">报价日期</label>
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.Quoted_Date, new { htmlAttributes = new { @class = "form-control"} })
                     @Html.ValidationMessageFor(model => model.Quoted_Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">报价单号</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Quotation_Num, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Quotation_Num, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -67,26 +49,11 @@
         </div>
     }
 </div>
-<script src="~/Scripts/kalendae.standalone.js"></script>
-<script src="~/Scripts/bootstrap-typeahead.js"></script>
+
 <script>
     $(function () {
-        $("#ProductId").val($("#product-id").html())
         $("#salessystem-input").val($("#SalesSystem_name").html())
         $("#SalesSystemId").val($("#SalesSystem_Id").html())
-        //产品搜索
-        function displayResult(item, val, text) {
-            $("#ProductId").val(val);
-        }
-        $('#product-input').typeahead({
-            ajax: {
-                url: "/SalesProcess/QueryProduct",
-                triggerLength: 1
-            },
-            itemSelected: displayResult,
-            display: 'ProductName',
-            val: 'Id'
-        });
         $("#add-quoted-form").ajaxForm(function (data) {
             if (data == "SUCCESS") {
                 $("#myModal").modal('hide')
@@ -105,7 +72,7 @@
                 alert("添加成功！");
             }
             else if (data == "UNAUTHORIZED") {
-                errorAlert("产品已存在！");
+                errorAlert("报价单已存在！");
             } else {
                 errorAlert("添加失败！");
             }

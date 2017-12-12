@@ -5,24 +5,26 @@
     }
 </style>
 <div>
-    <table class="table text-center">
+    <table class="table">
         <tr>
-            <th class="text-center">商铺名称</th>
-            <th class="text-center">联系电话</th>
-            <th class="text-center">地址</th>
-            <th></th>
+            <th style="width:15%;">Id</th>
+            <th style="width:15%;">商铺名称</th>
+            <th style="width:20%;">联系电话</th>
+            <th style="width:20%;">地址</th>
+            <th style="width:30%;"></th>
         </tr>
         @foreach (var sales in Model)
         {
             if (sales.System_Status != -1)
             {
                 <tr>
+                    <td>@sales.Id</td>
                     <td>@sales.System_Name</td>
                     <td>@sales.System_Phone</td>
                     <td>@sales.System_Address</td>
                     <td>
                         <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
-                        <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价信息</a>
+                        <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价单信息</a>
                         <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
                     </td>
                 </tr>

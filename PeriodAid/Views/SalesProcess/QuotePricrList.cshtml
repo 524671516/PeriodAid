@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+}
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>产品名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="quotePrice-query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="quotePrice-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<a class="btn btn-info btn-sm" id="add-quotePrice" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报价信息</a>
+<div id="quotePrice_list_content"></div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/SalesProcess/QuotePricrListPartial",
+                data: {
+                    query: $("#quotePrice-query").val(),
+                    quotedId: getUrlParam('quotedId')
+                },
+                success: function (data) {
+                    $("#quotePrice_list_content").html(data)
+                }
+            });
+        });
+        //新增
+        $("#add-quotePrice").on("click", function () {
+            $.ajax({
+                url: '/SalesProcess/AddQuotePricrPartial',
+                data: {
+                    quotedId: getUrlParam('quotedId')
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+        //搜索
+        $("#quotePrice-search").click(function () {
+            $.ajax({
+                url: "/SalesProcess/QuotePricrListPartial",
+                data: {
+                    query: $("#quotePrice-query").val(),
+                    quotedId: getUrlParam('quotedId')
+                },
+                success: function (data) {
+                    $("#quotePrice_list_content").html(data);
+                }
+            })
+        });
+    </script>
+}

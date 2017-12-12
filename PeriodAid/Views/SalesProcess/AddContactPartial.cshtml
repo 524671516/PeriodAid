@@ -3,11 +3,8 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>新增联系人信息</h2>
 </div>
-@foreach(var name in ViewBag.ClientName)
-{
-    <div class="hidden" id="Client-name">@name.Client_Name</div>
-    <div class="hidden" id="Client_Id">@name.Id</div>
-}
+<div class="hidden" id="Client-name">@ViewBag.ClientName.Client_Name</div>
+<div class="hidden" id="Client_Id">@ViewBag.ClientName.Id</div>
 <div class="modal-body">
     @using (Html.BeginForm("AddContactPartial", "SalesProcess", FormMethod.Post, new { @id = "add-contact-form" }))
     {
@@ -15,28 +12,28 @@
         <div class="form-horizontal">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
-                <label class="col-md-3 control-label">姓名</label>
+                <label class="col-md-2 control-label">姓名</label>
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.Contact_Name, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Contact_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label">联系电话</label>
+                <label class="col-md-2 control-label">联系电话</label>
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.Contact_Mobile, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Contact_Mobile, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label">邮寄地址</label>
+                <label class="col-md-2 control-label">邮寄地址</label>
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.Contact_Address, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Contact_Address, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label">所属客户</label>
+                <label class="col-md-2 control-label">所属客户</label>
                 <div class="col-md-9">
                     <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" readonly="readonly" />
                     <input type="hidden" id="ClientId" name="Client_Id" />
@@ -45,7 +42,7 @@
             </div>
 
             <div class="form-group">
-                <div class="col-md-offset-3 col-md-9">
+                <div class="col-md-offset-2 col-md-9">
                     <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
                 </div>
             </div>

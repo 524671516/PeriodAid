@@ -3,11 +3,8 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改商铺信息</h2>
 </div>
-@foreach (var name in ViewBag.SalesName)
-{
-    <div class="hidden" id="Client-name">@name.SP_Client.Client_Name</div>
-    <div class="hidden" id="Client_Id">@name.Client_Id</div>
-}
+<div class="hidden" id="Client-name">@ViewBag.SalesName.SP_Client.Client_Name</div>
+<div class="hidden" id="Client_Id">@ViewBag.SalesName.Client_Id</div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditSalesInfo", "SalesProcess", FormMethod.Post, new { @id = "sales-form" }))
     {

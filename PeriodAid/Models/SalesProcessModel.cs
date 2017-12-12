@@ -19,18 +19,20 @@
         public virtual DbSet<SP_Contact> SP_Contact { get; set; }
         public virtual DbSet<SP_SalesSystem> SP_SalesSystem { get; set; }
         public virtual DbSet<SP_Quoted> SP_Quoted { get; set; }
+        public virtual DbSet<SP_QuotePrice> SP_QuotePrice { get; set; }
         public virtual DbSet<SP_Order> SP_Order { get; set; }
         public virtual DbSet<SP_FinanceInfo> SP_FinanceInfo { get; set; }
-
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_Client).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_Contact).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_Quoted).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_QuotePrice).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_FinanceInfo).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_ProductType>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_ProductType).HasForeignKey(m => m.ProductType_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_SalesSystem).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_SalesSystem>().HasMany(m => m.SP_Quoted).WithRequired(m => m.SP_SalesSystem).HasForeignKey(m => m.SalesSystem_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Quoted>().HasMany(m => m.SP_QuotePrice).WithRequired(m => m.SP_Quoted).HasForeignKey(m => m.Quoted_Id).WillCascadeOnDelete(false);
         }
     }
 
@@ -72,7 +74,7 @@
         public virtual SP_ProductType SP_ProductType { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SP_Quoted> SP_Quoted { get; set; }
+        public virtual ICollection<SP_QuotePrice> SP_QuotePrice { get; set; }
 
     }
     /// <summary>
@@ -189,28 +191,46 @@
         public virtual SP_Client SP_Client { get; set; }
     }
     /// <summary>
-    /// 报价信息
+    /// 报价单
     /// </summary>
     [Table ("SP_Quoted")]
     public partial class SP_Quoted
     {
         public int Id { get; set; }
-
-        public decimal Quoted_Price { get; set; }
-
+        
         public DateTime Quoted_Date { get; set; }
 
         public string Remark { get; set; }
+        
+        public int SalesSystem_Id { get; set; }
+
+        public virtual SP_SalesSystem SP_SalesSystem { get; set; }
+
+        public string Quotation_Num { get; set; }
+
+        public int Quoted_Status { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SP_QuotePrice> SP_QuotePrice { get; set; }
+
+    }
+    /// <summary>
+    /// 报价商品
+    /// </summary>
+    [Table("SP_QuotePrice")]
+    public partial class SP_QuotePrice
+    {
+        public int Id { get; set; }
+
+        public decimal Quote_Price { get; set; }
 
         public int Product_Id { get; set; }
 
         public virtual SP_Product SP_Product { get; set; }
 
-        public int SalesSystem_Id { get; set; }
+        public int Quoted_Id { get; set; }
 
-        public virtual SP_SalesSystem SP_SalesSystem { get; set; }
-
-        public int Quoted_Status { get; set; }
+        public virtual SP_Quoted SP_Quoted { get; set; }
 
     }
     /// <summary>

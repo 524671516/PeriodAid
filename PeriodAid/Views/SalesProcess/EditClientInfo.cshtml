@@ -1,8 +1,10 @@
 ﻿@model PeriodAid.Models.SP_Client
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h2>修改客户信息</h2>
+    <h2>修改经销商信息</h2>
 </div>
+<div class="hidden" id="seller-id">@ViewBag.Seller.Seller_Id</div>
+<div class="hidden" id="seller-name">@ViewBag.Seller.SP_Seller.Seller_Name</div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditClientInfo", "SalesProcess", FormMethod.Post, new { @id = "client-form" }))
     {
@@ -12,37 +14,38 @@
             @Html.HiddenFor(model => model.Id)
             <div class="form-group">
                 <label class="control-label col-md-2">客户名称</label>
-                <div class="col-md-10">
+                <div class="col-md-9">
                     @Html.EditorFor(model => model.Client_Name,new { htmlAttributes = new { @class = "form-control"} } )
                     @Html.ValidationMessageFor(model => model.Client_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-md-2">状态</label>
-                <div class="col-md-10">
+                <div class="col-md-9">
                     @Html.DropDownListFor(model => model.Client_Status, ViewBag.ClientStatus as SelectList, new { @class = "form-control", @required = "required" })
                     @Html.ValidationMessageFor(model => model.Client_Status, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-md-2">客户类型</label>
-                <div class="col-md-10">
+                <div class="col-md-9">
                     @Html.DropDownListFor(model => model.Client_Type, ViewBag.ClientType as SelectList, new { @class = "form-control", @required = "required" })
                     @Html.ValidationMessageFor(model => model.Client_Type, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-md-2">区域</label>
-                <div class="col-md-10">
+                <div class="col-md-9">
                     @Html.DropDownListFor(model => model.Client_Area,ViewBag.SalesList as SelectList,new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Client_Area, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label">负责人</label>
-                <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Seller_Id, ViewBag.SellerName as SelectList, new { @class = "form-control", @required = "required" })
-                    @Html.ValidationMessageFor(model => model.Seller_Id, " ", new { @class = "text-danger" })
+                <div class="col-md-9">
+                    <input id="seller-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
+                    <input type="hidden" id="SellerId" name="Seller_Id" />
+                    @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -54,6 +57,23 @@
     }
 </div>
 <script>
+    $(function () {
+        $("#seller-input").val($("#seller-name").html())
+        $("#SellerId").val($("#seller-id").html())
+        //负责人搜索
+        function displayResult(item, val, text) {
+            $("#SellerId").val(val);
+        }
+        $('#seller-input').typeahead({
+            ajax: {
+                url: "/SalesProcess/QuerySeller",
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'SellerName',
+            val: 'Id'
+        });
+    })
     $('#save-btn').click(function () {
         $("#client-form").ajaxSubmit({
             url: '/SalesProcess/EditClientInfo',
