@@ -25,8 +25,8 @@ namespace PeriodAid.Controllers
         }
         public SP_Seller getSeller(string username)
         {
-            var user = _db.SP_Seller.SingleOrDefault(m => m.User_Name == username);
-            return user;
+            var seller = _db.SP_Seller.SingleOrDefault(m => m.User_Name == username);
+            return seller;
         }
 
         public ActionResult ProductList()
@@ -485,13 +485,16 @@ namespace PeriodAid.Controllers
 
         public ActionResult SalesListPartial(int? page, string query)
         {
+            var seller = getSeller(User.Identity.Name);
+            if (seller == null)
+            {
+                return Content("FAIL");
+            }
             int _page = page ?? 1;
             if (query != "")
             {
-                var sales = (from m in _db.SP_SalesSystem
-                             select m);
-                var SearchResult = (from m in sales
-                                    where m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                var SearchResult = (from m in _db.SP_SalesSystem
+                                    where m.Seller_Id == seller.Id && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
@@ -499,6 +502,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var SearchResult = (from m in _db.SP_SalesSystem
+                                    where m.Seller_Id == seller.Id
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
