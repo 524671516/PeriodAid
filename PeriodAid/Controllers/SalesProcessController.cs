@@ -488,7 +488,7 @@ namespace PeriodAid.Controllers
             var seller = getSeller(User.Identity.Name);
             if (seller == null)
             {
-                return Content("FAIL");
+                return Content("FALL");
             }
             int _page = page ?? 1;
             if (query != "")

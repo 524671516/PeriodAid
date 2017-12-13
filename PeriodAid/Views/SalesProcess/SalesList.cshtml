@@ -13,7 +13,9 @@
     </tr>
 </table>
 <a class="btn btn-info btn-sm" id="add-sales" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道信息</a>
-<div id="sales_list_content"></div>
+<div id="sales_list_content">
+    <div class="h2 hidden">暂无权限</div>
+</div>
 @section scripts{
 <script>
     $(function () {
@@ -24,7 +26,11 @@
                 query: $("#sales-query").val()
             },
             success: function (data) {
-                $("#sales_list_content").html(data)
+                if (data == "FALL") {
+                    $("#sales_list_content div").removeClass("hidden")
+                } else {
+                    $("#sales_list_content").html(data)
+                }
             }
         });
     })
@@ -34,11 +40,14 @@
             url: "/SalesProcess/SalesListPartial",
             data: {
                 page: 1,
-                query: $("#sales-query").val(),
-                clientId: getUrlParam("clientId")
+                query: $("#sales-query").val()
             },
             success: function (data) {
-                $("#sales_list_content").html(data)
+                if (data == "FALL") {
+                    $("#sales_list_content div").removeClass("hidden")
+                } else {
+                    $("#sales_list_content").html(data)
+                }
             }
         })
     })
