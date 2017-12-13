@@ -6,13 +6,13 @@
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
-            <label>商铺信息：</label>
+            <label>渠道信息：</label>
             <input class="form-control input-sm offline-search-inline" id="sales-query" placeholder="搜索内容" />
             <a class="btn btn-info btn-sm" id="sales-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
     </tr>
 </table>
-<a class="btn btn-info btn-sm" id="add-sales" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增商铺信息</a>
+<a class="btn btn-info btn-sm" id="add-sales" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道信息</a>
 <div id="sales_list_content"></div>
 @section scripts{
 <script>
@@ -47,7 +47,6 @@
         $.ajax({
             url: '/SalesProcess/AddSalesPartial',
             data: {
-                clientId:getUrlParam("clientId")
             },
             success: function (data) {
                 $('#modal-content').html(data)

@@ -7,10 +7,11 @@
 <div>
     <table class="table">
         <tr>
-            <th style="width:15%;">Id</th>
-            <th style="width:15%;">商铺名称</th>
+            <th style="width:10%;">Id</th>
+            <th style="width:10%;">商铺名称</th>
             <th style="width:20%;">联系电话</th>
             <th style="width:20%;">地址</th>
+            <th style="width:10%;">负责人</th>
             <th style="width:30%;"></th>
         </tr>
         @foreach (var sales in Model)
@@ -22,6 +23,7 @@
                     <td>@sales.System_Name</td>
                     <td>@sales.System_Phone</td>
                     <td>@sales.System_Address</td>
+                    <td>@sales.SP_Seller.Seller_Name</td>
                     <td>
                         <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
                         <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价单信息</a>

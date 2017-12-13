@@ -8,12 +8,11 @@
 <div>
     <table class="table">
         <tr>
-            <th style="width:10%;">客户名称</th>
-            <th style="width:10%;">状态</th>
-            <th style="width:15%;">客户类型</th>
-            <th style="width:15%;">所属区域</th>
-            <th style="width:15%;">负责人</th>
-            <th style="width:35%;"></th>
+            <th style="width:15%;">客户名称</th>
+            <th style="width:15%;">状态</th>
+            <th style="width:20%;">客户类型</th>
+            <th style="width:20%;">所属区域</th>
+            <th style="width:30%;"></th>
         </tr>
         @foreach (var item in Model)
         {
@@ -24,10 +23,8 @@
                     <td>@Html.PlattformTypeStatus(item.Client_Status)</td>
                     <td>@Html.ClientType(item.Client_Type)</td>
                     <td>@item.Client_Area</td>
-                    <td>@item.SP_Seller.Seller_Name</td>
                     <td>
                         <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
-                        <a class="sales-btn btn btn-xs btn-info" role="button" data-val="@item.Id">商铺信息</a>
                         <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
                         <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
                     </td>
@@ -119,11 +116,6 @@
         $(".contact-btn").on("click", function () {
             var C_id = $(this).attr("data-val")
             $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
-        })
-        // 销售信息
-        $(".sales-btn").on("click", function () {
-            var C_id = $(this).attr("data-val")
-            $(this).attr("href", "/SalesProcess/SalesList?clientId=" + C_id)
         })
     })
 </script>

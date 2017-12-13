@@ -281,10 +281,6 @@ namespace PeriodAid.Controllers
         public ActionResult EditClientInfo(int clientId)
         {
             var item = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
-            var seller = (from m in _db.SP_Client
-                          where m.Id == clientId
-                          select m).FirstOrDefault();
-            ViewBag.Seller = seller;
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
@@ -495,7 +491,7 @@ namespace PeriodAid.Controllers
                 var sales = (from m in _db.SP_SalesSystem
                              select m);
                 var SearchResult = (from m in sales
-                                    where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                    where m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
@@ -539,6 +535,7 @@ namespace PeriodAid.Controllers
                     sales.System_Phone = model.System_Phone;
                     sales.System_Address = model.System_Address;
                     sales.Client_Id = model.Client_Id;
+                    sales.Seller_Id = model.Seller_Id;
                     sales.System_Status = 0;
                     _db.SP_SalesSystem.Add(sales);
                     _db.SaveChanges();
@@ -564,7 +561,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditSalesInfo(SP_SalesSystem model)
         {
-            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address && m.System_Status == model.System_Status);
+            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address && m.System_Status == model.System_Status && m.Seller_Id == model.Seller_Id);
             if (ModelState.IsValid)
             {
                 if (Sales)
@@ -594,6 +591,7 @@ namespace PeriodAid.Controllers
             sales.System_Name = Sales.System_Name;
             sales.System_Phone = Sales.System_Phone;
             sales.System_Address = Sales.System_Address;
+            sales.Seller_Id = Sales.Seller_Id;
             sales.System_Status = -1;
             if (TryUpdateModel(sales))
             {
@@ -607,10 +605,10 @@ namespace PeriodAid.Controllers
 
         public ActionResult QuotedList(int SalesSystemId)
         {
-            var quoted = (from m in _db.SP_Quoted
-                         where m.SalesSystem_Id == SalesSystemId
-                         select m).FirstOrDefault();
-            ViewBag.Quoted = quoted;
+            var sales = (from m in _db.SP_SalesSystem
+                          where m.Id == SalesSystemId
+                          select m).FirstOrDefault();
+            ViewBag.Sales = sales;
             return View();
         }
 

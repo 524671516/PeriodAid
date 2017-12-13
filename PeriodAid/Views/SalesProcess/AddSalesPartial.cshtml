@@ -1,7 +1,7 @@
 ﻿@model PeriodAid.Models.SP_SalesSystem
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h2>新增商铺信息</h2>
+    <h2>新增渠道信息</h2>
 </div>
 <div class="modal-body">
     @using (Html.BeginForm("AddSalesPartial", "SalesProcess", FormMethod.Post, new { @id = "add-sales-form" }))
@@ -10,7 +10,7 @@
         <div class="form-horizontal">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
-                <label class="col-md-2 control-label">商铺名称</label>
+                <label class="col-md-2 control-label">渠道名称</label>
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.System_Name, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.System_Name, "", new { @class = "text-danger" })
@@ -28,6 +28,14 @@
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.System_Address, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.System_Address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">负责人</label>
+                <div class="col-md-9">
+                    <input id="seller-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
+                    <input type="hidden" id="SellerId" name="Seller_Id" />
+                    @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -51,6 +59,19 @@
 </div>
 <script>
     $(function () {
+        //负责人搜索
+        function displayResult(item, val, text) {
+            $("#SellerId").val(val);
+        }
+        $('#seller-input').typeahead({
+            ajax: {
+                url: "/SalesProcess/QuerySeller",
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'SellerName',
+            val: 'Id'
+        });
         $("#add-sales-form").ajaxForm(function (data) {
             if (data == "SUCCESS") {
                 $("#myModal").modal('hide')
