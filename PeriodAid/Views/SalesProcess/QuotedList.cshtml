@@ -6,14 +6,14 @@
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
-            <label>产品名称：</label>
+            <label>报价单号：</label>
             <input class="form-control input-sm offline-search-inline" id="quoted-query" placeholder="搜索内容" />
             <a class="btn btn-info btn-sm" id="quoted-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
     </tr>
 </table>
-<h2>报价列表</h2>
-<a class="btn btn-info btn-sm" id="add-quoted" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报价信息</a>
+<h3 class="text-center">@ViewBag.Quoted.SP_SalesSystem.System_Name</h3>
+<a class="btn btn-info btn-sm" id="add-quoted" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报价单信息</a>
 <div id="quoted_list_content"></div>
 @section scripts{
     <script>

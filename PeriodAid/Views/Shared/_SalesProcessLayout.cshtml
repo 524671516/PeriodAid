@@ -16,11 +16,22 @@
     <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/prettify.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @RenderSection("header", required: false)
     <style>
         .navbar-default .navbar-nav > li > a{
             color: #393232;
+        }
+        .form-horizontal .control-label{
+            padding-top: 10px;
+        }
+        .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td{
+            vertical-align: bottom
+        }
+        .nav-tabs{
+            border-bottom:none
         }
     </style>
 </head>
@@ -34,9 +45,9 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a href="/SalesProcess/ProductList">产品管理</a></li>
-                        <li><a href="/SalesProcess/ClientList">客户管理</a></li>
+                        <li><a href="/SalesProcess/ClientList">经销商管理</a></li>
                         <li><a style="cursor:pointer" href="/SalesProcess/SellerList">业务员管理</a></li>
-                        <li><a style="cursor:pointer">订单管理</a></li>
+                        <li><a style="cursor:pointer" href="/SalesProcess/OrderList">订单管理</a></li>
                         <li><a style="cursor:pointer">财务管理</a></li>
                     </ul>
                     @Html.Partial("_LoginPartial")
@@ -102,6 +113,8 @@
     <script src="~/Scripts/TaskManagementCalendar.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
     <script src="~/Scripts/off-JavaScript.js"></script>
+    <script src="~/Scripts/bootstrap-typeahead.js"></script>
+    <script src="~/Scripts/kalendae.standalone.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
