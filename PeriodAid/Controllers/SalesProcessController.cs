@@ -1,4 +1,5 @@
 ﻿using PagedList;
+using PeriodAid.Filters;
 using PeriodAid.Models;
 using System;
 using System.Collections.Generic;
@@ -494,7 +495,7 @@ namespace PeriodAid.Controllers
             if (query != "")
             {
                 var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.Seller_Id == seller.Id && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                    where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
@@ -502,7 +503,6 @@ namespace PeriodAid.Controllers
             else
             {
                 var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.Seller_Id == seller.Id
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
@@ -689,6 +689,7 @@ namespace PeriodAid.Controllers
             }
             //return Content("ERROR1");
         }
+
         
         public ActionResult EditQuotedInfo(int quotedId)
         {
@@ -700,6 +701,7 @@ namespace PeriodAid.Controllers
             return PartialView(Quoted);
         }
         [HttpPost]
+        [Seller(OperationGroup = 503)]
         public ActionResult EditQuotedInfo(SP_Quoted model)
         {
             bool Quoted = _db.SP_Quoted.Any(m => m.Quotation_Num == model.Quotation_Num && m.Quoted_Date == model.Quoted_Date && m.Remark == model.Remark);
@@ -723,6 +725,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
         [HttpPost]
+        [Seller(OperationGroup = 503)]
         public ActionResult DeleteQuoted(int quotedId)
         {
             var Quoted = _db.SP_Quoted.AsNoTracking().SingleOrDefault(m => m.Id == quotedId);
@@ -826,7 +829,7 @@ namespace PeriodAid.Controllers
             }
             //return Content("ERROR1");
         }
-
+        
         public ActionResult EditQuotePriceInfo(int quotepriceId)
         {
             var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotepriceId);

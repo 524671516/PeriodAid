@@ -258,6 +258,7 @@
     <Compile Include="DAL\WeChatClasses.cs" />
     <Compile Include="DAL\WeChatUtilities.cs" />
     <Compile Include="Extensions\HtmlExtensions.cs" />
+    <Compile Include="Filters\SellerFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -1193,6 +1194,8 @@
     <Folder Include="Content\checkin-img\" />
     <Folder Include="Content\downloads\" />
     <Folder Include="Views\Authorization\" />
+    <Folder Include="Views\Default\" />
+    <Folder Include="Views\SellerFilter\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

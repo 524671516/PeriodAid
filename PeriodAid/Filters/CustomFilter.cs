@@ -269,7 +269,6 @@ namespace PeriodAid.Filters
                 setErrorResult(filterContext, "未知错误。");
             }
         }
-
         private void setErrorResult(ActionExecutingContext filterContext, string errmsg)
         {
             
