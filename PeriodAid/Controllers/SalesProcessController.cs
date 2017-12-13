@@ -23,6 +23,11 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
+        public SP_Seller getSeller(string username)
+        {
+            var user = _db.SP_Seller.SingleOrDefault(m => m.User_Name == username);
+            return user;
+        }
 
         public ActionResult ProductList()
         {
@@ -201,7 +206,7 @@ namespace PeriodAid.Controllers
                 var customer = (from m in _db.SP_Client
                                 select m);
                 var SearchResult = (from m in customer
-                                    where m.Client_Name.Contains(query) || m.SP_Seller.Seller_Name.Contains(query) || m.Client_Area.Contains(query)
+                                    where m.Client_Name.Contains(query) || m.Client_Area.Contains(query)
                                     orderby m.Client_Name descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
@@ -258,7 +263,6 @@ namespace PeriodAid.Controllers
                     var client = new SP_Client();
                     client.Client_Name = model.Client_Name;
                     client.Client_Type = model.Client_Type;
-                    client.Seller_Id = model.Seller_Id;
                     client.Client_Area = model.Client_Area;
                     client.Client_Status = model.Client_Status;
                     _db.SP_Client.Add(client);
@@ -309,7 +313,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditClientInfo(SP_Client model)
         {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Seller_Id == model.Seller_Id && m.Client_Status == model.Client_Status);
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status);
             if (ModelState.IsValid)
             {
                 if (Client)
@@ -337,7 +341,6 @@ namespace PeriodAid.Controllers
             SP_Client client = new SP_Client();
             client.Id = Client.Id;
             client.Client_Name = Client.Client_Name;
-            client.Seller_Id = Client.Seller_Id;
             client.Client_Status = -1;
             client.Client_Area = Client.Client_Area;
             client.Client_Type = Client.Client_Type;

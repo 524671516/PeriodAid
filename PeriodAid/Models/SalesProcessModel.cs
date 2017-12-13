@@ -25,7 +25,7 @@
         
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_Client).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_SalesSystem).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_Contact).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_QuotePrice).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_FinanceInfo).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
@@ -106,6 +106,8 @@
         [StringLength(16)]
         public string Seller_Name { get; set; }
 
+        public string User_Name { get; set; }
+
         [StringLength(16), RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
         public string Seller_Mobile { get; set; } // 手机号码
 
@@ -114,7 +116,7 @@
         public int Seller_Status { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SP_Client> SP_Client { get; set; }
+        public virtual ICollection<SP_SalesSystem> SP_SalesSystem { get; set; }
     }
     /// <summary>
     /// 客户信息
@@ -132,10 +134,6 @@
         public int Client_Type { get; set; }
 
         public int Client_Status { get; set; }
-
-        public int Seller_Id { get; set; }
-
-        public virtual SP_Seller SP_Seller { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Contact> SP_Contact { get; set; }
@@ -165,6 +163,10 @@
         public int Client_Id { get; set; }
 
         public virtual SP_Client SP_Client { get; set; }
+
+        public int Seller_Id { get; set; }
+
+        public virtual SP_Seller SP_Seller { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Quoted> SP_Quoted { get; set; }
