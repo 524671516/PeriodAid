@@ -909,11 +909,11 @@ namespace PeriodAid.Controllers
         public ActionResult AddSellerPartial()
         {
             List<SelectListItem> sellerType = new List<SelectListItem>();
-            sellerType.Add(new SelectListItem() { Text = "业务员", Value = "0" });
-            sellerType.Add(new SelectListItem() { Text = "产品部", Value = "1" });
-            sellerType.Add(new SelectListItem() { Text = "财务部", Value = "2" });
-            sellerType.Add(new SelectListItem() { Text = "业务主管", Value = "3" });
-            sellerType.Add(new SelectListItem() { Text = "管理员", Value = "4" });
+            sellerType.Add(new SelectListItem() { Text = "业务员", Value = SellerType.SELLER.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "产品部", Value = SellerType.PRODUCTDEPARTMENT.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "财务部", Value = SellerType.FINANCIALDEPARTMENT.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "业务主管", Value = SellerType.SELLERADMIN.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "管理员", Value = SellerType.ADMINISTARTOR.ToString() });
             ViewBag.SellerType = new SelectList(sellerType, "Value", "Text");
             return PartialView();
         }
@@ -951,11 +951,11 @@ namespace PeriodAid.Controllers
         {
             var Seller = _db.SP_Seller.SingleOrDefault(m => m.Id == sellerId);
             List<SelectListItem> sellerlist = new List<SelectListItem>();
-            sellerlist.Add(new SelectListItem() { Text = "业务员", Value = "0" });
-            sellerlist.Add(new SelectListItem() { Text = "产品部", Value = "1" });
-            sellerlist.Add(new SelectListItem() { Text = "财务部", Value = "2" });
-            sellerlist.Add(new SelectListItem() { Text = "业务主管", Value = "3" });
-            sellerlist.Add(new SelectListItem() { Text = "管理员", Value = "4" });
+            sellerlist.Add(new SelectListItem() { Text = "业务员", Value = SellerType.SELLER.ToString() });
+            sellerlist.Add(new SelectListItem() { Text = "产品部", Value = SellerType.PRODUCTDEPARTMENT.ToString() });
+            sellerlist.Add(new SelectListItem() { Text = "财务部", Value = SellerType.FINANCIALDEPARTMENT.ToString() });
+            sellerlist.Add(new SelectListItem() { Text = "业务主管", Value = SellerType.SELLERADMIN.ToString() });
+            sellerlist.Add(new SelectListItem() { Text = "管理员", Value = SellerType.ADMINISTARTOR.ToString() });
             ViewBag.Seller = new SelectList(sellerlist, "Value", "Text");
             return PartialView(Seller);
         }

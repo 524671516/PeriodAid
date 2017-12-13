@@ -259,4 +259,28 @@
 
         public virtual SP_Client SP_Client { get; set; }
     }
+    public static class SellerType
+    {
+        /// <summary>
+        /// 业务员
+        /// </summary>
+        public static int SELLER = 0;
+        /// <summary>
+        /// 产品部
+        /// </summary>
+        public static int PRODUCTDEPARTMENT = 1;
+        /// <summary>
+        ///  财务部
+        /// </summary>
+        public static int FINANCIALDEPARTMENT = 2;
+        /// <summary>
+        ///  业务主管
+        /// </summary>
+        public static int SELLERADMIN = 3;
+        /// <summary>
+        ///  管理员
+        /// </summary>
+        public static int ADMINISTARTOR = 4;
+
+    }
 }
