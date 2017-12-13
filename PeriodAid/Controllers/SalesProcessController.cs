@@ -482,22 +482,17 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult SalesList(int clientId)
+        public ActionResult SalesList()
         {
-            var client = (from m in _db.SP_Client
-                          where m.Id == clientId
-                          select m).FirstOrDefault();
-            ViewBag.ClientName = client;
             return View();
         }
 
-        public ActionResult SalesListPartial(int clientId, int? page, string query)
+        public ActionResult SalesListPartial(int? page, string query)
         {
             int _page = page ?? 1;
             if (query != "")
             {
                 var sales = (from m in _db.SP_SalesSystem
-                             where m.Client_Id == clientId
                              select m);
                 var SearchResult = (from m in sales
                                     where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
@@ -508,19 +503,23 @@ namespace PeriodAid.Controllers
             else
             {
                 var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.Client_Id == clientId
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
         }
 
-        public ActionResult AddSalesPartial(int clientId)
+        public ActionResult AddSalesPartial()
         {
-            var client = (from m in _db.SP_Client
-                          where m.Id == clientId
-                          select m).FirstOrDefault();
-            ViewBag.ClientName = client;
+            List<SelectListItem> saleslist = new List<SelectListItem>();
+            var salesname = from m in _db.SP_Client
+                            select m;
+            foreach(var name in salesname)
+            {
+
+                saleslist.Add(new SelectListItem() { Text = name.Client_Name, Value = name.Id.ToString() });
+            }
+            ViewBag.Sales = new SelectList(saleslist, "Value", "Text");
             return PartialView();
         }
         [HttpPost]

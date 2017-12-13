@@ -3,8 +3,6 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>新增商铺信息</h2>
 </div>
-<div class="hidden" id="Client-name">@ViewBag.ClientName.Client_Name</div>
-<div class="hidden" id="Client_Id">@ViewBag.ClientName.Id</div>
 <div class="modal-body">
     @using (Html.BeginForm("AddSalesPartial", "SalesProcess", FormMethod.Post, new { @id = "add-sales-form" }))
     {
@@ -35,8 +33,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">经销商</label>
                 <div class="col-md-9">
-                    <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" readonly="readonly" />
-                    <input type="hidden" id="ClientId" name="Client_Id" />
+                    @Html.DropDownListFor(model => model.Client_Id, ViewBag.Sales as SelectList ,"- 请选择 -",new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -54,8 +51,6 @@
 </div>
 <script>
     $(function () {
-        $("#client-input").val($("#Client-name").html())
-        $("#ClientId").val($("#Client_Id").html())
         $("#add-sales-form").ajaxForm(function (data) {
             if (data == "SUCCESS") {
                 $("#myModal").modal('hide')
