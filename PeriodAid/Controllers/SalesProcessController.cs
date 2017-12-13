@@ -900,7 +900,7 @@ namespace PeriodAid.Controllers
             {
                 var SearchResult = (from m in _db.SP_Seller
                                     where m.Seller_Status != -1
-                                    orderby m.Id descending
+                                    orderby m.Id ascending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
@@ -933,6 +933,7 @@ namespace PeriodAid.Controllers
                     seller.Seller_Name = model.Seller_Name;
                     seller.Seller_Mobile = model.Seller_Mobile;
                     seller.Seller_Type = model.Seller_Type;
+                    seller.User_Name = model.User_Name;
                     seller.Seller_Status = 0;
                     _db.SP_Seller.Add(seller);
                     _db.Configuration.ValidateOnSaveEnabled = false;
@@ -963,6 +964,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditSellerInfo(SP_Seller model)
         {
             bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type);
+            ModelState.Remove("User_Name");
             if (ModelState.IsValid)
             {
                 if (Seller)
