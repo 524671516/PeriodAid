@@ -982,7 +982,6 @@ namespace PeriodAid.Controllers
         {
             var Seller = _db.SP_Seller.AsNoTracking().SingleOrDefault(m => m.Id == sellerId);
             SP_Seller seller = new SP_Seller();
-            seller.Id = Seller.Id;
             seller.Seller_Name = Seller.Seller_Name;
             seller.Seller_Mobile = Seller.Seller_Mobile;
             seller.Seller_Type = Seller.Seller_Type;
