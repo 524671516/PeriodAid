@@ -33,7 +33,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">状态</label>
                 <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Seller_Type, ViewBag.SellerType as SelectList ,"- 请选择 -", new { @class = "form-control" })
+                    @Html.DropDownListFor(model => model.Seller_Type, ViewBag.SellerType as SelectList , new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Seller_Type, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -69,6 +69,8 @@
                         });
                     } else if (data.result == "UNAUTHORIZED") {
                         errorAlert('已存在!')
+                    } else if (data.result == "FAIL") {
+                        errorAlert('信息不全，无法添加!')
                     }else {
                         errorAlert(data.errmsg);
                     }

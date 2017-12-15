@@ -403,26 +403,33 @@ namespace PeriodAid.Controllers
         public ActionResult AddContactPartial(SP_Contact model, FormCollection form)
         {
             bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Status == model.Contact_Status);
-            ModelState.Remove("Contact_Mobile");
             if (ModelState.IsValid)
             {
-                if (Contact)
+                if (model.Contact_Name == null || model.Contact_Mobile == null || model.Contact_Address == null)
                 {
-                    return Json( new { result = "UNAUTHORIZED" });
+                    return Json(new { result = "FAIL" });
                 }
                 else
                 {
-                    var contact = new SP_Contact();
-                    contact.Contact_Name = model.Contact_Name;
-                    contact.Contact_Mobile = model.Contact_Mobile;
-                    contact.Contact_Address = model.Contact_Address;
-                    contact.Contact_Status = 0;
-                    contact.Client_Id = model.Client_Id;
-                    _db.SP_Contact.Add(contact);
-                    _db.Configuration.ValidateOnSaveEnabled = false;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
+                    if (Contact)
+                    {
+                        return Json(new { result = "UNAUTHORIZED" });
+                    }
+                    else
+                    {
+                        var contact = new SP_Contact();
+                        contact.Contact_Name = model.Contact_Name;
+                        contact.Contact_Mobile = model.Contact_Mobile;
+                        contact.Contact_Address = model.Contact_Address;
+                        contact.Contact_Status = 0;
+                        contact.Client_Id = model.Client_Id;
+                        _db.SP_Contact.Add(contact);
+                        _db.Configuration.ValidateOnSaveEnabled = false;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
                 }
+                
             }
             else
             {
@@ -445,7 +452,6 @@ namespace PeriodAid.Controllers
         public ActionResult EditContactInfo(SP_Contact model)
         {
             bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Address == model.Contact_Address);
-            ModelState.Remove("Contact_Mobile");
             if (ModelState.IsValid)
             {
                 if (Contact)
@@ -847,6 +853,7 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         [HttpPost]
+        [Seller(OperationGroup = 801)]
         public ActionResult AddQuotePricrPartial(SP_QuotePrice model, FormCollection form)
         {
             bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id && m.SP_Quoted.Quoted_Date == model.SP_Quoted.Quoted_Date);
@@ -854,7 +861,7 @@ namespace PeriodAid.Controllers
             {
                 if (QuotePrice)
                 {
-                    return Content("UNAUTHORIZED");
+                    return Json(new { result = "UNAUTHORIZED" });
                 }
                 else
                 {
@@ -864,7 +871,7 @@ namespace PeriodAid.Controllers
                     quotePrice.Quote_Price = model.Quote_Price;
                     _db.SP_QuotePrice.Add(quotePrice);
                     _db.SaveChanges();
-                    return Content("SUCCESS");
+                    return Json(new { result = "SUCCESS" });
                 }
             }
             else
@@ -884,6 +891,7 @@ namespace PeriodAid.Controllers
             return PartialView(item);
         }
         [HttpPost]
+        [Seller(OperationGroup = 803)]
         public ActionResult EditQuotePriceInfo(SP_QuotePrice model)
         {
             bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Quote_Price == model.Quote_Price);
@@ -907,6 +915,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
         [HttpPost]
+        [Seller(OperationGroup = 803)]
         public ActionResult DeleteQuotePrice(int quotedId)
         {
             var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotedId);
@@ -971,23 +980,31 @@ namespace PeriodAid.Controllers
             bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile);
             if (ModelState.IsValid)
             {
-                if (Seller)
+                if(model.Seller_Name == null || model.Seller_Mobile == null || model.User_Name == null)
                 {
-                    return Json(new { result = "UNAUTHORIZED" });
+                    return Json(new { result = "FAIL" });
                 }
                 else
                 {
-                    var seller = new SP_Seller();
-                    seller.Seller_Name = model.Seller_Name;
-                    seller.Seller_Mobile = model.Seller_Mobile;
-                    seller.Seller_Type = model.Seller_Type;
-                    seller.User_Name = model.User_Name;
-                    seller.Seller_Status = 0;
-                    _db.SP_Seller.Add(seller);
-                    _db.Configuration.ValidateOnSaveEnabled = false;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
+                    if (Seller)
+                    {
+                        return Json(new { result = "UNAUTHORIZED" });
+                    }
+                    else
+                    {
+                        var seller = new SP_Seller();
+                        seller.Seller_Name = model.Seller_Name;
+                        seller.Seller_Mobile = model.Seller_Mobile;
+                        seller.Seller_Type = model.Seller_Type;
+                        seller.User_Name = model.User_Name;
+                        seller.Seller_Status = 0;
+                        _db.SP_Seller.Add(seller);
+                        _db.Configuration.ValidateOnSaveEnabled = false;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
                 }
+                
             }
             else
             {
@@ -1100,22 +1117,30 @@ namespace PeriodAid.Controllers
             ModelState.Remove("Order_Date");
             if (ModelState.IsValid)
             {
-                if (Order)
+                if (model.Order_Number == null || model.Quotation_Num == null)
                 {
-                    return Json(new { result = "UNAUTHORIZED" });
+                    return Json(new { result = "FAIL" });
                 }
                 else
                 {
-                    var order = new SP_Order();
-                    order.Order_Number = model.Order_Number;
-                    order.Order_Status = 0;
-                    order.Quotation_Num = model.Quotation_Num;
-                    order.Order_Date = model.Order_Date;
-                    _db.SP_Order.Add(order);
-                    _db.Configuration.ValidateOnSaveEnabled = false;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
+                    if (Order)
+                    {
+                        return Json(new { result = "UNAUTHORIZED" });
+                    }
+                    else
+                    {
+                        var order = new SP_Order();
+                        order.Order_Number = model.Order_Number;
+                        order.Order_Status = 0;
+                        order.Quotation_Num = model.Quotation_Num;
+                        order.Order_Date = model.Order_Date;
+                        _db.SP_Order.Add(order);
+                        _db.Configuration.ValidateOnSaveEnabled = false;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
                 }
+                
             }
             else
             {

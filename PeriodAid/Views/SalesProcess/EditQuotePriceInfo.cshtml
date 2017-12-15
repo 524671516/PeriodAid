@@ -39,7 +39,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="button" value="保存" id="save-btn" class="btn btn-default" />
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
                 </div>
             </div>
 
@@ -55,11 +55,15 @@
         $("#quoted-input").val($("#quotation-num").html())
         $("#QuotedId").val($("#quoted-id").html())
     })
-    $('#save-btn').click(function () {
-        $("#quotePrice-form").ajaxSubmit({
-            url: '/SalesProcess/EditQuotePriceInfo',
-            type: 'post',
-            success: function (data) {
+    $("#save-btn").on("click", function () {
+        $("#quotePrice-form").submit();
+    })
+    //新建项目表单验证   详细用法请查看validate插件
+    $("#quotePrice-form").validate({
+        debug: true,
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
                     alert('保存成功')
                     $("#myModal").modal('hide');
@@ -75,14 +79,19 @@
                             $('body').removeClass('modal-open')
                         }
                     });
-
                 } else if (data.result == "UNAUTHORIZED") {
                     errorAlert('信息未修改')
-                } else {
+                } else if (data.result == "FAIL") {
                     errorAlert('保存失败')
+                } else {
+                    errorAlert(data.errmsg);
                 }
-            }
-        })
-        return false;
-    })
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#save-btn").removeClass("disabled");
+        }
+    });
 </script>

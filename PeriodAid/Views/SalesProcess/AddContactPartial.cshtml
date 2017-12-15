@@ -78,7 +78,10 @@
                         });
                     } else if (data.result == "UNAUTHORIZED") {
                         errorAlert('已存在!')
-                    } else {
+                    } else if (data.result == "FAIL") {
+                        errorAlert('信息不全,无法添加!')
+                    }
+                    else {
                         errorAlert(data.errmsg);
                     }
                 })

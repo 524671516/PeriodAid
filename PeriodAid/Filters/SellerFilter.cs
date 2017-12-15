@@ -103,6 +103,22 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.SALESEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.QUOPRIVIEW)
+                    {
+                        // 查看报价产品权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.QUOPRIADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.QUOPRIEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
                     else
                     {
                         setErrorResult(filterContext, "用户行为未定义");
@@ -163,11 +179,27 @@ namespace PeriodAid.Filters
                         // 添加渠道权限
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.SALESEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.QUOPRIVIEW)
+                    {
+                        // 查看报价产品权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.QUOPRIADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.QUOPRIEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
                     else
                     {
                         setErrorResult(filterContext, "用户行为未定义");
                     }
-                }else if (seller.Seller_Type == SellerType.SELLER)
+                }else if (seller.Seller_Type == SellerType.SELLER) // 业务员权限
                 {
                     if (OperationGroup == SalesOperationCode.SELLERVIEW)
                     {
@@ -181,37 +213,37 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
-                    else if (OperationGroup == SalesOperationCode.SALESEDIT)
-                    {
-                        // 修改渠道信息权限
-                        var salesId = Convert.ToInt32(filterContext.HttpContext.Request.Params["Id"]);
-                        var salessystem = _db.SP_SalesSystem.SingleOrDefault(m => m.Id == salesId && m.SP_Seller.Seller_Status > -1);
-                        if (salessystem == null)
-                        {
-                            setErrorResult(filterContext, "操作失败,渠道已被移除");
-                        }else
-                        {
-                            if (salessystem.Seller_Id != seller.Id)
-                            {
-                                setErrorResult(filterContext, "权限不足");
-                            }
-                        }
-                    }
-                    else if(OperationGroup == SalesOperationCode.QUOTVIEW)
-                    {
-                        var salesId = Convert.ToInt32(filterContext.HttpContext.Request.Params["SalesSystemId"]);
-                        var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SalesSystem_Id == salesId && m.SP_SalesSystem.System_Status > -1);
-                        if(quoted == null)
-                        {
-                            setErrorResult(filterContext, "操作失败,报价单已被移除");
-                        }else
-                        {
-                            if(quoted.SP_SalesSystem.Seller_Id != seller.Id)
-                            {
-                                setErrorResult(filterContext, "权限不足");
-                            }
-                        }
-                    }
+                    //else if (OperationGroup == SalesOperationCode.SALESEDIT)
+                    //{
+                    //    // 修改渠道信息权限
+                    //    var salesId = Convert.ToInt32(filterContext.HttpContext.Request.Params["Id"]);
+                    //    var salessystem = _db.SP_SalesSystem.SingleOrDefault(m => m.Id == salesId && m.SP_Seller.Seller_Status > -1);
+                    //    if (salessystem == null)
+                    //    {
+                    //        setErrorResult(filterContext, "操作失败,渠道已被移除");
+                    //    }else
+                    //    {
+                    //        if (salessystem.Seller_Id != seller.Id)
+                    //        {
+                    //            setErrorResult(filterContext, "权限不足");
+                    //        }
+                    //    }
+                    //}
+                    //else if(OperationGroup == SalesOperationCode.QUOTVIEW)
+                    //{
+                    //    var salesId = Convert.ToInt32(filterContext.HttpContext.Request.Params["SalesSystemId"]);
+                    //    var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SalesSystem_Id == salesId && m.SP_SalesSystem.System_Status > -1);
+                    //    if(quoted == null)
+                    //    {
+                    //        setErrorResult(filterContext, "操作失败,报价单已被移除");
+                    //    }else
+                    //    {
+                    //        if(quoted.SP_SalesSystem.Seller_Id != seller.Id)
+                    //        {
+                    //            setErrorResult(filterContext, "权限不足");
+                    //        }
+                    //    }
+                    //}
                 }
                 else
                 {
@@ -330,5 +362,17 @@ namespace PeriodAid.Filters
         /// 修改/删除人员信息
         /// </summary>
         public static int SELLEREDIT = 703;
+        /// <summary>
+        /// 新增报价产品
+        /// </summary>
+        public static int QUOPRIADD = 801;
+        /// <summary>
+        /// 查看报价产品
+        /// </summary>
+        public static int QUOPRIVIEW = 802;
+        /// <summary>
+        /// 修改/删除报价产品
+        /// </summary>
+        public static int QUOPRIEDIT = 803;
     }
 }

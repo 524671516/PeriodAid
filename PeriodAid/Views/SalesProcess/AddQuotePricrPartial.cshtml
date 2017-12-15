@@ -45,7 +45,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-9">
-                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit" />
                 </div>
             </div>
 
@@ -72,27 +72,38 @@
             val: 'Id'
         });
     })
-    $("#add-quotePrice-form").ajaxForm(function (data) {
-        if (data == "SUCCESS") {
-            $("#myModal").modal('hide')
-            $.ajax({
-                url: "/SalesProcess/QuotePricrListPartial",
-                data: {
-                    query: $("#quotePrice-query").val(),
-                    quotedId: getUrlParam('quotedId')
-                },
-                success: function (data) {
-                    $("#quotePrice_list_content").html(data)
-                    $('.modal-backdrop.in').remove()
-                    $('body').removeClass('modal-open')
+    $("#add-quotePrice-form").validate({
+        debug: true,
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                if (data.result == "SUCCESS") {
+                    alert("添加成功！");
+                    $("#myModal").modal('hide')
+                    $.ajax({
+                        url: "/SalesProcess/QuotePricrListPartial",
+                        data: {
+                            query: $("#quotePrice-query").val(),
+                            quotedId: getUrlParam('quotedId')
+                        },
+                        success: function (data) {
+                            $("#quotePrice_list_content").html(data)
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                        }
+                    });
                 }
-            });
-            alert("添加成功！");
+                else if (data.result == "UNAUTHORIZED") {
+                    errorAlert("报价已存在!");
+                } else {
+                    errorAlert(data.errmsg)
+                }
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            $("#add-submit").removeClass("disabled");
         }
-        else if (data == "UNAUTHORIZED") {
-            errorAlert("报价已存在！");
-        } else {
-            errorAlert("添加失败！");
-        }
-    });
+    })
 </script>

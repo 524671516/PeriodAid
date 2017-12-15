@@ -76,8 +76,9 @@
                             });
                             alert("删除成功")
                         } else if (data.result == "FAIL") {
-                            alert("删除失败", "", function () {
-                            }, { type: 'error' });
+                            errorAlert("删除失败")
+                        } else {
+                            errorAlert(data.errmsg)
                         }
                     }
                 })
