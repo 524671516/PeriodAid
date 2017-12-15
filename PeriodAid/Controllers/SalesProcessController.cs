@@ -502,20 +502,44 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             if (query != "")
             {
-                var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.SP_Seller.Seller_Type <= seller.Seller_Type && m.System_Status != -1
-                                    &&  m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (seller.Id != 0)
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1
+                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.SP_Seller.Seller_Type <= seller.Seller_Type && m.System_Status != -1
+                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
             else
             {
-                var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.SP_Seller.Seller_Type <= seller.Seller_Type && m.System_Status != -1
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (seller.Id != 0)
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.SP_Seller.Seller_Type <= seller.Seller_Type && m.System_Status != -1
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+
+
             }
         }
 
