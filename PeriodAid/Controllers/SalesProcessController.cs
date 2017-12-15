@@ -502,25 +502,51 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             if (query != "")
             {
-                var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.SP_Seller.Seller_Type <= seller.Seller_Type && m.System_Status != -1
-                                    &&  m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if(seller.Seller_Type == 0)
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.Seller_Id == seller.Id && m.System_Status != -1 && m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1 && m.System_Name.Contains(query) 
+                                        || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                
             }
             else
             {
-                var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.SP_Seller.Seller_Type <= seller.Seller_Type && m.System_Status != -1
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (seller.Seller_Type == 0)
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.Seller_Id == seller.Id && m.System_Status != -1
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
         }
 
         public ActionResult AddSalesPartial()
         {
+            var seller = getSeller(User.Identity.Name);
+            ViewBag.Seller = seller;
             List<SelectListItem> saleslist = new List<SelectListItem>();
             var salesname = from m in _db.SP_Client
                             select m;
@@ -597,10 +623,10 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
         [HttpPost]
-        [Seller(OperationGroup = 404)]
-        public ActionResult DeleteSales(int salesId)
+        [Seller(OperationGroup = 403)]
+        public ActionResult DeleteSales(int Id)
         {
-            var Sales = _db.SP_SalesSystem.AsNoTracking().SingleOrDefault(m => m.Id == salesId);
+            var Sales = _db.SP_SalesSystem.AsNoTracking().SingleOrDefault(m => m.Id == Id);
             SP_SalesSystem sales = new SP_SalesSystem();
             sales.Id = Sales.Id;
             sales.Client_Id = Sales.Client_Id;

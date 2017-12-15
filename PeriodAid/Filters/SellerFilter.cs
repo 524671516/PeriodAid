@@ -193,23 +193,7 @@ namespace PeriodAid.Filters
                         {
                             if (salessystem.Seller_Id != seller.Id)
                             {
-                                setErrorResult(filterContext, "权限不足,无法修改");
-                            }
-                        }
-                    }
-                    else if(OperationGroup == SalesOperationCode.SALESDEL)
-                    {
-                        var salesId = Convert.ToInt32(filterContext.HttpContext.Request.Params["salesId"]);
-                        var salessystem = _db.SP_SalesSystem.SingleOrDefault(m => m.Id == salesId && m.SP_Seller.Seller_Status > -1);
-                        if (salessystem == null)
-                        {
-                            setErrorResult(filterContext, "操作失败,渠道已被移除");
-                        }
-                        else
-                        {
-                            if (salessystem.Seller_Id != seller.Id)
-                            {
-                                setErrorResult(filterContext, "权限不足,无法删除");
+                                setErrorResult(filterContext, "权限不足");
                             }
                         }
                     }
@@ -307,13 +291,9 @@ namespace PeriodAid.Filters
         /// </summary>
         public static int SALESVIEW = 402;
         /// <summary>
-        /// 修改渠道
+        /// 修改/删除渠道
         /// </summary>
         public static int SALESEDIT = 403;
-        /// <summary>
-        /// 删除渠道
-        /// </summary>
-        public static int SALESDEL = 404;
         /// <summary>
         /// 添加报价单
         /// </summary>
