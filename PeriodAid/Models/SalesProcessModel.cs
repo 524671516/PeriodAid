@@ -57,13 +57,15 @@
         public string Supplier_Name { get; set; }
 
         public string Bar_Code { get; set; }
-
+        
         public decimal Product_Weight { get; set; }
 
         public int Carton_Spec { get; set; }
 
+        [Range(typeof(decimal), "0.00", "99999999.99", ErrorMessage = "产品单价格式不正确")]
         public decimal Purchase_Price { get; set; }
 
+        [Range(typeof(decimal), "0.00", "99999999.99", ErrorMessage = "产品单价格式不正确")]
         public decimal Supply_Price { get; set; }
 
         public int Product_Status { get; set; }
@@ -105,6 +107,7 @@
         [StringLength(16)]
         public string Seller_Name { get; set; }
 
+        [Required, StringLength(32)]
         public string User_Name { get; set; }
 
         [StringLength(16), RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
