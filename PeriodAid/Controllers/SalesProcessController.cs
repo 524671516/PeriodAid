@@ -276,6 +276,7 @@ namespace PeriodAid.Controllers
                     client.Client_Type = model.Client_Type;
                     client.Client_Area = model.Client_Area;
                     client.Client_Status = model.Client_Status;
+                    client.Seller_Id = model.Seller_Id;
                     _db.SP_Client.Add(client);
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
