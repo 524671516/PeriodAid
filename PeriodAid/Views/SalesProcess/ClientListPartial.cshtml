@@ -10,9 +10,10 @@
         <tr>
             <th style="width:15%;">客户名称</th>
             <th style="width:15%;">状态</th>
-            <th style="width:20%;">客户类型</th>
-            <th style="width:20%;">所属区域</th>
-            <th style="width:30%;"></th>
+            <th style="width:15%;">客户类型</th>
+            <th style="width:15%;">所属区域</th>
+            <th style="width:15%;">负责人</th>
+            <th style="width:25%;"></th>
         </tr>
         @foreach (var item in Model)
         {
@@ -21,6 +22,7 @@
                 <td>@Html.PlattformTypeStatus(item.Client_Status)</td>
                 <td>@Html.ClientType(item.Client_Type)</td>
                 <td>@item.Client_Area</td>
+                <td>@item.Seller_Id</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
                     <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
