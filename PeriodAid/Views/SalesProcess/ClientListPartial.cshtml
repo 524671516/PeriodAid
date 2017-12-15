@@ -22,7 +22,7 @@
                 <td>@Html.PlattformTypeStatus(item.Client_Status)</td>
                 <td>@Html.ClientType(item.Client_Type)</td>
                 <td>@item.Client_Area</td>
-                <td>@item.Seller_Id</td>
+                <td>@item.SP_Seller.Seller_Name</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
                     <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
