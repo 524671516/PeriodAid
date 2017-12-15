@@ -1,8 +1,11 @@
-﻿using PagedList;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
+using PagedList;
 using PeriodAid.Filters;
 using PeriodAid.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -659,7 +662,7 @@ namespace PeriodAid.Controllers
             ViewBag.Sales = sales;
             return View();
         }
-        [Seller(OperationGroup = 502)]
+
         public ActionResult QuotedListPartial(int? page, string query, int SalesSystemId)
         {
             int _page = page ?? 1;
@@ -1192,6 +1195,293 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
             return Json(new { result = "FAIL" });
 
+        }
+
+        //生成PDF
+        public ActionResult creatPdf()
+        {
+            var product = from m in _db.SP_Product
+                                 where m.Product_Status != 1
+                                 select m;
+            var count = product.Count() + 1;
+            Document document = new Document(PageSize.A3);
+            try
+            {
+                // 创建文档
+                PdfWriter.GetInstance(document, new FileStream(@"d:\Create.pdf", FileMode.Create));
+                BaseFont setFont = BaseFont.CreateFont(@"C:\Windows\Fonts\simfang.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                Font font = new Font(setFont, 16);
+                Font font1 = new Font(setFont, 12);
+                Font font2 = new Font(setFont, 10);
+                Paragraph title = new Paragraph("寿全斋[-订单发货-]审批单", font);
+                title.Alignment = 1;
+                // 打开文档
+                document.Open();
+                document.Add(title);
+                PdfPTable table = new PdfPTable(10);
+                PdfPCell cell;
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 10;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 5;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("□有货就发", font1));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("□发货时间:", font1));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 3;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("订单编号:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("客户名称:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("订单类型:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("业务对接:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 10;
+                table.AddCell(cell);
+                // 产品标题
+                cell = new PdfPCell(new Paragraph("订单信息", font1));
+                cell.Colspan = 10;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货情况", font1));
+                cell.Rowspan = 1;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订单内容", font1));
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Rowspan = 1;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("产品代码", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货品种", font1));
+                cell.Colspan = 2;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货数量", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货单价", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("货款金额", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("备注", font1));
+                cell.Colspan = 2;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                //foreach(var name in plattform_name)
+                //{
+                //    cell = new PdfPCell(new Paragraph(name.System_Code.ToString(), font2));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(name.Item_Name.ToString(), font2));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    cell.Colspan = 2;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(" "));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(name.Purchase_Price.ToString(), font2));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(" "));
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(" "));
+                //    cell.Colspan = 2;
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    table.AddCell(cell);
+                //}
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("合计", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("--"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("数量", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("--"));
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("价格", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                // 付款
+                cell = new PdfPCell(new Paragraph("付款内容", font1));
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.Rowspan = 3;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("1"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("付款方式", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票内容", font1));
+                cell.Rowspan = 3;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("1"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票类型"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                // 2
+                cell = new PdfPCell(new Paragraph("2"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("付款时间", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("2"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票内容"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                //3 
+                cell = new PdfPCell(new Paragraph("3"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("付款金额", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("3"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票时间"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                // 收货
+                cell = new PdfPCell(new Paragraph("收货人信息", font1));
+                cell.Colspan = 2;
+                cell.Rowspan = 5;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("收货人", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Paragraph("收货人联系电话", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Paragraph("收货地址", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+
+                cell = new PdfPCell(new Paragraph("运输方式（特批加急）", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("□快递-顺丰  □物流-德邦  □包车", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Paragraph("最后收货期限", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("     年     月     日", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                document.Add(table);
+            }
+            catch (DocumentException de)
+            {
+                Console.Error.WriteLine(de.Message);
+            }
+            catch (IOException ioe)
+            {
+                Console.Error.WriteLine(ioe.Message);
+            }
+            // 关闭文档
+            document.Close();
+            return Content("success");
         }
     }
 }
