@@ -1342,7 +1342,7 @@ namespace PeriodAid.Controllers
                 {
                     if (dd.Rows[i][1].ToString() == product.System_Code && plattformName == traffic_plattform.TrafficPlattform_Name)
                     {
-                        var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Up_Date == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
+                        var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.UpdateTime == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
                         if (traffic_data == null)
                         {
                             traffic_data = new SS_TrafficData()
@@ -1350,7 +1350,7 @@ namespace PeriodAid.Controllers
                                 TrafficPlattform_Id = Convert.ToInt32(traffic_plattform.Id),
                                 Product_Id = Convert.ToInt32(product.Id),
                                 TrafficSource_Id = Convert.ToInt32(traffic_source.Id),
-                                Up_Date = Convert.ToDateTime(date),
+                                UpdateTime = Convert.ToDateTime(date),
                                 Product_Flow = Convert.ToInt32(dd.Rows[i][4]),
                                 Product_Visitor = Convert.ToInt32(dd.Rows[i][5]),
                                 Product_Customer = Convert.ToInt32(dd.Rows[i][7]),
@@ -1430,14 +1430,14 @@ namespace PeriodAid.Controllers
                         var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
                         if (product != null)
                         {
-                            var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Up_Date == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
+                            var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.UpdateTime == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
                             int p_flow, p_visitor, p_customer, o_count;
                             double p_times;
                             if (traffic_data == null)
                             {
                                 traffic_data = new SS_TrafficData()
                                 {
-                                    Up_Date = date,
+                                    UpdateTime = date,
                                     Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
                                     Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
                                     Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0,
@@ -1513,7 +1513,7 @@ namespace PeriodAid.Controllers
             foreach (var product in productlist)
             {
                 var productOrder = from m in product
-                                   where m.Up_Date == date
+                                   where m.UpdateTime == date
                                    group m by m.SS_TrafficPlattform into g
                                    select g;
                 bool firstCount = true;
@@ -1550,8 +1550,8 @@ namespace PeriodAid.Controllers
                     row_pos++;
                 }
                 var product_count = from m in product
-                                    where m.Up_Date == date
-                                    group m by m.Up_Date into g
+                                    where m.UpdateTime == date
+                                    group m by m.UpdateTime into g
                                     select g;
                 foreach (var productCount in product_count)
                 {
@@ -1569,7 +1569,7 @@ namespace PeriodAid.Controllers
             row_pos++;
             // 各平台总和
             var data_each = from m in _db.SS_TrafficData
-                            where m.Up_Date == date
+                            where m.UpdateTime == date
                             group m by m.SS_TrafficPlattform into g
                             select g;
             foreach (var eachData in data_each)
@@ -1587,7 +1587,7 @@ namespace PeriodAid.Controllers
             }
             // 平台总和
             var data_all = from m in _db.SS_TrafficData
-                           where m.Up_Date == date
+                           where m.UpdateTime == date
                            group m by m.SS_TrafficPlattform.Plattform_Id into g
                            select g;
             foreach (var allData in data_all)
@@ -1634,7 +1634,7 @@ namespace PeriodAid.Controllers
                 // 写产品列
                 int row_pos = 1;
                 var TrafficData = from m in _db.SS_TrafficData
-                                  where m.SS_TrafficPlattform.Id == plattform.Id && m.Up_Date == date
+                                  where m.SS_TrafficPlattform.Id == plattform.Id && m.UpdateTime == date
                                   orderby m.Product_Id
                                   select m;
                 foreach (var trafficdata in TrafficData)
@@ -1696,7 +1696,7 @@ namespace PeriodAid.Controllers
                 row.CreateCell(++cell_pos).SetCellValue("uv价值");
                 var data_date = from m in _db.SS_TrafficData
                                 where m.Product_Id == product.Id
-                                group m by m.Up_Date into g
+                                group m by m.UpdateTime into g
                                 select g;
                 var row_pos = 2;
                 foreach (var dataDate in data_date)
@@ -1748,8 +1748,8 @@ namespace PeriodAid.Controllers
             ViewBag.productList = productList;
             var trafficDate = (from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-                              orderby m.Up_Date descending
-                              select m.Up_Date).FirstOrDefault();
+                              orderby m.UpdateTime descending
+                              select m.UpdateTime).FirstOrDefault();
             ViewBag.trafficDate = trafficDate;
             var trafficName = from m in _db.SS_TrafficPlattform
                               where m.Plattform_Id == plattformId
@@ -1766,7 +1766,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId 
-                                       && m.Up_Date == single && m.SS_Product.Plattform_Id == plattformId
+                                       && m.UpdateTime == single && m.SS_Product.Plattform_Id == plattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1783,7 +1783,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Up_Date == single
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.UpdateTime == single
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1803,7 +1803,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Up_Date == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.UpdateTime == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1820,7 +1820,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.Product_Id == productId && m.Up_Date == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.Product_Id == productId && m.UpdateTime == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1846,7 +1846,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end && m.SS_Product.Plattform_Id == plattformId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end && m.SS_Product.Plattform_Id == plattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1862,7 +1862,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1881,7 +1881,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1897,7 +1897,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1978,9 +1978,9 @@ namespace PeriodAid.Controllers
             if(trafficPlattformId == 0)
             {
                 var info_data = from m in _db.SS_TrafficData
-                                where m.Up_Date >= _start && m.Up_Date <= _end
+                                where m.UpdateTime >= _start && m.UpdateTime <= _end
                                 && m.Product_Id == productId && m.TrafficSource_Id == sourceId
-                                group m by m.Up_Date into g
+                                group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
                 DateTime current_date = _start;
@@ -2008,9 +2008,9 @@ namespace PeriodAid.Controllers
             else
             {
                 var info_data = from m in _db.SS_TrafficData
-                                where m.Up_Date >= _start && m.Up_Date <= _end
+                                where m.UpdateTime >= _start && m.UpdateTime <= _end
                                 && m.Product_Id == productId && m.TrafficSource_Id == sourceId && m.TrafficPlattform_Id == trafficPlattformId
-                                group m by m.Up_Date into g
+                                group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
                 DateTime current_date = _start;

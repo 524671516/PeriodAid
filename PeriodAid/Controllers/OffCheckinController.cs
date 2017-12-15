@@ -201,10 +201,10 @@ namespace PeriodAid.Controllers
         }
         #region 临时
         
-        public ActionResult ParaConfirm()
+        public ActionResult ParaConfirm(int year, int month)
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
-            DateTime date = new DateTime(2017, 11, 1);
+            DateTime date = new DateTime(year, month,1);
             var list = from m in _offlineDB.Off_Checkin
                        where m.Off_Checkin_Schedule.Subscribe < date
                        && m.Status == 4
