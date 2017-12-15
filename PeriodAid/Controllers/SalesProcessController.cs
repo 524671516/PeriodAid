@@ -189,29 +189,57 @@ namespace PeriodAid.Controllers
         public ActionResult ClientListPartial(int? page, string query)
         {
             int _page = page ?? 1;
-            if (query != "")
+            var seller = getSeller(User.Identity.Name);
+            if(seller.Seller_Type == 0)
             {
-                var customer = (from m in _db.SP_Client
-                                where m.Client_Status != -1
-                                select m);
-                var SearchResult = (from m in customer
-                                    where m.Client_Name.Contains(query) || m.Client_Area.Contains(query)
-                                    orderby m.Client_Name descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
-            }
-            else
+                if (query != "")
+                {
+                    var customer = (from m in _db.SP_Client
+                                    where m.Client_Status != -1 && m.Seller_Id == seller.Id
+                                    select m);
+                    var SearchResult = (from m in customer
+                                        where m.Client_Name.Contains(query) || m.Client_Area.Contains(query)
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_Client
+                                        where m.Client_Status != -1 && m.Seller_Id == seller.Id
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+            }else
             {
-                var SearchResult = (from m in _db.SP_Client
-                                    where m.Client_Status != -1
-                                    orderby m.Client_Name descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (query != "")
+                {
+                    var customer = (from m in _db.SP_Client
+                                    where m.Client_Status != -1 && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                                    select m);
+                    var SearchResult = (from m in customer
+                                        where m.Client_Name.Contains(query) || m.Client_Area.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_Client
+                                        where m.Client_Status != -1 && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
+            
         }
 
         public ActionResult AddClientPartial()
         {
+            var seller = getSeller(User.Identity.Name);
+            ViewBag.Seller = seller;
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
@@ -270,6 +298,8 @@ namespace PeriodAid.Controllers
 
         public ActionResult EditClientInfo(int clientId)
         {
+            var seller = getSeller(User.Identity.Name);
+            ViewBag.Seller = seller;
             var item = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
@@ -300,7 +330,7 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 203)]
         public ActionResult EditClientInfo(SP_Client model)
         {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status);
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status && m.Seller_Id == model.Seller_Id);
             if (ModelState.IsValid)
             {
                 if (Client)
@@ -465,59 +495,27 @@ namespace PeriodAid.Controllers
 
         public ActionResult SalesListPartial(int? page, string query)
         {
-            var seller = getSeller(User.Identity.Name);
-            if (seller == null)
-            {
-                return Content("FAIL");
-            }
             int _page = page ?? 1;
             if (query != "")
             {
-                if(seller.Seller_Type == 0)
-                {
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1 && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1 && m.System_Name.Contains(query) 
-                                        || m.System_Phone.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                
+                var SearchResult = (from m in _db.SP_SalesSystem
+                                    where m.System_Status != -1 && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
             }
             else
             {
-                if (seller.Seller_Type == 0)
-                {
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
+                var SearchResult = (from m in _db.SP_SalesSystem
+                                    where m.System_Status != -1
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
             }
         }
 
         public ActionResult AddSalesPartial()
         {
-            var seller = getSeller(User.Identity.Name);
-            ViewBag.Seller = seller;
             List<SelectListItem> saleslist = new List<SelectListItem>();
             var salesname = from m in _db.SP_Client
                             select m;
