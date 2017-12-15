@@ -112,6 +112,7 @@ namespace PeriodAid.Controllers
         public ActionResult AddProductPartial(SP_Product model, FormCollection form)
         {
             bool Product = _db.SP_Product.Any(m => m.System_Code == model.System_Code);
+            ModelState.Remove("Product_Status");
             if (ModelState.IsValid)
             {
                 if (Product)
@@ -513,6 +514,15 @@ namespace PeriodAid.Controllers
                 return PartialView(SearchResult);
             }
         }
+        [HttpPost]
+        public JsonResult QueryClient(string query)
+        {
+            var client = from m in _db.SP_Client
+                         where m.Client_Status != -1
+                         && m.Client_Name.Contains(query)
+                         select new { Id = m.Id, Client_Name = m.Client_Name };
+            return Json(client);
+        }
 
         public ActionResult AddSalesPartial()
         {
@@ -521,7 +531,6 @@ namespace PeriodAid.Controllers
                             select m;
             foreach(var name in salesname)
             {
-
                 saleslist.Add(new SelectListItem() { Text = name.Client_Name, Value = name.Id.ToString() });
             }
             ViewBag.Sales = new SelectList(saleslist, "Value", "Text");
@@ -898,7 +907,7 @@ namespace PeriodAid.Controllers
                 return PartialView(SearchResult);
             }
         }
-
+        
         public ActionResult AddSellerPartial()
         {
             List<SelectListItem> sellerType = new List<SelectListItem>();
