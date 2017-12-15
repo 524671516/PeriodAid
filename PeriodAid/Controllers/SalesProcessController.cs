@@ -1186,18 +1186,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteOrder(int orderId)
         {
             var Order = _db.SP_Order.AsNoTracking().SingleOrDefault(m => m.Id == orderId);
-            SP_Order order = new SP_Order();
-            order.Id = Order.Id;
-            order.Order_Date = Order.Order_Date;
-            order.Order_Number = Order.Order_Number;
-            order.Quotation_Num = Order.Quotation_Num;
-            order.Order_Status = -1;
-            if (TryUpdateModel(order))
-            {
-                _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
+            Order.Order_Status = -1;
+            _db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
             return Json(new { result = "FAIL" });
 
         }
