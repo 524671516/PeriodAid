@@ -43,40 +43,51 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-3 col-md-9">
-                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit" />
                 </div>
             </div>
         </div>
     }
 </div>
-
 <script>
     $(function () {
         $("#salessystem-input").val($("#SalesSystem_name").html())
         $("#SalesSystemId").val($("#SalesSystem_Id").html())
-        $("#add-quoted-form").ajaxForm(function (data) {
-            if (data == "SUCCESS") {
-                $("#myModal").modal('hide')
-                $.ajax({
-                    url: "/SalesProcess/QuotedListPartial",
-                    data: {
-                        query: $("#quoted-query").val(),
-                        SalesSystemId: getUrlParam('SalesSystemId')
-                    },
-                    success: function (data) {
-                        $("#quoted_list_content").html(data)
-                        $('.modal-backdrop.in').remove()
-                        $('body').removeClass('modal-open')
+        $("#add-quoted-form").validate({
+            debug: true,
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert("添加成功！");
+                        $("#myModal").modal('hide')
+                        $.ajax({
+                            url: "/SalesProcess/QuotedListPartial",
+                            data: {
+                                query: $("#quoted-query").val(),
+                                SalesSystemId: getUrlParam('SalesSystemId')
+                            },
+                            success: function (data) {
+                                $("#quoted_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "UNAUTHORIZED") {
+                        errorAlert('报价单已存在!')
+                    } else if (data.result == "FAIL") {
+                        errorAlert('信息不全,添加失败')
+                    } else {
+                        errorAlert(data.errmsg);
                     }
-                });
-                alert("添加成功！");
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#add-submit").removeClass("disabled");
             }
-            else if (data == "UNAUTHORIZED") {
-                errorAlert("报价单已存在！");
-            } else {
-                errorAlert("添加失败！");
-            }
-        });
+        })
         window.moment = Kalendae.moment;
         var k4 = new Kalendae.Input('Quoted_Date', {
             months: 1,

@@ -39,7 +39,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit"/>
                 </div>
             </div>
         </div>
@@ -48,27 +48,37 @@
 </div>
 <script>
     $(function () {
-        $("#add-seller-form").ajaxForm(function (data) {
-            if (data == "SUCCESS") {
-                $("#myModal").modal('hide')
-                $.ajax({
-                    url: "/SalesProcess/SellerListPartial",
-                    data: {
-                        query: $("#seller-query").val()
-                    },
-                    success: function (data) {
-                        $("#seller_list_content").html(data)
-                        $('.modal-backdrop.in').remove()
-                        $('body').removeClass('modal-open')
+        $("#add-seller-form").validate({
+            debug: true,
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert("添加成功！");
+                        $("#myModal").modal('hide')
+                        $.ajax({
+                            url: "/SalesProcess/SellerListPartial",
+                            data: {
+                                query: $("#seller-query").val()
+                            },
+                            success: function (data) {
+                                $("#seller_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "UNAUTHORIZED") {
+                        errorAlert('已存在!')
+                    }else {
+                        errorAlert(data.errmsg);
                     }
-                });
-                alert("添加成功！");
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#add-submit").removeClass("disabled");
             }
-            else if (data == "UNAUTHORIZED") {
-                errorAlert("已存在！");
-            } else {
-                errorAlert("添加失败！");
-            }
-        });
+        })
     })
 </script>

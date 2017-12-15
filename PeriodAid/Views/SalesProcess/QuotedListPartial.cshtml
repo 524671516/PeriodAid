@@ -15,19 +15,17 @@
         </tr>
         @foreach (var item in Model)
         {
-            if (item.Quoted_Status != -1)
-            {
-                <tr>
-                    <td>@item.Quoted_Date.ToString("yyyy-MM-dd")</td>
-                    <td>@item.Quotation_Num</td>
-                    <td>@item.Remark</td>
-                    <td class="text-center">
-                        <a data-eid="@item.Id" class="quoted-edit btn btn-xs btn-success" role="button">编辑</a>
-                        <a class="quotePrice-info btn btn-xs btn-info" data-eid="@item.Id" role="button">产品报价信息</a>
-                        <a class="quoted-delete btn btn-xs btn-danger" data-eid="@item.Id" role="button">删除</a>
-                    </td>
-                </tr>
-            }
+        <tr>
+            <td>@item.Quoted_Date.ToString("yyyy-MM-dd")</td>
+            <td>@item.Quotation_Num</td>
+            <td>@item.Remark</td>
+            <td class="text-center">
+                <a data-eid="@item.Id" class="quoted-edit btn btn-xs btn-success" role="button">编辑</a>
+                <a class="quotePrice-info btn btn-xs btn-info" data-eid="@item.Id" role="button">产品报价信息</a>
+                <a class="quoted-delete btn btn-xs btn-danger" data-eid="@item.Id" role="button">删除</a>
+            </td>
+        </tr>
+
         }
     </table>
 </div>
@@ -80,8 +78,9 @@
                             });
                             alert("删除成功")
                         } else if (data.result == "FAIL") {
-                            alert("删除失败", "", function () {
-                            }, { type: 'error' });
+                            errorAlert("删除失败")
+                        } else{
+                            errorAlert(data.errmsg)
                         }
                     }
                 })

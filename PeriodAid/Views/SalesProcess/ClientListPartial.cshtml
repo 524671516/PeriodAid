@@ -16,20 +16,17 @@
         </tr>
         @foreach (var item in Model)
         {
-            if (item.Client_Status != -1)
-            {
-                <tr>
-                    <td>@item.Client_Name</td>
-                    <td>@Html.PlattformTypeStatus(item.Client_Status)</td>
-                    <td>@Html.ClientType(item.Client_Type)</td>
-                    <td>@item.Client_Area</td>
-                    <td>
-                        <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
-                        <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
-                        <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
-                    </td>
-                </tr>
-            }
+            <tr>
+                <td>@item.Client_Name</td>
+                <td>@Html.PlattformTypeStatus(item.Client_Status)</td>
+                <td>@Html.ClientType(item.Client_Type)</td>
+                <td>@item.Client_Area</td>
+                <td>
+                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
+                    <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
+                </td>
+            </tr>
         }
     </table>
     <div class="text-right">
@@ -104,8 +101,9 @@
                                     });
                                     alert("删除成功")
                             } else if (data.result == "FAIL") {
-                                alert("删除失败", "", function () {
-                                }, { type: 'error' });
+                                errorAlert("删除失败")
+                            } else {
+                                errorAlert(data.errmsg)
                             }
                         }
                     })

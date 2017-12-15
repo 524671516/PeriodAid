@@ -24,26 +24,23 @@
 
         @foreach (var item in Model)
         {
-            if (item.Product_Status != -1)
-            {
-                <tr>
-                    <td>@item.System_Code</td>
-                    <td>@item.Item_Code</td>
-                    <td>@Html.ProductTypeStatus(item.Product_Status)</td>
-                    <td>@item.Brand_Name</td>
-                    <td>@item.Item_Name</td>
-                    <td>@item.Product_Weight</td>
-                    <td>@item.Carton_Spec</td>
-                    <td>@item.Purchase_Price</td>
-                    <td>@item.Supply_Price</td>
-                    <td>@item.SP_ProductType.Type_Name</td>
-                    <td>@item.Bar_Code</td>
-                    <td>
-                        <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                        <a class="delete-product btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
-                    </td>
-                </tr>
-            }
+            <tr>
+                <td>@item.System_Code</td>
+                <td>@item.Item_Code</td>
+                <td>@Html.ProductTypeStatus(item.Product_Status)</td>
+                <td>@item.Brand_Name</td>
+                <td>@item.Item_Name</td>
+                <td>@item.Product_Weight</td>
+                <td>@item.Carton_Spec</td>
+                <td>@item.Purchase_Price</td>
+                <td>@item.Supply_Price</td>
+                <td>@item.SP_ProductType.Type_Name</td>
+                <td>@item.Bar_Code</td>
+                <td>
+                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="delete-product btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
+                </td>
+            </tr>
         }
     </table>
     <div class="text-right">

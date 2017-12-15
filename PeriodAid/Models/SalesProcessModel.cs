@@ -246,6 +246,10 @@
         public string Order_Number { get; set; }
 
         public DateTime Order_Date { get; set; }
+
+        public string Quotation_Num { get; set; }
+
+        public int Order_Status { get; set; }
     }
     /// <summary>
     /// 财务信息

@@ -16,22 +16,18 @@
         </tr>
         @foreach (var sales in Model)
         {
-            if (sales.System_Status != -1)
-            {
-                <tr>
-                    <td>@sales.Id</td>
-                    <td>@sales.System_Name</td>
-                    <td>@sales.System_Phone</td>
-                    <td>@sales.System_Address</td>
-                    <td>@sales.SP_Seller.Seller_Name</td>
-                    <td>
-                        <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
-                        <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价单信息</a>
-                        <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
-                    </td>
-                </tr>
-
-            }
+        <tr>
+            <td>@sales.Id</td>
+            <td>@sales.System_Name</td>
+            <td>@sales.System_Phone</td>
+            <td>@sales.System_Address</td>
+            <td>@sales.SP_Seller.Seller_Name</td>
+            <td>
+                <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
+                <a class="quoted-info btn btn-xs btn-info" data-eid="@sales.Id" role="button">报价单信息</a>
+                <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
+            </td>
+        </tr>
         }
     </table>
 </div>
@@ -83,8 +79,9 @@
                             });
                             alert("删除成功")
                         } else if (data.result == "FAIL") {
-                            alert("删除失败", "", function () {
-                            }, { type: 'error' });
+                            errorAlert("删除失败")
+                        } else {
+                            errorAlert(data.errmsg)
                         }
                     }
                 })

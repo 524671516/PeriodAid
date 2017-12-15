@@ -84,6 +84,7 @@
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
+                                alert("删除成功")
                                     $.ajax({
                                         url: "/SalesProcess/SellerListPartial",
                                         data: {
@@ -95,10 +96,10 @@
                                             $('body').removeClass('modal-open')
                                         }
                                     });
-                                    alert("删除成功")
                             } else if (data.result == "FAIL") {
-                                alert("删除失败", "", function () {
-                                }, { type: 'error' });
+                                errorAlert("删除失败")
+                            } else {
+                                errorAlert(data.errmsg)
                             }
                         }
                     })

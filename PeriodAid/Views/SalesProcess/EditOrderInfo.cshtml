@@ -1,0 +1,116 @@
+﻿@model PeriodAid.Models.SP_Order
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>修改订单信息</h2>
+</div>
+<div class="hidden" id="num-name">@ViewBag.Num.Quotation_Num</div>
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("EditOrderInfo", "SalesProcess", FormMethod.Post, new { @id = "order-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            <div class="form-group">
+                <label class="control-label col-md-2">订单日期</label>
+                <div class="col-md-9">
+                    <div id="show-date">
+                        @Html.EditorFor(model => model.Order_Date, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Order_Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">订单号</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Order_Number, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Order_Number, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">报价单号</label>
+                <div class="col-md-9">
+                    <input id="quoted-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
+                    <input type="hidden" id="QuotationNum" name="Quotation_Num" />
+                    @Html.ValidationMessageFor(model => model.Quotation_Num, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
+                </div>
+            </div>
+
+
+
+        </div>
+    }
+</div>
+<script>
+    $(function () {
+        $("#quoted-input").val($("#num-name").html())
+        $("#QuotationNum").val($("#num-name").html())
+        // 修改日期格式
+        var strDate = $("#Order_Date").val().substring(0, 10)
+        var reg = /\//g
+        var newstrDate = strDate.replace(reg, "-")
+        $("#show-date input").attr("value", newstrDate);
+        //报价单号搜索
+        function displayResult(item, val, text) {
+            $("#QuotationNum").val(val);
+        }
+        $('#quoted-input').typeahead({
+            ajax: {
+                url: "/SalesProcess/QueryQuoted",
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'Quotation_Num',
+            val: 'Id'
+        });
+        window.moment = Kalendae.moment;
+        var k4 = new Kalendae.Input('Order_Date', {
+            months: 1,
+            mode: 'single',
+            titleFormat: "MM月, YYYY年",
+            format: "YYYY-MM-DD"
+        })
+        $("#save-btn").on("click", function () {
+            $("#order-form").submit();
+        })
+        $("#order-form").validate({
+            debug: true,
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert('保存成功')
+                        $("#myModal").modal('hide');
+                        $.ajax({
+                            url: "/SalesProcess/OrderListPartial",
+                            data: {
+                                query: $("#order-query").val()
+                            },
+                            success: function (data) {
+                                $("#order_list_content").html(data);
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "UNAUTHORIZED") {
+                        errorAlert('信息未修改')
+                    } else if (data.result == "FAIL") {
+                        errorAlert('保存失败')
+                    } else {
+                        errorAlert(data.errmsg);
+                    }
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#save-btn").removeClass("disabled");
+            }
+        });
+    })
+</script>

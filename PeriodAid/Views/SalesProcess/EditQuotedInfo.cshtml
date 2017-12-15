@@ -47,7 +47,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="button" value="保存" id="save-btn" class="btn btn-default" />
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
                 </div>
             </div>
 
@@ -56,44 +56,6 @@
 </div>
 <script src="~/Scripts/kalendae.standalone.js"></script>
 <script>
-
-    $("#save-btn").on("click", function () {
-        if (!$(this).hasClass("disabled")) {
-            $(this).addClass("disabled")
-            $("#quoted-form").submit();
-        }
-    });
-        //新建项目表单验证   详细用法请查看validate插件
-    $("#quoted-form").validate({
-            debug: true,
-            rules: {
-                SubjectTitle: {
-                    required: true,
-                    maxlength: 128
-                }
-            },
-            //验证通过的正式提交函数
-            submitHandler: function (form) {
-                $(form).ajaxSubmit(function (data) {
-                    if (data.result == "SUCCESS") {
-                        UnimportantAlert(data.msg);
-                        $("#btn-edit-subject").removeClass("disabled");
-                        $('#Add-Subject').modal('hide');
-                        GetActiveSubject("#personal_active_subject")
-                        GetFinishSubject("#personal_finish_subject")
-                    } else {
-                        errorAlert(data.errmsg);
-                        $("#btn-edit-subject").removeClass("disabled");
-                    }
-                })
-            },
-            errorClass: "has-error",
-            //验证失败
-            errorPlacement: function (error, element) {
-                $("#btn-edit-subject").removeClass("disabled");
-            }
-    });
-
     $(function () {
         $("#salessystem-input").val($("#salessystem-name").html())
         $("#salessystemId").val($("#salessystem-id").html())
@@ -101,38 +63,48 @@
         var strDate = $("#Quoted_Date").val().substring(0, 10)
         var reg = /\//g
         var newstrDate = strDate.replace(reg, "-")
-        $("#show-date input").attr("value", newstrDate)
-    })
-    //$('#save-btn').click(function () {
-    //    $("#quoted-form").ajaxSubmit({
-    //        url: '/SalesProcess/EditQuotedInfo',
-    //        type: 'post',
-    //        success: function (data) {
-    //            if (data.result == "SUCCESS") {
-    //                alert('保存成功')
-    //                $("#myModal").modal('hide');
-    //                $.ajax({
-    //                    url: "/SalesProcess/QuotedListPartial",
-    //                    data: {
-    //                        query: $("#quoted-query").val(),
-    //                        SalesSystemId: getUrlParam('SalesSystemId')
-    //                    },
-    //                    success: function (data) {
-    //                        $("#quoted_list_content").html(data);
-    //                        $('.modal-backdrop.in').remove()
-    //                        $('body').removeClass('modal-open')
-    //                    }
-    //                });
+        $("#show-date input").attr("value", newstrDate);
 
-    //            } else if (data.result == "UNAUTHORIZED") {
-    //                errorAlert('信息未修改')
-    //            } else {
-    //                errorAlert('保存失败')
-    //            }
-    //        }
-    //    })
-    //    return false;
-    //})
+        $("#save-btn").on("click", function () {
+            $("#quoted-form").submit();
+        });
+        //新建项目表单验证   详细用法请查看validate插件
+        $("#quoted-form").validate({
+            debug: true,
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert('保存成功')
+                        $("#myModal").modal('hide');
+                        $.ajax({
+                            url: "/SalesProcess/QuotedListPartial",
+                            data: {
+                                query: $("#quoted-query").val(),
+                                SalesSystemId: getUrlParam('SalesSystemId')
+                            },
+                            success: function (data) {
+                                $("#quoted_list_content").html(data);
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "UNAUTHORIZED") {
+                        errorAlert('信息未修改')
+                    } else if (data.result == "FAIL") {
+                        errorAlert('保存失败')
+                    }else {
+                        errorAlert(data.errmsg);
+                    }
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#save-btn").removeClass("disabled");
+            }
+        });
+    })
     window.moment = Kalendae.moment;
     var k4 = new Kalendae.Input('Quoted_Date', {
         months: 1,

@@ -43,7 +43,7 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-9">
-                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit" />
                 </div>
             </div>
 
@@ -55,28 +55,38 @@
     $(function () {
         $("#client-input").val($("#Client-name").html())
         $("#ClientId").val($("#Client_Id").html())
-        $("#add-contact-form").ajaxForm(function (data) {
-            if (data == "SUCCESS") {
-                $("#myModal").modal('hide')
-                $.ajax({
-                    url: "/SalesProcess/ContactListPartial",
-                    data: {
-                        clientId: getUrlParam("clientId"),
-                        page: 1,
-                        query: $("#contact-query").val(),
-                    },
-                    success: function (data) {
-                        $("#contact_list_content").html(data)
-                        $('.modal-backdrop.in').remove()
-                        $('body').removeClass('modal-open')
+        $("#add-contact-form").validate({
+            debug: true,
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert("添加成功！");
+                        $("#myModal").modal('hide')
+                        $.ajax({
+                            url: "/SalesProcess/ContactListPartial",
+                            data: {
+                                clientId: getUrlParam("clientId"),
+                                page: 1,
+                                query: $("#contact-query").val(),
+                            },
+                            success: function (data) {
+                                $("#contact_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "UNAUTHORIZED") {
+                        errorAlert('已存在!')
+                    } else {
+                        errorAlert(data.errmsg);
                     }
-                });
-                alert("添加成功！");
-            }
-            else if (data == "UNAUTHORIZED") {
-                errorAlert("联系人已存在！");
-            } else {
-                errorAlert("添加失败！");
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#add-submit").removeClass("disabled");
             }
         })
     })

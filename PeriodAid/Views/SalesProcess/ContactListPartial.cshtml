@@ -15,20 +15,16 @@
         </tr>
         @foreach (var list in Model)
         {
-            if (list.Contact_Status!= -1)
-            {
-                <tr>
-                    <td>@list.Id</td>
-                    <td>@list.Contact_Name</td>
-                    <td>@list.Contact_Mobile</td>
-                    <td>@list.Contact_Address</td>
-                    <td>
-                        <a data-eid="@list.Id" class="select-contact btn btn-xs btn-success" role="button">编辑</a>
-                        <a class="delete-contact btn btn-xs btn-danger" data-eid="@list.Id" role="button">删除</a>
-                    </td>
-                </tr>
-            }
-
+            <tr>
+                <td>@list.Id</td>
+                <td>@list.Contact_Name</td>
+                <td>@list.Contact_Mobile</td>
+                <td>@list.Contact_Address</td>
+                <td>
+                    <a data-eid="@list.Id" class="select-contact btn btn-xs btn-success" role="button">编辑</a>
+                    <a class="delete-contact btn btn-xs btn-danger" data-eid="@list.Id" role="button">删除</a>
+                </td>
+            </tr>
         }
     </table>
 </div>
@@ -81,8 +77,9 @@
                                     });
                                     alert("删除成功")
                             } else if (data.result == "FAIL") {
-                                alert("删除失败", "", function () {
-                                }, { type: 'error' });
+                                errorAlert("删除失败")
+                            } else {
+                                errorAlert(data.errmsg)
                             }
                         }
                     })
