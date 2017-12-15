@@ -3,6 +3,8 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>新增经销商信息</h2>
 </div>
+<div class="hidden" id="seller-type-id">@ViewBag.Seller.Id</div>
+<div class="hidden" id="seller-type-name">@ViewBag.Seller.Seller_Name</div>
 <div class="modal-body">
     @using (Html.BeginForm("AddClientPartial", "SalesProcess", FormMethod.Post, new { @id = "add-client-form" }))
     {
@@ -30,6 +32,28 @@
                     @Html.ValidationMessageFor(model => model.Client_Type, " ", new { @class = "text-danger" })
                 </div>
             </div>
+            @if (ViewBag.Seller.Seller_Type == 0)
+            {
+                <div class="form-group">
+                    <label class="col-md-2 control-label">负责人</label>
+                    <div class="col-md-9">
+                        <input id="seller-input-type" type="text" class="span4 form-control" autocomplete="off" name="seller-input-type" readonly="readonly" />
+                        <input type="hidden" id="Seller-Type" name="Seller_Id" />
+                        @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="col-md-2 control-label">负责人</label>
+                    <div class="col-md-9">
+                        <input id="seller-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
+                        <input type="hidden" id="SellerId" name="Seller_Id" />
+                        @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
             <div class="form-group">
                 <label class="col-md-3 control-label">区域</label>
                 <div class="col-md-8">
@@ -47,6 +71,21 @@
 </div>
 <script>
     $(function () {
+        $("#seller-input-type").val($("#seller-type-name").html())
+        $("#Seller-Type").val($("#seller-type-id").html())
+        //负责人搜索
+        function displayResult(item, val, text) {
+            $("#SellerId").val(val);
+        }
+        $('#seller-input').typeahead({
+            ajax: {
+                url: "/SalesProcess/QuerySeller",
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'SellerName',
+            val: 'Id'
+        });
         $("#add-client-form").validate({
             debug: true,
             //验证通过的正式提交函数
