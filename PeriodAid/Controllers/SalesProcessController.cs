@@ -175,28 +175,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteProduct(int productId)
         {
             var Product = _db.SP_Product.AsNoTracking().SingleOrDefault(m => m.Id == productId);
-            SP_Product product = new SP_Product();
-            product.Id = Product.Id;
-            product.Item_Code = Product.Item_Code;
-            product.Item_Name = Product.Item_Name;
-            product.System_Code = Product.System_Code;
-            product.Carton_Spec = Product.Carton_Spec;
-            product.Purchase_Price = Product.Purchase_Price;
-            product.Brand_Name = Product.Brand_Name;
-            product.Item_ShortName = Product.Item_ShortName;
-            product.Supplier_Name = Product.Supplier_Name;
-            product.Bar_Code = Product.Bar_Code;
-            product.Product_Weight = Product.Product_Weight;
-            product.Supply_Price = Product.Supply_Price;
-            product.ProductType_Id = Product.ProductType_Id;
-            product.Product_Status = -1;
-            if (TryUpdateModel(product))
-            {
-                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
+            Product.Product_Status = -1;
+            _db.Entry(Product).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         public ActionResult ClientList()
@@ -343,20 +325,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteClient(int clientId)
         {
             var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == clientId);
-            SP_Client client = new SP_Client();
-            client.Id = Client.Id;
-            client.Client_Name = Client.Client_Name;
-            client.Client_Status = -1;
-            client.Client_Area = Client.Client_Area;
-            client.Client_Type = Client.Client_Type;
-            if (TryUpdateModel(client))
-            {
-                _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
+            Client.Client_Status = -1;
+            _db.Entry(Client).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         public ActionResult ContactList(int clientId)
@@ -479,21 +451,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteContact(int contactId)
         {
             var Contact = _db.SP_Contact.AsNoTracking().SingleOrDefault(m => m.Id == contactId);
-            SP_Contact contact = new SP_Contact();
-            contact.Id = Contact.Id;
-            contact.Contact_Name = Contact.Contact_Name;
-            contact.Contact_Mobile = Contact.Contact_Mobile;
-            contact.Contact_Address = Contact.Contact_Address;
-            contact.Client_Id = Contact.Client_Id;
-            contact.Contact_Status = -1;
-            if (TryUpdateModel(contact))
-            {
-                _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
+            Contact.Contact_Status = -1;
+            _db.Entry(Contact).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         public ActionResult SalesList()
@@ -636,22 +597,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteSales(int Id)
         {
             var Sales = _db.SP_SalesSystem.AsNoTracking().SingleOrDefault(m => m.Id == Id);
-            SP_SalesSystem sales = new SP_SalesSystem();
-            sales.Id = Sales.Id;
-            sales.Client_Id = Sales.Client_Id;
-            sales.System_Name = Sales.System_Name;
-            sales.System_Phone = Sales.System_Phone;
-            sales.System_Address = Sales.System_Address;
-            sales.Seller_Id = Sales.Seller_Id;
-            sales.System_Status = -1;
-            if (TryUpdateModel(sales))
-            {
-                _db.Entry(sales).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
+            Sales.System_Status = -1;
+            _db.Entry(Sales).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
         
         public ActionResult QuotedList(int SalesSystemId)
@@ -782,21 +731,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteQuoted(int quotedId)
         {
             var Quoted = _db.SP_Quoted.AsNoTracking().SingleOrDefault(m => m.Id == quotedId);
-            SP_Quoted quoted = new SP_Quoted();
-            quoted.Id = Quoted.Id;
-            quoted.Quotation_Num = Quoted.Quotation_Num;
-            quoted.Quoted_Date = Quoted.Quoted_Date;
-            quoted.Remark = Quoted.Remark;
-            quoted.SalesSystem_Id = Quoted.SalesSystem_Id;
-            quoted.Quoted_Status = -1;
-            if (TryUpdateModel(quoted))
-            {
-                _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
+            Quoted.Quoted_Status = -1;
+            _db.Entry(Quoted).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
         [HttpPost]
         public JsonResult QueryProduct(string query)
@@ -1002,7 +940,7 @@ namespace PeriodAid.Controllers
                         seller.User_Name = model.User_Name;
                         seller.Seller_Status = 0;
                         _db.SP_Seller.Add(seller);
-                        _db.Configuration.ValidateOnSaveEnabled = false;
+                        //_db.Configuration.ValidateOnSaveEnabled = false;
                         _db.SaveChanges();
                         return Json(new { result = "SUCCESS" });
                     }
@@ -1057,20 +995,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteSeller(int sellerId)
         {
             var Seller = _db.SP_Seller.AsNoTracking().SingleOrDefault(m => m.Id == sellerId);
-            SP_Seller seller = new SP_Seller();
-            seller.Id = Seller.Id;
-            seller.Seller_Name = Seller.Seller_Name;
-            seller.Seller_Mobile = Seller.Seller_Mobile;
-            seller.Seller_Type = Seller.Seller_Type;
-            seller.User_Name = Seller.User_Name;
-            seller.Seller_Status = -1;
-            if (TryUpdateModel(seller))
-            {
-                _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
+            Seller.Seller_Status = -1;
+            _db.Entry(Seller).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
 
         }
 
@@ -1193,7 +1121,6 @@ namespace PeriodAid.Controllers
             _db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
             _db.SaveChanges();
             return Json(new { result = "SUCCESS" });
-            return Json(new { result = "FAIL" });
 
         }
 
