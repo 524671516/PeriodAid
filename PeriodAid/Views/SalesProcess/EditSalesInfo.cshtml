@@ -103,7 +103,7 @@
             $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
                     alert('保存成功')
-                    $("#save-btn").remoceClass("disabled")
+                    $("#save-btn").removeClass("disabled")
                     $("#myModal").modal('hide');
                     $.ajax({
                         url: "/SalesProcess/SalesListPartial",
@@ -111,7 +111,7 @@
                             query: $("#sales-query").val(),
                         },
                         success: function (data) {
-                            $("#sales_list_content").html(data);
+                            $("#sales_list_content").html(data),
                             $('.modal-backdrop.in').remove()
                             $('body').removeClass('modal-open')
                         }

@@ -44,8 +44,8 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label">负责人</label>
                     <div class="col-md-9">
-                        <input id="seller-input-type" type="text" class="span4 form-control" autocomplete="off" name="seller-input-type" readonly="readonly" />
-                        <input type="hidden" id="Seller-Type" name="Seller_Id" />
+                        <input id="seller_input_type" type="text" class="span4 form-control" autocomplete="off" name="seller_input_type" readonly="readonly" />
+                        <input type="hidden" id="Seller_Type" name="Seller_Id" />
                         @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label">负责人</label>
                     <div class="col-md-9">
-                        <input id="seller-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
+                        <input id="seller_input" type="text" class="span4 form-control" autocomplete="off" name="seller_input" />
                         <input type="hidden" id="SellerId" name="Seller_Id" />
                         @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
                     </div>
@@ -71,8 +71,8 @@
 </div>
 <script>
     $(function () {
-        $("#seller-input-type").val($("#seller-type-name").html())
-        $("#Seller-Type").val($("#seller-type-id").html())
+        $("#seller_input_type").val($("#seller-type-name").html())
+        $("#Seller_Type").val($("#seller-type-id").html())
         //负责人搜索
         function displayResult(item, val, text) {
             $("#SellerId").val(val);
@@ -93,12 +93,18 @@
                     required: true,
                     maxlength: 16
                 },
+                seller_input: {
+                    required: true
+                }
             },
             messages:{
                 Client_Name: {
                     required: "名称是必须的",
                     maxlength: 16
                 },
+                seller_input: {
+                    required:"负责人是必须的"
+                }
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {

@@ -99,8 +99,10 @@
                         $("#add-submit").removeAttr("disabled")
                         errorAlert('已存在!')
                     } else if (data.result == "FAIL") {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert("添加失败!");
                     } else {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert(data.errmsg);
                     }
                 })

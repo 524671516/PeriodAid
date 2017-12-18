@@ -91,6 +91,7 @@ namespace PeriodAid.Controllers
                 }
             }
         }
+
         public void AddProductViewBag()
         {
             List<SelectListItem> productType = new List<SelectListItem>();
@@ -106,6 +107,7 @@ namespace PeriodAid.Controllers
             productStatus.Add(new SelectListItem() { Text = "下架", Value = "-1" });
             ViewBag.productStatus = new SelectList(productStatus, "Value", "Text");
         }
+
         public ActionResult AddProductPartial()
         {
             AddProductViewBag();
@@ -147,7 +149,6 @@ namespace PeriodAid.Controllers
                     _db.Configuration.ValidateOnSaveEnabled = false;
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
-
                 }
             }
             else
@@ -161,10 +162,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditProductInfo(int productId)
         {
             var item = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
-            var productType = (from m in _db.SP_Product
-                               where m.Id == productId
-                               select m).FirstOrDefault();
-            ViewBag.productType = productType;
+            AddProductViewBag();
             return PartialView(item);
         }
         [HttpPost]
