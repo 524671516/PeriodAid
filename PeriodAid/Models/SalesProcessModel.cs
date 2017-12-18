@@ -42,7 +42,7 @@
     {
         public int Id { get; set; }
 
-        [Required, StringLength(32)]
+        [StringLength(32)]
         public string Item_Code { get; set; }
 
         public string System_Code { get; set; }

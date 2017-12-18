@@ -115,13 +115,17 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 101)]
         public ActionResult AddProductPartial(SP_Product model, FormCollection form)
         {
-            bool Product = _db.SP_Product.Any(m => m.System_Code == model.System_Code);
+            bool Product = _db.SP_Product.Any(m => m.Item_Name == model.Item_Name);
             ModelState.Remove("Product_Status");
+            ModelState.Remove("Item_Code");
+            ModelState.Remove("System_Code");
+            ModelState.Remove("Item_ShortName");
+            ModelState.Remove("Bar_Code");
             if (ModelState.IsValid)
             {
                 if (Product)
                 {
-                    return Json(new { result = "FALL" });
+                    return Json(new { result = "UNAUTHORIZED" });
                 }
                 else
                 {
@@ -140,6 +144,7 @@ namespace PeriodAid.Controllers
                     item.ProductType_Id = model.ProductType_Id;
                     item.Product_Status = model.Product_Status;
                     _db.SP_Product.Add(item);
+                    _db.Configuration.ValidateOnSaveEnabled = false;
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
 
@@ -148,7 +153,7 @@ namespace PeriodAid.Controllers
             else
             {
                 AddProductViewBag();
-                return Json(new { result = "ERROR" });
+                return Json(new { result = "FAIL" });
             }
             //return Content("ERROR1");
         }
@@ -243,6 +248,7 @@ namespace PeriodAid.Controllers
             }
 
         }
+
         public void AddClientViewBag(){
             var seller = getSeller(User.Identity.Name);
             ViewBag.Seller = seller;
@@ -270,6 +276,7 @@ namespace PeriodAid.Controllers
             salessystem.Add(new SelectListItem() { Text = "华北", Value = "华北" });
             ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
         }
+
         public ActionResult AddClientPartial()
         {
             AddClientViewBag();
@@ -421,31 +428,23 @@ namespace PeriodAid.Controllers
             bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Status == model.Contact_Status);
             if (ModelState.IsValid)
             {
-                if (model.Contact_Name == null || model.Contact_Mobile == null || model.Contact_Address == null)
+                if (Contact)
                 {
-                    return Json(new { result = "FAIL" });
+                    return Json(new { result = "UNAUTHORIZED" });
                 }
                 else
                 {
-                    if (Contact)
-                    {
-                        return Json(new { result = "UNAUTHORIZED" });
-                    }
-                    else
-                    {
-                        var contact = new SP_Contact();
-                        contact.Contact_Name = model.Contact_Name;
-                        contact.Contact_Mobile = model.Contact_Mobile;
-                        contact.Contact_Address = model.Contact_Address;
-                        contact.Contact_Status = 0;
-                        contact.Client_Id = model.Client_Id;
-                        _db.SP_Contact.Add(contact);
-                        _db.Configuration.ValidateOnSaveEnabled = false;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
+                    var contact = new SP_Contact();
+                    contact.Contact_Name = model.Contact_Name;
+                    contact.Contact_Mobile = model.Contact_Mobile;
+                    contact.Contact_Address = model.Contact_Address;
+                    contact.Contact_Status = 0;
+                    contact.Client_Id = model.Client_Id;
+                    _db.SP_Contact.Add(contact);
+                    _db.Configuration.ValidateOnSaveEnabled = false;
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
                 }
-                
             }
             else
             {
@@ -873,7 +872,8 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return PartialView(model);
+                AddProductViewBag();
+                return Json(new { result = "FAIL" });
             }
         }
         
@@ -967,31 +967,22 @@ namespace PeriodAid.Controllers
             bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile);
             if (ModelState.IsValid)
             {
-                if(model.Seller_Name == null || model.Seller_Mobile == null || model.User_Name == null)
+                if (Seller)
                 {
-                    return Json(new { result = "FAIL" });
+                    return Json(new { result = "UNAUTHORIZED" });
                 }
                 else
                 {
-                    if (Seller)
-                    {
-                        return Json(new { result = "UNAUTHORIZED" });
-                    }
-                    else
-                    {
-                        var seller = new SP_Seller();
-                        seller.Seller_Name = model.Seller_Name;
-                        seller.Seller_Mobile = model.Seller_Mobile;
-                        seller.Seller_Type = model.Seller_Type;
-                        seller.User_Name = model.User_Name;
-                        seller.Seller_Status = 0;
-                        _db.SP_Seller.Add(seller);
-                        //_db.Configuration.ValidateOnSaveEnabled = false;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
+                    var seller = new SP_Seller();
+                    seller.Seller_Name = model.Seller_Name;
+                    seller.Seller_Mobile = model.Seller_Mobile;
+                    seller.Seller_Type = model.Seller_Type;
+                    seller.User_Name = model.User_Name;
+                    seller.Seller_Status = 0;
+                    _db.SP_Seller.Add(seller);
+                    _db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
                 }
-                
             }
             else
             {

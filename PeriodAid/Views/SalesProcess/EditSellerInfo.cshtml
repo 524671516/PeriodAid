@@ -20,9 +20,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">手机号</label>
                 <div class="col-md-10">
-                    <div id="show-date">
-                        @Html.EditorFor(model => model.Seller_Mobile, new { htmlAttributes = new { @class = "form-control" } })
-                    </div>
+                    @Html.EditorFor(model => model.Seller_Mobile, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Seller_Mobile, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -51,15 +49,31 @@
 </div>
 <script>
     $("#save-btn").on("click", function () {
-        $("#seller-form").submit();
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#seller-form").submit();
+        }
     })
     //新建项目表单验证   详细用法请查看validate插件
     $("#seller-form").validate({
         debug: true,
+        rules:{
+            Seller_Mobile: {
+                required: true,
+                number:true
+            }
+        },
+        messages:{
+            Seller_Mobile: {
+                required: "手机是必填的",
+                number: "请注意手机格式"
+            }
+        },
         //验证通过的正式提交函数
         submitHandler: function (form) {
             $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
+                    $("#save-btn").removeClass("disabled")
                     alert('保存成功')
                     $("#myModal").modal('hide');
                     $.ajax({
@@ -75,10 +89,13 @@
                         }
                     });
                 } else if (data.result == "UNAUTHORIZED") {
+                    $("#save-btn").removeClass("disabled")
                     errorAlert('信息未修改')
                 } else if (data.result == "FAIL") {
+                    $("#save-btn").removeClass("disabled")
                     errorAlert('保存失败')
                 } else {
+                    $("#save-btn").removeClass("disabled")
                     errorAlert(data.errmsg);
                 }
             })
@@ -86,7 +103,8 @@
         errorClass: "has-error",
         //验证失败
         errorPlacement: function (error, element) {
-            $("#save-btn").removeClass("disabled");
+            $("#save-btn").removeClass("disabled")
+            error.appendTo(element.parent())
         }
     });
 </script>
