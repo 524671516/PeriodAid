@@ -814,7 +814,7 @@ namespace PeriodAid.Controllers
                             select m;
                 var SearchResult = from m in price
                                    where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.System_Code.Contains(query) 
-                                   || m.SP_Product.Item_Code.Contains(query) || m.SP_Product.Brand_Name.Contains(query)
+                                   || m.SP_Product.Item_Code.Contains(query)
                                    orderby m.Product_Id descending
                                    select m;
                 return PartialView(SearchResult);
@@ -882,6 +882,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditQuotePriceInfo(SP_QuotePrice model)
         {
             bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Quote_Price == model.Quote_Price);
+            ModelState.Remove("Quoted_Date");
             if (ModelState.IsValid)
             {
                 if (QuotePrice)
