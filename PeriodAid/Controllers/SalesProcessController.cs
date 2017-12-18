@@ -91,8 +91,7 @@ namespace PeriodAid.Controllers
                 }
             }
         }
-
-        public ActionResult AddProductPartial()
+        public void AddProductViewBag()
         {
             List<SelectListItem> productType = new List<SelectListItem>();
             productType.Add(new SelectListItem() { Text = "姜茶", Value = "1" });
@@ -106,6 +105,10 @@ namespace PeriodAid.Controllers
             productStatus.Add(new SelectListItem() { Text = "在售", Value = "0" });
             productStatus.Add(new SelectListItem() { Text = "下架", Value = "-1" });
             ViewBag.productStatus = new SelectList(productStatus, "Value", "Text");
+        }
+        public ActionResult AddProductPartial()
+        {
+            AddProductViewBag();
             return PartialView();
         }
         [HttpPost]
@@ -117,7 +120,7 @@ namespace PeriodAid.Controllers
             {
                 if (Product)
                 {
-                    return Content("FALL");
+                    return Json(new { result = "FALL" });
                 }
                 else
                 {
@@ -137,13 +140,14 @@ namespace PeriodAid.Controllers
                     item.Product_Status = model.Product_Status;
                     _db.SP_Product.Add(item);
                     _db.SaveChanges();
-                    return Content("SUCCESS");
+                    return Json(new { result = "SUCCESS" });
 
                 }
             }
             else
             {
-                return PartialView(model);
+                AddProductViewBag();
+                return Json(new { result = "ERROR" });
             }
             //return Content("ERROR1");
         }
@@ -152,8 +156,8 @@ namespace PeriodAid.Controllers
         {
             var item = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
             var productType = (from m in _db.SP_Product
-                              where m.Id == productId
-                              select m).FirstOrDefault();
+                               where m.Id == productId
+                               select m).FirstOrDefault();
             ViewBag.productType = productType;
             return PartialView(item);
         }
@@ -191,7 +195,7 @@ namespace PeriodAid.Controllers
         {
             int _page = page ?? 1;
             var seller = getSeller(User.Identity.Name);
-            if(seller.Seller_Type == 0)
+            if (seller.Seller_Type == 0)
             {
                 if (query != "")
                 {
@@ -212,7 +216,7 @@ namespace PeriodAid.Controllers
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
-            }else
+            } else
             {
                 if (query != "")
                 {
@@ -234,11 +238,9 @@ namespace PeriodAid.Controllers
                     return PartialView(SearchResult);
                 }
             }
-            
-        }
 
-        public ActionResult AddClientPartial()
-        {
+        }
+        public void AddClientViewBag(){
             var seller = getSeller(User.Identity.Name);
             ViewBag.Seller = seller;
             List<SelectListItem> itemlist = new List<SelectListItem>();
@@ -264,7 +266,10 @@ namespace PeriodAid.Controllers
             salessystem.Add(new SelectListItem() { Text = "西北", Value = "西北" });
             salessystem.Add(new SelectListItem() { Text = "华北", Value = "华北" });
             ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
-            
+        }
+        public ActionResult AddClientPartial()
+        {
+            AddClientViewBag();
             return PartialView();
         }
         [HttpPost]
@@ -293,7 +298,8 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return PartialView(model);
+                AddClientViewBag();
+                return Json(new { result = "ERROR" });
             }
         }
 

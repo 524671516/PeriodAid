@@ -88,6 +88,15 @@
         });
         $("#add-client-form").validate({
             debug: true,
+            rules: {
+                Client_Name: {
+                    required: true,
+                    maxlength: 16
+                },
+                Seller_Id: {
+                    required: true,
+                }
+            },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
@@ -108,7 +117,7 @@
                     } else if (data.result == "UNAUTHORIZED") {
                         errorAlert('已存在!')
                     } else {
-                        errorAlert(data.errmsg);
+                        errorAlert("信息不完整!");
                     }
                 })
             },

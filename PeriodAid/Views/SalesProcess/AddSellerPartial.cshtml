@@ -50,6 +50,16 @@
     $(function () {
         $("#add-seller-form").validate({
             debug: true,
+            rules: {
+                Seller_Name: {
+                    required: true,
+                    maxlength: 16
+                },
+                User_Name: {
+                    required: true,
+                    maxlength: 32
+                },
+            },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {

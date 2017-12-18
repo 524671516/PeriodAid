@@ -65,6 +65,17 @@
         });
         $("#add-sales-form").validate({
             debug: true,
+            rules: {
+                System_Name: {
+                    required: true,
+                },
+                System_Phone: {
+                    required: true,
+                },
+                Client_Id: {
+                    required: true,
+                },
+            },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
