@@ -5,8 +5,6 @@
 </div>
 <div class="hidden" id="Client-name">@ViewBag.SalesName.SP_Client.Client_Name</div>
 <div class="hidden" id="Client_Id">@ViewBag.SalesName.Client_Id</div>
-<div class="hidden" id="seller-id">@ViewBag.SalesName.Seller_Id</div>
-<div class="hidden" id="seller-name">@ViewBag.SalesName.SP_Seller.Seller_Name</div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditSalesInfo", "SalesProcess", FormMethod.Post, new { @id = "sales-form" }))
     {
@@ -34,15 +32,7 @@
                     @Html.EditorFor(model => model.System_Address, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.System_Address, "", new { @class = "text-danger" })
                 </div>
-            </div>            
-            <div class="form-group">
-                <label class="col-md-2 control-label">负责人</label>
-                <div class="col-md-10">
-                    <input id="seller-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
-                    <input type="hidden" id="SellerId" name="Seller_Id" />
-                    @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
-                </div>
-            </div>
+            </div> 
             <div class="form-group">
                 <label class="control-label col-md-2">经销商</label>
                 <div class="col-md-10">

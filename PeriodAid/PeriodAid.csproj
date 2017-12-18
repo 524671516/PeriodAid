@@ -1171,14 +1171,10 @@
     <Content Include="Views\SalesProcess\ContactListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddContactPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditContactInfo.cshtml" />
-    <Content Include="Views\SalesProcess\QuotedList.cshtml" />
-    <Content Include="Views\SalesProcess\QuotedListPartial.cshtml" />
-    <Content Include="Views\SalesProcess\AddQuotedPartial.cshtml" />
     <Content Include="Views\SalesProcess\SalesList.cshtml" />
     <Content Include="Views\SalesProcess\SalesListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddSalesPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditSalesInfo.cshtml" />
-    <Content Include="Views\SalesProcess\EditQuotedInfo.cshtml" />
     <Content Include="Views\SalesProcess\SellerList.cshtml" />
     <Content Include="Views\SalesProcess\SellerListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddSellerPartial.cshtml" />

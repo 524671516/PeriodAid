@@ -199,7 +199,8 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "用户行为未定义");
                     }
-                }else if (seller.Seller_Type == SellerType.SELLER) // 业务员权限
+                }
+                else if (seller.Seller_Type == SellerType.SELLER) // 业务员权限
                 {
                     if (OperationGroup == SalesOperationCode.SELLERVIEW)
                     {

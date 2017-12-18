@@ -5,8 +5,9 @@
 </div>
 <div class="hidden" id="product-name">@ViewBag.QuotePrice.SP_Product.Item_Name</div>
 <div class="hidden" id="product-id">@ViewBag.QuotePrice.SP_Product.Id</div>
-<div class="hidden" id="quotation-num">@ViewBag.QuotePrice.SP_Quoted.Quotation_Num</div>
-<div class="hidden" id="quoted-id">@ViewBag.QuotePrice.SP_Quoted.Id</div>
+<div class="hidden" id="price-date">@ViewBag.QuotePrice.Quoted_Date.ToString("yyyy-MM-dd")</div>
+<div class="hidden" id="system-id">@ViewBag.QuotePrice.SalesSystem_Id</div>
+<div class="hidden" id="system-name">@ViewBag.QuotePrice.SP_SalesSystem.System_Name</div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditQuotePriceInfo", "SalesProcess", FormMethod.Post, new { @id = "quotePrice-form" }))
     {
@@ -22,6 +23,15 @@
                     @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label">报价日期</label>
+                <div class="col-md-9">
+                    <input id="price-input" type="text" class="span4 form-control" autocomplete="off" name="price-input" readonly="readonly" />
+                    <input type="hidden" id="PriceDate" name="Quoted_Date" />
+                    @Html.ValidationMessageFor(model => model.Quoted_Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
             <div class="form-group">
                 <label class="control-label col-md-2">报价</label>
                 <div class="col-md-9">
@@ -30,11 +40,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">报价单号</label>
+                <label class="col-md-2 control-label">渠道名称</label>
                 <div class="col-md-9">
-                    <input id="quoted-input" type="text" class="span4 form-control" autocomplete="off" name="quoted-input" readonly="readonly" />
-                    <input type="hidden" id="QuotedId" name="Quoted_Id" />
-                    @Html.ValidationMessageFor(model => model.Quoted_Id, "", new { @class = "text-danger" })
+                    <input id="sales-input" type="text" class="span4 form-control" autocomplete="off" name="sales-input" readonly="readonly" />
+                    <input type="hidden" id="SalesSystemId" name="SalesSystem_Id" />
+                    @Html.ValidationMessageFor(model => model.SalesSystem_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -42,9 +52,6 @@
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
                 </div>
             </div>
-
-
-
         </div>
     }
 </div>
@@ -52,8 +59,10 @@
     $(function () {
         $("#ProductId").val($("#product-id").html())
         $("#product-input").val($("#product-name").html())
-        $("#quoted-input").val($("#quotation-num").html())
-        $("#QuotedId").val($("#quoted-id").html())
+        $("#price-input").val($("#price-date").html())
+        $("#PriceDate").val($("#price-date").html())
+        $("#sales-input").val($("#system-name").html())
+        $("#SalesSystemId").val($("#system-id").html())
     })
     $("#save-btn").on("click", function () {
         $("#quotePrice-form").submit();
@@ -61,6 +70,18 @@
     //新建项目表单验证   详细用法请查看validate插件
     $("#quotePrice-form").validate({
         debug: true,
+        rules: {
+            Quote_Price: {
+                required:true,
+                number:true,
+            }
+        },
+        messages:{
+            Quote_Price: {
+                required: "价格是必需的",
+                number: "注意格式 如: 18.00",
+            }
+        },
         //验证通过的正式提交函数
         submitHandler: function (form) {
             $(form).ajaxSubmit(function (data) {
@@ -71,7 +92,7 @@
                         url: "/SalesProcess/QuotePricrListPartial",
                         data: {
                             query: $("#quotePrice-query").val(),
-                            quotedId: getUrlParam('quotedId')
+                            SalesSystemId: getUrlParam('SalesSystemId')
                         },
                         success: function (data) {
                             $("#quotePrice_list_content").html(data);
@@ -91,7 +112,7 @@
         errorClass: "has-error",
         //验证失败
         errorPlacement: function (error, element) {
-            $("#save-btn").removeClass("disabled");
-        }
+            error.appendTo(element.parent());
+        },
     });
 </script>

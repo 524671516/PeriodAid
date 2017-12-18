@@ -1342,7 +1342,7 @@ namespace PeriodAid.Controllers
                 {
                     if (dd.Rows[i][1].ToString() == product.System_Code && plattformName == traffic_plattform.TrafficPlattform_Name)
                     {
-                        var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Up_Date == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
+                        var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.UpdateTime == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
                         if (traffic_data == null)
                         {
                             traffic_data = new SS_TrafficData()
@@ -1350,7 +1350,7 @@ namespace PeriodAid.Controllers
                                 TrafficPlattform_Id = Convert.ToInt32(traffic_plattform.Id),
                                 Product_Id = Convert.ToInt32(product.Id),
                                 TrafficSource_Id = Convert.ToInt32(traffic_source.Id),
-                                Up_Date = Convert.ToDateTime(date),
+                                UpdateTime = Convert.ToDateTime(date),
                                 Product_Flow = Convert.ToInt32(dd.Rows[i][4]),
                                 Product_Visitor = Convert.ToInt32(dd.Rows[i][5]),
                                 Product_Customer = Convert.ToInt32(dd.Rows[i][7]),
@@ -1430,14 +1430,14 @@ namespace PeriodAid.Controllers
                         var product = _db.SS_Product.SingleOrDefault(m => m.System_Code == system_code);
                         if (product != null)
                         {
-                            var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.Up_Date == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
+                            var traffic_data = _db.SS_TrafficData.SingleOrDefault(m => m.UpdateTime == date && m.TrafficPlattform_Id == traffic_plattform.Id && m.TrafficSource_Id == traffic_source.Id && m.Product_Id == product.Id);
                             int p_flow, p_visitor, p_customer, o_count;
                             double p_times;
                             if (traffic_data == null)
                             {
                                 traffic_data = new SS_TrafficData()
                                 {
-                                    Up_Date = date,
+                                    UpdateTime = date,
                                     Product_Flow = csv_reader.TryGetField<int>("商品流量", out p_flow) ? p_flow : 0,
                                     Product_Visitor = csv_reader.TryGetField<int>("商品访客", out p_visitor) ? p_visitor : 0,
                                     Product_VisitTimes = csv_reader.TryGetField<double>("商品访次", out p_times) ? p_times : 0,
@@ -1513,7 +1513,7 @@ namespace PeriodAid.Controllers
             foreach (var product in productlist)
             {
                 var productOrder = from m in product
-                                   where m.Up_Date == date
+                                   where m.UpdateTime == date
                                    group m by m.SS_TrafficPlattform into g
                                    select g;
                 bool firstCount = true;
@@ -1550,8 +1550,8 @@ namespace PeriodAid.Controllers
                     row_pos++;
                 }
                 var product_count = from m in product
-                                    where m.Up_Date == date
-                                    group m by m.Up_Date into g
+                                    where m.UpdateTime == date
+                                    group m by m.UpdateTime into g
                                     select g;
                 foreach (var productCount in product_count)
                 {
@@ -1569,7 +1569,7 @@ namespace PeriodAid.Controllers
             row_pos++;
             // 各平台总和
             var data_each = from m in _db.SS_TrafficData
-                            where m.Up_Date == date
+                            where m.UpdateTime == date
                             group m by m.SS_TrafficPlattform into g
                             select g;
             foreach (var eachData in data_each)
@@ -1587,7 +1587,7 @@ namespace PeriodAid.Controllers
             }
             // 平台总和
             var data_all = from m in _db.SS_TrafficData
-                           where m.Up_Date == date
+                           where m.UpdateTime == date
                            group m by m.SS_TrafficPlattform.Plattform_Id into g
                            select g;
             foreach (var allData in data_all)
@@ -1634,7 +1634,7 @@ namespace PeriodAid.Controllers
                 // 写产品列
                 int row_pos = 1;
                 var TrafficData = from m in _db.SS_TrafficData
-                                  where m.SS_TrafficPlattform.Id == plattform.Id && m.Up_Date == date
+                                  where m.SS_TrafficPlattform.Id == plattform.Id && m.UpdateTime == date
                                   orderby m.Product_Id
                                   select m;
                 foreach (var trafficdata in TrafficData)
@@ -1696,7 +1696,7 @@ namespace PeriodAid.Controllers
                 row.CreateCell(++cell_pos).SetCellValue("uv价值");
                 var data_date = from m in _db.SS_TrafficData
                                 where m.Product_Id == product.Id
-                                group m by m.Up_Date into g
+                                group m by m.UpdateTime into g
                                 select g;
                 var row_pos = 2;
                 foreach (var dataDate in data_date)
@@ -1748,8 +1748,8 @@ namespace PeriodAid.Controllers
             ViewBag.productList = productList;
             var trafficDate = (from m in _db.SS_TrafficData
                               where m.SS_TrafficPlattform.Plattform_Id == plattformId && m.Product_Id == productId
-                              orderby m.Up_Date descending
-                              select m.Up_Date).FirstOrDefault();
+                              orderby m.UpdateTime descending
+                              select m.UpdateTime).FirstOrDefault();
             ViewBag.trafficDate = trafficDate;
             var trafficName = from m in _db.SS_TrafficPlattform
                               where m.Plattform_Id == plattformId
@@ -1766,7 +1766,7 @@ namespace PeriodAid.Controllers
                 {
                     var productlist = (from m in _db.SS_TrafficData
                                        where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId 
-                                       && m.Up_Date == single && m.SS_Product.Plattform_Id == plattformId
+                                       && m.UpdateTime == single && m.SS_Product.Plattform_Id == plattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1783,7 +1783,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Up_Date == single
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.UpdateTime == single
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1803,7 +1803,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Up_Date == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.UpdateTime == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1820,7 +1820,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.Product_Id == productId && m.Up_Date == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.Product_Id == productId && m.UpdateTime == single && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1846,7 +1846,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end && m.SS_Product.Plattform_Id == plattformId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end && m.SS_Product.Plattform_Id == plattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1862,7 +1862,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end
+                                       where m.SS_Product.Plattform_Id == plattformId && m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1881,7 +1881,7 @@ namespace PeriodAid.Controllers
                 if (query != "")
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.SS_TrafficSource.TrafficSource_Name.Contains(query) && m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1897,7 +1897,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var productlist = (from m in _db.SS_TrafficData
-                                       where m.Product_Id == productId && m.Up_Date >= start && m.Up_Date <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
+                                       where m.Product_Id == productId && m.UpdateTime >= start && m.UpdateTime <= end && m.SS_Product.Plattform_Id == plattformId && m.TrafficPlattform_Id == trafficPlattformId
                                        group m by m.SS_TrafficSource into g
                                        orderby g.Sum(m => m.Product_Visitor) descending
                                        select new TrafficData
@@ -1978,9 +1978,9 @@ namespace PeriodAid.Controllers
             if(trafficPlattformId == 0)
             {
                 var info_data = from m in _db.SS_TrafficData
-                                where m.Up_Date >= _start && m.Up_Date <= _end
+                                where m.UpdateTime >= _start && m.UpdateTime <= _end
                                 && m.Product_Id == productId && m.TrafficSource_Id == sourceId
-                                group m by m.Up_Date into g
+                                group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
                 DateTime current_date = _start;
@@ -2008,9 +2008,9 @@ namespace PeriodAid.Controllers
             else
             {
                 var info_data = from m in _db.SS_TrafficData
-                                where m.Up_Date >= _start && m.Up_Date <= _end
+                                where m.UpdateTime >= _start && m.UpdateTime <= _end
                                 && m.Product_Id == productId && m.TrafficSource_Id == sourceId && m.TrafficPlattform_Id == trafficPlattformId
-                                group m by m.Up_Date into g
+                                group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
                 DateTime current_date = _start;
@@ -2048,301 +2048,7 @@ namespace PeriodAid.Controllers
                        select new { record_date = m.Traffic_Date };
             return Json(list);
         }
-
-        // 社群电商
-        //public ActionResult creatPdf()
-        //{
-        //    var plattform_name = from m in _db.SS_Product
-        //                         where m.Plattform_Id == 1
-        //                         select m;
-        //    var count = plattform_name.Count()+1;
-        //    Document document = new Document(PageSize.A3);
-        //    try
-        //    {
-        //        // 创建文档
-        //        PdfWriter.GetInstance(document, new FileStream(@"d:\Create.pdf", FileMode.Create));
-        //        BaseFont setFont = BaseFont.CreateFont(@"C:\Windows\Fonts\simfang.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-        //        Font font = new Font(setFont, 16);
-        //        Font font1 = new Font(setFont, 12);
-        //        Font font2 = new Font(setFont, 10);
-        //        Paragraph title = new Paragraph("寿全斋[-订单发货-]审批单", font);
-        //        title.Alignment = 1;
-        //        // 打开文档
-        //        document.Open();
-        //        document.Add(title);
-        //        PdfPTable table = new PdfPTable(10);
-        //        PdfPCell cell;
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-        //        cell.Border = Rectangle.NO_BORDER;
-        //        cell.Colspan = 10;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-        //        cell.Border = Rectangle.NO_BORDER;
-        //        cell.Colspan = 5;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase("□有货就发", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-        //        cell.Border = Rectangle.NO_BORDER;
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase("□发货时间:", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-        //        cell.Border = Rectangle.NO_BORDER;
-        //        cell.Colspan = 3;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase("订单编号:", font1));
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase(" "));
-        //        cell.Colspan = 4;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase("客户名称:", font1));
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase(" "));
-        //        cell.Colspan = 4;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase("订单类型:", font1));
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase(" "));
-        //        cell.Colspan = 4;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase("业务对接:", font1));
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Phrase(" "));
-        //        cell.Colspan = 4;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-        //        cell.Border = Rectangle.NO_BORDER;
-        //        cell.Colspan = 10;
-        //        table.AddCell(cell);
-        //        // 产品标题
-        //        cell = new PdfPCell(new Paragraph("订单信息", font1));
-        //        cell.Colspan = 10;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("订货情况", font1));
-        //        cell.Rowspan = 1;
-        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("订单内容", font1));
-        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        cell.Rowspan = 1;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("产品代码", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("订货品种", font1));
-        //        cell.Colspan = 2;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("订货数量", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("订货单价", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("货款金额", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("备注", font1));
-        //        cell.Colspan = 2;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        //foreach(var name in plattform_name)
-        //        //{
-        //        //    cell = new PdfPCell(new Paragraph(name.System_Code.ToString(), font2));
-        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        //    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        //    table.AddCell(cell);
-        //        //    cell = new PdfPCell(new Paragraph(name.Item_Name.ToString(), font2));
-        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        //    cell.Colspan = 2;
-        //        //    table.AddCell(cell);
-        //        //    cell = new PdfPCell(new Paragraph(" "));
-        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        //    table.AddCell(cell);
-        //        //    cell = new PdfPCell(new Paragraph(name.Purchase_Price.ToString(), font2));
-        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        //    table.AddCell(cell);
-        //        //    cell = new PdfPCell(new Paragraph(" "));
-        //        //    table.AddCell(cell);
-        //        //    cell = new PdfPCell(new Paragraph(" "));
-        //        //    cell.Colspan = 2;
-        //        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        //    table.AddCell(cell);
-        //        //}
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("合计",font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("--"));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("数量",font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("--"));
-        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("价格", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        // 付款
-        //        cell = new PdfPCell(new Paragraph("付款内容",font1));
-        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        cell.Rowspan = 3;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("1"));
-        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("付款方式", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("开票内容", font1));
-        //        cell.Rowspan = 3;
-        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("1"));
-        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("开票类型"));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        // 2
-        //        cell = new PdfPCell(new Paragraph("2"));
-        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("付款时间", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("2"));
-        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("开票内容"));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        //3 
-        //        cell = new PdfPCell(new Paragraph("3"));
-        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("付款金额", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("3"));
-        //        cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("开票时间"));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 2;
-        //        table.AddCell(cell);
-        //        // 收货
-        //        cell = new PdfPCell(new Paragraph("收货人信息",font1));
-        //        cell.Colspan = 2;
-        //        cell.Rowspan = 5;
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("收货人",font1));
-        //        cell.Colspan = 3;
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 5;
-        //        table.AddCell(cell);
-                
-        //        cell = new PdfPCell(new Paragraph("收货人联系电话", font1));
-        //        cell.Colspan = 3;
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 5;
-        //        table.AddCell(cell);
-                
-        //        cell = new PdfPCell(new Paragraph("收货地址", font1));
-        //        cell.Colspan = 3;
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph(" "));
-        //        cell.Colspan = 5;
-        //        table.AddCell(cell);
-                
-
-        //        cell = new PdfPCell(new Paragraph("运输方式（特批加急）", font1));
-        //        cell.Colspan = 3;
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("□快递-顺丰  □物流-德邦  □包车",font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        cell.Colspan = 5;
-        //        table.AddCell(cell);
-
-        //        cell = new PdfPCell(new Paragraph("最后收货期限", font1));
-        //        cell.Colspan = 3;
-        //        cell.HorizontalAlignment = Element.ALIGN_LEFT;
-        //        table.AddCell(cell);
-        //        cell = new PdfPCell(new Paragraph("     年     月     日", font1));
-        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-        //        cell.Colspan = 5;
-        //        table.AddCell(cell);
-
-
-
-
-
-
-
-        //        document.Add(table);
-        //    }
-        //    catch (DocumentException de)
-        //    {
-        //        Console.Error.WriteLine(de.Message);
-        //    }
-        //    catch (IOException ioe)
-        //    {
-        //        Console.Error.WriteLine(ioe.Message);
-        //    }
-        //    // 关闭文档
-        //    document.Close();
-        //    return Content("success");
-        //}
-
-
+        
     }
 }
 

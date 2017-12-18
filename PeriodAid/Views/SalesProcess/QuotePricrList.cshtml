@@ -19,7 +19,7 @@
                 url: "/SalesProcess/QuotePricrListPartial",
                 data: {
                     query: $("#quotePrice-query").val(),
-                    quotedId: getUrlParam('quotedId')
+                    SalesSystemId: getUrlParam('SalesSystemId')
                 },
                 success: function (data) {
                     $("#quotePrice_list_content").html(data)
@@ -31,7 +31,7 @@
             $.ajax({
                 url: '/SalesProcess/AddQuotePricrPartial',
                 data: {
-                    quotedId: getUrlParam('quotedId')
+                    SalesSystemId: getUrlParam('SalesSystemId')
                 },
                 success: function (data) {
                     $('#modal-content').html(data)

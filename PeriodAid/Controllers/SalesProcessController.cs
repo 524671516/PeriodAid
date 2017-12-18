@@ -1,8 +1,11 @@
-﻿using PagedList;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
+using PagedList;
 using PeriodAid.Filters;
 using PeriodAid.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -88,8 +91,7 @@ namespace PeriodAid.Controllers
                 }
             }
         }
-
-        public ActionResult AddProductPartial()
+        public void AddProductViewBag()
         {
             List<SelectListItem> productType = new List<SelectListItem>();
             productType.Add(new SelectListItem() { Text = "姜茶", Value = "1" });
@@ -103,17 +105,22 @@ namespace PeriodAid.Controllers
             productStatus.Add(new SelectListItem() { Text = "在售", Value = "0" });
             productStatus.Add(new SelectListItem() { Text = "下架", Value = "-1" });
             ViewBag.productStatus = new SelectList(productStatus, "Value", "Text");
+        }
+        public ActionResult AddProductPartial()
+        {
+            AddProductViewBag();
             return PartialView();
         }
         [HttpPost]
         public ActionResult AddProductPartial(SP_Product model, FormCollection form)
         {
             bool Product = _db.SP_Product.Any(m => m.System_Code == model.System_Code);
+            ModelState.Remove("Product_Status");
             if (ModelState.IsValid)
             {
                 if (Product)
                 {
-                    return Content("FALL");
+                    return Json(new { result = "FALL" });
                 }
                 else
                 {
@@ -133,13 +140,14 @@ namespace PeriodAid.Controllers
                     item.Product_Status = model.Product_Status;
                     _db.SP_Product.Add(item);
                     _db.SaveChanges();
-                    return Content("SUCCESS");
+                    return Json(new { result = "SUCCESS" });
 
                 }
             }
             else
             {
-                return PartialView(model);
+                AddProductViewBag();
+                return Json(new { result = "ERROR" });
             }
             //return Content("ERROR1");
         }
@@ -148,8 +156,8 @@ namespace PeriodAid.Controllers
         {
             var item = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
             var productType = (from m in _db.SP_Product
-                              where m.Id == productId
-                              select m).FirstOrDefault();
+                               where m.Id == productId
+                               select m).FirstOrDefault();
             ViewBag.productType = productType;
             return PartialView(item);
         }
@@ -172,28 +180,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteProduct(int productId)
         {
             var Product = _db.SP_Product.AsNoTracking().SingleOrDefault(m => m.Id == productId);
-            SP_Product product = new SP_Product();
-            product.Id = Product.Id;
-            product.Item_Code = Product.Item_Code;
-            product.Item_Name = Product.Item_Name;
-            product.System_Code = Product.System_Code;
-            product.Carton_Spec = Product.Carton_Spec;
-            product.Purchase_Price = Product.Purchase_Price;
-            product.Brand_Name = Product.Brand_Name;
-            product.Item_ShortName = Product.Item_ShortName;
-            product.Supplier_Name = Product.Supplier_Name;
-            product.Bar_Code = Product.Bar_Code;
-            product.Product_Weight = Product.Product_Weight;
-            product.Supply_Price = Product.Supply_Price;
-            product.ProductType_Id = Product.ProductType_Id;
-            product.Product_Status = -1;
-            if (TryUpdateModel(product))
-            {
-                _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
+            Product.Product_Status = -1;
+            _db.Entry(Product).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         public ActionResult ClientList()
@@ -204,29 +194,55 @@ namespace PeriodAid.Controllers
         public ActionResult ClientListPartial(int? page, string query)
         {
             int _page = page ?? 1;
-            if (query != "")
+            var seller = getSeller(User.Identity.Name);
+            if (seller.Seller_Type == 0)
             {
-                var customer = (from m in _db.SP_Client
-                                where m.Client_Status != -1
-                                select m);
-                var SearchResult = (from m in customer
-                                    where m.Client_Name.Contains(query) || m.Client_Area.Contains(query)
-                                    orderby m.Client_Name descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
-            }
-            else
+                if (query != "")
+                {
+                    var customer = (from m in _db.SP_Client
+                                    where m.Client_Status != -1 && m.Seller_Id == seller.Id
+                                    select m);
+                    var SearchResult = (from m in customer
+                                        where m.Client_Name.Contains(query) || m.Client_Area.Contains(query)
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_Client
+                                        where m.Client_Status != -1 && m.Seller_Id == seller.Id
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+            } else
             {
-                var SearchResult = (from m in _db.SP_Client
-                                    where m.Client_Status != -1
-                                    orderby m.Client_Name descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (query != "")
+                {
+                    var customer = (from m in _db.SP_Client
+                                    where m.Client_Status != -1 && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                                    select m);
+                    var SearchResult = (from m in customer
+                                        where m.Client_Name.Contains(query) || m.Client_Area.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_Client
+                                        where m.Client_Status != -1 && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                                        orderby m.Client_Name descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
-        }
 
-        public ActionResult AddClientPartial()
-        {
+        }
+        public void AddClientViewBag(){
+            var seller = getSeller(User.Identity.Name);
+            ViewBag.Seller = seller;
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
@@ -250,7 +266,10 @@ namespace PeriodAid.Controllers
             salessystem.Add(new SelectListItem() { Text = "西北", Value = "西北" });
             salessystem.Add(new SelectListItem() { Text = "华北", Value = "华北" });
             ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
-            
+        }
+        public ActionResult AddClientPartial()
+        {
+            AddClientViewBag();
             return PartialView();
         }
         [HttpPost]
@@ -271,6 +290,7 @@ namespace PeriodAid.Controllers
                     client.Client_Type = model.Client_Type;
                     client.Client_Area = model.Client_Area;
                     client.Client_Status = model.Client_Status;
+                    client.Seller_Id = model.Seller_Id;
                     _db.SP_Client.Add(client);
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
@@ -278,12 +298,15 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return PartialView(model);
+                AddClientViewBag();
+                return Json(new { result = "ERROR" });
             }
         }
 
         public ActionResult EditClientInfo(int clientId)
         {
+            var seller = getSeller(User.Identity.Name);
+            ViewBag.Seller = seller;
             var item = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
@@ -314,7 +337,7 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 203)]
         public ActionResult EditClientInfo(SP_Client model)
         {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status);
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status && m.Seller_Id == model.Seller_Id);
             if (ModelState.IsValid)
             {
                 if (Client)
@@ -340,20 +363,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteClient(int clientId)
         {
             var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == clientId);
-            SP_Client client = new SP_Client();
-            client.Id = Client.Id;
-            client.Client_Name = Client.Client_Name;
-            client.Client_Status = -1;
-            client.Client_Area = Client.Client_Area;
-            client.Client_Type = Client.Client_Type;
-            if (TryUpdateModel(client))
-            {
-                _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
+            Client.Client_Status = -1;
+            _db.Entry(Client).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         public ActionResult ContactList(int clientId)
@@ -476,21 +489,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteContact(int contactId)
         {
             var Contact = _db.SP_Contact.AsNoTracking().SingleOrDefault(m => m.Id == contactId);
-            SP_Contact contact = new SP_Contact();
-            contact.Id = Contact.Id;
-            contact.Contact_Name = Contact.Contact_Name;
-            contact.Contact_Mobile = Contact.Contact_Mobile;
-            contact.Contact_Address = Contact.Contact_Address;
-            contact.Client_Id = Contact.Client_Id;
-            contact.Contact_Status = -1;
-            if (TryUpdateModel(contact))
-            {
-                _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
+            Contact.Contact_Status = -1;
+            _db.Entry(Contact).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         public ActionResult SalesList()
@@ -500,18 +502,15 @@ namespace PeriodAid.Controllers
 
         public ActionResult SalesListPartial(int? page, string query)
         {
-            var seller = getSeller(User.Identity.Name);
-            if (seller == null)
-            {
-                return Content("FAIL");
-            }
             int _page = page ?? 1;
-            if (query != "")
+            var seller = getSeller(User.Identity.Name);
+            if(seller.Seller_Type == 0)
             {
-                if(seller.Seller_Type == 0)
+                if (query != "")
                 {
                     var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.Seller_Id == seller.Id && m.System_Status != -1 && m.System_Name.Contains(query) || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id 
+                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -519,46 +518,62 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1 && m.System_Name.Contains(query) 
-                                        || m.System_Phone.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
+                                        where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
-                
             }
             else
             {
-                if (seller.Seller_Type == 0)
+                if (query != "")
                 {
                     var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.Seller_Id == seller.Id && m.System_Status != -1
+                                        where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
+                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
                 else
                 {
-
                     var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1
+                                        where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
                                         orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
             }
         }
+        [HttpPost]
+        public JsonResult QueryClient(string query)
+        {
+            var seller = getSeller(User.Identity.Name);
+            if(seller.Seller_Type == 0)
+            {
+                var client = from m in _db.SP_Client
+                             where m.Client_Status != -1 && m.Seller_Id == seller.Id
+                             && m.Client_Name.Contains(query)
+                             select new { Id = m.Id, Client_Name = m.Client_Name };
+                return Json(client);
+            }
+            else
+            {
+                var client = from m in _db.SP_Client
+                             where m.Client_Status != -1 && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                             && m.Client_Name.Contains(query)
+                             select new { Id = m.Id, Client_Name = m.Client_Name };
+                return Json(client);
+            }
+        }
 
         public ActionResult AddSalesPartial()
         {
-            var seller = getSeller(User.Identity.Name);
-            ViewBag.Seller = seller;
             List<SelectListItem> saleslist = new List<SelectListItem>();
             var salesname = from m in _db.SP_Client
                             select m;
             foreach(var name in salesname)
             {
-
                 saleslist.Add(new SelectListItem() { Text = name.Client_Name, Value = name.Id.ToString() });
             }
             ViewBag.Sales = new SelectList(saleslist, "Value", "Text");
@@ -582,7 +597,6 @@ namespace PeriodAid.Controllers
                     sales.System_Phone = model.System_Phone;
                     sales.System_Address = model.System_Address;
                     sales.Client_Id = model.Client_Id;
-                    sales.Seller_Id = model.Seller_Id;
                     sales.System_Status = 0;
                     _db.SP_SalesSystem.Add(sales);
                     _db.SaveChanges();
@@ -608,7 +622,7 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 403)]
         public ActionResult EditSalesInfo(SP_SalesSystem model)
         {
-            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address && m.System_Status == model.System_Status && m.Seller_Id == model.Seller_Id);
+            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address && m.System_Status == model.System_Status);
             if (ModelState.IsValid)
             {
                 if (Sales)
@@ -633,168 +647,145 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteSales(int Id)
         {
             var Sales = _db.SP_SalesSystem.AsNoTracking().SingleOrDefault(m => m.Id == Id);
-            SP_SalesSystem sales = new SP_SalesSystem();
-            sales.Id = Sales.Id;
-            sales.Client_Id = Sales.Client_Id;
-            sales.System_Name = Sales.System_Name;
-            sales.System_Phone = Sales.System_Phone;
-            sales.System_Address = Sales.System_Address;
-            sales.Seller_Id = Sales.Seller_Id;
-            sales.System_Status = -1;
-            if (TryUpdateModel(sales))
-            {
-                _db.Entry(sales).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
+            Sales.System_Status = -1;
+            _db.Entry(Sales).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
         
-        public ActionResult QuotedList(int SalesSystemId)
-        {
-            var sales = (from m in _db.SP_SalesSystem
-                          where m.Id == SalesSystemId
-                          select m).FirstOrDefault();
-            ViewBag.Sales = sales;
-            return View();
-        }
-        [Seller(OperationGroup = 502)]
-        public ActionResult QuotedListPartial(int? page, string query, int SalesSystemId)
-        {
-            int _page = page ?? 1;
-            if (query != null)
-            {
-                if (query != "")
-                {
-                    var product = from m in _db.SP_Quoted
-                                  where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
-                                  select m;
-                    var SearchResult = (from m in product
-                                        where m.Quotation_Num.Contains(query)
-                                        orderby m.Quoted_Date descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-                    var SearchResult = (from m in _db.SP_Quoted
-                                        where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
-                                        orderby m.Quoted_Date descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
+        //public ActionResult QuotedList(int SalesSystemId)
+        //{
+        //    var sales = (from m in _db.SP_SalesSystem
+        //                  where m.Id == SalesSystemId
+        //                  select m).FirstOrDefault();
+        //    ViewBag.Sales = sales;
+        //    return View();
+        //}
 
-            }
-            else
-            {
-                var productlist = (from m in _db.SP_Quoted
-                                   where m.SalesSystem_Id == SalesSystemId
-                                   orderby m.Quoted_Date descending
-                                   select m).ToPagedList(_page, 15);
-                return PartialView(productlist);
-            }
-        }
+        //public ActionResult QuotedListPartial(int? page, string query, int SalesSystemId)
+        //{
+        //    int _page = page ?? 1;
+        //    if (query != null)
+        //    {
+        //        if (query != "")
+        //        {
+        //            var product = from m in _db.SP_Quoted
+        //                          where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
+        //                          select m;
+        //            var SearchResult = (from m in product
+        //                                where m.Quotation_Num.Contains(query)
+        //                                orderby m.Quoted_Date descending
+        //                                select m).ToPagedList(_page, 15);
+        //            return PartialView(SearchResult);
+        //        }
+        //        else
+        //        {
+        //            var SearchResult = (from m in _db.SP_Quoted
+        //                                where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
+        //                                orderby m.Quoted_Date descending
+        //                                select m).ToPagedList(_page, 15);
+        //            return PartialView(SearchResult);
+        //        }
 
-        public ActionResult AddQuotedPartial(int SalesSystemId)
-        {
-            var salessystem = (from m in _db.SP_SalesSystem
-                               where m.Id == SalesSystemId
-                               select m).FirstOrDefault();
-            ViewBag.Sales = salessystem;
-            return PartialView();
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 501)]
-        public ActionResult AddQuotedPartial(SP_Quoted model, FormCollection form)
-        {
-            bool Quoted = _db.SP_Quoted.Any(m =>m.Quotation_Num == model.Quotation_Num);
-            ModelState.Remove("Quoted_Date");
-            if (ModelState.IsValid)
-            {
-                if(model.Quotation_Num == null || model.Remark == null || model.Quoted_Date.DayOfYear == 1)
-                {
-                    return Json(new { result = "FAIL" });
-                }
-                else
-                {
-                    if (Quoted)
-                    {
-                        return Json(new { result = "UNAUTHORIZED" });
-                    }
-                    else
-                    {
-                        var quoted = new SP_Quoted();
-                        quoted.Quoted_Date = model.Quoted_Date;
-                        quoted.Quotation_Num = model.Quotation_Num;
-                        quoted.Remark = model.Remark;
-                        quoted.SalesSystem_Id = model.SalesSystem_Id;
-                        _db.SP_Quoted.Add(quoted);
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-            }
-            else
-            {
-                return PartialView(model);
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        var productlist = (from m in _db.SP_Quoted
+        //                           where m.SalesSystem_Id == SalesSystemId
+        //                           orderby m.Quoted_Date descending
+        //                           select m).ToPagedList(_page, 15);
+        //        return PartialView(productlist);
+        //    }
+        //}
+
+        //public ActionResult AddQuotedPartial(int SalesSystemId)
+        //{
+        //    var salessystem = (from m in _db.SP_SalesSystem
+        //                       where m.Id == SalesSystemId
+        //                       select m).FirstOrDefault();
+        //    ViewBag.Sales = salessystem;
+        //    return PartialView();
+        //}
+        //[HttpPost]
+        //[Seller(OperationGroup = 501)]
+        //public ActionResult AddQuotedPartial(SP_Quoted model, FormCollection form)
+        //{
+        //    bool Quoted = _db.SP_Quoted.Any(m =>m.Quotation_Num == model.Quotation_Num);
+        //    ModelState.Remove("Quoted_Date");
+        //    if (ModelState.IsValid)
+        //    {
+        //        if(model.Quotation_Num == null || model.Remark == null || model.Quoted_Date.DayOfYear == 1)
+        //        {
+        //            return Json(new { result = "FAIL" });
+        //        }
+        //        else
+        //        {
+        //            if (Quoted)
+        //            {
+        //                return Json(new { result = "UNAUTHORIZED" });
+        //            }
+        //            else
+        //            {
+        //                var quoted = new SP_Quoted();
+        //                quoted.Quoted_Date = model.Quoted_Date;
+        //                quoted.Quotation_Num = model.Quotation_Num;
+        //                quoted.Remark = model.Remark;
+        //                quoted.SalesSystem_Id = model.SalesSystem_Id;
+        //                _db.SP_Quoted.Add(quoted);
+        //                _db.SaveChanges();
+        //                return Json(new { result = "SUCCESS" });
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return PartialView(model);
+        //    }
+        //}
         
-        public ActionResult EditQuotedInfo(int quotedId)
-        {
-            var Quoted = _db.SP_Quoted.SingleOrDefault(m => m.Id == quotedId);
-            var quoted = (from m in _db.SP_Quoted
-                          where m.Id == quotedId
-                          select m).FirstOrDefault();
-            ViewBag.Quoted = quoted;
-            return PartialView(Quoted);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 503)]
-        public ActionResult EditQuotedInfo(SP_Quoted model)
-        {
-            bool Quoted = _db.SP_Quoted.Any(m => m.Quotation_Num == model.Quotation_Num && m.Quoted_Date == model.Quoted_Date && m.Remark == model.Remark);
-            if (ModelState.IsValid)
-            {
-                if (Quoted)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    SP_Quoted quoted = new SP_Quoted();
-                    if (TryUpdateModel(quoted))
-                    {
-                        _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 503)]
-        public ActionResult DeleteQuoted(int quotedId)
-        {
-            var Quoted = _db.SP_Quoted.AsNoTracking().SingleOrDefault(m => m.Id == quotedId);
-            SP_Quoted quoted = new SP_Quoted();
-            quoted.Id = Quoted.Id;
-            quoted.Quotation_Num = Quoted.Quotation_Num;
-            quoted.Quoted_Date = Quoted.Quoted_Date;
-            quoted.Remark = Quoted.Remark;
-            quoted.SalesSystem_Id = Quoted.SalesSystem_Id;
-            quoted.Quoted_Status = -1;
-            if (TryUpdateModel(quoted))
-            {
-                _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
-
-        }
+        //public ActionResult EditQuotedInfo(int quotedId)
+        //{
+        //    var Quoted = _db.SP_Quoted.SingleOrDefault(m => m.Id == quotedId);
+        //    var quoted = (from m in _db.SP_Quoted
+        //                  where m.Id == quotedId
+        //                  select m).FirstOrDefault();
+        //    ViewBag.Quoted = quoted;
+        //    return PartialView(Quoted);
+        //}
+        //[HttpPost]
+        //[Seller(OperationGroup = 503)]
+        //public ActionResult EditQuotedInfo(SP_Quoted model)
+        //{
+        //    bool Quoted = _db.SP_Quoted.Any(m => m.Quotation_Num == model.Quotation_Num && m.Quoted_Date == model.Quoted_Date && m.Remark == model.Remark);
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (Quoted)
+        //        {
+        //            return Json(new { result = "UNAUTHORIZED" });
+        //        }
+        //        else
+        //        {
+        //            SP_Quoted quoted = new SP_Quoted();
+        //            if (TryUpdateModel(quoted))
+        //            {
+        //                _db.Entry(quoted).State = System.Data.Entity.EntityState.Modified;
+        //                _db.SaveChanges();
+        //                return Json(new { result = "SUCCESS" });
+        //            }
+        //        }
+        //    }
+        //    return Json(new { result = "FAIL" });
+        //}
+        //[HttpPost]
+        //[Seller(OperationGroup = 503)]
+        //public ActionResult DeleteQuoted(int quotedId)
+        //{
+        //    var Quoted = _db.SP_Quoted.AsNoTracking().SingleOrDefault(m => m.Id == quotedId);
+        //    Quoted.Quoted_Status = -1;
+        //    _db.Entry(Quoted).State = System.Data.Entity.EntityState.Modified;
+        //    _db.SaveChanges();
+        //    return Json(new { result = "SUCCESS" });
+        //}
         [HttpPost]
         public JsonResult QueryProduct(string query)
         {
@@ -814,22 +805,22 @@ namespace PeriodAid.Controllers
             return Json(seller);
         }
 
-        public ActionResult QuotePricrList(int quotedId)
+        public ActionResult QuotePricrList()
         {
             return View();
         }
 
-        public ActionResult QuotePricrListPartial(int? page, string query, int quotedId)
+        public ActionResult QuotePricrListPartial(int? page, string query,int SalesSystemId)
         {
             int _page = page ?? 1;
             if (query != "")
             {
                 var price = from m in _db.SP_QuotePrice
-                            where m.Quoted_Id == quotedId
+                            where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
                             select m;
                 var SearchResult = from m in price
                                    where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.System_Code.Contains(query) 
-                                   || m.SP_Product.Item_Code.Contains(query) || m.SP_Product.Brand_Name.Contains(query)
+                                   || m.SP_Product.Item_Code.Contains(query)
                                    orderby m.Product_Id descending
                                    select m;
                 return PartialView(SearchResult);
@@ -837,26 +828,27 @@ namespace PeriodAid.Controllers
             else
             {
                 var SearchResult = from m in _db.SP_QuotePrice
-                                   where m.Quoted_Id == quotedId
+                                   where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
                                    orderby m.Product_Id descending
                                    select m;
                 return PartialView(SearchResult);
             }
         }
 
-        public ActionResult AddQuotePricrPartial(int quotedId)
+        public ActionResult AddQuotePricrPartial(int SalesSystemId)
         {
-            var quoted = (from m in _db.SP_Quoted
-                          where m.Id == quotedId
-                          select m).FirstOrDefault();
-            ViewBag.Quoted = quoted;
+            var sales = (from m in _db.SP_SalesSystem
+                         where m.Id == SalesSystemId
+                         select m).FirstOrDefault();
+            ViewBag.Sales = sales;
             return PartialView();
         }
         [HttpPost]
         [Seller(OperationGroup = 801)]
         public ActionResult AddQuotePricrPartial(SP_QuotePrice model, FormCollection form)
         {
-            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id && m.SP_Quoted.Quoted_Date == model.SP_Quoted.Quoted_Date);
+            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id);
+            ModelState.Remove("Quoted_Date");
             if (ModelState.IsValid)
             {
                 if (QuotePrice)
@@ -867,8 +859,10 @@ namespace PeriodAid.Controllers
                 {
                     var quotePrice = new SP_QuotePrice();
                     quotePrice.Product_Id = model.Product_Id;
-                    quotePrice.Quoted_Id = model.Quoted_Id;
                     quotePrice.Quote_Price = model.Quote_Price;
+                    quotePrice.Quoted_Status = 0;
+                    quotePrice.Quoted_Date = model.Quoted_Date;
+                    quotePrice.SalesSystem_Id = model.SalesSystem_Id;
                     _db.SP_QuotePrice.Add(quotePrice);
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
@@ -878,7 +872,6 @@ namespace PeriodAid.Controllers
             {
                 return PartialView(model);
             }
-            //return Content("ERROR1");
         }
         
         public ActionResult EditQuotePriceInfo(int quotepriceId)
@@ -895,6 +888,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditQuotePriceInfo(SP_QuotePrice model)
         {
             bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Quote_Price == model.Quote_Price);
+            ModelState.Remove("Quoted_Date");
             if (ModelState.IsValid)
             {
                 if (QuotePrice)
@@ -916,23 +910,13 @@ namespace PeriodAid.Controllers
         }
         [HttpPost]
         [Seller(OperationGroup = 803)]
-        public ActionResult DeleteQuotePrice(int quotedId)
+        public ActionResult DeleteQuotePrice(int quotePriceId)
         {
-            var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotedId);
-            if (item != null)
-            {
-                try
-                {
-                    _db.SP_QuotePrice.Remove(item);
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-                catch
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-            }
-            return Json(new { result = "FAIL" });
+            var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotePriceId);
+            item.Quoted_Status = -1;
+            _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
 
         }
 
@@ -961,7 +945,7 @@ namespace PeriodAid.Controllers
                 return PartialView(SearchResult);
             }
         }
-
+        
         public ActionResult AddSellerPartial()
         {
             List<SelectListItem> sellerType = new List<SelectListItem>();
@@ -1008,6 +992,14 @@ namespace PeriodAid.Controllers
             }
             else
             {
+                ModelState.AddModelError("", "错误");
+                List<SelectListItem> sellerType = new List<SelectListItem>();
+                sellerType.Add(new SelectListItem() { Text = "业务员", Value = SellerType.SELLER.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "产品部", Value = SellerType.PRODUCTDEPARTMENT.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "财务部", Value = SellerType.FINANCIALDEPARTMENT.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "业务主管", Value = SellerType.SELLERADMIN.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "管理员", Value = SellerType.ADMINISTARTOR.ToString() });
+                ViewBag.SellerType = new SelectList(sellerType, "Value", "Text");
                 return PartialView(model);
             }
         }
@@ -1086,15 +1078,15 @@ namespace PeriodAid.Controllers
                 return PartialView(SearchResult);
             }
         }
-        [HttpPost]
-        public JsonResult QueryQuoted(string query)
-        {
-            var quoted = from m in _db.SP_Quoted
-                         where m.Quoted_Status != -1
-                         && m.Quotation_Num.Contains(query)
-                         select new { Id = m.Quotation_Num, Quotation_Num = m.Quotation_Num };
-            return Json(quoted);
-        }
+        //[HttpPost]
+        //public JsonResult QueryQuoted(string query)
+        //{
+        //    var quoted = from m in _db.SP_Quoted
+        //                 where m.Quoted_Status != -1
+        //                 && m.Quotation_Num.Contains(query)
+        //                 select new { Id = m.Quotation_Num, Quotation_Num = m.Quotation_Num };
+        //    return Json(quoted);
+        //}
 
         public ActionResult AddOrderPricrPartial()
         {
@@ -1176,20 +1168,298 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteOrder(int orderId)
         {
             var Order = _db.SP_Order.AsNoTracking().SingleOrDefault(m => m.Id == orderId);
-            SP_Order order = new SP_Order();
-            order.Id = Order.Id;
-            order.Order_Date = Order.Order_Date;
-            order.Order_Number = Order.Order_Number;
-            order.Quotation_Num = Order.Quotation_Num;
-            order.Order_Status = -1;
-            if (TryUpdateModel(order))
-            {
-                _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
+            Order.Order_Status = -1;
+            _db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
 
+        }
+
+        //生成PDF
+        public ActionResult creatPdf()
+        {
+            var product = from m in _db.SP_Product
+                                 where m.Product_Status != 1
+                                 select m;
+            var count = product.Count() + 1;
+            Document document = new Document(PageSize.A3);
+            try
+            {
+                // 创建文档
+                PdfWriter.GetInstance(document, new FileStream(@"d:\Create.pdf", FileMode.Create));
+                BaseFont setFont = BaseFont.CreateFont(@"C:\Windows\Fonts\simfang.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                Font font = new Font(setFont, 16);
+                Font font1 = new Font(setFont, 12);
+                Font font2 = new Font(setFont, 10);
+                Paragraph title = new Paragraph("寿全斋[-订单发货-]审批单", font);
+                title.Alignment = 1;
+                // 打开文档
+                document.Open();
+                document.Add(title);
+                PdfPTable table = new PdfPTable(10);
+                PdfPCell cell;
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 10;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 5;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("□有货就发", font1));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("□发货时间:", font1));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 3;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("订单编号:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("客户名称:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("订单类型:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase("业务对接:", font1));
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.Colspan = 4;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                cell.Border = Rectangle.NO_BORDER;
+                cell.Colspan = 10;
+                table.AddCell(cell);
+                // 产品标题
+                cell = new PdfPCell(new Paragraph("订单信息", font1));
+                cell.Colspan = 10;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货情况", font1));
+                cell.Rowspan = 1;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订单内容", font1));
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Rowspan = 1;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("产品代码", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货品种", font1));
+                cell.Colspan = 2;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货数量", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("订货单价", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("货款金额", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("备注", font1));
+                cell.Colspan = 2;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                //foreach(var name in plattform_name)
+                //{
+                //    cell = new PdfPCell(new Paragraph(name.System_Code.ToString(), font2));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(name.Item_Name.ToString(), font2));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    cell.Colspan = 2;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(" "));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(name.Purchase_Price.ToString(), font2));
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(" "));
+                //    table.AddCell(cell);
+                //    cell = new PdfPCell(new Paragraph(" "));
+                //    cell.Colspan = 2;
+                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                //    table.AddCell(cell);
+                //}
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("合计", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("--"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("数量", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("--"));
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("价格", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                // 付款
+                cell = new PdfPCell(new Paragraph("付款内容", font1));
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.Rowspan = 3;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("1"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("付款方式", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票内容", font1));
+                cell.Rowspan = 3;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("1"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票类型"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                // 2
+                cell = new PdfPCell(new Paragraph("2"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("付款时间", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("2"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票内容"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                //3 
+                cell = new PdfPCell(new Paragraph("3"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("付款金额", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("3"));
+                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("开票时间"));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 2;
+                table.AddCell(cell);
+                // 收货
+                cell = new PdfPCell(new Paragraph("收货人信息", font1));
+                cell.Colspan = 2;
+                cell.Rowspan = 5;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("收货人", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Paragraph("收货人联系电话", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Paragraph("收货地址", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(" "));
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+
+                cell = new PdfPCell(new Paragraph("运输方式（特批加急）", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("□快递-顺丰  □物流-德邦  □包车", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Paragraph("最后收货期限", font1));
+                cell.Colspan = 3;
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(cell);
+                cell = new PdfPCell(new Paragraph("     年     月     日", font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.Colspan = 5;
+                table.AddCell(cell);
+
+                document.Add(table);
+            }
+            catch (DocumentException de)
+            {
+                Console.Error.WriteLine(de.Message);
+            }
+            catch (IOException ioe)
+            {
+                Console.Error.WriteLine(ioe.Message);
+            }
+            // 关闭文档
+            document.Close();
+            return Content("success");
         }
     }
 }

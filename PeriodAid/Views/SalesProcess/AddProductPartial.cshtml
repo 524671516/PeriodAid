@@ -32,12 +32,12 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">产品状态</label>
                 <div class="col-md-3">
-                    @Html.DropDownListFor(model => model.Product_Status, ViewBag.productStatus as SelectList ,"- 请选择 -",new { @class = "form-control" })
+                    @Html.DropDownListFor(model => model.Product_Status, ViewBag.productStatus as SelectList ,new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Product_Status, "", new { @class = "text-danger" })
                 </div>
                 <label class="col-md-2 control-label">产品类别</label>
                 <div class="col-md-3">
-                    @Html.DropDownListFor(model => model.ProductType_Id, ViewBag.productType as SelectList, "- 请选择 -", new { @class = "form-control", @required = "required" })
+                    @Html.DropDownListFor(model => model.ProductType_Id, ViewBag.productType as SelectList, new { @class = "form-control", @required = "required" })
                     @Html.ValidationMessageFor(model => model.ProductType_Id, " ", new { @class = "text-danger" })
                 </div>
             </div>
@@ -100,31 +100,62 @@
 
         </div>
     }
-</div>    
+</div>
 <script>
     $(function () {
-        $('#add-product-form').ajaxForm(function (data) {
-            if (data == "SUCCESS") {
-                alert("添加成功")
-                $('.modal-box').modal('hide');
-                $.ajax({
-                    url: "/SalesProcess/ProductListPartial",
-                    data: {
-                        productType: $(".product-list-li.active").children(".type-btn").attr("data-id"),
-                        query: $("#storage-product-query").val()
-                    },
-                    success: function (data) {
-                        $("#product_list_content").html(data)
-                        $('.modal-backdrop.in').remove()
-                        $('body').removeClass('modal-open')
+        $("#add-product-form").validate({
+            debug: true,
+            rules: {
+                Item_Name: {
+                    required: true,
+                    maxlength: 16
+                },
+                Carton_Spec: {
+                    required: true,
+                },
+                Purchase_Price: {
+                    requirde: true,
+                },
+                Product_Weight: {
+                    required: true,
+                },
+                Supply_Price: {
+                    required: true,
+                },
+                ProductType_Id: {
+                    required: true,
+                },
+            },
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert("添加成功！");
+                        $("#myModal").modal('hide')
+                        $.ajax({
+                            url: "/SalesProcess/ProductListPartial",
+                            data: {
+                                productType: $(".product-list-li.active").children(".type-btn").attr("data-id"),
+                                query: $("#storage-product-query").val()
+                            },
+                            success: function (data) {
+                                $("#product_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "FALL") {
+                        errorAlert('产品已存在!')
+                    } else {
+                        errorAlert("信息不完整!");
                     }
-                });
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#add-submit").removeClass("disabled");
             }
-            else if(data == "FALL") {
-                errorAlert("产品已存在！");
-            } else {
-                errorAlert("添加失败！");
-            }
-        });
+        })
     })
 </script>   
