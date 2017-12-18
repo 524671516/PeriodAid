@@ -999,7 +999,7 @@ namespace PeriodAid.Controllers
                         seller.User_Name = model.User_Name;
                         seller.Seller_Status = 0;
                         _db.SP_Seller.Add(seller);
-                        _db.Configuration.ValidateOnSaveEnabled = false;
+                        //_db.Configuration.ValidateOnSaveEnabled = false;
                         _db.SaveChanges();
                         return Json(new { result = "SUCCESS" });
                     }
@@ -1054,20 +1054,10 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteSeller(int sellerId)
         {
             var Seller = _db.SP_Seller.AsNoTracking().SingleOrDefault(m => m.Id == sellerId);
-            SP_Seller seller = new SP_Seller();
-            seller.Id = Seller.Id;
-            seller.Seller_Name = Seller.Seller_Name;
-            seller.Seller_Mobile = Seller.Seller_Mobile;
-            seller.Seller_Type = Seller.Seller_Type;
-            seller.User_Name = Seller.User_Name;
-            seller.Seller_Status = -1;
-            if (TryUpdateModel(seller))
-            {
-                _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            return Json(new { result = "FAIL" });
+            Seller.Seller_Status = -1;
+            _db.Entry(Seller).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
 
         }
 
