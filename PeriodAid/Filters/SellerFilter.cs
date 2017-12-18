@@ -195,6 +195,18 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.PRODVIEW)
+                    {
+                        // 查看产品权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.PRODADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.PRODEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
                     else
                     {
                         setErrorResult(filterContext, "用户行为未定义");
@@ -211,6 +223,18 @@ namespace PeriodAid.Filters
                         setErrorResult(filterContext, "权限不足");
                     }
                     else if (OperationGroup == SalesOperationCode.SELLEREDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.PRODVIEW)
+                    {
+                        // 查看产品权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.PRODADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.PRODEDIT)
                     {
                         setErrorResult(filterContext, "权限不足");
                     }

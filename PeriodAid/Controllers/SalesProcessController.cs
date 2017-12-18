@@ -112,6 +112,7 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         [HttpPost]
+        [Seller(OperationGroup = 101)]
         public ActionResult AddProductPartial(SP_Product model, FormCollection form)
         {
             bool Product = _db.SP_Product.Any(m => m.System_Code == model.System_Code);
@@ -162,6 +163,7 @@ namespace PeriodAid.Controllers
             return PartialView(item);
         }
         [HttpPost]
+        [Seller(OperationGroup = 103)]
         public ActionResult EditProductInfo(SP_Product model)
         {
             if (ModelState.IsValid)
@@ -177,6 +179,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
         [HttpPost]
+        [Seller(OperationGroup = 103)]
         public ActionResult DeleteProduct(int productId)
         {
             var Product = _db.SP_Product.AsNoTracking().SingleOrDefault(m => m.Id == productId);
@@ -232,7 +235,7 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var SearchResult = (from m in _db.SP_Client
-                                        where m.Client_Status != -1 && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                                        where m.Client_Status != -1 && m.SP_Seller.Seller_Status != -1
                                         orderby m.Client_Name descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
@@ -1093,6 +1096,7 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         [HttpPost]
+        [Seller(OperationGroup = 601)]
         public ActionResult AddOrderPricrPartial(SP_Order model, FormCollection form)
         {
             bool Order = _db.SP_Order.Any( m => m.Order_Number == model.Order_Number && m.Quotation_Num == model.Quotation_Num);
@@ -1140,6 +1144,7 @@ namespace PeriodAid.Controllers
             return PartialView(Order);
         }
         [HttpPost]
+        [Seller(OperationGroup = 603)]
         public ActionResult EditOrderInfo(SP_Order model)
         {
             bool Order = _db.SP_Order.Any(m => m.Order_Date == model.Order_Date && m.Order_Number == model.Order_Number && m.Quotation_Num == model.Quotation_Num);
@@ -1165,6 +1170,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
         [HttpPost]
+        [Seller(OperationGroup = 603)]
         public ActionResult DeleteOrder(int orderId)
         {
             var Order = _db.SP_Order.AsNoTracking().SingleOrDefault(m => m.Id == orderId);
