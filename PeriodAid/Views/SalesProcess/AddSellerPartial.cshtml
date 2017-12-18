@@ -82,7 +82,7 @@
                     $("#add-submit").attr("disabled",true)
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
-                        $("#add-submit").removeAttr("disabled")
+                        //$("#add-submit").removeAttr("disabled")
                         $("#myModal").modal('hide')
                         $.ajax({
                             url: "/SalesProcess/SellerListPartial",
@@ -98,8 +98,9 @@
                     } else if (data.result == "UNAUTHORIZED") {
                         $("#add-submit").removeAttr("disabled")
                         errorAlert('已存在!')
+                    } else if (data.result == "FAIL") {
+                        errorAlert("添加失败!");
                     } else {
-                        $("#add-submit").removeAttr("disabled")
                         errorAlert(data.errmsg);
                     }
                 })
