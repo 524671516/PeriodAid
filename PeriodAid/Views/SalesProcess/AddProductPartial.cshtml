@@ -55,31 +55,6 @@
                     @Html.ValidationMessageFor(model => model.Carton_Spec, "", new { @class = "text-danger" })
                 </div>
             </div>
-            <hr />
-            <div class="form-group">
-                <label class="col-md-2 control-label">系统编码</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control", @placeholder= "选填" } })
-                    @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
-                </div>
-                <label class="col-md-2 control-label">产品编码</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
-                    @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label">商品简称</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
-                    @Html.ValidationMessageFor(model => model.Item_ShortName, "", new { @class = "text-danger" })
-                </div>
-                <label class="col-md-2 control-label">条形码</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
-                    @Html.ValidationMessageFor(model => model.Bar_Code, "", new { @class = "text-danger" })
-                </div>
-            </div>
             <div class="form-group">
                 <label class="col-md-2 control-label">产品状态</label>
                 <div class="col-md-3">
@@ -90,6 +65,35 @@
                 <div class="col-md-3">
                     @Html.DropDownListFor(model => model.ProductType_Id, ViewBag.productType as SelectList, new { @class = "form-control"})
                     @Html.ValidationMessageFor(model => model.ProductType_Id, " ", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="javascript:;" id="show_more_info" class="color-blue">填写更多<i class="fa fa-angle-double-down" aria-hidden="true"></i><i class="fa fa-angle-double-up" aria-hidden="true" hidden></i></a>
+            </div>
+            <div id="more_info">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">系统编码</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                        @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
+                    </div>
+                    <label class="col-md-2 control-label">产品编码</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                        @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">商品简称</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                        @Html.ValidationMessageFor(model => model.Item_ShortName, "", new { @class = "text-danger" })
+                    </div>
+                    <label class="col-md-2 control-label">条形码</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                        @Html.ValidationMessageFor(model => model.Bar_Code, "", new { @class = "text-danger" })
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -103,16 +107,21 @@
 </div>
 <script>
     $(function () {
+        $("#more_info").hide();
+        $(".fa-angle-double-up").hide();
+        $(".fa-angle-double-down").show();
+        $("#show_more_info").click(function () {
+            $("#more_info").slideToggle();
+            $("#show_more_info .fa").slideToggle()
+        })
         $("#add-product-form").validate({
             debug: true,
             rules: {
                 Item_Name: {
                     required: true,
-                    minlength: 2
                 },
                 Brand_Name: {
                     required: true,
-                    minlength: 2
                 },
                 Purchase_Price: {
                     required: true,
@@ -132,17 +141,14 @@
                 },
                 Supplier_Name: {
                     required: true,
-                    minlength:2
                 }
             },
             messages: {
                 Item_Name: {
                     required: "名称是必须的",
-                    minlength: 2
                 },
                 Brand_Name: {
                     required: "品牌是必须的",
-                    minlength: 2
                 },
                 Purchase_Price: {
                     required: "零售价是必须的",
@@ -162,7 +168,6 @@
                 },
                 Supplier_Name: {
                     required: "供应商是必须的",
-                    minlength: 2
                 }
             },
             //验证通过的正式提交函数
