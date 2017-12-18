@@ -79,6 +79,18 @@
     })
     $("#add-quotePrice-form").validate({
         debug: true,
+        rules: {
+            Quoted_Date: {
+                required: true,
+                dateISO: true
+            }
+        },
+        messages: {
+            Quoted_Date: {
+                required: "日期是必需的",
+                dateISO: "请直接选择日期",
+            }
+        },
         //验证通过的正式提交函数
         submitHandler: function (form) {
             $(form).ajaxSubmit(function (data) {
@@ -108,7 +120,7 @@
         errorClass: "has-error",
         //验证失败
         errorPlacement: function (error, element) {
-            $("#add-submit").removeClass("disabled");
+            error.appendTo(element.parent());
         }
     })
 </script>
