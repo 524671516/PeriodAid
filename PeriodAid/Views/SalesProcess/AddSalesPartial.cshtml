@@ -30,11 +30,11 @@
                     @Html.ValidationMessageFor(model => model.System_Address, "", new { @class = "text-danger" })
                 </div>
             </div>
-            
             <div class="form-group">
                 <label class="col-md-2 control-label">经销商</label>
                 <div class="col-md-9">
-                    @Html.DropDownListFor(model => model.Client_Id, ViewBag.Sales as SelectList ,"- 请选择 -",new { @class = "form-control" })
+                    <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" />
+                    <input type="hidden" id="ClientId" name="Client_Id" />
                     @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -50,6 +50,19 @@
 </div>
 <script>
     $(function () {
+        //经销商搜索
+        function displayResult(item, val, text) {
+            $("#ClientId").val(val);
+        }
+        $('#client-input').typeahead({
+            ajax: {
+                url: "/SalesProcess/QueryClient",
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'Client_Name',
+            val: 'Id'
+        });
         $("#add-sales-form").validate({
             debug: true,
             //验证通过的正式提交函数
