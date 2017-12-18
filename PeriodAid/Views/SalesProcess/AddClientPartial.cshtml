@@ -12,31 +12,38 @@
         <div class="form-horizontal">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
-                <label class="col-md-3 control-label">客户名称</label>
-                <div class="col-md-8">
+                <label class="col-md-2 control-label">客户名称</label>
+                <div class="col-md-9">
                     @Html.EditorFor(model => model.Client_Name, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Client_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label">状态</label>
-                <div class="col-md-8">
+                <label class="col-md-2 control-label">状态</label>
+                <div class="col-md-9">
                     @Html.DropDownListFor(model => model.Client_Status, ViewBag.ClientStatus as SelectList, new { @class = "form-control", @required = "required" })
                     @Html.ValidationMessageFor(model => model.Client_Status, " ", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label">客户类型</label>
-                <div class="col-md-8">
+                <label class="col-md-2 control-label">客户类型</label>
+                <div class="col-md-9">
                     @Html.DropDownListFor(model => model.Client_Type, ViewBag.ClientType as SelectList, new { @class = "form-control", @required = "required" })
                     @Html.ValidationMessageFor(model => model.Client_Type, " ", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">区域</label>
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.Client_Area, ViewBag.SalesList as SelectList, new { @class = "form-control", @required = "required" })
+                    @Html.ValidationMessageFor(model => model.Client_Area, " ", new { @class = "text-danger" })
                 </div>
             </div>
             @if (ViewBag.Seller.Seller_Type == 0)
             {
                 <div class="form-group">
-                    <label class="col-md-3 control-label">负责人</label>
-                    <div class="col-md-8">
+                    <label class="col-md-2 control-label">负责人</label>
+                    <div class="col-md-9">
                         <input id="seller-input-type" type="text" class="span4 form-control" autocomplete="off" name="seller-input-type" readonly="readonly" />
                         <input type="hidden" id="Seller-Type" name="Seller_Id" />
                         @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
@@ -46,8 +53,8 @@
             else
             {
                 <div class="form-group">
-                    <label class="col-md-3 control-label">负责人</label>
-                    <div class="col-md-8">
+                    <label class="col-md-2 control-label">负责人</label>
+                    <div class="col-md-9">
                         <input id="seller-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
                         <input type="hidden" id="SellerId" name="Seller_Id" />
                         @Html.ValidationMessageFor(model => model.Seller_Id, "", new { @class = "text-danger" })
@@ -55,14 +62,7 @@
                 </div>
             }
             <div class="form-group">
-                <label class="col-md-3 control-label">区域</label>
-                <div class="col-md-8">
-                    @Html.DropDownListFor(model => model.Client_Area, ViewBag.SalesList as SelectList, new { @class = "form-control", @required = "required" })
-                    @Html.ValidationMessageFor(model => model.Client_Area, " ", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-3 col-md-8">
+                <div class="col-md-offset-2 col-md-8">
                     <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit" />
                 </div>
             </div>
@@ -93,13 +93,17 @@
                     required: true,
                     maxlength: 16
                 },
-                Seller_Id: {
-                    required: true,
-                }
+            },
+            messages:{
+                Client_Name: {
+                    required: "名称是必须的",
+                    maxlength: 16
+                },
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
+                    $("#add-submit").addClass("disabled")
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
                         $("#myModal").modal('hide')
@@ -125,6 +129,7 @@
             //验证失败
             errorPlacement: function (error, element) {
                 $("#add-submit").removeClass("disabled");
+                error.appendTo(element.parent())
             }
         })
     })

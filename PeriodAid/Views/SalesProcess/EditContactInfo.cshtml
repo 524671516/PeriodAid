@@ -55,44 +55,72 @@
     $(function () {
         $("#client-input").val($("#C-name").html())
         $("#ClientId").val($("#C-id").html())
-    })
-    $("#save-btn").on("click", function () {
-        $("#contact-form").submit();
-    })
-    $("#contact-form").validate({
-        debug: true,
-        //验证通过的正式提交函数
-        submitHandler: function (form) {
-            $(form).ajaxSubmit(function (data) {
-                if (data.result == "SUCCESS") {
-                    alert('保存成功')
-                    $("#myModal").modal('hide');
-                    $.ajax({
-                        url: "/SalesProcess/ContactListPartial",
-                        data: {
-                            clientId: getUrlParam("clientId"),
-                            page: 1,
-                            query: $("#contact-query").val(),
-                        },
-                        success: function (data) {
-                            $("#contact_list_content").html(data);
-                            $('.modal-backdrop.in').remove()
-                            $('body').removeClass('modal-open')
-                        }
-                    });
-                } else if (data.result == "UNAUTHORIZED") {
-                    errorAlert('信息未修改')
-                } else if (data.result == "FAIL") {
-                    errorAlert('保存失败')
-                } else {
-                    errorAlert(data.errmsg);
+        $("#save-btn").on("click", function () {
+            if (!$(this).hasClass("disabled")) {
+                $(this).addClass("disabled")
+                $("#contact-form").submit();
+            }
+        })
+        $("#contact-form").validate({
+            debug: true,
+            rules: {
+                Contact_Name: {
+                    required: true,
+                    minlength:2
+                },
+                Contact_Mobile: {
+                    required: true,
+                    number:true
                 }
-            })
-        },
-        errorClass: "has-error",
-        //验证失败
-        errorPlacement: function (error, element) {
-            $("#save-btn").removeClass("disabled");
-        }
-    });
+            },
+            messages: {
+                Contact_Name: {
+                    required: "名字是必须的"
+                },
+                Contact_Mobile: {
+                    required: "电话是必须的",
+                    number:"请注意电话格式"
+                }
+            },
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert('保存成功')
+                        $("#save-btn").removeClass("disabled")
+                        $("#myModal").modal('hide');
+                        $.ajax({
+                            url: "/SalesProcess/ContactListPartial",
+                            data: {
+                                clientId: getUrlParam("clientId"),
+                                page: 1,
+                                query: $("#contact-query").val(),
+                            },
+                            success: function (data) {
+                                $("#contact_list_content").html(data);
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "UNAUTHORIZED") {
+                        $("#save-btn").removeClass("disabled")
+                        errorAlert('信息未修改')
+                    } else if (data.result == "FAIL") {
+                        $("#save-btn").removeClass("disabled")
+                        errorAlert('保存失败')
+                    } else {
+                        $("#save-btn").removeClass("disabled")
+                        errorAlert(data.errmsg);
+                    }
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#save-btn").removeClass("disabled");
+                error.appendTo(element.parent())
+            }
+        });
+    })
+    
 </script>

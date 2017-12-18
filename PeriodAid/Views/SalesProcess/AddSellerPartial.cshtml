@@ -55,16 +55,34 @@
                     required: true,
                     maxlength: 16
                 },
+                Seller_Mobile:{
+                    required: true,
+                    number: true
+                },
                 User_Name: {
                     required: true,
                     maxlength: 32
                 },
             },
+            messages:{
+                Seller_Name: {
+                    required: "姓名是必填的"
+                },
+                Seller_Mobile: {
+                    required: "手机是必填的",
+                    number: "请注意手机格式"
+                },
+                User_Name: {
+                    required: "用户名是必填的"
+                },
+            },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
+                    $("#add-submit").attr("disabled",true)
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
+                        $("#add-submit").removeAttr("disabled")
                         $("#myModal").modal('hide')
                         $.ajax({
                             url: "/SalesProcess/SellerListPartial",
@@ -78,18 +96,19 @@
                             }
                         });
                     } else if (data.result == "UNAUTHORIZED") {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert('已存在!')
-                    } else if (data.result == "FAIL") {
-                        errorAlert('信息不全，无法添加!')
-                    }else {
-                        //errorAlert(data.errmsg);
+                    } else {
+                        $("#add-submit").removeAttr("disabled")
+                        errorAlert(data.errmsg);
                     }
                 })
             },
             errorClass: "has-error",
             //验证失败
             errorPlacement: function (error, element) {
-                $("#add-submit").removeClass("disabled");
+                error.appendTo(element.parent())
+                $("#add-submit").removeAttr("disabled")
             }
         })
     })

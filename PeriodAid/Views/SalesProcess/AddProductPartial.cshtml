@@ -18,27 +18,16 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">系统编码</label>
+                <label class="col-md-2 control-label">产品名称</label>
                 <div class="col-md-3">
-                    @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
                 </div>
-                <label class="col-md-2 control-label">产品编码</label>
+
+                <label class="col-md-2 control-label">供应商</label>
                 <div class="col-md-3">
-                    @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label">产品状态</label>
-                <div class="col-md-3">
-                    @Html.DropDownListFor(model => model.Product_Status, ViewBag.productStatus as SelectList ,new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Product_Status, "", new { @class = "text-danger" })
-                </div>
-                <label class="col-md-2 control-label">产品类别</label>
-                <div class="col-md-3">
-                    @Html.DropDownListFor(model => model.ProductType_Id, ViewBag.productType as SelectList, new { @class = "form-control", @required = "required" })
-                    @Html.ValidationMessageFor(model => model.ProductType_Id, " ", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Supplier_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Supplier_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -54,47 +43,58 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">条形码</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Bar_Code, "", new { @class = "text-danger" })
-                </div>
+
                 <label class="col-md-2 control-label">重量(/克)</label>
                 <div class="col-md-3">
                     @Html.EditorFor(model => model.Product_Weight, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Product_Weight, "", new { @class = "text-danger" })
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label">商品简称</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Item_ShortName, "", new { @class = "text-danger" })
-                </div>
-                <label class="col-md-2 control-label">产品名称</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            
-            <div class="form-group">
                 <label class="col-md-2 control-label">箱规</label>
                 <div class="col-md-3">
                     @Html.EditorFor(model => model.Carton_Spec, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Carton_Spec, "", new { @class = "text-danger" })
                 </div>
-                <label class="col-md-2 control-label">供应商</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Supplier_Name, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Supplier_Name, "", new { @class = "text-danger" })
-                </div>
-                
             </div>
-            
+            <hr />
+            <div class="form-group">
+                <label class="col-md-2 control-label">系统编码</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control", @placeholder= "选填" } })
+                    @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
+                </div>
+                <label class="col-md-2 control-label">产品编码</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                    @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">商品简称</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                    @Html.ValidationMessageFor(model => model.Item_ShortName, "", new { @class = "text-danger" })
+                </div>
+                <label class="col-md-2 control-label">条形码</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                    @Html.ValidationMessageFor(model => model.Bar_Code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">产品状态</label>
+                <div class="col-md-3">
+                    @Html.DropDownListFor(model => model.Product_Status, ViewBag.productStatus as SelectList ,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Product_Status, "", new { @class = "text-danger" })
+                </div>
+                <label class="col-md-2 control-label">产品类别</label>
+                <div class="col-md-3">
+                    @Html.DropDownListFor(model => model.ProductType_Id, ViewBag.productType as SelectList, new { @class = "form-control"})
+                    @Html.ValidationMessageFor(model => model.ProductType_Id, " ", new { @class = "text-danger" })
+                </div>
+            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-9">
-                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" />
+                    <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit" />
                 </div>
             </div>
 
@@ -108,29 +108,70 @@
             rules: {
                 Item_Name: {
                     required: true,
-                    maxlength: 16
+                    minlength: 2
                 },
-                Carton_Spec: {
+                Brand_Name: {
                     required: true,
+                    minlength: 2
                 },
                 Purchase_Price: {
-                    requirde: true,
-                },
-                Product_Weight: {
                     required: true,
+                    number:true
                 },
                 Supply_Price: {
                     required: true,
+                    number:true
                 },
-                ProductType_Id: {
+                Product_Weight: {
                     required: true,
+                    number:true
                 },
+                Carton_Spec: {
+                    required: true,
+                    number:true
+                },
+                Supplier_Name: {
+                    required: true,
+                    minlength:2
+                }
+            },
+            messages: {
+                Item_Name: {
+                    required: "名称是必须的",
+                    minlength: 2
+                },
+                Brand_Name: {
+                    required: "品牌是必须的",
+                    minlength: 2
+                },
+                Purchase_Price: {
+                    required: "零售价是必须的",
+                    number: "请注意格式 如 19"
+                },
+                Supply_Price: {
+                    required: "供货价是必须的",
+                    number: "请注意格式 如 19"
+                },
+                Product_Weight: {
+                    required: "重量是必须的",
+                    number: "请注意格式 如 120"
+                },
+                Carton_Spec: {
+                    required: "箱规是必须的",
+                    number: "请注意格式 如 24"
+                },
+                Supplier_Name: {
+                    required: "供应商是必须的",
+                    minlength: 2
+                }
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {
+                $("#add-submit").attr("disabled", true)
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
+                        $("#add-submit").removeAttr("disabled")
                         $("#myModal").modal('hide')
                         $.ajax({
                             url: "/SalesProcess/ProductListPartial",
@@ -144,17 +185,20 @@
                                 $('body').removeClass('modal-open')
                             }
                         });
-                    } else if (data.result == "FALL") {
+                    } else if (data.result == "UNAUTHORIZED") {
                         errorAlert('产品已存在!')
+                        $("#add-submit").removeAttr("disabled")
                     } else {
-                        errorAlert("信息不完整!");
+                        $("#add-submit").removeAttr("disabled")
+                        errorAlert(data.errmsg)
                     }
                 })
             },
             errorClass: "has-error",
             //验证失败
             errorPlacement: function (error, element) {
-                $("#add-submit").removeClass("disabled");
+                $("#add-submit").removeAttr("disabled")
+                error.appendTo(element.parent())
             }
         })
     })

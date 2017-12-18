@@ -65,7 +65,10 @@
         $("#SalesSystemId").val($("#system-id").html())
     })
     $("#save-btn").on("click", function () {
-        $("#quotePrice-form").submit();
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#quotePrice-form").submit();
+        }
     })
     //新建项目表单验证   详细用法请查看validate插件
     $("#quotePrice-form").validate({
@@ -87,6 +90,7 @@
             $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
                     alert('保存成功')
+                    $("#save-btn").removeClass("disabled")
                     $("#myModal").modal('hide');
                     $.ajax({
                         url: "/SalesProcess/QuotePricrListPartial",
@@ -101,10 +105,13 @@
                         }
                     });
                 } else if (data.result == "UNAUTHORIZED") {
+                    $("#save-btn").removeClass("disabled")
                     errorAlert('信息未修改')
                 } else if (data.result == "FAIL") {
+                    $("#save-btn").removeClass("disabled")
                     errorAlert('保存失败')
                 } else {
+                    $("#save-btn").removeClass("disabled")
                     errorAlert(data.errmsg);
                 }
             })
@@ -112,6 +119,7 @@
         errorClass: "has-error",
         //验证失败
         errorPlacement: function (error, element) {
+            $("#save-btn").removeClass("disabled")
             error.appendTo(element.parent());
         },
     });

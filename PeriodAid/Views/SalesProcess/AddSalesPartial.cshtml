@@ -33,7 +33,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">经销商</label>
                 <div class="col-md-9">
-                    <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" />
+                    <input id="client_input" type="text" class="span4 form-control" autocomplete="off" name="client_input" />
                     <input type="hidden" id="ClientId" name="Client_Id" />
                     @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
                 </div>
@@ -54,7 +54,7 @@
         function displayResult(item, val, text) {
             $("#ClientId").val(val);
         }
-        $('#client-input').typeahead({
+        $('#client_input').typeahead({
             ajax: {
                 url: "/SalesProcess/QueryClient",
                 triggerLength: 1
@@ -71,16 +71,31 @@
                 },
                 System_Phone: {
                     required: true,
+                    number:true
                 },
-                Client_Id: {
+                client_input: {
                     required: true,
+                }
+            },
+            messages:{
+                System_Name: {
+                    required:"名称是必须的"
                 },
+                System_Phone: {
+                    required: "电话是必须的",
+                    number:"请注意电话格式"
+                },
+                client_input: {
+                    required: "经销商是必须的",
+                }
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
+                    $("#add-submit").attr("disabled",true)
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
+                        $("#add-submit").removeAttr("disabled")
                         $("#myModal").modal('hide')
                         $.ajax({
                             url: "/SalesProcess/SalesListPartial",
@@ -97,11 +112,14 @@
                         });
                     }
                     else if (data.result == "UNAUTHORIZED") {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert("渠道已存在!");
                     }
                     else if (data.result == "FAIL") {
-                        errorAlert("信息不全,添加失败!");
+                        $("#add-submit").removeAttr("disabled")
+                        errorAlert("经销商不存在!");
                     } else {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert(data.errmsg)
                     }
                 })
@@ -109,7 +127,8 @@
             errorClass: "has-error",
             //验证失败
             errorPlacement: function (error, element) {
-                $("#add-submit").removeClass("disabled");
+                $("#add-submit").removeAttr("disabled")
+                error.appendTo(element.parent())
             }
         })
     })

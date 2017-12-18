@@ -33,6 +33,13 @@
                     @Html.ValidationMessageFor(model => model.Client_Type, "", new { @class = "text-danger" })
                 </div>
             </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">区域</label>
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.Client_Area,ViewBag.SalesList as SelectList,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Client_Area, "", new { @class = "text-danger" })
+                </div>
+            </div>
             @if (ViewBag.Seller.Seller_Type == 0)
             {
                 <div class="form-group">
@@ -55,13 +62,6 @@
                     </div>
                 </div>
             }
-            <div class="form-group">
-                <label class="control-label col-md-2">区域</label>
-                <div class="col-md-9">
-                    @Html.DropDownListFor(model => model.Client_Area,ViewBag.SalesList as SelectList,new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Client_Area, "", new { @class = "text-danger" })
-                </div>
-            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
@@ -90,15 +90,29 @@
             val: 'Id'
         });
         $("#save-btn").on("click", function () {
-            $("#client-form").submit();
+            if (!$(this).hasClass("disabled")) {
+                $(this).addClass("disabled")
+                $("#client-form").submit();
+            }
         })
         $("#client-form").validate({
             debug: true,
+            rules:{
+                Client_Name: {
+                    required:true
+                }
+            },
+            messages:{
+                Client_Name: {
+                    required: "名称是必须的"
+                }
+            },
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
                         alert('保存成功')
+                        $("#save-btn").removeClass("disabled")
                         $("#myModal").modal('hide');
                         $.ajax({
                             url: "/SalesProcess/ClientListPartial",
@@ -112,10 +126,13 @@
                             }
                         });
                     } else if (data.result == "UNAUTHORIZED") {
+                        $("#save-btn").removeClass("disabled")
                         errorAlert('信息未修改')
                     } else if (data.result == "FAIL") {
+                        $("#save-btn").removeClass("disabled")
                         errorAlert('保存失败')
                     } else {
+                        $("#save-btn").removeClass("disabled")
                         errorAlert(data.errmsg);
                     }
                 })
@@ -123,7 +140,8 @@
             errorClass: "has-error",
             //验证失败
             errorPlacement: function (error, element) {
-                $("#save-btn").removeClass("disabled");
+                error.appendTo(element.parent())
+                $("#save-btn").removeClass("disabled")
             }
         });
     })

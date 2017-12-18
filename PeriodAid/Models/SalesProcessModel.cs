@@ -42,7 +42,7 @@
     {
         public int Id { get; set; }
 
-        [Required, StringLength(32)]
+        [StringLength(32)]
         public string Item_Code { get; set; }
 
         public string System_Code { get; set; }
@@ -61,11 +61,9 @@
         public decimal Product_Weight { get; set; }
 
         public int Carton_Spec { get; set; }
-
-        [Range(typeof(decimal), "0.00", "99999999.99", ErrorMessage = "产品单价格式不正确")]
+        
         public decimal Purchase_Price { get; set; }
-
-        [Range(typeof(decimal), "0.00", "99999999.99", ErrorMessage = "产品单价格式不正确")]
+        
         public decimal Supply_Price { get; set; }
 
         public int Product_Status { get; set; }

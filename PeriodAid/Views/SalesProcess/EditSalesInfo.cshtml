@@ -36,7 +36,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">经销商</label>
                 <div class="col-md-10">
-                    <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" readonly="readonly" />
+                    <input id="client-input" type="text" class="span4 form-control" autocomplete="off" name="client-input" readonly="readonly" required />
                     <input type="hidden" id="ClientId" name="Client_Id" />
                     @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
                 </div>
@@ -71,15 +71,39 @@
             });
     })
     $("#save-btn").on("click", function () {
-        $("#sales-form").submit();
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#sales-form").submit();
+        }
     })
     $("#sales-form").validate({
         debug: true,
+        rules: {
+            System_Name: {
+                required: true,
+                minlength:1
+            },
+            System_Phone: {
+                required: true,
+                number: true
+            }
+        },
+        messages: {
+            System_Name: {
+                required: "名称是必需的",
+                minlength: "请输入正确格式",
+            },
+            System_Phone: {
+                required: "电话是必须的",
+                number: "请注意电话格式"
+            },
+        },
         //验证通过的正式提交函数
         submitHandler: function (form) {
             $(form).ajaxSubmit(function (data) {
                 if (data.result == "SUCCESS") {
                     alert('保存成功')
+                    $("#save-btn").remoceClass("disabled")
                     $("#myModal").modal('hide');
                     $.ajax({
                         url: "/SalesProcess/SalesListPartial",
@@ -93,10 +117,13 @@
                         }
                     });
                 } else if (data.result == "UNAUTHORIZED") {
+                    $("#save-btn").remoceClass("disabled")
                     errorAlert('信息未修改')
                 } else if (data.result == "FAIL") {
+                    $("#save-btn").remoceClass("disabled")
                     errorAlert('保存失败')
                 } else {
+                    $("#save-btn").remoceClass("disabled")
                     errorAlert(data.errmsg);
                 }
             })
@@ -104,38 +131,9 @@
         errorClass: "has-error",
         //验证失败
         errorPlacement: function (error, element) {
-            $("#save-btn").removeClass("disabled");
+            $("#save-btn").remoceClass("disabled")
+            error.appendTo(element.parent())
         }
     });
-    //$('#save-btn').click(function () {
-    //    $("#sales-form").ajaxSubmit({
-    //        url: '/SalesProcess/EditSalesInfo',
-    //        type: 'post',
-    //        success: function (data) {
-    //            if (data.result == "SUCCESS") {
-    //                alert('保存成功')
-    //                $("#myModal").modal('hide');
-    //                $.ajax({
-    //                    url: "/SalesProcess/SalesListPartial",
-    //                    data: {
-    //                        page: 1,
-    //                        query: $("#sales-query").val(),
-    //                        clientId: getUrlParam("clientId")
-    //                    },
-    //                    success: function (data) {
-    //                        $("#sales_list_content").html(data);
-    //                        $('.modal-backdrop.in').remove()
-    //                        $('body').removeClass('modal-open')
-    //                    }
-    //                });
-
-    //            } else if (data.result == "UNAUTHORIZED") {
-    //                errorAlert('信息未修改')
-    //            } else {
-    //                errorAlert('保存失败')
-    //            }
-    //        }
-    //    })
-    //    return false;
-    //})
+   
 </script>

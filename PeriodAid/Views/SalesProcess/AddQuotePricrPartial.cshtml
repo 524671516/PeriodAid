@@ -14,8 +14,8 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">产品名称</label>
                 <div class="col-md-9">
-                    <input id="product-input" type="text" class="span4 form-control" autocomplete="off" name="product-input" />
-                    <input type="hidden" id="ProductId" name="Product_Id" />
+                    <input id="product_input" type="text" class="span4 form-control" autocomplete="off" name="product_input" required minlength="1" />
+                    <input type="hidden" id="Product_Id" name="Product_Id" />
                     @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">报格</label>
+                <label class="col-md-2 control-label">价格</label>
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.Quote_Price, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Quote_Price, "", new { @class = "text-danger" })
@@ -54,8 +54,6 @@
     $(function () {
         $("#sales-input").val($("#sales-name").html())
         $("#SalesId").val($("#sales-id").html())
-        $("#date-input").val($("#quoted-date").html())
-        $("#QuotedDate").val($("#quoted-date").html())
         window.moment = Kalendae.moment;
         var k4 = new Kalendae.Input('Quoted_Date', {
             months: 1,
@@ -65,9 +63,9 @@
         });
         //产品搜索
         function displayResult(item, val, text) {
-            $("#ProductId").val(val);
+            $("#Product_Id").val(val);
         }
-        $('#product-input').typeahead({
+        $('#product_input').typeahead({
             ajax: {
                 url: "/SalesProcess/QueryProduct",
                 triggerLength: 1
@@ -82,20 +80,34 @@
         rules: {
             Quoted_Date: {
                 required: true,
-                dateISO: true
+                date: true
+            },
+            Quote_Price: {
+                required: true,
+                number:true
             }
         },
         messages: {
             Quoted_Date: {
                 required: "日期是必需的",
                 dateISO: "请直接选择日期",
+            },
+            Quote_Price: {
+                required: "价格是必须的",
+                number: "注意格式 如: 18.00"
+            },
+            product_input: {
+                required: "名称是必须的",
+                minlength:"请输入正确文字格式"
             }
         },
         //验证通过的正式提交函数
         submitHandler: function (form) {
             $(form).ajaxSubmit(function (data) {
+                $("#add-submit").attr("disabled", true)
                 if (data.result == "SUCCESS") {
                     alert("添加成功！");
+                    $("#add-submit").removeAttr("disabled")
                     $("#myModal").modal('hide')
                     $.ajax({
                         url: "/SalesProcess/QuotePricrListPartial",
@@ -111,8 +123,14 @@
                     });
                 }
                 else if (data.result == "UNAUTHORIZED") {
+                    $("#add-submit").removeAttr("disabled")
                     errorAlert("报价已存在!");
-                } else {
+                } else if (data.result == "FAIL") {
+                    $("#add-submit").removeAttr("disabled")
+                    errorAlert("产品不存在!");
+                }
+                else {
+                    $("#add-submit").removeAttr("disabled")
                     errorAlert(data.errmsg)
                 }
             })
@@ -120,6 +138,7 @@
         errorClass: "has-error",
         //验证失败
         errorPlacement: function (error, element) {
+            $("#add-submit").removeAttr("disabled")
             error.appendTo(element.parent());
         }
     })

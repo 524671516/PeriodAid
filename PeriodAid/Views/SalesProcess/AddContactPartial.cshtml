@@ -55,42 +55,71 @@
     $(function () {
         $("#client-input").val($("#Client-name").html())
         $("#ClientId").val($("#Client_Id").html())
-        $("#add-contact-form").validate({
-            debug: true,
-            //验证通过的正式提交函数
-            submitHandler: function (form) {
-                $(form).ajaxSubmit(function (data) {
-                    if (data.result == "SUCCESS") {
-                        alert("添加成功！");
-                        $("#myModal").modal('hide')
-                        $.ajax({
-                            url: "/SalesProcess/ContactListPartial",
-                            data: {
-                                clientId: getUrlParam("clientId"),
-                                page: 1,
-                                query: $("#contact-query").val(),
-                            },
-                            success: function (data) {
-                                $("#contact_list_content").html(data)
-                                $('.modal-backdrop.in').remove()
-                                $('body').removeClass('modal-open')
-                            }
-                        });
-                    } else if (data.result == "UNAUTHORIZED") {
-                        errorAlert('已存在!')
-                    } else if (data.result == "FAIL") {
-                        errorAlert('信息不全,无法添加!')
-                    }
-                    else {
-                        errorAlert(data.errmsg);
-                    }
-                })
+    })
+    $("#add-contact-form").validate({
+        debug: true,
+        rules: {
+            Contact_Name: {
+                required: true,
+                minlength:2
             },
-            errorClass: "has-error",
-            //验证失败
-            errorPlacement: function (error, element) {
-                $("#add-submit").removeClass("disabled");
+            Contact_Mobile: {
+                required: true,
+                number:true
+            },
+            Contact_Address: {
+                required: true,
+                minlength: 2
             }
-        })
+        },
+        messages:{
+            Contact_Name: {
+                required: "姓名是必须的"
+            },
+            Contact_Mobile: {
+                required: "电话是必须的",
+                number:"请注意电话格式"
+            },
+            Contact_Address: {
+                required: "地址是必须的"
+            }
+        },
+        //验证通过的正式提交函数
+        submitHandler: function (form) {
+            $(form).ajaxSubmit(function (data) {
+                $("#add-submit").attr("disabled", true)
+                if (data.result == "SUCCESS") {
+                    alert("添加成功！");
+                    $("#add-submit").removeAttr("disabled")
+                    $("#myModal").modal('hide')
+                    $.ajax({
+                        url: "/SalesProcess/ContactListPartial",
+                        data: {
+                            clientId: getUrlParam("clientId"),
+                            page: 1,
+                            query: $("#contact-query").val(),
+                        },
+                        success: function (data) {
+                            $("#contact_list_content").html(data)
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                        }
+                    });
+                } else if (data.result == "UNAUTHORIZED") {
+                    $("#add-submit").removeAttr("disabled")
+                    errorAlert('已存在!')
+                }
+                else {
+                    $("#add-submit").removeAttr("disabled")
+                    errorAlert(data.errmsg);
+                }
+            })
+        },
+        errorClass: "has-error",
+        //验证失败
+        errorPlacement: function (error, element) {
+            error.appendTo(element.parent())
+            $("#add-submit").removeAttr("disabled")
+        }
     })
 </script>
