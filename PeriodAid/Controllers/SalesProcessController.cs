@@ -945,6 +945,14 @@ namespace PeriodAid.Controllers
             }
             else
             {
+                ModelState.AddModelError("", "错误");
+                List<SelectListItem> sellerType = new List<SelectListItem>();
+                sellerType.Add(new SelectListItem() { Text = "业务员", Value = SellerType.SELLER.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "产品部", Value = SellerType.PRODUCTDEPARTMENT.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "财务部", Value = SellerType.FINANCIALDEPARTMENT.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "业务主管", Value = SellerType.SELLERADMIN.ToString() });
+                sellerType.Add(new SelectListItem() { Text = "管理员", Value = SellerType.ADMINISTARTOR.ToString() });
+                ViewBag.SellerType = new SelectList(sellerType, "Value", "Text");
                 return PartialView(model);
             }
         }
