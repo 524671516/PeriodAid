@@ -497,31 +497,68 @@ namespace PeriodAid.Controllers
         public ActionResult SalesListPartial(int? page, string query)
         {
             int _page = page ?? 1;
-            if (query != "")
+            var seller = getSeller(User.Identity.Name);
+            if(seller.Seller_Type == 0)
             {
-                var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.System_Status != -1 && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (query != "")
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id 
+                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
             else
             {
-                var SearchResult = (from m in _db.SP_SalesSystem
-                                    where m.System_Status != -1
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (query != "")
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
+                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in _db.SP_SalesSystem
+                                        where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
+                                        orderby m.Id descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
         }
         [HttpPost]
         public JsonResult QueryClient(string query)
         {
-            var client = from m in _db.SP_Client
-                         where m.Client_Status != -1
-                         && m.Client_Name.Contains(query)
-                         select new { Id = m.Id, Client_Name = m.Client_Name };
-            return Json(client);
+            var seller = getSeller(User.Identity.Name);
+            if(seller.Seller_Type == 0)
+            {
+                var client = from m in _db.SP_Client
+                             where m.Client_Status != -1 && m.Seller_Id == seller.Id
+                             && m.Client_Name.Contains(query)
+                             select new { Id = m.Id, Client_Name = m.Client_Name };
+                return Json(client);
+            }
+            else
+            {
+                var client = from m in _db.SP_Client
+                             where m.Client_Status != -1 && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                             && m.Client_Name.Contains(query)
+                             select new { Id = m.Id, Client_Name = m.Client_Name };
+                return Json(client);
+            }
         }
 
         public ActionResult AddSalesPartial()
@@ -762,17 +799,18 @@ namespace PeriodAid.Controllers
             return Json(seller);
         }
 
-        public ActionResult QuotePricrList(int quotedId)
+        public ActionResult QuotePricrList()
         {
             return View();
         }
 
-        public ActionResult QuotePricrListPartial(int? page, string query)
+        public ActionResult QuotePricrListPartial(int? page, string query,int SalesSystemId)
         {
             int _page = page ?? 1;
             if (query != "")
             {
                 var price = from m in _db.SP_QuotePrice
+                            where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
                             select m;
                 var SearchResult = from m in price
                                    where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.System_Code.Contains(query) 
@@ -784,18 +822,19 @@ namespace PeriodAid.Controllers
             else
             {
                 var SearchResult = from m in _db.SP_QuotePrice
+                                   where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
                                    orderby m.Product_Id descending
                                    select m;
                 return PartialView(SearchResult);
             }
         }
 
-        public ActionResult AddQuotePricrPartial(int quotedId)
+        public ActionResult AddQuotePricrPartial(int SalesSystemId)
         {
-            //var quoted = (from m in _db.SP_Quoted
-            //              where m.Id == quotedId
-            //              select m).FirstOrDefault();
-            //ViewBag.Quoted = quoted;
+            var sales = (from m in _db.SP_SalesSystem
+                         where m.Id == SalesSystemId
+                         select m).FirstOrDefault();
+            ViewBag.Sales = sales;
             return PartialView();
         }
         [HttpPost]
@@ -803,6 +842,7 @@ namespace PeriodAid.Controllers
         public ActionResult AddQuotePricrPartial(SP_QuotePrice model, FormCollection form)
         {
             bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id);
+            ModelState.Remove("Quoted_Date");
             if (ModelState.IsValid)
             {
                 if (QuotePrice)
@@ -813,8 +853,10 @@ namespace PeriodAid.Controllers
                 {
                     var quotePrice = new SP_QuotePrice();
                     quotePrice.Product_Id = model.Product_Id;
-                    //quotePrice.Quoted_Id = model.Quoted_Id;
                     quotePrice.Quote_Price = model.Quote_Price;
+                    quotePrice.Quoted_Status = 0;
+                    quotePrice.Quoted_Date = model.Quoted_Date;
+                    quotePrice.SalesSystem_Id = model.SalesSystem_Id;
                     _db.SP_QuotePrice.Add(quotePrice);
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
@@ -824,7 +866,6 @@ namespace PeriodAid.Controllers
             {
                 return PartialView(model);
             }
-            //return Content("ERROR1");
         }
         
         public ActionResult EditQuotePriceInfo(int quotepriceId)
@@ -862,23 +903,13 @@ namespace PeriodAid.Controllers
         }
         [HttpPost]
         [Seller(OperationGroup = 803)]
-        public ActionResult DeleteQuotePrice(int quotedId)
+        public ActionResult DeleteQuotePrice(int quotePriceId)
         {
-            var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotedId);
-            if (item != null)
-            {
-                try
-                {
-                    _db.SP_QuotePrice.Remove(item);
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-                catch
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-            }
-            return Json(new { result = "FAIL" });
+            var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotePriceId);
+            item.Quoted_Status = -1;
+            _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
 
         }
 

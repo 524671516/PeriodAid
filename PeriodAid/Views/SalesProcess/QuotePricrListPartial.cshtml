@@ -7,11 +7,12 @@
 <div>
     <table class="table">
         <tr>
-            <th>系统编码</th>
-            <th>品牌</th>
-            <th>产品名称</th>
-            <th>报价</th>
-            <th></th>
+            <th style="width:15%">系统编码</th>
+            <th style="width:15%">品牌</th>
+            <th style="width:25%">产品名称</th>
+            <th style="width:15%">最近报价日期</th>
+            <th style="width:15%">报价</th>
+            <th style="width:15%"></th>
         </tr>
         @foreach(var price in Model)
         {
@@ -19,6 +20,7 @@
                 <td>@price.SP_Product.System_Code</td>
                 <td>@price.SP_Product.Brand_Name</td>
                 <td>@price.SP_Product.Item_Name</td>
+                <td>@price.Quoted_Date.ToString("yyyy-MM-dd")</td>
                 <td>@price.Quote_Price</td>
                 <td class="text-center">
                     <a data-eid="@price.Id" class="quotePrice-edit btn btn-xs btn-success" role="button">编辑</a>
@@ -51,14 +53,14 @@
     })
     // 删除
     $(".quotePrice-delete").on("click", function () {
-        var C_id = $(this).attr("data-eid");
+        var Q_id = $(this).attr("data-eid");
         confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
             if (isConfirm) {
                 $.ajax({
                     url: "/SalesProcess/DeleteQuotePrice",
                     type: "post",
                     data: {
-                        quotedId: C_id,
+                        quotePriceId: Q_id,
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
@@ -66,7 +68,7 @@
                                 url: "/SalesProcess/QuotePricrListPartial",
                                 data: {
                                     query: $("#quotePrice-query").val(),
-                                    quotedId: getUrlParam('quotedId')
+                                    SalesSystemId: getUrlParam('SalesSystemId')
                                 },
                                 success: function (data) {
                                     $("#quotePrice_list_content").html(data)
