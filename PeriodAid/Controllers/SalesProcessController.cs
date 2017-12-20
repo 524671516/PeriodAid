@@ -494,55 +494,102 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
 
-        public ActionResult SalesList()
+        public ActionResult SalesList(int? clientId)
         {
             return View();
         }
 
-        public ActionResult SalesListPartial(int? page, string query)
+        public ActionResult SalesListPartial(int? page, string query,int? clientId)
         {
             int _page = page ?? 1;
             var seller = getSeller(User.Identity.Name);
-            if(seller.Seller_Type == 0)
+            if (clientId == null)
             {
-                if (query != "")
+                if (seller.Seller_Type == 0)
                 {
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id 
-                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
+                    if (query != "")
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id
+                                            && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
+                    else
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
                 }
                 else
                 {
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
+                    if (query != "")
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
+                                            && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
+                    else
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
                 }
             }
             else
             {
-                if (query != "")
+                if (seller.Seller_Type == 0)
                 {
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
-                                        && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
+                    if (query != "")
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
+                                            && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
+                    else
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
                 }
                 else
                 {
-                    var SearchResult = (from m in _db.SP_SalesSystem
-                                        where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
+                    if (query != "")
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type && m.Client_Id == clientId
+                                            && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
+                    else
+                    {
+                        var SearchResult = (from m in _db.SP_SalesSystem
+                                            where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type && m.Client_Id == clientId
+                                            orderby m.Id descending
+                                            select m).ToPagedList(_page, 15);
+                        return PartialView(SearchResult);
+                    }
                 }
             }
+            
         }
         [HttpPost]
         public JsonResult QueryClient(string query)

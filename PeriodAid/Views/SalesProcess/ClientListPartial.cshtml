@@ -26,7 +26,8 @@
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
                     <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人详情</a>
-                    <a class="order-btn btn btn-xs btn-info" data-eid="@item.Id">订货信息</a>
+                    <a class="sales-btn btn btn-xs" data-eid="@item.Id" style="color:white;background:#3a7285">渠道详情</a>
+                    <a class="order-btn btn btn-xs btn-info" data-eid="@item.Id">订货详情</a>
                     <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
                 </td>
             </tr>
@@ -123,6 +124,10 @@
             var C_id = $(this).attr("data-eid")
             $(this).attr("href", "/SalesProcess/OrderList?clientId=" + C_id)
         })
-       
+        // 渠道详情
+        $(".sales-btn").on("click", function () {
+            var C_id = $(this).attr("data-eid")
+            $(this).attr("href", "/SalesProcess/SalesList?clientId=" + C_id)
+        })
     })
 </script>
