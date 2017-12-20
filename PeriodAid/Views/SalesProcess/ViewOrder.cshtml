@@ -19,15 +19,13 @@
                 <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
                 @if (order.SP_Product.Carton_Spec == 0)
                 {
-                <td>请填写箱规</td>
+                <td>暂无箱规</td>
                 }
                 else
                 {
                 <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
                 }
             </tr>
-            
-
         }
     </table>
     <button type="button" class="btn btn-default close-order" data-dismiss="modal">关闭</button>

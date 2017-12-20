@@ -40,6 +40,11 @@
 
             color: #a94442;
         }  
+        .breadcrumb{
+            background:none;
+            padding:0;
+            margin:0
+        }
     </style>
 </head>
 <body>
@@ -134,4 +139,7 @@
             $(this).parent("li").addClass('current');
         }
     });
+    function backBtn() {
+        window.history.back();
+    };
 </script>

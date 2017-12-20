@@ -13,8 +13,10 @@
     </tr>
 </table>
 <a class="btn btn-info btn-sm" id="add-sales" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道信息</a>
-<ol class="breadcrumb" style="padding:0;margin:0">
-    <li>当前位置：/&nbsp;<a href="/SalesProcess/SalesList">&nbsp;渠道</a></li>
+<ol class="breadcrumb">
+    当前位置：
+    <li class="active">渠道管理</li>
+    <li><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
 </ol>
 <div id="sales_list_content">
     <div class="h2 hidden">暂无权限,请联系管理员</div>
@@ -26,7 +28,8 @@
             url: "/SalesProcess/SalesListPartial",
             data: {
                 page: 1,
-                query: $("#sales-query").val()
+                query: $("#sales-query").val(),
+                clientId: getUrlParam("clientId")
             },
             success: function (data) {
                 if (data == "FAIL") {
@@ -43,7 +46,8 @@
             url: "/SalesProcess/SalesListPartial",
             data: {
                 page: 1,
-                query: $("#sales-query").val()
+                query: $("#sales-query").val(),
+                clientId: getUrlParam("clientId")
             },
             success: function (data) {
                 if (data == "FAIL") {

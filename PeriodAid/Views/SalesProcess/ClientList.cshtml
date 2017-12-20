@@ -2,7 +2,6 @@
     ViewBag.Title = "ClientList";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
-
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
@@ -13,8 +12,8 @@
     </tr>
 </table>
 <a class="btn btn-info btn-sm" id="add-client" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增经销商信息</a>
-<ol class="breadcrumb" style="padding:0;margin:0">
-    <li>当前位置：/&nbsp;<a href="/SalesProcess/ClientList">&nbsp;经销商</a></li>
+<ol class="breadcrumb">
+    当前位置：<li class="active">经销商管理</li>
 </ol>
 <div id="client_list_content"></div>
 @section scripts{
@@ -72,5 +71,6 @@
                 }
             })
         })
+        
     </script>
     }
