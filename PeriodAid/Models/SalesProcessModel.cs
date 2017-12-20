@@ -20,6 +20,7 @@
         public virtual DbSet<SP_SalesSystem> SP_SalesSystem { get; set; }
         public virtual DbSet<SP_QuotePrice> SP_QuotePrice { get; set; }
         public virtual DbSet<SP_Order> SP_Order { get; set; }
+        public virtual DbSet<SP_OrderPrice> SP_OrderPrice { get; set; }
         public virtual DbSet<SP_FinanceInfo> SP_FinanceInfo { get; set; }
         
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -31,6 +32,9 @@
             modelBuilder.Entity<SP_ProductType>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_ProductType).HasForeignKey(m => m.ProductType_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_SalesSystem).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_SalesSystem>().HasMany(m => m.SP_QuotePrice).WithRequired(m => m.SP_SalesSystem).HasForeignKey(m => m.SalesSystem_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_Order).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Order>().HasMany(m => m.SP_OrderPrice).WithRequired(m => m.SP_Order).HasForeignKey(m => m.Order_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_OrderPrice).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
         }
     }
 
@@ -57,8 +61,8 @@
         public string Supplier_Name { get; set; }
 
         public string Bar_Code { get; set; }
-        
-        public decimal Product_Weight { get; set; }
+
+        public int Product_Weight { get; set; }
 
         public int Carton_Spec { get; set; }
         
@@ -74,6 +78,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_QuotePrice> SP_QuotePrice { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SP_OrderPrice> SP_OrderPrice { get; set; }
 
     }
     /// <summary>
@@ -147,6 +154,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_SalesSystem> SP_SalesSystem { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SP_Order> SP_Order { get; set; }
     }
     /// <summary>
     /// 销售系统
@@ -228,9 +238,34 @@
 
         public DateTime Order_Date { get; set; }
 
-        public string Quotation_Num { get; set; }
+        public int Order_Status { get; set; }
+
+        public int Client_Id { get; set; }
+
+        public virtual SP_Client SP_Client { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SP_OrderPrice> SP_OrderPrice { get; set; }
+    }
+    /// <summary>
+    /// 订货详情
+    /// </summary>
+    [Table("SP_OrderPrice")]
+    public partial class SP_OrderPrice
+    {
+        public int Id { get; set; }
+
+        public decimal Order_Price { get; set; }
 
         public int Order_Status { get; set; }
+
+        public int Order_Id { get; set; }
+
+        public virtual SP_Order SP_Order { get; set; }
+
+        public int Product_Id { get; set; }
+
+        public virtual SP_Product SP_Product { get; set; }
     }
     /// <summary>
     /// 财务信息

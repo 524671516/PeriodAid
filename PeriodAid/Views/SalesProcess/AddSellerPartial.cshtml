@@ -82,7 +82,7 @@
                     $("#add-submit").attr("disabled",true)
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
-                        //$("#add-submit").removeAttr("disabled")
+                        $("#add-submit").removeAttr("disabled")
                         $("#myModal").modal('hide')
                         $.ajax({
                             url: "/SalesProcess/SellerListPartial",

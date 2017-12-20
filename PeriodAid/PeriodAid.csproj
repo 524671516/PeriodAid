@@ -434,6 +434,7 @@
     <Content Include="Content\jquery.fullPage.css" />
     <Content Include="Content\PA-Site.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\SalesProcess.css" />
     <Content Include="Content\Plattformlnventory.css" />
     <Content Include="Content\prettify.css" />
     <Content Include="Content\TaskManagement.css" />
@@ -553,6 +554,7 @@
     <Content Include="Scripts\Sortable.js" />
     <Content Include="Scripts\Sortable.min.js" />
     <Content Include="Scripts\TaskManagement.js" />
+    <Content Include="Scripts\SalesProcess.js" />
     <Content Include="Scripts\TaskManagementCalendar.js" />
     <Content Include="Scripts\taskmanagement_m.js" />
     <Content Include="Scripts\validate.expand.js" />
@@ -1187,6 +1189,7 @@
     <Content Include="Views\SalesProcess\OrderListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddOrderPricrPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditOrderInfo.cshtml" />
+    <Content Include="Views\SalesProcess\ViewContact.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

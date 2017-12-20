@@ -6,14 +6,14 @@
     }
 </style>
 <div>
-    <table class="table">
-        <tr>
+    <table class="table table-hover" style="margin-bottom:0">
+        <tr style="background-color:#f9f9f9">
             <th style="width:15%;">客户名称</th>
-            <th style="width:15%;">状态</th>
-            <th style="width:15%;">客户类型</th>
+            <th style="width:10%;">状态</th>
+            <th style="width:10%;">客户类型</th>
             <th style="width:15%;">所属区域</th>
             <th style="width:15%;">负责人</th>
-            <th style="width:25%;"></th>
+            <th style="width:35%;"></th>
         </tr>
         @foreach (var item in Model)
         {
@@ -25,12 +25,19 @@
                 <td>@item.SP_Seller.Seller_Name</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人信息</a>
+                    <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人详情</a>
+                    <a class="order-btn btn btn-xs btn-info" data-eid="@item.Id">订货信息</a>
                     <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
+                    @*<a class="view-contact btn btn-xs btn-info" role="button" data-val="@item.Id" data-name="@item.Client_Name" data-toggle="collapse" data-target="#@item.Client_Name" aria-expanded="false" aria-controls="@item.Client_Name">所属联系人</a>*@
                 </td>
             </tr>
         }
     </table>
+    @*<div class="collapse view-contact-partial">
+        <div class="well" style="padding:8px" id="view-div">
+
+        </div>
+    </div>*@
     <div class="text-right">
         @Html.PagedListPager(Model, page => Url.Action("ClientListPartial", new { page }))
     </div>
@@ -112,10 +119,29 @@
                 }
             });
         })
-        // 选择联系人
+        // 联系人详情
         $(".contact-btn").on("click", function () {
             var C_id = $(this).attr("data-val")
             $(this).attr("href", "/SalesProcess/ContactList?clientId=" + C_id)
         })
+        // 订货信息
+        $(".order-btn").on("click", function () {
+            var C_id = $(this).attr("data-eid")
+            $(this).attr("href", "/SalesProcess/OrderList?clientId=" + C_id)
+        })
+        // 查看联系人
+        //$(".view-contact").on("click", function () {
+        //    var p_Id = $(this).attr("data-name")
+        //    $(".view-contact-partial").attr("id", p_Id)
+        //    $.ajax({
+        //        url: "/SalesProcess/ViewContact",
+        //        data:{
+        //            clientId: $(this).attr("data-val")
+        //        },
+        //        success:function(data){
+        //            $("#view-div").html(data)
+        //        }
+        //    })
+        //})
     })
 </script>

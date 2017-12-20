@@ -90,11 +90,11 @@
         },
         messages: {
             System_Name: {
-                required: "名称是必需的",
+                required: "名称是必填的",
                 minlength: "请输入正确格式",
             },
             System_Phone: {
-                required: "电话是必须的",
+                required: "电话是必填的",
                 number: "请注意电话格式"
             },
         },
@@ -117,13 +117,13 @@
                         }
                     });
                 } else if (data.result == "UNAUTHORIZED") {
-                    $("#save-btn").remoceClass("disabled")
+                    $("#save-btn").removeClass("disabled")
                     errorAlert('信息未修改')
                 } else if (data.result == "FAIL") {
-                    $("#save-btn").remoceClass("disabled")
+                    $("#save-btn").removeClass("disabled")
                     errorAlert('保存失败')
                 } else {
-                    $("#save-btn").remoceClass("disabled")
+                    $("#save-btn").removeClass("disabled")
                     errorAlert(data.errmsg);
                 }
             })
@@ -131,7 +131,7 @@
         errorClass: "has-error",
         //验证失败
         errorPlacement: function (error, element) {
-            $("#save-btn").remoceClass("disabled")
+            $("#save-btn").removeClass("disabled")
             error.appendTo(element.parent())
         }
     });

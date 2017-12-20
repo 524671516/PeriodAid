@@ -3,7 +3,8 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改订单信息</h2>
 </div>
-<div class="hidden" id="num-name">@ViewBag.Num.Quotation_Num</div>
+<div class="hidden" id="client-name">@ViewBag.Client.SP_Client.Client_Name</div>
+<div class="hidden" id="client-id">@ViewBag.Client.Client_Id</div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditOrderInfo", "SalesProcess", FormMethod.Post, new { @id = "order-form" }))
     {
@@ -28,11 +29,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">报价单号</label>
+                <label class="col-md-2 control-label">经销商</label>
                 <div class="col-md-9">
-                    <input id="quoted-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
-                    <input type="hidden" id="QuotationNum" name="Quotation_Num" />
-                    @Html.ValidationMessageFor(model => model.Quotation_Num, "", new { @class = "text-danger" })
+                    <input id="client_input" type="text" class="span4 form-control" autocomplete="off" name="client_input" />
+                    <input type="hidden" id="ClientId" name="Client_Id" />
+                    @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -40,34 +41,31 @@
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
                 </div>
             </div>
-
-
-
         </div>
     }
 </div>
 <script>
     $(function () {
-        $("#quoted-input").val($("#num-name").html())
-        $("#QuotationNum").val($("#num-name").html())
+        $("#client_input").val($("#client-name").html());
+        $("#ClientId").val($("#client-id").html())
+        //经销商搜索
+        function displayResult(item, val, text) {
+            $("#ClientId").val(val);
+        }
+        $('#client_input').typeahead({
+            ajax: {
+                url: "/SalesProcess/QueryClient",
+                triggerLength: 1
+            },
+            itemSelected: displayResult,
+            display: 'Client_Name',
+            val: 'Id'
+        });
         // 修改日期格式
         var strDate = $("#Order_Date").val().substring(0, 10)
         var reg = /\//g
         var newstrDate = strDate.replace(reg, "-")
         $("#show-date input").attr("value", newstrDate);
-        //报价单号搜索
-        function displayResult(item, val, text) {
-            $("#QuotationNum").val(val);
-        }
-        $('#quoted-input').typeahead({
-            ajax: {
-                url: "/SalesProcess/QueryQuoted",
-                triggerLength: 1
-            },
-            itemSelected: displayResult,
-            display: 'Quotation_Num',
-            val: 'Id'
-        });
         window.moment = Kalendae.moment;
         var k4 = new Kalendae.Input('Order_Date', {
             months: 1,
@@ -89,7 +87,8 @@
                         $.ajax({
                             url: "/SalesProcess/OrderListPartial",
                             data: {
-                                query: $("#order-query").val()
+                                query: $("#order-query").val(),
+                                clientId: getUrlParam("clientId")
                             },
                             success: function (data) {
                                 $("#order_list_content").html(data);

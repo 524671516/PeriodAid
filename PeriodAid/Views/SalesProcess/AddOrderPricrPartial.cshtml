@@ -24,11 +24,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">报价单号</label>
+                <label class="col-md-2 control-label">经销商</label>
                 <div class="col-md-9">
-                    <input id="quoted-input" type="text" class="span4 form-control" autocomplete="off" name="seller-input" />
-                    <input type="hidden" id="QuotationNum" name="Quotation_Num" />
-                    @Html.ValidationMessageFor(model => model.Quotation_Num, "", new { @class = "text-danger" })
+                    <input id="client_input" type="text" class="span4 form-control" autocomplete="off" name="client_input" />
+                    <input type="hidden" id="ClientId" name="Client_Id" />
+                    @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -42,17 +42,17 @@
 </div>
 <script>
     $(function () {
-        //报价单号搜索
+        //经销商搜索
         function displayResult(item, val, text) {
-            $("#QuotationNum").val(val);
+            $("#ClientId").val(val);
         }
-        $('#quoted-input').typeahead({
+        $('#client_input').typeahead({
             ajax: {
-                url: "/SalesProcess/QueryQuoted",
+                url: "/SalesProcess/QueryClient",
                 triggerLength: 1
             },
             itemSelected: displayResult,
-            display: 'Quotation_Num',
+            display: 'Client_Name',
             val: 'Id'
         });
         $("#add-order-form").validate({
@@ -66,7 +66,8 @@
                         $.ajax({
                             url: "/SalesProcess/OrderListPartial",
                             data: {
-                                query: $("#order-query").val()
+                                query: $("#order-query").val(),
+                                clientId: getUrlParam("clientId")
                             },
                             success: function (data) {
                                 $("#order_list_content").html(data)

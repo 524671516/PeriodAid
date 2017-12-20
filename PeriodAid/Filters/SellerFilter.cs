@@ -119,10 +119,6 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
-                    else
-                    {
-                        setErrorResult(filterContext, "用户行为未定义");
-                    }
                 }
                 else if (seller.Seller_Type == SellerType.FINANCIALDEPARTMENT) // 财务部权限
                 {
@@ -207,10 +203,6 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
-                    else
-                    {
-                        setErrorResult(filterContext, "用户行为未定义");
-                    }
                 }
                 else if (seller.Seller_Type == SellerType.SELLER) // 业务员权限
                 {
@@ -238,37 +230,6 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
-                    //else if (OperationGroup == SalesOperationCode.SALESEDIT)
-                    //{
-                    //    // 修改渠道信息权限
-                    //    var salesId = Convert.ToInt32(filterContext.HttpContext.Request.Params["Id"]);
-                    //    var salessystem = _db.SP_SalesSystem.SingleOrDefault(m => m.Id == salesId && m.SP_Seller.Seller_Status > -1);
-                    //    if (salessystem == null)
-                    //    {
-                    //        setErrorResult(filterContext, "操作失败,渠道已被移除");
-                    //    }else
-                    //    {
-                    //        if (salessystem.Seller_Id != seller.Id)
-                    //        {
-                    //            setErrorResult(filterContext, "权限不足");
-                    //        }
-                    //    }
-                    //}
-                    //else if(OperationGroup == SalesOperationCode.QUOTVIEW)
-                    //{
-                    //    var salesId = Convert.ToInt32(filterContext.HttpContext.Request.Params["SalesSystemId"]);
-                    //    var quoted = _db.SP_Quoted.SingleOrDefault(m => m.SalesSystem_Id == salesId && m.SP_SalesSystem.System_Status > -1);
-                    //    if(quoted == null)
-                    //    {
-                    //        setErrorResult(filterContext, "操作失败,报价单已被移除");
-                    //    }else
-                    //    {
-                    //        if(quoted.SP_SalesSystem.Seller_Id != seller.Id)
-                    //        {
-                    //            setErrorResult(filterContext, "权限不足");
-                    //        }
-                    //    }
-                    //}
                 }
                 else
                 {

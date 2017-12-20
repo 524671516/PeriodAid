@@ -13,9 +13,9 @@
     <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
-    <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/SalesProcess.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/prettify.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
@@ -50,13 +50,13 @@
                     <a class="navbar-brand" href="/SalesProcess/ProductList?productType=0"><strong class="color-blue">销售管理</strong></a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
+                    <ul class="nav navbar-nav" id="ul-hover">
                         <li><a href="/SalesProcess/ProductList">产品管理</a></li>
                         <li><a href="/SalesProcess/ClientList">经销商管理</a></li>
                         <li><a href="/SalesProcess/SalesList">渠道管理</a></li>
-                        <li><a style="cursor:pointer" href="/SalesProcess/SellerList">业务员管理</a></li>
-                        <li><a style="cursor:pointer" href="/SalesProcess/OrderList">订单管理</a></li>
-                        <li><a style="cursor:pointer">财务管理</a></li>
+                        <li><a href="/SalesProcess/SellerList">业务员管理</a></li>
+                        <li><a href="/SalesProcess/OrderList">订单管理</a></li>
+                        <li><a>财务管理</a></li>
                     </ul>
                     @Html.Partial("_LoginPartial")
                 </div>
@@ -118,7 +118,7 @@
     <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
     <script src="~/Scripts/bootstrap-select.js"></script>
     <script src="~/Scripts/defaults-zh_CN.min.js"></script>
-    <script src="~/Scripts/TaskManagementCalendar.js"></script>
+    <script src="~/Scripts/SalesProcess.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
     <script src="~/Scripts/off-JavaScript.js"></script>
     <script src="~/Scripts/bootstrap-typeahead.js"></script>
@@ -126,6 +126,12 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
-
-
-
+<script>
+    var locUrl = window.location.pathname;
+    $("#ul-hover li a").each(function (index, el) {
+        var href = this.getAttribute("href");
+        if( href == locUrl){
+            $(this).parent("li").addClass('current');
+        }
+    });
+</script>
