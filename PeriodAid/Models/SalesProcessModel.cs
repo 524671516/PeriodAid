@@ -257,6 +257,8 @@
 
         public decimal Order_Price { get; set; }
 
+        public int Order_Count { get; set; }
+
         public int Order_Status { get; set; }
 
         public int Order_Id { get; set; }
