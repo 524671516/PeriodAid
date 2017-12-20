@@ -2,6 +2,7 @@
     ViewBag.Title = "ClientList";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
+
 <table class="offline-search-box">
     <tr>
         <td class="pull-right">
@@ -13,6 +14,10 @@
 </table>
 <a class="btn btn-info btn-sm" id="add-client" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增经销商信息</a>
 <div id="client_list_content"></div>
+<ol class="breadcrumb text-center">
+    <li><a href="/SalesProcess/ClientList">经销商</a></li>
+    <li><a href="/SalesProcess/ContentList">联系人</a></li>
+</ol>
 @section scripts{
     <script>
         $(function () {
@@ -68,5 +73,12 @@
                 }
             })
         })
+        var locUrl = window.location.pathname;
+        $(".breadcrumb li a").each(function (index, el) {
+            var href = this.getAttribute("href");
+            if (href == locUrl) {
+                $(this).parent("li").addClass('active');
+            }
+        });
     </script>
     }
