@@ -760,8 +760,8 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 801)]
         public ActionResult AddQuotePricrPartial(SP_QuotePrice model, FormCollection form)
         {
-            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id && m.Quoted_Date == model.Quoted_Date);
-            var QuoteDate = _db.SP_QuotePrice.SingleOrDefault(m => m.Product_Id == model.Product_Id && m.Quoted_Status == 0);
+            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id && m.Quoted_Date == model.Quoted_Date && m.SalesSystem_Id == model.SalesSystem_Id);
+            var QuoteDate = _db.SP_QuotePrice.SingleOrDefault(m => m.Product_Id == model.Product_Id && m.Quoted_Status == 0 && m.SalesSystem_Id == model.SalesSystem_Id);
             ModelState.Remove("Quoted_Date");
             if (ModelState.IsValid)
             {
@@ -1091,7 +1091,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return PartialView(model);
+                return Json(new { result = "FAIL" });
             }
         }
 
@@ -1160,9 +1160,9 @@ namespace PeriodAid.Controllers
         //生成PDF
         public ActionResult creatPdf()
         {
-            var product = from m in _db.SP_Product
-                                 where m.Product_Status != 1
-                                 select m;
+            var product = from m in _db.SP_OrderPrice
+                          where m.Order_Status != -1
+                          select m;
             var count = product.Count() + 1;
             Document document = new Document(PageSize.A3);
             try
@@ -1265,29 +1265,29 @@ namespace PeriodAid.Controllers
                 cell.Colspan = 2;
                 cell.HorizontalAlignment = Element.ALIGN_CENTER;
                 table.AddCell(cell);
-                //foreach(var name in plattform_name)
-                //{
-                //    cell = new PdfPCell(new Paragraph(name.System_Code.ToString(), font2));
-                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                //    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                //    table.AddCell(cell);
-                //    cell = new PdfPCell(new Paragraph(name.Item_Name.ToString(), font2));
-                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                //    cell.Colspan = 2;
-                //    table.AddCell(cell);
-                //    cell = new PdfPCell(new Paragraph(" "));
-                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                //    table.AddCell(cell);
-                //    cell = new PdfPCell(new Paragraph(name.Purchase_Price.ToString(), font2));
-                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                //    table.AddCell(cell);
-                //    cell = new PdfPCell(new Paragraph(" "));
-                //    table.AddCell(cell);
-                //    cell = new PdfPCell(new Paragraph(" "));
-                //    cell.Colspan = 2;
-                //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                //    table.AddCell(cell);
-                //}
+                foreach (var order in product)
+                {
+                    cell = new PdfPCell(new Paragraph(order.Product_Id.ToString(), font2));
+                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Paragraph(order.SP_Product.Item_Name.ToString(), font2));
+                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Paragraph(order.Order_Count.ToString(), font2));
+                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Paragraph(order.Order_Price.ToString(), font2));
+                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Paragraph(Math.Round((order.Order_Price * order.Order_Count), 2).ToString(), font2));
+                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    table.AddCell(cell);
+                }
                 cell = new PdfPCell(new Paragraph(" "));
                 cell.Colspan = 2;
                 table.AddCell(cell);

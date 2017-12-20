@@ -57,11 +57,41 @@
         });
         $("#add-order-form").validate({
             debug: true,
+            rules:{
+                Order_Date: {
+                    required: true,
+                    date:true
+                },
+                Order_Number: {
+                    required: true,
+                    maxlength: 20
+                },
+                client_input: {
+                    required: true,
+                    maxlength:20
+                }
+            },
+            messages:{
+                Order_Date: {
+                    required: "日期是必填的",
+                    date:"请直接选择日期"
+                },
+                Order_Number: {
+                    required: "订单号是必填的",
+                    maxlength: 20
+                },
+                client_input: {
+                    required: "经销商是必填的",
+                    maxlength:20
+                }
+            },
             //验证通过的正式提交函数
             submitHandler: function (form) {
+                $("#add-submit").attr("disabled",true)
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
+                        $("#add-submit").removeAttr("disabled")
                         $("#myModal").modal('hide')
                         $.ajax({
                             url: "/SalesProcess/OrderListPartial",
@@ -77,11 +107,14 @@
                         });
                     }
                     else if (data.result == "UNAUTHORIZED") {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert("订单号存在!");
                     }
                     else if (data.result == "FAIL") {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert("信息不全,添加失败!");
                     } else {
+                        $("#add-submit").removeAttr("disabled")
                         errorAlert(data.errmsg)
                     }
                 })
@@ -89,7 +122,8 @@
             errorClass: "has-error",
             //验证失败
             errorPlacement: function (error, element) {
-                $("#add-submit").removeClass("disabled");
+                error.appendTo(element.parent())
+                $("#add-submit").removeAttr("disabled")
             }
         })
     })

@@ -14,6 +14,7 @@
         }
         public virtual DbSet<SP_Product> SP_Product { get; set; }
         public virtual DbSet<SP_ProductType> SP_ProductType { get; set; }
+        public virtual DbSet<SP_Department> SP_Department { get; set; }
         public virtual DbSet<SP_Seller> SP_Seller { get; set; }
         public virtual DbSet<SP_Client> SP_Client { get; set; }
         public virtual DbSet<SP_Contact> SP_Contact { get; set; }
@@ -100,6 +101,18 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Product> SP_Product { get; set; }
+    }
+    /// <summary>
+    /// 部门
+    /// </summary>
+    [Table("SP_Department")]
+    public partial class SP_Department
+    {
+        public int Id { get; set; }
+
+        public string Department_Name { get; set; }
+
+        public int Status { get; set; }
     }
     /// <summary>
     /// 业务员
@@ -281,6 +294,11 @@
 
         public virtual SP_Client SP_Client { get; set; }
     }
+
+
+
+
+
     public static class SellerType
     {
         /// <summary>
