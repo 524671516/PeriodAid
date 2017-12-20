@@ -1315,11 +1315,17 @@ namespace PeriodAid.Controllers
                 table.AddCell(cell);
                 var price = from m in _db.SP_OrderPrice
                             where m.Order_Status != -1
-                            group m by m.SP_Order into g
-                            select g;
+                            group m by m.Product_Id into g
+                            select new OrderPriceSum {
+                                SumOrder_Price = g.Sum(m=>m.Order_Price),
+                                SumOrder_Count= g.Sum(m => m.Order_Count),
+                            };
+                decimal sumcount=0;
                 foreach(var Price in price)
                 {
-                    cell = new PdfPCell(new Paragraph(Price.Sum(m=>m.Order_Count).ToString(), font1));
+                    var sunc = Price.SumOrder_Count * Price.SumOrder_Price;
+                    sumcount += sunc;
+                    cell = new PdfPCell(new Paragraph(sumcount.ToString(), font1));
                     cell.HorizontalAlignment = Element.ALIGN_CENTER;
                     table.AddCell(cell);
                     cell = new PdfPCell(new Paragraph("--"));
