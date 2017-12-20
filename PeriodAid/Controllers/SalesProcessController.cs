@@ -196,15 +196,6 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult ViewContact(int clientId)
-        {
-            var contact = from m in _db.SP_Contact
-                          where m.Client_Id == clientId && m.Contact_Status != -1
-                          select m;
-            ViewBag.Contact = contact;
-            return PartialView();
-        }
-
         public ActionResult ClientListPartial(int? page, string query)
         {
             int _page = page ?? 1;
@@ -1096,6 +1087,20 @@ namespace PeriodAid.Controllers
             _db.SaveChanges();
             return Json(new { result = "SUCCESS" });
 
+        }
+        
+        public ActionResult ViewOrder(int orderId)
+        {
+            var order =   from m in _db.SP_OrderPrice
+                          where m.Order_Id == orderId && m.Order_Status != -1
+                          select m;
+            ViewBag.Order = order;
+
+            var order_num = (from m in _db.SP_Order
+                             where m.Id == orderId && m.Order_Status != -1
+                             select m).FirstOrDefault();
+            ViewBag.OrderNum = order_num;
+            return PartialView();
         }
 
         //生成PDF

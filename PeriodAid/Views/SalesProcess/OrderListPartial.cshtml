@@ -23,17 +23,12 @@
                 <td>@order.SP_Client.Client_Name</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="order-btn btn btn-xs btn-primary"role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample" >详情</a>
+                    <a class="order-btn btn btn-xs btn-primary"role="button" data-id="@order.Id" data-toggle="modal"  data-target="#myModal" >详情</a>
                     <a class="delete-order btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除记录</a>
                 </td>
             </tr>
         }
     </table>
-    <div class="collapse" id="collapseExample">
-        <div class="well">
-            ...
-        </div>
-    </div>
     <div class="text-right">
         @Html.PagedListPager(Model, page => Url.Action("OrderListPartial", new { page }))
     </div>
@@ -109,5 +104,18 @@
                 })
             }
         });
+    })
+    // 查看订单详情
+    $(".order-btn").on("click", function () {
+        $.ajax({
+            url: "/SalesProcess/ViewOrder",
+            data:{
+                orderId: $(this).attr("data-id")
+            },
+            success:function(data){
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
     })
 </script>

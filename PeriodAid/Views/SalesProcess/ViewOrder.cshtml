@@ -1,0 +1,37 @@
+﻿<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>订单详情</h2>
+    <h4 class="text-center">订单号：@ViewBag.OrderNum.Order_Number</h4>
+    <table class="table">
+        <tr>
+            <th style="width:15%">产品名称</th>
+            <th style="width:15%">单价</th>
+            <th style="width:15%">订货量</th>
+            <th style="width:15%">金额</th>
+            <th style="width:15%">箱数</th>
+        </tr>
+        @foreach (var order in ViewBag.Order)
+        {
+            <tr>
+                <td>@order.SP_Product.Item_Name</td>
+                <td>@order.Order_Price</td>
+                <td>@order.Order_Count</td>
+                <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
+                @if (order.SP_Product.Carton_Spec == 0)
+                {
+                <td>请填写箱规</td>
+                }
+                else
+                {
+                <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
+                }
+            </tr>
+            
+
+        }
+    </table>
+    <button type="button" class="btn btn-default close-order" data-dismiss="modal">关闭</button>
+</div>
+
+
+
