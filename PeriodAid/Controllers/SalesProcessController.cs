@@ -1313,23 +1313,37 @@ namespace PeriodAid.Controllers
                 cell.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cell.Colspan = 2;
                 table.AddCell(cell);
-                var price = from m in _db.SP_OrderPrice
+                var Count = from m in _db.SP_OrderPrice
                             where m.Order_Status != -1
-                            group m by m.SP_Order into g
+                            group m by m.Order_Id into g
                             select g;
-                foreach(var Price in price)
+                foreach(var ordercount in Count)
                 {
-                    cell = new PdfPCell(new Paragraph(Price.Sum(m=>m.Order_Count).ToString(), font1));
+                    cell = new PdfPCell(new Paragraph(ordercount.Sum(m=>m.Order_Count).ToString(), font1));
                     cell.HorizontalAlignment = Element.ALIGN_CENTER;
                     table.AddCell(cell);
                     cell = new PdfPCell(new Paragraph("--"));
                     cell.VerticalAlignment = Element.ALIGN_MIDDLE;
                     cell.HorizontalAlignment = Element.ALIGN_CENTER;
                     table.AddCell(cell);
-                    //cell = new PdfPCell(new Paragraph(Math.Round().ToString(), font1));
-                    //cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    //table.AddCell(cell);
                 }
+                var Price = from m in _db.SP_OrderPrice
+                            where m.Order_Status != -1
+                            group m by m.Id into g
+                            select new OrderPriceSum
+                            {
+                                SumCount = g.Sum(m=>m.Order_Count),
+                                SumPrice = g.Sum(m=>m.Order_Price)
+                            };
+                decimal SumPrice = 0;
+                foreach (var price in Price)
+                {
+                    var sumPrice = price.SumPrice * price.SumCount;
+                    SumPrice += sumPrice;
+                }
+                cell = new PdfPCell(new Paragraph(Math.Round(SumPrice).ToString(), font1));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                table.AddCell(cell);
                 cell = new PdfPCell(new Paragraph(" "));
                 cell.Colspan = 2;
                 table.AddCell(cell);
