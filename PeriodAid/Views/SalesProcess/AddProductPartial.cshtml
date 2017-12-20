@@ -11,10 +11,10 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <div class="form-group">
-                <label class="col-md-2 control-label">品牌</label>
+                <label class="col-md-2 control-label">供应商</label>
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.Brand_Name, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Brand_Name, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Supplier_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Supplier_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -23,11 +23,10 @@
                     @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
                 </div>
-
-                <label class="col-md-2 control-label">供应商</label>
+                <label class="col-md-2 control-label">品牌</label>
                 <div class="col-md-3">
-                    @Html.EditorFor(model => model.Supplier_Name, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Supplier_Name, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Brand_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Brand_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -43,7 +42,6 @@
                 </div>
             </div>
             <div class="form-group">
-
                 <label class="col-md-2 control-label">重量(/克)</label>
                 <div class="col-md-3">
                     @Html.EditorFor(model => model.Product_Weight, new { htmlAttributes = new { @class = "form-control" } })
@@ -53,6 +51,31 @@
                 <div class="col-md-3">
                     @Html.EditorFor(model => model.Carton_Spec, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Carton_Spec, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label class="col-md-2 control-label">系统编码</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control", @placeholder= "选填" } })
+                    @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
+                </div>
+                <label class="col-md-2 control-label">产品编码</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                    @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">商品简称</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                    @Html.ValidationMessageFor(model => model.Item_ShortName, "", new { @class = "text-danger" })
+                </div>
+                <label class="col-md-2 control-label">条形码</label>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
+                    @Html.ValidationMessageFor(model => model.Bar_Code, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -67,35 +90,6 @@
                     @Html.ValidationMessageFor(model => model.ProductType_Id, " ", new { @class = "text-danger" })
                 </div>
             </div>
-            <div class="text-center">
-                <a href="javascript:;" id="show_more_info" class="color-blue">填写更多<i class="fa fa-angle-double-down" aria-hidden="true"></i><i class="fa fa-angle-double-up" aria-hidden="true" hidden></i></a>
-            </div>
-            <div id="more_info">
-                <div class="form-group">
-                    <label class="col-md-2 control-label">系统编码</label>
-                    <div class="col-md-3">
-                        @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
-                        @Html.ValidationMessageFor(model => model.System_Code, "", new { @class = "text-danger" })
-                    </div>
-                    <label class="col-md-2 control-label">产品编码</label>
-                    <div class="col-md-3">
-                        @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
-                        @Html.ValidationMessageFor(model => model.Item_Code, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2 control-label">商品简称</label>
-                    <div class="col-md-3">
-                        @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
-                        @Html.ValidationMessageFor(model => model.Item_ShortName, "", new { @class = "text-danger" })
-                    </div>
-                    <label class="col-md-2 control-label">条形码</label>
-                    <div class="col-md-3">
-                        @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "选填" } })
-                        @Html.ValidationMessageFor(model => model.Bar_Code, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-9">
                     <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit" />
@@ -107,60 +101,58 @@
 </div>
 <script>
     $(function () {
-        $("#more_info").hide();
-        $(".fa-angle-double-up").hide();
-        $(".fa-angle-double-down").show();
-        $("#show_more_info").click(function () {
-            $("#more_info").slideToggle();
-            $("#show_more_info .fa").slideToggle()
-        })
         $("#add-product-form").validate({
             debug: true,
             rules: {
                 Item_Name: {
                     required: true,
+                    minlength: 2
                 },
                 Brand_Name: {
                     required: true,
+                    minlength: 2
                 },
                 Purchase_Price: {
                     required: true,
-                    number:true
+                    number: true
                 },
                 Supply_Price: {
                     required: true,
-                    number:true
+                    number: true
                 },
                 Product_Weight: {
                     required: true,
-                    number:true
+                    number: true
                 },
                 Carton_Spec: {
                     required: true,
-                    number:true
+                    number: true
                 },
                 Supplier_Name: {
                     required: true,
-                }
+                    minlength: 2
+                },
             },
             messages: {
                 Item_Name: {
                     required: "名称是必须的",
+                    minlength: "最少两个字符"
                 },
                 Brand_Name: {
                     required: "品牌是必须的",
+                    minlength: "最少两个字符"
                 },
                 Purchase_Price: {
                     required: "零售价是必须的",
-                    number: "请注意格式 如 19"
+                    number: "请注意格式 如 19.42"
                 },
                 Supply_Price: {
                     required: "供货价是必须的",
-                    number: "请注意格式 如 19"
+                    number: "请注意格式 如 19.42"
                 },
                 Product_Weight: {
                     required: "重量是必须的",
-                    number: "请注意格式 如 120"
+                    number: "请注意格式 如 30"
                 },
                 Carton_Spec: {
                     required: "箱规是必须的",
@@ -168,7 +160,8 @@
                 },
                 Supplier_Name: {
                     required: "供应商是必须的",
-                }
+                    minlength: "最少两个字符"
+                },
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {
