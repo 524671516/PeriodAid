@@ -729,20 +729,20 @@ namespace PeriodAid.Controllers
             if (query != "")
             {
                 var price = from m in _db.SP_QuotePrice
-                            where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
+                            where m.SalesSystem_Id == SalesSystemId
                             select m;
                 var SearchResult = from m in price
                                    where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.System_Code.Contains(query) 
                                    || m.SP_Product.Item_Code.Contains(query)
-                                   orderby m.Product_Id descending
+                                   orderby m.Quoted_Status descending
                                    select m;
                 return PartialView(SearchResult);
             }
             else
             {
                 var SearchResult = from m in _db.SP_QuotePrice
-                                   where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
-                                   orderby m.Product_Id descending
+                                   where m.SalesSystem_Id == SalesSystemId
+                                   orderby m.Quoted_Status descending
                                    select m;
                 return PartialView(SearchResult);
             }
@@ -760,7 +760,8 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 801)]
         public ActionResult AddQuotePricrPartial(SP_QuotePrice model, FormCollection form)
         {
-            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id);
+            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id && m.Quoted_Date == model.Quoted_Date);
+            var QuoteDate = _db.SP_QuotePrice.SingleOrDefault(m => m.Product_Id == model.Product_Id && m.Quoted_Status == 0);
             ModelState.Remove("Quoted_Date");
             if (ModelState.IsValid)
             {
@@ -770,6 +771,12 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
+                    if (QuoteDate != null)
+                    {
+                        QuoteDate.Quoted_Status = -1;
+                        _db.Entry(QuoteDate).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                    }
                     var quotePrice = new SP_QuotePrice();
                     quotePrice.Product_Id = model.Product_Id;
                     quotePrice.Quote_Price = model.Quote_Price;

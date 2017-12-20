@@ -1,32 +1,45 @@
 ﻿@model IEnumerable<PeriodAid.Models.SP_QuotePrice>
-<style>
-    .btn-xs {
-        line-height: 1.4;
-    }
-</style>
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
             <th style="width:15%">系统编码</th>
             <th style="width:25%">供应商</th>
             <th style="width:15%">产品名称</th>
-            <th style="width:15%">报价日期</th>
-            <th style="width:15%">报价</th>
+            <th style="width:10%">报价</th>
+            <th style="width:10%">报价日期</th>
+            <th style="width:10%"></th>
             <th style="width:15%"></th>
         </tr>
-        @foreach(var price in Model)
+        @foreach (var price in Model)
         {
-            <tr>
-                <td>@price.SP_Product.System_Code</td>
-                <td>@price.SP_Product.Supplier_Name</td>
-                <td>@price.SP_Product.Item_Name</td>
-                <td>@price.Quoted_Date.ToString("yyyy-MM-dd")</td>
-                <td>@price.Quote_Price</td>
-                <td class="text-center">
-                    <a data-eid="@price.Id" class="quotePrice-edit btn btn-xs btn-success" role="button">编辑</a>
-                    <a class="quotePrice-delete btn btn-xs btn-danger" data-eid="@price.Id" role="button">删除</a>
-                </td>
-            </tr>
+            if (price.Quoted_Status == -1)
+            {
+                <tr style="background:#cfcccc">
+                    <td>@price.SP_Product.System_Code</td>
+                    <td>@price.SP_Product.Supplier_Name</td>
+                    <td>@price.SP_Product.Item_Name</td>
+                    <td>@price.Quote_Price</td>
+                    <td>@price.Quoted_Date.ToString("yyyy-MM-dd")</td>
+                    <td >过期</td>
+                    <td></td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>@price.SP_Product.System_Code</td>
+                    <td>@price.SP_Product.Supplier_Name</td>
+                    <td>@price.SP_Product.Item_Name</td>
+                    <td>@price.Quote_Price</td>
+                    <td>@price.Quoted_Date.ToString("yyyy-MM-dd")</td>
+                    <td>最新报价</td>
+                    <td class="text-center">
+                        <a data-eid="@price.Id" class="quotePrice-edit btn btn-xs btn-success" role="button">编辑</a>
+                        <a class="quotePrice-delete btn btn-xs btn-danger" data-eid="@price.Id" role="button">删除</a>
+                    </td>
+                </tr>
+            }
+
         }
     </table>
 </div>
