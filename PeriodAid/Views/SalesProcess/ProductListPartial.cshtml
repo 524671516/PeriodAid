@@ -4,9 +4,7 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th>品牌</th>
             <th>产品名称</th>
-            <th>系统编码</th>
             <th>产品编码</th>
             <th>产品状态</th>
             <th>重量(/克)</th>
@@ -14,16 +12,13 @@
             <th>标准零售价</th>
             <th>标准供货价</th>
             <th>产品类别</th>
-            <th>条形码</th>
             <th></th>
         </tr>
 
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Brand_Name</td>
                 <td>@item.Item_Name</td>
-                <td>@item.System_Code</td>
                 <td>@item.Item_Code</td>
                 <td>@Html.ProductTypeStatus(item.Product_Status)</td>
                 <td>@item.Product_Weight</td>
@@ -31,9 +26,9 @@
                 <td>@item.Purchase_Price</td>
                 <td>@item.Supply_Price</td>
                 <td>@item.SP_ProductType.Type_Name</td>
-                <td>@item.Bar_Code</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="detail-btn btn btn-xs btn-primary" role="button" data-id="@item.Id" data-toggle="modal" data-target=".bs-example-modal-lg">详情</a>
                     <a class="delete-product btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
                 </td>
             </tr>
@@ -47,6 +42,12 @@
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="lg-modal-content">
         </div>
     </div>
 </div>
@@ -69,7 +70,6 @@
         });
         // 编辑
         $('.select-a').click(function () {
-            console.log($(this).attr('data-val'))
             $.ajax({
                 url: '/SalesProcess/EditProductInfo',
                 data: {
@@ -118,6 +118,20 @@
                     })
                 }
             });
+        })
+        // 产品详情
+        $(".detail-btn").on("click", function () {
+            $.ajax({
+                url: "/SalesProcess/ProductDetail",
+                data: {
+                    productId: $(this).attr("data-id"),
+                },
+                success: function (data) {
+                    $('#lg-modal-content').html(data)
+                    $(".bs-example-modal-lg").modal('show')
+                }
+            })
+            
         })
     })
 </script>

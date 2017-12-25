@@ -23,7 +23,7 @@
         public virtual DbSet<SP_Order> SP_Order { get; set; }
         public virtual DbSet<SP_OrderPrice> SP_OrderPrice { get; set; }
         public virtual DbSet<SP_FinanceInfo> SP_FinanceInfo { get; set; }
-        
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SP_Seller>().HasMany(m => m.SP_Client).WithRequired(m => m.SP_Seller).HasForeignKey(m => m.Seller_Id).WillCascadeOnDelete(false);
@@ -33,7 +33,7 @@
             modelBuilder.Entity<SP_ProductType>().HasMany(m => m.SP_Product).WithRequired(m => m.SP_ProductType).HasForeignKey(m => m.ProductType_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_SalesSystem).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_SalesSystem>().HasMany(m => m.SP_QuotePrice).WithRequired(m => m.SP_SalesSystem).HasForeignKey(m => m.SalesSystem_Id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<SP_Client>().HasMany(m => m.SP_Order).WithRequired(m => m.SP_Client).HasForeignKey(m => m.Client_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Contact>().HasMany(m => m.SP_Order).WithRequired(m => m.SP_Contact).HasForeignKey(m => m.Contact_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Order>().HasMany(m => m.SP_OrderPrice).WithRequired(m => m.SP_Order).HasForeignKey(m => m.Order_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_OrderPrice).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
         }
@@ -74,6 +74,9 @@
         public int Product_Status { get; set; }
 
         public int ProductType_Id { get; set; }
+
+        [StringLength(256)]
+        public string Product_Img { get; set; }
 
         public virtual SP_ProductType SP_ProductType { get; set; }
 
@@ -168,8 +171,6 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_SalesSystem> SP_SalesSystem { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SP_Order> SP_Order { get; set; }
     }
     /// <summary>
     /// 销售系统
@@ -214,6 +215,9 @@
         public int Client_Id { get; set; }
 
         public virtual SP_Client SP_Client { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SP_Order> SP_Order { get; set; }
     }
     
     /// <summary>
@@ -253,9 +257,9 @@
 
         public int Order_Status { get; set; }
 
-        public int Client_Id { get; set; }
+        public int Contact_Id { get; set; }
 
-        public virtual SP_Client SP_Client { get; set; }
+        public virtual SP_Contact SP_Contact { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_OrderPrice> SP_OrderPrice { get; set; }
@@ -294,6 +298,9 @@
 
         public virtual SP_Client SP_Client { get; set; }
     }
+    
+
+
 
     public class OrderPriceSum
     {

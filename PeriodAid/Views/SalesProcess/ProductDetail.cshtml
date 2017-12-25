@@ -1,0 +1,169 @@
+﻿@model PeriodAid.Models.SP_Product
+    <style>
+        .form-horizontal .control-label{
+            text-align:center
+        }
+        .detail-label{
+            margin-bottom:17px
+        }
+        .detail-div{
+           margin-bottom:17px
+        }
+    </style>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>产品详情</h2>
+</div>
+<div class="modal-body">
+    @using (Html.BeginForm())
+    {
+        if (ViewBag.Product.Product_Img != null)
+        {
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-4">
+                        <img src="@ViewBag.Product.Product_Img" />
+                    </div>
+                    <label class="col-md-2 control-label detail-label">供应商</label>
+                    <div class="col-md-6 detail-div">
+                        @Html.EditorFor(model => model.Supplier_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label" >产品名称</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">品牌</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Brand_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+
+                    <label class="control-label col-md-2 detail-label">零售价</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Purchase_Price, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="control-label col-md-2 detail-label">供货价</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Supply_Price, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">重量(/克)</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Product_Weight, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">箱规</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Carton_Spec, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">系统编码</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">产品编码</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Item_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">商品简称</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">条形码</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">产品状态</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.Product_Status, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">产品类别</label>
+                    <div class="col-md-2 detail-div">
+                        @Html.EditorFor(model => model.ProductType_Id, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-10 col-md-2">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-horizontal">
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">供应商</label>
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.Supplier_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">产品名称</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label">品牌</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Brand_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">零售价</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Purchase_Price, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label">供货价</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Supply_Price, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">重量(/克)</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Product_Weight, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label">箱规</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Carton_Spec, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">系统编码</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.System_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label">产品编码</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Item_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">商品简称</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Item_ShortName, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label">条形码</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Bar_Code, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">产品状态</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Product_Status, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <label class="col-md-2 control-label detail-label">产品类别</label>
+                    <div class="col-md-3 detail-div">
+                        @Html.EditorFor(model => model.ProductType_Id, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-9 col-md-2">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+</div>
+

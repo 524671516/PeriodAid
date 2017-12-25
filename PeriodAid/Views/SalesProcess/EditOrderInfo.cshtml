@@ -3,8 +3,8 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改订单信息</h2>
 </div>
-<div class="hidden" id="client-name">@ViewBag.Client.SP_Client.Client_Name</div>
-<div class="hidden" id="client-id">@ViewBag.Client.Client_Id</div>
+<div class="hidden" id="contact-name">@ViewBag.Contact.SP_Contact.Contact_Name</div>
+<div class="hidden" id="contact-id">@ViewBag.Contact.Contact_Id</div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditOrderInfo", "SalesProcess", FormMethod.Post, new { @id = "order-form" }))
     {
@@ -16,7 +16,7 @@
                 <label class="control-label col-md-2">订单日期</label>
                 <div class="col-md-9">
                     <div id="show-date">
-                        @Html.EditorFor(model => model.Order_Date, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.Order_Date, new { htmlAttributes = new { @class = "form-control date-readonly", @readonly="readonly" } })
                     </div>
                     @Html.ValidationMessageFor(model => model.Order_Date, "", new { @class = "text-danger" })
                 </div>
@@ -29,11 +29,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">经销商</label>
+                <label class="col-md-2 control-label">联系人</label>
                 <div class="col-md-9">
-                    <input id="client_input" type="text" class="span4 form-control" autocomplete="off" name="client_input" />
-                    <input type="hidden" id="ClientId" name="Client_Id" />
-                    @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
+                    <input id="contact_input" type="text" class="span4 form-control" autocomplete="off" name="contact_input" />
+                    <input type="hidden" id="ContactId" name="Contact_Id" />
+                    @Html.ValidationMessageFor(model => model.Contact_Id, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -46,19 +46,19 @@
 </div>
 <script>
     $(function () {
-        $("#client_input").val($("#client-name").html());
-        $("#ClientId").val($("#client-id").html())
+        $("#contact_input").val($("#contact-name").html());
+        $("#ContactId").val($("#contact-id").html())
         //经销商搜索
         function displayResult(item, val, text) {
             $("#ClientId").val(val);
         }
-        $('#client_input').typeahead({
+        $('#contact_input').typeahead({
             ajax: {
-                url: "/SalesProcess/QueryClient",
+                url: "/SalesProcess/QueryContact",
                 triggerLength: 1
             },
             itemSelected: displayResult,
-            display: 'Client_Name',
+            display: 'Contact_Name',
             val: 'Id'
         });
         // 修改日期格式
