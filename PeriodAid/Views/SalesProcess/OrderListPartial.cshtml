@@ -109,6 +109,6 @@
     })
     // 查看订单详情
     $(".order-btn").on("click", function () {
-        
+        $(this).attr("href", "/SalesProcess/OrderPriceList?orderId=" + $(this).attr("data-id"))
     })
 </script>

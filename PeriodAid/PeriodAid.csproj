@@ -1187,10 +1187,13 @@
     <Content Include="Views\SalesProcess\EditQuotePriceInfo.cshtml" />
     <Content Include="Views\SalesProcess\OrderList.cshtml" />
     <Content Include="Views\SalesProcess\OrderListPartial.cshtml" />
-    <Content Include="Views\SalesProcess\AddOrderPricrPartial.cshtml" />
+    <Content Include="Views\SalesProcess\AddOrderPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditOrderInfo.cshtml" />
-    <Content Include="Views\SalesProcess\OrderPriceList.cshtml" />
     <Content Include="Views\SalesProcess\ProductDetail.cshtml" />
+    <Content Include="Views\SalesProcess\OrderPriceList.cshtml" />
+    <Content Include="Views\SalesProcess\OrderPriceListPartial.cshtml" />
+    <Content Include="Views\SalesProcess\AddOrderPricePartial.cshtml" />
+    <Content Include="Views\SalesProcess\EditOrderPriceInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

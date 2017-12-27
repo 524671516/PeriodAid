@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -1039,13 +1040,13 @@ namespace PeriodAid.Controllers
             
         }
 
-        public ActionResult AddOrderPricrPartial()
+        public ActionResult AddOrderPartial()
         {
             return PartialView();
         }
         [HttpPost]
         [Seller(OperationGroup = 601)]
-        public ActionResult AddOrderPricrPartial(SP_Order model, FormCollection form)
+        public ActionResult AddOrderPartial(SP_Order model, FormCollection form)
         {
             bool Order = _db.SP_Order.Any( m => m.Order_Number == model.Order_Number);
             ModelState.Remove("Order_Date");
@@ -1124,9 +1125,18 @@ namespace PeriodAid.Controllers
         
         public ActionResult OrderPriceList(int orderId)
         {
-            var order =   from m in _db.SP_OrderPrice
-                          where m.Order_Id == orderId && m.Order_Status != -1
-                          select m;
+            var order = (from m in _db.SP_Order
+                         where m.Id == orderId
+                         select m).FirstOrDefault();
+            ViewBag.Order = order;
+            return View();
+        }
+
+        public ActionResult OrderPriceListPartial(int orderId)
+        {
+            var order = from m in _db.SP_OrderPrice
+                        where m.Order_Id == orderId && m.OrderPrice_Status != -1
+                        select m;
             ViewBag.Order = order;
 
             var order_num = (from m in _db.SP_Order
@@ -1135,7 +1145,7 @@ namespace PeriodAid.Controllers
             ViewBag.OrderNum = order_num;
 
             var Price = from m in _db.SP_OrderPrice
-                        where m.Order_Status != -1 && m.Order_Id == orderId
+                        where m.OrderPrice_Status != -1 && m.Order_Id == orderId
                         group m by m.Id into g
                         select new OrderPriceSum
                         {
@@ -1144,7 +1154,7 @@ namespace PeriodAid.Controllers
                         };
             int sumCount = 0;
             decimal sumPrice = 0;
-            foreach(var price in Price)
+            foreach (var price in Price)
             {
                 sumCount += price.SumCount;
                 var Sumprice = price.SumCount * price.SumPrice;
@@ -1153,6 +1163,118 @@ namespace PeriodAid.Controllers
             ViewBag.Count = sumCount;
             ViewBag.Price = sumPrice;
             return PartialView();
+        }
+
+        public ActionResult AddOrderPricePartial(int orderId)
+        {
+            var order = (from m in _db.SP_Order
+                         where m.Id == orderId
+                         select m).FirstOrDefault();
+            ViewBag.Order = order;
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
+        {
+            
+            ModelState.Remove("Order_Count");
+            ModelState.Remove("Order_Price");
+            if (ModelState.IsValid)
+            {
+
+                var productlist = from m in _db.SP_QuotePrice
+                                  where m.Quoted_Status != -1
+                                  select m;
+                foreach (var product in productlist)
+                {
+                    bool OrderPrice = _db.SP_OrderPrice.Any(m => m.Product_Id == product.Product_Id && m.Order_Id == model.Order_Id && m.OrderPrice_Status != -1);
+                    if (OrderPrice)
+                    {
+                        return Json(new { result = "UNAUTHORIZED" });
+                    }
+                    else
+                    {
+
+                        int order = 0;
+                        if (form["order_" + product.Id] != "")
+                            order = Convert.ToInt32(form["order_" + product.Id]);
+                        if (order == 0)
+                        {
+                        }
+                        else
+                        {
+                            var orderprice = new SP_OrderPrice();
+                            {
+                                orderprice.Order_Count = order;
+                                orderprice.Order_Price = product.Quote_Price;
+                                orderprice.Product_Id = product.Product_Id;
+                                orderprice.OrderPrice_Status = 0;
+                                orderprice.Order_Id = model.Order_Id;
+                            };
+                            _db.SP_OrderPrice.Add(orderprice);
+                        }
+                    }
+
+                }
+                _db.SaveChangesAsync();
+                return Json(new { result = "SUCCESS" });
+
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        public JsonResult AllProductAjax()
+        {
+            var product = from m in _db.SP_QuotePrice
+                          where m.Quoted_Status != -1
+                          select new { Id = m.Id, ItemName = m.SP_Product.Item_Name };
+            return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult EditOrderPriceInfo(int orderPriceId)
+        {
+            var OrderPrice = _db.SP_OrderPrice.SingleOrDefault(m => m.Id == orderPriceId);
+            var product = (from m in _db.SP_OrderPrice
+                           where m.Id == orderPriceId
+                           select m).FirstOrDefault();
+            ViewBag.Product = product;
+            return PartialView(OrderPrice);
+        }
+        [HttpPost]
+        public ActionResult EditOrderPriceInfo(SP_OrderPrice model)
+        {
+            bool Order = _db.SP_OrderPrice.Any(m => m.Order_Count == model.Order_Count && m.Order_Id == model.Order_Id && m.Product_Id == model.Product_Id && m.OrderPrice_Status != -1);
+            if (ModelState.IsValid)
+            {
+                if (Order)
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
+                }
+                else
+                {
+                    SP_OrderPrice orderPrice = new SP_OrderPrice();
+                    if (TryUpdateModel(orderPrice))
+                    {
+                        _db.Entry(orderPrice).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
+        [HttpPost]
+        public ActionResult DeleteOrderPrice(int orderPriceId)
+        {
+            var OrderPrice = _db.SP_OrderPrice.AsNoTracking().SingleOrDefault(m => m.Id == orderPriceId);
+            OrderPrice.OrderPrice_Status = -1;
+            _db.Entry(OrderPrice).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+
         }
         // 搜索
         [HttpPost]
@@ -1220,7 +1342,7 @@ namespace PeriodAid.Controllers
         public ActionResult OrderPdf(int orderId)
         {
             var product = from m in _db.SP_OrderPrice
-                          where m.Order_Status != -1 && m.Order_Id == orderId
+                          where m.OrderPrice_Status != -1 && m.Order_Id == orderId
                           select m;
             var orderNum = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
             var count = product.Count();
@@ -1368,7 +1490,7 @@ namespace PeriodAid.Controllers
                 cell.Colspan = 2;
                 table.AddCell(cell);
                 var Price = from m in _db.SP_OrderPrice
-                            where m.Order_Status != -1 && m.Order_Id == orderId
+                            where m.OrderPrice_Status != -1 && m.Order_Id == orderId
                             group m by m.Id into g
                             select new OrderPriceSum
                             {

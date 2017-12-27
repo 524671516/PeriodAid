@@ -5,7 +5,7 @@
 </div>
 
 <div class="modal-body">
-    @using (Html.BeginForm("AddOrderPricrPartial", "SalesProcess", FormMethod.Post, new { @id = "add-order-form" }))
+    @using (Html.BeginForm("AddOrderPartial", "SalesProcess", FormMethod.Post, new { @id = "add-order-form" }))
     {
         @Html.AntiForgeryToken()
         <div class="form-horizontal">

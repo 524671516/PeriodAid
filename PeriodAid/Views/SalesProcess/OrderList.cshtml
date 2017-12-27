@@ -12,12 +12,7 @@
     </tr>
 </table>
 <a class="btn btn-info btn-sm" id="add-order" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增订单</a>
-@*<form action="/SalesProcess/UploadOrder" method="post" enctype="multipart/form-data" id="up-file-form">
-    <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:29px;position: relative;top: -8px;padding-left:5px" />
-    <input type="file" id="file-name" name="file-name" class="hidden" />
-    <a class="btn btn-info btn-sm" id="add-order" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增订单</a>
-    <input type="submit" class="btn btn-danger btn-sm" id="file-form-sub"  style="margin-top:-18px" value="提交" />
-</form>*@
+
 <ol class="breadcrumb">
     当前位置：
     <li class="active">订单管理</li>
@@ -27,32 +22,7 @@
 @section scripts{
     <script>
         $(function () {
-            // 上传订单
-            //$("#file-form-sub").attr("disabled", true)
-            //$('#file-name').change(function () {
-            //    $("#file-form-sub").removeAttr("disabled")
-            //    if ($(this).val() != "") {
-            //        var file = $("#file-name").val();
-            //        var fileName = file.lastIndexOf('\\')
-            //        strName = file.substring(fileName + 1)
-            //        $('#add-order').text(strName)
-            //        var Name = strName.substring(0, strName.indexOf(".")).toUpperCase()
-            //    } else {
-            //        $('#add-order').text("选择文件")
-            //    }
-            //})
-            //$('#add-order').on('click', function () {
-            //    $('#file-name').trigger('click')
-            //})
-            //window.moment = Kalendae.moment;
-            //var k4 = new Kalendae.Input('file-date', {
-            //    months: 1,
-            //    mode: 'single',
-            //    titleFormat: "MM月, YYYY年",
-            //    format: "YYYY-MM-DD"
-            //})
-
-             //
+            
             $.ajax({
                 url: "/SalesProcess/OrderListPartial",
                 data: {
@@ -68,7 +38,7 @@
          //添加
         $("#add-order").on("click", function () {
             $.ajax({
-                url: '/SalesProcess/AddOrderPricrPartial',
+                url: '/SalesProcess/AddOrderPartial',
                 data: {
                 },
                 success: function (data) {
