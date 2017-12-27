@@ -1189,7 +1189,7 @@
     <Content Include="Views\SalesProcess\OrderListPartial.cshtml" />
     <Content Include="Views\SalesProcess\AddOrderPricrPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditOrderInfo.cshtml" />
-    <Content Include="Views\SalesProcess\ViewOrder.cshtml" />
+    <Content Include="Views\SalesProcess\OrderPriceList.cshtml" />
     <Content Include="Views\SalesProcess\ProductDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>

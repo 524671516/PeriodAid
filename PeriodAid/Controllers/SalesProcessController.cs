@@ -1122,7 +1122,7 @@ namespace PeriodAid.Controllers
 
         }
         
-        public ActionResult ViewOrder(int orderId)
+        public ActionResult OrderPriceList(int orderId)
         {
             var order =   from m in _db.SP_OrderPrice
                           where m.Order_Id == orderId && m.Order_Status != -1
