@@ -20,8 +20,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">订单号</label>
                 <div class="col-md-9">
-                    @Html.EditorFor(model => model.Order_Number, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Order_Number, "", new { @class = "text-danger" })
+                    <input type="text" class="span4 form-control" readonly="readonly" value="@ViewBag.ordernumber" name="order_number"/>
                 </div>
             </div>
             <div class="form-group">

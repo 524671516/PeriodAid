@@ -1038,9 +1038,24 @@ namespace PeriodAid.Controllers
             
             
         }
-
+        
         public ActionResult AddOrderPricrPartial()
         {
+            Random ran = new Random();
+            int RandKey = ran.Next(01,99);
+            var ordernumber = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString();
+            var OrderNum=int.Parse(DateTime.Now.Hour.ToString()+DateTime.Now.Minute.ToString()+ RandKey);
+            var strNum = OrderNum.ToString();
+            if (strNum.Length == 1)
+            {
+                strNum = "00" + strNum;
+            }
+            else if (strNum.Length == 2)
+            {
+                strNum = "0" + strNum;
+            }
+            ordernumber += strNum;
+            ViewBag.ordernumber = ordernumber;
             return PartialView();
         }
         [HttpPost]
