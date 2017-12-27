@@ -510,6 +510,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult SalesList(int? clientId)
         {
+            ViewBag.clientId = clientId;
             return View();
         }
 
@@ -1657,6 +1658,117 @@ namespace PeriodAid.Controllers
 
         }
 
+        // 渠道订单导入
+        public ActionResult SalesSystemOrder(FormCollection form,int clientId)
+        {
+            var file = Request.Files[0];
+            var name = file.FileName;
+            var filename = DateTime.Now.Ticks + ".csv";
+            AliOSSUtilities util = new AliOSSUtilities();
+            util.PutObject(file.InputStream, "ExcelUpload/" + filename);
+            StreamReader reader = new StreamReader(util.GetObject("ExcelUpload/" + filename), System.Text.Encoding.Default);
+            CsvReader csv_reader = new CsvReader(reader);
+            string[] OrderContent = new string[5];
+            for (int i = 0; i < 5; i++) {
+                while (csv_reader.Read()) {
+                    string content = csv_reader.GetField<string>(1);
+                    if (content == "产品代码")
+                    {
+                        break;
+                    }
+                    OrderContent[i] = content;
+                    break;
+                }
+            }
+            var OrderContent0 = OrderContent[0];
+            var salesSystem = _db.SP_SalesSystem.SingleOrDefault(m => m.System_Name == OrderContent0);
+            if (salesSystem == null)
+            {
+                SP_SalesSystem NewSales = new SP_SalesSystem();
+                NewSales.System_Name = OrderContent0;
+                NewSales.System_Address = "";
+                NewSales.System_Phone = "";
+                NewSales.Client_Id = clientId;
+                NewSales.System_Status = 0;
+                _db.SP_SalesSystem.Add(NewSales);
+                _db.SaveChanges();
+            }
+            var OrderContent1 = OrderContent[3];
+            var contact = _db.SP_Contact.SingleOrDefault(m => m.Contact_Name == OrderContent1 && m.Client_Id == clientId);
+            if (contact == null)
+            {
+                SP_Contact NewContact = new SP_Contact();
+                NewContact.Contact_Name = OrderContent1;
+                NewContact.Contact_Mobile = OrderContent[4];
+                NewContact.Client_Id = clientId;
+                NewContact.Contact_Status = 0;
+                _db.SP_Contact.Add(NewContact);
+                _db.SaveChanges();
+            }
+            while (csv_reader.Read())
+            {
+                string data = csv_reader.GetField<string>(1);
+                if (data == "产品代码")
+                {
+                    continue;
+                }
+                else if (data == "") {
+                    break;
+                }
+                var today = DateTime.Now.Date;
+                var NewContact = _db.SP_Contact.SingleOrDefault(m => m.Contact_Name == OrderContent1 && m.Client_Id == clientId);
+                var order = _db.SP_Order.SingleOrDefault(m => m.Order_Date == today && m.Contact_Id == NewContact.Id);
+                if (order == null)
+                {
+                    SP_Order NewOrder = new SP_Order();
+                    NewOrder.Order_Number = DateTime.Now.Date.ToString();
+                    NewOrder.Order_Date = DateTime.Now.Date;
+                    NewOrder.Order_Status = 0;
+                    NewOrder.Contact_Id = NewContact.Id;
+                    _db.SP_Order.Add(NewOrder);
+                    _db.SaveChanges();
+                }
+                else {
+                    order.Order_Number = DateTime.Now.Date.ToString();
+                    order.Order_Date = DateTime.Now.Date;
+                    order.Order_Status = 0;
+                    order.Contact_Id = NewContact.Id;
+                    _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                var NewSalesSystem = _db.SP_SalesSystem.SingleOrDefault(m => m.System_Name == OrderContent0);
+                var ProductPrice = _db.SP_QuotePrice.SingleOrDefault(m => m.SP_Product.Item_Code == data && m.SalesSystem_Id == NewSalesSystem.Id && m.Quoted_Status != -1);
+                if (ProductPrice == null) {
+                    return Content("当前渠道报价不存在或与表中报价不一致！");
+                }
+                var Neworder = _db.SP_Order.SingleOrDefault(m => m.Order_Date == today && m.Contact_Id == NewContact.Id);
+                var NewProductPrice = _db.SP_QuotePrice.SingleOrDefault(m => m.SP_Product.Item_Code == data && m.SalesSystem_Id == NewSalesSystem.Id && m.Quoted_Status != -1);
+                var orderPrice = _db.SP_OrderPrice.SingleOrDefault(m => m.Order_Id == Neworder.Id&&m.Product_Id == ProductPrice.SP_Product.Id && m.Order_Status != -1);
+                string count = csv_reader.GetField<string>(5);
+                if (orderPrice == null)
+                {
+                    SP_OrderPrice NewOrderPrice = new SP_OrderPrice();
+                    NewOrderPrice.Order_Price = NewProductPrice.Quote_Price;
+                    NewOrderPrice.Order_Status = 0;
+                    NewOrderPrice.Order_Id = Neworder.Id;
+                    NewOrderPrice.Product_Id = NewProductPrice.Product_Id;
+                    NewOrderPrice.Order_Count = int.Parse(count);
+                    _db.SP_OrderPrice.Add(NewOrderPrice);
+                    _db.SaveChanges();
+                }
+                else {
+                    orderPrice.Order_Price = NewProductPrice.Quote_Price;
+                    orderPrice.Order_Status = 0;
+                    orderPrice.Order_Id = Neworder.Id;
+                    orderPrice.Product_Id = NewProductPrice.Product_Id;
+                    orderPrice.Order_Count = int.Parse(count);
+                    _db.Entry(orderPrice).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+
+            }
+            return Content("success");
+        }
 
         // 上传订单
         //合并
