@@ -25,7 +25,7 @@
                 <td>@order.SP_Contact.SP_Client.Client_Name</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="order-btn btn btn-xs btn-primary"role="button" data-id="@order.Id" data-toggle="modal" data-target=".bs-example-modal-lg">详情</a>
+                    <a class="order-btn btn btn-xs btn-primary"role="button" data-id="@order.Id">详情</a>
                     <a class="delete-order btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除记录</a>
                 </td>
             </tr>
@@ -38,12 +38,6 @@
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="modal-content">
-        </div>
-    </div>
-</div>
-<div class="modal fade bs-example-modal-lg" id="lg-myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" id="lg-modal-content">
         </div>
     </div>
 </div>
@@ -115,15 +109,6 @@
     })
     // 查看订单详情
     $(".order-btn").on("click", function () {
-        $.ajax({
-            url: "/SalesProcess/ViewOrder",
-            data:{
-                orderId: $(this).attr("data-id")
-            },
-            success:function(data){
-                $('#lg-modal-content').html(data)
-                $("#lg-myModal").modal('show')
-            }
-        })
+        
     })
 </script>
