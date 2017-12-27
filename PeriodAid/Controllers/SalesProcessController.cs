@@ -1136,7 +1136,7 @@ namespace PeriodAid.Controllers
 
         }
         
-        public ActionResult OrderPriceList(int orderId)
+        public ActionResult OrderPriceList(int orderId,int clientId)
         {
             var order = (from m in _db.SP_Order
                          where m.Id == orderId
@@ -1239,10 +1239,10 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public JsonResult AllProductAjax()
+        public JsonResult AllProductAjax(int clientId)
         {
             var product = from m in _db.SP_QuotePrice
-                          where m.Quoted_Status != -1
+                          where m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId
                           select new { Id = m.Id, ItemName = m.SP_Product.Item_Name };
             return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
         }

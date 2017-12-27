@@ -25,7 +25,7 @@
                 <td>@order.SP_Contact.SP_Client.Client_Name</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="order-btn btn btn-xs btn-primary"role="button" data-id="@order.Id">详情</a>
+                    <a class="order-btn btn btn-xs btn-primary"role="button" data-id="@order.Id" data-cid="@order.SP_Contact.Client_Id">详情</a>
                     <a class="delete-order btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除记录</a>
                 </td>
             </tr>
@@ -109,6 +109,6 @@
     })
     // 查看订单详情
     $(".order-btn").on("click", function () {
-        $(this).attr("href", "/SalesProcess/OrderPriceList?orderId=" + $(this).attr("data-id"))
+        $(this).attr("href", "/SalesProcess/OrderPriceList?orderId=" + $(this).attr("data-id") + "&clientId=" + $(this).attr("data-cid"))
     })
 </script>
