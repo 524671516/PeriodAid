@@ -1,64 +1,55 @@
-﻿<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h2>订单详情</h2>
-    <h4 class="text-center">订单号：@ViewBag.OrderNum.Order_Number</h4>
-    <table class="table">
-        <tr>
-            <th style="width:15%">产品名称</th>
-            <th style="width:15%">单价</th>
-            <th style="width:15%">箱规</th>
-            <th style="width:15%">箱数</th>
-            <th style="width:15%">订货量</th>
-            <th style="width:15%">金额</th>
-        </tr>
-        @foreach (var order in ViewBag.Order)
-        {
-            <tr>
-                <td>@order.SP_Product.Item_Name</td>
-                <td>@order.Order_Price</td>
-                @if (order.SP_Product.Carton_Spec == 0)
-                {
-                    <td>暂无箱规</td>
-                    <td>暂无箱规</td>
+﻿@{
+    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+}
+<div class="h3 text-center">订单号:@ViewBag.Order.Order_Number</div>
+<a class="btn btn-info btn-sm" id="add-orderPrice" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增订单产品</a>
+<ol class="breadcrumb">
+    当前位置：
+    <li class="active">订单详情</li>
+    <li><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
+</ol>
+<a class="btn btn-danger btn-sm float-right" style="margin-top:-29px" role="button" id="price_btn">生成审批单</a>
+<div id="orderPrice_list_content"></div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/SalesProcess/OrderPriceListPartial",
+                data: {
+                    orderId: getUrlParam("orderId")
+                },
+                success: function (data) {
+                    $("#orderPrice_list_content").html(data)
                 }
-                else
-                {
-                    <td>@order.SP_Product.Carton_Spec</td>
-                    <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
+            })
+        })
+        // 新增
+        $("#add-orderPrice").on("click", function () {
+            $.ajax({
+                url: '/SalesProcess/AddOrderPricePartial',
+                data: {
+                    orderId: getUrlParam("orderId")
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
                 }
-                <td>@order.Order_Count</td>
-                <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
-            </tr>
-        }
-        <tr>
-            <td>共计：</td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
-            <td>@ViewBag.Count</td>
-            <td>@ViewBag.Price</td>
-        </tr>  
-    </table>
-    
-    <button type="button" class="btn btn-danger close-order" data-dismiss="modal" data-id="@ViewBag.OrderNum.Id">生成审批单</button>
-</div>
-<script>
-    $(function () {
-        $(".close-order").on("click", function () {
+            })
+        })
+        // 生成PDF
+        $("#price_btn").on("click", function () {
             $.ajax({
                 url: "/SalesProcess/OrderPdf",
                 type:"post",
-                data:{
-                    orderId:$(this).attr("data-id")
+                data: {
+                    orderId: getUrlParam("orderId")
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        alert("下载成功")
-                    } else {
-                        errorAlert("ERROR")
+                        alert("打印成功")
                     }
                 }
             })
         })
-    })
-</script>
+    </script>
+    }

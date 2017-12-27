@@ -1,0 +1,100 @@
+﻿@model PeriodAid.Models.SP_OrderPrice
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>修改订单产品</h2>
+</div>
+<div class="hidden" id="product-name">@ViewBag.Product.SP_Product.Item_Name</div>
+<div class="hidden" id="product-id">@ViewBag.Product.Product_Id</div>
+<div class="hidden" id="order-name">@ViewBag.Product.SP_Order.Order_Number</div>
+<div class="hidden" id="order-id">@ViewBag.Product.Order_Id</div>
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("EditOrderPriceInfo", "SalesProcess", FormMethod.Post, new { @id = "orderPrice-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            <div class="form-group">
+                <label class="col-md-2 control-label">订单号</label>
+                <div class="col-md-9">
+                    <input id="order_input" type="text" class="span4 form-control" autocomplete="off" readonly="readonly" name="order_input" />
+                    <input type="hidden" id="OrderId" name="Order_Id" />
+                    @Html.ValidationMessageFor(model => model.Order_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">产品名称</label>
+                <div class="col-md-9">
+                    <input id="product_input" type="text" class="span4 form-control" autocomplete="off" readonly="readonly" name="product_input" />
+                    <input type="hidden" id="ProductId" name="Product_Id" />
+                    @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">单价</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Order_Price, new { htmlAttributes = new { @class = "form-control",@readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.Order_Price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">订货量</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Order_Count, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Order_Count, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+<script>
+    $(function () {
+        $("#product_input").val($("#product-name").html())
+        $("#ProductId").val($("#product-id").html())
+        $("#order_input").val($("#order-name").html())
+        $("#OrderId").val($("#order-id").html())
+        $("#save-btn").on("click", function () {
+            $("#orderPrice-form").submit();
+        })
+        $("#orderPrice-form").validate({
+            debug: true,
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert('保存成功')
+                        $("#myModal").modal('hide');
+                        $.ajax({
+                            url: "/SalesProcess/OrderPriceListPartial",
+                            data: {
+                                orderId: getUrlParam("orderId")
+                            },
+                            success: function (data) {
+                                $("#orderPrice_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        });
+                    } else if (data.result == "UNAUTHORIZED") {
+                        errorAlert('信息未修改')
+                    } else if (data.result == "FAIL") {
+                        errorAlert('保存失败')
+                    } else {
+                        errorAlert(data.errmsg);
+                    }
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                $("#save-btn").removeClass("disabled");
+            }
+        });
+    })
+</script>

@@ -1,0 +1,101 @@
+﻿@model PeriodAid.Models.SP_OrderPrice
+<table class="table">
+    <tr>
+        <th style="width:15%">产品名称</th>
+        <th style="width:15%">单价</th>
+        <th style="width:10%">箱规</th>
+        <th style="width:15%">箱数</th>
+        <th style="width:15%">订货量</th>
+        <th style="width:15%">金额</th>
+        <th style="width:15%"></th>
+    </tr>
+    @foreach (var order in ViewBag.Order)
+    {
+        <tr>
+            <td>@order.SP_Product.Item_Name</td>
+            <td>@order.Order_Price</td>
+            @if (order.SP_Product.Carton_Spec == 0)
+                {
+                <td>暂无箱规</td>
+                <td>暂无箱规</td>
+            }
+            else
+            {
+                <td>@order.SP_Product.Carton_Spec</td>
+                <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
+            }
+            <td>@order.Order_Count</td>
+            <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
+            <td>
+                <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
+                <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除记录</a>
+            </td>
+        </tr>
+    }
+    <tr>
+        <td>共计：</td>
+        <td>--</td>
+        <td>--</td>
+        <td>--</td>
+        <td>@ViewBag.Count</td>
+        <td>@ViewBag.Price</td>
+        <td></td>
+    </tr>
+</table>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        // 编辑
+        $(".select-a").on("click", function () {
+            $.ajax({
+                url: '/SalesProcess/EditOrderPriceInfo',
+                data: {
+                    orderPriceId: $(this).attr('data-val'),
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+
+                }
+            })
+        })
+        // 删除
+        $(".delete-orderPrice").on("click", function () {
+            var O_id = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/SalesProcess/DeleteOrderPrice",
+                        type: "post",
+                        data: {
+                            orderPriceId: O_id,
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                $.ajax({
+                                    url: "/SalesProcess/OrderPriceListPartial",
+                                    data: {
+                                        orderId: getUrlParam("orderId")
+                                    },
+                                    success: function (data) {
+                                        $("#orderPrice_list_content").html(data)
+                                        $('.modal-backdrop.in').remove()
+                                        $('body').removeClass('modal-open')
+                                    }
+                                });
+                                alert("删除成功")
+                            } else {
+                                errorAlert(data.errmsg)
+                            }
+                        }
+                    })
+                }
+            });
+        })
+    })
+</script>
