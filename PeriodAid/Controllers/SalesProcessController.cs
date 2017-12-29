@@ -962,7 +962,7 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 703)]
         public ActionResult EditSellerInfo(SP_Seller model)
         {
-            bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type);
+            bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type && m.Department_Id == model.Department_Id && m.Manager_Id == model.Manager_Id);
             ModelState.Remove("User_Name");
             ModelState.Remove("Seller_Mobile");
             if (ModelState.IsValid)
@@ -976,8 +976,10 @@ namespace PeriodAid.Controllers
                     SP_Seller seller = new SP_Seller();
                     if (TryUpdateModel(seller))
                     {
+
                         _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
                         _db.SaveChanges();
+
                         return Json(new { result = "SUCCESS" });
                     }
                 }
