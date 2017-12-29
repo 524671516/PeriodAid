@@ -144,6 +144,8 @@
 
         public int Department_Id { get; set; }
 
+        public int Manager_Id { get; set; }
+
         public virtual SP_Department SP_Department { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
