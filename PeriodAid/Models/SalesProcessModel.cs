@@ -36,6 +36,7 @@
             modelBuilder.Entity<SP_Contact>().HasMany(m => m.SP_Order).WithRequired(m => m.SP_Contact).HasForeignKey(m => m.Contact_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Order>().HasMany(m => m.SP_OrderPrice).WithRequired(m => m.SP_Order).HasForeignKey(m => m.Order_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SP_Product>().HasMany(m => m.SP_OrderPrice).WithRequired(m => m.SP_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<SP_Department>().HasMany(m => m.SP_Seller).WithRequired(m => m.SP_Department).HasForeignKey(m => m.Department_Id).WillCascadeOnDelete(false);
         }
     }
 
@@ -116,6 +117,9 @@
         public string Department_Name { get; set; }
 
         public int Status { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SP_Seller> SP_Seller { get; set; }
     }
     /// <summary>
     /// 业务员
@@ -137,6 +141,10 @@
         public int Seller_Type { get; set; }
 
         public int Seller_Status { get; set; }
+
+        public int Department_Id { get; set; }
+
+        public virtual SP_Department SP_Department { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SP_Client> SP_Client { get; set; }

@@ -1245,7 +1245,7 @@ namespace PeriodAid.Controllers
         {
             var product = from m in _db.SP_QuotePrice
                           where m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId
-                          select new { Id = m.Id, ItemName = m.SP_Product.Item_Name };
+                          select new { Id = m.Id, ItemName =m.SP_SalesSystem.System_Name+"-"+ m.SP_Product.Item_Name };
             return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
         }
 
@@ -1365,7 +1365,7 @@ namespace PeriodAid.Controllers
             try
             {
                 // 创建文档
-                PdfWriter.GetInstance(document, new FileStream(@"d:\Create.pdf", FileMode.Create));
+                PdfWriter.GetInstance(document, new FileStream(@"C:\Users\Tork\Downloads\Create.pdf", FileMode.Append));
                 BaseFont setFont = BaseFont.CreateFont(@"C:\Windows\Fonts\simfang.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
                 Font font = new Font(setFont, 16);
                 Font font1 = new Font(setFont, 12);
