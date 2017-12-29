@@ -3,6 +3,10 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改业务员信息</h2>
 </div>
+<div id="manager-name" class="hidden">@ViewBag.Seller.Seller_Name</div>
+<div id="manager-id" class="hidden">@ViewBag.Seller.Id</div>
+<div id="department-name" class="hidden">@ViewBag.Seller.SP_Department.Department_Name</div>
+<div id="department-id" class="hidden">@ViewBag.Seller.Department_Id</div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("EditSellerInfo", "SalesProcess", FormMethod.Post, new { @id = "seller-form" }))
     {
@@ -38,6 +42,42 @@
                     @Html.ValidationMessageFor(model => model.Seller_Type, "", new { @class = "text-danger" })
                 </div>
             </div>
+            @if (ViewBag.Seller.Seller_Type == 4)
+            {
+                <div class="form-group" id="manager_select">
+                    <label class="col-md-2 control-label">负责人</label>
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.Manager_Id, ViewBag.Manager as SelectList, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Manager_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">部门</label>
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.Department_Id, ViewBag.Department as SelectList, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Department_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            else if (ViewBag.Seller.Seller_Type == 3)
+            {
+                <div class="form-group">
+                    <label class="col-md-2 control-label">负责人</label>
+                    <div class="col-md-10">
+                        <input id="manager_input" type="text" class="span4 form-control" autocomplete="off" name="manager_input" readonly="readonly" />
+                        <input type="hidden" id="ManagerId" name="Manager_Id" />
+                        @Html.ValidationMessageFor(model => model.Manager_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">部门</label>
+                    <div class="col-md-10">
+                        <input id="department_input" type="text" class="span4 form-control" autocomplete="off" name="department_input" readonly="readonly" />
+                        <input type="hidden" id="DepartmentId" name="Department_Id" />
+                        @Html.ValidationMessageFor(model => model.Department_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
@@ -48,6 +88,12 @@
     }
 </div>
 <script>
+    $(function () {
+        $("#manager_input").val($("#manager-name").html())
+        $("#ManagerId").val($("#manager-id").html())
+        $("#department_input").val($("#department-name").html())
+        $("#DepartmentId").val($("#department-id").html())
+    })
     $("#save-btn").on("click", function () {
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")

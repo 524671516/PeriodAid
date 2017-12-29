@@ -934,7 +934,7 @@ namespace PeriodAid.Controllers
                         _db.SP_Seller.Add(seller);
                         _db.SaveChanges();
                         var newseller = _db.SP_Seller.SingleOrDefault(m => m.Id == seller.Id);
-                        newseller.Manager_Id = newseller.Id;
+                        newseller.Manager_Id = newseller.Id.ToString();
                         _db.Entry(newseller).State = System.Data.Entity.EntityState.Modified;
                         _db.SaveChanges();
                     }
@@ -963,6 +963,7 @@ namespace PeriodAid.Controllers
         {
             bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type);
             ModelState.Remove("User_Name");
+            ModelState.Remove("Seller_Mobile");
             if (ModelState.IsValid)
             {
                 if (Seller)

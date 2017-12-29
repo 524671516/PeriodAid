@@ -142,7 +142,7 @@
 
         public int Seller_Status { get; set; }
 
-        public int Manager_Id { get; set; }
+        public string Manager_Id { get; set; }
 
         public int Department_Id { get; set; }
 
