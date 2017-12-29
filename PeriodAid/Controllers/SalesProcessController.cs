@@ -828,7 +828,7 @@ namespace PeriodAid.Controllers
             int _page = page ?? 1;
             if (query != "")
             {
-                if (seller.Seller_Type != 4)
+                if (seller.Seller_Type != SellerType.ADMINISTARTOR)
                 {
                     var sellerList = (from m in _db.SP_Seller
                                       where m.Seller_Status != -1 && m.Manager_Id == seller.Manager_Id && m.Seller_Name.Contains(query) || m.Seller_Mobile.Contains(query)
@@ -847,7 +847,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                if (seller.Seller_Type != 4)
+                if (seller.Seller_Type != SellerType.ADMINISTARTOR)
                 {
                     var sellerList = (from m in _db.SP_Seller
                                       where m.Seller_Status != -1 && m.Manager_Id == seller.Manager_Id
