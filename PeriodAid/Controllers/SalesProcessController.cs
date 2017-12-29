@@ -931,10 +931,11 @@ namespace PeriodAid.Controllers
                     }
                     else
                     {
+                        seller.Manager_Id = "NULL";
                         _db.SP_Seller.Add(seller);
                         _db.SaveChanges();
                         var newseller = _db.SP_Seller.SingleOrDefault(m => m.Id == seller.Id);
-                        newseller.Manager_Id = newseller.Id;
+                        newseller.Manager_Id = newseller.Id.ToString();
                         _db.Entry(newseller).State = System.Data.Entity.EntityState.Modified;
                         _db.SaveChanges();
                     }
