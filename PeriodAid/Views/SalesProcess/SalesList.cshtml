@@ -16,20 +16,19 @@
 <ol class="breadcrumb">
     当前位置：
     <li class="active">渠道管理</li>
-    <li><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
+    <li class="backBtn"><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
 </ol>
-<input id="clientId" value="@ViewBag.clientId" hidden/>
-<form method="post" enctype="multipart/form-data" id="up-file-form">
-    <input type="file" id="file-name" name="file-name" class="hidden" />
-    <a href="javascript:;" id="upload" style="margin-left:0">选择文件</a>
-    <input type="submit" class="btn btn-danger" id="file-form-sub" style="padding:3px 12px;width:auto" value="导入订货单" />
-</form>
 <div id="sales_list_content">
     <div class="h2 hidden">暂无权限,请联系管理员</div>
 </div>
 @section scripts{
 <script>
     $(function () {
+        if (getUrlParam("clientId") == null) {
+            $(".backBtn").hide()
+        } else {
+            $(".backBtn").show()
+        }
         $.ajax({
             url: "/SalesProcess/SalesListPartial",
             data: {
@@ -45,9 +44,6 @@
                 }
             }
         });
-        if ($("#clientId").val() == "") {
-            $("#up-file-form").remove();
-        }
         var salesAction = "/SalesProcess/SalesSystemOrder?clientId=" + $("#clientId").val();
         $("#up-file-form").attr("action", salesAction);
     })
