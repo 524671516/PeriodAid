@@ -824,22 +824,46 @@ namespace PeriodAid.Controllers
 
         public ActionResult SellerListPartial(int? page,string query)
         {
+            var seller = getSeller(User.Identity.Name);
             int _page = page ?? 1;
             if (query != "")
             {
-                var sellerList = (from m in _db.SP_Seller
-                                  where m.Seller_Status != -1 && m.Seller_Name.Contains(query) || m.Seller_Mobile.Contains(query)
-                                  orderby m.Id
-                                  select m).ToPagedList(_page, 15);
-                return PartialView(sellerList);
+                if (seller.Seller_Type != 4)
+                {
+                    var sellerList = (from m in _db.SP_Seller
+                                      where m.Seller_Status != -1 && m.Manager_Id == seller.Manager_Id && m.Seller_Name.Contains(query) || m.Seller_Mobile.Contains(query)
+                                      orderby m.Id
+                                      select m).ToPagedList(_page, 15);
+                    return PartialView(sellerList);
+                }
+                else {
+
+                    var sellerList = (from m in _db.SP_Seller
+                                      where m.Seller_Status != -1 && m.Seller_Name.Contains(query) || m.Seller_Mobile.Contains(query)
+                                      orderby m.Id
+                                      select m).ToPagedList(_page, 15);
+                    return PartialView(sellerList);
+                }
             }
             else
             {
-                var SearchResult = (from m in _db.SP_Seller
-                                    where m.Seller_Status != -1
-                                    orderby m.Id ascending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (seller.Seller_Type != 4)
+                {
+                    var sellerList = (from m in _db.SP_Seller
+                                      where m.Seller_Status != -1 && m.Manager_Id == seller.Manager_Id
+                                      orderby m.Id
+                                      select m).ToPagedList(_page, 15);
+                    return PartialView(sellerList);
+                }
+                else
+                {
+
+                    var sellerList = (from m in _db.SP_Seller
+                                      where m.Seller_Status != -1
+                                      orderby m.Id
+                                      select m).ToPagedList(_page, 15);
+                    return PartialView(sellerList);
+                }
             }
         }
 
