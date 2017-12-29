@@ -931,7 +931,7 @@ namespace PeriodAid.Controllers
                     }
                     else
                     {
-                        seller.Manager_Id = "NULL";
+                        seller.Manager_Id = null;
                         _db.SP_Seller.Add(seller);
                         _db.SaveChanges();
                         var newseller = _db.SP_Seller.SingleOrDefault(m => m.Id == seller.Id);
