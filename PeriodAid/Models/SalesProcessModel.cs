@@ -310,18 +310,13 @@
         public virtual SP_Client SP_Client { get; set; }
     }
     
-
-
-
     public class OrderPriceSum
     {
         public int SumCount { get; set; }
 
         public decimal SumPrice { get; set; }
     }
-
-
-
+    
     public static class SellerType
     {
         /// <summary>
@@ -347,4 +342,5 @@
 
     }
     
+
 }

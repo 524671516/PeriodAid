@@ -50,7 +50,7 @@
         // 删除
         $(".delete-contact").on("click", function () {
             var C_id = $(this).attr("data-eid");
-            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+            confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
                         url: "/SalesProcess/DeleteContact",

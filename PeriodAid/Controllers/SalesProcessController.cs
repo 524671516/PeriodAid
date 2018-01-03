@@ -872,10 +872,10 @@ namespace PeriodAid.Controllers
             var seller = getSeller(User.Identity.Name);
             ViewBag.Seller = seller;
             List<SelectListItem> sellerType = new List<SelectListItem>();
-            sellerType.Add(new SelectListItem() { Text = "业务员", Value = SellerType.SELLER.ToString() });
-            sellerType.Add(new SelectListItem() { Text = "产品部", Value = SellerType.PRODUCTDEPARTMENT.ToString() });
-            sellerType.Add(new SelectListItem() { Text = "财务部", Value = SellerType.FINANCIALDEPARTMENT.ToString() });
-            sellerType.Add(new SelectListItem() { Text = "业务主管", Value = SellerType.SELLERADMIN.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "普通", Value = SellerType.SELLER.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "产品操作", Value = SellerType.PRODUCTDEPARTMENT.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "财务审核", Value = SellerType.FINANCIALDEPARTMENT.ToString() });
+            sellerType.Add(new SelectListItem() { Text = "部门主管", Value = SellerType.SELLERADMIN.ToString() });
             sellerType.Add(new SelectListItem() { Text = "管理员", Value = SellerType.ADMINISTARTOR.ToString() });
             ViewBag.SellerType = new SelectList(sellerType, "Value", "Text");
             List<SelectListItem> managerlist = new List<SelectListItem>();
@@ -973,14 +973,24 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
+                    
                     SP_Seller seller = new SP_Seller();
                     if (TryUpdateModel(seller))
                     {
-
-                        _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-
+                        if (model.Seller_Type == SellerType.SELLER || model.Seller_Type == SellerType.FINANCIALDEPARTMENT || model.Seller_Type == SellerType.PRODUCTDEPARTMENT)
+                        {
+                            _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                            _db.SaveChanges();
+                        }
+                        else
+                        {
+                            seller.Manager_Id = model.Id.ToString();
+                            _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
+                            _db.SaveChanges();
+                        }
                         return Json(new { result = "SUCCESS" });
+
+
                     }
                 }
             }

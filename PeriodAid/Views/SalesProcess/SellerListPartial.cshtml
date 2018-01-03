@@ -4,7 +4,7 @@
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
             <th style="width:15%;">Id</th>
-            <th style="width:15%;">类型</th>
+            <th style="width:15%;">权限</th>
             <th style="width:20%;">姓名</th>
             <th style="width:20%;">手机号</th>
             <th style="width:30%;"></th>
@@ -16,9 +16,9 @@
                 <td>@Html.SellerType(item.Seller_Type)</td>
                 <td>@item.Seller_Name</td>
                 <td>@item.Seller_Mobile</td>
-                <td>
+                <td style="text-align:center">
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="delete-seller btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除业务员</a>
+                    <a class="delete-seller btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除</a>
                 </td>
             </tr>
         }
@@ -69,7 +69,7 @@
         // 删除
         $(".delete-seller").on("click", function () {
             var C_id = $(this).attr("data-eid");
-            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+            confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
                         url: "/SalesProcess/DeleteSeller",

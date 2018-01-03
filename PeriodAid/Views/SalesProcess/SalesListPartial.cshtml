@@ -16,7 +16,7 @@
             <td>@sales.System_Phone</td>
             <td>@sales.System_Address</td>
             <td>@sales.SP_Client.Client_Name</td>
-            <td>
+            <td style="text-align:center">
                 <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
                 <a class="quoted-info btn btn-xs btn-primary" data-eid="@sales.Id" role="button">报价信息</a>
                 <a class="delete-sales btn btn-xs btn-danger" data-eid="@sales.Id" role="button">删除</a>
@@ -48,7 +48,7 @@
     // 删除
     $(".delete-sales").on("click", function () {
         var S_id = $(this).attr("data-eid");
-        confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+        confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
             if (isConfirm) {
                 $.ajax({
                     url: "/SalesProcess/DeleteSales",
