@@ -39,7 +39,9 @@
             <div class="form-group">
                 <label class="control-label col-md-2">添加产品</label>
                 <div class="col-md-7">
-                    <select id="productlist" class="form-control" name="productlist"></select>
+                    <input id="product_input" type="text" class="span4 form-control" autocomplete="off" name="product_input" />
+                    <input type="hidden" id="ProductId" name="Product_Id" />
+                    @*<select id="productlist" class="form-control" name="productlist"></select>*@
                 </div>
                 <div class="col-md-2">
                     <a href="javascript:;" class="btn btn-default" id="add-product"><i class="fa fa-plus" aria-hidden="true"></i></a>
@@ -58,30 +60,44 @@
         $("#price_input").val($("#order-number").html())
         $("#OrderId").val($("#order-id").html())
     })
-    $("#add-product").click(function () {
-        var select_item = $("#productlist").find("option:selected");
-        if (select_item.length != 0) {
-            $("#productdetails").append("<tr><td class='text-center'>" + select_item.text() + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + select_item.attr("value") + "' id='order_" + select_item.attr("value") + "' /></td><td><input class='form-control input-sm' required='required' type='number' placeholder='价格' name='price_" + select_item.attr("value") + "' id='price_" + select_item.attr("value") + "' /></td></tr>");
-            select_item.remove();
-        }
-    });
-    $.ajax({
-        url: "/SalesProcess/AllProductAjax",
-        type: "post",
-        data: {
-            clientId: getUrlParam('clientId')
+    // 搜索产品
+    function displayResult(item, val, text) {
+        $("#ProductId").val(val);
+    }
+    $('#product_input').typeahead({
+        ajax: {
+            url: "/SalesProcess/QueryProduct",
+            triggerLength: 1
         },
-        success: function (data) {
-            if (data.result == "SUCCESS") {
-                for (var i = 0; i < data.data.length; i++) {
-                    var item = $("#price_" + data.data[i].Id);
-                    if (item.length == 0) {
-                        $("#productlist").append("<option value='" + data.data[i].Id +"'>" + data.data[i].ItemName + "</option>");
-                    }
-                }
-            }
-        }
+        itemSelected: displayResult,
+        display: 'ProductName',
+        val: 'Id'
     });
+    $("#add-product").click(function () {
+        var select_item = $("#product_input").val();
+        console.log(select_item)
+        //if (select_item != "") {
+        //    $("#productdetails").append("<tr><td class='text-center'>" + select_item + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + select_item.attr("value") + "' id='order_" + select_item.attr("value") + "' /></td><td><input class='form-control input-sm' required='required' type='number' placeholder='价格' name='price_" + select_item.attr("value") + "' id='price_" + select_item.attr("value") + "' /></td></tr>");
+        //    select_item.remove();
+        //}
+    });
+    //$.ajax({
+    //    url: "/SalesProcess/AllProductAjax",
+    //    type: "post",
+    //    data: {
+    //        clientId: getUrlParam('clientId')
+    //    },
+    //    success: function (data) {
+    //        if (data.result == "SUCCESS") {
+    //            for (var i = 0; i < data.data.length; i++) {
+    //                var item = $("#price_" + data.data[i].Id);
+    //                if (item.length == 0) {
+    //                    $("#productlist").append("<option value='" + data.data[i].Id +"'>" + data.data[i].ItemName + "</option>");
+    //                }
+    //            }
+    //        }
+    //    }
+    //});
     $("#add-orderPrice-form").validate({
         debug: true,
         //验证通过的正式提交函数
