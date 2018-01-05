@@ -133,9 +133,9 @@
 
 <script>
     $(function () {
-        $(document).delegate("#img-input", "change", function () {
+        $("#img-input").on("change", function () {
             ajaxFileUpload("Product_Img", "input-img-list", "img-input");
-        });
+        })
         $(document).delegate("#upload-btn", "click", function () {
             $("#img-input").trigger("click");
         })
