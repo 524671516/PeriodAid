@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using PagedList;
@@ -32,6 +33,15 @@ namespace PeriodAid.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        private byte[] SetFileToByteArray(HttpPostedFileBase File)
+        {
+            Stream stream = File.InputStream;
+            byte[] ArrayByte = new byte[File.ContentLength];
+            stream.Read(ArrayByte, 0, File.ContentLength);
+            stream.Close();
+            return ArrayByte;
         }
 
         public SP_Seller getSeller(string username)
@@ -1880,7 +1890,6 @@ namespace PeriodAid.Controllers
             if (files.Count > 0)
             {
                 int size = files[0].ContentLength;
-                var ss = files[0].ContentType;
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
                     string filename = files[0].FileName; //改filename公式
