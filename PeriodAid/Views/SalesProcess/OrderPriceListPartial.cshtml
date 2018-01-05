@@ -28,7 +28,7 @@
             <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
             <td>
                 <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除记录</a>
+                <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>
             </td>
         </tr>
     }
@@ -67,7 +67,7 @@
         // 删除
         $(".delete-orderPrice").on("click", function () {
             var O_id = $(this).attr("data-eid");
-            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+            confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
                         url: "/SalesProcess/DeleteOrderPrice",

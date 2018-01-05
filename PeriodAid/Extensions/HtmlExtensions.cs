@@ -200,13 +200,13 @@ namespace System.Web.Mvc
             switch (status)
             {
                 case 0:
-                    return "业务员";
+                    return "普通";
                 case 1:
-                    return "产品部";
+                    return "产品操作";
                 case 2:
-                    return "财务部";
+                    return "财务审核";
                 case 3:
-                    return "业务主管";
+                    return "部门主管";
                 case 4:
                     return "管理员";
                 default:

@@ -29,7 +29,7 @@
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                     <a class="detail-btn btn btn-xs btn-primary" role="button" data-id="@item.Id" data-toggle="modal" data-target=".bs-example-modal-lg">详情</a>
-                    <a class="delete-product btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
+                    <a class="delete-product btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除</a>
                 </td>
             </tr>
         }
@@ -85,7 +85,7 @@
         // 删除
         $(".delete-product").on("click", function () {
             var P_id = $(this).attr("data-eid");
-            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+            confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
                         url: "/SalesProcess/DeleteProduct",

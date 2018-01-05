@@ -12,8 +12,8 @@
             <th style="width:10%;">状态</th>
             <th style="width:10%;">客户类型</th>
             <th style="width:15%;">所属区域</th>
-            <th style="width:15%;">负责人</th>
-            <th style="width:35%;"></th>
+            <th style="width:10%;">负责人</th>
+            <th style="width:40%;"></th>
         </tr>
         @foreach (var item in Model)
         {
@@ -23,13 +23,16 @@
                 <td>@Html.ClientType(item.Client_Type)</td>
                 <td>@item.Client_Area</td>
                 <td>@item.SP_Seller.Seller_Name</td>
-                <td>
-                    <span id="show_more" class="glyphicon glyphicon-menu-right"></span>
-                    <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人详情</a>
-                    <a class="sales-btn btn btn-xs" data-eid="@item.Id" style="color:white;background:#3a7285">渠道详情</a>
-                    <a class="order-btn btn btn-xs btn-info" data-eid="@item.Id">订货详情</a>
+                <td style="text-align:center">
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除记录</a>
+                    <a class="delete-client btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除</a> 
+                    <div style="display:inline-block" class="more-btn-view">
+                        <a class="contact-btn btn btn-xs btn-primary" role="button" data-val="@item.Id" data-name="@item.Client_Name">联系人详情</a>
+                        <a class="sales-btn btn btn-xs" data-eid="@item.Id" style="color:white;background:#3a7285">渠道详情</a>
+                        <a class="order-btn btn btn-xs btn-info" data-eid="@item.Id">订货详情</a>
+                        
+                    </div>
+                    <a class="more-btn btn btn-xs btn-default">更多</a>
                 </td>
             </tr>
         }
@@ -46,15 +49,7 @@
 </div>
 <script>
     $(function () {
-        $(".select-a").hide()
-        $(".delete-client").hide()
-        $("#show_more").click(function () {
-            $(".contact-btn").hide()
-            $(".sales-btn").hide()
-            $(".order-btn").hide()
-            $(".select-a").slideToggle()
-            $(".delete-client").slideToggle()
-        })
+        $(".more-btn-view").toggle()
         //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
@@ -89,7 +84,7 @@
         // 删除
         $(".delete-client").on("click", function () {
             var C_id = $(this).attr("data-eid");
-            confirm("确定要删除吗?", "你将把此条信息从活动列表中删除", function (isConfirm) {
+            confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
                         url: "/SalesProcess/DeleteClient",
@@ -138,6 +133,10 @@
         $(".sales-btn").on("click", function () {
             var C_id = $(this).attr("data-eid")
             $(this).attr("href", "/SalesProcess/SalesList?clientId=" + C_id)
+        })
+        // 更多按钮
+        $(".more-btn").on("click", function () {
+            $(this).siblings(".more-btn-view").toggle()
         })
     })
 </script>
