@@ -1016,8 +1016,23 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult OrderList(int? clientId)
+        public ActionResult OrderList(int? clientId,int? orderType)
         {
+            var _clientId = clientId ?? 0;
+            if (_clientId == 0)
+            {
+                var OrderType = from m in _db.SP_Order
+                                select m;
+                ViewBag.OrderType = OrderType;
+            }
+            else
+            {
+                var OrderType = from m in _db.SP_Order
+                                where m.SP_Contact.Client_Id == clientId
+                                select m;
+                ViewBag.OrderType = OrderType;
+            }
+            
             return View();
         }
 
@@ -1273,12 +1288,12 @@ namespace PeriodAid.Controllers
             if (ModelState.IsValid)
             {
 
-                var productlist = from m in _db.SP_QuotePrice
-                                  where m.Quoted_Status != -1
+                var productlist = from m in _db.SP_Product
+                                  where m.Product_Status != -1
                                   select m;
                 foreach (var product in productlist)
                 {
-                    bool OrderPrice = _db.SP_OrderPrice.Any(m => m.Product_Id == product.Product_Id && m.Order_Id == model.Order_Id && m.OrderPrice_Status != -1);
+                    bool OrderPrice = _db.SP_OrderPrice.Any(m => m.Product_Id == model.Product_Id && m.Order_Id == model.Order_Id && m.OrderPrice_Status != -1);
                     if (OrderPrice)
                     {
                         return Json(new { result = "UNAUTHORIZED" });
@@ -1299,7 +1314,7 @@ namespace PeriodAid.Controllers
                             {
                                 orderprice.Order_Count = order;
                                 orderprice.Order_Price = price;
-                                orderprice.Product_Id = product.Product_Id;
+                                orderprice.Product_Id = product.Id;
                                 orderprice.OrderPrice_Status = 0;
                                 orderprice.Order_Id = model.Order_Id;
                             };
@@ -1317,15 +1332,7 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
-
-        public JsonResult AllProductAjax(int clientId)
-        {
-            var product = from m in _db.SP_QuotePrice
-                          where m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId
-                          select new { Id = m.Id, ItemName =m.SP_SalesSystem.System_Name+"-"+ m.SP_Product.Item_Name };
-            return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
-        }
-
+        
         public ActionResult EditOrderPriceInfo(int orderPriceId)
         {
             var OrderPrice = _db.SP_OrderPrice.SingleOrDefault(m => m.Id == orderPriceId);
@@ -1418,7 +1425,7 @@ namespace PeriodAid.Controllers
             var product = from m in _db.SP_Product
                           where m.Product_Status != -1
                           && m.Item_Name.Contains(query)
-                          select new { Id = m.Id, ProductName = m.Item_Name };
+                          select new { Id = m.Id, ProductName = m.Item_Name};
             return Json(product);
         }
         [HttpPost]
@@ -1430,7 +1437,28 @@ namespace PeriodAid.Controllers
                          select new { Id = m.Id, SellerName = m.Seller_Name };
             return Json(seller);
         }
-        //生成PDF
+ 
+        public JsonResult AllPriceAjax(int productId,int clientId)
+        {
+            bool Price = _db.SP_QuotePrice.Any(m => m.Product_Id == productId && m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId);
+            if (Price)
+            {
+                var product = from m in _db.SP_QuotePrice
+                              where m.Quoted_Status != -1 && m.Product_Id == productId && m.SP_SalesSystem.Client_Id == clientId
+                              select new { Id = m.Product_Id, Price = m.Quote_Price };
+                return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var product = from m in _db.SP_Product
+                              where m.Product_Status != -1 && m.Id == productId
+                              select new { Id = m.Id, Price = m.Purchase_Price };
+                return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
+            }
+            
+            
+        }
+        
         [HttpPost]
         public ActionResult OrderPdf(int orderId)
         {

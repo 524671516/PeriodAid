@@ -88,7 +88,8 @@
                             url: "/SalesProcess/OrderListPartial",
                             data: {
                                 query: $("#order-query").val(),
-                                clientId: getUrlParam("clientId")
+                                clientId: getUrlParam("clientId"),
+                                orderType: $(".order-list-li.active").children(".type-btn").attr("data-id")
                             },
                             success: function (data) {
                                 $("#order_list_content").html(data);

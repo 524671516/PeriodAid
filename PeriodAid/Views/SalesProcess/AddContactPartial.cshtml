@@ -68,23 +68,17 @@
                 minlength: 11,
                 isMobile: true
             },
-            Contact_Job: {
-                required: true,
-                minlength: 2
-            }
         },
         messages:{
             Contact_Name: {
-                required: "姓名是必填的"
+                required: "姓名是必填的",
+                minlength:"请输入正确姓名"
             },
             Contact_Mobile: {
                 required: "请输入手机号",
                 minlength: "确认手机不能小于11个字符",
                 isMobile: "请正确填写您的手机号码"
             },
-            Contact_Job: {
-                required: "地址是必填的"
-            }
         },
         //验证通过的正式提交函数
         submitHandler: function (form) {
