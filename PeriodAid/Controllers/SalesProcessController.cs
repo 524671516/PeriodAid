@@ -1879,9 +1879,10 @@ namespace PeriodAid.Controllers
             string imgurl;
             if (files.Count > 0)
             {
+                int size = files[0].ContentLength;
+                var ss = files[0].ContentType;
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
-                    int size = files[0].ContentLength;
                     string filename = files[0].FileName; //改filename公式
                     string _filename = DateTime.Now.ToFileTime().ToString() + "sqzweb" + filename.ToString().Substring(filename.ToString().LastIndexOf("."));
                     //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
