@@ -108,11 +108,12 @@
                 },
                 Seller_Mobile:{
                     required: true,
-                    number: true
+                    minlength: 11,
+                    isMobile: true
                 },
                 User_Name: {
                     required: true,
-                    maxlength: 32
+                    email: true
                 },
             },
             messages:{
@@ -120,11 +121,13 @@
                     required: "姓名是必填的"
                 },
                 Seller_Mobile: {
-                    required: "手机是必填的",
-                    number: "请注意手机格式"
+                    required: "请输入手机号",
+                    minlength: "确认手机不能小于11个字符",
+                    isMobile: "请正确填写您的手机号码"
                 },
                 User_Name: {
-                    required: "用户名是必填的"
+                    required: "用户名是必填的",
+                    email:"请输入正确的邮箱格式"
                 },
             },
             //验证通过的正式提交函数
@@ -148,7 +151,7 @@
                         });
                     } else if (data.result == "UNAUTHORIZED") {
                         $("#add-submit").removeAttr("disabled")
-                        errorAlert('已存在!')
+                        errorAlert('用户名或电话已存在!')
                     } else if (data.result == "FAIL") {
                         $("#add-submit").removeAttr("disabled")
                         errorAlert("添加失败!");

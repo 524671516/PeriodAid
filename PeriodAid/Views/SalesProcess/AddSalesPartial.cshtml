@@ -30,15 +30,31 @@
                     @Html.ValidationMessageFor(model => model.System_Address, "", new { @class = "text-danger" })
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label">经销商</label>
-                <div class="col-md-9">
-                    <input id="client_input" type="text" class="span4 form-control" autocomplete="off" name="client_input" />
-                    <input type="hidden" id="ClientId" name="Client_Id" />
-                    @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
+            @if (ViewBag.Client == null)
+            {
+                <div class="form-group">
+                    <label class="col-md-2 control-label">经销商</label>
+                    <div class="col-md-9">
+                        <input id="client_input" type="text" class="span4 form-control" autocomplete="off" name="client_input" />
+                        <input type="hidden" id="ClientId" name="Client_Id" />
+                        @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-
+            }
+            else
+            {
+                <div id="client-id" class="hidden">@ViewBag.Client.Id</div>
+                <div id="client-name" class="hidden">@ViewBag.Client.Client_Name</div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">经销商</label>
+                    <div class="col-md-9">
+                        <input id="client_input_view" type="text" class="span4 form-control" autocomplete="off" name="client_input_view" readonly="readonly" />
+                        <input type="hidden" id="ClientViewId" name="Client_Id" />
+                        @Html.ValidationMessageFor(model => model.Client_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-9">
                     <input type="submit" value="新增" class="btn btn-default" id="add-submit" name="add-submit"/>
@@ -50,6 +66,8 @@
 </div>
 <script>
     $(function () {
+        $("#client_input_view").val($("#client-name").html())
+        $("#ClientViewId").val($("#client-id").html())
         //经销商搜索
         function displayResult(item, val, text) {
             $("#ClientId").val(val);
@@ -71,7 +89,8 @@
                 },
                 System_Phone: {
                     required: true,
-                    number:true
+                    minlength: 11,
+                    isMobile: true
                 },
                 client_input: {
                     required: true,
@@ -82,8 +101,9 @@
                     required:"名称是必填的"
                 },
                 System_Phone: {
-                    required: "电话是必填的",
-                    number:"请注意电话格式"
+                    required: "请输入手机号",
+                    minlength: "确认手机不能小于11个字符",
+                    isMobile: "请正确填写您的手机号码"
                 },
                 client_input: {
                     required: "经销商是必填的",

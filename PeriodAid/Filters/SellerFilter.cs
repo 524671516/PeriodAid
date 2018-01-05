@@ -99,6 +99,10 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.SALESVIEW)
+                    {
+                        // 查看渠道权限
+                    }
                     else if(OperationGroup == SalesOperationCode.SALESADD)
                     {
                         setErrorResult(filterContext, "权限不足");
@@ -116,6 +120,22 @@ namespace PeriodAid.Filters
                         setErrorResult(filterContext, "权限不足");
                     }
                     else if (OperationGroup == SalesOperationCode.QUOPRIEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if(OperationGroup == SalesOperationCode.PRODVIEW)
+                    {
+                        // 查看产品权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERVIEW)
+                    {
+                        // 查看订单权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDEREDIT)
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
@@ -170,9 +190,12 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.SALESVIEW)
+                    {
+                        // 查看渠道权限
+                    }
                     else if (OperationGroup == SalesOperationCode.SALESADD)
                     {
-                        // 添加渠道权限
                         setErrorResult(filterContext, "权限不足");
                     }
                     else if (OperationGroup == SalesOperationCode.SALESEDIT)
@@ -203,6 +226,18 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.ORDERVIEW)
+                    {
+                        // 查看订单权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDEREDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
                 }
                 else if (seller.Seller_Type == SellerType.SELLER) // 业务员权限
                 {
@@ -230,6 +265,34 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.CLIEVIEW)
+                    {
+                        // 查看经销商权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.CLIEADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.CLIEEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.SALESVIEW)
+                    {
+                        // 查看渠道权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERVIEW)
+                    {
+                        // 查看产品权限
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERADD)
+                    {
+                       //
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDEREDIT)
+                    {
+                        //
+                    }
                 }
                 else
                 {
@@ -256,7 +319,7 @@ namespace PeriodAid.Filters
             {
                 filterContext.Result = new ContentResult()
                 {
-                    Content = "<h2>权限不足</h2>"
+                    Content = "<h2>权限不足,请联系管理员注册开通</h2>"
                 };
             }
         }

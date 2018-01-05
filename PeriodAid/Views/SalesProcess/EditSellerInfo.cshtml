@@ -114,16 +114,25 @@
     $("#seller-form").validate({
         debug: true,
         rules:{
+            Seller_Name: {
+                required: true,
+                maxlength: 16
+            },
             Seller_Mobile: {
                 required: true,
-                number:true
-            }
+                minlength: 11,
+                isMobile: true
+            },
         },
         messages:{
+            Seller_Name: {
+                required: "姓名是必填的"
+            },
             Seller_Mobile: {
-                required: "手机是必填的",
-                number: "请注意手机格式"
-            }
+                required: "请输入手机号",
+                minlength: "确认手机不能小于11个字符",
+                isMobile: "请正确填写您的手机号码"
+            },
         },
         //验证通过的正式提交函数
         submitHandler: function (form) {

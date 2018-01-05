@@ -26,10 +26,10 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">邮寄地址</label>
+                <label class="col-md-2 control-label">职位</label>
                 <div class="col-md-9">
-                    @Html.EditorFor(model => model.Contact_Address, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Contact_Address, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Contact_Job, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Contact_Job, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -65,9 +65,10 @@
             },
             Contact_Mobile: {
                 required: true,
-                number:true
+                minlength: 11,
+                isMobile: true
             },
-            Contact_Address: {
+            Contact_Job: {
                 required: true,
                 minlength: 2
             }
@@ -77,10 +78,11 @@
                 required: "姓名是必填的"
             },
             Contact_Mobile: {
-                required: "电话是必填的",
-                number:"请注意电话格式"
+                required: "请输入手机号",
+                minlength: "确认手机不能小于11个字符",
+                isMobile: "请正确填写您的手机号码"
             },
-            Contact_Address: {
+            Contact_Job: {
                 required: "地址是必填的"
             }
         },

@@ -9,7 +9,7 @@
         <tr style="background-color:#f9f9f9">
             <th style="width:15%;">姓名</th>
             <th style="width:20%;">联系电话</th>
-            <th style="width:45%;">邮寄地址</th>
+            <th style="width:45%;">职位</th>
             <th style="width:20%;"></th>
         </tr>
         @foreach (var list in Model)
@@ -17,7 +17,7 @@
             <tr>
                 <td>@list.Contact_Name</td>
                 <td>@list.Contact_Mobile</td>
-                <td>@list.Contact_Address</td>
+                <td>@list.Contact_Job</td>
                 <td>
                     <a data-eid="@list.Id" class="select-contact btn btn-xs btn-success" role="button">编辑</a>
                     <a class="delete-contact btn btn-xs btn-danger" data-eid="@list.Id" role="button">删除</a>

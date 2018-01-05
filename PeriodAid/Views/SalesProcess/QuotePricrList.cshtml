@@ -10,14 +10,14 @@
         </td>
     </tr>
 </table>
-<a class="btn btn-info btn-sm" id="add-quotePrice" style="margin-bottom:18px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报价信息</a>
-<ol class="breadcrumb">
+<a class="btn btn-info btn-sm float-left" id="add-quotePrice"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增报价信息</a>
+<a class="btn btn-danger btn-sm float-left" style="margin-left:10px" role="button" id="price_btn" href="javascript:;">生成报价单</a>
+@*<form method="post" id="price_form"></form>*@
+<ol class="breadcrumb float-left" style="margin-top:34px;margin-left:-200px">
     当前位置：
     <li><a href="/SalesProcess/SalesList" >渠道管理</a></li>
     <li class="active">报价信息</li>
 </ol>
-<a class="btn btn-danger btn-sm float-right" style="margin-top:-29px" role="button" id="price_btn" onclick="$('#price_form').submit();" href="javascript:;">生成报价单</a>
-<form method="post" id="price_form"></form>
 <div id="quotePrice_list_content"></div>
 @section scripts{
     <script>
@@ -30,7 +30,6 @@
                 },
                 success: function (data) {
                     $("#quotePrice_list_content").html(data)
-                    $("#price_form").attr("action", "/SalesProcess/getQuotePrice?SalesSystemId=" + getUrlParam('SalesSystemId'))
                 }
             });
         });
@@ -61,5 +60,17 @@
             })
         });
         // 下载
+        $("#price_btn").on("click", function () {
+            $.ajax({
+                url: "/SalesProcess/SelectQuotePrice",
+                data: {
+                    SalesSystemId: getUrlParam('SalesSystemId')
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
     </script>
 }

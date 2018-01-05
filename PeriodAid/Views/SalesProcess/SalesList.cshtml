@@ -19,7 +19,6 @@
     <li class="backBtn"><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
 </ol>
 <div id="sales_list_content">
-    <div class="h2 hidden">暂无权限,请联系管理员</div>
 </div>
 @section scripts{
 <script>
@@ -37,11 +36,7 @@
                 clientId: getUrlParam("clientId")
             },
             success: function (data) {
-                if (data == "FAIL") {
-                    $("#sales_list_content div").removeClass("hidden")
-                } else {
-                    $("#sales_list_content").html(data)
-                }
+                $("#sales_list_content").html(data)
             }
         });
         var salesAction = "/SalesProcess/SalesSystemOrder?clientId=" + $("#clientId").val();
@@ -57,11 +52,7 @@
                 clientId: getUrlParam("clientId")
             },
             success: function (data) {
-                if (data == "FAIL") {
-                    $("#sales_list_content div").removeClass("hidden")
-                } else {
-                    $("#sales_list_content").html(data)
-                }
+                $("#sales_list_content").html(data)
             }
         })
     })
@@ -70,6 +61,7 @@
         $.ajax({
             url: '/SalesProcess/AddSalesPartial',
             data: {
+                clientId: getUrlParam("clientId")
             },
             success: function (data) {
                 $('#modal-content').html(data)

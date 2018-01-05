@@ -31,6 +31,7 @@
                         <tr>
                             <th class="col-md-2 text-center">商品名称</th>
                             <th class="col-md-2 text-center">数量</th>
+                            <th class="col-md-2 text-center">价格</th>
                         </tr>
                     </table>
                 </div>      
@@ -60,7 +61,7 @@
     $("#add-product").click(function () {
         var select_item = $("#productlist").find("option:selected");
         if (select_item.length != 0) {
-            $("#productdetails").append("<tr><td class='text-center'>" + select_item.text() + "</td><td><input class='form-control input-sm' type='number' placeholder='数量' name='order_" + select_item.attr("value") + "' id='order_" + select_item.attr("value") + "' /></td></tr>");
+            $("#productdetails").append("<tr><td class='text-center'>" + select_item.text() + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + select_item.attr("value") + "' id='order_" + select_item.attr("value") + "' /></td><td><input class='form-control input-sm' required='required' type='number' placeholder='价格' name='price_" + select_item.attr("value") + "' id='price_" + select_item.attr("value") + "' /></td></tr>");
             select_item.remove();
         }
     });

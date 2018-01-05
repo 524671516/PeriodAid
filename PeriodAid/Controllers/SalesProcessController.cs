@@ -39,7 +39,7 @@ namespace PeriodAid.Controllers
             var seller = _db.SP_Seller.SingleOrDefault(m => m.User_Name == username);
             return seller;
         }
-
+        
         public ActionResult ProductList()
         {
             var P_Type = from m in _db.SP_ProductType
@@ -54,7 +54,7 @@ namespace PeriodAid.Controllers
             ViewBag.Product = product;
             return PartialView(product);
         }
-
+        [Seller(OperationGroup = 102)]
         public ActionResult ProductListPartial(int? page, string query, int productType)
         {
             int _page = page ?? 1;
@@ -212,6 +212,7 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+        [Seller(OperationGroup = 202)]
         public ActionResult ClientListPartial(int? page, string query)
         {
             int _page = page ?? 1;
@@ -225,7 +226,7 @@ namespace PeriodAid.Controllers
                                     select m);
                     var SearchResult = (from m in customer
                                         where m.Client_Name.Contains(query) || m.Client_Area.Contains(query)
-                                        orderby m.Client_Name descending
+                                        orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
@@ -233,7 +234,7 @@ namespace PeriodAid.Controllers
                 {
                     var SearchResult = (from m in _db.SP_Client
                                         where m.Client_Status != -1 && m.Seller_Id == seller.Id
-                                        orderby m.Client_Name descending
+                                        orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
@@ -246,7 +247,7 @@ namespace PeriodAid.Controllers
                                     select m);
                     var SearchResult = (from m in customer
                                         where m.Client_Name.Contains(query) || m.Client_Area.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
-                                        orderby m.Client_Name descending
+                                        orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
@@ -254,7 +255,7 @@ namespace PeriodAid.Controllers
                 {
                     var SearchResult = (from m in _db.SP_Client
                                         where m.Client_Status != -1 && m.SP_Seller.Seller_Status != -1
-                                        orderby m.Client_Name descending
+                                        orderby m.Id descending
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
@@ -312,6 +313,7 @@ namespace PeriodAid.Controllers
                     client.Client_Name = model.Client_Name;
                     client.Client_Type = model.Client_Type;
                     client.Client_Area = model.Client_Area;
+                    client.Client_Address = model.Client_Address;
                     client.Client_Status = model.Client_Status;
                     client.Seller_Id = model.Seller_Id;
                     _db.SP_Client.Add(client);
@@ -330,37 +332,19 @@ namespace PeriodAid.Controllers
         {
             var seller = getSeller(User.Identity.Name);
             ViewBag.Seller = seller;
+            var client = (from m in _db.SP_Client
+                          where m.Id == clientId && m.SP_Seller.Seller_Type <= seller.Seller_Type
+                          select m).FirstOrDefault();
+            ViewBag.Client = client;
             var item = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
-            List<SelectListItem> itemlist = new List<SelectListItem>();
-            itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
-            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
-            itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
-            ViewBag.ClientStatus = new SelectList(itemlist, "Value", "Text");
-
-            List<SelectListItem> typelist = new List<SelectListItem>();
-            typelist.Add(new SelectListItem() { Text = "未知", Value = "0" });
-            typelist.Add(new SelectListItem() { Text = "大客户", Value = "1" });
-            typelist.Add(new SelectListItem() { Text = "经销商", Value = "2" });
-            ViewBag.ClientType = new SelectList(typelist, "Value", "Text");
-
-            List<SelectListItem> salessystem = new List<SelectListItem>();
-            salessystem.Add(new SelectListItem() { Text = "华东", Value = "华东" });
-            salessystem.Add(new SelectListItem() { Text = "外区", Value = "外区" });
-            salessystem.Add(new SelectListItem() { Text = "华南", Value = "华南" });
-            salessystem.Add(new SelectListItem() { Text = "全国", Value = "全国" });
-            salessystem.Add(new SelectListItem() { Text = "西南", Value = "西南" });
-            salessystem.Add(new SelectListItem() { Text = "华中", Value = "华中" });
-            salessystem.Add(new SelectListItem() { Text = "东北", Value = "东北" });
-            salessystem.Add(new SelectListItem() { Text = "西北", Value = "西北" });
-            salessystem.Add(new SelectListItem() { Text = "华北", Value = "华北" });
-            ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
+            AddClientViewBag();
             return PartialView(item);
         }
         [HttpPost]
         [Seller(OperationGroup = 203)]
         public ActionResult EditClientInfo(SP_Client model)
         {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status && m.Seller_Id == model.Seller_Id);
+            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status && m.Seller_Id == model.Seller_Id && m.Client_Address == model.Client_Address);
             if (ModelState.IsValid)
             {
                 if (Client)
@@ -450,7 +434,7 @@ namespace PeriodAid.Controllers
                     var contact = new SP_Contact();
                     contact.Contact_Name = model.Contact_Name;
                     contact.Contact_Mobile = model.Contact_Mobile;
-                    contact.Contact_Address = model.Contact_Address;
+                    contact.Contact_Job = model.Contact_Job;
                     contact.Contact_Status = 0;
                     contact.Client_Id = model.Client_Id;
                     _db.SP_Contact.Add(contact);
@@ -479,7 +463,7 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 303)]
         public ActionResult EditContactInfo(SP_Contact model)
         {
-            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Address == model.Contact_Address);
+            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Job == model.Contact_Job);
             if (ModelState.IsValid)
             {
                 if (Contact)
@@ -510,11 +494,11 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
 
-        public ActionResult SalesList(int? clientId)
+        public ActionResult SalesList()
         {
             return View();
         }
-
+        [Seller(OperationGroup = 402)]
         public ActionResult SalesListPartial(int? page, string query,int? clientId)
         {
             int _page = page ?? 1;
@@ -608,16 +592,21 @@ namespace PeriodAid.Controllers
             
         }
         
-        public ActionResult AddSalesPartial()
+        public ActionResult AddSalesPartial(int? clientId)
         {
-            List<SelectListItem> saleslist = new List<SelectListItem>();
-            var salesname = from m in _db.SP_Client
-                            select m;
-            foreach(var name in salesname)
+            var _client = clientId ?? 0;
+            if (_client == 0)
             {
-                saleslist.Add(new SelectListItem() { Text = name.Client_Name, Value = name.Id.ToString() });
+                ViewBag.Client = null;
             }
-            ViewBag.Sales = new SelectList(saleslist, "Value", "Text");
+            else
+            {
+                var Client = (from m in _db.SP_Client
+                              where m.Id == clientId
+                              select m).FirstOrDefault();
+                ViewBag.Client = Client;
+            }
+            
             return PartialView();
         }
         [HttpPost]
@@ -724,6 +713,16 @@ namespace PeriodAid.Controllers
             }
         }
 
+        // 选择报价产品
+        public ActionResult SelectQuotePrice(int SalesSystemId)
+        {
+            var QuotePrice = from m in _db.SP_QuotePrice
+                             where m.SalesSystem_Id == SalesSystemId
+                             select m;
+            ViewBag.QuotePrice = QuotePrice;
+            return PartialView();
+        }
+
         public ActionResult AddQuotePricrPartial(int SalesSystemId)
         {
             var sales = (from m in _db.SP_SalesSystem
@@ -821,7 +820,7 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
+        [Seller(OperationGroup = 702)]
         public ActionResult SellerListPartial(int? page,string query)
         {
             var seller = getSeller(User.Identity.Name);
@@ -906,50 +905,62 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 701)]
         public ActionResult AddSellerPartial(SP_Seller model, FormCollection form)
         {
-            bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile);
-            if (ModelState.IsValid)
+            bool Seller = _db.SP_Seller.Any(m =>m.Seller_Mobile == model.Seller_Mobile || m.User_Name == model.User_Name);
+            var SellerName = _db.SP_Seller.SingleOrDefault(m => m.User_Name == model.User_Name );
+            if (SellerName.Seller_Status == -1)
             {
-                if (Seller)
+                if (TryUpdateModel(SellerName))
                 {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    var seller = new SP_Seller();
-                    seller.Seller_Name = model.Seller_Name;
-                    seller.Seller_Mobile = model.Seller_Mobile;
-                    seller.Seller_Type = model.Seller_Type;
-                    seller.User_Name = model.User_Name;
-                    seller.Department_Id = model.Department_Id;
-                    seller.Seller_Status = 0;
-                    if (model.Seller_Type == SellerType.SELLER || model.Seller_Type == SellerType.FINANCIALDEPARTMENT || model.Seller_Type == SellerType.PRODUCTDEPARTMENT)
-                    {
-                        seller.Manager_Id = model.Manager_Id;
-                        _db.SP_Seller.Add(seller);
-                        _db.SaveChanges();
-                        
-                    }
-                    else
-                    {
-                        seller.Manager_Id = null;
-                        _db.SP_Seller.Add(seller);
-                        _db.SaveChanges();
-                        var newseller = _db.SP_Seller.SingleOrDefault(m => m.Id == seller.Id);
-                        newseller.Manager_Id = newseller.Id.ToString();
-                        _db.Entry(newseller).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                    }
-                    return Json(new { result = "SUCCESS" });
-
-
+                    SellerName.Seller_Status = 0;
+                    _db.Entry(SellerName).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
                 }
             }
             else
             {
-                ModelState.AddModelError("", "错误");
-                AddSellerViewBag();
-                return Json(new { result = "FAIL" });
+                if (ModelState.IsValid)
+                {
+                    if (Seller)
+                    {
+                        return Json(new { result = "UNAUTHORIZED" });
+                    }
+                    else
+                    {
+                        var seller = new SP_Seller();
+                        seller.Seller_Name = model.Seller_Name;
+                        seller.Seller_Mobile = model.Seller_Mobile;
+                        seller.Seller_Type = model.Seller_Type;
+                        seller.User_Name = model.User_Name;
+                        seller.Department_Id = model.Department_Id;
+                        seller.Seller_Status = 0;
+                        if (model.Seller_Type == SellerType.SELLER || model.Seller_Type == SellerType.FINANCIALDEPARTMENT || model.Seller_Type == SellerType.PRODUCTDEPARTMENT)
+                        {
+                            seller.Manager_Id = model.Manager_Id;
+                            _db.SP_Seller.Add(seller);
+                            _db.SaveChanges();
+                        }
+                        else
+                        {
+                            seller.Manager_Id = null;
+                            _db.SP_Seller.Add(seller);
+                            _db.SaveChanges();
+                            var newseller = _db.SP_Seller.SingleOrDefault(m => m.Id == seller.Id);
+                            newseller.Manager_Id = newseller.Id.ToString();
+                            _db.Entry(newseller).State = System.Data.Entity.EntityState.Modified;
+                            _db.SaveChanges();
+                        }
+                        return Json(new { result = "SUCCESS" });
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "错误");
+                    AddSellerViewBag();
+                    return Json(new { result = "FAIL" });
+                }
             }
+            return Json(new { result = "SUCCESS" });
+
         }
 
         public ActionResult EditSellerInfo(int sellerId)
@@ -963,8 +974,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditSellerInfo(SP_Seller model)
         {
             bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type && m.Department_Id == model.Department_Id && m.Manager_Id == model.Manager_Id);
-            ModelState.Remove("User_Name");
-            ModelState.Remove("Seller_Mobile");
+            
             if (ModelState.IsValid)
             {
                 if (Seller)
@@ -989,8 +999,6 @@ namespace PeriodAid.Controllers
                             _db.SaveChanges();
                         }
                         return Json(new { result = "SUCCESS" });
-
-
                     }
                 }
             }
@@ -1013,6 +1021,7 @@ namespace PeriodAid.Controllers
             return View();
         }
 
+        [Seller(OperationGroup = 602)]
         public ActionResult OrderListPartial(int? page, string query,int? clientId)
         {
             var seller = getSeller(User.Identity.Name);
@@ -1259,7 +1268,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
         {
-            
             ModelState.Remove("Order_Count");
             ModelState.Remove("Order_Price");
             if (ModelState.IsValid)
@@ -1277,10 +1285,11 @@ namespace PeriodAid.Controllers
                     }
                     else
                     {
-
                         int order = 0;
+                        decimal price = 0;
                         if (form["order_" + product.Id] != "")
                             order = Convert.ToInt32(form["order_" + product.Id]);
+                            price = Convert.ToDecimal(form["price_" + product.Id]);
                         if (order == 0)
                         {
                         }
@@ -1289,7 +1298,7 @@ namespace PeriodAid.Controllers
                             var orderprice = new SP_OrderPrice();
                             {
                                 orderprice.Order_Count = order;
-                                orderprice.Order_Price = product.Quote_Price;
+                                orderprice.Order_Price = price;
                                 orderprice.Product_Id = product.Product_Id;
                                 orderprice.OrderPrice_Status = 0;
                                 orderprice.Order_Id = model.Order_Id;
@@ -1359,6 +1368,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
 
         }
+        
         // 搜索
         [HttpPost]
         public JsonResult QueryClient(string query)
@@ -1843,6 +1853,7 @@ namespace PeriodAid.Controllers
             {
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
+                    int size = files[0].ContentLength;
                     string filename = files[0].FileName; //改filename公式
                     string _filename = DateTime.Now.ToFileTime().ToString() + "sqzweb" + filename.ToString().Substring(filename.ToString().LastIndexOf("."));
                     //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
@@ -1850,7 +1861,7 @@ namespace PeriodAid.Controllers
                     util.PutWebObject(files[0].InputStream, "Content/" + _filename);
                     msg = "成功! 文件大小为:" + files[0].ContentLength;
                     imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
-                    string res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
+                    string res = "{ error:'" + error + "', size:'" + size + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
                     return Content(res);
                 }
                 else
@@ -1864,11 +1875,9 @@ namespace PeriodAid.Controllers
         }
         // 报价单导出
         [HttpPost]
-        public ActionResult getQuotePrice(FormCollection form,int SalesSystemId)
+        public ActionResult getQuotePrice(FormCollection form,int SalesSystemId,string productId)
         {
-           
             HSSFWorkbook book = new HSSFWorkbook();
-            var price_list = _db.SP_QuotePrice.Where(m => m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1);
             ISheet sheet = book.CreateSheet("报价单");
             // 写标题
             IRow row = sheet.CreateRow(0);
@@ -1878,17 +1887,22 @@ namespace PeriodAid.Controllers
             row.CreateCell(++cell_pos).SetCellValue("箱规");
             row.CreateCell(++cell_pos).SetCellValue("单价");
             int row_pos = 1;
-            foreach (var price in price_list)
+            string _productId = productId;
+            string[] sArray = _productId.Split(',');
+            string num = "";
+            foreach (string i in sArray)
             {
+                num = i;
+                int _ProductId = Convert.ToInt32(num);
+                var price_list = _db.SP_QuotePrice.SingleOrDefault(m => m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1 && m.Product_Id == _ProductId);
                 IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
-                single_row.CreateCell(cell_pos).SetCellValue(price.SP_Product.Item_Code);
-                single_row.CreateCell(++cell_pos).SetCellValue(price.SP_Product.Item_Name);
-                single_row.CreateCell(++cell_pos).SetCellValue(price.SP_Product.Carton_Spec);
-                single_row.CreateCell(++cell_pos).SetCellValue((double)(price.Quote_Price));
+                single_row.CreateCell(cell_pos).SetCellValue(price_list.SP_Product.Item_Code);
+                single_row.CreateCell(++cell_pos).SetCellValue(price_list.SP_Product.Item_Name);
+                single_row.CreateCell(++cell_pos).SetCellValue(price_list.SP_Product.Carton_Spec);
+                single_row.CreateCell(++cell_pos).SetCellValue((double)(price_list.Quote_Price));
                 row_pos++;
-            }
-            
+            };
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();

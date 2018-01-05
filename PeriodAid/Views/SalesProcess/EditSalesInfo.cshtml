@@ -81,21 +81,21 @@
         rules: {
             System_Name: {
                 required: true,
-                minlength:1
             },
             System_Phone: {
                 required: true,
-                number: true
-            }
+                minlength: 11,
+                isMobile: true
+            },
         },
         messages: {
             System_Name: {
-                required: "名称是必填的",
-                minlength: "请输入正确格式",
+                required: "名称是必填的"
             },
             System_Phone: {
-                required: "电话是必填的",
-                number: "请注意电话格式"
+                required: "请输入手机号",
+                minlength: "确认手机不能小于11个字符",
+                isMobile: "请正确填写您的手机号码"
             },
         },
         //验证通过的正式提交函数

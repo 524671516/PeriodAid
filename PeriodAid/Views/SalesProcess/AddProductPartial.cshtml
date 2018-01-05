@@ -102,7 +102,7 @@
                             @Html.ValidationMessageFor(model => model.Product_Img, "", new { @class = "text-danger" })
                             <a href="javascript:;" class="fileupload-btn text-center" id="upload-btn"><i class="fa fa-plus"></i></a>
                             <input type="file" id="img-input" name="img-file" accept=".jpg,.png,.gif" class="hidden" />
-                            
+                            <span style="margin-top:10px;display:inline-block;color:#d91515;height:120px;line-height:120px"> 支持 jpg/png/gif 格式 </span>
                         </div>
                     </div>
                 </div>
@@ -221,6 +221,7 @@
             }
         })
         // 图片
+        var maxSize = 1024;
         $(document).delegate("#img-input", "change", function () {
             ajaxFileUpload("Product_Img", "input-img-list", "img-input");
         });
@@ -241,9 +242,8 @@
                 if (typeof (data.error) != 'undefined') {
                     if (data.error != '') {
                         alert(data.error);
-                    } else {
-                        console.log(targetname)
-                        console.log(data.imgurl)
+                    }
+                    else {
                         alert("上传成功");
                         $("#" + targetname).val(data.imgurl);
                         $("#" + imglist).html("<div class=\"img-list\" value= " + data.imgurl + " style=background-image:url(" + data.imgurl + ")" + "><span class=\"img-close\"><span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");

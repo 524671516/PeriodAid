@@ -153,7 +153,7 @@
         
     }
     /// <summary>
-    /// 客户信息
+    /// 经销商信息
     /// </summary>
     [Table("SP_Client")]
     public partial class SP_Client
@@ -164,6 +164,8 @@
         public string Client_Name { get; set; }
         
         public string Client_Area { get; set; }
+
+        public string Client_Address { get; set; }
 
         public int Client_Type { get; set; }
 
@@ -219,7 +221,7 @@
         [StringLength(16), RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
         public string Contact_Mobile { get; set; }
 
-        public string Contact_Address { get; set; }
+        public string Contact_Job { get; set; }
 
         public int Contact_Status { get; set; }
 
