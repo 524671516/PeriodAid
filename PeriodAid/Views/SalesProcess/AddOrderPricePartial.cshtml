@@ -67,19 +67,35 @@
     $('#product_input').typeahead({
         ajax: {
             url: "/SalesProcess/QueryProduct",
-            triggerLength: 1
+            triggerLength: 1,
         },
         itemSelected: displayResult,
         display: 'ProductName',
-        val: 'Id'
+        val: 'Id',
     });
     $("#add-product").click(function () {
-        var select_item = $("#product_input").val();
-        console.log(select_item)
-        //if (select_item != "") {
-        //    $("#productdetails").append("<tr><td class='text-center'>" + select_item + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + select_item.attr("value") + "' id='order_" + select_item.attr("value") + "' /></td><td><input class='form-control input-sm' required='required' type='number' placeholder='价格' name='price_" + select_item.attr("value") + "' id='price_" + select_item.attr("value") + "' /></td></tr>");
-        //    select_item.remove();
-        //}
+        var that = $(this)
+        var select_item = $("#product_input");
+        var P_Id = $("#ProductId")
+        if (select_item.val() != "") {
+            $("#productdetails").append("<tr><td class='text-center'>" + select_item.val() + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + P_Id.attr("value") + "' id='order_" + P_Id.attr("value") + "' /></td><td><input class='form-control input-sm' required='required' type='number' placeholder='价格' name='price_" + P_Id.attr("value") + "' id='price_" + P_Id.attr("value") + "' /></td></tr>");
+            that.attr("data-pid", P_Id.val())
+            $.ajax({
+                url: "/SalesProcess/AllPriceAjax",
+                type: "post",
+                data: {
+                    productId: that.attr("data-pid"),
+                    clientId: getUrlParam("clientId")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        var item = $("#price_" + data.data[0].Id);
+                        item.val(data.data[0].Price)
+                        $("#product_input").val("")
+                    }
+                }
+            });
+        }
     });
     //$.ajax({
     //    url: "/SalesProcess/AllProductAjax",
