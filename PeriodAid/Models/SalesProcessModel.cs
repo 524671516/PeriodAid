@@ -266,11 +266,23 @@
 
         public string Order_Number { get; set; }
 
+        public string Order_Address { get; set; }
+
         public DateTime Order_Date { get; set; }
 
         public int Order_Status { get; set; }
 
+        public int Order_Type { get; set; }
+
         public int Contact_Id { get; set; }
+
+        public string Order_Remark { get; set; }
+
+        public string Other_Remark { get; set; }
+
+        public string Signed_Number { get; set; }
+
+        public decimal Cancellation_Fee { get; set; }
 
         public virtual SP_Contact SP_Contact { get; set; }
 
