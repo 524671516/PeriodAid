@@ -1,0 +1,180 @@
+﻿@model PeriodAid.Models.SP_Order
+@{
+    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+}
+<style>
+    .control-label{
+        margin-top:14px;
+        text-align:center;
+        margin-bottom:0
+    }
+    .form-control{
+        height:30px;
+        box-shadow:none;
+        border:0;
+        border-bottom:1px solid black;
+        border-radius:initial;
+        text-align:center
+    }
+    
+</style>
+<h2 class="text-center" style="margin-bottom:25px">寿全斋订货通知单</h2>
+@using (Html.BeginForm("AddOrderPartial", "SalesProcess", FormMethod.Post, new { @id = "add-order-form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-md-12">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="hidden">
+            <input type="text" value="@ViewBag.ordernumber" name="Order_Number" />
+            @Html.ValidationMessageFor(model => model.Order_Number, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">购货单位：</label>
+            <div class="col-md-8">
+                <input id="client_input" type="text" class="span4 form-control" autocomplete="off" name="client_input"/>
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">订货日期：</label>
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Order_Date, new { htmlAttributes = new { @class = "form-control date-readonly", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.Order_Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">联系人电话：</label>
+            <div class="col-md-8">
+                <input id="contact_input" type="text" class="span4 form-control" autocomplete="off" name="contact_input" />
+                <input type="hidden" id="ContactId" name="Contact_Id" />
+                @Html.ValidationMessageFor(model => model.Contact_Id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">邮寄地址：</label>
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Order_Address, new { htmlAttributes = new { @class = "form-control" , @autocomplete ="off"} })
+                @Html.ValidationMessageFor(model => model.Order_Address, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">签呈编号：</label>
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Signed_Number, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Signed_Number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">核销费用：</label>
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Cancellation_Fee, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Cancellation_Fee, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <a class="btn btn-info btn-sm  float-left" id="add-orderPrice"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加产品</a>
+        <div class="form-group">
+            <div class="col-md-6">
+                <input type="submit" value="新增" class="hidden" id="add-submit" name="add-submit" />
+            </div>
+        </div>
+    </div>
+}
+@section scripts{
+    <script>
+        $(function () {
+            //经销商搜索
+            function displayResult(item, val, text) {
+                $("#ClientId").val(val);
+            }
+            $('#client_input').typeahead({
+                ajax: {
+                    url: "/SalesProcess/QueryClient",
+                    triggerLength: 1
+                },
+                itemSelected: displayResult,
+                display: 'Client_Name',
+                val: 'Id'
+            });
+            // 日期
+            window.moment = Kalendae.moment;
+            var k4 = new Kalendae.Input('Order_Date', {
+                months: 1,
+                mode: 'single',
+                titleFormat: "MM月, YYYY年",
+                format: "YYYY-MM-DD"
+            });
+            //联系人搜索
+            function displayResult(item, val, text) {
+                $("#ContactId").val(val);
+            }
+            $('#contact_input').typeahead({
+                ajax: {
+                    url: "/SalesProcess/QueryContactPhone",
+                    triggerLength: 1
+                },
+                itemSelected: displayResult,
+                display: 'Contact_Name',
+                val: 'Id'
+            });
+        })
+        $("#add-orderPrice").on("click", function () {
+            $("#add-submit").trigger("click");
+        })
+        // order
+        $("#add-order-form").validate({
+            debug: true,
+            rules: {
+                Order_Date: {
+                    required: true,
+                    date: true
+                },
+                client_input: {
+                    required:true
+                },
+                contact_input: {
+                    required:true
+                },
+                Order_Address: {
+                    required: true
+                }
+
+            },
+            messages: {
+                Order_Date: {
+                    required: "日期是必填的",
+                    date: "请直接选择日期"
+                },
+                client_input: {
+                    required: "购货单位是必填的"
+                },
+                contact_input: {
+                    required: "联系人是必填的"
+                },
+                Order_Address: {
+                    required: "邮寄地址是必填的"
+                }
+            },
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                    }
+                    else if (data.result == "UNAUTHORIZED") {
+                        errorAlert("订单号存在!");
+                    }
+                    else if (data.result == "FAIL") {
+                        errorAlert("联系人不存在!");
+                    } else {
+                        errorAlert(data.errmsg)
+                    }
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parent())
+            }
+        })
+    </script>
+    
+    
+    }

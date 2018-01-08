@@ -45,18 +45,23 @@
             })
             
         })
-         //添加
-        $("#add-order").on("click", function () {
-            $.ajax({
-                url: '/SalesProcess/AddOrderPartial',
-                data: {
-                },
-                success: function (data) {
-                    $('#modal-content').html(data)
-                    $("#myModal").modal('show')
-                }
-            })
+        // 添加
+        $("#add-order").click(function () {
+            $(this).attr("href", "/SalesProcess/AddOrder")
         })
+
+         //添加
+        //$("#add-order").on("click", function () {
+        //    $.ajax({
+        //        url: '/SalesProcess/AddOrderPartial',
+        //        data: {
+        //        },
+        //        success: function (data) {
+        //            $('#modal-content').html(data)
+        //            $("#myModal").modal('show')
+        //        }
+        //    })
+        //})
         // 搜索
         $("#order-search").on("click", function () {
             $.ajax({

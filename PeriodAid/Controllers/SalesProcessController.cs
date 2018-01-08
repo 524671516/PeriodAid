@@ -1028,7 +1028,7 @@ namespace PeriodAid.Controllers
             else
             {
                 var OrderType = from m in _db.SP_Order
-                                where m.SP_Contact.Client_Id == clientId
+                                where m.SP_Contact.Client_Id == clientId && m.Order_Type == orderType
                                 select m;
                 ViewBag.OrderType = OrderType;
             }
@@ -1132,7 +1132,7 @@ namespace PeriodAid.Controllers
             
         }
 
-        public ActionResult AddOrderPartial()
+        public ActionResult AddOrder()
         {
             Random ran = new Random();
             int RandKey = ran.Next(01, 99);
@@ -1149,6 +1149,12 @@ namespace PeriodAid.Controllers
             }
             ordernumber += strNum;
             ViewBag.ordernumber = ordernumber;
+            return View();
+        }
+
+        public ActionResult AddOrderPartial()
+        {
+            
             return PartialView();
         }
         [HttpPost]
@@ -1157,6 +1163,8 @@ namespace PeriodAid.Controllers
         {
             bool Order = _db.SP_Order.Any( m => m.Order_Number == model.Order_Number);
             ModelState.Remove("Order_Date");
+            ModelState.Remove("Order_Remark");
+            ModelState.Remove("Other_Remark");
             if (ModelState.IsValid)
             {
                 if (Order)
@@ -1167,9 +1175,15 @@ namespace PeriodAid.Controllers
                 {
                     var order = new SP_Order();
                     order.Order_Number = model.Order_Number;
-                    order.Order_Status = 0;
                     order.Order_Date = model.Order_Date;
+                    order.Order_Status = 0;
                     order.Contact_Id = model.Contact_Id;
+                    order.Order_Address = model.Order_Address;
+                    order.Order_Type = 0;
+                    order.Order_Remark = model.Order_Remark;
+                    order.Other_Remark = model.Other_Remark;
+                    order.Signed_Number = model.Signed_Number;
+                    order.Cancellation_Fee = model.Cancellation_Fee;
                     _db.SP_Order.Add(order);
                     _db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
@@ -1272,12 +1286,8 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
 
-        public ActionResult AddOrderPricePartial(int orderId)
+        public ActionResult AddOrderPricePartial()
         {
-            var order = (from m in _db.SP_Order
-                         where m.Id == orderId
-                         select m).FirstOrDefault();
-            ViewBag.Order = order;
             return PartialView();
         }
         [HttpPost]
@@ -1386,7 +1396,7 @@ namespace PeriodAid.Controllers
                 var client = from m in _db.SP_Client
                              where m.Client_Status != -1 && m.Seller_Id == seller.Id
                              && m.Client_Name.Contains(query)
-                             select new { Id = m.Id, Client_Name = m.Client_Name };
+                             select new { Id = m.Id, Client_Name = m.Client_Name};
                 return Json(client);
             }
             else
@@ -1437,7 +1447,29 @@ namespace PeriodAid.Controllers
                          select new { Id = m.Id, SellerName = m.Seller_Name };
             return Json(seller);
         }
- 
+
+        [HttpPost]
+        public JsonResult QueryContactPhone(string query)
+        {
+            var seller = getSeller(User.Identity.Name);
+            if (seller.Seller_Type == 0)
+            {
+                var client = from m in _db.SP_Contact
+                             where m.Contact_Status != -1 && m.SP_Client.Seller_Id == seller.Id
+                             && m.SP_Client.Client_Name.Contains(query)
+                             select new { Id = m.Id, Contact_Name = m.Contact_Name + "  " + m.Contact_Mobile };
+                return Json(client);
+            }
+            else
+            {
+                var client = from m in _db.SP_Contact
+                             where m.Contact_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
+                             && m.SP_Client.Client_Name.Contains(query)
+                             select new { Id = m.Id, Contact_Name = m.Contact_Name + " " + m.Contact_Mobile };
+                return Json(client);
+            }
+        }
+
         public JsonResult AllPriceAjax(int productId,int clientId)
         {
             bool Price = _db.SP_QuotePrice.Any(m => m.Product_Id == productId && m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId);
