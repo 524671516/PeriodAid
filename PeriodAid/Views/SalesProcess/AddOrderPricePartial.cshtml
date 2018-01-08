@@ -8,21 +8,16 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>新增订单产品</h2>
 </div>
-<div class="hidden" id="order-number">@ViewBag.Order.Order_Number</div>
-<div class="hidden" id="order-id">@ViewBag.Order.Id</div>
+<div id="client_id" class="hidden">@ViewBag.Order.SP_Contact.Client_Id</div>
 <div class="modal-body">
     @using (Html.BeginForm("AddOrderPricePartial", "SalesProcess", FormMethod.Post, new { @id = "add-orderPrice-form" }))
     {
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="form-group">
-                <label class="col-md-2 control-label">订单号</label>
-                <div class="col-md-9">
-                    <input id="price_input" type="text" class="span4 form-control" readonly="readonly" autocomplete="off" name="price_input" />
-                    <input type="hidden" id="OrderId" name="Order_Id" />
-                    @Html.ValidationMessageFor(model => model.Order_Id, "", new { @class = "text-danger" })
-                </div>
+            <div class="hidden">
+                <input type="text" value="@ViewBag.Order.Id" name="Order_Id" />
+                @Html.ValidationMessageFor(model => model.Order_Id, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 <label class="control-label col-md-2">订货信息</label>
@@ -56,10 +51,6 @@
     }
 </div>
 <script>
-    $(function () {
-        $("#price_input").val($("#order-number").html())
-        $("#OrderId").val($("#order-id").html())
-    })
     // 搜索产品
     function displayResult(item, val, text) {
         $("#ProductId").val(val);
@@ -85,7 +76,7 @@
                 type: "post",
                 data: {
                     productId: that.attr("data-pid"),
-                    clientId: getUrlParam("clientId")
+                    clientId: $("#client_id").html()
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
@@ -127,7 +118,7 @@
                     $.ajax({
                         url: "/SalesProcess/OrderPriceListPartial",
                         data: {
-                            orderId: getUrlParam("orderId")
+                            orderId: $("#order_id").attr("data-oid")
                         },
                         success: function (data) {
                             $("#orderPrice_list_content").html(data)

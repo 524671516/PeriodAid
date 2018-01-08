@@ -4,8 +4,7 @@
         <th style="width:15%">产品名称</th>
         <th style="width:15%">单价</th>
         <th style="width:10%">箱规</th>
-        <th style="width:15%">箱数</th>
-        <th style="width:15%">订货量</th>
+        <th style="width:15%">订货数量（箱）</th>
         <th style="width:15%">金额</th>
         <th style="width:15%"></th>
     </tr>
@@ -24,7 +23,6 @@
                 <td>@order.SP_Product.Carton_Spec</td>
                 <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
             }
-            <td>@order.Order_Count</td>
             <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
             <td>
                 <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
@@ -37,7 +35,6 @@
         <td>--</td>
         <td>--</td>
         <td>--</td>
-        <td>@ViewBag.Count</td>
         <td>@ViewBag.Price</td>
         <td></td>
     </tr>

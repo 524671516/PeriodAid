@@ -1164,7 +1164,6 @@ namespace PeriodAid.Controllers
 
         public ActionResult AddOrderPartial()
         {
-            
             return PartialView();
         }
         [HttpPost]
@@ -1174,7 +1173,8 @@ namespace PeriodAid.Controllers
             bool Order = _db.SP_Order.Any( m => m.Order_Number == model.Order_Number);
             ModelState.Remove("Order_Date");
             ModelState.Remove("Order_Remark");
-            ModelState.Remove("Other_Remark");
+            ModelState.Remove("Signed_Number");
+            ModelState.Remove("Cancellation_Fee");
             if (ModelState.IsValid)
             {
                 if (Order)
@@ -1195,7 +1195,8 @@ namespace PeriodAid.Controllers
                     order.Cancellation_Fee = model.Cancellation_Fee;
                     _db.SP_Order.Add(order);
                     _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
+                    var OrderId = _db.SP_Order.SingleOrDefault(m => m.Order_Number == model.Order_Number);
+                    return Json(new { result = "SUCCESS",order = OrderId.Id });
                 }
 
             }
@@ -1253,22 +1254,17 @@ namespace PeriodAid.Controllers
 
         }
         
-        public ActionResult OrderPriceList(int orderId)
+        public ActionResult OrderPriceList()
         {
-            var order = (from m in _db.SP_Order
-                         where m.Id == orderId
-                         select m).FirstOrDefault();
-            ViewBag.Order = order;
-            return View();
+            return PartialView();
         }
 
         public ActionResult OrderPriceListPartial(int orderId)
         {
             var order = from m in _db.SP_OrderPrice
-                        where m.Order_Id == orderId && m.OrderPrice_Status != -1
+                        where m.Order_Id == orderId
                         select m;
             ViewBag.Order = order;
-
             var order_num = (from m in _db.SP_Order
                              where m.Id == orderId && m.Order_Status != -1
                              select m).FirstOrDefault();
@@ -1295,8 +1291,10 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
 
-        public ActionResult AddOrderPricePartial()
+        public ActionResult AddOrderPricePartial(int orderId)
         {
+            var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
+            ViewBag.Order = order;
             return PartialView();
         }
         [HttpPost]
