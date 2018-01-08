@@ -255,7 +255,6 @@
             submitHandler: function (form) {
                 $("#add-submit").attr("disabled", true)
                 if ($("#PicUrl-img").attr("src") != "http://cdn2.shouquanzhai.cn/Subject/Avatar/131596247744053486.jpg") {
-                    alert(1)
                     $("#ProductImg").attr("value", $("#PicUrl-img").attr("src"))
                 }
                 $(form).ajaxSubmit(function (data) {
@@ -297,37 +296,6 @@
         })
         
     })
-    // 上传图片(暂未使用)
-    function ajaxFileUpload(targetname, imglist, fileelment) {
-        $.ajaxFileUpload({
-            url: '/SalesProcess/UpLoadImg', //用于文件上传的服务器端请求地址
-            type: 'post',
-            secureuri: false, //是否需要安全协议，一般设置为false
-            fileElementId: fileelment, //文件上传域的ID
-            dataType: 'json', //返回值类型 一般设置为json
-            success: function (data, status)  //服务器成功响应处理函数
-            {
-                console.log(data)
-                if (typeof (data.error) != 'undefined') {
-                    if (data.error != '') {
-                        alert(data.error);
-                    }
-                    else {
-                        alert("上传成功");
-                        $("#" + targetname).val(data.imgurl);
-                        $("#" + imglist).html("<div class=\"img-list\" value= " + data.imgurl + " style=background-image:url(" + data.imgurl + ")" + "><span class=\"img-close\"><span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");
-                        $("#upload-btn").hide();
-                        $("#ProductImg").attr("value", data.imgurl)
-                    }
-                }
-            },
-            error: function (data, status, e)//服务器响应失败处理函数
-            {
-                alert(e);
-            }
-        });
-        return false;
-    };
     //删除图片
     $("#input-img-list").on("click", ".img-close", function (event) {
         var that = $(this);
