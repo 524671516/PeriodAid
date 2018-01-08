@@ -278,8 +278,6 @@
 
         public string Order_Remark { get; set; }
 
-        public string Other_Remark { get; set; }
-
         public string Signed_Number { get; set; }
 
         public decimal Cancellation_Fee { get; set; }
@@ -304,6 +302,8 @@
         public int OrderPrice_Status { get; set; }
 
         public int Order_Id { get; set; }
+
+        public string OrderPrice_Remark { get; set; }
 
         public virtual SP_Order SP_Order { get; set; }
 

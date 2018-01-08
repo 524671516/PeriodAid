@@ -1181,7 +1181,6 @@ namespace PeriodAid.Controllers
                     order.Order_Address = model.Order_Address;
                     order.Order_Type = 0;
                     order.Order_Remark = model.Order_Remark;
-                    order.Other_Remark = model.Other_Remark;
                     order.Signed_Number = model.Signed_Number;
                     order.Cancellation_Fee = model.Cancellation_Fee;
                     _db.SP_Order.Add(order);
