@@ -105,7 +105,7 @@
                             <input class="hidden" name="Product_Img" id="ProductImg"/>
                             @Html.ValidationMessageFor(model => model.Product_Img, "", new { @class = "text-danger" })
                             <span style="height:180px;width:180px;display:inline-block">
-                                <img style="width:100%;height:100%" id="PicUrl-img">
+                                <img style="width:100%;height:100%" id="PicUrl-img" src="http://cdn2.shouquanzhai.cn/Subject/Avatar/131596247744053486.jpg">
                             </span>
                             <span class="btn btn-primary" data-toggle="modal" data-target="#avatar-modal"><span class="glyphicon glyphicon-open" aria-hidden="true"></span>上传图片</span>
                             <input type="file" id="img-input" name="img-file" accept=".jpg,.png,.gif" class="hidden" />
@@ -175,9 +175,9 @@
                             </div>
                         </div>
                     </div>
-                        <!-- <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div> -->
+                    <!-- <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div> -->
                 }
             </div>
         </div>
@@ -188,7 +188,7 @@
 <script src="~/Scripts/cropper.min.js"></script>
 <script src="~/Scripts/croppermain.js"></script>
 <script>
-    $(function () {
+    $(function () {// 图片
         $("#add-product-form").validate({
             debug: true,
             rules: {
@@ -254,6 +254,10 @@
             //验证通过的正式提交函数
             submitHandler: function (form) {
                 $("#add-submit").attr("disabled", true)
+                if ($("#PicUrl-img").attr("src") != "http://cdn2.shouquanzhai.cn/Subject/Avatar/131596247744053486.jpg") {
+                    alert(1)
+                    $("#ProductImg").attr("value", $("#PicUrl-img").attr("src"))
+                }
                 $(form).ajaxSubmit(function (data) {
                     if (data.result == "SUCCESS") {
                         alert("添加成功！");
@@ -274,7 +278,7 @@
                     } else if (data.result == "UNAUTHORIZED") {
                         errorAlert('产品已存在!')
                         $("#add-submit").removeAttr("disabled")
-                    }else if(data.result == "FAIL"){
+                    } else if (data.result == "FAIL") {
                         errorAlert('添加失败!')
                         $("#add-submit").removeAttr("disabled")
                     }
@@ -291,12 +295,9 @@
                 error.appendTo(element.parent())
             }
         })
-        // 图片
-        $(".avatar-save").on("click", function () {
-            ajaxFileUpload("PicUrl-img", "input-img-list", "img-input");
-        })
+        
     })
-    // 上传图片
+    // 上传图片(暂未使用)
     function ajaxFileUpload(targetname, imglist, fileelment) {
         $.ajaxFileUpload({
             url: '/SalesProcess/UpLoadImg', //用于文件上传的服务器端请求地址
@@ -316,7 +317,7 @@
                         $("#" + targetname).val(data.imgurl);
                         $("#" + imglist).html("<div class=\"img-list\" value= " + data.imgurl + " style=background-image:url(" + data.imgurl + ")" + "><span class=\"img-close\"><span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");
                         $("#upload-btn").hide();
-                        $("#ProductImg").attr("value",data.imgurl)
+                        $("#ProductImg").attr("value", data.imgurl)
                     }
                 }
             },
