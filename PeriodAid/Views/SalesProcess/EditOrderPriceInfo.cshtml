@@ -73,7 +73,7 @@
                         $.ajax({
                             url: "/SalesProcess/OrderPriceListPartial",
                             data: {
-                                orderId: getUrlParam("orderId")
+                                orderId: $("#order_id").attr("data-oid")
                             },
                             success: function (data) {
                                 $("#orderPrice_list_content").html(data)

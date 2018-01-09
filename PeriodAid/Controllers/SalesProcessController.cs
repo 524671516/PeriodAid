@@ -1026,95 +1026,81 @@ namespace PeriodAid.Controllers
 
         }
 
-        public ActionResult OrderList(int? clientId,int? orderType)
+        public ActionResult OrderList()
         {
-            var _clientId = clientId ?? 0;
-            if (_clientId == 0)
-            {
-                var OrderType = from m in _db.SP_Order
-                                select m;
-                ViewBag.OrderType = OrderType;
-            }
-            else
-            {
-                var OrderType = from m in _db.SP_Order
-                                where m.SP_Contact.Client_Id == clientId && m.Order_Type == orderType
-                                select m;
-                ViewBag.OrderType = OrderType;
-            }
-            
             return View();
         }
 
         [Seller(OperationGroup = 602)]
-        public ActionResult OrderListPartial(int? page, string query,int? clientId)
+        public ActionResult OrderListPartial(int? page, string query,int? clientId,int orderType)
         {
             var seller = getSeller(User.Identity.Name);
             int _page = page ?? 1;
-            if (clientId == null)
+            if(seller.Seller_Type == 0)
             {
-                if (seller.Seller_Type == 0)
+                if(clientId == null)
                 {
-                    if (query != "")
+                    if(query != "")
                     {
                         var orderList = (from m in _db.SP_Order
-                                         where m.SP_Contact.SP_Client.Seller_Id == seller.Id && m.Order_Number.Contains(query) 
-                                         || m.SP_Contact.SP_Client.Client_Name.Contains(query) && m.Order_Status != -1
-                                         orderby m.Id
+                                         where m.SP_Contact.SP_Client.Seller_Id == seller.Id && m.Order_Type == orderType && m.Order_Status != -1 
+                                         && m.Order_Number.Contains(query) ||  m.SP_Contact.SP_Client.Client_Name.Contains(query) 
+                                         orderby m.Order_Date descending
                                          select m).ToPagedList(_page, 15);
                         return PartialView(orderList);
                     }
                     else
                     {
-                        var SearchResult = (from m in _db.SP_Order
-                                            where m.Order_Status != -1 && m.SP_Contact.SP_Client.Seller_Id == seller.Id
-                                            orderby m.Id ascending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
-                    }
-                }
-                else
-                {
-                    if (query != "")
-                    {
                         var orderList = (from m in _db.SP_Order
-                                         where m.Order_Number.Contains(query)|| m.SP_Contact.SP_Client.Client_Name.Contains(query) 
+                                         where m.SP_Contact.SP_Client.Seller_Id == seller.Id && m.Order_Type == orderType
                                          && m.Order_Status != -1
-                                         orderby m.Id
+                                         orderby m.Order_Date descending
+                                         select m).ToPagedList(_page, 15);
+                        return PartialView(orderList);
+                    }
+                }else
+                {
+                    if (query != "")
+                    {
+                        var orderList = (from m in _db.SP_Order
+                                         where m.SP_Contact.SP_Client.Seller_Id == seller.Id && m.Order_Type == orderType && m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId
+                                         && m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query)
+                                         orderby m.Order_Date descending
                                          select m).ToPagedList(_page, 15);
                         return PartialView(orderList);
                     }
                     else
                     {
-                        var SearchResult = (from m in _db.SP_Order
-                                            where m.Order_Status != -1
-                                            orderby m.Id ascending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
+                        var orderList = (from m in _db.SP_Order
+                                         where m.SP_Contact.SP_Client.Seller_Id == seller.Id && m.Order_Type == orderType
+                                         && m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId
+                                         orderby m.Order_Date descending
+                                         select m).ToPagedList(_page, 15);
+                        return PartialView(orderList);
                     }
                 }
             }
             else
             {
-                if (seller.Seller_Type == 0)
+                if (clientId == null)
                 {
                     if (query != "")
                     {
                         var orderList = (from m in _db.SP_Order
-                                         where m.SP_Contact.Client_Id == clientId && m.SP_Contact.SP_Client.Seller_Id == seller.Id 
-                                         && m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query) && m.Order_Status != -1
-                                         orderby m.Id
+                                         where m.Order_Type == orderType && m.Order_Status != -1
+                                         && m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query)
+                                         orderby m.Order_Date descending
                                          select m).ToPagedList(_page, 15);
                         return PartialView(orderList);
                     }
                     else
                     {
-                        var SearchResult = (from m in _db.SP_Order
-                                            where m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId 
-                                            && m.SP_Contact.SP_Client.Seller_Id == seller.Id
-                                            orderby m.Id ascending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
+                        var orderList = (from m in _db.SP_Order
+                                         where m.Order_Type == orderType
+                                         && m.Order_Status != -1
+                                         orderby m.Order_Date descending
+                                         select m).ToPagedList(_page, 15);
+                        return PartialView(orderList);
                     }
                 }
                 else
@@ -1122,26 +1108,26 @@ namespace PeriodAid.Controllers
                     if (query != "")
                     {
                         var orderList = (from m in _db.SP_Order
-                                         where m.Order_Number.Contains(query)|| m.SP_Contact.SP_Client.Client_Name.Contains(query) 
-                                         && m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId
-                                         orderby m.Id
+                                         where m.Order_Type == orderType && m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId
+                                         && m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query)
+                                         orderby m.Order_Date descending
                                          select m).ToPagedList(_page, 15);
                         return PartialView(orderList);
                     }
                     else
                     {
-                        var SearchResult = (from m in _db.SP_Order
-                                            where m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId
-                                            orderby m.Id ascending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
+                        var orderList = (from m in _db.SP_Order
+                                         where m.Order_Type == orderType
+                                         && m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId
+                                         orderby m.Order_Date descending
+                                         select m).ToPagedList(_page, 15);
+                        return PartialView(orderList);
                     }
                 }
             }
-            
-            
-        }
 
+        }
+        [Seller(OperationGroup = 601)]
         public ActionResult AddOrder()
         {
             Random ran = new Random();
@@ -1161,27 +1147,18 @@ namespace PeriodAid.Controllers
             ViewBag.ordernumber = ordernumber;
             return View();
         }
-
-        public ActionResult AddOrderPartial()
-        {
-            return PartialView();
-        }
         [HttpPost]
         [Seller(OperationGroup = 601)]
         public ActionResult AddOrderPartial(SP_Order model, FormCollection form)
         {
-            bool Order = _db.SP_Order.Any( m => m.Order_Number == model.Order_Number);
+            bool Contact = _db.SP_Contact.Any( m => m.Id == model.Contact_Id);
             ModelState.Remove("Order_Date");
             ModelState.Remove("Order_Remark");
             ModelState.Remove("Signed_Number");
             ModelState.Remove("Cancellation_Fee");
             if (ModelState.IsValid)
             {
-                if (Order)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
+                if (Contact)
                 {
                     var order = new SP_Order();
                     order.Order_Number = model.Order_Number;
@@ -1196,7 +1173,11 @@ namespace PeriodAid.Controllers
                     _db.SP_Order.Add(order);
                     _db.SaveChanges();
                     var OrderId = _db.SP_Order.SingleOrDefault(m => m.Order_Number == model.Order_Number);
-                    return Json(new { result = "SUCCESS",order = OrderId.Id });
+                    return Json(new { result = "SUCCESS", order = OrderId.Id });
+                }
+                else
+                {
+                    return Json(new { result = "UNAUTHORIZED" });
                 }
 
             }
@@ -1262,7 +1243,7 @@ namespace PeriodAid.Controllers
         public ActionResult OrderPriceListPartial(int orderId)
         {
             var order = from m in _db.SP_OrderPrice
-                        where m.Order_Id == orderId
+                        where m.Order_Id == orderId && m.OrderPrice_Status != -1
                         select m;
             ViewBag.Order = order;
             var order_num = (from m in _db.SP_Order
@@ -1304,7 +1285,6 @@ namespace PeriodAid.Controllers
             ModelState.Remove("Order_Price");
             if (ModelState.IsValid)
             {
-
                 var productlist = from m in _db.SP_Product
                                   where m.Product_Status != -1
                                   select m;
@@ -1319,9 +1299,11 @@ namespace PeriodAid.Controllers
                     {
                         int order = 0;
                         decimal price = 0;
+                        string remark = "";
                         if (form["order_" + product.Id] != "")
                             order = Convert.ToInt32(form["order_" + product.Id]);
                             price = Convert.ToDecimal(form["price_" + product.Id]);
+                            remark = Convert.ToString(form["remark_" + product.Id]);
                         if (order == 0)
                         {
                         }
@@ -1334,11 +1316,11 @@ namespace PeriodAid.Controllers
                                 orderprice.Product_Id = product.Id;
                                 orderprice.OrderPrice_Status = 0;
                                 orderprice.Order_Id = model.Order_Id;
+                                orderprice.OrderPrice_Remark = remark;
                             };
                             _db.SP_OrderPrice.Add(orderprice);
                         }
                     }
-
                 }
                 _db.SaveChangesAsync();
                 return Json(new { result = "SUCCESS" });
@@ -1423,7 +1405,7 @@ namespace PeriodAid.Controllers
             {
                 var client = from m in _db.SP_Contact
                              where m.Contact_Status != -1 && m.SP_Client.Seller_Id == seller.Id
-                             && m.SP_Client.Client_Name.Contains(query)
+                             && m.Contact_Name.Contains(query)
                              select new { Id = m.Id, Contact_Name = m.SP_Client.Client_Name+"-"+m.Contact_Name };
                 return Json(client);
             }
@@ -1431,7 +1413,7 @@ namespace PeriodAid.Controllers
             {
                 var client = from m in _db.SP_Contact
                              where m.Contact_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
-                             && m.SP_Client.Client_Name.Contains(query)
+                             && m.Contact_Name.Contains(query)
                              select new { Id = m.Id, Contact_Name = m.SP_Client.Client_Name + "-" + m.Contact_Name };
                 return Json(client);
             }
@@ -1454,24 +1436,23 @@ namespace PeriodAid.Controllers
                          select new { Id = m.Id, SellerName = m.Seller_Name };
             return Json(seller);
         }
-
         [HttpPost]
-        public JsonResult QueryContactPhone(string query)
+        public JsonResult QueryContactPhone(string query,int clientId)
         {
             var seller = getSeller(User.Identity.Name);
             if (seller.Seller_Type == 0)
             {
                 var client = from m in _db.SP_Contact
-                             where m.Contact_Status != -1 && m.SP_Client.Seller_Id == seller.Id
-                             && m.SP_Client.Client_Name.Contains(query)
+                             where m.Contact_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
+                             && m.Contact_Name.Contains(query)
                              select new { Id = m.Id, Contact_Name = m.Contact_Name + "  " + m.Contact_Mobile };
                 return Json(client);
             }
             else
             {
                 var client = from m in _db.SP_Contact
-                             where m.Contact_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type
-                             && m.SP_Client.Client_Name.Contains(query)
+                             where m.Contact_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type && m.Client_Id == clientId
+                             && m.Contact_Name.Contains(query)
                              select new { Id = m.Id, Contact_Name = m.Contact_Name + " " + m.Contact_Mobile };
                 return Json(client);
             }
@@ -1497,7 +1478,6 @@ namespace PeriodAid.Controllers
             
             
         }
-        
         [HttpPost]
         public ActionResult OrderPdf(int orderId)
         {

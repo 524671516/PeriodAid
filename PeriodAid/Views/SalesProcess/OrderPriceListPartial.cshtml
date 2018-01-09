@@ -6,38 +6,42 @@
         <th style="width:10%">箱规</th>
         <th style="width:15%">订货数量（箱）</th>
         <th style="width:15%">金额</th>
-        <th style="width:15%"></th>
+        <th style="width:15%">备注</th>
+        <th></th>
     </tr>
     @foreach (var order in ViewBag.Order)
-    {
-        <tr>
-            <td>@order.SP_Product.Item_Name</td>
-            <td>@order.Order_Price</td>
-            @if (order.SP_Product.Carton_Spec == 0)
+        {
+            <tr>
+                <td>@order.SP_Product.Item_Name</td>
+                <td>@order.Order_Price</td>
+                @if (order.SP_Product.Carton_Spec == 0)
                 {
-                <td>暂无箱规</td>
-                <td>暂无箱规</td>
-            }
-            else
-            {
-                <td>@order.SP_Product.Carton_Spec</td>
-                <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
-            }
-            <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
-            <td>
-                <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>
-            </td>
+                    <td>暂无箱规</td>
+                    <td>暂无箱规</td>
+                }
+                else
+                {
+                    <td>@order.SP_Product.Carton_Spec</td>
+                    <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
+                }
+                <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
+                <td>@order.OrderPrice_Remark</td>
+                <td>
+                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>共计：</td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+            <td>@ViewBag.Price</td>
+            <td></td>
+            <td></td>
         </tr>
-    }
-    <tr>
-        <td>共计：</td>
-        <td>--</td>
-        <td>--</td>
-        <td>--</td>
-        <td>@ViewBag.Price</td>
-        <td></td>
-    </tr>
+    
 </table>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -77,7 +81,7 @@
                                 $.ajax({
                                     url: "/SalesProcess/OrderPriceListPartial",
                                     data: {
-                                        orderId: getUrlParam("orderId")
+                                        orderId: $("#order_id").attr("data-oid")
                                     },
                                     success: function (data) {
                                         $("#orderPrice_list_content").html(data)
