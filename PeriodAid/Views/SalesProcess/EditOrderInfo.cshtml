@@ -46,7 +46,7 @@
         <div class="form-group col-md-6">
             <label class="col-md-3 control-label order_label">订货日期：</label>
             <div class="col-md-8">
-                @Html.EditorFor(model => model.Order_Date, new { htmlAttributes = new { @class = "form-control date-readonly order_control", @readonly = "readonly" } })
+                <input id="order_date" type="text" value="@ViewBag.Order.Order_Date.ToString("yyyy-MM-dd")" class="form-control date-readonly order_control" autocomplete="off" name="Order_Date" readonly="readonly" required />
                 @Html.ValidationMessageFor(model => model.Order_Date, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -125,7 +125,7 @@
             })
             // 日期
             window.moment = Kalendae.moment;
-            var k4 = new Kalendae.Input('Order_Date', {
+            var k4 = new Kalendae.Input('order_date', {
                 months: 1,
                 mode: 'single',
                 titleFormat: "MM月, YYYY年",

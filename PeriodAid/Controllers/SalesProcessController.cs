@@ -1190,6 +1190,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditOrderInfo(int orderId)
         {
             var Order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
+            ViewBag.Order = Order;
             var contact = _db.SP_Contact.SingleOrDefault(m => m.Id == Order.SP_Contact.Id);
             ViewBag.contact = contact;
             return View(Order);
