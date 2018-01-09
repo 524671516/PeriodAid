@@ -19,9 +19,8 @@
     <li class="backBtn"><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
 </ol>
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="order-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="type-btn" style="cursor:pointer">全部订单</a></li>
-    <li role="presentation" class="order-list-li"><a aria-controls="home" role="tab" data-toggle="tab" data-id="1" class="type-btn" style="cursor:pointer">已审核订单</a></li>
-    <li role="presentation" class="order-list-li"><a aria-controls="home" role="tab" data-toggle="tab" data-id="-1" class="type-btn" style="cursor:pointer">待审核订单</a></li>
+    <li role="presentation" class="order-list-li active"><a aria-controls="home" role="tab" data-toggle="tab" data-id="-1" class="type-btn" style="cursor:pointer">待审核订单</a></li>
+    <li role="presentation" class="order-list-li"><a aria-controls="home" role="tab" data-toggle="tab" data-id="0" class="type-btn" style="cursor:pointer">已审核订单</a></li>
 </ul>
 <div id="order_list_content"></div>
 @section scripts{
@@ -49,6 +48,21 @@
         $("#add-order").click(function () {
             $(this).attr("href", "/SalesProcess/AddOrder")
         })
+        // 切换
+        $(".order-list-li").on("click", function () {
+            $.ajax({
+                url: "/SalesProcess/OrderListPartial",
+                data: {
+                    query: $("#order-query").val(),
+                    clientId: getUrlParam("clientId"),
+                    orderType: $(this).children(".type-btn").attr("data-id")
+                },
+                success: function (data) {
+                    $("#order_list_content").html(data)
+                }
+            })
+        })
+
 
          //添加
         //$("#add-order").on("click", function () {

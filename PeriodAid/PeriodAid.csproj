@@ -1187,7 +1187,6 @@
     <Content Include="Views\SalesProcess\EditQuotePriceInfo.cshtml" />
     <Content Include="Views\SalesProcess\OrderList.cshtml" />
     <Content Include="Views\SalesProcess\OrderListPartial.cshtml" />
-    <Content Include="Views\SalesProcess\AddOrderPartial.cshtml" />
     <Content Include="Views\SalesProcess\EditOrderInfo.cshtml" />
     <Content Include="Views\SalesProcess\ProductDetail.cshtml" />
     <Content Include="Views\SalesProcess\OrderPriceList.cshtml" />
