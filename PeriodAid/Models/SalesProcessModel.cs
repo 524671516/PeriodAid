@@ -328,6 +328,8 @@
     {
         public int SumCount { get; set; }
 
+        public int CartonCount { get; set; }
+
         public decimal SumPrice { get; set; }
     }
     

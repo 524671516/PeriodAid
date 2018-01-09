@@ -1255,17 +1255,18 @@ namespace PeriodAid.Controllers
                         select new OrderPriceSum
                         {
                             SumCount = g.Sum(m => m.Order_Count),
+                            CartonCount=g.Sum(m=>m.Order_Count/m.SP_Product.Carton_Spec),
                             SumPrice = g.Sum(m => m.Order_Price)
                         };
-            int sumCount = 0;
+            int cartonCount = 0;
             decimal sumPrice = 0;
             foreach (var price in Price)
             {
-                sumCount += price.SumCount;
+                cartonCount += price.CartonCount;
                 var Sumprice = price.SumCount * price.SumPrice;
                 sumPrice += Sumprice;
             }
-            ViewBag.Count = sumCount;
+            ViewBag.Count = cartonCount;
             ViewBag.Price = sumPrice;
             return PartialView();
         }
