@@ -24,8 +24,7 @@
                 <td>@order.SP_Contact.Contact_Name</td>
                 <td>@order.SP_Contact.SP_Client.Client_Name</td>
                 <td>
-                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="order-btn btn btn-xs btn-primary"role="button" data-id="@order.Id" data-cid="@order.SP_Contact.Client_Id">详情</a>
+                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer">编辑</a>
                     <a class="delete-order btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>
                 </td>
             </tr>
@@ -60,18 +59,8 @@
         });
     })
     // 编辑
-    $(".select-a").on("click", function () {
-        $.ajax({
-            url: '/SalesProcess/EditOrderInfo',
-            data: {
-                orderId: $(this).attr('data-val'),
-            },
-            success: function (data) {
-                $('#modal-content').html(data)
-                $("#myModal").modal('show')
-
-            }
-        })
+    $(".select-a").click(function () {
+        $(this).attr("href", "/SalesProcess/EditOrderInfo?orderId=" + $(this).attr("data-val")+"")
     })
     // 删除
     $(".delete-order").on("click", function () {
@@ -106,9 +95,5 @@
                 })
             }
         });
-    })
-    // 查看订单详情
-    $(".order-btn").on("click", function () {
-        $(this).attr("href", "/SalesProcess/OrderPriceList?orderId=" + $(this).attr("data-id") + "&clientId=" + $(this).attr("data-cid"))
     })
 </script>

@@ -1209,17 +1209,15 @@ namespace PeriodAid.Controllers
         public ActionResult EditOrderInfo(int orderId)
         {
             var Order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            var contact = (from m in _db.SP_Order
-                          where m.Id == orderId
-                          select m).FirstOrDefault();
-            ViewBag.Contact = contact;
-            return PartialView(Order);
+            var contact = _db.SP_Contact.SingleOrDefault(m => m.Id == Order.SP_Contact.Id);
+            ViewBag.contact = contact;
+            return View(Order);
         }
         [HttpPost]
         [Seller(OperationGroup = 603)]
         public ActionResult EditOrderInfo(SP_Order model)
         {
-            bool Order = _db.SP_Order.Any(m => m.Order_Date == model.Order_Date && m.Order_Number == model.Order_Number && m.Contact_Id == model.Contact_Id);
+            bool Order = _db.SP_Order.Any(m => m.Order_Address == model.Order_Address && m.Order_Remark == model.Order_Remark && m.Signed_Number == model.Signed_Number && m.Cancellation_Fee== model.Cancellation_Fee);
             ModelState.Remove("Order_Date");
             ModelState.Remove("Order_Status");
             ModelState.Remove("Contact_Id");
