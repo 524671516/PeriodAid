@@ -201,8 +201,8 @@
                     preview: this.$avatarPreview.selector,
                     crop: function (e) {
                         var json = [
-                              '{"x":' + e.x,
-                              '"y":' + e.y,
+                              '{"x":' + e.x*1.5,
+                              '"y":' + e.y*1.5,
                               '"height":' + e.height,
                               '"width":' + e.width,
                               '"rotate":' + e.rotate + '}'
