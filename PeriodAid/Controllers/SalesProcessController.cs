@@ -1189,7 +1189,7 @@ namespace PeriodAid.Controllers
                     order.Order_Status = 0;
                     order.Contact_Id = model.Contact_Id;
                     order.Order_Address = model.Order_Address;
-                    order.Order_Type = 0;
+                    order.Order_Type = -1;
                     order.Order_Remark = model.Order_Remark;
                     order.Signed_Number = model.Signed_Number;
                     order.Cancellation_Fee = model.Cancellation_Fee;

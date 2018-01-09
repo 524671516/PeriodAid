@@ -89,7 +89,11 @@
     <a class="btn btn-info btn-sm  float-left" style="margin:10px 0" id="add-orderPrice" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加产品</a>
     <div id="orderPrice_list_content"></div>
 </div>
-
+<div class="col-md-12" style="padding:0 74px 0 40px">
+    <a class="btn btn-danger btn-sm  float-left"id="confirm-btn">提交</a>
+    <a class="btn btn-danger btn-sm col-md-offset-9" id="">审批</a>
+    <a class="btn btn-danger btn-sm  float-right" id="">生成订货单</a>
+</div>
 @section scripts{
     <script>
         $(function () {
@@ -225,6 +229,11 @@
                 errorPlacement: function (error, element) {
                     error.appendTo(element.parent())
                 }
+            })
+            // 提交
+            $("#confirm-btn").on("click", function () {
+                $(this).attr("href", "/SalesProcess/OrderList")
+                
             })
     </script>
 
