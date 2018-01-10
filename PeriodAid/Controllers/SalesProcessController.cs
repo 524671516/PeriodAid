@@ -1314,6 +1314,8 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
         {
+            ModelState.Remove("Order_Price");
+            ModelState.Remove("Order_Count");
             if (ModelState.IsValid)
             {
                 var productlist = from m in _db.SP_Product
@@ -2222,7 +2224,7 @@ namespace PeriodAid.Controllers
             r2c1.SetCellValue(orderInfo.SP_Contact.SP_Client.Client_Name);
             r2c1.CellStyle = textStyle1;
             var r2c4 = row2.CreateCell(4);
-            r2c4.SetCellValue(orderInfo.Order_Date.ToString());
+            r2c4.SetCellValue(orderInfo.Order_Date.ToString("yyyy-MM-dd"));
             r2c4.CellStyle = textStyle1;
 
             MemoryStream _stream = new MemoryStream();

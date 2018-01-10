@@ -123,7 +123,6 @@
         $("#ContactId").val($("#contactId").html())
         $("#contact-input").val($("#contactMobile").html())
         $("#Contact_Id").val($("#contactId").html())
-        $("#getExcel").addClass("disabled")
         $(function () {
             $("#CreatOrderExcel").attr("action", "/SalesProcess/CreatOrderExcel?orderId=" + getUrlParam('orderId'))
             $("#order_id").attr("data-oid",getUrlParam('orderId'))
@@ -253,7 +252,6 @@
                         $("#confirm-btn").addClass("disabled")
                         $(".select-a").addClass("disabled")
                         $(".delete-orderPrice").addClass("disabled")
-                        $("#getExcel").removeClass("disabled")
                     }
                 }
             })
