@@ -1314,6 +1314,8 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
         {
+            ModelState.Remove("Order_Count");
+            ModelState.Remove("Order_Price");
             if (ModelState.IsValid)
             {
                 var productlist = from m in _db.SP_Product
