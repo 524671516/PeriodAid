@@ -65,7 +65,6 @@
         val: 'Id',
     });
     $("#add-product").click(function () {
-        if ($("#ProductId").val() != "") {
             var that = $(this)
             var select_item = $("#product_input");
             var P_Id = $("#ProductId")
@@ -85,7 +84,6 @@
                                 var item = $("#price_" + data.data[0].Id);
                                 item.val(data.data[0].Price)
                                 $("#product_input").val("")
-                                $("#ProductId").val("")
                             }
                         }
                     });
@@ -93,9 +91,6 @@
                     errorAlert("请不要重复添加相同产品")
                 }
             }
-        } else {
-            errorAlert("请选择正确商品")
-        }
     });
     $("#add-orderPrice-form").validate({
         debug: true,
