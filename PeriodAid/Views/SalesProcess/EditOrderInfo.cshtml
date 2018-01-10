@@ -101,8 +101,9 @@
 </div>
 <div class="col-md-12 text-center" style="padding:0 74px 0 40px">
     <a class="btn btn-info btn-sm"  id="add-order"><i class="fa fa-edit"></i>&nbsp;提交修改</a>&nbsp;&nbsp;&nbsp;
-    <a class="btn btn-danger btn-sm" id="">提交审批</a>&nbsp;&nbsp;&nbsp;
-    <a class="btn btn-danger btn-sm" id="">生成订货单</a>
+    <a class="btn btn-danger btn-sm" id=""><i class="fa fa-check"></i>&nbsp;提交审批</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-danger btn-sm" onclick="$('#CreatOrderExcel').submit()"><i class="fa fa-download"></i>&nbsp;生成订货单</a>
+    <form method="post" id="CreatOrderExcel" action=""></form>
 </div>
 @section scripts{
     <script>
@@ -112,6 +113,7 @@
         $("#contact-input").val($("#contactMobile").html())
         $("#Contact_Id").val($("#contactId").html())
         $(function () {
+            $("#CreatOrderExcel").attr("action","/SalesProcess/CreatOrderExcel?orderId="+getUrlParam('orderId'))
             $("#order_id").attr("data-oid",getUrlParam('orderId'))
             $.ajax({
                 url: "/SalesProcess/OrderPriceListPartial",
@@ -206,6 +208,18 @@
                 success: function (data) {
                     $('#modal-content').html(data)
                     $("#myModal").modal('show')
+                }
+            })
+        })
+        //生成订货通知单
+        $("#CreatOrderExcel").click(function () {
+            $.ajax({
+                url: "/SalesProcess/CreatOrderExcel",
+                type:"post",
+                data: {
+                    orderId: getUrlParam('orderId')
+                },
+                success: function (data) {
                 }
             })
         })
