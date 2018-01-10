@@ -51,6 +51,10 @@
 </div>
 <script>
     $(function () {
+        if ($("#order_type").html() == 0) {
+            $(".select-a").addClass("disabled")
+            $(".delete-orderPrice").addClass("disabled")
+        }
         // 编辑
         $(".select-a").on("click", function () {
             $.ajax({

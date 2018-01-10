@@ -1383,3 +1383,14 @@ a.btn_subtask_detail{
     cursor:pointer;
     color:black
 }
+ #confirm_text{
+        position:absolute;
+        font-size:50px;
+        border:5px solid #450404;
+        text-align:center;
+        opacity:0.4;
+        padding:45px 0;
+        color:#450404;
+        transform:rotate(-9deg);
+        z-index:100;
+    }

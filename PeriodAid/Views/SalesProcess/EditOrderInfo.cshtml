@@ -16,27 +16,28 @@
         border-radius: initial;
         text-align: center
     }
+   
 </style>
 <div class="hidden" id="contactMobile">@ViewBag.contact.Contact_Mobile</div>
 <div class="hidden" id="contactId">@ViewBag.contact.Id</div>
+<div id="order_id" class="hidden"></div>
 <h2 class="text-center" style="margin-bottom:25px">寿全斋订货通知单</h2>
 <h4 class="text-center" id="order_show"></h4>
-<div id="order_id" class="hidden"></div>
+<div class="col-md-12">
+    <ol class="breadcrumb float-left">
+        当前位置：
+        <li><a href="/SalesProcess/OrderList">订单管理</a></li>
+        <li class="active">订单编辑</li>
+    </ol>
+</div>
+<div id="order_type" class="hidden">@ViewBag.Order.Order_Type</div>
 @using (Html.BeginForm("EditOrderInfo", "SalesProcess", FormMethod.Post, new { @id = "edit-order-form" }))
 {
     @Html.AntiForgeryToken()
     <div class="col-md-12">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
-        @Html.HiddenFor(model => model.Contact_Id)
         @Html.HiddenFor(model => model.SP_Contact.Id)
-        <div class="form-group col-md-6" hidden>
-            <label class="col-md-3 control-label order_label">订单号码：</label>
-            <div class="col-md-8">
-                @Html.EditorFor(model => model.Order_Number, new { htmlAttributes = new { @class = "form-control date-readonly order_control", @readonly = "readonly" } })
-                @Html.ValidationMessageFor(model => model.Order_Number, "", new { @class = "text-danger" })
-            </div>
-        </div>
         <div class="form-group col-md-6">
             <label class="col-md-3 control-label order_label">购货单位：</label>
             <div class="col-md-8">
@@ -79,12 +80,22 @@
                 @Html.ValidationMessageFor(model => model.Cancellation_Fee, "", new { @class = "text-danger" })
             </div>
         </div>
+        <div class="form-group col-md-12" style="margin-bottom:0"></div>
         <div class="form-group col-md-6">
             <label class="col-md-3 control-label order_label">备注：</label>
             <div class="col-md-8">
                 @Html.EditorFor(model => model.Order_Remark, new { htmlAttributes = new { @class = "form-control order_control", @autocomplete = "off" } })
                 @Html.ValidationMessageFor(model => model.Order_Remark, "", new { @class = "text-danger" })
             </div>
+        </div>
+        <div class="hidden">
+            @Html.EditorFor(model => model.Order_Number, new { htmlAttributes = new { @class = "form-control date-readonly order_control", @readonly = "readonly" } })
+            @Html.ValidationMessageFor(model => model.Order_Number, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="hidden">
+                @Html.EditorFor(model => model.Order_Type, new { htmlAttributes = new { @class = "form-control"} })
+                @Html.ValidationMessageFor(model => model.Order_Type, "", new { @class = "text-danger" })
         </div>
         <div class="form-group">
             <div class="col-md-6">
@@ -93,17 +104,17 @@
         </div>
     </div>
 }
+<div class="col-md-12 hidden" id="confirm_text">已审批</div>
 <div class="col-md-12 well" style="padding:0 74px 0 40px">
     <a class="btn btn-info btn-sm  float-left" style="margin:10px 0" id="add-orderPrice" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加产品</a>
     <div id="orderPrice_list_content">
-
     </div>
 </div>
 <div class="col-md-12 text-center" style="padding:0 74px 0 40px">
-    <a class="btn btn-info btn-sm"  id="add-order"><i class="fa fa-edit"></i>&nbsp;提交修改</a>&nbsp;&nbsp;&nbsp;
-    <a class="btn btn-danger btn-sm" id="">提交审批</a>&nbsp;&nbsp;&nbsp;
-    <a class="btn btn-danger btn-sm" id="">生成订货单</a>
-</div>
+    <a class="btn btn-info btn-sm" id="add-order"><i class="fa fa-edit"></i>&nbsp;提交修改</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-danger btn-sm" id="confirm-btn">提交审批</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-danger btn-sm" id="getExcel">生成订货单</a>
+</div>    
 @section scripts{
     <script>
         $("#order_show").html("订单号："+$("#Order_Number").val())
@@ -111,6 +122,7 @@
         $("#ContactId").val($("#contactId").html())
         $("#contact-input").val($("#contactMobile").html())
         $("#Contact_Id").val($("#contactId").html())
+        $("#getExcel").addClass("disabled")
         $(function () {
             $("#order_id").attr("data-oid",getUrlParam('orderId'))
             $.ajax({
@@ -130,6 +142,14 @@
                 titleFormat: "MM月, YYYY年",
                 format: "YYYY-MM-DD"
             });
+
+            if ($("#order_type").html() == 0) {
+                $("#add-orderPrice").addClass("disabled")
+                $("#add-order").addClass("disabled")
+                $("#confirm-btn").addClass("disabled")
+                $("#getExcel").removeClass("disabled")
+                $("#confirm_text").removeClass("hidden")
+            }
         })
         $("#add-order").on("click", function () {
             $("#add-submit").trigger("click");
@@ -151,21 +171,45 @@
             debug: true,
             rules: {
                 Order_Date: {
-                    required: true,
-                    date: true
+                    required: true
+                },
+                client_input: {
+                    required: true
+                },
+                contact_input: {
+                    required: true
                 },
                 Order_Address: {
                     required: true
+                },
+                Signed_Number: {
+                    required: true
+                },
+                Cancellation_Fee: {
+                    required: true,
+                    number: true
                 }
 
             },
             messages: {
                 Order_Date: {
-                    required: "日期是必填的",
-                    date: "请直接选择日期"
+                    required: "日期是必须的"
+                },
+                client_input: {
+                    required: "购货单位是必须的"
+                },
+                contact_input: {
+                    required: "联系人是必须的"
                 },
                 Order_Address: {
-                    required: "邮寄地址是必填的"
+                    required: "邮寄地址是必须的"
+                },
+                Signed_Number: {
+                    required: "编号是必须的"
+                },
+                Cancellation_Fee: {
+                    required: "费用是必须的",
+                    number: "请注意格式"
                 }
             },
             //验证通过的正式提交函数
@@ -193,8 +237,24 @@
         })
         // 提交
         $("#confirm-btn").on("click", function () {
-            $(this).attr("href", "/SalesProcess/OrderList")
-
+            $.ajax({
+                url: "/SalesProcess/ConfirmOrder",
+                type:"post",
+                data: {
+                    orderId: $("#order_id").attr("data-oid")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert("已提交审批")
+                        $("#add-orderPrice").addClass("disabled")
+                        $("#add-order").addClass("disabled")
+                        $("#confirm-btn").addClass("disabled")
+                        $(".select-a").addClass("disabled")
+                        $(".delete-orderPrice").addClass("disabled")
+                        $("#getExcel").removeClass("disabled")
+                    }
+                }
+            })
         })
         //新增产品
         $("#add-price").click(function () {
