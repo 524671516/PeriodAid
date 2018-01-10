@@ -42,6 +42,12 @@
 </div>
 <script>
     $(function () {
+        var O_type = $(".order-list-li.active").children(".type-btn").attr("data-id")
+        if (O_type == 0) {
+            $(".select-a").html("详情")
+            $(".select-a").removeClass("btn-success")
+            $(".select-a").addClass("btn-primary")
+        }
         //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
