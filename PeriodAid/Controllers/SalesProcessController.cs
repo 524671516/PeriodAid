@@ -1337,22 +1337,30 @@ namespace PeriodAid.Controllers
                             order = Convert.ToInt32(form["order_" + product.Id]);
                             price = Convert.ToDecimal(form["price_" + product.Id]);
                             remark = Convert.ToString(form["remark_" + product.Id]);
-                        if (order == 0)
+                        var orderType = _db.SP_Order.SingleOrDefault(m => m.Id == model.Order_Id);
+                        if (orderType.Order_Type != 0) 
                         {
-                        }
-                        else
-                        {
-                            var orderprice = new SP_OrderPrice();
+                            if (order == 0)
                             {
-                                orderprice.Order_Count = order;
-                                orderprice.Order_Price = price;
-                                orderprice.Product_Id = product.Id;
-                                orderprice.OrderPrice_Status = 0;
-                                orderprice.Order_Id = model.Order_Id;
-                                orderprice.OrderPrice_Remark = remark;
-                            };
-                            _db.SP_OrderPrice.Add(orderprice);
+                            }
+                            else
+                            {
+                                var orderprice = new SP_OrderPrice();
+                                {
+                                    orderprice.Order_Count = order;
+                                    orderprice.Order_Price = price;
+                                    orderprice.Product_Id = product.Id;
+                                    orderprice.OrderPrice_Status = 0;
+                                    orderprice.Order_Id = model.Order_Id;
+                                    orderprice.OrderPrice_Remark = remark;
+                                };
+                                _db.SP_OrderPrice.Add(orderprice);
+                            }
+                        }else
+                        {
+                            return Json(new { result = "WARNING" });
                         }
+                        
                     }
                 }
                 _db.SaveChangesAsync();
@@ -1386,12 +1394,19 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    SP_OrderPrice orderPrice = new SP_OrderPrice();
-                    if (TryUpdateModel(orderPrice))
+                    var order = _db.SP_Order.SingleOrDefault(m => m.Id == model.Order_Id);
+                    if (order.Order_Type != 0)
                     {
-                        _db.Entry(orderPrice).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
+                        SP_OrderPrice orderPrice = new SP_OrderPrice();
+                        if (TryUpdateModel(orderPrice))
+                        {
+                            _db.Entry(orderPrice).State = System.Data.Entity.EntityState.Modified;
+                            _db.SaveChanges();
+                            return Json(new { result = "SUCCESS" });
+                        }
+                    }else
+                    {
+                        return Json(new { result = "WARNING" });
                     }
                 }
             }
@@ -1401,9 +1416,17 @@ namespace PeriodAid.Controllers
         public ActionResult DeleteOrderPrice(int orderPriceId)
         {
             var OrderPrice = _db.SP_OrderPrice.AsNoTracking().SingleOrDefault(m => m.Id == orderPriceId);
-            OrderPrice.OrderPrice_Status = -1;
-            _db.Entry(OrderPrice).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
+            var order = _db.SP_Order.SingleOrDefault(m => m.Id == OrderPrice.Order_Id);
+            if (order.Order_Type != 0)
+            {
+                OrderPrice.OrderPrice_Status = -1;
+                _db.Entry(OrderPrice).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+            }
+            else
+            {
+                return Json(new { result = "WARNING" });
+            }
             return Json(new { result = "SUCCESS" });
 
         }

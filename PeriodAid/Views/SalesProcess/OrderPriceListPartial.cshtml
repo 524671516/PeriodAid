@@ -97,7 +97,10 @@
                                     }
                                 });
                                 alert("删除成功")
-                            } else {
+                            } else if (data.result == "WARNING") {
+                                errorAlert("订单已审批，无法删除")
+                            }
+                            else {
                                 errorAlert(data.errmsg)
                             }
                         }

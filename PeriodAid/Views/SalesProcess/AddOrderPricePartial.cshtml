@@ -111,13 +111,15 @@
                             $("#orderPrice_list_content").html(data)
                             $('.modal-backdrop.in').remove()
                             $('body').removeClass('modal-open')
-                            $("#confirm-btn").removeClass("disabled")
                         }
                     });
                 }
                 else if (data.result == "UNAUTHORIZED") {
                     $("#add-submit").removeAttr("disabled")
                     errorAlert("报价已存在!");
+                } else if (data.result == "WARNING") {
+                    $("#add-submit").removeAttr("disabled")
+                    errorAlert("订单已审批，无法添加!");
                 }
                 else if (data.result == "FAIL") {
                     $("#add-submit").removeAttr("disabled")
