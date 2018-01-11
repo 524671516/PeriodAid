@@ -1255,15 +1255,25 @@ namespace PeriodAid.Controllers
         }
         // 审批
         [HttpPost]
+        [Seller(OperationGroup = 601)]
         public ActionResult ConfirmOrder(int orderId)
         {
-            var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            if (TryUpdateModel(order))
+            var seller = getSeller(User.Identity.Name);
+            if (seller.Seller_Type == 0)
             {
-                order.Order_Type = 0;
-                _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
+                return Json(new { result = "FALL" });
             }
+            else
+            {
+                var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
+                if (TryUpdateModel(order))
+                {
+                    order.Order_Type = 0;
+                    _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                }
+            }
+            
             return Json(new { result = "SUCCESS" });
         }
 

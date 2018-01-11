@@ -239,25 +239,29 @@
         })
         // 提交
         $("#confirm-btn").on("click", function () {
-            $.ajax({
-                url: "/SalesProcess/ConfirmOrder",
-                type:"post",
-                data: {
-                    orderId: $("#order_id").attr("data-oid")
-                },
-                success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        confirm("是否确认审批?", " ", function (isConfirm) {
-                            if (isConfirm) {
+            confirm("是否确认审批?", " ", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/SalesProcess/ConfirmOrder",
+                        type: "post",
+                        data: {
+                            orderId: $("#order_id").attr("data-oid")
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
                                 window.location.href = "/SalesProcess/EditOrderInfo?orderId=" + getUrlParam('orderId');
                                 $("#add-orderPrice").addClass("disabled")
                                 $("#add-order").addClass("disabled")
                                 $("#confirm-btn").addClass("disabled")
                             }
-                        })
-                    }
-                }
+                            else if (data.result == "FALL") {
+                                errorAlert("权限不足,不能审批")
+                            }
+                        }
+                    })
+                } 
             })
+            
         })
         //新增产品
         $("#add-price").click(function () {
@@ -272,7 +276,6 @@
                 }
             })
         })
-
         //生成订货通知单
         $("#CreatOrderExcel").click(function () {
             $.ajax({
