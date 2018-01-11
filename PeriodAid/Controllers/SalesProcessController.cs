@@ -2158,8 +2158,10 @@ namespace PeriodAid.Controllers
                             select m;
             var cell_data = 7;
             var order_num = 0;
+            int divisionCount = 0;
             foreach (var data in priceData)
             {
+                var dataRest = data.Order_Count % data.SP_Product.Carton_Spec;
                 IRow rowData = sheet.CreateRow(++cell_data);
                 rowData.Height= 30 * 20;
                 var rd0 = rowData.CreateCell(0);
@@ -2170,22 +2172,64 @@ namespace PeriodAid.Controllers
                 rd2.SetCellValue(data.SP_Product.Carton_Spec);
                 var rd3 = rowData.CreateCell(3);
                 rd3.SetCellValue(data.Order_Count);
-                var rd4 = rowData.CreateCell(4);
-                rd4.SetCellValue(data.Order_Count / data.SP_Product.Carton_Spec);
                 var rd5 = rowData.CreateCell(5);
                 rd5.SetCellValue(data.SP_Product.Purchase_Price.ToString());
-                var rd6 = rowData.CreateCell(6);
-                rd6.SetCellValue((data.Order_Count * data.SP_Product.Purchase_Price).ToString());
+                if (dataRest == data.Order_Count)
+                {
+                    var rd6 = rowData.CreateCell(6);
+                    rd6.SetCellValue((data.Order_Count * data.SP_Product.Purchase_Price).ToString());
+                    rd6.CellStyle = textStyle1;
+                    var rd4 = rowData.CreateCell(4);
+                    rd4.SetCellValue("1");
+                    rd4.CellStyle = textStyle1;
+                }
+                else {
+                    var rd6 = rowData.CreateCell(6);
+                    rd6.SetCellValue((data.Order_Count / data.SP_Product.Carton_Spec * data.SP_Product.Carton_Spec * data.SP_Product.Purchase_Price).ToString());
+                    rd6.CellStyle = textStyle1;
+                    var rd4 = rowData.CreateCell(4);
+                    rd4.SetCellValue(data.Order_Count / data.SP_Product.Carton_Spec);
+                    rd4.CellStyle = textStyle1;
+                }
                 var rd7 = rowData.CreateCell(7);
                 rd7.SetCellValue(data.OrderPrice_Remark);
                 rd0.CellStyle = textStyle1;
                 rd1.CellStyle = textStyle1;
                 rd2.CellStyle = textStyle1;
                 rd3.CellStyle = textStyle1;
-                rd4.CellStyle = textStyle1;
                 rd5.CellStyle = textStyle1;
-                rd6.CellStyle = textStyle1;
                 rd7.CellStyle = textStyle1;
+                if (dataRest != 0 && dataRest != data.Order_Count)
+                {
+                    divisionCount++;
+                    cell_data++;
+                    IRow rowDataRest = sheet.CreateRow(cell_data);
+                    rowDataRest.Height = 30 * 20;
+                    var rd0rest = rowDataRest.CreateCell(0);
+                    rd0rest.SetCellValue(++order_num);
+                    var rd1rest = rowDataRest.CreateCell(1);
+                    rd1rest.SetCellValue(data.SP_Product.Item_Name);
+                    var rd2rest = rowDataRest.CreateCell(2);
+                    rd2rest.SetCellValue(data.SP_Product.Carton_Spec);
+                    var rd3rest = rowDataRest.CreateCell(3);
+                    rd3rest.SetCellValue("");
+                    var rd4rest = rowDataRest.CreateCell(4);
+                    rd4rest.SetCellValue("1");
+                    var rd5rest = rowDataRest.CreateCell(5);
+                    rd5rest.SetCellValue(data.SP_Product.Purchase_Price.ToString());
+                    var rd6rest = rowDataRest.CreateCell(6);
+                    rd6rest.SetCellValue((dataRest * data.SP_Product.Purchase_Price).ToString());
+                    var rd7rest = rowDataRest.CreateCell(7);
+                    rd7rest.SetCellValue(data.OrderPrice_Remark);
+                    rd0rest.CellStyle = textStyle1;
+                    rd1rest.CellStyle = textStyle1;
+                    rd2rest.CellStyle = textStyle1;
+                    rd3rest.CellStyle = textStyle1;
+                    rd4rest.CellStyle = textStyle1;
+                    rd5rest.CellStyle = textStyle1;
+                    rd6rest.CellStyle = textStyle1;
+                    rd7rest.CellStyle = textStyle1;
+                }
             }
             for (int i = 1; i < 8; i++)//3-7行样式
             {
@@ -2203,8 +2247,8 @@ namespace PeriodAid.Controllers
                 var r6c = row6.CreateCell(i);
                 r6c.CellStyle = textStyle1;
             }
-            var rest = priceData.Count() + 8;
-            var restEnd = priceData.Count() + 8;
+            var rest = priceData.Count() + divisionCount + 8;
+            var restEnd = priceData.Count() + divisionCount + 8;
             for (; rest - restEnd <= 2; rest++)
             {
                 IRow rowRest = sheet.CreateRow(rest);
