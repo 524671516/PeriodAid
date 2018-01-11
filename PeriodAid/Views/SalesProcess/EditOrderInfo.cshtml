@@ -247,12 +247,12 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $("#add-orderPrice").addClass("disabled")
-                        $("#add-order").addClass("disabled")
-                        $("#confirm-btn").addClass("disabled")
                         confirm("是否确认审批?", " ", function (isConfirm) {
                             if (isConfirm) {
                                 window.location.href = "/SalesProcess/EditOrderInfo?orderId=" + getUrlParam('orderId');
+                                $("#add-orderPrice").addClass("disabled")
+                                $("#add-order").addClass("disabled")
+                                $("#confirm-btn").addClass("disabled")
                             }
                         })
                     }
