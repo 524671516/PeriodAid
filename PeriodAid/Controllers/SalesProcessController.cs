@@ -2056,7 +2056,7 @@ namespace PeriodAid.Controllers
             {
                 int j = i + 1;
                 int[] a = { 0, 0, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 2, 4, 3, 4, 4, 4, 5, 4, 6, 4 };
-                int[] b = { 1, 6, 2, 2, 3, 2, 4, 2, 5, 2, 6, 2, 2, 6, 3, 6, 4, 6, 5, 6, 6, 6 };
+                int[] b = { 1, 7, 2, 2, 3, 2, 4, 2, 5, 2, 6, 2, 2, 7, 3, 7, 4, 7, 5, 7, 6, 7 };
                 if (i % 2 == 0)
                 {
                     sheet.AddMergedRegion(new CellRangeAddress(a[i], b[i], a[j], b[j]));
@@ -2065,15 +2065,15 @@ namespace PeriodAid.Controllers
             var orderInfo = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
             // 写标题
             IRow row0 = sheet.CreateRow(0);
-            row0.Height = 21 * 20;
-            for (int i = 0; i < 6; i++)
+            row0.Height = 40 * 20;
+            for (int i = 0; i < 7; i++)
             {
                 sheet.SetColumnWidth(i, 20 * 256);
                 //sheet.SetDefaultColumnStyle(i, borderstyle);
             }
             IRow row1 = sheet.CreateRow(1);
-            row1.Height = 21 * 20;
-            for (int i = 0; i < 7; i++)
+            row1.Height = 40 * 20;
+            for (int i = 0; i < 8; i++)
             {
                 var r0c = row0.CreateCell(i);
                 r0c.CellStyle = textStyle1;
@@ -2089,7 +2089,7 @@ namespace PeriodAid.Controllers
             r0c6.CellStyle = titleStyle;
             r1c6.CellStyle = titleStyle;
             IRow row2 = sheet.CreateRow(2);//第三行
-            row2.Height = 21 * 20;
+            row2.Height = 35 * 20;
             var r2c0 = row2.CreateCell(cell_pos);
             r2c0.SetCellValue("购货单位：");
             r2c0.CellStyle = textStyle2;
@@ -2097,7 +2097,7 @@ namespace PeriodAid.Controllers
             r2c3.SetCellValue("订货日期：");
             r2c3.CellStyle = textStyle2;
             IRow row3 = sheet.CreateRow(3);//第四行
-            row3.Height = 21 * 20;
+            row3.Height = 35 * 20;
             var r3c0 = row3.CreateCell(cell_pos);
             r3c0.SetCellValue("联系人及电话：");
             r3c0.CellStyle = textStyle2;
@@ -2107,28 +2107,28 @@ namespace PeriodAid.Controllers
             var r3c6 = row3.CreateCell(6);
             r3c6.CellStyle = textStyle1;
             IRow row4 = sheet.CreateRow(4);//第五行
-            row4.Height = 21 * 20;
+            row4.Height = 35 * 20;
             var r4c6 = row4.CreateCell(6);
             r4c6.CellStyle = textStyle1;
             var r4c0 = row4.CreateCell(cell_pos);
             r4c0.SetCellValue("签呈编号：");
             r4c0.CellStyle = textStyle2;
             IRow row5 = sheet.CreateRow(5);//第六行
-            row5.Height = 21 * 20;
+            row5.Height = 35 * 20;
             var r5c6 = row5.CreateCell(6);
             r5c6.CellStyle = textStyle1;
             var r5c0 = row5.CreateCell(cell_pos);
             r5c0.SetCellValue("核销费用：");
             r5c0.CellStyle = textStyle2;
             IRow row6 = sheet.CreateRow(6);//第七行
-            row6.Height = 21 * 20;
+            row6.Height = 35 * 20;
             var r6c6 = row6.CreateCell(6);
             r6c6.CellStyle = textStyle1;
             var r6c0 = row6.CreateCell(cell_pos);
             r6c0.SetCellValue("备注：");
             r6c0.CellStyle = textStyle2;
             IRow row7 = sheet.CreateRow(7);//第八行（数据区）
-            row7.Height = 21 * 20;
+            row7.Height = 30 * 20;
             var r7c0 = row7.CreateCell(cell_pos);
             r7c0.SetCellValue("序号");
             var r7c1 = row7.CreateCell(++cell_pos);
@@ -2136,13 +2136,15 @@ namespace PeriodAid.Controllers
             var r7c2 = row7.CreateCell(++cell_pos);
             r7c2.SetCellValue("规格");
             var r7c3 = row7.CreateCell(++cell_pos);
-            r7c3.SetCellValue("订货数量(箱)");
+            r7c3.SetCellValue("订货数量");
             var r7c4 = row7.CreateCell(++cell_pos);
-            r7c4.SetCellValue("单价");
+            r7c4.SetCellValue("箱数");
             var r7c5 = row7.CreateCell(++cell_pos);
-            r7c5.SetCellValue("金额");
+            r7c5.SetCellValue("单价");
             var r7c6 = row7.CreateCell(++cell_pos);
-            r7c6.SetCellValue("备注");
+            r7c6.SetCellValue("金额");
+            var r7c7 = row7.CreateCell(++cell_pos);
+            r7c7.SetCellValue("备注");
             r7c0.CellStyle = textStyle1;
             r7c1.CellStyle = textStyle1;
             r7c2.CellStyle = textStyle1;
@@ -2150,6 +2152,7 @@ namespace PeriodAid.Controllers
             r7c4.CellStyle = textStyle1;
             r7c5.CellStyle = textStyle1;
             r7c6.CellStyle = textStyle1;
+            r7c7.CellStyle = textStyle1;
             var priceData = from m in _db.SP_OrderPrice
                             where m.Order_Id == orderId && m.OrderPrice_Status != -1
                             select m;
@@ -2158,6 +2161,7 @@ namespace PeriodAid.Controllers
             foreach (var data in priceData)
             {
                 IRow rowData = sheet.CreateRow(++cell_data);
+                rowData.Height= 30 * 20;
                 var rd0 = rowData.CreateCell(0);
                 rd0.SetCellValue(++order_num);
                 var rd1 = rowData.CreateCell(1);
@@ -2165,13 +2169,15 @@ namespace PeriodAid.Controllers
                 var rd2 = rowData.CreateCell(2);
                 rd2.SetCellValue(data.SP_Product.Carton_Spec);
                 var rd3 = rowData.CreateCell(3);
-                rd3.SetCellValue(data.Order_Count / data.SP_Product.Carton_Spec);
+                rd3.SetCellValue(data.Order_Count);
                 var rd4 = rowData.CreateCell(4);
-                rd4.SetCellValue(data.SP_Product.Purchase_Price.ToString());
+                rd4.SetCellValue(data.Order_Count / data.SP_Product.Carton_Spec);
                 var rd5 = rowData.CreateCell(5);
-                rd5.SetCellValue((data.Order_Count * data.SP_Product.Purchase_Price).ToString());
+                rd5.SetCellValue(data.SP_Product.Purchase_Price.ToString());
                 var rd6 = rowData.CreateCell(6);
-                rd6.SetCellValue(data.OrderPrice_Remark);
+                rd6.SetCellValue((data.Order_Count * data.SP_Product.Purchase_Price).ToString());
+                var rd7 = rowData.CreateCell(7);
+                rd7.SetCellValue(data.OrderPrice_Remark);
                 rd0.CellStyle = textStyle1;
                 rd1.CellStyle = textStyle1;
                 rd2.CellStyle = textStyle1;
@@ -2179,8 +2185,9 @@ namespace PeriodAid.Controllers
                 rd4.CellStyle = textStyle1;
                 rd5.CellStyle = textStyle1;
                 rd6.CellStyle = textStyle1;
+                rd7.CellStyle = textStyle1;
             }
-            for (int i = 1; i < 7; i++)//3-7行样式
+            for (int i = 1; i < 8; i++)//3-7行样式
             {
                 if (i != 3)
                 {
@@ -2201,13 +2208,15 @@ namespace PeriodAid.Controllers
             for (; rest - restEnd <= 2; rest++)
             {
                 IRow rowRest = sheet.CreateRow(rest);
-                for (int i = 0; i < 7; i++)
+                rowRest.Height = 30 * 20;
+                for (int i = 0; i < 8; i++)
                 {
                     var rcRest = rowRest.CreateCell(i);//数据区后追三行
                     rcRest.CellStyle = textStyle1;
                 }
             }
-            IRow rowAdd = sheet.CreateRow(rest);
+            IRow rowAdd = sheet.CreateRow(rest);//合计数据区
+            rowAdd.Height = 30 * 20;
             var rcAdd = rowAdd.CreateCell(0);
             rcAdd.SetCellValue("合计");
             rcAdd.CellStyle = textStyle1;
@@ -2215,10 +2224,10 @@ namespace PeriodAid.Controllers
             rcAdd1.CellStyle = textStyle1;
             var rcAdd2 = rowAdd.CreateCell(2);
             rcAdd2.CellStyle = textStyle1;
-            var rcAdd4 = rowAdd.CreateCell(4);
-            rcAdd4.CellStyle = textStyle1;
-            var rcAdd6 = rowAdd.CreateCell(6);
-            rcAdd6.CellStyle = textStyle1;
+            var rcAdd5 = rowAdd.CreateCell(5);
+            rcAdd5.CellStyle = textStyle1;
+            var rcAdd7 = rowAdd.CreateCell(7);
+            rcAdd7.CellStyle = textStyle1;
             var Price = from m in _db.SP_OrderPrice
                         where m.OrderPrice_Status != -1 && m.Order_Id == orderId
                         group m by m.Id into g
@@ -2229,19 +2238,25 @@ namespace PeriodAid.Controllers
                             SumPrice = g.Sum(m => m.Order_Price)
                         };
             int cartonCount = 0;
+            int orderCount = 0;
             decimal sumPrice = 0;
             foreach (var price in Price)
             {
                 cartonCount += price.CartonCount;
+                orderCount += price.SumCount;
                 var Sumprice = price.SumCount * price.SumPrice;
                 sumPrice += Sumprice;
             }
-            var row_sumPrice = rowAdd.CreateCell(3);
-            row_sumPrice.SetCellValue(cartonCount);
-            row_sumPrice.CellStyle = textStyle1;
-            var row_sumCount = rowAdd.CreateCell(5);
-            row_sumCount.SetCellValue(sumPrice.ToString());
+            var row_orderCount = rowAdd.CreateCell(3);
+            row_orderCount.SetCellValue(orderCount);
+            row_orderCount.CellStyle = textStyle1;
+            var row_sumCount = rowAdd.CreateCell(4);
+            row_sumCount.SetCellValue(cartonCount);
             row_sumCount.CellStyle = textStyle1;
+            var row_sumPrice = rowAdd.CreateCell(6);
+            row_sumPrice.SetCellValue(sumPrice.ToString());
+            row_sumPrice.CellStyle = textStyle1;
+            //未知区
             //填充订单数据
             var r2c1 = row2.CreateCell(1);
             r2c1.SetCellValue(orderInfo.SP_Contact.SP_Client.Client_Name);
@@ -2249,6 +2264,12 @@ namespace PeriodAid.Controllers
             var r2c4 = row2.CreateCell(4);
             r2c4.SetCellValue(orderInfo.Order_Date.ToString("yyyy-MM-dd"));
             r2c4.CellStyle = textStyle1;
+            var r3c1 = row3.CreateCell(1);
+            r3c1.SetCellValue(orderInfo.SP_Contact.Contact_Name+" "+orderInfo.SP_Contact.Contact_Mobile);
+            r3c1.CellStyle = textStyle1;
+            var r3c4 = row3.CreateCell(4);
+            r3c4.SetCellValue(orderInfo.Order_Address);
+            r3c4.CellStyle = textStyle1;
 
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
