@@ -18,7 +18,7 @@
     }
    
 </style>
-<div class="hidden" id="contactMobile">@ViewBag.contact.Contact_Mobile</div>
+<div class="hidden" id="contactMobile">@ViewBag.contact.Contact_Name  @ViewBag.contact.Contact_Mobile</div>
 <div class="hidden" id="contactId">@ViewBag.contact.Id</div>
 <div id="order_id" class="hidden"></div>
 <h2 class="text-center" style="margin-bottom:25px">寿全斋订货通知单</h2>
@@ -113,7 +113,7 @@
 <div class="col-md-12 text-center" style="padding:0 74px 0 40px">
     <a class="btn btn-info btn-sm" id="add-order"><i class="fa fa-edit"></i>&nbsp;提交修改</a>&nbsp;&nbsp;&nbsp;
     <a class="btn btn-danger btn-sm" id="confirm-btn">提交审批</a>&nbsp;&nbsp;&nbsp;
-    <a class="btn btn-danger btn-sm" onclick="$('#CreatOrderExcel').submit()"><i class="fa fa-download"></i>&nbsp;生成订货单</a>
+    <a class="btn btn-danger btn-sm" id="CreatOrderExcel-btn" onclick="$('#CreatOrderExcel').submit()"><i class="fa fa-download"></i>&nbsp;生成订货单</a>
     <form method="post" id="CreatOrderExcel" action=""></form>
 </div>    
 @section scripts{
@@ -124,6 +124,7 @@
         $("#contact-input").val($("#contactMobile").html())
         $("#Contact_Id").val($("#contactId").html())
         $(function () {
+            $("#CreatOrderExcel-btn").addClass("disabled")
             $("#CreatOrderExcel").attr("action", "/SalesProcess/CreatOrderExcel?orderId=" + getUrlParam('orderId'))
             $("#order_id").attr("data-oid",getUrlParam('orderId'))
             $.ajax({
@@ -148,7 +149,7 @@
                 $("#add-orderPrice").addClass("disabled")
                 $("#add-order").addClass("disabled")
                 $("#confirm-btn").addClass("disabled")
-                $("#getExcel").removeClass("disabled")
+                $("#CreatOrderExcel-btn").removeClass("disabled")
                 $("#confirm_text").removeClass("hidden")
             }
         })
@@ -246,12 +247,14 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        alert("已提交审批")
                         $("#add-orderPrice").addClass("disabled")
                         $("#add-order").addClass("disabled")
                         $("#confirm-btn").addClass("disabled")
-                        $(".select-a").addClass("disabled")
-                        $(".delete-orderPrice").addClass("disabled")
+                        confirm("是否确认审批?", " ", function (isConfirm) {
+                            if (isConfirm) {
+                                window.location.href = "/SalesProcess/EditOrderInfo?orderId=" + getUrlParam('orderId');
+                            }
+                        })
                     }
                 }
             })
