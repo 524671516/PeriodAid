@@ -226,7 +226,10 @@
                     }
                     else if (data.result == "FAIL") {
                         errorAlert("联系人不存在!");
-                    } else {
+                    } else if (data.result == "WARNING") {
+                        errorAlert("订单已审批，不能修改!");
+                    }
+                    else {
                         errorAlert(data.errmsg)
                     }
                 })
@@ -253,6 +256,8 @@
                                 $("#add-orderPrice").addClass("disabled")
                                 $("#add-order").addClass("disabled")
                                 $("#confirm-btn").addClass("disabled")
+                            } else if (data.result == "WARNING") {
+                                errorAlert("订单已审批")
                             }
                             else if (data.result == "FALL") {
                                 errorAlert("权限不足,不能审批")

@@ -1231,13 +1231,22 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    SP_Order order = new SP_Order();
-                    if (TryUpdateModel(order))
+                    var orderType = _db.SP_Order.SingleOrDefault(m => m.Id == model.Id);
+                    if (orderType.Order_Type != 0) 
                     {
-                        _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
+                        SP_Order order = new SP_Order();
+                        if (TryUpdateModel(order))
+                        {
+                            _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                            _db.SaveChanges();
+                            return Json(new { result = "SUCCESS" });
+                        }
                     }
+                    else
+                    {
+                        return Json(new { result = "WARNING" });
+                    }
+                    
                 }
             }
             return Json(new { result = "FAIL" });
@@ -1259,18 +1268,25 @@ namespace PeriodAid.Controllers
         public ActionResult ConfirmOrder(int orderId)
         {
             var seller = getSeller(User.Identity.Name);
+            var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
             if (seller.Seller_Type == 0)
             {
                 return Json(new { result = "FALL" });
             }
             else
             {
-                var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-                if (TryUpdateModel(order))
+                if (order.Order_Type != 0)
                 {
-                    order.Order_Type = 0;
-                    _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
+                    if (TryUpdateModel(order))
+                    {
+                        order.Order_Type = 0;
+                        _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "WARNING" });
                 }
             }
             
@@ -1324,8 +1340,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
         {
-            ModelState.Remove("Order_Price");
-            ModelState.Remove("Order_Count");
             if (ModelState.IsValid)
             {
                 var productlist = from m in _db.SP_Product
