@@ -1231,8 +1231,7 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    var orderType = _db.SP_Order.SingleOrDefault(m => m.Id == model.Id);
-                    if (orderType.Order_Type != 0) 
+                    if (model.Order_Type != 0) 
                     {
                         SP_Order order = new SP_Order();
                         if (TryUpdateModel(order))

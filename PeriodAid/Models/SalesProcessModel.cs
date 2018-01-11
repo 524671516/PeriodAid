@@ -303,6 +303,8 @@
 
         public int Order_Id { get; set; }
 
+        public decimal OrderPrice_Discount { get; set; }
+
         public string OrderPrice_Remark { get; set; }
 
         public virtual SP_Order SP_Order { get; set; }

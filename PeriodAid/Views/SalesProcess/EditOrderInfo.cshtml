@@ -38,6 +38,7 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
         @Html.HiddenFor(model => model.SP_Contact.Id)
+        @Html.HiddenFor(model => model.Contact_Id)
         <div class="form-group col-md-6">
             <label class="col-md-3 control-label order_label">购货单位：</label>
             <div class="col-md-8">
