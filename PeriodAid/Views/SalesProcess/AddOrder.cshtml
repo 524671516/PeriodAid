@@ -104,8 +104,8 @@
 @section scripts{
     <script>
         $(function () {
-            $("#add-orderPrice").addClass("hidden")
             $("#confirm-btn").addClass("disabled")
+            $("#add-orderPrice").addClass("hidden")
                 $.ajax({
                     url: "/SalesProcess/OrderPriceList",
                     data: {
@@ -214,9 +214,9 @@
                 //验证通过的正式提交函数
                 submitHandler: function (form) {
                     $(form).ajaxSubmit(function (data) {
-                        $("#add-order").addClass("hidden")
-                        $("#add-orderPrice").removeClass("hidden")
                         if (data.result == "SUCCESS") {
+                            $("#add-order").addClass("hidden")
+                            $("#add-orderPrice").removeClass("hidden")
                             $("#order_id").attr("data-oid", data.order)
                             $.ajax({
                                 url: '/SalesProcess/AddOrderPricePartial',
@@ -235,7 +235,7 @@
                             $('body').removeClass('modal-open')
                         }
                         else if (data.result == "FAIL") {
-                            errorAlert("添加失败!");
+                            errorAlert("添加失败,基本信息不正确!");
                             $('.modal-backdrop.in').remove()
                             $('body').removeClass('modal-open')
                         } else {
