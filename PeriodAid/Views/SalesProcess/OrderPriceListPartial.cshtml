@@ -78,6 +78,18 @@
                     $('#view-table [data-pid="' + that.attr('data-val') + '"]').html(data)
                     $(".select-a").addClass("disabled")
                     $(".delete-orderPrice").addClass("disabled")
+                    // 返回
+                    $("#back-btn").on("click", function () {
+                        $.ajax({
+                            url: "/SalesProcess/OrderPriceListPartial",
+                            data: {
+                                orderId: getUrlParam('orderId')
+                            },
+                            success: function (data) {
+                                $("#orderPrice_list_content").html(data)
+                            }
+                        })
+                    })
                     // 修改
                     $("#save-btn").on("click", function () {
                         if (!$(this).hasClass("disabled")) {
