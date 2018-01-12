@@ -1,14 +1,167 @@
 ﻿@model PeriodAid.Models.SP_OrderPrice
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h2>修改订单产品</h2>
+<div class="hidden"></div>
+<table class="table">
+    <tr>
+        <th style="width:15%">产品名称</th>
+        <th style="width:10%">单价</th>
+        <th style="width:10%">订货数量</th>
+        <th style="width:10%">箱规</th>
+        <th style="width:10%">箱数</th>
+        <th style="width:10%">金额</th>
+        <th style="width:10%">折扣价</th>
+        <th style="width:10%">备注</th>
+        <th style="width:15%"></th>
+    </tr>
+    @foreach (var order in ViewBag.Order)
+    {
+        using (Html.BeginForm("EditOrderPriceInfo", "SalesProcess", FormMethod.Post, new { @id = "edit-orderPrice-form" }))
+        {
+            @Html.AntiForgeryToken()
+        <tr>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            <td>@order.SP_Product.Item_Name
+                <input type="text" class="hidden" name="Product_Id" value="@order.Product_Id" />
+                @Html.ValidationMessageFor(model => model.Product_Id, "", new { @class = "text-danger" })
+            </td>
+            <td>@order.Order_Price
+                <input type="text" class="hidden" name="Order_Price" value="@order.Order_Price" />
+                @Html.ValidationMessageFor(model => model.Order_Price, "", new { @class = "text-danger" })
+            </td>
+            <td>
+                <input value="@order.Order_Count" class="price-form-control" name="Order_Count" />
+                @Html.ValidationMessageFor(model => model.Order_Count, "", new { @class = "text-danger" })
+            </td>
+            @if (order.SP_Product.Carton_Spec == 0)
+                {
+                <td>暂无箱规</td>
+                <td>暂无箱规</td>
+            }
+            else
+            {
+                <td>@order.SP_Product.Carton_Spec</td>
+                <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
+            }
+            <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
+            <td>
+                <input value="@Math.Round((order.OrderPrice_Discount * order.Order_Count), 2)" class="price-form-control" name="OrderPrice_Discount" />
+                @Html.ValidationMessageFor(model => model.OrderPrice_Discount, "", new { @class = "text-danger" })
+            </td>
+            <td>
+                <input style="max-width:205px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" value="@order.OrderPrice_Remark" class="price-form-control" name="OrderPrice_Remark" />
+                @Html.ValidationMessageFor(model => model.OrderPrice_Remark, "", new { @class = "text-danger" })
+            </td>
+            <td>
+                <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer">确定</a>
+                <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>    
+            </td>
+        </tr>
+        <tr class="">
+            <td><input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" /></td>
+        </tr>
+        }
+    }
+</table>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
 </div>
-<div class="hidden" id="product-name">@ViewBag.Product.SP_Product.Item_Name</div>
-<div class="hidden" id="product-id">@ViewBag.Product.Product_Id</div>
-<div class="hidden" id="order-name">@ViewBag.Product.SP_Order.Order_Number</div>
-<div class="hidden" id="order-id">@ViewBag.Product.Order_Id</div>
-<div class="modal-body" id="modal-body">
-    @using (Html.BeginForm("EditOrderPriceInfo", "SalesProcess", FormMethod.Post, new { @id = "orderPrice-form" }))
+<script>
+    $(function () {
+        // 编辑
+        $(".select-a").on("click", function () {
+            $("#save-btn").trigger("click");
+            
+        })
+        $("#save-btn").click(function () {
+            $("#edit-orderPrice-form").submit();
+        })
+        $("#edit-orderPrice-form").validate({
+            debug: true,
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#order_id").attr("data-oid", data.order)
+                        alert("信息修改成功！")
+                    }
+                    else if (data.result == "UNAUTHORIZED") {
+                        errorAlert("未修改信息!");
+                    }
+                    else if (data.result == "FAIL") {
+                        errorAlert("联系人不存在!");
+                    } else if (data.result == "WARNING") {
+                        errorAlert("订单已审批，不能修改!");
+                    }
+                    else {
+                        errorAlert(data.errmsg)
+                    }
+                })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parent())
+            }
+        })
+        // 删除
+        $(".delete-orderPrice").on("click", function () {
+            var O_id = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/SalesProcess/DeleteOrderPrice",
+                        type: "post",
+                        data: {
+                            orderPriceId: O_id,
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                $.ajax({
+                                    url: "/SalesProcess/EditOrderPriceInfo",
+                                    data: {
+                                        orderId: $("#order_id").attr("data-oid")
+                                    },
+                                    success: function (data) {
+                                        $("#orderPrice_list_content").html(data)
+                                        $('.modal-backdrop.in').remove()
+                                        $('body').removeClass('modal-open')
+                                    }
+                                });
+                                alert("删除成功")
+                            } else if (data.result == "WARNING") {
+                                errorAlert("订单已审批，无法删除")
+                            }
+                            else {
+                                errorAlert(data.errmsg)
+                            }
+                        }
+                    })
+                }
+            });
+        })
+    })
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @*@using (Html.BeginForm("EditOrderPriceInfo", "SalesProcess", FormMethod.Post, new { @id = "orderPrice-form" }))
     {
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
@@ -57,53 +210,53 @@
                 </div>
             </div>
         </div>
-    }
-</div>
-<script>
-    $(function () {
-        $("#product_input").val($("#product-name").html())
-        $("#ProductId").val($("#product-id").html())
-        $("#order_input").val($("#order-name").html())
-        $("#OrderId").val($("#order-id").html())
-        $("#save-btn").on("click", function () {
-            $("#orderPrice-form").submit();
+    }*@
+
+    @*<script>
+        $(function () {
+            $("#product_input").val($("#product-name").html())
+            $("#ProductId").val($("#product-id").html())
+            $("#order_input").val($("#order-name").html())
+            $("#OrderId").val($("#order-id").html())
+            $("#save-btn").on("click", function () {
+                $("#orderPrice-form").submit();
+            })
+            $("#orderPrice-form").validate({
+                debug: true,
+                //验证通过的正式提交函数
+                submitHandler: function (form) {
+                    $(form).ajaxSubmit(function (data) {
+                        if (data.result == "SUCCESS") {
+                            alert('保存成功')
+                            $("#myModal").modal('hide');
+                            $.ajax({
+                                url: "/SalesProcess/OrderPriceListPartial",
+                                data: {
+                                    orderId: $("#order_id").attr("data-oid")
+                                },
+                                success: function (data) {
+                                    $("#orderPrice_list_content").html(data)
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
+                                }
+                            });
+                        } else if (data.result == "UNAUTHORIZED") {
+                            errorAlert('信息未修改')
+                        } else if (data.result == "FAIL") {
+                            errorAlert('保存失败')
+                        } else if (data.result == "WARNING") {
+                            errorAlert("订单已审批，不能修改")
+                        }
+                        else {
+                            errorAlert(data.errmsg);
+                        }
+                    })
+                },
+                errorClass: "has-error",
+                //验证失败
+                errorPlacement: function (error, element) {
+                    $("#save-btn").removeClass("disabled");
+                }
+            });
         })
-        $("#orderPrice-form").validate({
-            debug: true,
-            //验证通过的正式提交函数
-            submitHandler: function (form) {
-                $(form).ajaxSubmit(function (data) {
-                    if (data.result == "SUCCESS") {
-                        alert('保存成功')
-                        $("#myModal").modal('hide');
-                        $.ajax({
-                            url: "/SalesProcess/OrderPriceListPartial",
-                            data: {
-                                orderId: $("#order_id").attr("data-oid")
-                            },
-                            success: function (data) {
-                                $("#orderPrice_list_content").html(data)
-                                $('.modal-backdrop.in').remove()
-                                $('body').removeClass('modal-open')
-                            }
-                        });
-                    } else if (data.result == "UNAUTHORIZED") {
-                        errorAlert('信息未修改')
-                    } else if (data.result == "FAIL") {
-                        errorAlert('保存失败')
-                    } else if (data.result == "WARNING") {
-                        errorAlert("订单已审批，不能修改")
-                    }
-                    else {
-                        errorAlert(data.errmsg);
-                    }
-                })
-            },
-            errorClass: "has-error",
-            //验证失败
-            errorPlacement: function (error, element) {
-                $("#save-btn").removeClass("disabled");
-            }
-        });
-    })
-</script>
+    </script>*@
