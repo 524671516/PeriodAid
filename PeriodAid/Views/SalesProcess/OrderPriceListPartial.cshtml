@@ -31,7 +31,7 @@
                 <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
             }
             <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
-            <td>@Math.Round((order.OrderPrice_Discount * order.Order_Count), 2)</td>
+            <td>@order.OrderPrice_Discount</td>
             <td style="max-width:123px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">@order.OrderPrice_Remark</td>
             <td>
                 <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer">编辑</a>
