@@ -1391,6 +1391,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult EditOrderPriceInfo(SP_OrderPrice model)
         {
+            var sss = model.Id;
             bool Order = _db.SP_OrderPrice.Any(m => m.Order_Count == model.Order_Count && m.OrderPrice_Remark == model.OrderPrice_Remark && m.Order_Price == model.Order_Price && m.OrderPrice_Status != -1);
             if (ModelState.IsValid)
             {
