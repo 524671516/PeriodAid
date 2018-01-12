@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<PeriodAid.Models.SP_OrderPrice>
-<table class="table">
+<table class="table" id="view-table">
     <tr>
         <th style="width:15%">产品名称</th>
         <th style="width:5%">单价</th>
@@ -12,30 +12,30 @@
         <th style="width:20%"></th>
     </tr>
     @foreach (var order in Model)
-        {
-            <tr>
-                <td>@order.SP_Product.Item_Name</td>
-                <td>@order.Order_Price</td>
-                <td>@order.Order_Count</td>
-                @if (order.SP_Product.Carton_Spec == 0)
-                {
-                    <td>暂无箱规</td>
-                    <td>暂无箱规</td>
-                }
-                else
-                {
-                    <td>@order.SP_Product.Carton_Spec</td>
-                    <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
-                }
-                <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
-                <td></td>
-                <td style="max-width:123px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">@order.OrderPrice_Remark</td>
-                <td>
-                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>
-                </td>
-            </tr>
-        }
+    {
+        <tr data-pid="@order.Id">
+            <td>@order.SP_Product.Item_Name</td>
+            <td>@order.Order_Price</td>
+            <td>@order.Order_Count</td>
+            @if (order.SP_Product.Carton_Spec == 0)
+            {
+                <td>暂无箱规</td>
+                <td>暂无箱规</td>
+            }
+            else
+            {
+                <td>@order.SP_Product.Carton_Spec</td>
+                <td>@Math.Round(order.Order_Count / (double)order.SP_Product.Carton_Spec)</td>
+            }
+            <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
+            <td>@Math.Round((order.OrderPrice_Discount * order.Order_Count), 2)</td>
+            <td style="max-width:123px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">@order.OrderPrice_Remark</td>
+            <td>
+                <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer">编辑</a>
+                <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>
+            </td>
+        </tr>
+    }
         <tr>
             <td>共计：</td>
             <td>--</td>
@@ -43,7 +43,7 @@
             <td>--</td>
             <td>@ViewBag.Count</td>
             <td>@ViewBag.Price</td>
-            <td></td>
+            <td>@ViewBag.Discount</td>
             <td></td>
             <td></td>
         </tr>
@@ -63,15 +63,14 @@
         }
         // 编辑
         $(".select-a").on("click", function () {
+            var that = $(this)
             $.ajax({
                 url: '/SalesProcess/EditOrderPriceInfo',
                 data: {
-                    orderPriceId: $(this).attr('data-val'),
+                    orderPriceId: that.attr('data-val'),
                 },
                 success: function (data) {
-                    $('#modal-content').html(data)
-                    $("#myModal").modal('show')
-
+                    $('#view-table [data-pid="' + that.attr('data-val') + '"]').html(data)
                 }
             })
         })

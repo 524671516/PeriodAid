@@ -1394,3 +1394,16 @@ a.btn_subtask_detail{
         transform:rotate(-9deg);
         z-index:100;
     }
+ .price-form-control{
+     display:block;
+     width:100%;
+     font-size:12px;
+     color:#555;
+     background-color: #fff;
+     background-image: none;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+     padding:0 5px;
+
+}

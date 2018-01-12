@@ -333,6 +333,8 @@
         public int CartonCount { get; set; }
 
         public decimal SumPrice { get; set; }
+
+        public decimal SumDiscount { get; set; }
     }
     
     public static class SellerType
