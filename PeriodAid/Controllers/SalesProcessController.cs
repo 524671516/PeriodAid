@@ -1280,7 +1280,6 @@ namespace PeriodAid.Controllers
             var order = from m in _db.SP_OrderPrice
                         where m.Order_Id == orderId && m.OrderPrice_Status != -1
                         select m;
-            ViewBag.Order = order;
             var order_num = (from m in _db.SP_Order
                              where m.Id == orderId && m.Order_Status != -1
                              select m).FirstOrDefault();
@@ -1310,7 +1309,7 @@ namespace PeriodAid.Controllers
             ViewBag.Count = cartonCount;
             ViewBag.Price = sumPrice;
             ViewBag.Discount = sumDiscount;
-            return PartialView();
+            return PartialView(order);
         }
 
         public ActionResult AddOrderPricePartial(int orderId)
@@ -1341,7 +1340,7 @@ namespace PeriodAid.Controllers
                         string remark = "";
                         decimal discount = 0;
                         if (form["order_" + product.Id] != "")
-                            order = Convert.ToInt32(form["order_" + product.Id]);
+                        order = Convert.ToInt32(form["order_" + product.Id]);
                         price = Convert.ToDecimal(form["price_" + product.Id]);
                         remark = Convert.ToString(form["remark_" + product.Id]);
                         discount = Convert.ToDecimal(form["discount_" + product.Id]);
