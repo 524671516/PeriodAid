@@ -1385,10 +1385,7 @@ namespace PeriodAid.Controllers
         public ActionResult EditOrderPriceInfo(int orderPriceId)
         {
             var OrderPrice = _db.SP_OrderPrice.SingleOrDefault(m => m.Id == orderPriceId);
-            var product = (from m in _db.SP_OrderPrice
-                           where m.Id == orderPriceId
-                           select m).FirstOrDefault();
-            ViewBag.Product = product;
+            ViewBag.OrderPrice = OrderPrice;
             return PartialView(OrderPrice);
         }
         [HttpPost]
