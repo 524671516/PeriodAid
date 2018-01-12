@@ -129,7 +129,7 @@
             $("#CreatOrderExcel").attr("action", "/SalesProcess/CreatOrderExcel?orderId=" + getUrlParam('orderId'))
             $("#order_id").attr("data-oid",getUrlParam('orderId'))
             $.ajax({
-                url: "/SalesProcess/EditOrderPriceInfo",
+                url: "/SalesProcess/OrderPriceListPartial",
                 data: {
                     orderId: getUrlParam('orderId')
                 },

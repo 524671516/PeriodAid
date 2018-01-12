@@ -2,13 +2,14 @@
 <table class="table">
     <tr>
         <th style="width:15%">产品名称</th>
-        <th style="width:10%">单价</th>
+        <th style="width:5%">单价</th>
         <th style="width:10%">订货数量</th>
-        <th style="width:10%">箱规</th>
+        <th style="width:5%">箱规</th>
         <th style="width:10%">箱数</th>
         <th style="width:10%">金额</th>
         <th style="width:10%">折扣价</th>
-        <th style="width:25%">备注</th>
+        <th style="width:15%">备注</th>
+        <th style="width:20%"></th>
     </tr>
     @foreach (var order in ViewBag.Order)
         {
@@ -28,11 +29,11 @@
                 }
                 <td>@Math.Round((order.Order_Price * order.Order_Count), 2)</td>
                 <td>@Math.Round((order.OrderPrice_Discount * order.Order_Count), 2)</td>
-                <td style="max-width:205px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">@order.OrderPrice_Remark</td>
-                @*<td>
+                <td style="max-width:123px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">@order.OrderPrice_Remark</td>
+                <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@order.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                     <a class="delete-orderPrice btn btn-xs btn-danger" role="button" data-eid="@order.Id">删除</a>
-                </td>*@
+                </td>
             </tr>
         }
         <tr>
@@ -44,15 +45,71 @@
             <td>@ViewBag.Price</td>
             <td>@ViewBag.Discount</td>
             <td></td>
+            <td></td>
         </tr>
     
 </table>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
 <script>
     $(function () {
         if ($("#order_type").html() == 0) {
             $(".select-a").addClass("disabled")
             $(".delete-orderPrice").addClass("disabled")
         }
-        
+        // 编辑
+        $(".select-a").on("click", function () {
+            $.ajax({
+                url: '/SalesProcess/EditOrderPriceInfo',
+                data: {
+                    orderPriceId: $(this).attr('data-val'),
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+
+                }
+            })
+        })
+        // 删除
+        $(".delete-orderPrice").on("click", function () {
+            var O_id = $(this).attr("data-eid");
+            confirm("确定要删除吗?", "你将把此条信息从列表中删除", function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "/SalesProcess/DeleteOrderPrice",
+                        type: "post",
+                        data: {
+                            orderPriceId: O_id,
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                $.ajax({
+                                    url: "/SalesProcess/OrderPriceListPartial",
+                                    data: {
+                                        orderId: $("#order_id").attr("data-oid")
+                                    },
+                                    success: function (data) {
+                                        $("#orderPrice_list_content").html(data)
+                                        $('.modal-backdrop.in').remove()
+                                        $('body').removeClass('modal-open')
+                                    }
+                                });
+                                alert("删除成功")
+                            } else if (data.result == "WARNING") {
+                                errorAlert("订单已审批，无法删除")
+                            }
+                            else {
+                                errorAlert(data.errmsg)
+                            }
+                        }
+                    })
+                }
+            });
+        })
     })
 </script>

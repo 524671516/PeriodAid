@@ -1293,18 +1293,23 @@ namespace PeriodAid.Controllers
                         {
                             SumCount = g.Sum(m => m.Order_Count),
                             CartonCount = g.Sum(m => m.Order_Count / m.SP_Product.Carton_Spec),
-                            SumPrice = g.Sum(m => m.Order_Price)
+                            SumPrice = g.Sum(m => m.Order_Price),
+                            SumDiscount = g.Sum(m => m.OrderPrice_Discount),
                         };
             int cartonCount = 0;
             decimal sumPrice = 0;
+            decimal sumDiscount = 0;
             foreach (var price in Price)
             {
                 cartonCount += price.CartonCount;
                 var Sumprice = price.SumCount * price.SumPrice;
+                var Sumdiscount = price.SumCount * price.SumDiscount;
                 sumPrice += Sumprice;
+                sumDiscount += Sumdiscount;
             }
             ViewBag.Count = cartonCount;
             ViewBag.Price = sumPrice;
+            ViewBag.Discount = sumDiscount;
             return PartialView();
         }
 
@@ -1317,8 +1322,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
         {
-            ModelState.Remove("Order_Price");
-            ModelState.Remove("Order_Count");
             if (ModelState.IsValid)
             {
                 var productlist = from m in _db.SP_Product
@@ -1336,10 +1339,12 @@ namespace PeriodAid.Controllers
                         int order = 0;
                         decimal price = 0;
                         string remark = "";
+                        decimal discount = 0;
                         if (form["order_" + product.Id] != "")
                             order = Convert.ToInt32(form["order_" + product.Id]);
                         price = Convert.ToDecimal(form["price_" + product.Id]);
                         remark = Convert.ToString(form["remark_" + product.Id]);
+                        discount = Convert.ToDecimal(form["discount_" + product.Id]);
                         var orderType = _db.SP_Order.SingleOrDefault(m => m.Id == model.Order_Id);
                         if (orderType.Order_Type != 0)
                         {
@@ -1352,6 +1357,7 @@ namespace PeriodAid.Controllers
                                 {
                                     orderprice.Order_Count = order;
                                     orderprice.Order_Price = price;
+                                    orderprice.OrderPrice_Discount = discount;
                                     orderprice.Product_Id = product.Id;
                                     orderprice.OrderPrice_Status = 0;
                                     orderprice.Order_Id = model.Order_Id;
