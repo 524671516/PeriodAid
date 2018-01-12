@@ -2015,53 +2015,70 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "报价单.xls");
         }
+        public ICellStyle ExcelCellStyle(HSSFWorkbook book,string styleName)
+        {
+            if (styleName == "标题")
+            {
+                ICellStyle cellStyle = book.CreateCellStyle();//标题样式
+                cellStyle.BorderLeft = BorderStyle.Thin;
+                cellStyle.BorderBottom = BorderStyle.Thin;
+                cellStyle.BorderRight = BorderStyle.Thin;
+                cellStyle.BorderTop = BorderStyle.Thin;
+                cellStyle.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
+                cellStyle.Alignment = HorizontalAlignment.Center;//水平对齐
+                IFont titleFont = book.CreateFont(); //创建一个字体样式对象
+                titleFont.FontName = "宋体"; //和excel里面的字体对应
+                titleFont.FontHeightInPoints = 16;//字体大小
+                titleFont.Boldweight = (short)FontBoldWeight.Bold;
+                cellStyle.SetFont(titleFont);
+                return cellStyle;
+            }
+            else if (styleName == "居中正文")
+            {
+                ICellStyle cellStyle = book.CreateCellStyle();//正文样式（居中）
+                cellStyle.BorderBottom = BorderStyle.Thin;
+                cellStyle.BorderLeft = BorderStyle.Thin;
+                cellStyle.BorderRight = BorderStyle.Thin;
+                cellStyle.BorderTop = BorderStyle.Thin;
+                cellStyle.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
+                cellStyle.Alignment = HorizontalAlignment.Center;
+                IFont textFont1 = book.CreateFont(); //创建一个字体样式对象
+                textFont1.FontName = "宋体"; //和excel里面的字体对应
+                textFont1.FontHeightInPoints = 12;//字体大小
+                cellStyle.SetFont(textFont1);
+                return cellStyle;
+            }
+            else
+            {
+                ICellStyle cellStyle = book.CreateCellStyle();//正文样式（居左）
+                cellStyle.BorderBottom = BorderStyle.Thin;
+                cellStyle.BorderLeft = BorderStyle.Thin;
+                cellStyle.BorderRight = BorderStyle.Thin;
+                cellStyle.BorderTop = BorderStyle.Thin;
+                cellStyle.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
+                cellStyle.Alignment = HorizontalAlignment.Left;
+                IFont textFont1 = book.CreateFont(); //创建一个字体样式对象
+                textFont1.FontName = "宋体"; //和excel里面的字体对应
+                textFont1.FontHeightInPoints = 12;//字体大小
+                cellStyle.SetFont(textFont1);
+                return cellStyle;
+            }
+        }
         //生成订货通知单
         [HttpPost]
         public ActionResult CreatOrderExcel(int orderId)
         {
             HSSFWorkbook book = new HSSFWorkbook();
             ISheet sheet = book.CreateSheet("报价单");
-
-            ICellStyle titleStyle = book.CreateCellStyle();//标题样式
-            titleStyle.BorderLeft = BorderStyle.Thin;
-            titleStyle.BorderBottom = BorderStyle.Thin;
-            titleStyle.BorderRight = BorderStyle.Thin;
-            titleStyle.BorderTop = BorderStyle.Thin;
-            titleStyle.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-            titleStyle.Alignment = HorizontalAlignment.Center;//水平对齐
-            IFont titleFont = book.CreateFont(); //创建一个字体样式对象
-            titleFont.FontName = "宋体"; //和excel里面的字体对应
-            titleFont.FontHeightInPoints = 16;//字体大小
-            titleFont.Boldweight = (short)FontBoldWeight.Bold;
-            titleStyle.SetFont(titleFont);
-
-            ICellStyle textStyle1 = book.CreateCellStyle();//正文样式（居中）
-            textStyle1.BorderBottom = BorderStyle.Thin;
-            textStyle1.BorderLeft = BorderStyle.Thin;
-            textStyle1.BorderRight = BorderStyle.Thin;
-            textStyle1.BorderTop = BorderStyle.Thin;
-            textStyle1.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-            textStyle1.Alignment = HorizontalAlignment.Center;
-            IFont textFont1 = book.CreateFont(); //创建一个字体样式对象
-            textFont1.FontName = "宋体"; //和excel里面的字体对应
-            textFont1.FontHeightInPoints = 12;//字体大小
-            textStyle1.SetFont(textFont1);
-
-            ICellStyle textStyle2 = book.CreateCellStyle();//正文样式（居左）
-            textStyle2.BorderBottom = BorderStyle.Thin;
-            textStyle2.BorderLeft = BorderStyle.Thin;
-            textStyle2.BorderRight = BorderStyle.Thin;
-            textStyle2.BorderTop = BorderStyle.Thin;
-            textStyle2.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-            textStyle2.Alignment = HorizontalAlignment.Left;
-            textStyle2.SetFont(textFont1);
-
+            var titleStyle = ExcelCellStyle(book, "标题");
+            var textStyle1 = ExcelCellStyle(book, "居中正文");
+            var textStyle2 = ExcelCellStyle(book, "居左正文");
             //合并单元格
             for (int i = 0; i < 21; i++)
             {
                 int j = i + 1;
                 int[] a = { 0, 0, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 2, 4, 3, 4, 4, 4, 5, 4, 6, 4 };
-                int[] b = { 1, 7, 2, 2, 3, 2, 4, 2, 5, 2, 6, 2, 2, 7, 3, 7, 4, 7, 5, 7, 6, 7 };
+                int[] b = { 1, 8, 2, 2, 3, 2, 4, 2, 5, 2, 6, 2, 2, 8, 3, 8, 4, 8, 5, 8, 6, 8 };
                 if (i % 2 == 0)
                 {
                     sheet.AddMergedRegion(new CellRangeAddress(a[i], b[i], a[j], b[j]));
@@ -2078,7 +2095,7 @@ namespace PeriodAid.Controllers
             }
             IRow row1 = sheet.CreateRow(1);
             row1.Height = 40 * 20;
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 9; i++)
             {
                 var r0c = row0.CreateCell(i);
                 r0c.CellStyle = textStyle1;
@@ -2099,7 +2116,7 @@ namespace PeriodAid.Controllers
             r2c0.SetCellValue("购货单位：");
             r2c0.CellStyle = textStyle2;
             var r2c3 = row2.CreateCell(3);
-            r2c3.SetCellValue("订货日期：");
+            r2c3.SetCellValue("订单编号：");
             r2c3.CellStyle = textStyle2;
             IRow row3 = sheet.CreateRow(3);//第四行
             row3.Height = 35 * 20;
@@ -2107,7 +2124,7 @@ namespace PeriodAid.Controllers
             r3c0.SetCellValue("联系人及电话：");
             r3c0.CellStyle = textStyle2;
             var r3c3 = row3.CreateCell(3);
-            r3c3.SetCellValue("收货地址：");
+            r3c3.SetCellValue("订货日期：");
             r3c3.CellStyle = textStyle2;
             var r3c6 = row3.CreateCell(6);
             r3c6.CellStyle = textStyle1;
@@ -2118,6 +2135,9 @@ namespace PeriodAid.Controllers
             var r4c0 = row4.CreateCell(cell_pos);
             r4c0.SetCellValue("签呈编号：");
             r4c0.CellStyle = textStyle2;
+            var r4c3 = row4.CreateCell(3);
+            r4c3.SetCellValue("收货地址：");
+            r4c3.CellStyle = textStyle2;
             IRow row5 = sheet.CreateRow(5);//第六行
             row5.Height = 35 * 20;
             var r5c6 = row5.CreateCell(6);
@@ -2137,19 +2157,21 @@ namespace PeriodAid.Controllers
             var r7c0 = row7.CreateCell(cell_pos);
             r7c0.SetCellValue("序号");
             var r7c1 = row7.CreateCell(++cell_pos);
-            r7c1.SetCellValue("品名");
+            r7c1.SetCellValue("产品代码");
             var r7c2 = row7.CreateCell(++cell_pos);
-            r7c2.SetCellValue("规格");
+            r7c2.SetCellValue("品名");
             var r7c3 = row7.CreateCell(++cell_pos);
-            r7c3.SetCellValue("订货数量");
+            r7c3.SetCellValue("规格");
             var r7c4 = row7.CreateCell(++cell_pos);
-            r7c4.SetCellValue("箱数");
+            r7c4.SetCellValue("订货数量");
             var r7c5 = row7.CreateCell(++cell_pos);
-            r7c5.SetCellValue("单价");
+            r7c5.SetCellValue("箱数");
             var r7c6 = row7.CreateCell(++cell_pos);
-            r7c6.SetCellValue("金额");
+            r7c6.SetCellValue("单价");
             var r7c7 = row7.CreateCell(++cell_pos);
-            r7c7.SetCellValue("备注");
+            r7c7.SetCellValue("金额");
+            var r7c8 = row7.CreateCell(++cell_pos);
+            r7c8.SetCellValue("备注");
             r7c0.CellStyle = textStyle1;
             r7c1.CellStyle = textStyle1;
             r7c2.CellStyle = textStyle1;
@@ -2158,6 +2180,7 @@ namespace PeriodAid.Controllers
             r7c5.CellStyle = textStyle1;
             r7c6.CellStyle = textStyle1;
             r7c7.CellStyle = textStyle1;
+            r7c8.CellStyle = textStyle1;
             var priceData = from m in _db.SP_OrderPrice
                             where m.Order_Id == orderId && m.OrderPrice_Status != -1
                             select m;
@@ -2170,19 +2193,21 @@ namespace PeriodAid.Controllers
                 var rd0 = rowData.CreateCell(0);
                 rd0.SetCellValue(++order_num);
                 var rd1 = rowData.CreateCell(1);
-                rd1.SetCellValue(data.SP_Product.Item_Name);
+                rd1.SetCellValue(data.SP_Product.Item_Code);
                 var rd2 = rowData.CreateCell(2);
-                rd2.SetCellValue(data.SP_Product.Carton_Spec);
+                rd2.SetCellValue(data.SP_Product.Item_Name);
                 var rd3 = rowData.CreateCell(3);
-                rd3.SetCellValue(data.Order_Count);
+                rd3.SetCellValue(data.SP_Product.Carton_Spec);
                 var rd4 = rowData.CreateCell(4);
-                rd4.SetCellValue(data.Order_Count / data.SP_Product.Carton_Spec);
+                rd4.SetCellValue(data.Order_Count);
                 var rd5 = rowData.CreateCell(5);
-                rd5.SetCellValue(data.SP_Product.Purchase_Price.ToString());
+                rd5.SetCellValue(data.Order_Count / data.SP_Product.Carton_Spec);
                 var rd6 = rowData.CreateCell(6);
-                rd6.SetCellValue((data.Order_Count * data.SP_Product.Purchase_Price).ToString());
+                rd6.SetCellValue(data.SP_Product.Purchase_Price.ToString());
                 var rd7 = rowData.CreateCell(7);
-                rd7.SetCellValue(data.OrderPrice_Remark);
+                rd7.SetCellValue((data.Order_Count * data.SP_Product.Purchase_Price).ToString());
+                var rd8 = rowData.CreateCell(8);
+                rd8.SetCellValue(data.OrderPrice_Remark);
                 rd0.CellStyle = textStyle1;
                 rd1.CellStyle = textStyle1;
                 rd2.CellStyle = textStyle1;
@@ -2191,8 +2216,9 @@ namespace PeriodAid.Controllers
                 rd5.CellStyle = textStyle1;
                 rd6.CellStyle = textStyle1;
                 rd7.CellStyle = textStyle1;
+                rd8.CellStyle = textStyle1;
             }
-            for (int i = 1; i < 8; i++)//3-7行样式
+            for (int i = 1; i < 9; i++)//3-7行样式
             {
                 if (i != 3)
                 {
@@ -2200,9 +2226,9 @@ namespace PeriodAid.Controllers
                     r2c.CellStyle = textStyle1;
                     var r3c = row3.CreateCell(i);
                     r3c.CellStyle = textStyle1;
+                    var r4c = row4.CreateCell(i);
+                    r4c.CellStyle = textStyle1;
                 }
-                var r4c = row4.CreateCell(i);
-                r4c.CellStyle = textStyle1;
                 var r5c = row5.CreateCell(i);
                 r5c.CellStyle = textStyle1;
                 var r6c = row6.CreateCell(i);
@@ -2214,7 +2240,7 @@ namespace PeriodAid.Controllers
             {
                 IRow rowRest = sheet.CreateRow(rest);
                 rowRest.Height = 30 * 20;
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 9; i++)
                 {
                     var rcRest = rowRest.CreateCell(i);//数据区后追三行
                     rcRest.CellStyle = textStyle1;
@@ -2225,14 +2251,11 @@ namespace PeriodAid.Controllers
             var rcAdd = rowAdd.CreateCell(0);
             rcAdd.SetCellValue("合计");
             rcAdd.CellStyle = textStyle1;
-            var rcAdd1 = rowAdd.CreateCell(1);
-            rcAdd1.CellStyle = textStyle1;
-            var rcAdd2 = rowAdd.CreateCell(2);
-            rcAdd2.CellStyle = textStyle1;
-            var rcAdd5 = rowAdd.CreateCell(5);
-            rcAdd5.CellStyle = textStyle1;
-            var rcAdd7 = rowAdd.CreateCell(7);
-            rcAdd7.CellStyle = textStyle1;
+            for (int i = 1; i < 9; i++)
+            {
+                var rcDataAdd = rowAdd.CreateCell(i);
+                rcDataAdd.CellStyle = textStyle1;
+            }
             var Price = from m in _db.SP_OrderPrice
                         where m.OrderPrice_Status != -1 && m.Order_Id == orderId
                         group m by m.Id into g
@@ -2252,13 +2275,13 @@ namespace PeriodAid.Controllers
                 var Sumprice = price.SumCount * price.SumPrice;
                 sumPrice += Sumprice;
             }
-            var row_orderCount = rowAdd.CreateCell(3);
+            var row_orderCount = rowAdd.CreateCell(4);
             row_orderCount.SetCellValue(orderCount);
             row_orderCount.CellStyle = textStyle1;
-            var row_sumCount = rowAdd.CreateCell(4);
+            var row_sumCount = rowAdd.CreateCell(5);
             row_sumCount.SetCellValue(cartonCount);
             row_sumCount.CellStyle = textStyle1;
-            var row_sumPrice = rowAdd.CreateCell(6);
+            var row_sumPrice = rowAdd.CreateCell(7);
             row_sumPrice.SetCellValue(sumPrice.ToString());
             row_sumPrice.CellStyle = textStyle1;
             //未知区
@@ -2267,15 +2290,17 @@ namespace PeriodAid.Controllers
             r2c1.SetCellValue(orderInfo.SP_Contact.SP_Client.Client_Name);
             r2c1.CellStyle = textStyle1;
             var r2c4 = row2.CreateCell(4);
-            r2c4.SetCellValue(orderInfo.Order_Date.ToString("yyyy-MM-dd"));
+            r2c4.SetCellValue(orderInfo.Order_Number);
             r2c4.CellStyle = textStyle1;
             var r3c1 = row3.CreateCell(1);
             r3c1.SetCellValue(orderInfo.SP_Contact.Contact_Name + " " + orderInfo.SP_Contact.Contact_Mobile);
             r3c1.CellStyle = textStyle1;
             var r3c4 = row3.CreateCell(4);
-            r3c4.SetCellValue(orderInfo.Order_Address);
+            r3c4.SetCellValue(orderInfo.Order_Date.ToString("yyyy-MM-dd"));
             r3c4.CellStyle = textStyle1;
-
+            var r4c4 = row4.CreateCell(4);
+            r4c4.SetCellValue(orderInfo.Order_Address);
+            r4c4.CellStyle = textStyle1;
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
