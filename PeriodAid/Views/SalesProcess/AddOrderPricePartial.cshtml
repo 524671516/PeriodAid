@@ -86,13 +86,13 @@
                                 item.val(data.data[0].Price)
                                 $("#product_input").val("")
                                 //总价运算
-                                $("#order_" + P_Id.attr("value") + "").unbind("blur");
+                                $("#order_" + P_Id.attr("value") + "").unbind("blur")
                                 $("#order_" + P_Id.attr("value") + "").on("blur", function () {
                                     var count = $("#order_" + P_Id.attr("value") + "").val();
                                     var price = $("#price_" + P_Id.attr("value") + "").val();
                                     $("#discount_" + P_Id.attr("value") + "").val(count * price);
                                 })
-                                $("#price_" + P_Id.attr("value") + "").unbind("blur");
+                                $("#price_" + P_Id.attr("value") + "").unbind("blur")
                                 $("#price_" + P_Id.attr("value") + "").on("blur", function () {
                                     var count = $("#order_" + P_Id.attr("value") + "").val();
                                     var price = $("#price_" + P_Id.attr("value") + "").val();

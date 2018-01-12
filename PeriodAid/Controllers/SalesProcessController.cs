@@ -1302,9 +1302,8 @@ namespace PeriodAid.Controllers
             {
                 cartonCount += price.CartonCount;
                 var Sumprice = price.SumCount * price.SumPrice;
-                var Sumdiscount = price.SumCount * price.SumDiscount;
                 sumPrice += Sumprice;
-                sumDiscount += Sumdiscount;
+                sumDiscount += price.SumDiscount;
             }
             ViewBag.Count = cartonCount;
             ViewBag.Price = sumPrice;
