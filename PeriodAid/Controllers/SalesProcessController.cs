@@ -1305,7 +1305,7 @@ namespace PeriodAid.Controllers
             }
             ViewBag.Count = cartonCount;
             ViewBag.Price = sumPrice;
-            return PartialView();
+            return PartialView(order);
         }
 
         public ActionResult AddOrderPricePartial(int orderId)
