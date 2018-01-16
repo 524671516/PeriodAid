@@ -1675,9 +1675,9 @@ namespace PeriodAid.Controllers
         public ActionResult getHotExcel(FormCollection form)
         {
             string findSql = "select SS_SalesRecord.Product_Id,SS_TrafficData.UpdateTime,SS_TrafficData.访客,SS_TrafficData.订单,SS_SalesRecord.商品数量,SS_TrafficData.流量,SS_Product.Purchase_Price from " +
-                "(select Id, Purchase_Price from SS_Product where Product_Type = '1') SS_Product," +
-                "(select Product_Id, UpdateTime, sum(Product_Visitor) as '访客',sum(Order_Count) as '订单',sum(Product_Flow) as '流量' from SS_TrafficData where Product_Id in (SELECT Id FROM SS_Product where Product_Type = '1') group by Product_Id,UpdateTime) SS_TrafficData," +
-                "(select Product_Id, SalesRecord_Date, sum(SS_SalesRecord.Sales_Count) as '商品数量' from SS_SalesRecord where Product_Id in (select Id from SS_Product where Product_Type = '1' and Storage_Id in (select Id from SS_Storage where Storage_Type = '1')) group by Product_Id,SalesRecord_Date) SS_SalesRecord " +
+                "(select Id, Purchase_Price from SS_Product where Product_Type = 1 and Plattform_Id = 1) SS_Product," +
+                "(select Product_Id, UpdateTime, sum(Product_Visitor) as '访客',sum(Order_Count) as '订单',sum(Product_Flow) as '流量' from SS_TrafficData group by Product_Id,UpdateTime) SS_TrafficData," +
+                "(select Product_Id, SalesRecord_Date, sum(SS_SalesRecord.Sales_Count) as '商品数量' from SS_SalesRecord where Storage_Id in (select Id from SS_Storage where Storage_Type = 1) group by Product_Id,SalesRecord_Date) SS_SalesRecord " +
                 "where SS_Product.Id = SS_SalesRecord.Product_Id and SS_SalesRecord.SalesRecord_Date = SS_TrafficData.UpdateTime and SS_SalesRecord.Product_Id = SS_TrafficData.Product_Id order by Product_Id,SalesRecord_Date";
             string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
             SqlConnection mycon = new SqlConnection(constr);
