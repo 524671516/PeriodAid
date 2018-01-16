@@ -1750,13 +1750,6 @@ namespace PeriodAid.Controllers
 
                 }
             }
-            
-
-
-
-
-
-
             mydr.Close();
             mycon.Close();
             MemoryStream _stream = new MemoryStream();
