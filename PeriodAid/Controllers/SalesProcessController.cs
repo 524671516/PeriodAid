@@ -2017,6 +2017,7 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "报价单.xls");
         }
+
         public ICellStyle ExcelCellStyle(HSSFWorkbook book,string styleName)
         {
             if (styleName == "标题")
