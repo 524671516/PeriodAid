@@ -196,22 +196,21 @@
                 this.$avatarWrapper.empty().html(this.$img);
                 this.$img.cropper({
                     viewMode: 1,
+                    responsive:true,
                     strict:true,
                     aspectRatio: 1,
                     preview: this.$avatarPreview.selector,
                     crop: function (e) {
                         var json = [
-                              '{"x":' + e.x*1.5,
-                              '"y":' + e.y*1.5,
-                              '"height":' + e.height,
-                              '"width":' + e.width,
+                              '{"x":' + Math.round(e.x),
+                              '"y":' + Math.round(e.y),
+                              '"height":' + Math.round(e.height),
+                              '"width":' + Math.round(e.width),
                               '"rotate":' + e.rotate + '}'
                         ].join();
-
                         _this.$avatarData.val(json);
                     }
                 });
-
                 this.active = true;
             }
 

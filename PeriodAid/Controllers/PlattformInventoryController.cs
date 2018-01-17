@@ -1671,7 +1671,7 @@ namespace PeriodAid.Controllers
         }
         // 爆款统计
         [HttpPost]
-        public ActionResult getHotExcel(FormCollection form)
+        public ActionResult getHotExcel(FormCollection form,DateTime start,DateTime end)
         {
             var product_list = from m in _db.SS_Product
                                where m.Product_Type == 1 && m.Plattform_Id == 1
@@ -1695,7 +1695,7 @@ namespace PeriodAid.Controllers
                 row.CreateCell(++cell_pos).SetCellValue("销售成本");
                 row.CreateCell(++cell_pos).SetCellValue("uv价值");
                 var data_date = from m in _db.SS_TrafficData
-                                where m.Product_Id == product.Id
+                                where m.Product_Id == product.Id && m.UpdateTime >= start && m.UpdateTime <= end
                                 group m by m.UpdateTime into g
                                 select g;
                 var row_pos = 2;
@@ -1708,7 +1708,7 @@ namespace PeriodAid.Controllers
                     foreach (var trafficData in traffic_data)
                     {
                         var sales_date = from m in _db.SS_SalesRecord
-                                         where m.Product_Id == product.Id && m.SalesRecord_Date == dateTime && m.SS_Storage.Storage_Type == 1
+                                         where m.SS_Storage.Storage_Type == 1 && m.Product_Id == product.Id && m.SalesRecord_Date == dateTime
                                          group m by m.Product_Id into g
                                          select g;
                         foreach (var salesDate in sales_date)

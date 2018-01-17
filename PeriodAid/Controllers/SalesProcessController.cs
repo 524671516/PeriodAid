@@ -1258,16 +1258,32 @@ namespace PeriodAid.Controllers
         }
         // 审批
         [HttpPost]
+        [Seller(OperationGroup = 604)]
         public ActionResult ConfirmOrder(int orderId)
         {
+            var seller = getSeller(User.Identity.Name);
             var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            if (TryUpdateModel(order))
+            if (order.Order_Type != -1)
             {
-                order.Order_Type = 0;
-                _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
+                return Json(new { result = "WARNING" });
             }
-            return Json(new { result = "SUCCESS" });
+            else
+            {
+                if (seller.Seller_Type == 0)
+                {
+                    return Json(new { result = "FALL" });
+                }
+                else
+                {
+                    if (TryUpdateModel(order))
+                    {
+                        order.Order_Type = 0;
+                        _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                        _db.SaveChanges();
+                    }
+                    return Json(new { result = "SUCCESS" });
+                }
+            }
         }
 
         public ActionResult OrderPriceList()
@@ -1318,6 +1334,7 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         [HttpPost]
+        [Seller(OperationGroup = 901)]
         public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
         {
             if (ModelState.IsValid)
@@ -1388,6 +1405,7 @@ namespace PeriodAid.Controllers
             return PartialView(OrderPrice);
         }
         [HttpPost]
+        [Seller(OperationGroup = 903)]
         public ActionResult EditOrderPriceInfo(SP_OrderPrice model)
         {
             bool Order = _db.SP_OrderPrice.Any(m => m.Order_Count == model.Order_Count && m.OrderPrice_Remark == model.OrderPrice_Remark && m.Order_Price == model.Order_Price && m.OrderPrice_Discount == model.OrderPrice_Discount && m.OrderPrice_Status != -1);
@@ -1419,6 +1437,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
         [HttpPost]
+        [Seller(OperationGroup = 903)]
         public ActionResult DeleteOrderPrice(int orderPriceId)
         {
             var OrderPrice = _db.SP_OrderPrice.AsNoTracking().SingleOrDefault(m => m.Id == orderPriceId);
@@ -1958,17 +1977,19 @@ namespace PeriodAid.Controllers
             string imgurl;
             if (files.Count > 0)
             {
-                int size = files[0].ContentLength;
                 if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
                 {
                     string filename = files[0].FileName; //改filename公式
                     string _filename = DateTime.Now.ToFileTime().ToString() + "sqzweb" + filename.ToString().Substring(filename.ToString().LastIndexOf("."));
-                    //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutWebObject(files[0].InputStream, "Content/" + _filename);
                     msg = "成功! 文件大小为:" + files[0].ContentLength;
                     imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
-                    string res = "{ error:'" + error + "', size:'" + size + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
+                    System.Drawing.Image image = System.Drawing.Image.FromStream(files[0].InputStream);
+                    int iWidth = image.Width;
+                    int iHeight = image.Height;
+                    string fileSize = GetFileSize(files[0].ContentLength);
+                    string res = "{ error:'" + error + "', size:'" + fileSize + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
                     return Content(res);
                 }
                 else
@@ -1979,6 +2000,22 @@ namespace PeriodAid.Controllers
             string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
             return Content(err_res);
 
+        }
+        /// <summary>
+        /// 获取文件大小
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        private string GetFileSize(long bytes)
+        {
+            long kblength = 1024;
+            long mbLength = 1024 * 1024;
+            if (bytes < kblength)
+                return bytes.ToString() + "B";
+            if (bytes < mbLength)
+                return decimal.Round(decimal.Divide(bytes, kblength), 2).ToString() + "KB";
+            else
+                return decimal.Round(decimal.Divide(bytes, mbLength), 2).ToString() + "MB";
         }
         // 报价单导出
         [HttpPost]
@@ -2086,6 +2123,10 @@ namespace PeriodAid.Controllers
                 }
             }
             var orderInfo = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
+            if (orderInfo.Order_Type != 0)
+            {
+                return Json(new { result = "FALL" });
+            }
             // 写标题
             IRow row0 = sheet.CreateRow(0);
             row0.Height = 40 * 20;
