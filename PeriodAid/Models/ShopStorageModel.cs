@@ -313,6 +313,22 @@
         public DateTime Upload_Date { get; set; }
     }
 
+    public class HotExcel
+    {
+        public string Product_Id { get; set; }
+        public string Product_Name { get; set; }
+        public DateTime UpdateTime { get; set; }
+        public double Product_Count { get; set; }
+        public double Count { get; set; }
+        public int Product_Visitor { get; set; }
+        public int Sales_Count { get; set; }
+        public int Order_Count { get; set; }
+        public double Ratio { get; set; }
+        public int Product_Flow { get; set; }
+        public double uvValue { get; set; }
+        public double Cost { get; set; }
+
+    }
    
     //public class MyEntity
     //{

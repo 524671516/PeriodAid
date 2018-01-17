@@ -18,6 +18,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Configuration;
 using System.Diagnostics;
+using System.Data.SqlClient;
 
 namespace PeriodAid.Controllers
 {
@@ -1671,22 +1672,56 @@ namespace PeriodAid.Controllers
         }
         // 爆款统计
         [HttpPost]
-        public ActionResult getHotExcel(FormCollection form,DateTime start,DateTime end)
+        public ActionResult getHotExcel(FormCollection form)
         {
-            var product_list = from m in _db.SS_Product
-                               where m.Product_Type == 1 && m.Plattform_Id == 1
-                               select m;
+            string findSql = "select SS_SalesRecord.Product_Id,SS_TrafficData.UpdateTime,SS_TrafficData.访客,SS_TrafficData.订单,SS_SalesRecord.商品数量,SS_TrafficData.流量,SS_Product.Purchase_Price from " +
+                "(select Id, Purchase_Price from SS_Product where Product_Type = 1 and Plattform_Id = 1) SS_Product," +
+                "(select Product_Id, UpdateTime, sum(Product_Visitor) as '访客',sum(Order_Count) as '订单',sum(Product_Flow) as '流量' from SS_TrafficData group by Product_Id,UpdateTime) SS_TrafficData," +
+                "(select Product_Id, SalesRecord_Date, sum(SS_SalesRecord.Sales_Count) as '商品数量' from SS_SalesRecord where Storage_Id in (select Id from SS_Storage where Storage_Type = 1) group by Product_Id,SalesRecord_Date) SS_SalesRecord " +
+                "where SS_Product.Id = SS_SalesRecord.Product_Id and SS_SalesRecord.SalesRecord_Date = SS_TrafficData.UpdateTime and SS_SalesRecord.Product_Id = SS_TrafficData.Product_Id order by Product_Id,SalesRecord_Date";
+            string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+            SqlConnection mycon = new SqlConnection(constr);
+            mycon.Open();
+            SqlCommand mycom = new SqlCommand(findSql, mycon);
+            SqlDataReader mydr = mycom.ExecuteReader();
+            List<HotExcel> _list = new List<HotExcel>();
+
+            var productList = from m in _db.SS_Product
+                              where m.Product_Type == 1
+                              select m;
             HSSFWorkbook book = new HSSFWorkbook();
-            foreach (var product in product_list)
+
+            while (mydr.Read())
             {
+
+                HotExcel list = new HotExcel();
+                list.Product_Id = mydr[0].ToString();
+                list.UpdateTime = Convert.ToDateTime(mydr[1]);
+                list.Product_Visitor = int.Parse(mydr[2].ToString());
+                list.Order_Count = int.Parse(mydr[3].ToString());
+                list.Sales_Count = int.Parse(mydr[4].ToString());
+                list.Count = (double)list.Sales_Count / list.Order_Count;
+                list.Product_Flow = int.Parse(mydr[5].ToString());
+                list.Ratio = (double)list.Order_Count / list.Product_Flow;
+                list.Cost = list.Sales_Count * Convert.ToDouble(mydr[6].ToString());
+                list.uvValue = list.Cost / list.Product_Visitor;
+                _list.Add(list);
+            }
+            foreach (var product in productList) {
                 var sheetName = product.Item_Name;
+                if (sheetName.Contains("/")) {
+                    sheetName = sheetName.Substring(0, sheetName.IndexOf("/"));
+                } else if (sheetName.Contains("*")) {
+                    sheetName = sheetName.Substring(0, sheetName.IndexOf("*"));
+                }
                 ISheet sheet = book.CreateSheet(sheetName);
                 IRow row0 = sheet.CreateRow(0);
                 int cell_pos = 0;
+                int cell_data = 2;
                 row0.Height = 70 * 20;
                 row0.CreateCell(cell_pos).SetCellValue("活动备注");
                 IRow row = sheet.CreateRow(1);
-                row.CreateCell(++cell_pos).SetCellValue(product.Item_Name + product.System_Code);
+                row.CreateCell(++cell_pos).SetCellValue(sheetName+product.System_Code);
                 row.CreateCell(++cell_pos).SetCellValue("访客");
                 row.CreateCell(++cell_pos).SetCellValue("订单");
                 row.CreateCell(++cell_pos).SetCellValue("商品数量");
@@ -1694,44 +1729,29 @@ namespace PeriodAid.Controllers
                 row.CreateCell(++cell_pos).SetCellValue("转化率");
                 row.CreateCell(++cell_pos).SetCellValue("销售成本");
                 row.CreateCell(++cell_pos).SetCellValue("uv价值");
-                var data_date = from m in _db.SS_TrafficData
-                                where m.Product_Id == product.Id && m.UpdateTime >= start && m.UpdateTime <= end
-                                group m by m.UpdateTime into g
-                                select g;
-                var row_pos = 2;
-                foreach (var dataDate in data_date)
+                foreach (var data in _list)
                 {
-                    var dateTime = Convert.ToDateTime(dataDate.Key.Year + "-" + dataDate.Key.Month + "-" + dataDate.Key.Day + " 00:00:00.000");
-                    var traffic_data = from m in dataDate
-                                       group m by m.SS_TrafficPlattform.Plattform_Id into g
-                                       select g;
-                    foreach (var trafficData in traffic_data)
+                    if (product.Id.ToString() == data.Product_Id)
                     {
-                        var sales_date = from m in _db.SS_SalesRecord
-                                         where m.SS_Storage.Storage_Type == 1 && m.Product_Id == product.Id && m.SalesRecord_Date == dateTime
-                                         group m by m.Product_Id into g
-                                         select g;
-                        foreach (var salesDate in sales_date)
-                        {
-                            IRow single_row = sheet.CreateRow(row_pos);
-                            cell_pos = 1;
-                            var Count = (double)salesDate.Sum(m => m.Sales_Count) / trafficData.Sum(m => m.Order_Count);
-                            var Ratio = (double)trafficData.Sum(m => m.Order_Count) / trafficData.Sum(m => m.Product_Flow);
-                            var Cost = salesDate.Sum(m => m.Sales_Count) * product.Purchase_Price;
-                            var uvValue = salesDate.Sum(m => m.Sales_Count) * product.Purchase_Price / trafficData.Sum(m => m.Product_Visitor);
-                            single_row.CreateCell(cell_pos).SetCellValue(dataDate.Key.Month + "." + dataDate.Key.Day);
-                            single_row.CreateCell(++cell_pos).SetCellValue(trafficData.Sum(m => m.Product_Visitor));
-                            single_row.CreateCell(++cell_pos).SetCellValue(trafficData.Sum(m => m.Order_Count));
-                            single_row.CreateCell(++cell_pos).SetCellValue(salesDate.Sum(m => m.Sales_Count));
-                            single_row.CreateCell(++cell_pos).SetCellValue(Math.Round(Count, 2));
-                            single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-                            single_row.CreateCell(++cell_pos).SetCellValue(Cost.ToString("0.##"));
-                            single_row.CreateCell(++cell_pos).SetCellValue(uvValue.ToString("0.00"));
-                            row_pos++;
-                        }
+                        IRow rowData = sheet.CreateRow(cell_data);
+                        rowData.CreateCell(1).SetCellValue(data.UpdateTime.ToString("MM.dd"));
+                        rowData.CreateCell(2).SetCellValue(data.Product_Visitor);
+                        rowData.CreateCell(3).SetCellValue(data.Order_Count);
+                        rowData.CreateCell(4).SetCellValue(data.Sales_Count);
+                        rowData.CreateCell(5).SetCellValue(Math.Round(data.Count, 2));
+                        rowData.CreateCell(6).SetCellValue(data.Ratio.ToString("p2"));
+                        rowData.CreateCell(7).SetCellValue(data.Cost.ToString("0.##"));
+                        rowData.CreateCell(8).SetCellValue(data.uvValue.ToString("0.00"));
+                        cell_data++;
                     }
+                    else {
+                        continue;
+                    }
+
                 }
             }
+            mydr.Close();
+            mycon.Close();
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
