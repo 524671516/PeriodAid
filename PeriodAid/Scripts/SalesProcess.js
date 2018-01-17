@@ -387,6 +387,8 @@
             throw new Error("onpagechanged is not a function");
         }
     }
+    // 多个model关闭
+    
 
     TmDatePicker.defaultOptions = {
         container: "body",                              //默认会append在body里面

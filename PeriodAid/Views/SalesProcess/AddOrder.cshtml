@@ -93,7 +93,7 @@
 }
 <div class="col-md-12" style="padding:0 74px 0 40px">
     <a class="btn btn-info btn-sm  float-left" style="margin:10px 0" id="add-order"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加产品</a>
-    <a class="btn btn-info btn-sm  float-left" style="margin:10px 0" id="add-orderPrice" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加产品</a>
+    <a class="btn btn-info btn-sm  float-left" style="margin:10px 0" id="add-orderPrice" data-toggle="modal" data-target=".bs-example-modal-lg"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加产品</a>
 </div>
 <div class="col-md-12 well" style="padding:0 74px 0 40px">
     <div id="orderPrice_list_content"></div>
@@ -163,7 +163,7 @@
                     },
                     success: function (data) {
                         $('#modal-content').html(data)
-                        $("#myModal").modal('show')
+                        $("#bg_myModal").modal('show')
                     }
                 })
             })
@@ -227,7 +227,7 @@
                                 },
                                 success: function (data) {
                                     $('#modal-content').html(data)
-                                    $("#myModal").modal('show')
+                                    $("#bg_myModal").modal('show')
                                 }
                             })
                         }

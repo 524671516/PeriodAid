@@ -3460,7 +3460,7 @@ namespace PeriodAid.Controllers
                     MemoryStream ms1 = new MemoryStream(ByteArray);
                     Bitmap sBitmap = (Bitmap)Image.FromStream(ms1);
                     Rectangle section = new Rectangle(new Point(jsonimgsize.ToInt(jsonimgsize.x), jsonimgsize.ToInt(jsonimgsize.y)), new Size(jsonimgsize.ToInt(jsonimgsize.width), jsonimgsize.ToInt(jsonimgsize.height)));
-                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, 200, 200, section.X, section.Y, section.Width, section.Height, jsonimgsize.rotate);
+                    Bitmap CroppedImage = MakeThumbnailImage(sBitmap, 180, 180, section.X, section.Y, section.Width, section.Height, jsonimgsize.rotate);
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutObject(BitmapByte(CroppedImage), "Subject/Avatar/" + filename);
                     imgurl = filename;

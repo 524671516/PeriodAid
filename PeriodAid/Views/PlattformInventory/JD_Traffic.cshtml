@@ -5,7 +5,7 @@
     <div id="traffic-view">
         <div style="margin-bottom:10px">
             <form action="/PlattformInventory/UploadTrafficFile" method="post" enctype="multipart/form-data" id="up-traffic-form">
-                <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px" />
+                <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px;padding-left:5px" />
                 <input type="file" id="traffic-name" name="file-name" class="hidden" />
                 <a href="javascript:;" id="upload-traffic">选择文件</a>
                 <input type="submit" class="btn btn-danger" id="traffic-form-sub" />
@@ -13,9 +13,11 @@
             <a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
             <form method="post" id="calc_form"></form>
         </div>
-        <div style="padding:0" class="col-md-5">
+        <div style="padding:0" class="col-md-10">
+            <input type="text" id="start-date" placeholder="开始日期" readonly="readonly" autocomplete="off" name="file-date" style="height:26px;padding-left:5px" />
+            <input type="text" id="end-date" placeholder="结束日期" readonly="readonly" autocomplete="off" name="file-date" style="height:26px;padding-left:5px" />
             <a class="btn btn-danger traffic-submit" href="javascript:;" id="hot-download" onclick="$('#hot_form').submit();">爆款统计下载</a>
-            <form method="post" id="hot_form" action="/PlattformInventory/getHotExcel"></form>
+            <form method="post" id="hot_form"></form>
         </div>
         <div class="tm-calendar-view tm-view" style="display:block;position: relative;top:0;height: 521px;width: 960px;z-index:0">
             <div class="tm-view-header tm-calendar-view-header">
@@ -47,6 +49,7 @@
 @section scripts{
 <script>
     $("#file-loading").hide()
+    $("#hot-download").addClass("disabled")
     $('#upload-traffic').click(function () {
         $('#traffic-name').trigger('click')
     })
@@ -164,5 +167,31 @@
             });
         }
     });
+    // 爆款下载
+    var start_time = "";
+    var end_time = "";
+    $("#start-date").on("change", function () {
+        var that = $(this)
+        $("#end-date").on("change", function () {
+            start_time = that.val()
+            end_time = $(this).val()
+            $("#hot-download").removeClass("disabled")
+            $("#hot_form").attr("action", "/PlattformInventory/getHotExcel?start=" + start_time + "&end=" + end_time)
+        })
+    })
+    $("#end-date").on("change", function () {
+        var that = $(this)
+        $("#start-date").on("change", function () {
+            start_time = $(this).val()
+            end_time = that.val()
+            $("#hot-download").removeClass("disabled")
+            $("#hot_form").attr("action", "/PlattformInventory/getHotExcel?start=" + start_time + "&end=" + end_time)
+        })
+    })
+    $("#hot-download").on("click", function () {
+        $("#start-date").val("")
+        $("#end-date").val("")
+        $("#hot-download").addClass("disabled")
+    })
 </script>
 }
