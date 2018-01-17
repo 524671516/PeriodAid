@@ -1537,25 +1537,30 @@ namespace PeriodAid.Controllers
             }
         }
 
-        public JsonResult AllPriceAjax(int productId, int clientId)
+        public JsonResult AllPriceAjax(int? productId, int clientId)
         {
-            bool Price = _db.SP_QuotePrice.Any(m => m.Product_Id == productId && m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId);
-            if (Price)
+            var _productId = productId ?? null;
+            if (_productId == null)  {
+                return Json(new { result = "FALL" });
+            }else
             {
-                var product = from m in _db.SP_QuotePrice
-                              where m.Quoted_Status != -1 && m.Product_Id == productId && m.SP_SalesSystem.Client_Id == clientId
-                              select new { Id = m.Product_Id, Price = m.Quote_Price };
-                return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
+                bool Price = _db.SP_QuotePrice.Any(m => m.Product_Id == _productId && m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId);
+                if (Price)
+                {
+                    var product = from m in _db.SP_QuotePrice
+                                  where m.Quoted_Status != -1 && m.Product_Id == _productId && m.SP_SalesSystem.Client_Id == clientId
+                                  select new { Id = m.Product_Id, Price = m.Quote_Price };
+                    return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var product = from m in _db.SP_Product
+                                  where m.Product_Status != -1 && m.Id == _productId
+                                  select new { Id = m.Id, Price = m.Purchase_Price };
+                    return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
+                }
             }
-            else
-            {
-                var product = from m in _db.SP_Product
-                              where m.Product_Status != -1 && m.Id == productId
-                              select new { Id = m.Id, Price = m.Purchase_Price };
-                return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
-            }
-
-
+            
         }
         [HttpPost]
         public ActionResult OrderPdf(int orderId)
@@ -1983,21 +1988,28 @@ namespace PeriodAid.Controllers
                     string _filename = DateTime.Now.ToFileTime().ToString() + "sqzweb" + filename.ToString().Substring(filename.ToString().LastIndexOf("."));
                     AliOSSUtilities util = new AliOSSUtilities();
                     util.PutWebObject(files[0].InputStream, "Content/" + _filename);
-                    msg = "成功! 文件大小为:" + files[0].ContentLength;
-                    imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
+                    //msg = "成功! 文件大小为:" + files[0].ContentLength;
                     System.Drawing.Image image = System.Drawing.Image.FromStream(files[0].InputStream);
-                    int iWidth = image.Width;
-                    int iHeight = image.Height;
-                    string fileSize = GetFileSize(files[0].ContentLength);
-                    string res = "{ error:'" + error + "', size:'" + fileSize + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
-                    return Content(res);
+                    var iWidth = image.Width;
+                    var iHeight = image.Height;
+                    if (iWidth == iHeight)
+                    {
+                        imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
+                        string res = "{ error:'" + error +  "',imgurl:'" + imgurl + "'}";
+                        return Content(res);
+                    }else
+                    {
+                        error = "文件错误";
+                    }
+                    //string fileSize = GetFileSize(files[0].ContentLength);
+                    
                 }
                 else
                 {
                     error = "文件错误";
                 }
             }
-            string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
+            string err_res = "{ error:'" + error  + "',imgurl:''}";
             return Content(err_res);
 
         }
@@ -2006,17 +2018,17 @@ namespace PeriodAid.Controllers
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        private string GetFileSize(long bytes)
-        {
-            long kblength = 1024;
-            long mbLength = 1024 * 1024;
-            if (bytes < kblength)
-                return bytes.ToString() + "B";
-            if (bytes < mbLength)
-                return decimal.Round(decimal.Divide(bytes, kblength), 2).ToString() + "KB";
-            else
-                return decimal.Round(decimal.Divide(bytes, mbLength), 2).ToString() + "MB";
-        }
+        //private string GetFileSize(long bytes)
+        //{
+        //    long kblength = 1024;
+        //    long mbLength = 1024 * 1024;
+        //    if (bytes < kblength)
+        //        return bytes.ToString() + "B";
+        //    if (bytes < mbLength)
+        //        return decimal.Round(decimal.Divide(bytes, kblength), 2).ToString() + "KB";
+        //    else
+        //        return decimal.Round(decimal.Divide(bytes, mbLength), 2).ToString() + "MB";
+        //}
         // 报价单导出
         [HttpPost]
         public ActionResult getQuotePrice(FormCollection form, int SalesSystemId, string productId)

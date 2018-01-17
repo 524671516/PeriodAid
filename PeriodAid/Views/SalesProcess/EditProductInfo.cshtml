@@ -255,10 +255,9 @@
             success: function (data, status)  //服务器成功响应处理函数
             {
                 if (typeof (data.error) != 'undefined') {
-                    if (data.error != '') {
-                        alert(data.error);
+                    if (data.imgurl == '') {
+                        errorAlert(data.error);
                     } else {
-                        console.log(data)
                         alert("上传成功");
                         $("#" + targetname).val(data.imgurl);
                         $("#" + imglist).html("<div class=\"img-list\" value= " + data.imgurl + " style=background-image:url(" + data.imgurl + ")" + "><span class=\"img-close\"><span class=\"fa-stack fa-lg\"><i class=\"fa fa-circle fa-stack-2x\"></i><i class=\"fa fa-times fa-stack-1x fa-inverse\"></i></span></span></div>");
@@ -269,7 +268,7 @@
             },
             error: function (data, status, e)//服务器响应失败处理函数
             {
-                alert(e);
+                errorAlert(e);
             }
         });
         return false;

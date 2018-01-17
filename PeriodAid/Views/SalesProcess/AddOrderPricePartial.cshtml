@@ -56,6 +56,7 @@
     // 搜索产品
     function displayResult(item, val, text) {
         $("#ProductId").val(val);
+        $("#product_input").attr("data-pid",val)
     }
     $('#product_input').typeahead({
         ajax: {
@@ -69,38 +70,41 @@
     $("#add-product").click(function () {
             var that = $(this)
             var select_item = $("#product_input");
-            var P_Id = $("#ProductId")
+            var P_Id = $("#ProductId").val();
             if (select_item.val() != "") {
                 if (select_item.val() != $("#prodcuct_name").html()) {
-                    $("#productdetails").append("<tr><td class='text-center' id='prodcuct_name'>" + select_item.val() + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + P_Id.attr("value") + "' id='order_" + P_Id.attr("value") + "' /></td><td><input class='form-control input-sm' required='required' type='number' name='price_" + P_Id.attr("value") + "' id='price_" + P_Id.attr("value") + "' /></td><td><input class='form-control input-sm' type='number' placeholder='总价' name='totalPrice_" + P_Id.attr("value") + "' id='totalPrice_" + P_Id.attr("value") + "' /></td><td><input class='form-control input-sm' type='number' placeholder='折扣价' required='required' name='discount_" + P_Id.attr("value") + "' id='discount_" + P_Id.attr("value") + "' /></td><td><input class='form-control input-sm'  type='text' placeholder='备注' name='remark_" + P_Id.attr("value") + "' id='remark_" + P_Id.attr("value") + "' /></td></tr>");
-                    that.attr("data-pid", P_Id.val())
                     $.ajax({
                         url: "/SalesProcess/AllPriceAjax",
                         type: "post",
                         data: {
-                            productId: that.attr("data-pid"),
+                            productId: select_item.attr("data-pid"),
                             clientId: $("#client_id").html()
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
+                                $("#productdetails").append("<tr><td class='text-center' id='prodcuct_name'>" + select_item.val() + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + P_Id + "' id='order_" + P_Id + "' /></td><td><input class='form-control input-sm' required='required' type='number' name='price_" + P_Id + "' id='price_" + P_Id + "' /></td><td><input class='form-control input-sm' type='number' placeholder='总价' name='totalPrice_" + P_Id + "' id='totalPrice_" + P_Id + "' /></td><td><input class='form-control input-sm' type='number' placeholder='折扣价' required='required' name='discount_" + P_Id + "' id='discount_" + P_Id + "' /></td><td><input class='form-control input-sm'  type='text' placeholder='备注' name='remark_" + P_Id + "' id='remark_" + P_Id + "' /></td></tr>");
+                                select_item.removeAttr("data-pid")
                                 var item = $("#price_" + data.data[0].Id);
                                 item.val(data.data[0].Price)
                                 $("#product_input").val("")
                                 //总价运算
-                                $("#order_" + P_Id.attr("value") + "").unbind("blur")
-                                $("#order_" + P_Id.attr("value") + "").on("blur", function () {
-                                    var count = $("#order_" + P_Id.attr("value") + "").val();
-                                    var price = $("#price_" + P_Id.attr("value") + "").val();
-                                    $("#totalPrice_" + P_Id.attr("value") + "").val(count * price)
-                                    $("#discount_" + P_Id.attr("value") + "").val(count * price);
+                                $("#order_" + P_Id + "").unbind("blur")
+                                $("#order_" + P_Id + "").on("blur", function () {
+                                    var count = $("#order_" + P_Id + "").val();
+                                    var price = $("#price_" + P_Id + "").val();
+                                    $("#totalPrice_" + P_Id + "").val(count * price)
+                                    $("#discount_" + P_Id + "").val(count * price);
                                 })
-                                $("#price_" + P_Id.attr("value") + "").unbind("blur")
-                                $("#price_" + P_Id.attr("value") + "").on("blur", function () {
-                                    var count = $("#order_" + P_Id.attr("value") + "").val();
-                                    var price = $("#price_" + P_Id.attr("value") + "").val();
-                                    $("#totalPrice_" + P_Id.attr("value") + "").val(count * price)
-                                    $("#discount_" + P_Id.attr("value") + "").val(count * price);
+                                $("#price_" + P_Id + "").unbind("blur")
+                                $("#price_" + P_Id + "").on("blur", function () {
+                                    var count = $("#order_" + P_Id + "").val();
+                                    var price = $("#price_" + P_Id + "").val();
+                                    $("#totalPrice_" + P_Id + "").val(count * price)
+                                    $("#discount_" + P_Id + "").val(count * price);
                                 })
+                             }
+                            else if (data.result == "FALL") {
+                                errorAlert("产品不存在")
                             }
                         }
                     });
