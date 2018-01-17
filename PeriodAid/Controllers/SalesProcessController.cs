@@ -1318,6 +1318,14 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
         [HttpPost]
+        public JsonResult CheckProductName()
+        {
+            var productlist = (from m in _db.SP_Product
+                              where m.Product_Status != -1
+                               select new { id = m.Id, name = m.Item_Name}).ToList();
+            return Json(new { data = productlist });
+        }
+        [HttpPost]
         public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
         {
             if (ModelState.IsValid)
