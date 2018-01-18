@@ -133,8 +133,14 @@
                         });
                     } else if (data.result == "UNAUTHORIZED") {
                         errorAlert('已存在!')
-                    } else {
+                        $("#add-submit").removeClass("disabled")
+                    } else if (data.result == "ERROR") {
                         errorAlert("信息不完整!");
+                        $("#add-submit").removeClass("disabled")
+                    }
+                    else {
+                        errorAlert(data.errmsg)
+                        $("#add-submit").removeClass("disabled")
                     }
                 })
             },

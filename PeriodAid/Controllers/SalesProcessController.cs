@@ -283,7 +283,6 @@ namespace PeriodAid.Controllers
             List<SelectListItem> itemlist = new List<SelectListItem>();
             itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
             itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
-            itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
             ViewBag.ClientStatus = new SelectList(itemlist, "Value", "Text");
 
             List<SelectListItem> typelist = new List<SelectListItem>();
@@ -1997,13 +1996,22 @@ namespace PeriodAid.Controllers
                     util.PutWebObject(files[0].InputStream, "Content/" + _filename);
                     //msg = "成功! 文件大小为:" + files[0].ContentLength;
                     System.Drawing.Image image = System.Drawing.Image.FromStream(files[0].InputStream);
-                    var iWidth = image.Width;
-                    var iHeight = image.Height;
-                    imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
-                    string res = "{ error:'" + error + "',imgurl:'" + imgurl + "'}";
-                    return Content(res);
+                    int iWidth = image.Width;
+                    int iHeight = image.Height;
+                    if (iWidth < 330 || iHeight < 330)
+                    {
+                        error = "图片过小,建议最小尺寸为330*330";
+                    } else if (iWidth > 800 || iHeight > 800) 
+                    {
+                        error = "图片过大,建议最大尺寸为800*800";
+                    }
+                    else
+                    {
+                        imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
+                        string res = "{ error:'" + error + "',imgurl:'" + imgurl + "'}";
+                        return Content(res);
+                    }
                     //string fileSize = GetFileSize(files[0].ContentLength);
-
                 }
                 else
                 {

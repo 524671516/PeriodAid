@@ -97,10 +97,7 @@
             val: 'Id'
         });
         $("#save-btn").on("click", function () {
-            if (!$(this).hasClass("disabled")) {
-                $(this).addClass("disabled")
-                $("#client-form").submit();
-            }
+            $("#client-form").submit();
         })
         $("#client-form").validate({
             debug: true,
