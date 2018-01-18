@@ -547,7 +547,7 @@ namespace PeriodAid.Controllers
                         var sales = from m in _db.SP_SalesSystem
                                     where m.System_Status != -1
                                     select m;
-                        var SearchResult = (from m in _db.SP_SalesSystem
+                        var SearchResult = (from m in sales
                                             where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                             orderby m.Id descending
                                             select m).ToPagedList(_page, 15);
@@ -569,9 +569,11 @@ namespace PeriodAid.Controllers
                 {
                     if (query != "")
                     {
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
-                                            && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
+                        var sales = from m in _db.SP_SalesSystem
+                                    where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
+                                    select m;
+                        var SearchResult = (from m in sales
+                                            where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                             orderby m.Id descending
                                             select m).ToPagedList(_page, 15);
                         return PartialView(SearchResult);
@@ -590,7 +592,7 @@ namespace PeriodAid.Controllers
                     if (query != "")
                     {
                         var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type && m.Client_Id == clientId
+                                            where m.System_Status != -1 && m.Client_Id == clientId
                                             && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
                                             orderby m.Id descending
                                             select m).ToPagedList(_page, 15);
