@@ -1,10 +1,10 @@
 ﻿@model PeriodAid.Models.SP_Product
-    <style>
-        #avatar-modal{
-            padding-left:0 !important;
-            z-index:1044!important;
-        }
-    </style>
+<style>
+    #avatar-modal {
+        padding-left: 0 !important;
+        z-index: 1044 !important;
+    }
+</style>
 <head>
     <link href="~/Content/cropper.min.css" rel="stylesheet" />
     <link href="~/Content/corppermain.css" rel="stylesheet" />
@@ -130,7 +130,7 @@
     }
 </div>
 <div id="crop-avatar" class="container">
-    <div class="modal fade" id="avatar-modal" data-backdrop="true"  aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+    <div class="modal fade" id="avatar-modal" data-hidden="true"  aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 @using (Html.BeginForm("UploadSubjectCutFileAjax", "TaskManagement", FormMethod.Post, new { @class = "avatar-form" }))
@@ -152,6 +152,11 @@
                             <div class="row">
                                 <div class="col-md-7" style="height:75%;">
                                     <div class="avatar-wrapper"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="avatar-preview preview-lg"></div>
+                                    <div class="avatar-preview preview-md"></div>
+                                    <div class="avatar-preview preview-sm"></div>
                                 </div>
                             </div>
                             <div class="row avatar-btns">
@@ -184,23 +189,7 @@
 <script src="~/Scripts/croppermain.js"></script>
 <script>
     $(function () {
-        $(document).on('show.bs.modal', '.modal', function (event) {
-            $(this).appendTo($('body'));
-        }).on('shown.bs.modal', '.modal.in', function (event) {
-            setModalsAndBackdropsOrder();
-        }).on('hidden.bs.modal', '.modal', function (event) {
-            setModalsAndBackdropsOrder();
-        });
-        function setModalsAndBackdropsOrder() {
-            var modalZIndex = 1040;
-            $('.modal.in').each(function (index) {
-                var $modal = $(this);
-                modalZIndex++;
-                $modal.css('zIndex', modalZIndex);
-                $modal.next('.modal-backdrop.in').addClass('hidden').css('zIndex', modalZIndex - 1);
-            });
-            $('.modal.in:visible:last').focus().next('.modal-backdrop.in').removeClass('hidden');
-        }
+        
         // 图片
         $("#add-product-form").validate({
             debug: true,
