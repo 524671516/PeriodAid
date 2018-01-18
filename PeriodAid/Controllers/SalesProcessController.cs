@@ -1414,7 +1414,7 @@ namespace PeriodAid.Controllers
         [Seller(OperationGroup = 903)]
         public ActionResult EditOrderPriceInfo(SP_OrderPrice model)
         {
-            bool Order = _db.SP_OrderPrice.Any(m => m.Order_Count == model.Order_Count && m.OrderPrice_Remark == model.OrderPrice_Remark && m.Order_Price == model.Order_Price && m.OrderPrice_Discount == model.OrderPrice_Discount && m.OrderPrice_Status != -1);
+            bool Order = _db.SP_OrderPrice.Any(m =>m.Product_Id == model.Product_Id && m.Order_Count == model.Order_Count && m.OrderPrice_Remark == model.OrderPrice_Remark && m.Order_Price == model.Order_Price && m.OrderPrice_Discount == model.OrderPrice_Discount && m.OrderPrice_Status != -1);
             if (ModelState.IsValid)
             {
                 if (Order)
