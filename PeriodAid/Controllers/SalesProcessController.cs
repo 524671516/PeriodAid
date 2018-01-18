@@ -1999,17 +1999,11 @@ namespace PeriodAid.Controllers
                     System.Drawing.Image image = System.Drawing.Image.FromStream(files[0].InputStream);
                     var iWidth = image.Width;
                     var iHeight = image.Height;
-                    if (iWidth == iHeight)
-                    {
-                        imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
-                        string res = "{ error:'" + error +  "',imgurl:'" + imgurl + "'}";
-                        return Content(res);
-                    }else
-                    {
-                        error = "文件错误";
-                    }
+                    imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
+                    string res = "{ error:'" + error + "',imgurl:'" + imgurl + "'}";
+                    return Content(res);
                     //string fileSize = GetFileSize(files[0].ContentLength);
-                    
+
                 }
                 else
                 {
