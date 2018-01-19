@@ -38,7 +38,7 @@
         <div class="form-group col-md-6">
             <label class="col-md-3 control-label order_label">购货单位：</label>
             <div class="col-md-8">
-                <input id="client_input" type="text" class="span4 form-control order_control" autocomplete="off" name="client_input" />
+                <input id="client_input" type="text" class="span4 form-control order_control" autocomplete="off" name="client_input"/>
             </div>
         </div>
         <div class="form-group col-md-6">
@@ -126,6 +126,16 @@
                     display: 'Client_Name',
                     val: 'Id'
                 });
+                //地址搜索
+                $('#Order_Address').typeahead({
+                    ajax: {
+                        url: "/SalesProcess/QueryAddress",
+                        triggerLength: 1
+                    },
+                    itemSelected: displayResultC,
+                    display: 'System_Address',
+                    val: 'System_Address'
+                });
                 // 日期
                 window.moment = Kalendae.moment;
                 var k4 = new Kalendae.Input('Order_Date', {
@@ -151,11 +161,11 @@
                         val: 'Id'
                     });
                 }
-            })
-            $("#add-order").on("click", function () {
+        })
+        $("#add-order").on("click", function () {
                 $("#add-submit").trigger("click");
             })
-            $("#add-orderPrice").on("click", function () {
+        $("#add-orderPrice").on("click", function () {
                 $.ajax({
                     url: '/SalesProcess/AddOrderPricePartial',
                     data: {
@@ -166,9 +176,9 @@
                         $("#bg_myModal").modal('show')
                     }
                 })
-            })
-            // order
-            $("#add-order-form").validate({
+        })
+        // order
+        $("#add-order-form").validate({
                 debug: true,
                 rules: {
                     Order_Date: {
@@ -237,9 +247,9 @@
                 errorPlacement: function (error, element) {
                     error.appendTo(element.parent())
                 }
-            })
-            // 提交
-            $("#confirm-btn").on("click", function () {
+        })
+        // 提交
+        $("#confirm-btn").on("click", function () {
                 var that = $(this)
                 alert("操作成功","订单号:" + $("#Order_Number").val(), function (isConfirm) {
                     if (isConfirm) {
@@ -247,6 +257,21 @@
                         $("#confirm-btn").addClass("disabled")
                     }
                 })
-            })
+        })
+        //默认地址
+        $("#Order_Address").focus(function () {
+            if ($("#client_input").attr("data-cvl") != null) {
+                $.ajax({
+                    url: "/SalesProcess/AutoFillAddress",
+                    type: "post",
+                    data: {
+                        clientId: $("#client_input").attr("data-cvl")
+                    },
+                    success: function (data) {
+                        $("#Order_Address").val(data)
+                    }
+                })
+            }
+        })
     </script>
 }
