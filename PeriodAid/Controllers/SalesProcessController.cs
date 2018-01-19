@@ -1161,18 +1161,7 @@ namespace PeriodAid.Controllers
         {
             Random ran = new Random();
             int RandKey = ran.Next(01, 99);
-            var ordernumber = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString();
-            var OrderNum = int.Parse(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + RandKey);
-            var strNum = OrderNum.ToString();
-            if (strNum.Length == 1)
-            {
-                strNum = "00" + strNum;
-            }
-            else if (strNum.Length == 2)
-            {
-                strNum = "0" + strNum;
-            }
-            ordernumber += strNum;
+            var ordernumber = DateTime.Now.ToString("yyyyMMddHHmmss");
             ViewBag.ordernumber = ordernumber;
             return View();
         }
@@ -1350,7 +1339,7 @@ namespace PeriodAid.Controllers
         {
             var productlist = (from m in _db.SP_Product
                               where m.Product_Status != -1
-                               select new { id = m.Id, name = m.Item_Name + "-" + m.Item_Code + "-" + m.Product_Standard }).ToList();
+                               select new { id = m.Id, name = m.Item_Code + "-" + m.Item_Name + "-" + m.Product_Standard }).ToList();
             return Json(new { data = productlist });
         }
         [HttpPost]
@@ -1479,9 +1468,10 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult QueryAddress(string query)
         {
+            var seller = getSeller(User.Identity.Name);
             var salesAddress = from m in _db.SP_SalesSystem
-                               where m.System_Address.Contains(query)
-                               select new { System_Address = m.System_Address };
+                               where m.System_Address.Contains(query) || m.System_Name.Contains(query) && m.SP_Client.Seller_Id == seller.Id 
+                               select new { System_Address = m.System_Address, Address_Show = m.System_Name + "-" + m.System_Address };
             return Json(salesAddress);
         }
         [HttpPost]
@@ -1532,7 +1522,7 @@ namespace PeriodAid.Controllers
                               select m;
             var product = from m in productlist
                           where m.Item_Name.Contains(query) || m.Item_Code.Contains(query)
-                          select new { Id = m.Id, ProductName = m.Item_Name + "-" +m.Item_Code + "-" + m.Product_Standard };
+                          select new { Id = m.Id, ProductName = m.Item_Code + "-" +m.Item_Name + "-" + m.Product_Standard };
             return Json(product);
         }
         [HttpPost]
