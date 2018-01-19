@@ -1161,18 +1161,7 @@ namespace PeriodAid.Controllers
         {
             Random ran = new Random();
             int RandKey = ran.Next(01, 99);
-            var ordernumber = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString();
-            var OrderNum = int.Parse(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + RandKey);
-            var strNum = OrderNum.ToString();
-            if (strNum.Length == 1)
-            {
-                strNum = "00" + strNum;
-            }
-            else if (strNum.Length == 2)
-            {
-                strNum = "0" + strNum;
-            }
-            ordernumber += strNum;
+            var ordernumber = DateTime.Now.ToString("yyyyMMddHHmmss");
             ViewBag.ordernumber = ordernumber;
             return View();
         }
@@ -1481,7 +1470,7 @@ namespace PeriodAid.Controllers
         {
             var seller = getSeller(User.Identity.Name);
             var salesAddress = from m in _db.SP_SalesSystem
-                               where m.System_Address.Contains(query) && m.SP_Client.Seller_Id == seller.Id
+                               where m.System_Address.Contains(query) || m.System_Name.Contains(query) && m.SP_Client.Seller_Id == seller.Id 
                                select new { System_Address = m.System_Address, Address_Show = m.System_Name + "-" + m.System_Address };
             return Json(salesAddress);
         }
