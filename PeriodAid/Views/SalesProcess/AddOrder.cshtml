@@ -129,7 +129,7 @@
                 //地址搜索
                 $('#Order_Address').typeahead({
                     ajax: {
-                        url: "/SalesProcess/QueryAddress",
+                        url: "/SalesProcess/QueryAddress?clientId=" + $("#client_input").attr("data-cvl"),
                         triggerLength: 1
                     },
                     itemSelected: displayResultC,

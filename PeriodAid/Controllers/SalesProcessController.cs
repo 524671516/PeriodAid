@@ -1477,10 +1477,10 @@ namespace PeriodAid.Controllers
 
         // 搜索
         [HttpPost]
-        public JsonResult QueryAddress(string query)
+        public JsonResult QueryAddress(int clientId,string query)
         {
             var salesAddress = from m in _db.SP_SalesSystem
-                               where m.System_Address.Contains(query)
+                               where m.System_Address.Contains(query) && m.Client_Id == clientId
                                select new { System_Address = m.System_Address };
             return Json(salesAddress);
         }
