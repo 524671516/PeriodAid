@@ -146,7 +146,19 @@
                 titleFormat: "MM月, YYYY年",
                 format: "YYYY-MM-DD"
             });
-
+            //地址搜索
+            $('#Order_Address').typeahead({
+                ajax: {
+                    url: "/SalesProcess/QueryAddress",
+                    triggerLength: 1
+                },
+                itemSelected: displayResultA,
+                display: 'Address_Show',
+                val: 'System_Address'
+            });
+            function displayResultA(item, val, text) {
+                $("#Order_Address").val(val);
+            }
             if ($("#order_type").html() == 0) {
                 $("#add-orderPrice").addClass("disabled")
                 $("#add-order").addClass("disabled")

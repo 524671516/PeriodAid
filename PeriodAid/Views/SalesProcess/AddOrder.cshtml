@@ -108,59 +108,77 @@
         $(function () {
             $("#confirm-btn").addClass("disabled")
             $("#add-orderPrice").addClass("hidden")
-                $.ajax({
-                    url: "/SalesProcess/OrderPriceList",
-                    data: {
-                    },
-                    success: function (data) {
-                        $("#orderPrice_list_content").html(data)
-                    }
-                })
-                //经销商搜索
-                $('#client_input').typeahead({
+            $.ajax({
+                url: "/SalesProcess/OrderPriceList",
+                data: {
+                },
+                success: function (data) {
+                    $("#orderPrice_list_content").html(data)
+                }
+            })
+            //经销商搜索
+            $('#client_input').typeahead({
+                ajax: {
+                    url: "/SalesProcess/QueryClient",
+                    triggerLength: 1
+                },
+                itemSelected: displayResultC,
+                display: 'Client_Name',
+                val: 'Id'
+            });
+            // 日期
+            window.moment = Kalendae.moment;
+            var k4 = new Kalendae.Input('Order_Date', {
+                months: 1,
+                mode: 'single',
+                titleFormat: "MM月, YYYY年",
+                format: "YYYY-MM-DD"
+            });
+            //默认地址
+            $("#Order_Address").focus(function () {
+                if ($("#client_input").attr("data-cvl") != null) {
+                    $.ajax({
+                        url: "/SalesProcess/AutoFillAddress",
+                        type: "post",
+                        data: {
+                            clientId: $("#client_input").attr("data-cvl")
+                        },
+                        success: function (data) {
+                            $("#Order_Address").val(data)
+                        }
+                    })
+                }
+            })
+            //地址搜索
+            $('#Order_Address').typeahead({
+                ajax: {
+                    url: "/SalesProcess/QueryAddress",
+                    triggerLength: 1
+                },
+                itemSelected: displayResultA,
+                display: 'Address_Show',
+                val: 'System_Address'
+            });
+            function displayResultA(item, val, text) {
+                $("#Order_Address").val(val);
+            }
+            //联系人搜索
+            function displayResult(item, val, text) {
+                $("#ContactId").val(val);
+            }
+            function displayResultC(item, val, text) {
+                $("#ContactId").attr("data-cid", val)
+                $("#client_input").attr("data-cvl", val)
+                $('#contact_input').typeahead({
                     ajax: {
-                        url: "/SalesProcess/QueryClient",
+                        url: "/SalesProcess/QueryContactPhone?clientId=" + $("#ContactId").attr("data-cid"),
                         triggerLength: 1
                     },
-                    itemSelected: displayResultC,
-                    display: 'Client_Name',
+                    itemSelected: displayResult,
+                    display: 'Contact_Name',
                     val: 'Id'
                 });
-                //地址搜索
-                $('#Order_Address').typeahead({
-                    ajax: {
-                        url: "/SalesProcess/QueryAddress?clientId=" + $("#client_input").attr("data-cvl"),
-                        triggerLength: 1
-                    },
-                    itemSelected: displayResultC,
-                    display: 'System_Address',
-                    val: 'System_Address'
-                });
-                // 日期
-                window.moment = Kalendae.moment;
-                var k4 = new Kalendae.Input('Order_Date', {
-                    months: 1,
-                    mode: 'single',
-                    titleFormat: "MM月, YYYY年",
-                    format: "YYYY-MM-DD"
-                });
-                //联系人搜索
-                function displayResult(item, val, text) {
-                    $("#ContactId").val(val);
-                }
-                function displayResultC(item, val, text) {
-                    $("#ContactId").attr("data-cid", val)
-                    $("#client_input").attr("data-cvl", val)
-                    $('#contact_input').typeahead({
-                        ajax: {
-                            url: "/SalesProcess/QueryContactPhone?clientId="+$("#ContactId").attr("data-cid"),
-                            triggerLength: 1
-                        },
-                        itemSelected: displayResult,
-                        display: 'Contact_Name',
-                        val: 'Id'
-                    });
-                }
+            }
         })
         $("#add-order").on("click", function () {
                 $("#add-submit").trigger("click");
@@ -257,21 +275,6 @@
                         $("#confirm-btn").addClass("disabled")
                     }
                 })
-        })
-        //默认地址
-        $("#Order_Address").focus(function () {
-            if ($("#client_input").attr("data-cvl") != null) {
-                $.ajax({
-                    url: "/SalesProcess/AutoFillAddress",
-                    type: "post",
-                    data: {
-                        clientId: $("#client_input").attr("data-cvl")
-                    },
-                    success: function (data) {
-                        $("#Order_Address").val(data)
-                    }
-                })
-            }
         })
     </script>
 }
