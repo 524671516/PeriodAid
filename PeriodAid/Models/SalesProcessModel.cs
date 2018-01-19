@@ -64,7 +64,7 @@
 
         public string Bar_Code { get; set; }
 
-        public int Product_Weight { get; set; }
+        public string Product_Standard { get; set; }
 
         public int Carton_Spec { get; set; }
         

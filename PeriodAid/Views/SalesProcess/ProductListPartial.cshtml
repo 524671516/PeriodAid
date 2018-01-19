@@ -7,7 +7,7 @@
             <th>产品名称</th>
             <th>产品编码</th>
             <th>产品状态</th>
-            <th>重量(/克)</th>
+            <th>规格</th>
             <th>箱规</th>
             <th>标准零售价</th>
             <th>标准供货价</th>
@@ -21,7 +21,7 @@
                 <td>@item.Item_Name</td>
                 <td>@item.Item_Code</td>
                 <td>@Html.ProductTypeStatus(item.Product_Status)</td>
-                <td>@item.Product_Weight</td>
+                <td>@item.Product_Standard</td>
                 <td>@item.Carton_Spec</td>
                 <td>@item.Purchase_Price</td>
                 <td>@item.Supply_Price</td>

@@ -303,11 +303,11 @@ namespace PeriodAid.Filters
                     }
                     else if (OperationGroup == SalesOperationCode.CLIEADD)
                     {
-                        setErrorResult(filterContext, "权限不足");
+                       //
                     }
                     else if (OperationGroup == SalesOperationCode.CLIEEDIT)
                     {
-                        setErrorResult(filterContext, "权限不足");
+                       //
                     }
                     else if (OperationGroup == SalesOperationCode.SALESVIEW)
                     {

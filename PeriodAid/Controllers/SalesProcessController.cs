@@ -145,7 +145,7 @@ namespace PeriodAid.Controllers
         {
             bool Product = _db.SP_Product.Any(m => m.Item_Name == model.Item_Name);
             ModelState.Remove("Product_Status");
-            ModelState.Remove("Item_Code");
+            ModelState.Remove("Brand_Name");
             ModelState.Remove("System_Code");
             ModelState.Remove("Item_ShortName");
             ModelState.Remove("Bar_Code");
@@ -166,7 +166,7 @@ namespace PeriodAid.Controllers
                     item.Item_ShortName = model.Item_ShortName;
                     item.Supplier_Name = model.Supplier_Name;
                     item.Bar_Code = model.Bar_Code;
-                    item.Product_Weight = model.Product_Weight;
+                    item.Product_Standard = model.Product_Standard;
                     item.Carton_Spec = model.Carton_Spec;
                     item.Purchase_Price = model.Purchase_Price;
                     item.Supply_Price = model.Supply_Price;
