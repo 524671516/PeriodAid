@@ -11,7 +11,6 @@
             <th>箱规</th>
             <th>标准零售价</th>
             <th>标准供货价</th>
-            <th>产品类别</th>
             <th></th>
         </tr>
 
@@ -25,7 +24,6 @@
                 <td>@item.Carton_Spec</td>
                 <td>@item.Purchase_Price</td>
                 <td>@item.Supply_Price</td>
-                <td>@item.SP_ProductType.Type_Name</td>
                 <td>
                     <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                     <a class="detail-btn btn btn-xs btn-primary" role="button" data-id="@item.Id" data-toggle="modal" data-target=".bs-example-modal-lg">详情</a>

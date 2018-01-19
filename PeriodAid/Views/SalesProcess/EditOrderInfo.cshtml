@@ -186,14 +186,6 @@
                 Order_Address: {
                     required: true
                 },
-                Signed_Number: {
-                    required: true
-                },
-                Cancellation_Fee: {
-                    required: true,
-                    number: true
-                }
-
             },
             messages: {
                 Order_Date: {
@@ -208,13 +200,6 @@
                 Order_Address: {
                     required: "邮寄地址是必须的"
                 },
-                Signed_Number: {
-                    required: "编号是必须的"
-                },
-                Cancellation_Fee: {
-                    required: "费用是必须的",
-                    number: "请注意格式"
-                }
             },
             //验证通过的正式提交函数
             submitHandler: function (form) {

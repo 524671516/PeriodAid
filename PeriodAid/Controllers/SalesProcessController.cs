@@ -150,6 +150,8 @@ namespace PeriodAid.Controllers
             ModelState.Remove("Item_ShortName");
             ModelState.Remove("Bar_Code");
             ModelState.Remove("Product_Img");
+            ModelState.Remove("ProductType_Id");
+            ModelState.Remove("Product_Status");
             if (ModelState.IsValid)
             {
                 if (Product)
@@ -1181,6 +1183,8 @@ namespace PeriodAid.Controllers
             bool Contact = _db.SP_Contact.Any(m => m.Id == model.Contact_Id);
             ModelState.Remove("Order_Date");
             ModelState.Remove("Order_Remark");
+            ModelState.Remove("Signed_Number");
+            ModelState.Remove("Cancellation_Fee");
             if (ModelState.IsValid)
             {
                 if (Contact)
@@ -1339,7 +1343,7 @@ namespace PeriodAid.Controllers
         {
             var productlist = (from m in _db.SP_Product
                               where m.Product_Status != -1
-                               select new { id = m.Id, name = m.Item_Name}).ToList();
+                               select new { id = m.Id, name = m.Item_Name + "-" + m.Item_Code + "-" + m.Product_Standard }).ToList();
             return Json(new { data = productlist });
         }
         [HttpPost]
@@ -1508,10 +1512,12 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult QueryProduct(string query)
         {
-            var product = from m in _db.SP_Product
-                          where m.Product_Status != -1
-                          && m.Item_Name.Contains(query)
-                          select new { Id = m.Id, ProductName = m.Item_Name };
+            var productlist = from m in _db.SP_Product
+                              where m.Product_Status != -1
+                              select m;
+            var product = from m in productlist
+                          where m.Item_Name.Contains(query) || m.Item_Code.Contains(query)
+                          select new { Id = m.Id, ProductName = m.Item_Name + "-" +m.Item_Code + "-" + m.Product_Standard };
             return Json(product);
         }
         [HttpPost]

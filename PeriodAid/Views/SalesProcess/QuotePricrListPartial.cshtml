@@ -2,9 +2,10 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th style="width:15%">系统编码</th>
-            <th style="width:25%">供应商</th>
             <th style="width:15%">产品名称</th>
+            <th style="width:15%">产品编码</th>
+            <th style="width:15%">规格</th>
+            <th style="width:10%">箱规</th>
             <th style="width:10%">报价</th>
             <th style="width:10%">报价日期</th>
             <th style="width:10%"></th>
@@ -15,9 +16,10 @@
             if (price.Quoted_Status == -1)
             {
                 <tr style="background:#cfcccc">
-                    <td>@price.SP_Product.System_Code</td>
-                    <td>@price.SP_Product.Supplier_Name</td>
                     <td>@price.SP_Product.Item_Name</td>
+                    <td>@price.SP_Product.Item_Code</td>
+                    <td>@price.SP_Product.Product_Standard</td>
+                    <td>@price.SP_Product.Carton_Spec</td>
                     <td>@price.Quote_Price</td>
                     <td>@price.Quoted_Date.ToString("yyyy-MM-dd")</td>
                     <td >过期报价</td>
@@ -27,9 +29,10 @@
             else
             {
                 <tr>
-                    <td>@price.SP_Product.System_Code</td>
-                    <td>@price.SP_Product.Supplier_Name</td>
                     <td>@price.SP_Product.Item_Name</td>
+                    <td>@price.SP_Product.Item_Code</td>
+                    <td>@price.SP_Product.Product_Standard</td>
+                    <td>@price.SP_Product.Carton_Spec</td>
                     <td>@price.Quote_Price</td>
                     <td>@price.Quoted_Date.ToString("yyyy-MM-dd")</td>
                     <td>最新报价</td>

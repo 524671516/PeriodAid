@@ -174,7 +174,7 @@ namespace System.Web.Mvc
                 case -1:
                     return "下架";
                 case 0:
-                    return "正常";
+                    return "在售";
                 case 1:
                     return "爆款";
                 default:
