@@ -3,6 +3,7 @@
       .table > tbody > tr > td{
           vertical-align:middle;
       }
+      
     </style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -100,7 +101,7 @@
                                     },
                                     success: function (data) {
                                         if (data.result == "SUCCESS") {
-                                            $("#productdetails").append("<tr><td class='text-center' id='prodcuct_name'>" + select_item.val() + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + P_Id + "' id='order_" + P_Id + "' /></td><td><input class='form-control input-sm' required='required' type='number' name='price_" + P_Id + "' id='price_" + P_Id + "' /></td><td><input class='form-control input-sm' type='number' placeholder='总价' name='totalPrice_" + P_Id + "' id='totalPrice_" + P_Id + "' /></td><td><input class='form-control input-sm' type='number' placeholder='折扣价' required='required' name='discount_" + P_Id + "' id='discount_" + P_Id + "' /></td><td><input class='form-control input-sm'  type='text' placeholder='备注' name='remark_" + P_Id + "' id='remark_" + P_Id + "' /></td></tr>");
+                                            $("#productdetails").append("<tr style='white-space:nowrap'><td class='text-center id='prodcuct_name'>" + select_item.val() + "</td><td><input class='form-control input-sm' required='required' type='number' placeholder='数量' name='order_" + P_Id + "' id='order_" + P_Id + "' /></td><td><input class='form-control input-sm' required='required' type='number' name='price_" + P_Id + "' id='price_" + P_Id + "' /></td><td><input class='form-control input-sm' type='number' placeholder='总价' name='totalPrice_" + P_Id + "' id='totalPrice_" + P_Id + "' /></td><td><input class='form-control input-sm' type='number' placeholder='折扣价' required='required' name='discount_" + P_Id + "' id='discount_" + P_Id + "' /></td><td><input class='form-control input-sm'  type='text' placeholder='备注' name='remark_" + P_Id + "' id='remark_" + P_Id + "' /></td></tr>");
                                             select_item.removeAttr("data-pid")
                                             var item = $("#price_" + data.data[0].Id);
                                             item.val(data.data[0].Price)
