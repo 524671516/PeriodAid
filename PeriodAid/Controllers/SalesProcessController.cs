@@ -1174,6 +1174,13 @@ namespace PeriodAid.Controllers
             ViewBag.ordernumber = ordernumber;
             return View();
         }
+        //自动填充经销商地址
+        [HttpPost]
+        public JsonResult AutoFillAddress(int clientId)
+        {
+            var clientAddress = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
+            return Json(clientAddress.Client_Address);
+        }
         [HttpPost]
         [Seller(OperationGroup = 601)]
         public ActionResult AddOrderPartial(SP_Order model, FormCollection form)
@@ -1465,6 +1472,14 @@ namespace PeriodAid.Controllers
         }
 
         // 搜索
+        [HttpPost]
+        public JsonResult QueryAddress(string query)
+        {
+            var salesAddress = from m in _db.SP_SalesSystem
+                               where m.System_Address.Contains(query)
+                               select new { System_Address = m.System_Address };
+            return Json(salesAddress);
+        }
         [HttpPost]
         public JsonResult QueryClient(string query)
         {
