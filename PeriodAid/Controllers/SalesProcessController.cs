@@ -738,7 +738,7 @@ namespace PeriodAid.Controllers
         public ActionResult SelectQuotePrice(int SalesSystemId)
         {
             var QuotePrice = from m in _db.SP_QuotePrice
-                             where m.SalesSystem_Id == SalesSystemId
+                             where m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1
                              select m;
             ViewBag.QuotePrice = QuotePrice;
             return PartialView();
@@ -1593,7 +1593,7 @@ namespace PeriodAid.Controllers
             try
             {
                 // 创建文档
-                PdfWriter.GetInstance(document, new FileStream(@"C:\Users\Tork\Downloads\Create.pdf", FileMode.Append));
+                PdfWriter.GetInstance(document, new FileStream(@"D:\Create.pdf", FileMode.Append));
                 BaseFont setFont = BaseFont.CreateFont(@"C:\Windows\Fonts\simfang.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
                 Font font = new Font(setFont, 16);
                 Font font1 = new Font(setFont, 12);

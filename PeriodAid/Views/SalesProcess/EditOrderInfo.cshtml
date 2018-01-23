@@ -115,8 +115,10 @@
 <div class="col-md-12 text-center" style="padding:0 74px 0 40px">
     <a class="btn btn-info btn-sm" id="add-order"><i class="fa fa-edit"></i>&nbsp;提交修改</a>&nbsp;&nbsp;&nbsp;
     <a class="btn btn-danger btn-sm" id="confirm-btn">提交审批</a>&nbsp;&nbsp;&nbsp;
-    <a class="btn btn-danger btn-sm" id="CreatOrderExcel-btn" onclick="$('#CreatOrderExcel').submit()"><i class="fa fa-download"></i>&nbsp;生成订货单</a>
-    <form method="post" id="CreatOrderExcel" action=""></form>
+    <a class="btn btn-danger btn-sm" id="CreatOrderExcel-btn" onclick="$('#CreatOrderExcel').submit()"><i class="fa fa-download"></i>&nbsp;生成订货单</a>&nbsp;&nbsp;&nbsp;
+    @*<a class="btn btn-danger btn-sm" id="CreatPdf-btn" onclick="$('#CreatPdf').submit()"><i class="fa fa-download"></i>&nbsp;生成审批单</a>*@
+    <form method="post" id="CreatOrderExcel"></form>
+    @*<form method="post" id="CreatPdf"></form>*@
 </div>    
 @section scripts{
     <script>
@@ -127,7 +129,9 @@
         $("#Contact_Id").val($("#contactId").html())
         $(function () {
             $("#CreatOrderExcel-btn").addClass("disabled")
+            $("#CreatPdf-btn").addClass("disabled")
             $("#CreatOrderExcel").attr("action", "/SalesProcess/CreatOrderExcel?orderId=" + getUrlParam('orderId'))
+            $("#CreatPdf").attr("action", "/SalesProcess/OrderPdf?orderId=" + getUrlParam('orderId'))
             $("#order_id").attr("data-oid",getUrlParam('orderId'))
             $.ajax({
                 url: "/SalesProcess/OrderPriceListPartial",
@@ -164,6 +168,7 @@
                 $("#add-order").addClass("disabled")
                 $("#confirm-btn").addClass("disabled")
                 $("#CreatOrderExcel-btn").removeClass("disabled")
+                $("#CreatPdf-btn").removeClass("disabled")
                 $("#confirm_text").removeClass("hidden")
             }
         })
@@ -201,16 +206,16 @@
             },
             messages: {
                 Order_Date: {
-                    required: "日期是必须的"
+                    required: "必须的"
                 },
                 client_input: {
-                    required: "购货单位是必须的"
+                    required: "必须的"
                 },
                 contact_input: {
-                    required: "联系人是必须的"
+                    required: "必须的"
                 },
                 Order_Address: {
-                    required: "邮寄地址是必须的"
+                    required: "必须的"
                 },
             },
             //验证通过的正式提交函数
@@ -289,7 +294,6 @@
                     orderId: getUrlParam('orderId')
                 },
                 success: function (data) {
-                    console.log(data)
                 }
             })
         })
