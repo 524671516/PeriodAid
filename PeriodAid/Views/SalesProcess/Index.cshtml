@@ -2,3 +2,31 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
+
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/SalesProcess/GetUserToken/",
+                success: function (data) {
+                    var user = JSON.parse(data["data"])
+                    var user_token = user["data"]["user_token"]
+                    console.log(user_token)
+                    $.ajax({
+                        url: "/SalesProcess/GetCrmInfo/",
+                        data: {
+                            user_token: user_token
+                        },
+                        success: function (data) {
+                            var crmInfo = JSON.parse(data["data"])
+                            var CRMInfo = crmInfo["data"]
+                            console.log(CRMInfo)
+                        }
+                    })
+                }
+            })
+
+        })
+    </script>
+
+}

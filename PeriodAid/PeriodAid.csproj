@@ -273,6 +273,7 @@
     <Compile Include="Filters\CustomFilter.cs" />
     <Compile Include="Models\ERPOrderDataContext.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\IKCRMDATAModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\OfflineSales.cs" />
     <Compile Include="Models\OfflineSalesViewModels.cs" />

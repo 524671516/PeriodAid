@@ -145,20 +145,20 @@
                         },
                         success: function (data) {
                             $("#Order_Address").val(data)
+                            //地址搜索
+                            $('#Order_Address').typeahead({
+                                ajax: {
+                                    url: "/SalesProcess/QueryAddress?clientId=" + $("#client_input").attr("data-cvl"),
+                                    triggerLength: 1
+                                },
+                                itemSelected: displayResultA,
+                                display: 'Address_Show',
+                                val: 'System_Address'
+                            });
                         }
                     })
                 }
             })
-            //地址搜索
-            $('#Order_Address').typeahead({
-                ajax: {
-                    url: "/SalesProcess/QueryAddress",
-                    triggerLength: 1
-                },
-                itemSelected: displayResultA,
-                display: 'Address_Show',
-                val: 'System_Address'
-            });
             function displayResultA(item, val, text) {
                 $("#Order_Address").val(val);
             }

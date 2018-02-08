@@ -14,9 +14,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
 
 namespace PeriodAid.Controllers
 {
@@ -2383,6 +2386,62 @@ namespace PeriodAid.Controllers
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "订货通知单.xls");
+        }
+
+        public static String buildQueryStr(Dictionary<String, String> dicList)
+        {
+            String postStr = "";
+
+            foreach (var item in dicList)
+            {
+                postStr += item.Key + "=" + HttpUtility.UrlEncode(item.Value, Encoding.UTF8) + "&";
+            }
+            postStr = postStr.Substring(0, postStr.LastIndexOf('&'));
+            return postStr;
+        }
+
+        public JsonResult GetUserToken()
+        {
+            string url = "https://api.ikcrm.com/api/v2/auth/login";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "post";
+            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/json";
+
+            ///添加参数  
+            Dictionary<String, String> dicList = new Dictionary<String, String>();
+            dicList.Add("login", "18817958576");
+            dicList.Add("password", "mengyu24");
+            dicList.Add("device", "dingtalk");
+            String postStr = buildQueryStr(dicList);
+            byte[] data = Encoding.UTF8.GetBytes(postStr);
+
+            request.ContentLength = data.Length;
+
+            Stream myRequestStream = request.GetRequestStream();
+            myRequestStream.Write(data, 0, data.Length);
+            myRequestStream.Close();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetCrmInfo(string user_token)
+        {
+            string url = "https://api.ikcrm.com/api/v2/leads?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/json";
+            
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
     }
 }
