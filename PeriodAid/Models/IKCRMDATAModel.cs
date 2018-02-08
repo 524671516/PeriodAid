@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace PeriodAid.Models
+{
+    using System;
+    using System.Data.Entity;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    public class IKCRMDATAModel : DbContext
+    {
+        public IKCRMDATAModel()
+            : base("name=IKCRMDATAConnection")
+        {
+        }
+        public virtual DbSet<CRM_Product> CRM_Product { get; set; }
+    }
+    [Table("CRM_Product")]
+    public partial class CRM_Product
+    {
+        public int Id { get; set; }
+
+        public string Item_Code { get; set; }
+
+        public string System_Code { get; set; }
+
+        public string Item_Name { get; set; }
+    }
+}
