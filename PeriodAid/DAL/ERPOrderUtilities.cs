@@ -121,7 +121,7 @@ namespace PeriodAid.DAL
                     "\"start_date\":\"" + st.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
                     "\"end_date\":\"" + et.ToString("yyyy-MM-dd HH:mm:ss") + "\"" +
                     "}";
-            string signature = sign(json, AppSecret);
+            string signature = sign(json, f);
             //string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
             var request = WebRequest.Create(API_Url) as HttpWebRequest;
             string info = "{" +

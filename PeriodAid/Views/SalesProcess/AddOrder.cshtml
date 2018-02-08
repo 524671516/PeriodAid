@@ -169,9 +169,10 @@
             function displayResultC(item, val, text) {
                 $("#ContactId").attr("data-cid", val)
                 $("#client_input").attr("data-cvl", val)
+                var _val = val;
                 $('#contact_input').typeahead({
                     ajax: {
-                        url: "/SalesProcess/QueryContactPhone?clientId=" + $("#ContactId").attr("data-cid"),
+                        url: "/SalesProcess/QueryContactPhone?clientId=" + _val,
                         triggerLength: 1
                     },
                     itemSelected: displayResult,
