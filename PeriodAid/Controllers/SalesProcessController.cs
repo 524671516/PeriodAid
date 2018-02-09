@@ -2,8 +2,8 @@
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NPOI.HSSF.UserModel;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using PagedList;
@@ -32,11 +32,12 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
+        private IKCRMDATAModel crm_db;
         public SalesProcessController()
         {
             _db = new SalesProcessModel();
+            crm_db = new IKCRMDATAModel();
         }
-
         public ActionResult Index()
         {
             return View();
@@ -2443,13 +2444,33 @@ namespace PeriodAid.Controllers
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
+            
+            //JObject jo = (JObject)JsonConvert.DeserializeObject(retString);
+            //string product = jo["data"].ToString();
+            //JObject jo1 = (JObject)JsonConvert.DeserializeObject(product);
+            //string product1 = jo1["products"].ToString();
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ProductArr()
-         {
-            return Json(new { result = "SUCCESS"});
+        [HttpPost]
+        public ActionResult SaveCRMInfo()
+        {
+            var sr = new StreamReader(Request.InputStream);
+            var stream = sr.ReadToEnd();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            var list = js.Deserialize<List<CRM_Product>>(stream);
+            if (list.Any())
+            {
+                foreach (var item in list)
+                {
+                    var crm_p = new CRM_Product();
+                    crm_p.Item_Code = item.Item_Code;
+                    crm_p.Item_Name = item.Item_Name;
+                    crm_db.CRM_Product.Add(crm_p);
+                }
+            }
+            crm_db.SaveChanges();
+            return Content("succ");
         }
-        
     }
 }
