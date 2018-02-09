@@ -20,7 +20,22 @@
                         success: function (data) {
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
-                            console.log(CRMInfo)
+                            var mychars = []
+                            for (var i = 0; i < CRMInfo["products"].length; i++) {
+                                mychars.push({
+                                    'Item_Code': CRMInfo["products"][i]["product_no"],
+                                    'Item_Name': CRMInfo["products"][i]["name"]
+                                });
+                            }
+                            $.ajax({
+                                url: "/SalesProcess/SaveCRMInfo/",
+                                type:"post",
+                                dataType: "json",
+                                data: JSON.stringify(mychars),
+                                success: function (data) {
+
+                                }
+                            })
                         }
                     })
                 }

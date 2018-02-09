@@ -2,6 +2,7 @@
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
@@ -19,6 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using System.Xml;
 
 namespace PeriodAid.Controllers
@@ -30,11 +32,12 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
+        private IKCRMDATAModel crm_db;
         public SalesProcessController()
         {
             _db = new SalesProcessModel();
+            crm_db = new IKCRMDATAModel();
         }
-
         public ActionResult Index()
         {
             return View();
@@ -2431,7 +2434,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string user_token)
         {
-            string url = "https://api.ikcrm.com/api/v2/leads?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/products?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -2441,7 +2444,33 @@ namespace PeriodAid.Controllers
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
+            
+            //JObject jo = (JObject)JsonConvert.DeserializeObject(retString);
+            //string product = jo["data"].ToString();
+            //JObject jo1 = (JObject)JsonConvert.DeserializeObject(product);
+            //string product1 = jo1["products"].ToString();
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult SaveCRMInfo()
+        {
+            var sr = new StreamReader(Request.InputStream);
+            var stream = sr.ReadToEnd();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            var list = js.Deserialize<List<CRM_Product>>(stream);
+            if (list.Any())
+            {
+                foreach (var item in list)
+                {
+                    var crm_p = new CRM_Product();
+                    crm_p.Item_Code = item.Item_Code;
+                    crm_p.Item_Name = item.Item_Name;
+                    crm_db.CRM_Product.Add(crm_p);
+                }
+            }
+            crm_db.SaveChanges();
+            return Content("succ");
         }
     }
 }
