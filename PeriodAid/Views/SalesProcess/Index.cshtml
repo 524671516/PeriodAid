@@ -6,21 +6,36 @@
 @section scripts{
     <script>
         $(function () {
+            var productArr = [];
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
-                    var user = JSON.parse(data["data"])
-                    var user_token = user["data"]["user_token"]
-                    console.log(user_token)
+                    var user = JSON.parse(data.data)
+                    var user_token = user.data.user_token
                     $.ajax({
                         url: "/SalesProcess/GetCrmInfo/",
                         data: {
                             user_token: user_token
                         },
                         success: function (data) {
-                            var crmInfo = JSON.parse(data["data"])
-                            var CRMInfo = crmInfo["data"]
-                            console.log(CRMInfo)
+                            var crmInfo = JSON.parse(data.data)
+                            var CRMInfo = crmInfo.data
+                            for (var i = 0; i < CRMInfo.products.length; i++) {
+                                var product = { "name": "", "product_no": "" }
+                                product.name = CRMInfo.products[i].name;
+                                product.product_no = CRMInfo.products[i].product_no
+                                productArr.push(product)
+                            }
+                            $.ajax({
+                                url: "/SalesProcess/ProductArr/",
+                                type: "post",
+                                data: {
+                                    name: JSON.stringify(productArr)
+                                },
+                                success: function (data) {
+
+                                }
+                            })
                         }
                     })
                 }
