@@ -18,6 +18,7 @@
                             user_token: user_token
                         },
                         success: function (data) {
+                            console.log(JSON.parse(data["data"]))
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
                             var mychars = []
