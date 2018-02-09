@@ -2438,11 +2438,17 @@ namespace PeriodAid.Controllers
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/json";
             
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
+            
+            //JObject jo = (JObject)JsonConvert.DeserializeObject(retString);
+            //string product = jo["data"].ToString();
+            //JObject jo1 = (JObject)JsonConvert.DeserializeObject(product);
+            //string product1 = jo1["products"].ToString();
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
@@ -2457,10 +2463,10 @@ namespace PeriodAid.Controllers
             {
                 foreach (var item in list)
                 {
-                    var crm_p = new CRM_Contract();
-                    crm_p.customer_id = item.customer_id;
-                    crm_p.customer_name = item.customer_name;
-                    crm_db.CRM_Contract.Add(crm_p);
+                    var crm_c = new CRM_Contract();
+                    crm_c.contract_id = item.contract_id;
+                    crm_c.customer_id = item.customer_id;
+                    crm_db.CRM_Contract.Add(crm_c);
                 }
             }
             crm_db.SaveChanges();

@@ -3,13 +3,6 @@
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 
-
-
-
-
-
-
-
 @section scripts{
     <script>
         $(function () {
@@ -18,6 +11,7 @@
                 success: function (data) {
                     var user = JSON.parse(data["data"])
                     var user_token = user["data"]["user_token"]
+                    console.log(user_token)
                     $.ajax({
                         url: "/SalesProcess/GetCrmInfo/",
                         data: {
@@ -25,13 +19,12 @@
                         },
                         success: function (data) {
                             var crmInfo = JSON.parse(data["data"])
-                            console.log(crmInfo)
                             var CRMInfo = crmInfo["data"]
                             var mychars = []
                             for (var i = 0; i < CRMInfo["contracts"].length; i++) {
                                 mychars.push({
-                                    'customer_id': CRMInfo["contracts"][i]["id"],
-                                    'customer_name': CRMInfo["contracts"][i]["customer_name"]
+                                    'contract_id': CRMInfo["contracts"][i]["id"],
+                                    'customer_id': CRMInfo["contracts"][i]["customer_id"]
                                 });
                             }
                             $.ajax({
