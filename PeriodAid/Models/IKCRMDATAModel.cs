@@ -39,7 +39,7 @@ namespace PeriodAid.Models
 
         public string user_id { get; set; }
 
-        public string user_name { get; set; }
+        public string contract_id { get; set; }
 
         public string customer_id { get; set; }
 

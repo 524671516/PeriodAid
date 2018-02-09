@@ -2458,15 +2458,15 @@ namespace PeriodAid.Controllers
             var sr = new StreamReader(Request.InputStream);
             var stream = sr.ReadToEnd();
             JavaScriptSerializer js = new JavaScriptSerializer();
-            var list = js.Deserialize<List<CRM_Product>>(stream);
+            var list = js.Deserialize<List<CRM_Contract>>(stream);
             if (list.Any())
             {
                 foreach (var item in list)
                 {
-                    var crm_p = new CRM_Product();
-                    crm_p.Item_Code = item.Item_Code;
-                    crm_p.Item_Name = item.Item_Name;
-                    crm_db.CRM_Product.Add(crm_p);
+                    var crm_c = new CRM_Contract();
+                    crm_c.contract_id = item.contract_id;
+                    crm_c.customer_id = item.customer_id;
+                    crm_db.CRM_Contract.Add(crm_c);
                 }
             }
             crm_db.SaveChanges();
