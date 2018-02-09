@@ -2438,17 +2438,11 @@ namespace PeriodAid.Controllers
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
-            //request.ContentType = "application/json";
             
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
-            
-            //JObject jo = (JObject)JsonConvert.DeserializeObject(retString);
-            //string product = jo["data"].ToString();
-            //JObject jo1 = (JObject)JsonConvert.DeserializeObject(product);
-            //string product1 = jo1["products"].ToString();
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
@@ -2458,15 +2452,15 @@ namespace PeriodAid.Controllers
             var sr = new StreamReader(Request.InputStream);
             var stream = sr.ReadToEnd();
             JavaScriptSerializer js = new JavaScriptSerializer();
-            var list = js.Deserialize<List<CRM_Product>>(stream);
+            var list = js.Deserialize<List<CRM_Contract>>(stream);
             if (list.Any())
             {
                 foreach (var item in list)
                 {
-                    var crm_p = new CRM_Product();
-                    crm_p.Item_Code = item.Item_Code;
-                    crm_p.Item_Name = item.Item_Name;
-                    crm_db.CRM_Product.Add(crm_p);
+                    var crm_p = new CRM_Contract();
+                    crm_p.customer_id = item.customer_id;
+                    crm_p.customer_name = item.customer_name;
+                    crm_db.CRM_Contract.Add(crm_p);
                 }
             }
             crm_db.SaveChanges();
