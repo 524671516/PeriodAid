@@ -3,6 +3,13 @@
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 
+
+
+
+
+
+
+
 @section scripts{
     <script>
         $(function () {
@@ -19,6 +26,7 @@
                         },
                         success: function (data) {
                             var crmInfo = JSON.parse(data["data"])
+                            console.log(crmInfo)
                             var CRMInfo = crmInfo["data"]
                             var mychars = []
                             for (var i = 0; i < CRMInfo["products"].length; i++) {
