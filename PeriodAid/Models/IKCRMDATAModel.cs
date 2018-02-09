@@ -18,6 +18,8 @@ namespace PeriodAid.Models
         {
         }
         public virtual DbSet<CRM_Product> CRM_Product { get; set; }
+        public virtual DbSet<CRM_Contract> CRM_Contract { get; set; }
+        public virtual DbSet<CRM_ContractDetail> CRM_ContractDetail { get; set; }
     }
     [Table("CRM_Product")]
     public partial class CRM_Product
@@ -29,5 +31,31 @@ namespace PeriodAid.Models
         public string System_Code { get; set; }
 
         public string Item_Name { get; set; }
+    }
+    [Table("CRM_Contract")]
+    public partial class CRM_Contract
+    {
+        public int Id { get; set; }
+
+        public string user_id { get; set; }
+
+        public string user_name { get; set; }
+
+        public string customer_id { get; set; }
+
+        public string customer_name { get; set; }
+    }
+    [Table("CRM_ContractDetail")]
+    public partial class CRM_ContractDetail
+    {
+        public int Id { get; set; }
+
+        public int product_no { get; set; }
+
+        public string product_name { get; set; }
+
+        public int product_count { get; set; }
+
+        public decimal product_price { get; set; }
     }
 }
