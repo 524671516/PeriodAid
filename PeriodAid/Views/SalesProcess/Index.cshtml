@@ -18,32 +18,33 @@
                         success: function (data) {
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
-                            //console.log(CRMInfo)
-                            //var address = CRMInfo.customer.address.province.name + " " + CRMInfo.customer.address.city.name + " " + CRMInfo.customer.address.district.name + " " + CRMInfo.customer.address.detail_address
-                            //$("#view_address").html(address)
-                            //var mychars = []
-                            //for (var i = 0; i < CRMInfo["contracts"].length; i++) {
-                            //    mychars.push({
-                            //        'contract_id': CRMInfo["contracts"][i]["id"],
-                            //        'customer_id': CRMInfo["contracts"][i]["customer_id"]
-                            //    });
-                            //}
+                            console.log(CRMInfo)
+                            var mychars = []
+                            for (var i = 0; i < CRMInfo["contracts"].length; i++) {
+                                mychars.push({
+                                    'contract_id': CRMInfo["contracts"][i]["id"],
+                                    'customer_id': CRMInfo["contracts"][i]["customer_id"],
+                                    'created_at': CRMInfo["contracts"][i]["created_at"],
+                                    'updated_at': CRMInfo["contracts"][i]["updated_at"]
+                                });
+                            }
                             $.ajax({
-                                url: "/SalesProcess/getERPItems_Count/",
-                                data:{},
+                                url: "/SalesProcess/SaveCRMInfo/",
+                                type: "post",
+                                dataType: "json",
+                                data: JSON.stringify(mychars),
                                 success: function (data) {
-                                    console.log(data)
+
                                 }
                             })
                             //$.ajax({
-                            //    url: "/SalesProcess/SaveCRMInfo/",
-                            //    type: "post",
-                            //    dataType: "json",
-                            //    data: JSON.stringify(mychars),
+                            //    url: "/SalesProcess/getERPItems_Count/",
+                            //    data:{},
                             //    success: function (data) {
-
+                            //        console.log(data)
                             //    }
                             //})
+
                         }
                     })
                 }

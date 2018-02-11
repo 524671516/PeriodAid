@@ -2435,7 +2435,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string user_token)
         {
-            string url = "https://api.ikcrm.com/api/v2/opportunities/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -2467,12 +2467,17 @@ namespace PeriodAid.Controllers
                     var crm_c = new CRM_Contract();
                     crm_c.contract_id = item.contract_id;
                     crm_c.customer_id = item.customer_id;
+                    crm_c.created_at = item.created_at;
+                    crm_c.updated_at = item.updated_at;
                     crm_db.CRM_Contract.Add(crm_c);
                 }
             }
             crm_db.SaveChanges();
             return Content("succ");
         }
+
+
+
 
         private static string AppId = "126225";
         private static string AppSecret = "4d97588127414cf6816994854c958a5d";
