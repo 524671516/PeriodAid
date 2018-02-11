@@ -1,10 +1,18 @@
 ﻿@{
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
-
+<select class="select_view">
+    <option id="select_information_product">全部信息</option>
+    <option id="select_information_order">最新信息</option>
+</select>
+<select class="select_view">
+    <option id="select_product">产品</option>
+    <option id="select_order">订单</option>
+</select>
 @section scripts{
     <script>
         $(function () {
+
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
@@ -18,32 +26,30 @@
                         success: function (data) {
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
-                            //console.log(CRMInfo)
-                            //var address = CRMInfo.customer.address.province.name + " " + CRMInfo.customer.address.city.name + " " + CRMInfo.customer.address.district.name + " " + CRMInfo.customer.address.detail_address
-                            //$("#view_address").html(address)
-                            //var mychars = []
-                            //for (var i = 0; i < CRMInfo["contracts"].length; i++) {
-                            //    mychars.push({
-                            //        'contract_id': CRMInfo["contracts"][i]["id"],
-                            //        'customer_id': CRMInfo["contracts"][i]["customer_id"]
-                            //    });
-                            //}
-                            $.ajax({
-                                url: "/SalesProcess/getERPItems_Count/",
-                                data:{},
-                                success: function (data) {
-                                    console.log(data)
-                                }
-                            })
+                            console.log(CRMInfo)
+                            var mychars = []
+                            for (var i = 0; i < CRMInfo["contracts"].length; i++) {
+                                mychars.push({
+                                    'contract_id': CRMInfo["contracts"][i]["id"],
+                                    'customer_id': CRMInfo["contracts"][i]["customer_id"]
+                                });
+                            }
                             //$.ajax({
-                            //    url: "/SalesProcess/SaveCRMInfo/",
-                            //    type: "post",
-                            //    dataType: "json",
-                            //    data: JSON.stringify(mychars),
+                            //    url: "/SalesProcess/getERPItems_Count/",
+                            //    data:{},
                             //    success: function (data) {
-
+                            //        console.log(data)
                             //    }
                             //})
+                            $.ajax({
+                                url: "/SalesProcess/SaveCRMInfo/",
+                                type: "post",
+                                dataType: "json",
+                                data: JSON.stringify(mychars),
+                                success: function (data) {
+
+                                }
+                            })
                         }
                     })
                 }

@@ -1407,3 +1407,9 @@ a.btn_subtask_detail{
      padding:0 5px;
 
 }
+
+ /*同步ERP*/
+ .select_view{
+     padding: 6px 20px;
+     font-size:14px
+ }
