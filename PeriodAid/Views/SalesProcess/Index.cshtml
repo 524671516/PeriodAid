@@ -1,5 +1,4 @@
 ﻿@{
-    ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 
@@ -11,7 +10,6 @@
                 success: function (data) {
                     var user = JSON.parse(data["data"])
                     var user_token = user["data"]["user_token"]
-                    console.log(user_token)
                     $.ajax({
                         url: "/SalesProcess/GetCrmInfo/",
                         data: {
@@ -20,28 +18,39 @@
                         success: function (data) {
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
-                            var mychars = []
-                            for (var i = 0; i < CRMInfo["contracts"].length; i++) {
-                                mychars.push({
-                                    'contract_id': CRMInfo["contracts"][i]["id"],
-                                    'customer_id': CRMInfo["contracts"][i]["customer_id"]
-                                });
-                            }
+                            //console.log(CRMInfo)
+                            //var address = CRMInfo.customer.address.province.name + " " + CRMInfo.customer.address.city.name + " " + CRMInfo.customer.address.district.name + " " + CRMInfo.customer.address.detail_address
+                            //$("#view_address").html(address)
+                            //var mychars = []
+                            //for (var i = 0; i < CRMInfo["contracts"].length; i++) {
+                            //    mychars.push({
+                            //        'contract_id': CRMInfo["contracts"][i]["id"],
+                            //        'customer_id': CRMInfo["contracts"][i]["customer_id"]
+                            //    });
+                            //}
                             $.ajax({
-                                url: "/SalesProcess/SaveCRMInfo/",
-                                type:"post",
-                                dataType: "json",
-                                data: JSON.stringify(mychars),
+                                url: "/SalesProcess/getERPItems_Count/",
+                                data:{},
                                 success: function (data) {
-
+                                    console.log(data)
                                 }
                             })
+                            //$.ajax({
+                            //    url: "/SalesProcess/SaveCRMInfo/",
+                            //    type: "post",
+                            //    dataType: "json",
+                            //    data: JSON.stringify(mychars),
+                            //    success: function (data) {
+
+                            //    }
+                            //})
                         }
                     })
                 }
             })
-
-        })
+            })
+            
+        
     </script>
 
 }

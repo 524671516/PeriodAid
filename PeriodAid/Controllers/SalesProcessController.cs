@@ -2391,6 +2391,7 @@ namespace PeriodAid.Controllers
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "订货通知单.xls");
         }
 
+        //CRM
         public static String buildQueryStr(Dictionary<String, String> dicList)
         {
             String postStr = "";
@@ -2434,7 +2435,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string user_token)
         {
-            string url = "https://api.ikcrm.com/api/v2/contracts?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/opportunities/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -2471,6 +2472,75 @@ namespace PeriodAid.Controllers
             }
             crm_db.SaveChanges();
             return Content("succ");
+        }
+
+        private static string AppId = "126225";
+        private static string AppSecret = "4d97588127414cf6816994854c958a5d";
+        private static string SessionKey = "411e59649efe40d6b25b8476a41c9ff2";
+        private static string API_Url = "https://demo.guanyierp.com/erpapi/rest/erp_open";
+
+        private string sign(string json, string secret)
+        {
+            StringBuilder enValue = new StringBuilder();
+            //前后加上secret
+            enValue.Append(secret);
+            enValue.Append(json);
+            enValue.Append(secret);
+            //使用MD5加密(32位大写)
+            return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
+        }
+
+        public async Task<int> getERPItems_Count()
+        {
+            string json = "{" +
+                    "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"" +
+                    "}";
+            string signature = sign(json, AppSecret);
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            string info = "{" +
+                "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            //return Content(info);
+            string result = "";
+            try
+            {
+                request.ContentType = "text/json";
+                request.Method = "post";
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = await request.GetResponseAsync() as HttpWebResponse;
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = reader.ReadToEnd();
+                        //return Content(result);
+                        JavaScriptSerializer serializer = new JavaScriptSerializer();
+                        Items_Result r = JsonConvert.DeserializeObject<Items_Result>(result);
+                        if (r != null)
+                        {
+                            return r.total;
+                        }
+                        return -1;
+                    }
+                }
+
+            }
+            catch (UriFormatException)
+            {
+                return -1;
+                //return Content(uex.Message);// 出错处理
+            }
+            catch (WebException)
+            {
+                return -1;//return Content(ex.Message);// 出错处理
+            }
         }
     }
 }
