@@ -1,10 +1,18 @@
 ﻿@{
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
-
+<select class="select_view">
+    <option id="select_information_product">全部信息</option>
+    <option id="select_information_order">最新信息</option>
+</select>
+<select class="select_view">
+    <option id="select_product">产品</option>
+    <option id="select_order">订单</option>
+</select>
 @section scripts{
     <script>
         $(function () {
+
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
@@ -23,11 +31,16 @@
                             for (var i = 0; i < CRMInfo["contracts"].length; i++) {
                                 mychars.push({
                                     'contract_id': CRMInfo["contracts"][i]["id"],
-                                    'customer_id': CRMInfo["contracts"][i]["customer_id"],
-                                    'created_at': CRMInfo["contracts"][i]["created_at"],
-                                    'updated_at': CRMInfo["contracts"][i]["updated_at"]
+                                    'customer_id': CRMInfo["contracts"][i]["customer_id"]
                                 });
                             }
+                            //$.ajax({
+                            //    url: "/SalesProcess/getERPItems_Count/",
+                            //    data:{},
+                            //    success: function (data) {
+                            //        console.log(data)
+                            //    }
+                            //})
                             $.ajax({
                                 url: "/SalesProcess/SaveCRMInfo/",
                                 type: "post",
@@ -37,14 +50,6 @@
 
                                 }
                             })
-                            //$.ajax({
-                            //    url: "/SalesProcess/getERPItems_Count/",
-                            //    data:{},
-                            //    success: function (data) {
-                            //        console.log(data)
-                            //    }
-                            //})
-
                         }
                     })
                 }
