@@ -2391,6 +2391,7 @@ namespace PeriodAid.Controllers
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "订货通知单.xls");
         }
 
+        //CRM
         public static String buildQueryStr(Dictionary<String, String> dicList)
         {
             String postStr = "";
@@ -2434,7 +2435,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string user_token)
         {
-            string url = "https://api.ikcrm.com/api/v2/contracts?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/opportunities/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -2466,8 +2467,6 @@ namespace PeriodAid.Controllers
                     var crm_c = new CRM_Contract();
                     crm_c.contract_id = item.contract_id;
                     crm_c.customer_id = item.customer_id;
-                    crm_c.customer_name = item.customer_name;
-                    crm_c.user_id = item.user_id;
                     crm_db.CRM_Contract.Add(crm_c);
                 }
             }
@@ -2477,8 +2476,9 @@ namespace PeriodAid.Controllers
 
         private static string AppId = "126225";
         private static string AppSecret = "4d97588127414cf6816994854c958a5d";
-        private static string SessionKey = "39960860083a4918ab7e11cb2547754d";
-        private static string API_Url = "http://demo.guanyierp.com/rest/erp_open";
+        private static string SessionKey = "411e59649efe40d6b25b8476a41c9ff2";
+        private static string API_Url = "https://demo.guanyierp.com/erpapi/rest/erp_open";
+
         private string sign(string json, string secret)
         {
             StringBuilder enValue = new StringBuilder();
@@ -2489,29 +2489,21 @@ namespace PeriodAid.Controllers
             //使用MD5加密(32位大写)
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
-        private async Task<int> getERPORDERS_Count(DateTime st, DateTime et)
+
+        public async Task<int> getERPItems_Count()
         {
             string json = "{" +
                     "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.history.get\"," +
-                    "\"sessionkey\":\"" + SessionKey + "\"," +
-                    "\"page_size\":1," +
-                    "\"page_no\":" + 1 + "," +
-                    "\"start_date\":\"" + st.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
-                    "\"end_date\":\"" + et.ToString("yyyy-MM-dd HH:mm:ss") + "\"" +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"" +
                     "}";
             string signature = sign(json, AppSecret);
-            //string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
             var request = WebRequest.Create(API_Url) as HttpWebRequest;
             string info = "{" +
                 "\"appkey\":\"" + AppId + "\"," +
-                "\"method\":\"gy.erp.trade.history.get\"," +
-                "\"sessionkey\":\"" + SessionKey + "\"," +
-                "\"page_size\":1," +
-                "\"page_no\":" + 1 + "," +
-                "\"start_date\":\"" + st.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
-                "\"end_date\":\"" + et.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
-                "\"sign\":\"" + signature + "\"" +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"sign\":\"" + signature + "\"" +
                 "}";
             //return Content(info);
             string result = "";
@@ -2528,12 +2520,9 @@ namespace PeriodAid.Controllers
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         result = reader.ReadToEnd();
-                        //修改数据合法性
-                        StringBuilder sb = new StringBuilder(result);
-                        sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
-                        sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                        //return Content(result);
                         JavaScriptSerializer serializer = new JavaScriptSerializer();
-                        Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(sb.ToString());
+                        Items_Result r = JsonConvert.DeserializeObject<Items_Result>(result);
                         if (r != null)
                         {
                             return r.total;
@@ -2541,14 +2530,16 @@ namespace PeriodAid.Controllers
                         return -1;
                     }
                 }
+
             }
             catch (UriFormatException)
             {
                 return -1;
+                //return Content(uex.Message);// 出错处理
             }
             catch (WebException)
             {
-                return -1;
+                return -1;//return Content(ex.Message);// 出错处理
             }
         }
     }
