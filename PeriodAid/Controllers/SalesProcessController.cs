@@ -2466,11 +2466,90 @@ namespace PeriodAid.Controllers
                     var crm_c = new CRM_Contract();
                     crm_c.contract_id = item.contract_id;
                     crm_c.customer_id = item.customer_id;
+                    crm_c.customer_name = item.customer_name;
+                    crm_c.user_id = item.user_id;
                     crm_db.CRM_Contract.Add(crm_c);
                 }
             }
             crm_db.SaveChanges();
             return Content("succ");
+        }
+
+        private static string AppId = "126225";
+        private static string AppSecret = "4d97588127414cf6816994854c958a5d";
+        private static string SessionKey = "39960860083a4918ab7e11cb2547754d";
+        private static string API_Url = "http://demo.guanyierp.com/rest/erp_open";
+        private string sign(string json, string secret)
+        {
+            StringBuilder enValue = new StringBuilder();
+            //前后加上secret
+            enValue.Append(secret);
+            enValue.Append(json);
+            enValue.Append(secret);
+            //使用MD5加密(32位大写)
+            return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
+        }
+        private async Task<int> getERPORDERS_Count(DateTime st, DateTime et)
+        {
+            string json = "{" +
+                    "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.history.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"page_size\":1," +
+                    "\"page_no\":" + 1 + "," +
+                    "\"start_date\":\"" + st.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                    "\"end_date\":\"" + et.ToString("yyyy-MM-dd HH:mm:ss") + "\"" +
+                    "}";
+            string signature = sign(json, AppSecret);
+            //string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            string info = "{" +
+                "\"appkey\":\"" + AppId + "\"," +
+                "\"method\":\"gy.erp.trade.history.get\"," +
+                "\"sessionkey\":\"" + SessionKey + "\"," +
+                "\"page_size\":1," +
+                "\"page_no\":" + 1 + "," +
+                "\"start_date\":\"" + st.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                "\"end_date\":\"" + et.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                "\"sign\":\"" + signature + "\"" +
+                "}";
+            //return Content(info);
+            string result = "";
+            try
+            {
+                request.ContentType = "text/json";
+                request.Method = "post";
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = await request.GetResponseAsync() as HttpWebResponse;
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = reader.ReadToEnd();
+                        //修改数据合法性
+                        StringBuilder sb = new StringBuilder(result);
+                        sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                        sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                        JavaScriptSerializer serializer = new JavaScriptSerializer();
+                        Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(sb.ToString());
+                        if (r != null)
+                        {
+                            return r.total;
+                        }
+                        return -1;
+                    }
+                }
+            }
+            catch (UriFormatException)
+            {
+                return -1;
+            }
+            catch (WebException)
+            {
+                return -1;
+            }
         }
     }
 }

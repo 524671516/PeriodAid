@@ -24,13 +24,15 @@
                             var mychars = []
                             for (var i = 0; i < CRMInfo["contracts"].length; i++) {
                                 mychars.push({
+                                    'user_id': CRMInfo["contracts"][i]["user_id"],
                                     'contract_id': CRMInfo["contracts"][i]["id"],
-                                    'customer_id': CRMInfo["contracts"][i]["customer_id"]
+                                    'customer_id': CRMInfo["contracts"][i]["customer_id"],
+                                    'customer_name': CRMInfo["contracts"][i]["customer_name"],
                                 });
                             }
                             $.ajax({
                                 url: "/SalesProcess/SaveCRMInfo/",
-                                type:"post",
+                                type: "post",
                                 dataType: "json",
                                 data: JSON.stringify(mychars),
                                 success: function (data) {
