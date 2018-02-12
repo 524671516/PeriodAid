@@ -2474,6 +2474,7 @@ namespace PeriodAid.Controllers
                         crm_c.sign_date = item.updated_at;
                         crm_c.updated_at = item.updated_at;
                         crm_c.status = item.status;
+                        crm_c.customer_name = item.customer_name;
                         crm_db.CRM_Contract.Add(crm_c);
                     }
                 }
@@ -2496,6 +2497,7 @@ namespace PeriodAid.Controllers
 
                 ///添加参数  
                 Dictionary<String, String> dicList = new Dictionary<String, String>();
+                //只修改了订单状态和备注
                 dicList.Add("contract[status]", "3764330");
                 dicList.Add("contract[special_terms]", "快递单号：1112222333");
                 String postStr = buildQueryStr(dicList);
@@ -2516,6 +2518,24 @@ namespace PeriodAid.Controllers
             return Content("succ");
         }
 
+        public ActionResult CRM_show()
+        {
+            return View();
+        }
+
+        public ActionResult CRM_undeliveredPartical()
+        {
+
+            var undeliveredData = from m in crm_db.CRM_Contract
+                                  where m.status == "3531568"
+                                  select m;
+            return View(undeliveredData);
+        }
+        
+        public ActionResult CRM_deliveredPartical()
+        {
+            return View();
+        }
 
 
         private static string AppId = "126225";

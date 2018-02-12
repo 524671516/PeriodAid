@@ -1200,6 +1200,8 @@
     <Content Include="Views\SalesProcess\EditOrderPriceInfo.cshtml" />
     <Content Include="Views\SalesProcess\SelectQuotePrice.cshtml" />
     <Content Include="Views\SalesProcess\AddOrder.cshtml" />
+    <Content Include="Views\SalesProcess\CRM_show.cshtml" />
+    <Content Include="Views\SalesProcess\CRM_undeliveredPartical.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
