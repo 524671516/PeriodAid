@@ -1,18 +1,21 @@
 ﻿@{
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
-<select class="select_view">
-    <option id="select_information_product">全部信息</option>
-    <option id="select_information_order">最新信息</option>
-</select>
-<select class="select_view">
-    <option id="select_product">产品</option>
-    <option id="select_order">订单</option>
-</select>
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" data-val="1" role="tab" data-toggle="tab">已发货</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" data-val="1" role="tab" data-toggle="tab">待发货</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">1</div>
+        <div role="tabpanel" class="tab-pane" id="profile">2</div>
+    </div>
+</div>
+<div id="order_list_content">
+</div>
 @section scripts{
     <script>
         $(function () {
-
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
