@@ -12,8 +12,9 @@
     </tr>
 </table>
 <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#home" aria-controls="home" data-val="1" role="tab" data-toggle="tab">待发货</a></li>
-        <li role="presentation"><a href="#profile" aria-controls="profile" data-val="1" role="tab" data-toggle="tab">已发货</a></li>
+        <li role="presentation" class="active"><a href="#" aria-controls="home" data-val="1" role="tab" data-toggle="tab" id="CRM_undelivered">待发货</a></li>
+        <li role="presentation"><a href="#" aria-controls="profile" data-val="1" role="tab" data-toggle="tab" id="CRM_delivered">已发货</a></li>
+        <li style="float:right"><a class="btn btn-xs btn-success" id="change_status" role="button">转为发货</a></li>
 </ul>
 <div id="undelivered_list_content">
 </div>
@@ -55,7 +56,7 @@
                                 dataType: "json",
                                 data: JSON.stringify(mychars)
                             })
-
+                            //数据保存完再请求数据页面
                             $.ajax({
                                 url: "/SalesProcess/CRM_undeliveredPartical/",
                                 success: function (data) {
@@ -64,9 +65,56 @@
                             })
                         }
                     })
+                    //订单状态修改加回传CRM（具体修改内容见控制器）
+                    $("#change_status").click(function () {
+                        $.ajax({
+                            url: "/SalesProcess/UpdateCRM/",
+                            data: {
+                                user_token: user_token
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                $.ajax({
+                                    url: "/SalesProcess/GetCrmInfo/",
+                                    data: {
+                                        user_token: user_token
+                                    },
+                                    success: function (data) {
+                                        alert("已转为[已发货]订单")
+                                        //回到已发货
+                                        $.ajax({
+                                            url: "/SalesProcess/CRM_deliveredPartical/",
+                                            success: function (data) {
+                                                $("#CRM_undelivered").parent().removeClass("active")
+                                                $("#CRM_delivered").parent().addClass("active")
+                                                $("#undelivered_list_content").html(data)
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                    })
                 }
             })
-        });
 
+            $("#CRM_undelivered").click(function () {
+                $.ajax({
+                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                    success: function (data) {
+                        $("#undelivered_list_content").html(data)
+                    }
+                })
+            })
+
+            $("#CRM_delivered").click(function () {
+                $.ajax({
+                    url: "/SalesProcess/CRM_deliveredPartical/",
+                    success: function (data) {
+                        $("#undelivered_list_content").html(data)
+                    }
+                })
+            })
+        });
     </script>
 }

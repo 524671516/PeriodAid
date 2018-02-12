@@ -2534,7 +2534,10 @@ namespace PeriodAid.Controllers
         
         public ActionResult CRM_deliveredPartical()
         {
-            return View();
+            var undeliveredData = from m in crm_db.CRM_Contract
+                                  where m.status == "3764330"
+                                  select m;
+            return View(undeliveredData);
         }
 
 

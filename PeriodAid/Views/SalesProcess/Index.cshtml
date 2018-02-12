@@ -58,25 +58,7 @@
                                 }
                             })
 
-                            //订单状态修改加回传CRM（具体修改内容见控制器）
-                            $.ajax({
-                                url: "/SalesProcess/UpdateCRM/",
-                                data: {
-                                    user_token: user_token
-                                },
-                                success: function (data) {
-                                    console.log(data)
-                                    $.ajax({
-                                        url: "/SalesProcess/GetCrmInfo/",
-                                        data: {
-                                            user_token: user_token
-                                        },
-                                        success: function (data) {
-                                            console.log(JSON.parse(data["data"])["data"])
-                                        }
-                                    })
-                                }
-                            })
+                            
                         }
                     })
                 }

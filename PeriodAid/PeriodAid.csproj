@@ -1202,6 +1202,7 @@
     <Content Include="Views\SalesProcess\AddOrder.cshtml" />
     <Content Include="Views\SalesProcess\CRM_show.cshtml" />
     <Content Include="Views\SalesProcess\CRM_undeliveredPartical.cshtml" />
+    <Content Include="Views\SalesProcess\CRM_deliveredPartical.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
