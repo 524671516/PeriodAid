@@ -45,9 +45,11 @@ namespace PeriodAid.Models
 
         public string customer_name { get; set; }
 
-        public DateTime created_at { get; set; }
+        public string status { get; set; }
 
-        public DateTime updated_at { get; set; }
+        public DateTime? sign_date { get; set; }
+
+        public DateTime? updated_at { get; set; }
     }
     [Table("CRM_ContractDetail")]
     public partial class CRM_ContractDetail

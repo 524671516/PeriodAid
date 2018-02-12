@@ -2404,6 +2404,7 @@ namespace PeriodAid.Controllers
             return postStr;
         }
 
+
         public JsonResult GetUserToken()
         {
             string url = "https://api.ikcrm.com/api/v2/auth/login";
@@ -2435,7 +2436,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string user_token)
         {
-            string url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0&status=3531568";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -2464,18 +2465,56 @@ namespace PeriodAid.Controllers
             {
                 foreach (var item in list)
                 {
-                    var crm_c = new CRM_Contract();
-                    crm_c.contract_id = item.contract_id;
-                    crm_c.customer_id = item.customer_id;
-                    crm_c.created_at = item.created_at;
-                    crm_c.updated_at = item.updated_at;
-                    crm_db.CRM_Contract.Add(crm_c);
+                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == item.contract_id);
+                    if (check_data == null)
+                    {
+                        var crm_c = new CRM_Contract();
+                        crm_c.contract_id = item.contract_id;
+                        crm_c.customer_id = item.customer_id;
+                        crm_c.sign_date = item.updated_at;
+                        crm_c.updated_at = item.updated_at;
+                        crm_c.status = item.status;
+                        crm_db.CRM_Contract.Add(crm_c);
+                    }
                 }
             }
             crm_db.SaveChanges();
             return Content("succ");
         }
 
+        public ActionResult UpdateCRM(string user_token)
+        {
+            var check_data = from m in crm_db.CRM_Contract
+                             select m;
+            foreach (var data in check_data)
+            {
+                string url = "https://api.ikcrm.com/api/v2/contracts/" + data.contract_id +"?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "PUT";
+                request.ContentType = "application/x-www-form-urlencoded";
+                //request.ContentType = "application/json";
+
+                ///添加参数  
+                Dictionary<String, String> dicList = new Dictionary<String, String>();
+                dicList.Add("contract[status]", "3764330");
+                dicList.Add("contract[special_terms]", "快递单号：1112222333");
+                String postStr = buildQueryStr(dicList);
+                byte[] b_data = Encoding.UTF8.GetBytes(postStr);
+                request.ContentLength = b_data.Length;
+
+                Stream myRequestStream = request.GetRequestStream();
+                myRequestStream.Write(b_data, 0, b_data.Length);
+                myRequestStream.Close();
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                var retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                data.status = "3764330";
+            }
+            crm_db.SaveChanges();
+            return Content("succ");
+        }
 
 
 

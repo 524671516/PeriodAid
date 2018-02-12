@@ -31,7 +31,10 @@
                             for (var i = 0; i < CRMInfo["contracts"].length; i++) {
                                 mychars.push({
                                     'contract_id': CRMInfo["contracts"][i]["id"],
-                                    'customer_id': CRMInfo["contracts"][i]["customer_id"]
+                                    'customer_id': CRMInfo["contracts"][i]["customer_id"],
+                                    'status': CRMInfo["contracts"][i]["status"],
+                                    'sign_date': CRMInfo["contracts"][i]["updated_at"],
+                                    'updated_at': CRMInfo["contracts"][i]["updated_at"]
                                 });
                             }
                             //$.ajax({
@@ -41,6 +44,7 @@
                             //        console.log(data)
                             //    }
                             //})
+
                             $.ajax({
                                 url: "/SalesProcess/SaveCRMInfo/",
                                 type: "post",
@@ -48,6 +52,26 @@
                                 data: JSON.stringify(mychars),
                                 success: function (data) {
 
+                                }
+                            })
+
+
+                            $.ajax({
+                                url: "/SalesProcess/UpdateCRM/",
+                                data: {
+                                    user_token: user_token
+                                },
+                                success: function (data) {
+                                    console.log(data)
+                                    $.ajax({
+                                        url: "/SalesProcess/GetCrmInfo/",
+                                        data: {
+                                            user_token: user_token
+                                        },
+                                        success: function (data) {
+                                            console.log(JSON.parse(data["data"])["data"])
+                                        }
+                                    })
                                 }
                             })
                         }
