@@ -2497,38 +2497,42 @@ namespace PeriodAid.Controllers
             return Content("succ");
         }
 
-        public ActionResult UpdateCRM(string user_token,int c_id)
+        public ActionResult UpdateCRM(string user_token,int[] c_id)
         {
-            var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.Id == c_id);
-            string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "PUT";
-            request.ContentType = "application/x-www-form-urlencoded";
-            //request.ContentType = "application/json";
+            var _Cid = c_id;
+            for (int i = 0 ; i< _Cid.Length;i++)
+            {
+                var cId = _Cid[i];
+                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.Id == cId);
+                string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "PUT";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentType = "application/json";
 
-            ///添加参数  
-            Dictionary<String, String> dicList = new Dictionary<String, String>();
-            //只修改了订单状态和备注
-            dicList.Add("contract[status]", "3780205");
-            //dicList.Add("contract[special_terms]", "快递单号" + special_terms);
-            String postStr = buildQueryStr(dicList);
-            byte[] b_data = Encoding.UTF8.GetBytes(postStr);
-            request.ContentLength = b_data.Length;
+                // 添加参数
+                Dictionary<String, String> dicList = new Dictionary<String, String>();
+                //只修改了订单状态和备注
+                dicList.Add("contract[status]", "3780205");
+                //dicList.Add("contract[special_terms]", "快递单号" + special_terms);
+                String postStr = buildQueryStr(dicList);
+                byte[] b_data = Encoding.UTF8.GetBytes(postStr);
+                request.ContentLength = b_data.Length;
 
-            Stream myRequestStream = request.GetRequestStream();
-            myRequestStream.Write(b_data, 0, b_data.Length);
-            myRequestStream.Close();
+                Stream myRequestStream = request.GetRequestStream();
+                myRequestStream.Write(b_data, 0, b_data.Length);
+                myRequestStream.Close();
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-
-            check_data.status = "3780205";
-            //check_data.special_terms = special_terms;
-            
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                var retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                check_data.status = "3780205";
+                //check_data.special_terms = special_terms;
+            }
             crm_db.SaveChanges();
             return Content("succ");
+
         }
 
         public ActionResult CRM_show()
@@ -2571,19 +2575,19 @@ namespace PeriodAid.Controllers
 
         public ActionResult getERPORDERS()
         {
-            string order_state = "1";
+            var platform_code = "126899286590086675";
             string json = "{" +
                    "\"appkey\":\"" + AppId + "\"," +
                     "\"method\":\"gy.erp.trade.get\"," +
-                    "\"sessionkey\":\"" + SessionKey + "\"," +
-                    "\"order_state\":\"" + order_state + "\"" +
+                    "\"platform_code\":\"" + platform_code + "\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"" +
                     "}";
             string signature = sign(json, AppSecret);
             string info = "{" +
                    "\"appkey\":\"" + AppId + "\"," +
                     "\"method\":\"gy.erp.trade.get\"," +
+                    "\"platform_code\":\"" + platform_code + "\"," +
                     "\"sessionkey\":\"" + SessionKey + "\"," +
-                    "\"order_state\":\"" + order_state + "\"," +
                     "\"sign\":\"" + signature + "\"" +
                 "}";
             var request = WebRequest.Create(API_Url) as HttpWebRequest;
@@ -2603,7 +2607,8 @@ namespace PeriodAid.Controllers
                     StringBuilder sb = new StringBuilder(result);
                     sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
                     sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
-                    deliverys_Result r = JsonConvert.DeserializeObject<deliverys_Result>(sb.ToString());
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
                     return Json(new { result = "SUCCESS", data = r }, JsonRequestBehavior.AllowGet);
                 }
             }
