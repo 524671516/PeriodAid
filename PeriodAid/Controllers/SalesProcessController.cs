@@ -2571,16 +2571,19 @@ namespace PeriodAid.Controllers
 
         public ActionResult getERPORDERS()
         {
+            string order_state = "1";
             string json = "{" +
                    "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.deliverys.get\"," +
-                    "\"sessionkey\":\"" + SessionKey + "\"" +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"order_state\":\"" + order_state + "\"" +
                     "}";
             string signature = sign(json, AppSecret);
             string info = "{" +
                    "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.deliverys.get\"," +
+                    "\"method\":\"gy.erp.trade.get\"," +
                     "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"order_state\":\"" + order_state + "\"," +
                     "\"sign\":\"" + signature + "\"" +
                 "}";
             var request = WebRequest.Create(API_Url) as HttpWebRequest;
@@ -2600,9 +2603,8 @@ namespace PeriodAid.Controllers
                     StringBuilder sb = new StringBuilder(result);
                     sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
                     sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
-                    JavaScriptSerializer serializer = new JavaScriptSerializer();
                     deliverys_Result r = JsonConvert.DeserializeObject<deliverys_Result>(sb.ToString());
-                    return Json(new { result = "SUCCESS", data = r.deliverys }, JsonRequestBehavior.AllowGet);
+                    return Json(new { result = "SUCCESS", data = r }, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception)
