@@ -47,6 +47,8 @@ namespace PeriodAid.Models
 
         public string status { get; set; }
 
+        public string special_terms { get; set; }
+
         public DateTime? sign_date { get; set; }
 
         public DateTime? updated_at { get; set; }

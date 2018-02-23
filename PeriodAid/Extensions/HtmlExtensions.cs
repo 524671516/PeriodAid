@@ -181,6 +181,21 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
+        //CRM
+        public static string ContractStatus(this HtmlHelper helper, string status)
+        {
+            switch (status)
+            {
+                case "3779515":
+                    return "执行中";
+                case "3779516":
+                    return "成功结束";
+                case "3780205":
+                    return "提交待审核";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string SellerStatus(this HtmlHelper helper, int status)
         {

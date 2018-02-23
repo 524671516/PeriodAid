@@ -2,7 +2,7 @@
     ViewBag.Title = "CRM_undelivered";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
-<table class="offline-search-box">
+@*<table class="offline-search-box">
     <tr>
         <td class="pull-right">
             <label>订单名称：</label>
@@ -10,13 +10,19 @@
             <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
         </td>
     </tr>
-</table>
-<ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#" aria-controls="home" data-val="1" role="tab" data-toggle="tab" id="CRM_undelivered">待发货</a></li>
-        <li role="presentation"><a href="#" aria-controls="profile" data-val="1" role="tab" data-toggle="tab" id="CRM_delivered">已发货</a></li>
-        <li style="float:right"><a class="btn btn-xs btn-success" id="change_status" role="button">转为发货</a></li>
-</ul>
-<div id="undelivered_list_content">
+</table>*@
+<div>
+    <a class="btn btn-info btn-sm status-btn" data-val="3779515" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
+    <a class="btn btn-info btn-sm status-btn" data-val="3780205" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
+    <a class="btn btn-info btn-sm status-btn" data-val="3779516"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
+    <a class="btn btn-info btn-sm status-btn" id="renovate_btn"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
+</div>
+@*<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#" aria-controls="home" data-val="3779515" class="status-btn" role="tab" data-toggle="tab">待发货</a></li>
+    <li role="presentation"><a href="#" aria-controls="profile" data-val="3780205" role="tab" class="status-btn" data-toggle="tab">发货待审核</a></li>
+    <li role="presentation"><a href="#" aria-controls="profile" data-val="3779516" role="tab" class="status-btn" data-toggle="tab">已发货</a></li>       
+</ul>*@
+<div id="undelivered_list_content" style="margin-top:20px">
 </div>
 
 
@@ -40,6 +46,7 @@
                             console.log(CRMInfo)
                             for (var i = 0; i < CRMInfo["contracts"].length; i++) {
                                 mychars.push({
+                                    'user_id': CRMInfo["contracts"][i]["user_id"],
                                     'contract_id': CRMInfo["contracts"][i]["id"],
                                     'customer_id': CRMInfo["contracts"][i]["customer_id"],
                                     'customer_name': CRMInfo["contracts"][i]["customer_name"],
@@ -56,65 +63,84 @@
                                 dataType: "json",
                                 data: JSON.stringify(mychars)
                             })
-                            //数据保存完再请求数据页面
-                            $.ajax({
-                                url: "/SalesProcess/CRM_undeliveredPartical/",
-                                success: function (data) {
-                                    $("#undelivered_list_content").html(data)
-                                }
-                            })
+                            
                         }
                     })
                     //订单状态修改加回传CRM（具体修改内容见控制器）
-                    $("#change_status").click(function () {
-                        $.ajax({
-                            url: "/SalesProcess/UpdateCRM/",
-                            data: {
-                                user_token: user_token
-                            },
-                            success: function (data) {
-                                console.log(data)
-                                $.ajax({
-                                    url: "/SalesProcess/GetCrmInfo/",
-                                    data: {
-                                        user_token: user_token
-                                    },
-                                    success: function (data) {
-                                        alert("已转为[已发货]订单")
-                                        //回到已发货
-                                        $.ajax({
-                                            url: "/SalesProcess/CRM_deliveredPartical/",
-                                            success: function (data) {
-                                                $("#CRM_undelivered").parent().removeClass("active")
-                                                $("#CRM_delivered").parent().addClass("active")
-                                                $("#undelivered_list_content").html(data)
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                        })
-                    })
+                    //$("#change_status").click(function () {
+                    //    $.ajax({
+                    //        url: "/SalesProcess/UpdateCRM/",
+                    //        data: {
+                    //            user_token: user_token,
+                    //            special_terms:"112233"
+                    //        },
+                    //        success: function (data) {
+                    //            $.ajax({
+                    //                url: "/SalesProcess/GetCrmInfo/",
+                    //                data: {
+                    //                    user_token: user_token
+                    //                },
+                    //                success: function (data) {
+                    //                    alert("已转为[已发货]订单")
+                    //                    //回到已发货
+                    //                    //$.ajax({
+                    //                    //    url: "/SalesProcess/CRM_deliveredPartical/",
+                    //                    //    success: function (data) {
+                    //                    //        $("#CRM_undelivered").parent().removeClass("active")
+                    //                    //        $("#CRM_delivered").parent().addClass("active")
+                    //                    //        $("#undelivered_list_content").html(data)
+                    //                    //    }
+                    //                    //})
+                    //                }
+                    //            })
+                    //        }
+                    //    })
+                    //})
                 }
             })
-
-            $("#CRM_undelivered").click(function () {
+            //数据保存完再请求数据页面
+            $.ajax({
+                url: "/SalesProcess/CRM_undeliveredPartical/",
+                data: {
+                    status: "3779515"
+                },
+                success: function (data) {
+                    $("#undelivered_list_content").html(data)
+                }
+            })
+            // 选择
+            $(".status-btn").on("click", function () {
                 $.ajax({
-                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                    url: "/SalesProcess/CRM_undeliveredPartical",
+                    data: {
+                        status: $(this).attr("data-val"),
+                    },
                     success: function (data) {
                         $("#undelivered_list_content").html(data)
                     }
                 })
             })
-
-            $("#CRM_delivered").click(function () {
-                $.ajax({
-                    url: "/SalesProcess/CRM_deliveredPartical/",
-                    success: function (data) {
-                        $("#undelivered_list_content").html(data)
-                    }
-                })
+            // 刷新
+            $("#renovate_btn").on("click", function () {
+                window.location.reload();
             })
+            //$("#CRM_undelivered").click(function () {
+            //    $.ajax({
+            //        url: "/SalesProcess/CRM_undeliveredPartical/",
+            //        success: function (data) {
+            //            $("#undelivered_list_content").html(data)
+            //        }
+            //    })
+            //})
+
+            //$("#CRM_delivered").click(function () {
+            //    $.ajax({
+            //        url: "/SalesProcess/CRM_deliveredPartical/",
+            //        success: function (data) {
+            //            $("#undelivered_list_content").html(data)
+            //        }
+            //    })
+            //})
         });
     </script>
 }

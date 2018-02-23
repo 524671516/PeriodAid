@@ -1,56 +1,99 @@
 ﻿@model IEnumerable<PeriodAid.Models.CRM_Contract>
-@{
-    Layout = null;
-}
+
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th></th>
-            <th>订单号</th>
-            <th>客户名称</th>
-            <th>联系人</th>
-            <th>订单状态</th>
-            <th>更新时间</th>
-            <th></th>
+            <th style="width:15%">订单号</th>
+            <th style="width:15%">客户名称</th>
+            <th style="width:15%">联系人</th>
+            <th style="width:10%">订单状态</th>
+            <th style="width:20%">更新时间</th>
+            <th style="width:20%"></th>
         </tr>
 
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    <label class="checkbox-custom">
-                        <input type="checkbox" class="btn">
-                    </label>
-                </td>
                 <td>@item.contract_id</td>
                 <td>@item.customer_name</td>
                 <td>@item.customer_id</td>
-                <td>@item.status</td>
+                <td>@Html.ContractStatus(item.status)</td>
                 <td>@item.updated_at</td>
-                <td>
-                    <a class="select-a btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                    <a class="detail-btn btn btn-xs btn-primary" role="button" data-id="@item.Id" data-toggle="modal" data-target=".bs-example-modal-lg">详情</a>
-                    <a class="delete-product btn btn-xs btn-danger" role="button" data-eid="@item.Id">删除</a>
-                </td>
+                @if (item.status == "3779515")
+                {
+                    <td>
+                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">同步ERP</a>
+                    </td>
+                }
+                else if (item.status == "3780205")
+                {
+                    <td>
+                        <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">获取ERP快递信息</a>
+                    </td>
+                }
+                else
+                {
+                    <td>快递单号：@item.special_terms</td>
+                }
             </tr>
         }
     </table>
 </div>
-
-<div class="modal fade" id="myModal" style="overflow-x: hidden;overflow-y: auto;" data-backdrop="true" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" id="modal-content">
-        </div>
-    </div>
-</div>
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" id="lg-modal-content">
-        </div>
-    </div>
-</div>
 <script>
     $(function () {
-        
+        $.ajax({
+            url: "/SalesProcess/GetUserToken/",
+            success: function (data) {
+                var user = JSON.parse(data["data"])
+                var user_token = user["data"]["user_token"]
+                // 同步到ERP等待审核
+                $(".change_status").click(function () {
+                    $.ajax({
+                        url: "/SalesProcess/UpdateCRM/",
+                        data: {
+                            user_token: user_token,
+                            c_id: $(this).attr("data-val"),
+                        },
+                        success: function (data) {
+                            $.ajax({
+                                url: "/SalesProcess/GetCrmInfo/",
+                                data: {
+                                    user_token: user_token
+                                },
+                                success: function (data) {
+                                    // 订单新增(gy.erp.trade.add)  ERP API 暂时不写
+                                    $.ajax({
+                                        
+                                    })
+                                    alert("已推送至ERP等待审核")
+                                    $.ajax({
+                                        url: "/SalesProcess/CRM_undeliveredPartical/",
+                                        data: {
+                                            status: "3779515"
+                                        },
+                                        success: function (data) {
+                                            $("#undelivered_list_content").html(data)
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                })
+                // 同步ERP快递信息
+                $(".get_erp_status").click(function () {
+                    $.ajax({
+                        url: "/SalesProcess/getERPItems_Count/",
+                        data: {
+                            c_id:$(this).attr("data-val"),
+                        },
+                        success: function (data) {
+                            console.log(data)
+                          
+                        }
+                    })
+                })
+            }
+        })
     })
 </script>
