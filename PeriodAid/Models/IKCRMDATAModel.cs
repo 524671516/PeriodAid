@@ -67,7 +67,7 @@ namespace PeriodAid.Models
         public decimal product_price { get; set; }
     }
 
-    public class deliverys_Result
+    public class orders_Result
     {
         public bool success { get; set; }//响应成功/响应失败
         public string errorCode { get; set; }//错误代码
@@ -75,7 +75,7 @@ namespace PeriodAid.Models
         public string errorDesc { get; set; }//错误描述
         public string subErrorDesc { get; set; }//子错误描述
         public string requestMethod { get; set; }//请求接口方法
-        public List<deliverys> deliverys { get; set; }
+        public List<orders> orders { get; set; }
         public int total;
     }
 }
