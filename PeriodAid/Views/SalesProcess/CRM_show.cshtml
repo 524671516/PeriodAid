@@ -11,7 +11,7 @@
         </td>
     </tr>
 </table>*@
-<div>
+<div class="select-btn">
     <a class="btn btn-info btn-sm status-btn" data-val="3779515" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
     <a class="btn btn-info btn-sm status-btn" data-val="3780205" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
     <a class="btn btn-info btn-sm status-btn" data-val="3779516"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
@@ -110,6 +110,9 @@
             })
             // 选择
             $(".status-btn").on("click", function () {
+                var that = $(this)
+                $(".select-btn .status-btn").removeClass("btn-danger");
+                that.addClass("btn-danger");
                 $.ajax({
                     url: "/SalesProcess/CRM_undeliveredPartical",
                     data: {

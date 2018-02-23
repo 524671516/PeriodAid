@@ -83,7 +83,7 @@
                 // 同步ERP快递信息
                 $(".get_erp_status").click(function () {
                     $.ajax({
-                        url: "/SalesProcess/getERPItems_Count/",
+                        url: "/SalesProcess/getERPORDERS/",
                         data: {
                             c_id:$(this).attr("data-val"),
                         },

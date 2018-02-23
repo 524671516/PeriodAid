@@ -2569,57 +2569,102 @@ namespace PeriodAid.Controllers
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
 
-        public async Task<int> getERPItems_Count()
+        public ActionResult getERPORDERS()
         {
             string json = "{" +
-                    "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.get\"," +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.deliverys.get\"," +
                     "\"sessionkey\":\"" + SessionKey + "\"" +
                     "}";
             string signature = sign(json, AppSecret);
-            var request = WebRequest.Create(API_Url) as HttpWebRequest;
             string info = "{" +
-                "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.get\"," +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.deliverys.get\"," +
                     "\"sessionkey\":\"" + SessionKey + "\"," +
                     "\"sign\":\"" + signature + "\"" +
                 "}";
-            //return Content(info);
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            request.ContentType = "text/json";
+            request.Method = "post";
             string result = "";
+            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
             try
             {
-                request.ContentType = "text/json";
-                request.Method = "post";
-                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                streamWriter.Write(info);
+                streamWriter.Flush();
+                streamWriter.Close();
+                var response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
                 {
-                    streamWriter.Write(info);
-                    streamWriter.Flush();
-                    streamWriter.Close();
-                    var response = await request.GetResponseAsync() as HttpWebResponse;
-                    using (var reader = new StreamReader(response.GetResponseStream()))
-                    {
-                        result = reader.ReadToEnd();
-                        //return Content(result);
-                        JavaScriptSerializer serializer = new JavaScriptSerializer();
-                        Items_Result r = JsonConvert.DeserializeObject<Items_Result>(result);
-                        if (r != null)
-                        {
-                            return r.total;
-                        }
-                        return -1;
-                    }
+                    result = reader.ReadToEnd();
+                    StringBuilder sb = new StringBuilder(result);
+                    sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                    sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    deliverys_Result r = JsonConvert.DeserializeObject<deliverys_Result>(sb.ToString());
+                    return Json(new { result = "SUCCESS", data = r.deliverys }, JsonRequestBehavior.AllowGet);
                 }
-
             }
-            catch (UriFormatException)
+            catch (Exception)
             {
-                return -1;
-                //return Content(uex.Message);// 出错处理
+                streamWriter.Close();
+                //CommonUtilities.writeLog("page: " + page + ", Exception: " + ex.Message);
+                return null;
             }
-            catch (WebException)
-            {
-                return -1;//return Content(ex.Message);// 出错处理
-            }
+            //return null;
         }
+
+        //public async Task<int> getERPItems_Count()
+        //{
+        //    string json = "{" +
+        //            "\"appkey\":\"" + AppId + "\"," +
+        //            "\"method\":\"gy.erp.trade.get\"," +
+        //            "\"sessionkey\":\"" + SessionKey + "\"" +
+        //            "}";
+        //    string signature = sign(json, AppSecret);
+        //    var request = WebRequest.Create(API_Url) as HttpWebRequest;
+        //    string info = "{" +
+        //        "\"appkey\":\"" + AppId + "\"," +
+        //            "\"method\":\"gy.erp.trade.get\"," +
+        //            "\"sessionkey\":\"" + SessionKey + "\"," +
+        //            "\"sign\":\"" + signature + "\"" +
+        //        "}";
+        //    //return Content(info);
+        //    string result = "";
+        //    try
+        //    {
+        //        request.ContentType = "text/json";
+        //        request.Method = "post";
+        //        using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+        //        {
+        //            streamWriter.Write(info);
+        //            streamWriter.Flush();
+        //            streamWriter.Close();
+        //            var response = await request.GetResponseAsync() as HttpWebResponse;
+        //            using (var reader = new StreamReader(response.GetResponseStream()))
+        //            {
+        //                result = reader.ReadToEnd();
+        //                //return Content(result);
+        //                JavaScriptSerializer serializer = new JavaScriptSerializer();
+        //                Items_Result r = JsonConvert.DeserializeObject<Items_Result>(result);
+        //                if (r != null)
+        //                {
+        //                    return r;
+        //                }
+        //                return -1;
+        //            }
+        //        }
+
+        //    }
+        //    catch (UriFormatException)
+        //    {
+        //        return -1;
+        //        //return Content(uex.Message);// 出错处理
+        //    }
+        //    catch (WebException)
+        //    {
+        //        return -1;//return Content(ex.Message);// 出错处理
+        //    }
+        //}
     }
 }
