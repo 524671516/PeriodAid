@@ -59,6 +59,7 @@
         $.ajax({
             url: "/SalesProcess/GetUserToken/",
             success: function (data) {
+                console.log(data)
                 var user = JSON.parse(data["data"])
                 user_token = user["data"]["user_token"]
             }

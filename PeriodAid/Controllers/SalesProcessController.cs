@@ -2405,34 +2405,46 @@ namespace PeriodAid.Controllers
         }
 
 
-        public JsonResult GetUserToken()
+        public ActionResult GetUserToken()
         {
-            string url = "https://api.ikcrm.com/api/v2/auth/login";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "post";
-            request.ContentType = "application/x-www-form-urlencoded";
-            //request.ContentType = "application/json";
+            var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            TimeSpan ts = DateTime.Now - token_time.download_at;
+            int days = ts.Days;
+            if (days >= 1)
+            {
+                string url = "https://api.ikcrm.com/api/v2/auth/login";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "post";
+                request.ContentType = "application/x-www-form-urlencoded";
+                //request.ContentType = "application/json";
 
-            ///添加参数  
-            Dictionary<String, String> dicList = new Dictionary<String, String>();
-            dicList.Add("login", "15921503329");
-            dicList.Add("password", "mengyu24");
-            dicList.Add("device", "dingtalk");
-            String postStr = buildQueryStr(dicList);
-            byte[] data = Encoding.UTF8.GetBytes(postStr);
+                ///添加参数  
+                Dictionary<String, String> dicList = new Dictionary<String, String>();
+                dicList.Add("login", "15921503329");
+                dicList.Add("password", "mengyu24");
+                dicList.Add("device", "dingtalk");
+                String postStr = buildQueryStr(dicList);
+                byte[] data = Encoding.UTF8.GetBytes(postStr);
 
-            request.ContentLength = data.Length;
+                request.ContentLength = data.Length;
 
-            Stream myRequestStream = request.GetRequestStream();
-            myRequestStream.Write(data, 0, data.Length);
-            myRequestStream.Close();
+                Stream myRequestStream = request.GetRequestStream();
+                myRequestStream.Write(data, 0, data.Length);
+                myRequestStream.Close();
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                var retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                result_Data resultdata = JsonConvert.DeserializeObject<result_Data>(retString);
+                token_time.user_token = resultdata.data.user_token;
+                token_time.download_at = DateTime.Now;
+                crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
+                crm_db.SaveChanges();
+            }
+            return Content("success");
         }
+        
 
         public ActionResult GetCrmInfo(string user_token)
         {
