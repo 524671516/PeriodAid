@@ -2420,9 +2420,9 @@ namespace PeriodAid.Controllers
 
                 ///添加参数  
                 Dictionary<String, String> dicList = new Dictionary<String, String>();
-                dicList.Add("login", "15921503329");
-                dicList.Add("password", "mengyu24");
-                dicList.Add("device", "dingtalk");
+                dicList.Add("login", UserInfo.login);
+                dicList.Add("password", UserInfo.password);
+                dicList.Add("device", UserInfo.device);
                 String postStr = buildQueryStr(dicList);
                 byte[] data = Encoding.UTF8.GetBytes(postStr);
 
