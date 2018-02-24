@@ -48,6 +48,7 @@
                             for (var i = 0; i < CRMInfo["contracts"].length; i++) {
                                 mychars.push({
                                     'user_id': CRMInfo["contracts"][i]["user_id"],
+                                    'user_name': CRMInfo["contracts"][i]["user_name"],
                                     'contract_id': CRMInfo["contracts"][i]["id"],
                                     'customer_id': CRMInfo["contracts"][i]["customer_id"],
                                     'customer_name': CRMInfo["contracts"][i]["customer_name"],
@@ -73,7 +74,7 @@
             $.ajax({
                 url: "/SalesProcess/CRM_undeliveredPartical/",
                 data: {
-                    status: "3779515"
+                    status: $("#first_btn").attr("data-val")
                 },
                 success: function (data) {
                     $("#undelivered_list_content").html(data)

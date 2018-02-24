@@ -2471,6 +2471,7 @@ namespace PeriodAid.Controllers
                         // new
                         check_data = new CRM_Contract();
                         check_data.user_id = item.user_id;
+                        check_data.user_name = item.user_name;
                         check_data.contract_id = item.contract_id;
                         check_data.customer_id = item.customer_id;
                         check_data.sign_date = item.updated_at;
@@ -2483,6 +2484,7 @@ namespace PeriodAid.Controllers
                     {
                         // update
                         check_data.user_id = item.user_id;
+                        check_data.user_name = item.user_name;
                         check_data.contract_id = item.contract_id;
                         check_data.customer_id = item.customer_id;
                         check_data.sign_date = item.updated_at;

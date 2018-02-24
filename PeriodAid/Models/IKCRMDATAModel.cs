@@ -37,17 +37,17 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
-        public string user_id { get; set; }
+        public int user_id { get; set; }
 
-        public string contract_id { get; set; }
+        public string user_name { get; set; }
 
-        public string customer_id { get; set; }
+        public int contract_id { get; set; }
+
+        public int customer_id { get; set; }
 
         public string customer_name { get; set; }
 
         public string status { get; set; }
-
-        public string special_terms { get; set; }
 
         public DateTime? sign_date { get; set; }
 
