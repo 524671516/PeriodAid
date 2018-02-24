@@ -2500,15 +2500,14 @@ namespace PeriodAid.Controllers
         public ActionResult UpdateCRM(string user_token,int[] c_id)
         {
             var _Cid = c_id;
-            for (int i = 0 ; i< _Cid.Length;i++)
+            foreach (var i in _Cid)
             {
-                var cId = _Cid[i];
-                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.Id == cId);
+                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.Id == i);
                 string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "PUT";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.ContentType = "application/json";
+                //request.ContentType = "application/json";
 
                 // 添加参数
                 Dictionary<String, String> dicList = new Dictionary<String, String>();
@@ -2528,7 +2527,6 @@ namespace PeriodAid.Controllers
                 var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 check_data.status = "3780205";
-                //check_data.special_terms = special_terms;
             }
             crm_db.SaveChanges();
             return Content("succ");

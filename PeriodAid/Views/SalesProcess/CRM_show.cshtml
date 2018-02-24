@@ -12,7 +12,7 @@
     </tr>
 </table>*@
 <div class="select-btn">
-    <a class="btn btn-info btn-sm status-btn" data-val="3779515" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
+    <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3779515" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
     <a class="btn btn-info btn-sm status-btn" data-val="3780205" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
     <a class="btn btn-info btn-sm status-btn" data-val="3779516"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
     <a class="btn btn-info btn-sm status-btn" id="renovate_btn"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
@@ -29,6 +29,7 @@
 @section scripts{
     <script>
         $(function () {
+            $("#first_btn").addClass("btn-danger")
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
@@ -66,36 +67,6 @@
                             
                         }
                     })
-                    //订单状态修改加回传CRM（具体修改内容见控制器）
-                    //$("#change_status").click(function () {
-                    //    $.ajax({
-                    //        url: "/SalesProcess/UpdateCRM/",
-                    //        data: {
-                    //            user_token: user_token,
-                    //            special_terms:"112233"
-                    //        },
-                    //        success: function (data) {
-                    //            $.ajax({
-                    //                url: "/SalesProcess/GetCrmInfo/",
-                    //                data: {
-                    //                    user_token: user_token
-                    //                },
-                    //                success: function (data) {
-                    //                    alert("已转为[已发货]订单")
-                    //                    //回到已发货
-                    //                    //$.ajax({
-                    //                    //    url: "/SalesProcess/CRM_deliveredPartical/",
-                    //                    //    success: function (data) {
-                    //                    //        $("#CRM_undelivered").parent().removeClass("active")
-                    //                    //        $("#CRM_delivered").parent().addClass("active")
-                    //                    //        $("#undelivered_list_content").html(data)
-                    //                    //    }
-                    //                    //})
-                    //                }
-                    //            })
-                    //        }
-                    //    })
-                    //})
                 }
             })
             //数据保存完再请求数据页面
