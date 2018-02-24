@@ -104,4 +104,27 @@ namespace PeriodAid.Models
         public List<orders> orders { get; set; }
         public int total;
     }
+    public class result_Data
+    {
+        public string code { get; set; }
+
+        public CRM_User_Token data { get; set; }
+    }
+    public static class UserInfo
+    {
+        /// 账户名
+        public static string login = "15921503329";
+        ///账户密码
+        public static string password = "mengyu24";
+        /// 类型
+        public static string device = "dingtalk";
+        ///CRM订单状态：待同步
+        public static int status_unsend = 3779515;
+        ///CRM订单状态：已同步待发货
+        public static int status_undelivered = 3780205;
+        ///CRM订单状态：已发货
+        public static int status_delivered = 3779516;
+
+
+    }
 }
