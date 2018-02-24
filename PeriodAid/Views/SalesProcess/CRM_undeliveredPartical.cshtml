@@ -55,6 +55,73 @@
 </div>
 <script>
     $(function () {
+        var user_token
+        $.ajax({
+            url: "/SalesProcess/GetUserToken/",
+            success: function (data) {
+                var user = JSON.parse(data["data"])
+                user_token = user["data"]["user_token"]
+            }
+        })
+
+        // 同步到ERP等待审核
+        $("#batch_change_status").click(function () {
+            if (orderarry.length == 0) {
+
+            } else {
+                $.ajax({
+                    url: "/SalesProcess/UpdateCRM/",
+                    type: "post",
+                    data: {
+                        user_token: user_token,
+                        c_id: orderarry,
+                    },
+                    success: function (data) {
+                        $.ajax({
+                            url: "/SalesProcess/GetCrmInfo/",
+                            data: {
+                                user_token: user_token
+                            },
+                            success: function (data) {
+                                // 订单新增(gy.erp.trade.add)  ERP API 暂时不写
+                                $.ajax({
+
+                                })
+                                alert("已推送至ERP等待审核")
+                                $.ajax({
+                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    data: {
+                                        status: "3779515"
+                                    },
+                                    success: function (data) {
+                                        $("#undelivered_list_content").html(data)
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        })
+        // 同步ERP快递信息
+        $(".get_erp_status").click(function () {
+            $.ajax({
+                url: "/SalesProcess/getERPORDERS/",
+                data: {
+                    c_id: $(this).attr("data-val"),
+                },
+                success: function (data) {
+                    console.log(data)
+
+                }
+            })
+        })
+
+        $(".change_status").on("click", function () {
+            var that = $(this)
+
+        })
+
         $("#batch_change_status").hide()
         $("#batch_change_deliverys").hide()
         var orderarry = [];
@@ -65,26 +132,30 @@
             if (select) {
                 orderarry.push(C_id)
                 $("#batch_change_status").show()
+                $(".change_status").hide()
             } else {
                 orderarry.remove(C_id)
                 $("#checkbox-all").prop("checked", false)
             }
             if ($("input:checked").length < 1) {
                 $("#batch_change_status").hide()
+                $(".change_status").show()
             }
         })
         $("#checkbox-all").click(function () {
             if ($(this).is(":checked")) {
                 $("#batch_change_status").show()
+                $(".change_status").hide()
                 $("input").prop("checked", true);  
+                orderarry.push($("input").attr("data-val"))
             } else {
                 $("#batch_change_status").hide()
+                $(".change_status").show()
                 $("input").prop("checked", false);  
+                orderarry.remove($("input").attr("data-val"))
             }
         })
-        $(".change_status").on("click", function () {
-            var that = $(this)
-        })
+
         $.ajax({
             url: "/SalesProcess/GetUserToken/",
             success: function (data) {
@@ -128,7 +199,10 @@
                             }
                         })
                     }
-                    
+                    $(".change_status").on("click", function () {
+                        var that = $(this)
+                        
+                    })
                 })
                 // 同步ERP快递信息
                 $(".get_erp_status").click(function () {
