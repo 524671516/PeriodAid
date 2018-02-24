@@ -43,6 +43,10 @@ namespace PeriodAid.Models
 
         public int contract_id { get; set; }
 
+        public decimal contract_price { get; set; }
+
+        public string contract_title { get; set; }
+
         public int customer_id { get; set; }
 
         public string customer_name { get; set; }
@@ -58,13 +62,10 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
-        public int product_no { get; set; }
+        public string contacts_name { get; set; }
 
-        public string product_name { get; set; }
+        public string contacts_tel { get; set; }
 
-        public int product_count { get; set; }
-
-        public decimal product_price { get; set; }
     }
 
     public class orders_Result

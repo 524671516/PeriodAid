@@ -2454,6 +2454,21 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetCrmDetailInfo(string user_token)
+        {
+            string url = "https://api.ikcrm.com/api/v2/contracts/388890?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/json";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         public ActionResult SaveCRMInfo()
         {
@@ -2473,6 +2488,8 @@ namespace PeriodAid.Controllers
                         check_data.user_id = item.user_id;
                         check_data.user_name = item.user_name;
                         check_data.contract_id = item.contract_id;
+                        check_data.contract_price = item.contract_price;
+                        check_data.contract_title = item.contract_title;
                         check_data.customer_id = item.customer_id;
                         check_data.sign_date = item.updated_at;
                         check_data.updated_at = item.updated_at;
@@ -2486,6 +2503,8 @@ namespace PeriodAid.Controllers
                         check_data.user_id = item.user_id;
                         check_data.user_name = item.user_name;
                         check_data.contract_id = item.contract_id;
+                        check_data.contract_price = item.contract_price;
+                        check_data.contract_title = item.contract_title;
                         check_data.customer_id = item.customer_id;
                         check_data.sign_date = item.updated_at;
                         check_data.updated_at = item.updated_at;
@@ -2496,7 +2515,7 @@ namespace PeriodAid.Controllers
                 }
             }
             crm_db.SaveChanges();
-            return Content("succ");
+            return Json(new { result = "success" });
         }
 
         public ActionResult UpdateCRM(string user_token,int[] c_id)
