@@ -10,7 +10,8 @@
             <th style="width:10%">订单状态</th>
             <th style="width:20%">更新时间</th>
             <th style="width:20%">
-                <a class="btn btn-xs btn-success" id="change_status" role="button" style="cursor:pointer">同步ERP</a>
+                <a class="btn btn-xs btn-success" id="batch_change_status"  role="button" style="cursor:pointer">批量同步ERP</a>
+                <a class="btn btn-xs btn-success" id="batch_change_deliverys" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
 
@@ -36,7 +37,7 @@
                 else if (item.status == "3780205")
                 {
                     <td>
-                        <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">获取ERP快递信息</a>
+                       <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">获取ERP配送信息</a>
                     </td>
                 }
                 else
@@ -49,16 +50,22 @@
 </div>
 <script>
     $(function () {
-        var productarry = [];
+        $("#batch_change_status").addClass("hidden")
+        $("#batch_change_deliverys").addClass("hidden")
+        var orderarry = [];
         $("input").click(function () {
             var that = $(this)
             var C_id = that.attr("data-val")
             var selsct = that.is(":checked");
             if (selsct) {
-                productarry.push(C_id)
+                orderarry.push(C_id)
+                console.log(orderarry)
             } else {
-                productarry.remove(C_id)
+                orderarry.remove(C_id)
             }
+        })
+        $(".change_status").on("click", function () {
+            var that = $(this)
         })
         $.ajax({
             url: "/SalesProcess/GetUserToken/",
@@ -66,17 +73,16 @@
                 var user = JSON.parse(data["data"])
                 var user_token = user["data"]["user_token"]
                 // 同步到ERP等待审核
-                
-                $("#change_status").click(function () {
-                    if (productarry.length == 0) {
-                        errorAlert("请选择同步订单")
+                $("#batch_change_status").click(function () {
+                    if (orderarry.length == 0) {
+                        
                     } else {
                         $.ajax({
                             url: "/SalesProcess/UpdateCRM/",
                             type:"post",
                             data: {
                                 user_token: user_token,
-                                c_id: productarry,
+                                c_id: orderarry,
                             },
                             success: function (data) {
                                 $.ajax({
