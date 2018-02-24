@@ -38,33 +38,7 @@ namespace PeriodAid.Models
 
         public string Item_Name { get; set; }
     }
-    [Table("CRM_Contract")]
-    public partial class CRM_Contract
-    {
-        public int Id { get; set; }
-
-        public int user_id { get; set; }
-
-        public string user_name { get; set; }
-
-        public int contract_id { get; set; }
-
-        public decimal contract_price { get; set; }
-
-        public string contract_title { get; set; }
-
-        public int customer_id { get; set; }
-
-        public string customer_name { get; set; }
-
-        public string status { get; set; }
-
-        public DateTime? sign_date { get; set; }
-
-        public DateTime? updated_at { get; set; }
-
-        
-    }
+    
     [Table("CRM_ContractDetail")]
     public partial class CRM_ContractDetail
     {
@@ -93,6 +67,7 @@ namespace PeriodAid.Models
 
         public DateTime download_at { get; set; }
     }
+
     public class orders_Result
     {
         public bool success { get; set; }//响应成功/响应失败
@@ -103,5 +78,39 @@ namespace PeriodAid.Models
         public string requestMethod { get; set; }//请求接口方法
         public List<orders> orders { get; set; }
         public int total;
+    }
+
+    public class CRM_Contract_ReturnData
+    {
+        public string code { get; set; }
+
+        public CRM_Contract_Data data { get; set; }
+    }
+    
+    public partial class CRM_Contract_Data
+    {
+        public List<CRM_Contract> contracts { get; set; }
+    }
+
+    [Table("CRM_Contract")]
+    public class CRM_Contract
+    {
+        public int id { get; set; }
+
+        public int user_id { get; set; }
+
+        public string user_name { get; set; }
+
+        public int customer_id { get; set; }
+
+        public string customer_name { get; set; }
+
+        public string title { get; set; }
+
+        public decimal total_amount { get; set; }
+
+        public string status { get; set; }
+
+        public DateTime? updated_at { get; set; }
     }
 }

@@ -41,27 +41,27 @@
                         data: {
                             user_token: user_token
                         },
-                        success: function (data) {
-                            $("#batch_change_status").attr("data-val", user_token)
-                            var mychars = []
-                            var contractDetail = [];
-                            var crmInfo = JSON.parse(data["data"])
-                            var CRMInfo = crmInfo["data"]
-                            //console.log(CRMInfo)
-                            for (var i = 0; i < CRMInfo["contracts"].length; i++) {
-                                mychars.push({
-                                    'user_id': CRMInfo["contracts"][i]["user_id"],
-                                    'user_name': CRMInfo["contracts"][i]["user_name"],
-                                    'contract_id': CRMInfo["contracts"][i]["id"],
-                                    'contract_price': CRMInfo["contracts"][i]["total_amount"],
-                                    'contract_title': CRMInfo["contracts"][i]["title"],
-                                    'customer_id': CRMInfo["contracts"][i]["customer_id"],
-                                    'customer_name': CRMInfo["contracts"][i]["customer_name"],
-                                    'status': CRMInfo["contracts"][i]["status"],
-                                    'sign_date': CRMInfo["contracts"][i]["updated_at"],
-                                    'updated_at': CRMInfo["contracts"][i]["updated_at"]
-                                });
-                                //contractDetail.push(CRMInfo["contracts"][i]["id"])
+                        success: function (data1) {
+                            //$("#batch_change_status").attr("data-val", user_token)
+                            //var mychars = []
+                            //var contractDetail = [];
+                            //var crmInfo = JSON.parse(data.data)
+                            //var CRMInfo = crmInfo.data
+                            //console.log(data1)
+                            //for (var i = 0; i < CRMInfo["contracts"].length; i++) {
+                            //    mychars.push({
+                            //        'user_id': CRMInfo["contracts"][i]["user_id"],
+                            //        'user_name': CRMInfo["contracts"][i]["user_name"],
+                            //        'contract_id': CRMInfo["contracts"][i]["id"],
+                            //        'contract_price': CRMInfo["contracts"][i]["total_amount"],
+                            //        'contract_title': CRMInfo["contracts"][i]["title"],
+                            //        'customer_id': CRMInfo["contracts"][i]["customer_id"],
+                            //        'customer_name': CRMInfo["contracts"][i]["customer_name"],
+                            //        'status': CRMInfo["contracts"][i]["status"],
+                            //        'sign_date': CRMInfo["contracts"][i]["updated_at"],
+                            //        'updated_at': CRMInfo["contracts"][i]["updated_at"]
+                            //    });
+                            //    contractDetail.push(CRMInfo["contracts"][i]["id"])
                             }
                             //console.log(contractDetail)
                             //$.ajax({
@@ -74,19 +74,19 @@
                             //    },
                             //    success: function (data) {
                             //        var crmdetailInfo = JSON.parse(data.data)
-                            //        console.log(crmdetailInfo)
+                            //        console.log(crmdetailInfo.data)
                             //}
                             //})
-                            //非异步请求，数据保存需要时间
-                            $.ajax({
-                                url: "/SalesProcess/SaveCRMInfo/",
-                                async: false,
-                                type: "post",
-                                dataType: "json",
-                                data: JSON.stringify(mychars),
-                            })
+                            ////非异步请求，数据保存需要时间
+                            //$.ajax({
+                            //    url: "/SalesProcess/SaveCRMInfo/",
+                            //    async: false,
+                            //    type: "post",
+                            //    dataType: "json",
+                            //    data: JSON.stringify(mychars),
+                            //})
                             
-                        }
+                        //}
                     })
                 }
             })

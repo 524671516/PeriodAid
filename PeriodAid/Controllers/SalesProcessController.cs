@@ -2440,27 +2440,39 @@ namespace PeriodAid.Controllers
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
-            //request.ContentType = "application/json";
             
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
-            
-            //JObject jo = (JObject)JsonConvert.DeserializeObject(retString);
-            //string product = jo["data"].ToString();
-            //JObject jo1 = (JObject)JsonConvert.DeserializeObject(product);
-            //string product1 = jo1["products"].ToString();
-            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+            CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(retString);
+            var check_data = from m in crm_db.CRM_Contract
+                             select m;
+            foreach(var Checkdata in check_data)
+            {
+                var crm_Contract = new CRM_Contract();
+                crm_Contract.id = Checkdata.id;
+                crm_Contract.user_id = Checkdata.user_id;
+                crm_Contract.user_name = Checkdata.user_name;
+                crm_Contract.customer_id = Checkdata.customer_id;
+                crm_Contract.customer_name = Checkdata.customer_name;
+                crm_Contract.title = Checkdata.title;
+                crm_Contract.total_amount = Checkdata.total_amount;
+                crm_Contract.status = Checkdata.status;
+                crm_Contract.updated_at = Checkdata.updated_at;
+                crm_db.CRM_Contract.Add(crm_Contract);
+            }
+            crm_db.SaveChanges();
+            return Content("SUCCESS");
         }
 
-        public ActionResult GetCrmDetailInfo(string user_token,int[] contract_id)
+        public ActionResult GetCrmDetailInfo(string user_token)
         {
-            var C_id = contract_id;
-            var retString = "";
-            foreach (var cid in C_id)
-            {
-                string url = "https://api.ikcrm.com/api/v2/contracts/" + cid + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            //var C_id = contract_id;
+            //var retString = "";
+            //foreach (var cid in C_id)
+            //{
+                string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "get";
                 request.ContentType = "application/x-www-form-urlencoded";
@@ -2468,109 +2480,110 @@ namespace PeriodAid.Controllers
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-                retString = myStreamReader.ReadToEnd();
+                var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
-            }
+                
+            //}
             return Json(new { result = "SUCCESS", data = retString });
         }
 
-        [HttpPost]
-        public ActionResult SaveCRMInfo()
-        {
-            var sr = new StreamReader(Request.InputStream);
-            var stream = sr.ReadToEnd();
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            var list = js.Deserialize<List<CRM_Contract>>(stream);
-            if (list.Count() != 0)
-            {
-                foreach (var item in list)
-                {
-                    var check_data = crm_db.CRM_Contract.AsNoTracking().SingleOrDefault(m => m.contract_id == item.contract_id);
-                    if (check_data == null)
-                    {
-                        // new
-                        check_data = new CRM_Contract();
-                        check_data.user_id = item.user_id;
-                        check_data.user_name = item.user_name;
-                        check_data.contract_id = item.contract_id;
-                        check_data.contract_price = item.contract_price;
-                        check_data.contract_title = item.contract_title;
-                        check_data.customer_id = item.customer_id;
-                        check_data.sign_date = item.updated_at;
-                        check_data.updated_at = item.updated_at;
-                        check_data.status = item.status;
-                        check_data.customer_name = item.customer_name;
-                        crm_db.CRM_Contract.Add(check_data);
-                    }
-                    else
-                    {
-                        // update
-                        check_data.user_id = item.user_id;
-                        check_data.user_name = item.user_name;
-                        check_data.contract_id = item.contract_id;
-                        check_data.contract_price = item.contract_price;
-                        check_data.contract_title = item.contract_title;
-                        check_data.customer_id = item.customer_id;
-                        check_data.sign_date = item.updated_at;
-                        check_data.updated_at = item.updated_at;
-                        check_data.status = item.status;
-                        check_data.customer_name = item.customer_name;
-                        crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
-                    }
-                }
-            }
-            crm_db.SaveChanges();
-            return Json(new { result = "success" });
-        }
+        //[HttpPost]
+        //public ActionResult SaveCRMInfo()
+        //{
+        //    var sr = new StreamReader(Request.InputStream);
+        //    var stream = sr.ReadToEnd();
+        //    JavaScriptSerializer js = new JavaScriptSerializer();
+        //    var list = js.Deserialize<List<CRM_Contract>>(stream);
+        //    if (list.Count() != 0)
+        //    {
+        //        foreach (var item in list)
+        //        {
+        //            var check_data = crm_db.CRM_Contract.AsNoTracking().SingleOrDefault(m => m.contract_id == item.contract_id);
+        //            if (check_data == null)
+        //            {
+        //                // new
+        //                check_data = new CRM_Contract();
+        //                check_data.user_id = item.user_id;
+        //                check_data.user_name = item.user_name;
+        //                check_data.contract_id = item.contract_id;
+        //                check_data.contract_price = item.contract_price;
+        //                check_data.contract_title = item.contract_title;
+        //                check_data.customer_id = item.customer_id;
+        //                check_data.sign_date = item.updated_at;
+        //                check_data.updated_at = item.updated_at;
+        //                check_data.status = item.status;
+        //                check_data.customer_name = item.customer_name;
+        //                crm_db.CRM_Contract.Add(check_data);
+        //            }
+        //            else
+        //            {
+        //                // update
+        //                check_data.user_id = item.user_id;
+        //                check_data.user_name = item.user_name;
+        //                check_data.contract_id = item.contract_id;
+        //                check_data.contract_price = item.contract_price;
+        //                check_data.contract_title = item.contract_title;
+        //                check_data.customer_id = item.customer_id;
+        //                check_data.sign_date = item.updated_at;
+        //                check_data.updated_at = item.updated_at;
+        //                check_data.status = item.status;
+        //                check_data.customer_name = item.customer_name;
+        //                crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+        //            }
+        //        }
+        //    }
+        //    crm_db.SaveChanges();
+        //    return Json(new { result = "success" });
+        //}
 
-        public ActionResult UpdateCRM(string user_token,int[] c_id)
-        {
-            var _Cid = c_id;
-            foreach (var i in _Cid)
-            {
-                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.Id == i);
-                string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "PUT";
-                request.ContentType = "application/x-www-form-urlencoded";
-                //request.ContentType = "application/json";
+        //public ActionResult UpdateCRM(string user_token,int[] c_id)
+        //{
+        //    var _Cid = c_id;
+        //    foreach (var i in _Cid)
+        //    {
+        //        var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.Id == i);
+        //        string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+        //        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        //        request.Method = "PUT";
+        //        request.ContentType = "application/x-www-form-urlencoded";
+        //        //request.ContentType = "application/json";
 
-                // 添加参数
-                Dictionary<String, String> dicList = new Dictionary<String, String>();
-                //只修改了订单状态和备注
-                dicList.Add("contract[status]", "3780205");
-                //dicList.Add("contract[special_terms]", "快递单号" + special_terms);
-                String postStr = buildQueryStr(dicList);
-                byte[] b_data = Encoding.UTF8.GetBytes(postStr);
-                request.ContentLength = b_data.Length;
+        //        // 添加参数
+        //        Dictionary<String, String> dicList = new Dictionary<String, String>();
+        //        //只修改了订单状态和备注
+        //        dicList.Add("contract[status]", "3780205");
+        //        //dicList.Add("contract[special_terms]", "快递单号" + special_terms);
+        //        String postStr = buildQueryStr(dicList);
+        //        byte[] b_data = Encoding.UTF8.GetBytes(postStr);
+        //        request.ContentLength = b_data.Length;
 
-                Stream myRequestStream = request.GetRequestStream();
-                myRequestStream.Write(b_data, 0, b_data.Length);
-                myRequestStream.Close();
+        //        Stream myRequestStream = request.GetRequestStream();
+        //        myRequestStream.Write(b_data, 0, b_data.Length);
+        //        myRequestStream.Close();
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-                var retString = myStreamReader.ReadToEnd();
-                myStreamReader.Close();
-                check_data.status = "3780205";
-            }
-            crm_db.SaveChanges();
-            return Content("succ");
+        //        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        //        StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+        //        var retString = myStreamReader.ReadToEnd();
+        //        myStreamReader.Close();
+        //        check_data.status = "3780205";
+        //    }
+        //    crm_db.SaveChanges();
+        //    return Content("succ");
 
-        }
+        //}
 
         public ActionResult CRM_show()
         {
             return View();
         }
 
-        public ActionResult CRM_undeliveredPartical(string status) 
-        {
-            var undeliveredData = from m in crm_db.CRM_Contract
-                                  where m.status == status
-                                  select m;
-            return PartialView(undeliveredData);
-        }
+        //public ActionResult CRM_undeliveredPartical(string status) 
+        //{
+        //    var undeliveredData = from m in crm_db.CRM_Contract
+        //                          where m.status == status
+        //                          select m;
+        //    return PartialView(undeliveredData);
+        //}
         
         //public ActionResult CRM_deliveredPartical()
         //{
