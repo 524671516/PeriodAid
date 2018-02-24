@@ -20,6 +20,11 @@ namespace PeriodAid.Models
         public virtual DbSet<CRM_Product> CRM_Product { get; set; }
         public virtual DbSet<CRM_Contract> CRM_Contract { get; set; }
         public virtual DbSet<CRM_ContractDetail> CRM_ContractDetail { get; set; }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            
+           
+        }
     }
     [Table("CRM_Product")]
     public partial class CRM_Product
@@ -56,6 +61,8 @@ namespace PeriodAid.Models
         public DateTime? sign_date { get; set; }
 
         public DateTime? updated_at { get; set; }
+
+        
     }
     [Table("CRM_ContractDetail")]
     public partial class CRM_ContractDetail
@@ -66,6 +73,15 @@ namespace PeriodAid.Models
 
         public string contacts_tel { get; set; }
 
+        public string contacts_address { get; set; }
+
+        public int customer_address { get; set; }
+
+        public int contract_id { get; set; }
+
+        public int product_id { get; set; }
+
+        public int product_quantity { get; set; }
     }
 
     public class orders_Result

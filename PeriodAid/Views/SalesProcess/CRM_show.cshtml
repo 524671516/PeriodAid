@@ -43,6 +43,7 @@
                         success: function (data) {
                             $("#batch_change_status").attr("data-val", user_token)
                             var mychars = []
+                            var contractDetail = [];
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
                             console.log(CRMInfo)
@@ -59,6 +60,9 @@
                                     'sign_date': CRMInfo["contracts"][i]["updated_at"],
                                     'updated_at': CRMInfo["contracts"][i]["updated_at"]
                                 });
+                                contractDetail.push({
+
+                                })
                             }
                             //非异步请求，数据保存需要时间
                             $.ajax({
@@ -67,18 +71,6 @@
                                 type: "post",
                                 dataType: "json",
                                 data: JSON.stringify(mychars),
-                                success: function (data) {
-                                    $.ajax({
-                                        url: "/SalesProcess/GetCrmDetailInfo/",
-                                        data: {
-                                            user_token: user_token
-                                        },
-                                        success: function (data) {
-                                            var crmDetailInfo = JSON.parse(data.data)
-                                            console.log(crmDetailInfo)
-                                        }
-                                    })
-                                }
                             })
                             
                         }

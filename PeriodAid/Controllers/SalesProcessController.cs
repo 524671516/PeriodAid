@@ -2456,7 +2456,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmDetailInfo(string user_token)
         {
-            string url = "https://api.ikcrm.com/api/v2/contracts/388890?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/"+ 388890 + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
