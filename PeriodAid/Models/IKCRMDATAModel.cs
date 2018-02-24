@@ -97,6 +97,8 @@ namespace PeriodAid.Models
     {
         public int id { get; set; }
 
+        public int contract_id { get; set; }
+
         public int user_id { get; set; }
 
         public string user_name { get; set; }
