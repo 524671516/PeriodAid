@@ -50,18 +50,19 @@
 </div>
 <script>
     $(function () {
-        $("#batch_change_status").addClass("hidden")
-        $("#batch_change_deliverys").addClass("hidden")
+        $("#batch_change_status").hide()
+        $("#batch_change_deliverys").hide()
         var orderarry = [];
         $("input").click(function () {
             var that = $(this)
             var C_id = that.attr("data-val")
-            var selsct = that.is(":checked");
-            if (selsct) {
+            var select = that.is(":checked");
+            if (select) {
                 orderarry.push(C_id)
-                console.log(orderarry)
+                $("#batch_change_status").show()
             } else {
                 orderarry.remove(C_id)
+                $("#batch_change_status").hide()
             }
         })
         $(".change_status").on("click", function () {
