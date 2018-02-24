@@ -2454,19 +2454,24 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetCrmDetailInfo(string user_token)
+        public ActionResult GetCrmDetailInfo(string user_token,int[] contract_id)
         {
-            string url = "https://api.ikcrm.com/api/v2/contracts/"+ 388890 + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "get";
-            request.ContentType = "application/x-www-form-urlencoded";
-            //request.ContentType = "application/json";
+            var C_id = contract_id;
+            var retString = "";
+            foreach (var cid in C_id)
+            {
+                string url = "https://api.ikcrm.com/api/v2/contracts/" + cid + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "get";
+                request.ContentType = "application/x-www-form-urlencoded";
+                //request.ContentType = "application/json";
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+            }
+            return Json(new { result = "SUCCESS", data = retString });
         }
 
         [HttpPost]

@@ -35,6 +35,7 @@
                 success: function (data) {
                     var user = JSON.parse(data["data"])
                     var user_token = user["data"]["user_token"]
+                    $("#first_btn").attr("data-token",user_token)
                     $.ajax({
                         url: "/SalesProcess/GetCrmInfo/",
                         data: {
@@ -46,7 +47,7 @@
                             var contractDetail = [];
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
-                            console.log(CRMInfo)
+                            //console.log(CRMInfo)
                             for (var i = 0; i < CRMInfo["contracts"].length; i++) {
                                 mychars.push({
                                     'user_id': CRMInfo["contracts"][i]["user_id"],
@@ -60,10 +61,22 @@
                                     'sign_date': CRMInfo["contracts"][i]["updated_at"],
                                     'updated_at': CRMInfo["contracts"][i]["updated_at"]
                                 });
-                                contractDetail.push({
-
-                                })
+                                //contractDetail.push(CRMInfo["contracts"][i]["id"])
                             }
+                            //console.log(contractDetail)
+                            //$.ajax({
+                            //    url: "/SalesProcess/GetCrmDetailInfo/",
+                            //    async: false,
+                            //    type: "post",
+                            //    data: {
+                            //        user_token: user_token,
+                            //        contract_id: contractDetail
+                            //    },
+                            //    success: function (data) {
+                            //        var crmdetailInfo = JSON.parse(data.data)
+                            //        console.log(crmdetailInfo)
+                            //}
+                            //})
                             //非异步请求，数据保存需要时间
                             $.ajax({
                                 url: "/SalesProcess/SaveCRMInfo/",
