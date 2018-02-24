@@ -41,6 +41,7 @@
                             user_token: user_token
                         },
                         success: function (data) {
+                            $("#batch_change_status").attr("data-val", user_token)
                             var mychars = []
                             var crmInfo = JSON.parse(data["data"])
                             var CRMInfo = crmInfo["data"]
@@ -50,6 +51,8 @@
                                     'user_id': CRMInfo["contracts"][i]["user_id"],
                                     'user_name': CRMInfo["contracts"][i]["user_name"],
                                     'contract_id': CRMInfo["contracts"][i]["id"],
+                                    'contract_price': CRMInfo["contracts"][i]["total_amount"],
+                                    'contract_title': CRMInfo["contracts"][i]["title"],
                                     'customer_id': CRMInfo["contracts"][i]["customer_id"],
                                     'customer_name': CRMInfo["contracts"][i]["customer_name"],
                                     'status': CRMInfo["contracts"][i]["status"],
@@ -63,7 +66,19 @@
                                 async: false,
                                 type: "post",
                                 dataType: "json",
-                                data: JSON.stringify(mychars)
+                                data: JSON.stringify(mychars),
+                                success: function (data) {
+                                    $.ajax({
+                                        url: "/SalesProcess/GetCrmDetailInfo/",
+                                        data: {
+                                            user_token: user_token
+                                        },
+                                        success: function (data) {
+                                            var crmDetailInfo = JSON.parse(data.data)
+                                            console.log(crmDetailInfo)
+                                        }
+                                    })
+                                }
                             })
                             
                         }
