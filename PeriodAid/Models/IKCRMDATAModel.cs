@@ -77,6 +77,5 @@ namespace PeriodAid.Models
         public string requestMethod { get; set; }//请求接口方法
         public List<orders> orders { get; set; }
         public int total;
-        public List<orders> orders { get; set; }
     }
 }

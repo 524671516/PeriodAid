@@ -2436,7 +2436,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string user_token)
         {
-            string url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/387217?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -2508,7 +2508,7 @@ namespace PeriodAid.Controllers
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "PUT";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.ContentType = "application/json";
+                //request.ContentType = "application/json";
 
                 // 添加参数
                 Dictionary<String, String> dicList = new Dictionary<String, String>();

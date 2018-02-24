@@ -30,7 +30,7 @@
                 @if (item.status == "3779515")
                 {
                     <td>
-                        @*<a class="change_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">同步ERP</a>*@
+                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">同步ERP</a>
                     </td>
                 }
                 else if (item.status == "3780205")
@@ -56,10 +56,8 @@
             var selsct = that.is(":checked");
             if (selsct) {
                 productarry.push(C_id)
-                console.log(productarry)
             } else {
                 productarry.remove(C_id)
-
             }
         })
         $.ajax({
