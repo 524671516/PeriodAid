@@ -2446,20 +2446,19 @@ namespace PeriodAid.Controllers
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(retString);
-            var check_data = from m in crm_db.CRM_Contract
-                             select m;
-            foreach(var Checkdata in check_data)
+            
+            for(int i = 0; i< r.data.contracts.Count();i++)
             {
                 var crm_Contract = new CRM_Contract();
-                crm_Contract.id = Checkdata.id;
-                crm_Contract.user_id = Checkdata.user_id;
-                crm_Contract.user_name = Checkdata.user_name;
-                crm_Contract.customer_id = Checkdata.customer_id;
-                crm_Contract.customer_name = Checkdata.customer_name;
-                crm_Contract.title = Checkdata.title;
-                crm_Contract.total_amount = Checkdata.total_amount;
-                crm_Contract.status = Checkdata.status;
-                crm_Contract.updated_at = Checkdata.updated_at;
+                crm_Contract.id = r.data.contracts[i].id;
+                crm_Contract.user_id = r.data.contracts[i].user_id;
+                crm_Contract.user_name = r.data.contracts[i].user_name;
+                crm_Contract.customer_id = r.data.contracts[i].customer_id;
+                crm_Contract.customer_name = r.data.contracts[i].customer_name;
+                crm_Contract.title = r.data.contracts[i].title;
+                crm_Contract.total_amount = r.data.contracts[i].total_amount;
+                crm_Contract.status = r.data.contracts[i].status;
+                crm_Contract.updated_at = r.data.contracts[i].updated_at;
                 crm_db.CRM_Contract.Add(crm_Contract);
             }
             crm_db.SaveChanges();
