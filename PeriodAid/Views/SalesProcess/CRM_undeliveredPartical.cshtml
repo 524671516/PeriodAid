@@ -3,14 +3,18 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th style="width:5%"></th>
+            <th style="width:5%">
+                <label class="checkbox-custom">
+                    <input type="checkbox" class="btn" id="checkbox-all">
+                </label>
+            </th>
             <th style="width:10%">订单号</th>
             <th style="width:15%">合同名称</th>
             <th style="width:15%">合同总金额</th>
             <th style="width:15%">客户名称</th>
             <th style="width:15%">订单状态</th>
             <th style="width:20%">
-                <a class="btn btn-xs btn-success" id="batch_change_status" role="button" style="cursor:pointer">批量同步ERP</a>
+                <a class="btn btn-xs btn-success" id="batch_change_status"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
@@ -32,13 +36,13 @@
                 @if (item.status == "3779515")
                 {
                     <td>
-                        @*<a class="change_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">同步ERP</a>*@
+                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">同步ERP</a>
                     </td>
                 }
                 else if (item.status == "3780205")
                 {
                     <td>
-                       @*<a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">获取ERP配送信息</a>*@
+                       <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.Id" style="cursor:pointer">获取ERP配送信息</a>
                     </td>
                 }
                 else
@@ -51,76 +55,95 @@
 </div>
 <script>
     $(function () {
-        $("#batch_change_deliverys").addClass("hidden")
+        $("#batch_change_status").hide()
+        $("#batch_change_deliverys").hide()
         var orderarry = [];
         $("input").click(function () {
             var that = $(this)
             var C_id = that.attr("data-val")
-            var selsct = that.is(":checked");
-            if (selsct) {
+            var select = that.is(":checked");
+            if (select) {
                 orderarry.push(C_id)
-                console.log(orderarry)
+                $("#batch_change_status").show()
             } else {
                 orderarry.remove(C_id)
+                $("#checkbox-all").prop("checked", false)
+            }
+            if ($("input:checked").length < 1) {
+                $("#batch_change_status").hide()
+            }
+        })
+        $("#checkbox-all").click(function () {
+            if ($(this).is(":checked")) {
+                $("#batch_change_status").show()
+                $("input").prop("checked", true);  
+            } else {
+                $("#batch_change_status").hide()
+                $("input").prop("checked", false);  
             }
         })
         $(".change_status").on("click", function () {
             var that = $(this)
         })
-        // 同步到ERP等待审核
-        $("#batch_change_status").click(function () {
-            var that = $(this)
-            var user_token = that.attr("data-val")
-            if (orderarry.length == 0) {
-
-            } else {
-                $.ajax({
-                    url: "/SalesProcess/UpdateCRM/",
-                    type: "post",
-                    data: {
-                        user_token: user_token,
-                        c_id: orderarry,
-                    },
-                    success: function (data) {
+        $.ajax({
+            url: "/SalesProcess/GetUserToken/",
+            success: function (data) {
+                var user = JSON.parse(data["data"])
+                var user_token = user["data"]["user_token"]
+                // 同步到ERP等待审核
+                $("#batch_change_status").click(function () {
+                    if (orderarry.length == 0) {
+                        
+                    } else {
                         $.ajax({
-                            url: "/SalesProcess/GetCrmInfo/",
+                            url: "/SalesProcess/UpdateCRM/",
+                            type:"post",
                             data: {
-                                user_token: user_token
+                                user_token: user_token,
+                                c_id: orderarry,
                             },
                             success: function (data) {
-                                // 订单新增(gy.erp.trade.add)  ERP API 暂时不写
                                 $.ajax({
-
-                                })
-                                alert("已推送至ERP等待审核")
-                                $.ajax({
-                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    url: "/SalesProcess/GetCrmInfo/",
                                     data: {
-                                        status: "3779515"
+                                        user_token: user_token
                                     },
                                     success: function (data) {
-                                        $("#undelivered_list_content").html(data)
+                                        // 订单新增(gy.erp.trade.add)  ERP API 暂时不写
+                                        $.ajax({
+
+                                        })
+                                        alert("已推送至ERP等待审核")
+                                        $.ajax({
+                                            url: "/SalesProcess/CRM_undeliveredPartical/",
+                                            data: {
+                                                status: "3779515"
+                                            },
+                                            success: function (data) {
+                                                $("#undelivered_list_content").html(data)
+                                            }
+                                        })
                                     }
                                 })
                             }
                         })
                     }
+                    
+                })
+                // 同步ERP快递信息
+                $(".get_erp_status").click(function () {
+                    $.ajax({
+                        url: "/SalesProcess/getERPORDERS/",
+                        data: {
+                            c_id:$(this).attr("data-val"),
+                        },
+                        success: function (data) {
+                            console.log(data)
+                          
+                        }
+                    })
                 })
             }
-
-        })
-        // 同步ERP快递信息
-        $(".get_erp_status").click(function () {
-            $.ajax({
-                url: "/SalesProcess/getERPORDERS/",
-                data: {
-                    c_id: $(this).attr("data-val"),
-                },
-                success: function (data) {
-                    console.log(data)
-
-                }
-            })
         })
     })
 </script>
