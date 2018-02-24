@@ -3,14 +3,18 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th style="width:5%"></th>
+            <th style="width:5%">
+                <label class="checkbox-custom">
+                    <input type="checkbox" class="btn" id="checkbox-all">
+                </label>
+            </th>
             <th style="width:10%">订单号</th>
             <th style="width:15%">客户名称</th>
             <th style="width:15%">联系人</th>
             <th style="width:10%">订单状态</th>
             <th style="width:20%">更新时间</th>
             <th style="width:20%">
-                <a class="btn btn-xs btn-success" id="batch_change_status"  role="button" style="cursor:pointer">批量同步ERP</a>
+                <a class="btn btn-xs btn-success" id="batch_change_status"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
@@ -62,7 +66,19 @@
                 $("#batch_change_status").show()
             } else {
                 orderarry.remove(C_id)
+                $("#checkbox-all").prop("checked", false)
+            }
+            if ($("input:checked").length < 1) {
                 $("#batch_change_status").hide()
+            }
+        })
+        $("#checkbox-all").click(function () {
+            if ($(this).is(":checked")) {
+                $("#batch_change_status").show()
+                $("input").prop("checked", true);  
+            } else {
+                $("#batch_change_status").hide()
+                $("input").prop("checked", false);  
             }
         })
         $(".change_status").on("click", function () {
