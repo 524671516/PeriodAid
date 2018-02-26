@@ -2479,6 +2479,40 @@ namespace PeriodAid.Controllers
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
             CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
+            //if (r.code == "0")
+            //{
+            //    for (int i = 0; i < r.data.customers.Count(); i++)
+            //    {
+            //        var Cid = r.data.customers[i].id;
+            //        string cAddress = r.data.customers[i].address.region_info;
+            //        string cstr = cAddress.Remove(0, 3);
+            //        var  check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
+            //        if (check_customer == null)
+            //        {
+            //            check_customer = new CRM_Customer();
+            //            check_customer.customer_id = Cid;
+            //            check_customer.customer_name = r.data.customers[i].name;
+            //            check_customer.customer_address = cstr + " "+ r.data.customers[i].address.detail_address;
+            //            check_customer.customer_tel = r.data.customers[i].address.tel;
+            //           for(int j =0; j < r.data.customers[i].contacts.Count(); j++)
+            //            {
+            //                var ctId = r.data.customers[i].contacts[j].address.addressable_id;
+            //                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
+            //                if (check_contact == null)
+            //                {
+            //                    check_contact = new CRM_Contact();
+            //                    check_contact.contact_id = ctId;
+            //                    check_contact.contact_name = r.data.customers[i].contacts[i].address.;
+            //                    check_contact.customer_address = cstr + " " + r.data.customers[i].address.detail_address;
+            //                    check_contact.customer_tel = r.data.customers[i].address.tel;
+            //                }
+            //            }
+            //            crm_db.CRM_Customer.Add(check_customer);
+            //        }
+            //    }
+             //   crm_db.SaveChanges();
+
+            //}
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
