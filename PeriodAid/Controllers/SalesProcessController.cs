@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -2403,10 +2404,10 @@ namespace PeriodAid.Controllers
             postStr = postStr.Substring(0, postStr.LastIndexOf('&'));
             return postStr;
         }
-
-
+        
         public ActionResult GetUserToken()
         {
+            var try_times = 0;
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
@@ -2437,10 +2438,22 @@ namespace PeriodAid.Controllers
                 var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 result_Data resultdata = JsonConvert.DeserializeObject<result_Data>(retString);
-                token_time.user_token = resultdata.data.user_token;
-                token_time.download_at = DateTime.Now;
-                crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
-                crm_db.SaveChanges();
+                if (resultdata.code == "0")
+                {
+                    token_time.user_token = resultdata.data.user_token;
+                    token_time.download_at = DateTime.Now;
+                    crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
+                    crm_db.SaveChanges();
+                }
+                else {
+                    Thread.Sleep(1000);
+                    try_times++;
+                    if (try_times >= 10) {
+                        return Content("failed");
+                    }
+                    return GetUserToken();
+                }
+
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
@@ -2566,41 +2579,42 @@ namespace PeriodAid.Controllers
         //    return Json(new { result = "success" });
         //}
 
-        //public ActionResult UpdateCRM(string user_token,int[] c_id)
-        //{
-        //    var _Cid = c_id;
-        //    foreach (var i in _Cid)
-        //    {
-        //        var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.Id == i);
-        //        string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
-        //        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-        //        request.Method = "PUT";
-        //        request.ContentType = "application/x-www-form-urlencoded";
-        //        //request.ContentType = "application/json";
+        public ActionResult UpdateCRM(int[] c_id)
+        {
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            var _Cid = c_id;
+            foreach (var i in _Cid)
+            {
+                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == i);
+                string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "PUT";
+                request.ContentType = "application/x-www-form-urlencoded";
+                //request.ContentType = "application/json";
 
-        //        // 添加参数
-        //        Dictionary<String, String> dicList = new Dictionary<String, String>();
-        //        //只修改了订单状态和备注
-        //        dicList.Add("contract[status]", "3780205");
-        //        //dicList.Add("contract[special_terms]", "快递单号" + special_terms);
-        //        String postStr = buildQueryStr(dicList);
-        //        byte[] b_data = Encoding.UTF8.GetBytes(postStr);
-        //        request.ContentLength = b_data.Length;
+                // 添加参数
+                Dictionary<String, String> dicList = new Dictionary<String, String>();
+                //只修改了订单状态和备注
+                dicList.Add("contract[status]", UserInfo.status_undelivered.ToString());
+                //dicList.Add("contract[special_terms]", "快递单号" + special_terms);
+                String postStr = buildQueryStr(dicList);
+                byte[] b_data = Encoding.UTF8.GetBytes(postStr);
+                request.ContentLength = b_data.Length;
 
-        //        Stream myRequestStream = request.GetRequestStream();
-        //        myRequestStream.Write(b_data, 0, b_data.Length);
-        //        myRequestStream.Close();
+                Stream myRequestStream = request.GetRequestStream();
+                myRequestStream.Write(b_data, 0, b_data.Length);
+                myRequestStream.Close();
 
-        //        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        //        StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-        //        var retString = myStreamReader.ReadToEnd();
-        //        myStreamReader.Close();
-        //        check_data.status = "3780205";
-        //    }
-        //    crm_db.SaveChanges();
-        //    return Content("succ");
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                var retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                check_data.status = UserInfo.status_undelivered.ToString();
+            }
+            crm_db.SaveChanges();
+            return Content("succ");
 
-        //}
+        }
 
         public ActionResult CRM_show()
         {

@@ -21,6 +21,7 @@ namespace PeriodAid.Models
         public virtual DbSet<CRM_Contract> CRM_Contract { get; set; }
         public virtual DbSet<CRM_ContractDetail> CRM_ContractDetail { get; set; }
         public virtual DbSet<CRM_User_Token> CRM_User_Token { get; set; }
+        public virtual DbSet<CRM_ExceptionLogs> CRM_ExceptionLogs { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             
@@ -95,6 +96,18 @@ namespace PeriodAid.Models
         public string status { get; set; }
 
         public DateTime? updated_at { get; set; }
+    }
+
+    [Table("CRM_ExceptionLogs")]
+    public partial class CRM_ExceptionLogs
+    {
+        public int Id { get; set; }
+
+        public string type{ get; set; }
+
+        public string exception { get; set; }
+
+        public DateTime exception_at { get; set; }
     }
 
     public class CRM_ContractDetail_ReturnData
