@@ -2466,6 +2466,22 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
         
+        public ActionResult GetCustomer()
+        {
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            string url = "https://api.ikcrm.com/api/v2/customers/?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
+            return Json(new { result = "SUCCESS", data = r }, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult GetCrmInfo()
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
@@ -2577,55 +2593,6 @@ namespace PeriodAid.Controllers
             //return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
             return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
-
-        //[HttpPost]
-        //public ActionResult SaveCRMInfo()
-        //{
-        //    var sr = new StreamReader(Request.InputStream);
-        //    var stream = sr.ReadToEnd();
-        //    JavaScriptSerializer js = new JavaScriptSerializer();
-        //    var list = js.Deserialize<List<CRM_Contract>>(stream);
-        //    if (list.Count() != 0)
-        //    {
-        //        foreach (var item in list)
-        //        {
-        //            var check_data = crm_db.CRM_Contract.AsNoTracking().SingleOrDefault(m => m.contract_id == item.contract_id);
-        //            if (check_data == null)
-        //            {
-        //                // new
-        //                check_data = new CRM_Contract();
-        //                check_data.user_id = item.user_id;
-        //                check_data.user_name = item.user_name;
-        //                check_data.contract_id = item.contract_id;
-        //                check_data.contract_price = item.contract_price;
-        //                check_data.contract_title = item.contract_title;
-        //                check_data.customer_id = item.customer_id;
-        //                check_data.sign_date = item.updated_at;
-        //                check_data.updated_at = item.updated_at;
-        //                check_data.status = item.status;
-        //                check_data.customer_name = item.customer_name;
-        //                crm_db.CRM_Contract.Add(check_data);
-        //            }
-        //            else
-        //            {
-        //                // update
-        //                check_data.user_id = item.user_id;
-        //                check_data.user_name = item.user_name;
-        //                check_data.contract_id = item.contract_id;
-        //                check_data.contract_price = item.contract_price;
-        //                check_data.contract_title = item.contract_title;
-        //                check_data.customer_id = item.customer_id;
-        //                check_data.sign_date = item.updated_at;
-        //                check_data.updated_at = item.updated_at;
-        //                check_data.status = item.status;
-        //                check_data.customer_name = item.customer_name;
-        //                crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
-        //            }
-        //        }
-        //    }
-        //    crm_db.SaveChanges();
-        //    return Json(new { result = "success" });
-        //}
 
         public ActionResult UpdateCRM(int[] c_id)
         {

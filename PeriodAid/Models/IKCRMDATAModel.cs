@@ -212,6 +212,18 @@ namespace PeriodAid.Models
         public virtual ICollection<CRM_Contact> CRM_Contact { get; set; }
     }
 
+    public partial class CRM_Customer_ReturnData
+    {
+        public string code { get; set; }
+
+        public CRM_Customer_Data data { get; set; }
+    }
+
+    public partial class CRM_Customer_Data
+    {
+    }
+
+
     [Table("CRM_Contact")]
     public partial class CRM_Contact
     {

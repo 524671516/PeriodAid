@@ -57,6 +57,13 @@
                     })
                 }
             })
+            // 获取crm客户数据
+            $.ajax({
+                url: "/SalesProcess/GetCustomer/",
+                success: function (data) {
+                    console.log(data)
+                }
+            })
             // 获取crm合同数据
             $.ajax({
                 url: "/SalesProcess/GetCrmInfo/",
