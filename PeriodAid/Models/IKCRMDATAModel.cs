@@ -197,6 +197,8 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
+        public int customer_id { get; set; }
+
         public string customer_name { get; set; }
 
         public string customer_address { get; set; }
