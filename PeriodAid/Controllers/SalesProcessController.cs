@@ -2446,9 +2446,10 @@ namespace PeriodAid.Controllers
         }
         
 
-        public ActionResult GetCrmInfo(string user_token)
+        public ActionResult GetCrmInfo()
         {
-            string url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            string url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -2458,11 +2459,10 @@ namespace PeriodAid.Controllers
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(retString);
-            
-            for(int i = 0; i< r.data.contracts.Count();i++)
+            CRM_Contract crm_Contract = new CRM_Contract();
+            for (int i = 0; i< r.data.contracts.Count();i++)
             {
-                var crm_Contract = new CRM_Contract();
-                crm_Contract.id = r.data.contracts[i].id;
+                crm_Contract.id = 123;
                 crm_Contract.user_id = r.data.contracts[i].user_id;
                 crm_Contract.user_name = r.data.contracts[i].user_name;
                 crm_Contract.customer_id = r.data.contracts[i].customer_id;
