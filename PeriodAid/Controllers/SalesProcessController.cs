@@ -2411,7 +2411,7 @@ namespace PeriodAid.Controllers
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
-            if (days <= 1)
+            if (days >= 1)
             {
                 string url = "https://api.ikcrm.com/api/v2/auth/login";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -2520,41 +2520,36 @@ namespace PeriodAid.Controllers
         public ActionResult GetCrmDetailInfo()
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            //var contracts = from m in crm_db.CRM_Contract
-            //                select m;
-            //foreach (var C_id in contracts)
-            //{
-            //    string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            //    request.Method = "get";
-            //    request.ContentType = "application/x-www-form-urlencoded";
-            //    //request.ContentType = "application/json";
+            var contracts = from m in crm_db.CRM_Contract
+                            select m;
+            foreach (var C_id in contracts)
+            {
+                string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "get";
+                request.ContentType = "application/x-www-form-urlencoded";
+                //request.ContentType = "application/json";
 
-            //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            //    var retString = myStreamReader.ReadToEnd();
-            //    myStreamReader.Close();
-            //    CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
-            //    var contact = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.contract_id == C_id.contract_id);
-            //    if (contact == null)
-            //    {
-            //        contact = new CRM_ContractDetail();
-            //        crm_db.CRM_Contract.Add(contact);
-            //    }
-            //}
-            string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "get";
-            request.ContentType = "application/x-www-form-urlencoded";
-            //request.ContentType = "application/json";
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
-            //return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
-            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                var retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
+                var contact = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.contract_id == C_id.contract_id);
+                if (contact == null)
+                {
+                    contact = new CRM_ContractDetail();
+                    contact.contract_id = C_id.id;
+                    contact.customer_address = r.data.customer.address.full_address;
+                    contact.customer_tel = r.data.customer.address.tel;
+                    contact.contacts_address = r.data.customer.contacts[0].address.full_address;
+                    contact.contacts_tel = r.data.customer.contacts[0].address.tel;
+                    crm_db.CRM_ContractDetail.Add(contact);
+                }
+            }
+            crm_db.SaveChanges();
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         //[HttpPost]
