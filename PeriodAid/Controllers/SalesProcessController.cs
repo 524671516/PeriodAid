@@ -2452,7 +2452,7 @@ namespace PeriodAid.Controllers
                     try_times++;
                     if (try_times >= 10) {
                         logs.type = "user_token";
-                        logs.exception = "获取失败";
+                        logs.exception = "[user_token]获取失败";
                         logs.exception_at = DateTime.Now;
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
@@ -2479,42 +2479,64 @@ namespace PeriodAid.Controllers
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(retString);
-            
-            for(int i = 0; i< r.data.contracts.Count();i++)
-            {
-                var contractId = r.data.contracts[i].id;
-                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                if (check_data == null)
-                {
-                    check_data = new CRM_Contract();
-                    check_data.contract_id = r.data.contracts[i].id;
-                    check_data.user_id = r.data.contracts[i].user_id;
-                    check_data.user_name = r.data.contracts[i].user_name;
-                    check_data.customer_id = r.data.contracts[i].customer_id;
-                    check_data.customer_name = r.data.contracts[i].customer_name;
-                    check_data.title = r.data.contracts[i].title;
-                    check_data.total_amount = r.data.contracts[i].total_amount;
-                    check_data.status = r.data.contracts[i].status;
-                    check_data.updated_at = r.data.contracts[i].updated_at;
-                    crm_db.CRM_Contract.Add(check_data);
-                }
-                else
-                {
-                    // update
-                    check_data.contract_id = r.data.contracts[i].id;
-                    check_data.user_id = r.data.contracts[i].user_id;
-                    check_data.user_name = r.data.contracts[i].user_name;
-                    check_data.customer_id = r.data.contracts[i].customer_id;
-                    check_data.customer_name = r.data.contracts[i].customer_name;
-                    check_data.title = r.data.contracts[i].title;
-                    check_data.total_amount = r.data.contracts[i].total_amount;
-                    check_data.status = r.data.contracts[i].status;
-                    check_data.updated_at = r.data.contracts[i].updated_at;
-                    crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
-                }
 
+            if (r.code == "0")
+            {
+                for (int i = 0; i < r.data.contracts.Count(); i++)
+                {
+                    var contractId = r.data.contracts[i].id;
+                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                    if (check_data == null)
+                    {
+                        check_data = new CRM_Contract();
+                        check_data.contract_id = r.data.contracts[i].id;
+                        check_data.user_id = r.data.contracts[i].user_id;
+                        check_data.user_name = r.data.contracts[i].user_name;
+                        check_data.customer_id = r.data.contracts[i].customer_id;
+                        check_data.customer_name = r.data.contracts[i].customer_name;
+                        check_data.title = r.data.contracts[i].title;
+                        check_data.total_amount = r.data.contracts[i].total_amount;
+                        check_data.status = r.data.contracts[i].status;
+                        check_data.updated_at = r.data.contracts[i].updated_at;
+                        crm_db.CRM_Contract.Add(check_data);
+                    }
+                    else
+                    {
+                        // update
+                        check_data.contract_id = r.data.contracts[i].id;
+                        check_data.user_id = r.data.contracts[i].user_id;
+                        check_data.user_name = r.data.contracts[i].user_name;
+                        check_data.customer_id = r.data.contracts[i].customer_id;
+                        check_data.customer_name = r.data.contracts[i].customer_name;
+                        check_data.title = r.data.contracts[i].title;
+                        check_data.total_amount = r.data.contracts[i].total_amount;
+                        check_data.status = r.data.contracts[i].status;
+                        check_data.updated_at = r.data.contracts[i].updated_at;
+                        crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                    }
+
+                }
+                crm_db.SaveChanges();
             }
-            crm_db.SaveChanges();
+            else
+            {
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                Thread.Sleep(1000);
+                try_times++;
+                if (try_times >= 10)
+                {
+                    logs.type = "contracts";
+                    logs.exception = "[合同]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return Content("failed");
+                }
+                return GetCrmInfo();
+            }
+
+
             return Json(new { result = "SUCCESS" , data = r.code }, JsonRequestBehavior.AllowGet);
         }
 
