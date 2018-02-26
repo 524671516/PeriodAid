@@ -120,6 +120,8 @@ namespace PeriodAid.Models
     public partial class CRM_ContractDetail_Data
     {
         public CRM_ContractDetail_Customer customer { get; set; }
+        
+        public List<CRM_ContractDetail_CustomerProductList> product_assets_for_new_record { get; set; }
     }
 
     public partial class CRM_ContractDetail_Customer
@@ -127,8 +129,6 @@ namespace PeriodAid.Models
         public CRM_ContractDetail_CustomerAddress address { get; set; }
 
         public List<CRM_ContractDetail_CustomerContacts> contacts { get; set; }
-
-        public List<CRM_ContractDetail_CustomerProductList> product_assets_for_new_record { get; set; }
     }
 
     public partial class CRM_ContractDetail_CustomerAddress
@@ -152,19 +152,19 @@ namespace PeriodAid.Models
 
     public partial class CRM_ContractDetail_CustomerProductList
     {
-        public CRM_ContractDetail_CustomerProduct product { get; set; }
-    }
-
-    public partial class CRM_ContractDetail_CustomerProduct
-    {
-        public int id { get; set; }
+        public int product_id { get; set; }
 
         public string name { get; set; }
-        
+
         public string product_no { get; set; }
+
+        public int quantity { get; set; }
+
+        public decimal recommended_unit_price { get; set; }
 
         public decimal standard_unit_price { get; set; }
 
+        public decimal total_price { get; set; }
     }
     
 
@@ -172,6 +172,8 @@ namespace PeriodAid.Models
     public partial class CRM_ContractDetail
     {
         public int Id { get; set; }
+
+        public int contract_id { get; set; }
 
         public string customer_address { get; set; }
 
