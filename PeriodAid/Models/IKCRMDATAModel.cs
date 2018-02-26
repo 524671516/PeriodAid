@@ -119,28 +119,26 @@ namespace PeriodAid.Models
 
     public partial class CRM_ContractDetail_Data
     {
-        public  CRM_ContractDetail_Customer customer { get; set; }
+        public CRM_ContractDetail customer { get; set; }
     }
 
-    public partial class CRM_ContractDetail_Customer
-    {
-        public string address { get; set; }
+    //public partial class CRM_ContractDetail_Customer
+    //{
+    //    public string address { get; set; }
 
-        public string full_address { get; set; }
+    //    public string full_address { get; set; }
 
-        public string tel { get; set; }
+    //    public string tel { get; set; }
 
-        public List<CRM_ContractDetail> contacts { get; set; }
-    }
+    //    public List<CRM_ContractDetail> contacts { get; set; }
+    //}
 
     [Table("CRM_ContractDetail")]
     public partial class CRM_ContractDetail
     {
         public int Id { get; set; }
 
-        public string full_address { get; set; }
-
-        public string tel { get; set; }
+        public string address { get; set; }
     }
 
 
