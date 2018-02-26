@@ -2455,10 +2455,9 @@ namespace PeriodAid.Controllers
                 }
 
             }
-            return Content("success");
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
         
-
         public ActionResult GetCrmInfo()
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
@@ -2508,28 +2507,25 @@ namespace PeriodAid.Controllers
 
             }
             crm_db.SaveChanges();
-            return Content("SUCCESS");
+            return Json(new { result = "SUCCESS" , data = r.code }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetCrmDetailInfo(string user_token)
+        public ActionResult GetCrmDetailInfo()
         {
-            //var C_id = contract_id;
-            //var retString = "";
-            //foreach (var cid in C_id)
-            //{
-                string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token + "&device=dingtalk&version_code=9.8.0";
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "get";
-                request.ContentType = "application/x-www-form-urlencoded";
-                //request.ContentType = "application/json";
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/json";
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-                var retString = myStreamReader.ReadToEnd();
-                myStreamReader.Close();
-                
-            //}
-            return Json(new { result = "SUCCESS", data = retString });
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
+
+            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         //[HttpPost]
@@ -2630,14 +2626,6 @@ namespace PeriodAid.Controllers
                                   select m;
             return PartialView(undeliveredData);
         }
-
-        //public ActionResult CRM_deliveredPartical()
-        //{
-        //    var undeliveredData = from m in crm_db.CRM_Contract
-        //                          where m.status == "3779516"
-        //                          select m;
-        //    return View(undeliveredData);
-        //}
 
 
         private static string AppId = "130412";
