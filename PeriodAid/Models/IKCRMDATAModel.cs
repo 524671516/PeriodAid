@@ -22,6 +22,8 @@ namespace PeriodAid.Models
         public virtual DbSet<CRM_ContractDetail> CRM_ContractDetail { get; set; }
         public virtual DbSet<CRM_User_Token> CRM_User_Token { get; set; }
         public virtual DbSet<CRM_ExceptionLogs> CRM_ExceptionLogs { get; set; }
+        public virtual DbSet<CRM_Customer> CRM_Customer { get; set; }
+        public virtual DbSet<CRM_Contact> CRM_Contact { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             
@@ -87,8 +89,6 @@ namespace PeriodAid.Models
 
         public int customer_id { get; set; }
 
-        public string customer_name { get; set; }
-
         public string title { get; set; }
 
         public decimal total_amount { get; set; }
@@ -122,8 +122,9 @@ namespace PeriodAid.Models
         public CRM_ContractDetail_Customer customer { get; set; }
         
         public List<CRM_ContractDetail_CustomerProductList> product_assets_for_new_record { get; set; }
+        
     }
-
+    
     public partial class CRM_ContractDetail_Customer
     {
         public CRM_ContractDetail_CustomerAddress address { get; set; }
@@ -175,17 +176,32 @@ namespace PeriodAid.Models
 
         public int contract_id { get; set; }
 
-        public string customer_address { get; set; }
-
-        public string customer_tel { get; set; }
-
-        public string contacts_address { get; set; }
-
-        public string contacts_tel { get; set; }
-
         public int product_id { get; set; }
     }
 
+    [Table("CRM_Customer")]
+    public partial class CRM_Customer
+    {
+        public int Id { get; set; }
+
+        public string customer_name { get; set; }
+
+        public string customer_address { get; set; }
+
+        public string customer_tel { get; set; }
+    }
+
+    [Table("CRM_Contact")]
+    public partial class CRM_Contact
+    {
+        public int Id { get; set; }
+
+        public string contact_name { get; set; }
+
+        public string contact_address { get; set; }
+
+        public string contact_tel { get; set; }
+    }
 
     public class result_Data
     {

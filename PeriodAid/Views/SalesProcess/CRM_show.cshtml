@@ -61,6 +61,7 @@
             $.ajax({
                 url: "/SalesProcess/GetCrmInfo/",
                 success: function (data) {
+                    //console.log(data)
                     //数据保存完再请求数据页面
                     $.ajax({
                         url: "/SalesProcess/CRM_undeliveredPartical/",
@@ -77,6 +78,8 @@
             $.ajax({
                 url: "/SalesProcess/GetCrmDetailInfo/",
                 success: function (data) {
+                    //var crm = JSON.parse(data.data)
+                    //console.log(crm)
                     console.log(data)
                 }
             })

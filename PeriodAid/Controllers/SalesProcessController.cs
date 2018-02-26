@@ -2491,7 +2491,6 @@ namespace PeriodAid.Controllers
                     check_data.user_id = r.data.contracts[i].user_id;
                     check_data.user_name = r.data.contracts[i].user_name;
                     check_data.customer_id = r.data.contracts[i].customer_id;
-                    check_data.customer_name = r.data.contracts[i].customer_name;
                     check_data.title = r.data.contracts[i].title;
                     check_data.total_amount = r.data.contracts[i].total_amount;
                     check_data.status = r.data.contracts[i].status;
@@ -2505,7 +2504,6 @@ namespace PeriodAid.Controllers
                     check_data.user_id = r.data.contracts[i].user_id;
                     check_data.user_name = r.data.contracts[i].user_name;
                     check_data.customer_id = r.data.contracts[i].customer_id;
-                    check_data.customer_name = r.data.contracts[i].customer_name;
                     check_data.title = r.data.contracts[i].title;
                     check_data.total_amount = r.data.contracts[i].total_amount;
                     check_data.status = r.data.contracts[i].status;
@@ -2515,7 +2513,7 @@ namespace PeriodAid.Controllers
 
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" , data = r.code }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS" , data = r }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCrmDetailInfo()
@@ -2529,7 +2527,6 @@ namespace PeriodAid.Controllers
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "get";
                 request.ContentType = "application/x-www-form-urlencoded";
-                //request.ContentType = "application/json";
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
@@ -2537,21 +2534,31 @@ namespace PeriodAid.Controllers
                 myStreamReader.Close();
                 CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
                 var contact = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.contract_id == C_id.contract_id);
+                string customerAddress = r.data.customer.address.full_address;
+                string customerstr = customerAddress.Remove(0, 3);
                 if (contact == null)
                 {
                     contact = new CRM_ContractDetail();
-                    contact.contract_id = C_id.id;
-                    contact.customer_address = r.data.customer.address.full_address;
-                    contact.customer_tel = r.data.customer.address.tel;
-                    contact.contacts_address = r.data.customer.contacts[0].address.full_address;
-                    contact.contacts_tel = r.data.customer.contacts[0].address.tel;
+                    contact.contract_id = C_id.contract_id;
                     crm_db.CRM_ContractDetail.Add(contact);
                 }
             }
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+
+            //string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            //request.Method = "get";
+            //request.ContentType = "application/x-www-form-urlencoded";
+
+            //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            //StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            //var retString = myStreamReader.ReadToEnd();
+            //myStreamReader.Close();
+            //CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
             //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
+
 
         //[HttpPost]
         //public ActionResult SaveCRMInfo()
