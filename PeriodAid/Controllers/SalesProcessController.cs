@@ -2510,9 +2510,11 @@ namespace PeriodAid.Controllers
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
+
             CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
 
-            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS", data = r }, JsonRequestBehavior.AllowGet);
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         //[HttpPost]
