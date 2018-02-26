@@ -211,6 +211,8 @@ namespace PeriodAid.Models
 
     public partial class CRM_CustomerDetail
     {
+        public int id { get; set; }
+
         public string name { get; set; }
 
         public CRM_CustomerAddress address { get; set; }
@@ -221,6 +223,8 @@ namespace PeriodAid.Models
     public partial class CRM_CustomerAddress
     {
         public int addressable_id { get; set; }
+
+        public string detail_address { get; set; }
 
         public string region_info { get; set; }
 
@@ -248,7 +252,7 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
-        public string contact_id { get; set; }
+        public int contact_id { get; set; }
 
         public string contact_name { get; set; }
 
