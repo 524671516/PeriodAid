@@ -30,15 +30,24 @@
     <script>
         $(function () {
             $("#first_btn").addClass("btn-danger")
+            // 获取user_token
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
-                }
+                    }
             })
+            // 获取crm合同数据
             $.ajax({
                 url: "/SalesProcess/GetCrmInfo/",
                 success: function (data) {
-                    
+                }
+            })
+            // 获取合同详情
+            $.ajax({
+                url: "/SalesProcess/GetCrmDetailInfo/",
+                success: function (data) {
+                    var crm = JSON.parse(data.data)
+                    console.log(crm)
                 }
             })
             //数据保存完再请求数据页面

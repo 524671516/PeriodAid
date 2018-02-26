@@ -39,25 +39,6 @@ namespace PeriodAid.Models
         public string Item_Name { get; set; }
     }
     
-    [Table("CRM_ContractDetail")]
-    public partial class CRM_ContractDetail
-    {
-        public int Id { get; set; }
-
-        public string contacts_name { get; set; }
-
-        public string contacts_tel { get; set; }
-
-        public string contacts_address { get; set; }
-
-        public int customer_address { get; set; }
-
-        public int contract_id { get; set; }
-
-        public int product_id { get; set; }
-
-        public int product_quantity { get; set; }
-    }
     [Table("CRM_User_Token")]
     public partial class CRM_User_Token
     {
@@ -115,6 +96,26 @@ namespace PeriodAid.Models
 
         public DateTime? updated_at { get; set; }
     }
+
+    public class CRM_ContractDetail_ReturnData
+    {
+        public string code { get; set; }
+
+        public CRM_ContractDetail_Data data { get; set; }
+    }
+
+    public partial class CRM_ContractDetail_Data
+    {
+        public List<CRM_ContractDetail> customer { get; set; }
+    }
+
+    [Table("CRM_ContractDetail")]
+    public partial class CRM_ContractDetail
+    {
+        public int Id { get; set; }
+    }
+
+
     public class result_Data
     {
         public string code { get; set; }
