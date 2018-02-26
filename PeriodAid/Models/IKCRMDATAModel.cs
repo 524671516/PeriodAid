@@ -26,8 +26,9 @@ namespace PeriodAid.Models
         public virtual DbSet<CRM_Contact> CRM_Contact { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            
-           
+            modelBuilder.Entity<CRM_Product>().HasMany(m => m.CRM_ContractDetail).WithRequired(m => m.CRM_Product).HasForeignKey(m => m.product_id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<CRM_Customer>().HasMany(m => m.CRM_Contract).WithRequired(m => m.CRM_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<CRM_Customer>().HasMany(m => m.CRM_Contact).WithRequired(m => m.CRM_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
         }
     }
     [Table("CRM_Product")]
@@ -40,6 +41,9 @@ namespace PeriodAid.Models
         public string System_Code { get; set; }
 
         public string Item_Name { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CRM_ContractDetail> CRM_ContractDetail { get; set; }
     }
     
     [Table("CRM_User_Token")]
@@ -88,6 +92,8 @@ namespace PeriodAid.Models
         public string user_name { get; set; }
 
         public int customer_id { get; set; }
+
+        public virtual CRM_Customer CRM_Customer { get; set; }
 
         public string title { get; set; }
 
@@ -155,8 +161,6 @@ namespace PeriodAid.Models
     {
         public int product_id { get; set; }
 
-        public string name { get; set; }
-
         public string product_no { get; set; }
 
         public int quantity { get; set; }
@@ -164,8 +168,6 @@ namespace PeriodAid.Models
         public decimal recommended_unit_price { get; set; }
 
         public decimal standard_unit_price { get; set; }
-
-        public decimal total_price { get; set; }
     }
     
 
@@ -177,6 +179,12 @@ namespace PeriodAid.Models
         public int contract_id { get; set; }
 
         public int product_id { get; set; }
+
+        public int product_quantity { get; set; }
+
+        public decimal standard_unit_price { get; set; }
+
+        public virtual CRM_Product CRM_Product { get; set; }
     }
 
     [Table("CRM_Customer")]
@@ -189,6 +197,12 @@ namespace PeriodAid.Models
         public string customer_address { get; set; }
 
         public string customer_tel { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CRM_Contract> CRM_Contract { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CRM_Contact> CRM_Contact { get; set; }
     }
 
     [Table("CRM_Contact")]
@@ -201,6 +215,10 @@ namespace PeriodAid.Models
         public string contact_address { get; set; }
 
         public string contact_tel { get; set; }
+
+        public int customer_id { get; set; }
+
+        public virtual CRM_Customer CRM_Customer { get; set; }
     }
 
     public class result_Data
