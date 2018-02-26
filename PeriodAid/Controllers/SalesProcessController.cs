@@ -2463,7 +2463,7 @@ namespace PeriodAid.Controllers
             for(int i = 0; i< r.data.contracts.Count();i++)
             {
                 var contractId = r.data.contracts[i].id;
-                var check_data = crm_db.CRM_Contract.AsNoTracking().SingleOrDefault(m => m.contract_id == contractId);
+                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId && m.status == "3779515");
                 if (check_data == null)
                 {
                     check_data = new CRM_Contract();
