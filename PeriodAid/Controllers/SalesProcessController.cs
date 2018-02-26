@@ -2411,7 +2411,7 @@ namespace PeriodAid.Controllers
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
-            if (days >= 1)
+            if (days <= 1)
             {
                 string url = "https://api.ikcrm.com/api/v2/auth/login";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -2438,17 +2438,24 @@ namespace PeriodAid.Controllers
                 var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 result_Data resultdata = JsonConvert.DeserializeObject<result_Data>(retString);
-                if (resultdata.code == "0")
+                if (resultdata.code != "0")
                 {
                     token_time.user_token = resultdata.data.user_token;
                     token_time.download_at = DateTime.Now;
                     crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
                     crm_db.SaveChanges();
                 }
-                else {
+                else
+                {
+                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
                     Thread.Sleep(1000);
                     try_times++;
                     if (try_times >= 10) {
+                        logs.type = "user_token";
+                        logs.exception = "获取失败";
+                        logs.exception_at = DateTime.Now;
+                        crm_db.CRM_ExceptionLogs.Add(logs);
+                        crm_db.SaveChanges();
                         return Content("failed");
                     }
                     return GetUserToken();

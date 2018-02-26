@@ -159,40 +159,10 @@
                     if (orderarry.length == 0) {
                         
                     } else {
-                        $.ajax({
-                            url: "/SalesProcess/UpdateCRM/",
-                            type:"post",
-                            data: {
-                                c_id: orderarry,
-                            },
-                            success: function (data) {
-                                $.ajax({
-                                    url: "/SalesProcess/GetCrmInfo/",
-                                    data: {
-                                    },
-                                    success: function (data) {
-                                        // 订单新增(gy.erp.trade.add)  ERP API 暂时不写
-                                        $.ajax({
-
-                                        })
-                                        alert("已推送至ERP等待审核")
-                                        $.ajax({
-                                            url: "/SalesProcess/CRM_undeliveredPartical/",
-                                            data: {
-                                                status: "3779515"
-                                            },
-                                            success: function (data) {
-                                                $("#undelivered_list_content").html(data)
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                        })
+                        UpdateCRM()
                     }
                     $(".change_status").on("click", function () {
-                        var that = $(this)
-                        
+                        UpdateCRM()
                     })
                 })
                 // 同步ERP快递信息
@@ -210,5 +180,37 @@
                 })
             }
         })
+        function UpdateCRM() {
+            $.ajax({
+                url: "/SalesProcess/UpdateCRM/",
+                type: "post",
+                data: {
+                    c_id: orderarry,
+                },
+                success: function (data) {
+                    $.ajax({
+                        url: "/SalesProcess/GetCrmInfo/",
+                        data: {
+                        },
+                        success: function (data) {
+                            // 订单新增(gy.erp.trade.add)  ERP API 暂时不写
+                            $.ajax({
+
+                            })
+                            alert("已推送至ERP等待审核")
+                            $.ajax({
+                                url: "/SalesProcess/CRM_undeliveredPartical/",
+                                data: {
+                                    status: "3779515"
+                                },
+                                success: function (data) {
+                                    $("#undelivered_list_content").html(data)
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
     })
 </script>
