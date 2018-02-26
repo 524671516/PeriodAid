@@ -119,22 +119,69 @@ namespace PeriodAid.Models
 
     public partial class CRM_ContractDetail_Data
     {
-        public  CRM_ContractDetail_Customer customer { get; set; }
-
-        public CRM_ContractDetail address { get; set; }
+        public CRM_ContractDetail_Customer customer { get; set; }
     }
 
     public partial class CRM_ContractDetail_Customer
     {
-        public List<CRM_ContractDetail> contacts { get; set; }
+        public CRM_ContractDetail_CustomerAddress address { get; set; }
+
+        public List<CRM_ContractDetail_CustomerContacts> contacts { get; set; }
+
+        public List<CRM_ContractDetail_CustomerProductList> product_assets_for_new_record { get; set; }
     }
+
+    public partial class CRM_ContractDetail_CustomerAddress
+    {
+        public string full_address { get; set; }
+
+        public string tel { get; set; }
+    }
+
+    public partial class CRM_ContractDetail_CustomerContacts
+    {
+        public CRM_ContractDetail_CustomerContactsAddress address { get; set; }
+    }
+
+    public partial class CRM_ContractDetail_CustomerContactsAddress
+    {
+        public string full_address { get; set; }
+
+        public string tel { get; set; }
+    }
+
+    public partial class CRM_ContractDetail_CustomerProductList
+    {
+        public CRM_ContractDetail_CustomerProduct product { get; set; }
+    }
+
+    public partial class CRM_ContractDetail_CustomerProduct
+    {
+        public int id { get; set; }
+
+        public string name { get; set; }
+        
+        public string product_no { get; set; }
+
+        public decimal standard_unit_price { get; set; }
+
+    }
+    
 
     [Table("CRM_ContractDetail")]
     public partial class CRM_ContractDetail
     {
         public int Id { get; set; }
 
-        public string full_address { get; set; }
+        public string customer_address { get; set; }
+
+        public string customer_tel { get; set; }
+
+        public string contacts_address { get; set; }
+
+        public string contacts_tel { get; set; }
+
+        public int product_id { get; set; }
     }
 
 
