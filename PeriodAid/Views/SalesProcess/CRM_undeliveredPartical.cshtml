@@ -24,7 +24,7 @@
             <tr>
                 <td>
                     <label class="checkbox-custom">
-                        <input type="checkbox" class="btn" data-val="@item.id">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.id">
                     </label>
                 </td>
                 <td>@item.contract_id</td>
@@ -55,8 +55,54 @@
 </div>
 <script>
     $(function () {
+        $("#batch_change_status").hide()
+        $("#batch_change_deliverys").hide()
+        var orderarry = [];
+        //单选
+        $(".checkbox").click(function () {
+            var that = $(this)
+            var C_id = that.attr("data-val")
+            var select = that.is(":checked");
+            if (select) {
+                orderarry.push(C_id)
+                $("#batch_change_status").show()
+                $(".change_status").hide()
+            } else {
+                orderarry.remove(C_id)
+                $("#checkbox-all").prop("checked", false)
+            }
+            if ($("input:checked").length < 2) {
+                $("#batch_change_status").hide()
+                $(".change_status").show()
+            }
+        })
+        //全选
+        $("#checkbox-all").click(function () {
+            var i = 0
+            if ($(this).is(":checked")) {
+                $("#batch_change_status").show()
+                $(".change_status").hide()
+                $("input").prop("checked", true);
+                var list = $(".checkbox:checked")
+                for (i; i < list.length; i++) {
+                    var list_data = $(list[i]).attr("data-val")
+                    if (orderarry.indexOf(list_data) == -1) {
+                        orderarry.push(list_data)
+                    }
+                }
+            } else {
+                $("#batch_change_status").hide()
+                $(".change_status").show()
+                $("input").prop("checked", false);
+                var list = $(".checkbox:unchecked")
+                for (i; i < list.length; i++) {
+                    orderarry.remove($(list[i]).attr("data-val"))
+                }
+            }
+        })
         // 同步到ERP等待审核
         $("#batch_change_status").click(function () {
+            console.log(orderarry)
             if (orderarry.length == 0) {
 
             } else {
@@ -105,46 +151,6 @@
                 }
             })
         })
-
-        $(".change_status").on("click", function () {
-            var that = $(this)
-
-        })
-
-        $("#batch_change_status").hide()
-        $("#batch_change_deliverys").hide()
-        var orderarry = [];
-        $("input").click(function () {
-            var that = $(this)
-            var C_id = that.attr("data-val")
-            var select = that.is(":checked");
-            if (select) {
-                orderarry.push(C_id)
-                $("#batch_change_status").show()
-                $(".change_status").hide()
-            } else {
-                orderarry.remove(C_id)
-                $("#checkbox-all").prop("checked", false)
-            }
-            if ($("input:checked").length < 2) {
-                $("#batch_change_status").hide()
-                $(".change_status").show()
-            }
-        })
-        $("#checkbox-all").click(function () {
-            if ($(this).is(":checked")) {
-                $("#batch_change_status").show()
-                $(".change_status").hide()
-                $("input").prop("checked", true);  
-                orderarry.push($("input").attr("data-val"))
-            } else {
-                $("#batch_change_status").hide()
-                $(".change_status").show()
-                $("input").prop("checked", false);  
-                orderarry.remove($("input").attr("data-val"))
-            }
-        })
-
         $(".change_status").on("click", function () {
             orderarry.push($(this).attr("data-val"))
             UpdateCRM()

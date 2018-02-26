@@ -2452,7 +2452,7 @@ namespace PeriodAid.Controllers
                     try_times++;
                     if (try_times >= 10) {
                         logs.type = "user_token";
-                        logs.exception = "获取失败";
+                        logs.exception = "[user_token]获取失败";
                         logs.exception_at = DateTime.Now;
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
@@ -2479,86 +2479,154 @@ namespace PeriodAid.Controllers
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(retString);
-            
-            for(int i = 0; i< r.data.contracts.Count();i++)
-            {
-                var contractId = r.data.contracts[i].id;
-                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                if (check_data == null)
-                {
-                    check_data = new CRM_Contract();
-                    check_data.contract_id = r.data.contracts[i].id;
-                    check_data.user_id = r.data.contracts[i].user_id;
-                    check_data.user_name = r.data.contracts[i].user_name;
-                    check_data.customer_id = r.data.contracts[i].customer_id;
-                    check_data.title = r.data.contracts[i].title;
-                    check_data.total_amount = r.data.contracts[i].total_amount;
-                    check_data.status = r.data.contracts[i].status;
-                    check_data.updated_at = r.data.contracts[i].updated_at;
-                    crm_db.CRM_Contract.Add(check_data);
-                }
-                else
-                {
-                    // update
-                    check_data.contract_id = r.data.contracts[i].id;
-                    check_data.user_id = r.data.contracts[i].user_id;
-                    check_data.user_name = r.data.contracts[i].user_name;
-                    check_data.customer_id = r.data.contracts[i].customer_id;
-                    check_data.title = r.data.contracts[i].title;
-                    check_data.total_amount = r.data.contracts[i].total_amount;
-                    check_data.status = r.data.contracts[i].status;
-                    check_data.updated_at = r.data.contracts[i].updated_at;
-                    crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
-                }
 
+            if (r.code == "0")
+            {
+                for (int i = 0; i < r.data.contracts.Count(); i++)
+                {
+                    var contractId = r.data.contracts[i].id;
+                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                    if (check_data == null)
+                    {
+                        check_data = new CRM_Contract();
+                        check_data.contract_id = r.data.contracts[i].id;
+                        check_data.user_id = r.data.contracts[i].user_id;
+                        check_data.user_name = r.data.contracts[i].user_name;
+                        check_data.customer_id = r.data.contracts[i].customer_id;
+                        check_data.title = r.data.contracts[i].title;
+                        check_data.total_amount = r.data.contracts[i].total_amount;
+                        check_data.status = r.data.contracts[i].status;
+                        check_data.updated_at = r.data.contracts[i].updated_at;
+                        crm_db.CRM_Contract.Add(check_data);
+                    }
+                    else
+                    {
+                        // update
+                        check_data.contract_id = r.data.contracts[i].id;
+                        check_data.user_id = r.data.contracts[i].user_id;
+                        check_data.user_name = r.data.contracts[i].user_name;
+                        check_data.customer_id = r.data.contracts[i].customer_id;
+                        check_data.title = r.data.contracts[i].title;
+                        check_data.total_amount = r.data.contracts[i].total_amount;
+                        check_data.status = r.data.contracts[i].status;
+                        check_data.updated_at = r.data.contracts[i].updated_at;
+                        crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                    }
+
+                }
+                crm_db.SaveChanges();
             }
-            crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" , data = r }, JsonRequestBehavior.AllowGet);
+            else
+            {
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                Thread.Sleep(1000);
+                try_times++;
+                if (try_times >= 10)
+                {
+                    logs.type = "contracts";
+                    logs.exception = "[合同]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return Content("failed");
+                }
+                return GetCrmInfo();
+            }
+
+
+            return Json(new { result = "SUCCESS" , data = r.code }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCrmDetailInfo()
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            var contracts = from m in crm_db.CRM_Contract
-                            select m;
-            foreach (var C_id in contracts)
-            {
-                string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "get";
-                request.ContentType = "application/x-www-form-urlencoded";
+            //var contracts = from m in crm_db.CRM_Contract
+            //                select m;
+            //foreach (var C_id in contracts)
+            //{
+            //    string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            //    request.Method = "get";
+            //    request.ContentType = "application/x-www-form-urlencoded";
+            //    //request.ContentType = "application/json";
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-                var retString = myStreamReader.ReadToEnd();
-                myStreamReader.Close();
-                CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
-                var contact = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.contract_id == C_id.contract_id);
-                string customerAddress = r.data.customer.address.full_address;
-                string customerstr = customerAddress.Remove(0, 3);
-                if (contact == null)
-                {
-                    contact = new CRM_ContractDetail();
-                    contact.contract_id = C_id.contract_id;
-                    crm_db.CRM_ContractDetail.Add(contact);
-                }
-            }
-            crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            //    var retString = myStreamReader.ReadToEnd();
+            //    myStreamReader.Close();
+            //    CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
+            //    var contact = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.contract_id == C_id.contract_id);
+            //    if (contact == null)
+            //    {
+            //        contact = new CRM_ContractDetail();
+            //        crm_db.CRM_Contract.Add(contact);
+            //    }
+            //}
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/json";
 
-            //string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            //request.Method = "get";
-            //request.ContentType = "application/x-www-form-urlencoded";
-
-            //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            //StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            //var retString = myStreamReader.ReadToEnd();
-            //myStreamReader.Close();
-            //CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
-            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
+            //return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
-        
+
+        //[HttpPost]
+        //public ActionResult SaveCRMInfo()
+        //{
+        //    var sr = new StreamReader(Request.InputStream);
+        //    var stream = sr.ReadToEnd();
+        //    JavaScriptSerializer js = new JavaScriptSerializer();
+        //    var list = js.Deserialize<List<CRM_Contract>>(stream);
+        //    if (list.Count() != 0)
+        //    {
+        //        foreach (var item in list)
+        //        {
+        //            var check_data = crm_db.CRM_Contract.AsNoTracking().SingleOrDefault(m => m.contract_id == item.contract_id);
+        //            if (check_data == null)
+        //            {
+        //                // new
+        //                check_data = new CRM_Contract();
+        //                check_data.user_id = item.user_id;
+        //                check_data.user_name = item.user_name;
+        //                check_data.contract_id = item.contract_id;
+        //                check_data.contract_price = item.contract_price;
+        //                check_data.contract_title = item.contract_title;
+        //                check_data.customer_id = item.customer_id;
+        //                check_data.sign_date = item.updated_at;
+        //                check_data.updated_at = item.updated_at;
+        //                check_data.status = item.status;
+        //                check_data.customer_name = item.customer_name;
+        //                crm_db.CRM_Contract.Add(check_data);
+        //            }
+        //            else
+        //            {
+        //                // update
+        //                check_data.user_id = item.user_id;
+        //                check_data.user_name = item.user_name;
+        //                check_data.contract_id = item.contract_id;
+        //                check_data.contract_price = item.contract_price;
+        //                check_data.contract_title = item.contract_title;
+        //                check_data.customer_id = item.customer_id;
+        //                check_data.sign_date = item.updated_at;
+        //                check_data.updated_at = item.updated_at;
+        //                check_data.status = item.status;
+        //                check_data.customer_name = item.customer_name;
+        //                crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+        //            }
+        //        }
+        //    }
+        //    crm_db.SaveChanges();
+        //    return Json(new { result = "success" });
+        //}
+
         public ActionResult UpdateCRM(int[] c_id)
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);

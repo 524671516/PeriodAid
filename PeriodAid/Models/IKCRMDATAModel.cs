@@ -36,10 +36,13 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
+        [StringLength(64)]
         public string Item_Code { get; set; }
 
+        [StringLength(64)]
         public string System_Code { get; set; }
 
+        [StringLength(64)]
         public string Item_Name { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -51,12 +54,13 @@ namespace PeriodAid.Models
     {
         public int Id { get; set; }
 
+        [StringLength(256)]
         public string user_token { get; set; }
 
         public DateTime download_at { get; set; }
     }
 
-    public class orders_Result
+    public partial class orders_Result
     {
         public bool success { get; set; }//响应成功/响应失败
         public string errorCode { get; set; }//错误代码
@@ -68,8 +72,9 @@ namespace PeriodAid.Models
         public int total;
     }
 
-    public class CRM_Contract_ReturnData
+    public partial class CRM_Contract_ReturnData
     {
+        [StringLength(64)]
         public string code { get; set; }
 
         public CRM_Contract_Data data { get; set; }
