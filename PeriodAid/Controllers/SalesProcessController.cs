@@ -2479,7 +2479,7 @@ namespace PeriodAid.Controllers
             var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
             CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
-            return Json(new { result = "SUCCESS", data = r }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCrmInfo()

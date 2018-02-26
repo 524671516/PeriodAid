@@ -74,7 +74,6 @@ namespace PeriodAid.Models
 
     public partial class CRM_Contract_ReturnData
     {
-        [StringLength(64)]
         public string code { get; set; }
 
         public CRM_Contract_Data data { get; set; }
@@ -130,7 +129,7 @@ namespace PeriodAid.Models
 
     public partial class CRM_ContractDetail_Data
     {
-        public CRM_ContractDetail_Customer customer { get; set; }
+        //public CRM_ContractDetail_Customer customer { get; set; }
         
         public List<CRM_ContractDetail_CustomerProductList> product_assets_for_new_record { get; set; }
         
@@ -139,23 +138,9 @@ namespace PeriodAid.Models
     public partial class CRM_ContractDetail_Customer
     {
         public CRM_ContractDetail_CustomerAddress address { get; set; }
-
-        public List<CRM_ContractDetail_CustomerContacts> contacts { get; set; }
     }
 
     public partial class CRM_ContractDetail_CustomerAddress
-    {
-        public string full_address { get; set; }
-
-        public string tel { get; set; }
-    }
-
-    public partial class CRM_ContractDetail_CustomerContacts
-    {
-        public CRM_ContractDetail_CustomerContactsAddress address { get; set; }
-    }
-
-    public partial class CRM_ContractDetail_CustomerContactsAddress
     {
         public string full_address { get; set; }
 
@@ -221,13 +206,49 @@ namespace PeriodAid.Models
 
     public partial class CRM_Customer_Data
     {
+        public List<CRM_CustomerDetail> customers { get; set; }
     }
 
+    public partial class CRM_CustomerDetail
+    {
+        public string name { get; set; }
+
+        public CRM_CustomerAddress address { get; set; }
+
+        public List<CRM_CustomerContacts> contacts { get; set; }
+    }
+
+    public partial class CRM_CustomerAddress
+    {
+        public int addressable_id { get; set; }
+
+        public string region_info { get; set; }
+
+        public string tel { get; set; }
+    }
+
+    public partial class CRM_CustomerContacts
+    {
+        public CRM_CustomerContactsAddress address { get; set; }
+    }
+    
+    public partial class CRM_CustomerContactsAddress
+    {
+        public int addressable_id { get; set; }
+
+        public string region_info { get; set; }
+
+        public string detail_address { get; set; }
+
+        public string tel { get; set; }
+    }
 
     [Table("CRM_Contact")]
     public partial class CRM_Contact
     {
         public int Id { get; set; }
+
+        public string contact_id { get; set; }
 
         public string contact_name { get; set; }
 

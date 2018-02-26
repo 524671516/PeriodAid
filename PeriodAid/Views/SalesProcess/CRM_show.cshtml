@@ -61,7 +61,8 @@
             $.ajax({
                 url: "/SalesProcess/GetCustomer/",
                 success: function (data) {
-                    console.log(data)
+                    var crm = JSON.parse(data.data)
+                    console.log(crm)
                 }
             })
             // 获取crm合同数据
@@ -87,7 +88,7 @@
                 success: function (data) {
                     //var crm = JSON.parse(data.data)
                     //console.log(crm)
-                    console.log(data)
+                    //console.log(data)
                 }
             })
 
