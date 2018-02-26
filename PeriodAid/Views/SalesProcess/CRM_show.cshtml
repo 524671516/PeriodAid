@@ -34,12 +34,43 @@
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
-                    }
+                    // 同步到ERP等待审核
+                    $("#batch_change_status").click(function () {
+                        if (orderarry.length == 0) {
+
+                        } else {
+                            UpdateCRM()
+                        }
+                    })
+                    // 同步ERP快递信息
+                    $(".get_erp_status").click(function () {
+                        $.ajax({
+                            url: "/SalesProcess/getERPORDERS/",
+                            data: {
+                                c_id: $(this).attr("data-val"),
+                            },
+                            success: function (data) {
+                                console.log(data)
+
+                            }
+                        })
+                    })
+                }
             })
             // 获取crm合同数据
             $.ajax({
                 url: "/SalesProcess/GetCrmInfo/",
                 success: function (data) {
+                    //数据保存完再请求数据页面
+                    $.ajax({
+                        url: "/SalesProcess/CRM_undeliveredPartical/",
+                        data: {
+                            status: $("#first_btn").attr("data-val")
+                        },
+                        success: function (data) {
+                            $("#undelivered_list_content").html(data)
+                        }
+                    })
                 }
             })
             // 获取合同详情
@@ -49,16 +80,7 @@
                     console.log(data)
                 }
             })
-            //数据保存完再请求数据页面
-            $.ajax({
-                url: "/SalesProcess/CRM_undeliveredPartical/",
-                data: {
-                    status: $("#first_btn").attr("data-val")
-                },
-                success: function (data) {
-                    $("#undelivered_list_content").html(data)
-                }
-            })
+
             // 选择
             $(".status-btn").on("click", function () {
                 var that = $(this)

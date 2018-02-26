@@ -34,6 +34,7 @@ namespace PeriodAid.Controllers
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
         private IKCRMDATAModel crm_db;
+        int try_times = 0;
         public SalesProcessController()
         {
             _db = new SalesProcessModel();
@@ -2407,11 +2408,10 @@ namespace PeriodAid.Controllers
         
         public ActionResult GetUserToken()
         {
-            var try_times = 0;
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
-            if (days <= 1)
+            if (days >= 1)
             {
                 string url = "https://api.ikcrm.com/api/v2/auth/login";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -2438,7 +2438,7 @@ namespace PeriodAid.Controllers
                 var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 result_Data resultdata = JsonConvert.DeserializeObject<result_Data>(retString);
-                if (resultdata.code != "0")
+                if (resultdata.code == "0")
                 {
                     token_time.user_token = resultdata.data.user_token;
                     token_time.download_at = DateTime.Now;
@@ -2456,6 +2456,7 @@ namespace PeriodAid.Controllers
                         logs.exception_at = DateTime.Now;
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
+                        try_times = 0;
                         return Content("failed");
                     }
                     return GetUserToken();
