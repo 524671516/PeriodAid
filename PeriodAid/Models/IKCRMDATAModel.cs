@@ -120,12 +120,16 @@ namespace PeriodAid.Models
     public partial class CRM_ContractDetail_Data
     {
         public  CRM_ContractDetail_Customer customer { get; set; }
-
-        public CRM_ContractDetail address { get; set; }
     }
 
     public partial class CRM_ContractDetail_Customer
     {
+        public string address { get; set; }
+
+        public string full_address { get; set; }
+
+        public string tel { get; set; }
+
         public List<CRM_ContractDetail> contacts { get; set; }
     }
 
@@ -135,6 +139,8 @@ namespace PeriodAid.Models
         public int Id { get; set; }
 
         public string full_address { get; set; }
+
+        public string tel { get; set; }
     }
 
 
