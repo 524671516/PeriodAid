@@ -2493,7 +2493,6 @@ namespace PeriodAid.Controllers
                         check_data.user_id = r.data.contracts[i].user_id;
                         check_data.user_name = r.data.contracts[i].user_name;
                         check_data.customer_id = r.data.contracts[i].customer_id;
-                        check_data.customer_name = r.data.contracts[i].customer_name;
                         check_data.title = r.data.contracts[i].title;
                         check_data.total_amount = r.data.contracts[i].total_amount;
                         check_data.status = r.data.contracts[i].status;
@@ -2507,7 +2506,6 @@ namespace PeriodAid.Controllers
                         check_data.user_id = r.data.contracts[i].user_id;
                         check_data.user_name = r.data.contracts[i].user_name;
                         check_data.customer_id = r.data.contracts[i].customer_id;
-                        check_data.customer_name = r.data.contracts[i].customer_name;
                         check_data.title = r.data.contracts[i].title;
                         check_data.total_amount = r.data.contracts[i].total_amount;
                         check_data.status = r.data.contracts[i].status;
