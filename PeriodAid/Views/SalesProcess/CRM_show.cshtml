@@ -13,15 +13,10 @@
 </table>*@
 <div class="select-btn">
     <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3779515" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
-    <a class="btn btn-info btn-sm status-btn" data-val="3780205" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
-    <a class="btn btn-info btn-sm status-btn" data-val="3779516"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
+    <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="3780205" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
+    <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3779516"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
     <a class="btn btn-info btn-sm status-btn" id="renovate_btn"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
 </div>
-@*<ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#" aria-controls="home" data-val="3779515" class="status-btn" role="tab" data-toggle="tab">待发货</a></li>
-    <li role="presentation"><a href="#" aria-controls="profile" data-val="3780205" role="tab" class="status-btn" data-toggle="tab">发货待审核</a></li>
-    <li role="presentation"><a href="#" aria-controls="profile" data-val="3779516" role="tab" class="status-btn" data-toggle="tab">已发货</a></li>       
-</ul>*@
 <div id="undelivered_list_content" style="margin-top:20px">
 </div>
 
@@ -34,42 +29,18 @@
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
                 success: function (data) {
-                    // 同步到ERP等待审核
-                    $("#batch_change_status").click(function () {
-                        if (orderarry.length == 0) {
-
-                        } else {
-                            UpdateCRM()
-                        }
-                    })
-                    // 同步ERP快递信息
-                    $(".get_erp_status").click(function () {
-                        $.ajax({
-                            url: "/SalesProcess/getERPORDERS/",
-                            data: {
-                                c_id: $(this).attr("data-val"),
-                            },
-                            success: function (data) {
-                                console.log(data)
-
-                            }
-                        })
-                    })
                 }
             })
             // 获取crm客户数据
             $.ajax({
                 url: "/SalesProcess/GetCustomer/",
                 success: function (data) {
-                    var crm = JSON.parse(data.data)
-                    console.log(crm)
                 }
             })
             // 获取crm合同数据
             $.ajax({
                 url: "/SalesProcess/GetCrmInfo/",
                 success: function (data) {
-                    //console.log(data)
                     //数据保存完再请求数据页面
                     $.ajax({
                         url: "/SalesProcess/CRM_undeliveredPartical/",
@@ -86,12 +57,9 @@
             $.ajax({
                 url: "/SalesProcess/GetCrmDetailInfo/",
                 success: function (data) {
-                    //var crm = JSON.parse(data.data)
-                    //console.log(crm)
-                    //console.log(data)
+                    console.log(data)
                 }
             })
-
             // 选择
             $(".status-btn").on("click", function () {
                 var that = $(this)
