@@ -120,6 +120,14 @@ namespace PeriodAid.Models
 
     }
 
+    [Table("CRM_Product_ContractDetail")]
+    public partial class CRM_Product_ContractDetail
+    {
+        public int ProductId { get; set; }
+
+        public int ContractDetailId { get; set; }
+    }
+
     [Table("CRM_ExceptionLogs")]
     public partial class CRM_ExceptionLogs
     {
