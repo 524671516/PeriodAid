@@ -382,7 +382,8 @@ namespace PeriodAid.Models
     public static class UserInfo
     {
         /// 账户名
-        public static string login = "18817958576";
+        //public static string login = "18817958576";
+        public static string login = "15921503329";
         ///账户密码
         public static string password = "mengyu24";
         /// 类型

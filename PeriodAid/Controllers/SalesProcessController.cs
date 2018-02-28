@@ -2484,7 +2484,15 @@ namespace PeriodAid.Controllers
                 {
                     var Cid = r.data.customers[i].id;
                     string cAddress = r.data.customers[i].address.region_info;
-                    string cstr = cAddress.Remove(0, 3);
+                    string cstr = "";
+                    if (cAddress.Count()>3)
+                    {
+                        cstr = cAddress.Remove(0, 3);
+                    }else
+                    {
+                        cstr = cAddress;
+                    }
+                    
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
                     if (check_customer == null)
                     {
@@ -2563,7 +2571,6 @@ namespace PeriodAid.Controllers
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             Random ran = new Random();
             int RandKey = ran.Next(01, 99);
-            var platform_code ="IK"+DateTime.Now.ToString("yyyyMMddHHmmss")+ RandKey;
             string url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
@@ -2578,6 +2585,7 @@ namespace PeriodAid.Controllers
             {
                 for (int i = 0; i < r.data.contracts.Count(); i++)
                 {
+                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey+i;
                     var contractId = r.data.contracts[i].id;
                     var customerId = r.data.contracts[i].customer_id;
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
@@ -2704,6 +2712,7 @@ namespace PeriodAid.Controllers
 
         public int GetProduct_Count()
         {
+            Thread.Sleep(1000);
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             string url = "https://api.ikcrm.com/api/v2/products?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             var request = WebRequest.Create(url) as HttpWebRequest;
@@ -2898,6 +2907,7 @@ namespace PeriodAid.Controllers
                        "\"appkey\":\"" + AppId + "\"," +
                         "\"method\":\"gy.erp.trade.get\"," +
                         "\"platform_code\":\"" + platform_code + "\"," +
+                        //"\"platform_code\":\"" + contract.platform_code + "\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"" +
                         "}";
                 string signature = sign(json, AppSecret);
@@ -2905,6 +2915,7 @@ namespace PeriodAid.Controllers
                        "\"appkey\":\"" + AppId + "\"," +
                         "\"method\":\"gy.erp.trade.get\"," +
                         "\"platform_code\":\"" + platform_code + "\"," +
+                        //"\"platform_code\":\"" + contract.platform_code + "\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"," +
                         "\"sign\":\"" + signature + "\"" +
                     "}";
