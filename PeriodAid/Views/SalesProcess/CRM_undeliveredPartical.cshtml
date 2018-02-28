@@ -33,13 +33,13 @@
                 <td>@item.CRM_Customer.customer_name</td>
                 <td>@Html.ContractStatus(item.status)</td>
                 
-                @if (item.status == "3779515")
+                @if (item.status == "3531567")
                 {
                     <td>
                         <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status" style="cursor:pointer">同步ERP</a>
                     </td>
                 }
-                else if (item.status == "3780205")
+                else if (item.status == "3531568")
                 {
                     <td>
                        <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status" style="cursor:pointer">获取ERP配送信息</a>
@@ -66,7 +66,7 @@
             var select = that.is(":checked");
             if (select) {
                 orderarry.push(C_id)
-                if (that.attr("data-status") == "3779515") {
+                if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").show()
                     $(".change_status").hide()
                 } else {
@@ -79,7 +79,7 @@
                 $("#checkbox-all").prop("checked", false)
             }
             if ($("input:checked").length < 2) {
-                if (that.attr("data-status") == "3779515") {
+                if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").hide()
                     $(".change_status").show()
                 } else {
@@ -93,7 +93,7 @@
         $("#checkbox-all").click(function () {
             var i = 0
             var that = $(this)
-            if (that.attr("data-status") == "3779515") {
+            if (that.attr("data-status") == "3531567") {
                 if (that.is(":checked")) {
                     $("#batch_change_status").show()
                     $(".change_status").hide()
@@ -165,7 +165,7 @@
                                 $.ajax({
                                     url: "/SalesProcess/CRM_undeliveredPartical/",
                                     data: {
-                                        status: "3779515"
+                                        status: "3531567"
                                     },
                                     success: function (data) {
                                         $("#undelivered_list_content").html(data)
@@ -200,7 +200,7 @@
                             $.ajax({
                                 url: "/SalesProcess/CRM_undeliveredPartical/",
                                 data: {
-                                    status: "3779516"
+                                    status: "3764330"
                                 },
                                 success: function (data) {
                                     $("#undelivered_list_content").html(data)
@@ -237,7 +237,7 @@
                             $.ajax({
                                 url: "/SalesProcess/CRM_undeliveredPartical/",
                                 data: {
-                                    status: "3779516"
+                                    status: "3764330"
                                 },
                                 success: function (data) {
                                     $("#undelivered_list_content").html(data)
@@ -276,7 +276,7 @@
                             $.ajax({
                                 url: "/SalesProcess/CRM_undeliveredPartical/",
                                 data: {
-                                    status: "3779515"
+                                    status: "3531567"
                                 },
                                 success: function (data) {
                                     $("#undelivered_list_content").html(data)

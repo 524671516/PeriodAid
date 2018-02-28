@@ -239,8 +239,6 @@ namespace PeriodAid.Models
         public int id { get; set; }
 
         public string text_asset_1e30f4 { get; set; }
-
-        public string text_asset_f1a68e_display { get; set; }
     }
     
     public partial class CRM_ContractDetail_CustomerProductList
@@ -326,8 +324,6 @@ namespace PeriodAid.Models
 
     public partial class CRM_CustomerAddress
     {
-        public int addressable_id { get; set; }
-
         public string detail_address { get; set; }
 
         public string region_info { get; set; }
@@ -384,18 +380,18 @@ namespace PeriodAid.Models
     public static class UserInfo
     {
         /// 账户名
-        //public static string login = "18817958576";
-        public static string login = "15921503329";
+        public static string login = "18817958576";
+        //public static string login = "15921503329";
         ///账户密码
         public static string password = "mengyu24";
         /// 类型
         public static string device = "dingtalk";
-        ///CRM订单状态：待同步
-        public static string status_unsend = "3779515";
+        ///CRM订单状态：未开始
+        public static string status_unsend = "3531567";
         ///CRM订单状态：已同步待发货
-        public static string status_undelivered = "3780205";
+        public static string status_undelivered = "3531568";
         ///CRM订单状态：已发货
-        public static string status_delivered = "3779516";
+        public static string status_delivered = "3764330";
 
 
     }

@@ -2491,7 +2491,6 @@ namespace PeriodAid.Controllers
                     {
                         cstr = cAddress;
                     }
-                    
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
                     if (check_customer == null)
                     {
@@ -2562,6 +2561,7 @@ namespace PeriodAid.Controllers
                 crm_db.SaveChanges();
             }
             return Json(new { result = "SUCCESS", data = r.code }, JsonRequestBehavior.AllowGet);
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCrmInfo()
@@ -2573,7 +2573,6 @@ namespace PeriodAid.Controllers
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
-
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
@@ -2583,7 +2582,7 @@ namespace PeriodAid.Controllers
             {
                 for (int i = 0; i < r.data.contracts.Count(); i++)
                 {
-                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey+i;
+                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey + i;
                     var contractId = r.data.contracts[i].id;
                     var customerId = r.data.contracts[i].customer_id;
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
@@ -2637,6 +2636,16 @@ namespace PeriodAid.Controllers
                 return GetCrmInfo();
             }
             return Json(new { result = "SUCCESS", data = r.code }, JsonRequestBehavior.AllowGet);
+            //string url = "https://api.ikcrm.com/api/v2/contracts/" + 395459 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            //request.Method = "get";
+            //request.ContentType = "application/x-www-form-urlencoded";
+            //Thread.Sleep(1000);
+            //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            //StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            //var retString = myStreamReader.ReadToEnd();
+            //myStreamReader.Close();
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCrmDetailInfo()
@@ -2656,37 +2665,32 @@ namespace PeriodAid.Controllers
                 var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
-                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == C_id.contract_id);
                 if (r.code == "0")
                 {
                     for (int i = 0; i < r.data.product_assets_for_new_record.Count(); i++)
                     {
                         var pid = r.data.product_assets_for_new_record[i].product_id;
-                        var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.contract_id);
+                        var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.id);
                         if (contractdetail == null)
                         {
                             contractdetail = new CRM_ContractDetail();
-                            contractdetail.contract_id = contract.id;
+                            contractdetail.contract_id = C_id.id;
                             contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
                             contractdetail.unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
                             contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
                             contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
                             crm_db.CRM_ContractDetail.Add(contractdetail);
-                            contract.express_state = r.data.text_asset_f1a68e_display;
-                            crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                         else
                         {
-                            contractdetail.contract_id = contract.id;
+                            contractdetail.contract_id = C_id.id;
                             contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
                             contractdetail.unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
                             contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
                             contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
-                            contract.express_state = r.data.text_asset_f1a68e_display;
-                            crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
                 }
@@ -2707,7 +2711,6 @@ namespace PeriodAid.Controllers
                     }
                     return GetCrmDetailInfo();
                 }
-
             }
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
@@ -2720,7 +2723,7 @@ namespace PeriodAid.Controllers
             //StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             //var retString = myStreamReader.ReadToEnd();
             //myStreamReader.Close();
-            //return Json(new { result = "SUCCESS",data = retString }, JsonRequestBehavior.AllowGet);
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         //public int GetProduct_Count()
@@ -2860,7 +2863,6 @@ namespace PeriodAid.Controllers
                     //只修改了订单状态和备注
                     dicList.Add("contract[status]", check_data.status);
                     dicList.Add("contract[text_asset_1e30f4]", check_data.express_name + ":" + check_data.express_number);
-                    dicList.Add("contract[text_asset_f1a68e_display]", check_data.express_state);
                     String postStr = buildQueryStr(dicList);
                     byte[] b_data = Encoding.UTF8.GetBytes(postStr);
                     request.ContentLength = b_data.Length;
@@ -2956,7 +2958,7 @@ namespace PeriodAid.Controllers
                             contract.express_state = "已发货";
                             contract.express_code = r.orders[0].deliverys[0].express_code;
                             contract.express_number = r.orders[0].deliverys[i].mail_no;
-                            contract.status = "3779516";
+                            contract.status = "3764330";
                             crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                         crm_db.SaveChanges();
