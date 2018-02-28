@@ -2406,7 +2406,8 @@ namespace PeriodAid.Controllers
             return postStr;
         }
         
-        public ActionResult GetUserToken()
+        [HttpPost]
+        public async Task<JsonResult> GetUserToken()
         {
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             TimeSpan ts = DateTime.Now - token_time.download_at;
@@ -2442,7 +2443,7 @@ namespace PeriodAid.Controllers
                     token_time.user_token = resultdata.data.user_token;
                     token_time.download_at = DateTime.Now;
                     crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
-                    crm_db.SaveChanges();
+                    await crm_db.SaveChangesAsync();
                 }
                 else
                 {
@@ -2456,13 +2457,12 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
-                        return Content("failed");
+                        return Json(new { result = "FAIL" });
                     }
-                    return GetUserToken();
+                    return await GetUserToken();
                 }
-
             }
-            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS" });
         }
         
         public ActionResult GetCustomer()
