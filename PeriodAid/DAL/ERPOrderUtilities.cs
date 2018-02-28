@@ -1043,12 +1043,12 @@ namespace PeriodAid.DAL
                     "\"sessionkey\":\"" + SessionKey + "\"," +
                     "\"order_type_code\":\"销售订单\"," +
                     "\"platform_code\":\"" + order.platform_code + "\"," +
-                    "\"shop_code\":\"线上其他渠道\"," +
+                    "\"shop_code\":\"" + order.shop_code + "\"," +
                     //"\"qty\": 1," +
                     "\"vip_code\":\"" + order.event_name + "\"," +
                     //"\"vip_name\":\"" + order.event_name + "\"," +
-                    "\"warehouse_code\":\"107\"," +
-                    "\"express_code\":\"STO\"," +
+                    "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
+                    "\"express_code\":\"" + order.express_code + "\"," +
                     "\"receiver_name\":\"" + order.receiver_name + "\"," +
                     "\"receiver_province\":\"" + order.receiver_province + "\"," +
                     "\"receiver_city\":\"" + order.receiver_city + "\"," +
@@ -1057,7 +1057,7 @@ namespace PeriodAid.DAL
                     "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
                     "\"receiver_address\":\"" + order.receiver_address + "\"," +
                     "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\","
-                    +"\"details\":[");
+                    + "\"details\":[");
             json.Append(details);
             json.Append("]}");
             //json.Append("\"payments\":[{");
@@ -1142,6 +1142,9 @@ namespace PeriodAid.DAL
         public string receiver_mobile { get; set; }
         public string receiver_zip { get; set; }
         public string receiver_address { get; set; }
+        public string shop_code { get; set; }
+        public string express_code { get; set; }
+        public string warehouse_code { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
     }
     public class ERPCustomOrder_details

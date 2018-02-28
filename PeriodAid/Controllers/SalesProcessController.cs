@@ -2822,6 +2822,30 @@ namespace PeriodAid.Controllers
             {
                 foreach (var i in _Cid)
                 {
+                    var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == i);
+                    ERPCustomOrder order = new ERPCustomOrder()
+                    {
+                        platform_code = contract.platform_code,
+                        receiver_address = contract.CRM_Customer.customer_address,
+                        receiver_name = contract.CRM_Customer.customer_name,
+                        receiver_mobile = contract.CRM_Customer.customer_tel
+                    };
+                    order.details = new List<ERPCustomOrder_details>();
+                    foreach(var item in contract.CRM_ContractDetail)
+                    {
+                        ERPCustomOrder_details details = new ERPCustomOrder_details()
+                        {
+                            item_code = item.product_code,
+                            price = item.unit_price,
+                            qty = item.quantity
+                        };
+                        order.details.Add(details);
+                    }
+                    ERPOrderUtilities util = new ERPOrderUtilities();
+                    string result = util.createOrder(order);
+                    
+                    // 改CRM状态
+                    // 建议重构
                     var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == i);
                     string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -2911,7 +2935,7 @@ namespace PeriodAid.Controllers
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
 
-        public ActionResult getERPORDERS(int[] c_id)
+        /*public ActionResult getERPORDERS(int[] c_id)
         {
             var platform_code = "126899286590086675";
             foreach(var cId in c_id)
@@ -3046,6 +3070,6 @@ namespace PeriodAid.Controllers
                 };
             }
             return Content("success");
-        }
+        }*/
     }
 }
