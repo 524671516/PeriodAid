@@ -12,9 +12,9 @@
     </tr>
 </table>*@
 <div class="select-btn">
-    <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3779515" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
-    <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="3780205" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
-    <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3779516"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
+    <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3531567" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
+    <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="3531568" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
+    <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3764330"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
     <a class="btn btn-info btn-sm status-btn" id="renovate_btn"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
 </div>
 <div id="undelivered_list_content" style="margin-top:20px">
@@ -28,6 +28,7 @@
             // 获取user_token
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
+                type:"post",
                 success: function (data) {
                 }
             })
@@ -41,6 +42,8 @@
             $.ajax({
                 url: "/SalesProcess/GetCrmInfo/",
                 success: function (data) {
+                    var crm = JSON.parse(data.data)
+                    console.log(crm)
                     //数据保存完再请求数据页面
                     $.ajax({
                         url: "/SalesProcess/CRM_undeliveredPartical/",
@@ -57,6 +60,8 @@
             $.ajax({
                 url: "/SalesProcess/GetCrmDetailInfo/",
                 success: function (data) {
+                    //var crm = JSON.parse(data.data)
+                    //console.log(crm)
                 }
             })
 

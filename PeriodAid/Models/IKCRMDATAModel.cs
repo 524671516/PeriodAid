@@ -17,7 +17,7 @@ namespace PeriodAid.Models
             : base("name=IKCRMDATAConnection")
         {
         }
-        public virtual DbSet<CRM_Product> CRM_Product { get; set; }
+        //public virtual DbSet<CRM_Product> CRM_Product { get; set; }
         public virtual DbSet<CRM_Contract> CRM_Contract { get; set; }
         public virtual DbSet<CRM_ContractDetail> CRM_ContractDetail { get; set; }
         public virtual DbSet<CRM_User_Token> CRM_User_Token { get; set; }
@@ -28,114 +28,115 @@ namespace PeriodAid.Models
         {
             modelBuilder.Entity<CRM_Customer>().HasMany(m => m.CRM_Contract).WithRequired(m => m.CRM_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Customer>().HasMany(m => m.CRM_Contact).WithRequired(m => m.CRM_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
-            
+            modelBuilder.Entity<CRM_Contract>().HasMany(m => m.CRM_ContractDetail).WithRequired(m => m.CRM_Contract).HasForeignKey(m => m.contract_id).WillCascadeOnDelete(false);
+
         }
     }
-    [Table("CRM_Product")]
-    public partial class CRM_Product
-    {
-        public int Id { get; set; }
+    //[Table("CRM_Product")]
+    //public partial class CRM_Product
+    //{
+    //    public int Id { get; set; }
         
-        [StringLength(64)]
-        public string system_Code { get; set; }
+    //    [StringLength(64)]
+    //    public string system_Code { get; set; }
 
-        [StringLength(64)]
-        public string item_Name { get; set; }
+    //    [StringLength(64)]
+    //    public string item_Name { get; set; }
         
-        public int product_id { get; set; }
-        // 规格
-        public string product_standard { get; set; }
-        // 如箱数
-        public string enter_box { get; set; }
-        // 单价
-        public decimal unit_price { get; set; }
-        // 毛利
-        public string gross_profit { get; set; }
-        // 零售价
-        public decimal retail_price { get; set; }
-        // 单盒条形码
-        public string product_barcode { get; set; }
-        // QS/SC号
-        public string QS_SC_number { get; set; }
-        // 保质期
-        public string expiration_date { get; set; }
-        // 单包装尺寸
-        public string product_size { get; set; }
-        // 外箱条码
-        public string outside_barcode { get; set; }
-        // 外箱包装尺寸
-        public string outside_size { get; set; }
-        // 净重
-        public decimal net_weight { get; set; }
-        // 毛重
-        public decimal gross_weight { get; set; }
-    }
+    //    public int product_id { get; set; }
+    //    // 规格
+    //    public string product_standard { get; set; }
+    //    // 如箱数
+    //    public string enter_box { get; set; }
+    //    // 单价
+    //    public decimal unit_price { get; set; }
+    //    // 毛利
+    //    public string gross_profit { get; set; }
+    //    // 零售价
+    //    public decimal retail_price { get; set; }
+    //    // 单盒条形码
+    //    public string product_barcode { get; set; }
+    //    // QS/SC号
+    //    public string QS_SC_number { get; set; }
+    //    // 保质期
+    //    public string expiration_date { get; set; }
+    //    // 单包装尺寸
+    //    public string product_size { get; set; }
+    //    // 外箱条码
+    //    public string outside_barcode { get; set; }
+    //    // 外箱包装尺寸
+    //    public string outside_size { get; set; }
+    //    // 净重
+    //    public decimal net_weight { get; set; }
+    //    // 毛重
+    //    public decimal gross_weight { get; set; }
+    //}
 
-    public partial class CRM_Product_ReturnData
-    {
-        public string code { get; set; }
+    //public partial class CRM_Product_ReturnData
+    //{
+    //    public string code { get; set; }
 
-        public CRM_ProductData data { get; set; }
-    }
+    //    public CRM_ProductData data { get; set; }
+    //}
 
-    public partial class CRM_ProductData
-    {
-        public int per_page { get; set; }
+    //public partial class CRM_ProductData
+    //{
+    //    public int per_page { get; set; }
 
-        public int total_count { get; set; }
+    //    public int total_count { get; set; }
 
-        public List<CRM_ProductCategories> product_categories { get; set; }
+    //    public List<CRM_ProductCategories> product_categories { get; set; }
 
-        public List<CRM_ProductList> products { get; set; }
-    }
+    //    public List<CRM_ProductList> products { get; set; }
+    //}
 
-    public partial class CRM_ProductCategories
-    {
-        public string name { get; set; }
-    }
+    //public partial class CRM_ProductCategories
+    //{
+    //    public string name { get; set; }
+    //}
 
-    public partial class CRM_ProductList
-    {
-        public int id { get; set; }
+    //public partial class CRM_ProductList
+    //{
+    //    public int id { get; set; }
 
-        public string product_no { get; set; }
+    //    public string product_no { get; set; }
 
-        public string name { get; set; }
-        // 规格
-        public string text_asset_ccc3d6 { get; set; }
-        // 如箱数
-        public string text_asset_ed9843 { get; set; }
-        // 单价
-        public decimal unit_cost { get; set; }
-        // 毛利
-        public string gross_margin { get; set; }
-        // 零售价
-        public decimal standard_unit_price { get; set; }
-        // 单盒条形码
-        public string text_asset_a632bd { get; set; }
-        // QS/SC号
-        public string text_asset_3a7a67 { get; set; }
-        // 保质期
-        public string text_asset_1c439d { get; set; }
-        // 单包装尺寸
-        public string text_asset_2e3eb8 { get; set; }
-        // 外箱条形码
-        public string text_asset_d00266 { get; set; }
-        // 外箱包装尺寸
-        public string text_asset_ce85c8 { get; set; }
-        // 净重
-        public string numeric_asset_db2cc5 { get; set; }
-        // 毛重
-        public string numeric_asset_4958a4 { get; set; }
-        // 分类
-        public CRM_ProductCategory product_category { get; set; }
+    //    public string name { get; set; }
+    //    // 规格
+    //    public string text_asset_ccc3d6 { get; set; }
+    //    // 如箱数
+    //    public string text_asset_ed9843 { get; set; }
+    //    // 单价
+    //    public decimal unit_cost { get; set; }
+    //    // 毛利
+    //    public string gross_margin { get; set; }
+    //    // 零售价
+    //    public decimal standard_unit_price { get; set; }
+    //    // 单盒条形码
+    //    public string text_asset_a632bd { get; set; }
+    //    // QS/SC号
+    //    public string text_asset_3a7a67 { get; set; }
+    //    // 保质期
+    //    public string text_asset_1c439d { get; set; }
+    //    // 单包装尺寸
+    //    public string text_asset_2e3eb8 { get; set; }
+    //    // 外箱条形码
+    //    public string text_asset_d00266 { get; set; }
+    //    // 外箱包装尺寸
+    //    public string text_asset_ce85c8 { get; set; }
+    //    // 净重
+    //    public string numeric_asset_db2cc5 { get; set; }
+    //    // 毛重
+    //    public string numeric_asset_4958a4 { get; set; }
+    //    // 分类
+    //    public CRM_ProductCategory product_category { get; set; }
         
-    }
+    //}
 
-    public partial class CRM_ProductCategory
-    {
-        public string name { get; set; }
-    }
+    //public partial class CRM_ProductCategory
+    //{
+    //    public string name { get; set; }
+    //}
     
     [Table("CRM_User_Token")]
     public partial class CRM_User_Token
@@ -208,16 +209,10 @@ namespace PeriodAid.Models
         [StringLength(128)]
         public string vip_code { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CRM_ContractDetail> CRM_ContractDetail { get; set; }
     }
-
-    [Table("CRM_Product_ContractDetail")]
-    public partial class CRM_Product_ContractDetail
-    {
-        public int ProductId { get; set; }
-
-        public int ContractDetailId { get; set; }
-    }
-
+    
     [Table("CRM_ExceptionLogs")]
     public partial class CRM_ExceptionLogs
     {
@@ -244,8 +239,6 @@ namespace PeriodAid.Models
         public int id { get; set; }
 
         public string text_asset_1e30f4 { get; set; }
-
-        public string text_asset_f1a68e_display { get; set; }
     }
     
     public partial class CRM_ContractDetail_CustomerProductList
@@ -258,7 +251,7 @@ namespace PeriodAid.Models
 
         public decimal recommended_unit_price { get; set; }
 
-        public decimal standard_unit_price { get; set; }
+        public string name { get; set; }
     }
     
 
@@ -268,12 +261,19 @@ namespace PeriodAid.Models
         public int Id { get; set; }
         
         public int contract_id { get; set; }
-        
+
+        public virtual CRM_Contract CRM_Contract { get; set; }
+
         public int product_id { get; set; }
+
+        public string product_name { get; set; }
+
+        public string product_code { get; set; }
 
         public int quantity { get; set; }
 
-        public decimal recommended_unit_price { get; set; }
+        public decimal unit_price { get; set; }
+        
     }
 
     [Table("CRM_Customer")]
@@ -324,8 +324,6 @@ namespace PeriodAid.Models
 
     public partial class CRM_CustomerAddress
     {
-        public int addressable_id { get; set; }
-
         public string detail_address { get; set; }
 
         public string region_info { get; set; }
@@ -382,18 +380,18 @@ namespace PeriodAid.Models
     public static class UserInfo
     {
         /// 账户名
-        //public static string login = "18817958576";
-        public static string login = "15921503329";
+        public static string login = "18817958576";
+        //public static string login = "15921503329";
         ///账户密码
         public static string password = "mengyu24";
         /// 类型
         public static string device = "dingtalk";
-        ///CRM订单状态：待同步
-        public static string status_unsend = "3779515";
+        ///CRM订单状态：未开始
+        public static string status_unsend = "3531567";
         ///CRM订单状态：已同步待发货
-        public static string status_undelivered = "3780205";
+        public static string status_undelivered = "3531568";
         ///CRM订单状态：已发货
-        public static string status_delivered = "3779516";
+        public static string status_delivered = "3764330";
 
 
     }

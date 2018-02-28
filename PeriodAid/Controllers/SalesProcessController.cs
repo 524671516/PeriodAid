@@ -2405,7 +2405,6 @@ namespace PeriodAid.Controllers
             postStr = postStr.Substring(0, postStr.LastIndexOf('&'));
             return postStr;
         }
-        
         [HttpPost]
         public async Task<JsonResult> GetUserToken()
         {
@@ -2492,7 +2491,6 @@ namespace PeriodAid.Controllers
                     {
                         cstr = cAddress;
                     }
-                    
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
                     if (check_customer == null)
                     {
@@ -2561,9 +2559,9 @@ namespace PeriodAid.Controllers
                     }
                 }
                 crm_db.SaveChanges();
-
             }
             return Json(new { result = "SUCCESS", data = r.code }, JsonRequestBehavior.AllowGet);
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCrmInfo()
@@ -2575,7 +2573,6 @@ namespace PeriodAid.Controllers
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
-
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             var retString = myStreamReader.ReadToEnd();
@@ -2585,7 +2582,7 @@ namespace PeriodAid.Controllers
             {
                 for (int i = 0; i < r.data.contracts.Count(); i++)
                 {
-                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey+i;
+                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey + i;
                     var contractId = r.data.contracts[i].id;
                     var customerId = r.data.contracts[i].customer_id;
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
@@ -2634,11 +2631,21 @@ namespace PeriodAid.Controllers
                     crm_db.CRM_ExceptionLogs.Add(logs);
                     crm_db.SaveChanges();
                     try_times = 0;
-                    return Content("failed");
+                    return Json(new { result = "FALL" }, JsonRequestBehavior.AllowGet);
                 }
                 return GetCrmInfo();
             }
             return Json(new { result = "SUCCESS", data = r.code }, JsonRequestBehavior.AllowGet);
+            //string url = "https://api.ikcrm.com/api/v2/contracts/" + 395459 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            //request.Method = "get";
+            //request.ContentType = "application/x-www-form-urlencoded";
+            //Thread.Sleep(1000);
+            //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            //StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            //var retString = myStreamReader.ReadToEnd();
+            //myStreamReader.Close();
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCrmDetailInfo()
@@ -2658,36 +2665,36 @@ namespace PeriodAid.Controllers
                 var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retString);
-                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == C_id.contract_id);
-                if(r.code == "0")
+                if (r.code == "0")
                 {
                     for (int i = 0; i < r.data.product_assets_for_new_record.Count(); i++)
                     {
                         var pid = r.data.product_assets_for_new_record[i].product_id;
-                        var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.contract_id);
+                        var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.id);
                         if (contractdetail == null)
                         {
                             contractdetail = new CRM_ContractDetail();
-                            contractdetail.contract_id = C_id.contract_id;
+                            contractdetail.contract_id = C_id.id;
                             contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
-                            contractdetail.recommended_unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                            contractdetail.unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                            contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
+                            contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
                             crm_db.CRM_ContractDetail.Add(contractdetail);
-                            contract.express_state = r.data.text_asset_f1a68e_display;
-                            crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                         else
                         {
-                            contractdetail.contract_id = C_id.contract_id;
+                            contractdetail.contract_id = C_id.id;
                             contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
-                            contractdetail.recommended_unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                            contractdetail.unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                            contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
+                            contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
-                            contract.express_state = r.data.text_asset_f1a68e_display;
-                            crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
-                }else
+                }
+                else
                 {
                     CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
                     Thread.Sleep(1000);
@@ -2700,103 +2707,112 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
-                        return Content("failed");
+                        return Json(new { result = "FALL" }, JsonRequestBehavior.AllowGet);
                     }
                     return GetCrmDetailInfo();
                 }
-                
             }
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            //string url = "https://api.ikcrm.com/api/v2/contracts/" + 388890 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            //request.Method = "get";
+            //request.ContentType = "application/x-www-form-urlencoded";
+            //Thread.Sleep(1000);
+            //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            //StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            //var retString = myStreamReader.ReadToEnd();
+            //myStreamReader.Close();
+            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
 
-        public int GetProduct_Count()
-        {
-            Thread.Sleep(1000);
-            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            string url = "https://api.ikcrm.com/api/v2/products?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            var request = WebRequest.Create(url) as HttpWebRequest;
-            request.Method = "get";
-            request.ContentType = "application/x-www-form-urlencoded";
+        //public int GetProduct_Count()
+        //{
+        //    Thread.Sleep(1000);
+        //    var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+        //    string url = "https://api.ikcrm.com/api/v2/products?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+        //    var request = WebRequest.Create(url) as HttpWebRequest;
+        //    request.Method = "get";
+        //    request.ContentType = "application/x-www-form-urlencoded";
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            CRM_Product_ReturnData r = JsonConvert.DeserializeObject<CRM_Product_ReturnData>(retString);
-            return r.data.total_count;
+        //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+        //    var retString = myStreamReader.ReadToEnd();
+        //    myStreamReader.Close();
+        //    CRM_Product_ReturnData r = JsonConvert.DeserializeObject<CRM_Product_ReturnData>(retString);
+        //    return r.data.total_count;
             
-        }
+        //}
 
-        public ActionResult GetProduct()
-        {
-            int totalcount = GetProduct_Count();
-            int perpage = 15;
-            int page = totalcount / perpage+1;
-            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            for(int i = 1; i<= page; i++)
-            {
-                string url = "https://api.ikcrm.com/api/v2/products?page="+i+"&user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-                var request = WebRequest.Create(url) as HttpWebRequest;
-                request.Method = "get";
-                request.ContentType = "application/x-www-form-urlencoded";
+        //public ActionResult GetProduct()
+        //{
+        //    int totalcount = GetProduct_Count();
+        //    int perpage = 15;
+        //    int page = totalcount / perpage+1;
+        //    var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+        //    for(int i = 1; i<= page; i++)
+        //    {
+        //        string url = "https://api.ikcrm.com/api/v2/products?page="+i+"&user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+        //        var request = WebRequest.Create(url) as HttpWebRequest;
+        //        request.Method = "get";
+        //        request.ContentType = "application/x-www-form-urlencoded";
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-                var retString = myStreamReader.ReadToEnd();
-                myStreamReader.Close();
-                CRM_Product_ReturnData r = JsonConvert.DeserializeObject<CRM_Product_ReturnData>(retString);
-                for(int j = 0; j < r.data.products.Count(); j++)
-                {
-                    var p_id = r.data.products[j].id;
-                    var net_weight = Convert.ToDecimal(r.data.products[j].numeric_asset_db2cc5);
-                    var gross_weight = Convert.ToDecimal(r.data.products[j].numeric_asset_4958a4);
-                    var check_product = crm_db.CRM_Product.SingleOrDefault(m => m.product_id == p_id);
-                    if (check_product == null)
-                    {
-                        check_product = new CRM_Product();
-                        check_product.item_Name = r.data.products[j].name;
-                        check_product.product_id = r.data.products[j].id;
-                        check_product.system_Code = r.data.products[j].product_no;
-                        check_product.product_standard = r.data.products[j].text_asset_ccc3d6;
-                        check_product.enter_box = r.data.products[j].text_asset_ed9843;
-                        check_product.unit_price = r.data.products[j].unit_cost;
-                        check_product.gross_profit = r.data.products[j].gross_margin;
-                        check_product.retail_price = r.data.products[j].standard_unit_price;
-                        check_product.product_barcode = r.data.products[j].text_asset_a632bd;
-                        check_product.QS_SC_number = r.data.products[j].text_asset_3a7a67;
-                        check_product.expiration_date = r.data.products[j].text_asset_1c439d;
-                        check_product.product_size = r.data.products[j].text_asset_2e3eb8;
-                        check_product.outside_barcode = r.data.products[j].text_asset_d00266;
-                        check_product.outside_size = r.data.products[j].text_asset_ce85c8;
-                        check_product.net_weight = net_weight;
-                        check_product.gross_weight = gross_weight;
-                        crm_db.CRM_Product.Add(check_product);
-                    }else
-                    {
-                        check_product.item_Name = r.data.products[j].name;
-                        check_product.product_id = r.data.products[j].id;
-                        check_product.system_Code = r.data.products[j].product_no;
-                        check_product.product_standard = r.data.products[j].text_asset_ccc3d6;
-                        check_product.enter_box = r.data.products[j].text_asset_ed9843;
-                        check_product.unit_price = r.data.products[j].unit_cost;
-                        check_product.gross_profit = r.data.products[j].gross_margin;
-                        check_product.retail_price = r.data.products[j].standard_unit_price;
-                        check_product.product_barcode = r.data.products[j].text_asset_a632bd;
-                        check_product.QS_SC_number = r.data.products[j].text_asset_3a7a67;
-                        check_product.expiration_date = r.data.products[j].text_asset_1c439d;
-                        check_product.product_size = r.data.products[j].text_asset_2e3eb8;
-                        check_product.outside_barcode = r.data.products[j].text_asset_d00266;
-                        check_product.outside_size = r.data.products[j].text_asset_ce85c8;
-                        check_product.net_weight = net_weight;
-                        check_product.gross_weight = gross_weight;
-                        crm_db.Entry(check_product).State = System.Data.Entity.EntityState.Modified;
-                    }
-                }
-            }
-            crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
-        }
+        //        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        //        StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+        //        var retString = myStreamReader.ReadToEnd();
+        //        myStreamReader.Close();
+        //        CRM_Product_ReturnData r = JsonConvert.DeserializeObject<CRM_Product_ReturnData>(retString);
+        //        for(int j = 0; j < r.data.products.Count(); j++)
+        //        {
+        //            var p_id = r.data.products[j].id;
+        //            var net_weight = Convert.ToDecimal(r.data.products[j].numeric_asset_db2cc5);
+        //            var gross_weight = Convert.ToDecimal(r.data.products[j].numeric_asset_4958a4);
+        //            var check_product = crm_db.CRM_Product.SingleOrDefault(m => m.product_id == p_id);
+        //            if (check_product == null)
+        //            {
+        //                check_product = new CRM_Product();
+        //                check_product.item_Name = r.data.products[j].name;
+        //                check_product.product_id = r.data.products[j].id;
+        //                check_product.system_Code = r.data.products[j].product_no;
+        //                check_product.product_standard = r.data.products[j].text_asset_ccc3d6;
+        //                check_product.enter_box = r.data.products[j].text_asset_ed9843;
+        //                check_product.unit_price = r.data.products[j].unit_cost;
+        //                check_product.gross_profit = r.data.products[j].gross_margin;
+        //                check_product.retail_price = r.data.products[j].standard_unit_price;
+        //                check_product.product_barcode = r.data.products[j].text_asset_a632bd;
+        //                check_product.QS_SC_number = r.data.products[j].text_asset_3a7a67;
+        //                check_product.expiration_date = r.data.products[j].text_asset_1c439d;
+        //                check_product.product_size = r.data.products[j].text_asset_2e3eb8;
+        //                check_product.outside_barcode = r.data.products[j].text_asset_d00266;
+        //                check_product.outside_size = r.data.products[j].text_asset_ce85c8;
+        //                check_product.net_weight = net_weight;
+        //                check_product.gross_weight = gross_weight;
+        //                crm_db.CRM_Product.Add(check_product);
+        //            }else
+        //            {
+        //                check_product.item_Name = r.data.products[j].name;
+        //                check_product.product_id = r.data.products[j].id;
+        //                check_product.system_Code = r.data.products[j].product_no;
+        //                check_product.product_standard = r.data.products[j].text_asset_ccc3d6;
+        //                check_product.enter_box = r.data.products[j].text_asset_ed9843;
+        //                check_product.unit_price = r.data.products[j].unit_cost;
+        //                check_product.gross_profit = r.data.products[j].gross_margin;
+        //                check_product.retail_price = r.data.products[j].standard_unit_price;
+        //                check_product.product_barcode = r.data.products[j].text_asset_a632bd;
+        //                check_product.QS_SC_number = r.data.products[j].text_asset_3a7a67;
+        //                check_product.expiration_date = r.data.products[j].text_asset_1c439d;
+        //                check_product.product_size = r.data.products[j].text_asset_2e3eb8;
+        //                check_product.outside_barcode = r.data.products[j].text_asset_d00266;
+        //                check_product.outside_size = r.data.products[j].text_asset_ce85c8;
+        //                check_product.net_weight = net_weight;
+        //                check_product.gross_weight = gross_weight;
+        //                crm_db.Entry(check_product).State = System.Data.Entity.EntityState.Modified;
+        //            }
+        //        }
+        //    }
+        //    crm_db.SaveChanges();
+        //    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+        //}
 
         public ActionResult UpdateCRM(int[] c_id,string c_status)
         {
@@ -2847,7 +2863,6 @@ namespace PeriodAid.Controllers
                     //只修改了订单状态和备注
                     dicList.Add("contract[status]", check_data.status);
                     dicList.Add("contract[text_asset_1e30f4]", check_data.express_name + ":" + check_data.express_number);
-                    dicList.Add("contract[text_asset_f1a68e_display]", check_data.express_state);
                     String postStr = buildQueryStr(dicList);
                     byte[] b_data = Encoding.UTF8.GetBytes(postStr);
                     request.ContentLength = b_data.Length;
@@ -2862,9 +2877,8 @@ namespace PeriodAid.Controllers
                     myStreamReader.Close();
                 }
             }
-            
             crm_db.SaveChanges();
-            return Content("succ");
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
 
         }
 
@@ -2944,7 +2958,7 @@ namespace PeriodAid.Controllers
                             contract.express_state = "已发货";
                             contract.express_code = r.orders[0].deliverys[0].express_code;
                             contract.express_number = r.orders[0].deliverys[i].mail_no;
-                            contract.status = "3779516";
+                            contract.status = "3764330";
                             crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                         crm_db.SaveChanges();

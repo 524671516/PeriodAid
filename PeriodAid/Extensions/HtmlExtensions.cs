@@ -186,11 +186,11 @@ namespace System.Web.Mvc
         {
             switch (status)
             {
-                case "3779515":
-                    return "执行中";
-                case "3779516":
-                    return "成功结束";
-                case "3780205":
+                case "3531567":
+                    return "待发货";
+                case "3764330":
+                    return "已发货";
+                case "3531568":
                     return "提交待审核";
                 default:
                     return "未知";
