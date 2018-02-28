@@ -2417,7 +2417,6 @@ namespace PeriodAid.Controllers
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "post";
                 request.ContentType = "application/x-www-form-urlencoded";
-                //request.ContentType = "application/json";
 
                 ///添加参数  
                 Dictionary<String, String> dicList = new Dictionary<String, String>();
@@ -2645,7 +2644,7 @@ namespace PeriodAid.Controllers
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "get";
                 request.ContentType = "application/x-www-form-urlencoded";
-
+                Thread.Sleep(1000);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
                 var retString = myStreamReader.ReadToEnd();
@@ -2700,6 +2699,46 @@ namespace PeriodAid.Controllers
                 
             }
             crm_db.SaveChanges();
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+        }
+
+        public int GetProduct_Count()
+        {
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            string url = "https://api.ikcrm.com/api/v2/products?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            var request = WebRequest.Create(url) as HttpWebRequest;
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            CRM_Product_ReturnData r = JsonConvert.DeserializeObject<CRM_Product_ReturnData>(retString);
+            return r.data.total_count;
+            
+        }
+
+        public ActionResult GetProduct()
+        {
+            int totalcount = GetProduct_Count();
+            int perpage = 15;
+            int page = totalcount / perpage+1;
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            for(int i = 1; i<= page; i++)
+            {
+                string url = "https://api.ikcrm.com/api/v2/products?page="+i+"&user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+                var request = WebRequest.Create(url) as HttpWebRequest;
+                request.Method = "get";
+                request.ContentType = "application/x-www-form-urlencoded";
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                var retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                CRM_Product_ReturnData r = JsonConvert.DeserializeObject<CRM_Product_ReturnData>(retString);
+            }
+            
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
@@ -2785,8 +2824,7 @@ namespace PeriodAid.Controllers
                                   select m;
             return PartialView(undeliveredData);
         }
-
-
+        
         private static string AppId = "130412";
         private static string AppSecret = "26d2e926f42a4f2181dd7d1b7f7d55c0";
         private static string SessionKey = "8a503b3d9d0d4119be2868cc69a8ef5a";
@@ -2866,6 +2904,76 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
         
+        public ActionResult createorder(ErpOrderDetail order,int[] c_id)
+        {
+            foreach(var cId in c_id)
+            {
+                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cId);
+                string json = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.add\"," +
+                        "\"order_type_code\":\"销售订单\"," +
+                        "\"platform_code\":\"" + contract.platform_code + "\"," +
+                        "\"shop_code\":\"" + order.shop_code + "\"," +
+                        "\"express_code\":\"" + order.express_code + "\"," +
+                        "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
+                        "\"vip_code\":\"" + order.vip_code + "\"," +
+                        "\"receiver_name\":\"" + contract.CRM_Customer.customer_name + "\"," +
+                        "\"receiver_address\":\"" + contract.CRM_Customer.customer_address + "\"," +
+                        "\"receiver_mobile\":\"" + contract.CRM_Customer.customer_tel + "\"," +
+                        "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"" +
+                        "}";
+                string signature = sign(json, AppSecret);
+                string info = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.add\"," +
+                        "\"order_type_code\":\"销售订单\"," +
+                        "\"platform_code\":\"" + contract.platform_code + "\"," +
+                        "\"shop_code\":\"" + order.shop_code + "\"," +
+                        "\"express_code\":\"" + order.express_code + "\"," +
+                        "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
+                        "\"vip_code\":\"" + order.vip_code + "\"," +
+                        "\"receiver_name\":\"" + contract.CRM_Customer.customer_name + "\"," +
+                        "\"receiver_address\":\"" + contract.CRM_Customer.customer_address + "\"," +
+                        "\"receiver_mobile\":\"" + contract.CRM_Customer.customer_tel + "\"," +
+                        "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"" +
+                        "\"sign\":\"" + signature + "\"" +
+                    "}";
+                var request = WebRequest.Create(API_Url) as HttpWebRequest;
+                request.ContentType = "text/json";
+                request.Method = "post";
+                string result = "";
+                try
+                {
+                    request.ContentType = "text/json";
+                    request.Method = "post";
+                    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                    {
+                        streamWriter.Write(info);
+                        streamWriter.Flush();
+                        streamWriter.Close();
+                        var response = request.GetResponse();
+                        using (var reader = new StreamReader(response.GetResponseStream()))
+                        {
+                            result = reader.ReadToEnd();
+                            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
 
+                }
+                catch (UriFormatException)
+                {
+                    return null;
+                    //return Content(uex.Message);// 出错处理
+                }
+                catch (WebException)
+                {
+                    return null;//return Content(ex.Message);// 出错处理
+                };
+            }
+            return Content("success");
+        }
     }
 }

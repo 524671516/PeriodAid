@@ -37,14 +37,104 @@ namespace PeriodAid.Models
         public int Id { get; set; }
         
         [StringLength(64)]
-        public string System_Code { get; set; }
+        public string system_Code { get; set; }
 
         [StringLength(64)]
-        public string Item_Name { get; set; }
+        public string item_Name { get; set; }
         
         public int product_id { get; set; }
+        // 规格
+        public string product_standard { get; set; }
+        // 如箱数
+        public string enter_box { get; set; }
+        // 单价
+        public decimal unit_price { get; set; }
+        // 毛利
+        public string gross_profit { get; set; }
+        // 零售价
+        public decimal retail_price { get; set; }
+        // 单盒条形码
+        public string product_barcode { get; set; }
+        // QS/SC号
+        public string QS_SC_number { get; set; }
+        // 保质期
+        public string expiration_date { get; set; }
+        // 单包装尺寸
+        public string product_size { get; set; }
+        // 外箱条码
+        public string outside_barcode { get; set; }
+        // 外箱包装尺寸
+        public string outside_size { get; set; }
+        // 净重
+        public decimal net_weight { get; set; }
+        // 毛重
+        public decimal gross_weight { get; set; }
+    }
 
-        public decimal product_price { get; set; }
+    public partial class CRM_Product_ReturnData
+    {
+        public string code { get; set; }
+
+        public CRM_ProductData data { get; set; }
+    }
+
+    public partial class CRM_ProductData
+    {
+        public int per_page { get; set; }
+
+        public int total_count { get; set; }
+
+        public List<CRM_ProductCategories> product_categories { get; set; }
+
+        public List<CRM_ProductList> products { get; set; }
+    }
+
+    public partial class CRM_ProductCategories
+    {
+        public string name { get; set; }
+    }
+
+    public partial class CRM_ProductList
+    {
+        public int id { get; set; }
+
+        public string product_no { get; set; }
+
+        public string name { get; set; }
+        // 规格
+        public string text_asset_ccc3d6 { get; set; }
+        // 如箱数
+        public string text_asset_ed9843 { get; set; }
+        // 单价
+        public decimal unit_cost { get; set; }
+        // 毛利
+        public string gross_margin { get; set; }
+        // 零售价
+        public decimal standard_unit_price { get; set; }
+        // 单盒条形码
+        public string text_asset_a632bd { get; set; }
+        // QS/SC号
+        public string text_asset_3a7a67 { get; set; }
+        // 保质期
+        public string text_asset_1c439d { get; set; }
+        // 单包装尺寸
+        public string text_asset_2e3eb8 { get; set; }
+        // 外箱条形码
+        public string text_asset_d00266 { get; set; }
+        // 外箱包装尺寸
+        public string text_asset_ce85c8 { get; set; }
+        // 净重
+        public string numeric_asset_db2cc5 { get; set; }
+        // 毛重
+        public string numeric_asset_4958a4 { get; set; }
+        // 分类
+        public CRM_ProductCategory product_category { get; set; }
+        
+    }
+
+    public partial class CRM_ProductCategory
+    {
+        public string name { get; set; }
     }
     
     [Table("CRM_User_Token")]
@@ -292,7 +382,7 @@ namespace PeriodAid.Models
     public static class UserInfo
     {
         /// 账户名
-        public static string login = "15921503329";
+        public static string login = "18817958576";
         ///账户密码
         public static string password = "mengyu24";
         /// 类型
@@ -334,5 +424,16 @@ namespace PeriodAid.Models
 
         public string mail_no { get; set; }
 
+    }
+
+    public partial class ErpOrderDetail
+    {
+        public string shop_code = "线上其他渠道";
+
+        public string express_code = "STO";
+
+        public string warehouse_code = "107";
+
+        public string vip_code = "";
     }
 }

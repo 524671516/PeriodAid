@@ -31,33 +31,41 @@
                 success: function (data) {
                 }
             })
-            // 获取crm客户数据
+            //// 获取crm客户数据
+            //$.ajax({
+            //    url: "/SalesProcess/GetCustomer/",
+            //    success: function (data) {
+            //    }
+            //})
+            //// 获取crm合同数据
+            //$.ajax({
+            //    url: "/SalesProcess/GetCrmInfo/",
+            //    success: function (data) {
+            //        //数据保存完再请求数据页面
+            //        $.ajax({
+            //            url: "/SalesProcess/CRM_undeliveredPartical/",
+            //            data: {
+            //                status: $("#first_btn").attr("data-val")
+            //            },
+            //            success: function (data) {
+            //                $("#undelivered_list_content").html(data)
+            //            }
+            //        })
+            //    }
+            //})
+            //// 获取合同详情
+            //$.ajax({
+            //    url: "/SalesProcess/GetCrmDetailInfo/",
+            //    success: function (data) {
+            //    }
+            //})
+
+            // 获取产品信息
             $.ajax({
-                url: "/SalesProcess/GetCustomer/",
+                url: "/SalesProcess/GetProduct/",
                 success: function (data) {
-                }
-            })
-            // 获取crm合同数据
-            $.ajax({
-                url: "/SalesProcess/GetCrmInfo/",
-                success: function (data) {
-                    //数据保存完再请求数据页面
-                    $.ajax({
-                        url: "/SalesProcess/CRM_undeliveredPartical/",
-                        data: {
-                            status: $("#first_btn").attr("data-val")
-                        },
-                        success: function (data) {
-                            $("#undelivered_list_content").html(data)
-                        }
-                    })
-                }
-            })
-            // 获取合同详情
-            $.ajax({
-                url: "/SalesProcess/GetCrmDetailInfo/",
-                success: function (data) {
-                    console.log(data)
+                    var crm = JSON.parse(data.data)
+                    console.log(crm)
                 }
             })
             // 选择
