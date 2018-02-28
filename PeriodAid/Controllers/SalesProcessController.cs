@@ -2560,7 +2560,6 @@ namespace PeriodAid.Controllers
                     }
                 }
                 crm_db.SaveChanges();
-
             }
             return Json(new { result = "SUCCESS", data = r.code }, JsonRequestBehavior.AllowGet);
         }
@@ -2633,7 +2632,7 @@ namespace PeriodAid.Controllers
                     crm_db.CRM_ExceptionLogs.Add(logs);
                     crm_db.SaveChanges();
                     try_times = 0;
-                    return Content("failed");
+                    return Json(new { result = "FALL" }, JsonRequestBehavior.AllowGet);
                 }
                 return GetCrmInfo();
             }
@@ -2704,7 +2703,7 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
-                        return Content("failed");
+                        return Json(new { result = "FALL" }, JsonRequestBehavior.AllowGet);
                     }
                     return GetCrmDetailInfo();
                 }
@@ -2876,9 +2875,8 @@ namespace PeriodAid.Controllers
                     myStreamReader.Close();
                 }
             }
-            
             crm_db.SaveChanges();
-            return Content("succ");
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
 
         }
 
