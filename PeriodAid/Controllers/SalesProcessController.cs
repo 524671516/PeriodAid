@@ -2737,8 +2737,55 @@ namespace PeriodAid.Controllers
                 var retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 CRM_Product_ReturnData r = JsonConvert.DeserializeObject<CRM_Product_ReturnData>(retString);
+                for(int j = 0; j < r.data.products.Count(); j++)
+                {
+                    var p_id = r.data.products[j].id;
+                    var net_weight = Convert.ToDecimal(r.data.products[j].numeric_asset_db2cc5);
+                    var gross_weight = Convert.ToDecimal(r.data.products[j].numeric_asset_4958a4);
+                    var check_product = crm_db.CRM_Product.SingleOrDefault(m => m.product_id == p_id);
+                    if (check_product == null)
+                    {
+                        check_product = new CRM_Product();
+                        check_product.item_Name = r.data.products[j].name;
+                        check_product.product_id = r.data.products[j].id;
+                        check_product.system_Code = r.data.products[j].product_no;
+                        check_product.product_standard = r.data.products[j].text_asset_ccc3d6;
+                        check_product.enter_box = r.data.products[j].text_asset_ed9843;
+                        check_product.unit_price = r.data.products[j].unit_cost;
+                        check_product.gross_profit = r.data.products[j].gross_margin;
+                        check_product.retail_price = r.data.products[j].standard_unit_price;
+                        check_product.product_barcode = r.data.products[j].text_asset_a632bd;
+                        check_product.QS_SC_number = r.data.products[j].text_asset_3a7a67;
+                        check_product.expiration_date = r.data.products[j].text_asset_1c439d;
+                        check_product.product_size = r.data.products[j].text_asset_2e3eb8;
+                        check_product.outside_barcode = r.data.products[j].text_asset_d00266;
+                        check_product.outside_size = r.data.products[j].text_asset_ce85c8;
+                        check_product.net_weight = net_weight;
+                        check_product.gross_weight = gross_weight;
+                        crm_db.CRM_Product.Add(check_product);
+                    }else
+                    {
+                        check_product.item_Name = r.data.products[j].name;
+                        check_product.product_id = r.data.products[j].id;
+                        check_product.system_Code = r.data.products[j].product_no;
+                        check_product.product_standard = r.data.products[j].text_asset_ccc3d6;
+                        check_product.enter_box = r.data.products[j].text_asset_ed9843;
+                        check_product.unit_price = r.data.products[j].unit_cost;
+                        check_product.gross_profit = r.data.products[j].gross_margin;
+                        check_product.retail_price = r.data.products[j].standard_unit_price;
+                        check_product.product_barcode = r.data.products[j].text_asset_a632bd;
+                        check_product.QS_SC_number = r.data.products[j].text_asset_3a7a67;
+                        check_product.expiration_date = r.data.products[j].text_asset_1c439d;
+                        check_product.product_size = r.data.products[j].text_asset_2e3eb8;
+                        check_product.outside_barcode = r.data.products[j].text_asset_d00266;
+                        check_product.outside_size = r.data.products[j].text_asset_ce85c8;
+                        check_product.net_weight = net_weight;
+                        check_product.gross_weight = gross_weight;
+                        crm_db.Entry(check_product).State = System.Data.Entity.EntityState.Modified;
+                    }
+                }
             }
-            
+            crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
