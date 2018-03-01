@@ -211,6 +211,12 @@ namespace PeriodAid.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CRM_ContractDetail> CRM_ContractDetail { get; set; }
+        // 收货人
+        public string consignee_name { get; set; }
+        // 收货地址
+        public string consignee_address { get; set; }
+        // 电话
+        public string consignee_tel { get; set; }
     }
     
     [Table("CRM_ExceptionLogs")]
@@ -239,6 +245,12 @@ namespace PeriodAid.Models
         public int id { get; set; }
 
         public string text_asset_1e30f4 { get; set; }
+        // 收件人
+        public string text_asset_73f972 { get; set; }
+        // 收货地址
+        public string text_asset_eb802b { get; set; }
+        // 电话
+        public string text_asset_da4211 { get; set; }
     }
     
     public partial class CRM_ContractDetail_CustomerProductList
@@ -317,6 +329,8 @@ namespace PeriodAid.Models
     public partial class CRM_Customer_Data
     {
         public List<CRM_CustomerDetail> customers { get; set; }
+
+        public int total_count { get; set; }
     }
 
     public partial class CRM_CustomerDetail
@@ -440,15 +454,5 @@ namespace PeriodAid.Models
         public string mail_no { get; set; }
 
     }
-
-    public partial class ErpOrderDetail
-    {
-        public string shop_code = "线上其他渠道";
-
-        public string express_code = "STO";
-
-        public string warehouse_code = "107";
-
-        public string vip_code = "";
-    }
+    
 }
