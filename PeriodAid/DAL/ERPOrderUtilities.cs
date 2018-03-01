@@ -1031,7 +1031,7 @@ namespace PeriodAid.DAL
                     details.Append("\"oid\":0,");
                     details.Append("\"item_code\":\"" + item.item_code + "\",");
                     details.Append("\"sku_code\":null");
-                    details.Append("}");
+                    details.Append("},");
                 }
                 if(order.details.Count>1)
                     details.Remove(details.Length - 1, 1);
@@ -1045,7 +1045,7 @@ namespace PeriodAid.DAL
                     "\"platform_code\":\"" + order.platform_code + "\"," +
                     "\"shop_code\":\"" + order.shop_code + "\"," +
                     //"\"qty\": 1," +
-                    "\"vip_code\":\"" + order.event_name + "\"," +
+                    "\"vip_code\":\"" + order.vip_code + "\"," +
                     //"\"vip_name\":\"" + order.event_name + "\"," +
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
@@ -1145,6 +1145,8 @@ namespace PeriodAid.DAL
         public string shop_code { get; set; }
         public string express_code { get; set; }
         public string warehouse_code { get; set; }
+        public string vip_code { get; set; }
+        public string deal_datetime { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
     }
     public class ERPCustomOrder_details

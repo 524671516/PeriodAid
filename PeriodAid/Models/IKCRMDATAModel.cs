@@ -292,6 +292,14 @@ namespace PeriodAid.Models
         [StringLength(64)]
         public string customer_tel { get; set; }
 
+        public string province { get; set; }
+
+        public string city { get; set; }
+
+        public string district { get; set; }
+
+        public string zip { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CRM_Contract> CRM_Contract { get; set; }
 
@@ -368,6 +376,14 @@ namespace PeriodAid.Models
         public int customer_id { get; set; }
 
         public virtual CRM_Customer CRM_Customer { get; set; }
+
+        public string province { get; set; }
+
+        public string city { get; set; }
+
+        public string district { get; set; }
+
+        public string zip { get; set; }
     }
 
     public class result_Data
