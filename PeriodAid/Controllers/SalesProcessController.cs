@@ -35,6 +35,7 @@ namespace PeriodAid.Controllers
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
         private IKCRMDATAModel crm_db;
+        private ThreeLevelAddressModel address_db;
         int try_times = 0;
         public SalesProcessController()
         {
@@ -2804,6 +2805,7 @@ namespace PeriodAid.Controllers
                             contract.receiver_name = r.data.text_asset_73f972;
                             contract.receiver_address = r.data.text_asset_eb802b;
                             contract.receiver_tel = r.data.text_asset_da4211;
+                            checkAddress(r.data.text_asset_eb802b, C_id.id);
                             crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                         else
@@ -2818,6 +2820,7 @@ namespace PeriodAid.Controllers
                             contract.receiver_name = r.data.text_asset_73f972;
                             contract.receiver_address = r.data.text_asset_eb802b;
                             contract.receiver_tel = r.data.text_asset_da4211;
+                            checkAddress(r.data.text_asset_eb802b, C_id.id);
                             crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
