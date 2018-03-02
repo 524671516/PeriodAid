@@ -2413,6 +2413,7 @@ namespace PeriodAid.Controllers
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
             //测试user_token是否可用
+            Thread.Sleep(1000);
             string test_url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + token_time.user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest test_request = (HttpWebRequest)WebRequest.Create(test_url);
             test_request.Method = "get";
