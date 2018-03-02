@@ -2481,6 +2481,7 @@ namespace PeriodAid.Controllers
             var total_count = Get_Count(url_api);
             int totalCount = total_count * 10;
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            Thread.Sleep(1000);
             string url = "https://api.ikcrm.com/api/v2/customers/?per_page="+ totalCount + "&user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
@@ -2700,6 +2701,7 @@ namespace PeriodAid.Controllers
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             Random ran = new Random();
             int RandKey = ran.Next(01, 99);
+            Thread.Sleep(1000);
             string url = "https://api.ikcrm.com/api/v2/contracts/?per_page="+ totalCount + "&user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
@@ -2786,6 +2788,7 @@ namespace PeriodAid.Controllers
                             select m;
             foreach (var C_id in contracts)
             {
+                Thread.Sleep(1000);
                 string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "get";
