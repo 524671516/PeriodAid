@@ -14,7 +14,13 @@
         <tr>
             <td>@sales.System_Name</td>
             <td>@sales.System_Phone</td>
-            <td>@sales.System_Address</td>
+            <td>
+                <div class="distpicker5">
+                    <select class="select_province"></select>
+                    <select class="select_city"></select>
+                    <select class="select_district"></select>
+                </div>
+            </td>
             <td>@sales.SP_Client.Client_Name</td>
             <td style="text-align:center">
                 <a data-eid="@sales.Id" class="select-sales btn btn-xs btn-success" role="button">编辑</a>
@@ -31,7 +37,17 @@
         </div>
     </div>
 </div>
+<script src="~/Scripts/distpicker.data.js"></script>
+<script src="~/Scripts/distpicker.js"></script>
+<script src="~/Scripts/main.js"></script>
 <script>
+    $(function () {
+        $(".distpicker5").distpicker({
+            autoSelect: false
+        });
+    })
+    var options = $(".select_province option:selected"); //获取选中的项
+    console.log(options.val())
     // 编辑
     $(".select-sales").on("click", function () {
         $.ajax({

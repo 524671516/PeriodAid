@@ -2412,7 +2412,7 @@ namespace PeriodAid.Controllers
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
-            if (days >= 1)
+            if (days <= 1)
             {
                 string url = "https://api.ikcrm.com/api/v2/auth/login";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -2480,7 +2480,7 @@ namespace PeriodAid.Controllers
             CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
             return r.data.total_count;
         }
-
+        
         public ActionResult GetCustomer(string url_api)
         {
             var total_count = Get_Count(url_api);
@@ -2777,7 +2777,6 @@ namespace PeriodAid.Controllers
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "get";
                 request.ContentType = "application/x-www-form-urlencoded";
-                Thread.Sleep(1000);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
                 var retString = myStreamReader.ReadToEnd();
