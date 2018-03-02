@@ -22,82 +22,17 @@
 @section scripts{
     <script>
         $(function () {
-            $("#first_btn").addClass("btn-danger")
-            // 获取user_token
             $.ajax({
-                url: "/SalesProcess/GetUserToken/",
+                url: "/SalesProcess/getThreeLevelAddress/",
                 type:"post",
-                success: function (data) {
-                }
-            })
-            // 获取crm客户数据
-            $.ajax({
-                url: "/SalesProcess/GetCustomer/",
-                data:{
-                    url_api: "/api/v2/customers"
-                },
-                success: function (data) {
-                }
-            })
-            // 获取crm合同数据
-            $.ajax({
-                url: "/SalesProcess/GetCrmInfo/",
                 data: {
-                    url_api: "/api/v2/contracts"
+                    full_address:"上海 上海市 青浦区 赵巷12号301小区22 "
                 },
                 success: function (data) {
-                    if (data.result == "SUCCESS") {
-                        //数据保存完再请求数据页面
-                        $.ajax({
-                            url: "/SalesProcess/CRM_undeliveredPartical/",
-                            data: {
-                                status: $("#first_btn").attr("data-val")
-                            },
-                            success: function (data) {
-                                $("#undelivered_list_content").html(data)
-                            }
-                        })
-                    } else {
-                        confirm("数据获取失败", "是否刷新", function (Confirm) {
-                            if (Confirm) {
-                                window.location.reload();
-                            }
-                        })
-                    }
+                    console.log(data)
                 }
             })
-            // 获取合同详情
-            $.ajax({
-                url: "/SalesProcess/GetCrmDetailInfo/",
-                success: function (data) {
-                    if (data.result == "FAIL") {
-                        confirm("数据获取失败", "是否刷新", function (Confirm) {
-                            if (Confirm) {
-                                window.location.reload();
-                            }
-                        })
-                    }
-                }
-            })
-            // 选择
-            $(".status-btn").on("click", function () {
-                var that = $(this)
-                $(".select-btn .status-btn").removeClass("btn-danger");
-                that.addClass("btn-danger");
-                $.ajax({
-                    url: "/SalesProcess/CRM_undeliveredPartical",
-                    data: {
-                        status: $(this).attr("data-val"),
-                    },
-                    success: function (data) {
-                        $("#undelivered_list_content").html(data)
-                    }
-                })
-            })
-            // 刷新
-            $("#renovate_btn").on("click", function () {
-                window.location.reload();
-            })
+            
         });
     </script>
 }
