@@ -35,11 +35,13 @@ namespace PeriodAid.Controllers
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
         private IKCRMDATAModel crm_db;
+        private ThreeLevelAddressModel address_db;
         int try_times = 0;
         public SalesProcessController()
         {
             _db = new SalesProcessModel();
             crm_db = new IKCRMDATAModel();
+            address_db = new ThreeLevelAddressModel();
         }
         public ActionResult Index()
         {
@@ -2475,23 +2477,7 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS" });
         }
-
-        public int Get_Count(string url_api)
-        {
-            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            string url = "https://api.ikcrm.com" + url_api + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            var request1 = WebRequest.Create(url) as HttpWebRequest;
-            request1.Method = "get";
-            request1.ContentType = "application/x-www-form-urlencoded";
-
-            HttpWebResponse response1 = (HttpWebResponse)request1.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response1.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
-            return r.data.total_count;
-        }
-
+        
         public string Get_Request(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -2802,12 +2788,17 @@ namespace PeriodAid.Controllers
                             contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
                             crm_db.CRM_ContractDetail.Add(contractdetail);
                             contract.receiver_name = r.data.text_asset_73f972;
+                            //检测地址
+                            checkAddress(r.data.text_asset_eb802b, contract.contract_id);
                             contract.receiver_address = r.data.text_asset_eb802b;
                             contract.receiver_tel = r.data.text_asset_da4211;
                             crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                         }
                         else
                         {
+                            //检测地址
+                            checkAddress(r.data.text_asset_eb802b, contract.contract_id);
+
                             contractdetail.contract_id = C_id.id;
                             contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
@@ -2999,7 +2990,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAULT" }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult getThreeLevelAddress(string full_address)
+        public Boolean checkAddress(string full_address,int contract_id)
         {
             var address_arry = full_address.ToCharArray();
             List<int> marks = new List<int>();
@@ -3011,18 +3002,31 @@ namespace PeriodAid.Controllers
             }
             if (marks.Count() < 3)
             {
-                return Json(new { result = "AddressFail" }, JsonRequestBehavior.AllowGet);
+                return false;
             }
             else {
                 var sub_province = full_address.Substring(0, marks[0]);
                 var sub_city = full_address.Substring(marks[0]+1, marks[1]-marks[0]-1);
                 var sub_area = full_address.Substring(marks[1]+1, marks[2]-marks[1]-1);
-                return Json(new { result = "SUCCESS", Province = sub_province, City = sub_city, Area = sub_area });
-
+                var check_province = address_db.Province.SingleOrDefault(m=>m.Province_name.Contains(sub_province));
+                var check_city = address_db.City.SingleOrDefault(m => m.P_code == check_province.Province_code && m.City_name.Contains(sub_city) || m.City_name.Contains("市辖区") || m.City_name.Contains("县"));
+                var check_area = address_db.Area.SingleOrDefault(m => m.C_code == check_city.City_code && m.Area_name.Contains(sub_area));
+                if (check_province != null && check_city != null && check_area != null)
+                {
+                    var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contract_id);
+                    contract.receiver_province = sub_province;
+                    contract.receiver_city = sub_city;
+                    contract.receiver_district = sub_area;
+                    crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
         }
 
-        public ActionResult createOrder(int[] c_id)
+        public ActionResult createOrder(string[] c_id)
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             // 不批量
