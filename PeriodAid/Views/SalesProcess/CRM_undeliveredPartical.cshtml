@@ -20,7 +20,7 @@
             <th >客户名称</th>
             <th >地址</th>
             <th >
-                @*<a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>*@
+                <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
@@ -30,7 +30,7 @@
             <tr>
                 <td>
                     <label class="checkbox-custom">
-                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.status" data-astatus="@item.shop_code">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.status" data-astatus="@item.address_status">
                     </label>
                 </td>
                 <td>@item.platform_code</td>
@@ -38,7 +38,7 @@
                 <td>@item.CRM_Customer.customer_name</td>
                 @if (item.status == "3531567")
                 {
-                    if (item.shop_code == "006")
+                    if (item.address_status == 0)
                     {
                         <td>@item.receiver_address</td>
                     }
@@ -106,10 +106,7 @@
         $("#batch_change_deliverys").hide()
         $("#checkbox-all").attr("data-status", $(".checkbox").attr("data-status"))
         var orderarry = [];
-        if ($(".checkbox").attr("data-astatus") == "006") {
-            
-            $(".checkbox").attr("disabled", "disabled")
-        }
+        $('.checkbox[data-astatus="-1"]').attr("disabled", "disabled")
         //单选
         $(".checkbox").click(function () {
             var that = $(this)
@@ -118,8 +115,8 @@
             if (select) {
                 orderarry.push(C_id)
                 if (that.attr("data-status") == "3531567") {
-                    //$("#batch_change_status").show()
-                    //$(".change_status").hide()
+                    $("#batch_change_status").show()
+                    $(".change_status").hide()
                 } else {
                     $("#batch_change_deliverys").show()
                     $(".get_erp_status").hide()
@@ -131,8 +128,8 @@
             }
             if ($("input:checked").length < 2) {
                 if (that.attr("data-status") == "3531567") {
-                    //$("#batch_change_status").hide()
-                    //$(".change_status").show()
+                    $("#batch_change_status").hide()
+                    $(".change_status").show()
                 } else {
                     $("#batch_change_deliverys").hide()
                     $(".get_erp_status").show()
@@ -146,24 +143,24 @@
             var that = $(this)
             if (that.attr("data-status") == "3531567") {
                 if (that.is(":checked")) {
-                    //$("#batch_change_status").show()
-                    //$(".change_status").hide()
-                    //$("input").prop("checked", true);
-                    //var list = $(".checkbox:checked")
-                    //for (i; i < list.length; i++) {
-                    //    var list_data = $(list[i]).attr("data-val")
-                    //    if (orderarry.indexOf(list_data) == -1) {
-                    //        orderarry.push(list_data)
-                    //    }
-                    //}
+                    $("#batch_change_status").show()
+                    $(".change_status").hide()
+                    $('.checkbox[data-astatus="0"]').prop("checked", true);
+                    var list = $(".checkbox:checked")
+                    for (i; i < list.length; i++) {
+                        var list_data = $(list[i]).attr("data-val")
+                        if (orderarry.indexOf(list_data) == -1) {
+                            orderarry.push(list_data)
+                        }
+                    }
                 } else {
-                    //$("#batch_change_status").hide()
-                    //$(".change_status").show()
-                    //$("input").prop("checked", false);
-                    //var list = $(".checkbox:unchecked")
-                    //for (i; i < list.length; i++) {
-                    //    orderarry.remove($(list[i]).attr("data-val"))
-                    //}
+                    $("#batch_change_status").hide()
+                    $(".change_status").show()
+                    $("input").prop("checked", false);
+                    var list = $(".checkbox:unchecked")
+                    for (i; i < list.length; i++) {
+                        orderarry.remove($(list[i]).attr("data-val"))
+                    }
                 }
             } else {
                 if (that.is(":checked")) {
@@ -189,53 +186,51 @@
             }
             
         })
-        // 批量同步到ERP等待审核
-        //$("#batch_change_status").click(function () {
-        //    var that = $(this);
-        //    orderarry.push(that.attr("data-val"), that.attr("data-province"), that.attr("data-city"), that.attr("data-district"))
-        //    console.log(orderarry)
-        //    if (orderarry.length == 0) {
+         //批量同步到ERP等待审核
+        $("#batch_change_status").click(function () {
+            var that = $(this);
+            console.log(orderarry)
+            if (orderarry.length == 0) {
 
-        //    } else {
-        //        $.ajax({
-        //            url: "/SalesProcess/createOrder/",
-        //            type: "post",
-        //            data: {
-        //                c_id: orderarry,
-        //            },
-        //            success: function (data) {
-        //                console.log(data)
-        //                if (data.result == "SUCCESS") {
-        //                    alert("已推送至ERP等待审核")
-        //                    $.ajax({
-        //                        url: "/SalesProcess/GetCrmInfo/",
-        //                        data: {
-        //                            url_api: "/api/v2/contracts",
-        //                        },
-        //                        success: function (data) {
+            } else {
+                $.ajax({
+                    url: "/SalesProcess/createOrder/",
+                    type: "post",
+                    data: {
+                        c_id: orderarry,
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            alert("已推送至ERP等待审核")
+                            $.ajax({
+                                url: "/SalesProcess/GetCrmInfo/",
+                                data: {
+                                    url_api: "/api/v2/contracts",
+                                },
+                                success: function (data) {
 
-        //                            $.ajax({
-        //                                url: "/SalesProcess/CRM_undeliveredPartical/",
-        //                                data: {
-        //                                    status: "3531567"
-        //                                },
-        //                                success: function (data) {
-        //                                    $("#undelivered_list_content").html(data)
-        //                                }
-        //                            })
-        //                        }
-        //                    })
-        //                } else if (data.result == "FAIL") {
-        //                    errorAlert("推送失败," + data.data)
-        //                } else {
-        //                    errorAlert("获取信息失败")
-        //                }
+                                    $.ajax({
+                                        url: "/SalesProcess/CRM_undeliveredPartical/",
+                                        data: {
+                                            status: "3531567"
+                                        },
+                                        success: function (data) {
+                                            $("#undelivered_list_content").html(data)
+                                        }
+                                    })
+                                }
+                            })
+                        } else if (data.result == "FAIL") {
+                            errorAlert("推送失败," + data.data)
+                        } else {
+                            errorAlert("获取信息失败")
+                        }
 
-        //            }
-        //        })
-        //    }
-        //})
-        // 批量获取ERP快递信息
+                    }
+                })
+            }
+        })
+         //批量获取ERP快递信息
         $("#batch_change_deliverys").click(function () {
             var that = $(this)
             orderarry.push(that.attr("data-val"))

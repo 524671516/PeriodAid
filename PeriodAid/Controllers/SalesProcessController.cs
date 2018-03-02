@@ -3003,142 +3003,189 @@ namespace PeriodAid.Controllers
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             // 不批量
-            int Cid = int.Parse(c_id[0]);
-            string province = c_id[1];
-            string city = c_id[2];
-            string district = c_id[3];
-            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == Cid);
-            contract.receiver_province = province;
-            contract.receiver_city = city;
-            contract.receiver_district = district;
-            crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
-            crm_db.SaveChanges();
-            //ERPCustomOrder order = new ERPCustomOrder()
-            //{
-            //    platform_code = contract.platform_code,
-            //    shop_code = contract.shop_code,
-            //    vip_code = contract.vip_code,
-            //    warehouse_code = contract.warehouse_code,
-            //    express_code = contract.express_code,
-            //    receiver_name = contract.receiver_name,
-            //    receiver_province = contract.receiver_province,
-            //    receiver_city = contract.receiver_city,
-            //    receiver_district = contract.receiver_province+"-"+ contract.receiver_city+"-"+contract.receiver_district,
-            //    receiver_mobile = contract.receiver_tel,
-            //    receiver_zip = contract.CRM_Customer.zip,
-            //    receiver_address = contract.receiver_address,
-            //    deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-            //};
-            //order.details = new List<ERPCustomOrder_details>();
-            //foreach (var item in contract.CRM_ContractDetail)
-            //{
-            //    ERPCustomOrder_details details = new ERPCustomOrder_details()
-            //    {
-            //        item_code = item.product_code,
-            //        price = item.unit_price,
-            //        qty = item.quantity
-            //    };
-            //    order.details.Add(details);
-            //}
-            //ERPOrderUtilities util = new ERPOrderUtilities();
-            //string result = util.createOrder(order);
-            //Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
-            //if (r.success)
-            //{
-            //    string url = "https://api.ikcrm.com/api/v2/contracts/" + contract.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            //    request.Method = "PUT";
-            //    request.ContentType = "application/x-www-form-urlencoded";
+            if (c_id == null)
+            {
+                int Cid = int.Parse(c_id[0]);
+                string province = c_id[1];
+                string city = c_id[2];
+                string district = c_id[3];
+                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == Cid);
+                contract.receiver_province = province;
+                contract.receiver_city = city;
+                contract.receiver_district = district;
+                crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                crm_db.SaveChanges();
+                //ERPCustomOrder order = new ERPCustomOrder()
+                //{
+                //    platform_code = contract.platform_code,
+                //    shop_code = contract.shop_code,
+                //    vip_code = contract.vip_code,
+                //    warehouse_code = contract.warehouse_code,
+                //    express_code = contract.express_code,
+                //    receiver_name = contract.receiver_name,
+                //    receiver_province = contract.receiver_province,
+                //    receiver_city = contract.receiver_city,
+                //    receiver_district = contract.receiver_province+"-"+ contract.receiver_city+"-"+contract.receiver_district,
+                //    receiver_mobile = contract.receiver_tel,
+                //    receiver_zip = contract.CRM_Customer.zip,
+                //    receiver_address = contract.receiver_address,
+                //    deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                //};
+                //order.details = new List<ERPCustomOrder_details>();
+                //foreach (var item in contract.CRM_ContractDetail)
+                //{
+                //    ERPCustomOrder_details details = new ERPCustomOrder_details()
+                //    {
+                //        item_code = item.product_code,
+                //        price = item.unit_price,
+                //        qty = item.quantity
+                //    };
+                //    order.details.Add(details);
+                //}
+                //ERPOrderUtilities util = new ERPOrderUtilities();
+                //string result = util.createOrder(order);
+                //Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
+                //if (r.success)
+                //{
+                //    string url = "https://api.ikcrm.com/api/v2/contracts/" + contract.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+                //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                //    request.Method = "PUT";
+                //    request.ContentType = "application/x-www-form-urlencoded";
 
-            //    // 添加参数
-            //    Dictionary<String, String> dicList = new Dictionary<String, String>();
-            //    //只修改了订单状态和备注
-            //    dicList.Add("contract[status]", UserInfo.status_undelivered);
-            //    String postStr = buildQueryStr(dicList);
-            //    byte[] b_data = Encoding.UTF8.GetBytes(postStr);
-            //    request.ContentLength = b_data.Length;
+                //    // 添加参数
+                //    Dictionary<String, String> dicList = new Dictionary<String, String>();
+                //    //只修改了订单状态和备注
+                //    dicList.Add("contract[status]", UserInfo.status_undelivered);
+                //    String postStr = buildQueryStr(dicList);
+                //    byte[] b_data = Encoding.UTF8.GetBytes(postStr);
+                //    request.ContentLength = b_data.Length;
 
-            //    Stream myRequestStream = request.GetRequestStream();
-            //    myRequestStream.Write(b_data, 0, b_data.Length);
-            //    myRequestStream.Close();
+                //    Stream myRequestStream = request.GetRequestStream();
+                //    myRequestStream.Write(b_data, 0, b_data.Length);
+                //    myRequestStream.Close();
 
-            //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            //    var retString = myStreamReader.ReadToEnd();
-            //    myStreamReader.Close();
-            //    contract.status = UserInfo.status_undelivered;
-            //    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
-            //}
-            //else
-            //{
-            //    return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
-            //}
-            // 批量
+                //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                //    var retString = myStreamReader.ReadToEnd();
+                //    myStreamReader.Close();
+                //    contract.status = UserInfo.status_undelivered;
+                //    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+                //}
+                //else
+                //{
+                //    return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
+                //}
+            }
+            else
+            {
+                // 批量
+                foreach (var _Cid in c_id)
+                {
+                    var contractId = int.Parse(_Cid);
+                    var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contractId);
+                    //ERPCustomOrder order = new ERPCustomOrder()
+                    //{
+                    //    platform_code = contract.platform_code,
+                    //    shop_code = contract.shop_code,
+                    //    vip_code = contract.vip_code,
+                    //    warehouse_code = contract.warehouse_code,
+                    //    express_code = contract.express_code,
+                    //    receiver_name = contract.receiver_name,
+                    //    receiver_mobile = contract.receiver_tel,
+                    //    receiver_zip = contract.CRM_Customer.zip,
+                    //    receiver_address = contract.receiver_address,
+                    //    deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    //};
+                    //order.details = new List<ERPCustomOrder_details>();
+                    //foreach (var item in contract.CRM_ContractDetail)
+                    //{
+                    //    ERPCustomOrder_details details = new ERPCustomOrder_details()
+                    //    {
+                    //        item_code = item.product_code,
+                    //        price = item.unit_price,
+                    //        qty = item.quantity
+                    //    };
+                    //    order.details.Add(details);
+                    //}
+                    //ERPOrderUtilities util = new ERPOrderUtilities();
+                    //string result = util.createOrder(order);
+                    //Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
+                    //if (r.success)
+                    //{
+                    //    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contractId);
+                    //    string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+                    //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                    //    request.Method = "PUT";
+                    //    request.ContentType = "application/x-www-form-urlencoded";
 
-            //foreach (var _Cid in c_id)
-            //{
-            //    var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid);
-            //    ERPCustomOrder order = new ERPCustomOrder()
-            //    {
-            //        platform_code = contract.platform_code,
-            //        shop_code = contract.shop_code,
-            //        vip_code = contract.vip_code,
-            //        warehouse_code = contract.warehouse_code,
-            //        express_code = contract.express_code,
-            //        receiver_name = contract.receiver_name,
-            //        receiver_mobile = contract.receiver_tel,
-            //        receiver_zip = contract.CRM_Customer.zip,
-            //        receiver_address = contract.receiver_address,
-            //        deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-            //    };
-            //    order.details = new List<ERPCustomOrder_details>();
-            //    foreach (var item in contract.CRM_ContractDetail)
-            //    {
-            //        ERPCustomOrder_details details = new ERPCustomOrder_details()
-            //        {
-            //            item_code = item.product_code,
-            //            price = item.unit_price,
-            //            qty = item.quantity
-            //        };
-            //        order.details.Add(details);
-            //    }
-            //    ERPOrderUtilities util = new ERPOrderUtilities();
-            //    string result = util.createOrder(order);
-            //    Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
-            //    if (r.success)
-            //    {
-            //        var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid);
-            //        string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            //        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            //        request.Method = "PUT";
-            //        request.ContentType = "application/x-www-form-urlencoded";
+                    //    // 添加参数
+                    //    Dictionary<String, String> dicList = new Dictionary<String, String>();
+                    //    //只修改了订单状态和备注
+                    //    dicList.Add("contract[status]", UserInfo.status_undelivered);
+                    //    String postStr = buildQueryStr(dicList);
+                    //    byte[] b_data = Encoding.UTF8.GetBytes(postStr);
+                    //    request.ContentLength = b_data.Length;
 
-            //        // 添加参数
-            //        Dictionary<String, String> dicList = new Dictionary<String, String>();
-            //        //只修改了订单状态和备注
-            //        dicList.Add("contract[status]", UserInfo.status_undelivered);
-            //        String postStr = buildQueryStr(dicList);
-            //        byte[] b_data = Encoding.UTF8.GetBytes(postStr);
-            //        request.ContentLength = b_data.Length;
+                    //    Stream myRequestStream = request.GetRequestStream();
+                    //    myRequestStream.Write(b_data, 0, b_data.Length);
+                    //    myRequestStream.Close();
 
-            //        Stream myRequestStream = request.GetRequestStream();
-            //        myRequestStream.Write(b_data, 0, b_data.Length);
-            //        myRequestStream.Close();
+                    //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                    //    var retString = myStreamReader.ReadToEnd();
+                    //    myStreamReader.Close();
+                    //    check_data.status = UserInfo.status_undelivered;
+                    //    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+                    //}
+                    //else
+                    //{
+                    //    return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
+                    //}
 
-            //        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            //        StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            //        var retString = myStreamReader.ReadToEnd();
-            //        myStreamReader.Close();
-            //        check_data.status = UserInfo.status_undelivered;
-            //        return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
-            //    }
-            //    else
-            //    {
-            //        return Json(new { result = "FAIL" , data = r.errorDesc }, JsonRequestBehavior.AllowGet);
-            //    }
-
-            //}
+                }
+            }
             return Json(new { result = "FAULT" }, JsonRequestBehavior.AllowGet);
         }
+        // 判断三级地址
+        public Boolean checkAddress(string full_address, int contract_id)
+        {
+            var address_arry = full_address.ToCharArray();
+            List<int> marks = new List<int>();
+            int i;
+            for (i = 0; i < address_arry.Length; i++)
+            {
+                if (address_arry[i].ToString() == " ")
+                {
+                    marks.Add(i);
+                }
+            }
+            if (marks.Count() < 3)
+            {
+                return false;
+            }
+            else
+            {
+                var sub_province = full_address.Substring(0, marks[0]);
+                var sub_city = full_address.Substring(marks[0] + 1, marks[1] - marks[0] - 1);
+                var sub_area = full_address.Substring(marks[1] + 1, marks[2] - marks[1] - 1);
+                var check_province = address_db.Province.SingleOrDefault(m => m.Province_name.Contains(sub_province));
+                var check_city = address_db.City.SingleOrDefault(m => m.P_code == check_province.Province_code && m.City_name.Contains(sub_city) || m.City_name.Contains("市辖区") || m.City_name.Contains("县"));
+                var check_area = address_db.Area.SingleOrDefault(m => m.C_code == check_city.City_code && m.Area_name.Contains(sub_area));
+                if (check_province != null && check_city != null && check_area != null)
+                {
+                    var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contract_id);
+                    contract.receiver_province = sub_province;
+                    contract.receiver_city = sub_city;
+                    contract.receiver_district = sub_area;
+                    crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
     }
 }
