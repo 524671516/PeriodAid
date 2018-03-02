@@ -217,6 +217,8 @@ namespace PeriodAid.Models
         public string consignee_address { get; set; }
         // 电话
         public string consignee_tel { get; set; }
+        //地址检测(0通过，-1出错)
+        public int address_status { get; set; }
     }
     
     [Table("CRM_ExceptionLogs")]

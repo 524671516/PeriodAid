@@ -35,11 +35,13 @@ namespace PeriodAid.Controllers
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
         private IKCRMDATAModel crm_db;
+        private ThreeLevelAddressModel address_db;
         int try_times = 0;
         public SalesProcessController()
         {
             _db = new SalesProcessModel();
             crm_db = new IKCRMDATAModel();
+            address_db = new ThreeLevelAddressModel();
         }
         public ActionResult Index()
         {
@@ -2676,24 +2678,6 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
-
-        public int Get_Count(string url_api)
-        {
-            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            string url = "https://api.ikcrm.com" + url_api + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            var request1 = WebRequest.Create(url) as HttpWebRequest;
-            request1.Method = "get";
-            request1.ContentType = "application/x-www-form-urlencoded";
-
-            HttpWebResponse response1 = (HttpWebResponse)request1.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response1.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
-            return r.data.total_count;
-        }
-
-
         public ActionResult GetCrmInfo(string url_api)
         {
             var total_count = Get_Count(url_api);
@@ -3001,6 +2985,29 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult getThreeLevelAddress(string full_address)
+        {
+            var address_arry = full_address.ToCharArray();
+            List<int> marks = new List<int>();
+            int i;
+            for (i=0; i < address_arry.Length; i++) {
+                if (address_arry[i].ToString() == " ") {
+                    marks.Add(i);
+                }
+            }
+            if (marks.Count() < 3)
+            {
+                return Json(new { result = "AddressFail" }, JsonRequestBehavior.AllowGet);
+            }
+            else {
+                var sub_province = full_address.Substring(0, marks[0]);
+                var sub_city = full_address.Substring(marks[0]+1, marks[1]-marks[0]-1);
+                var sub_area = full_address.Substring(marks[1]+1, marks[2]-marks[1]-1);
+                return Json(new { result = "SUCCESS", Province = sub_province, City = sub_city, Area = sub_area });
+
+            }
+        }
+
         public ActionResult createOrder(int[] c_id)
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
@@ -3069,5 +3076,23 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
+
+
+        public int Get_Count(string url_api)
+        {
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            string url = "https://api.ikcrm.com" + url_api + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            var request1 = WebRequest.Create(url) as HttpWebRequest;
+            request1.Method = "get";
+            request1.ContentType = "application/x-www-form-urlencoded";
+
+            HttpWebResponse response1 = (HttpWebResponse)request1.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response1.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
+            return r.data.total_count;
+        }
+
     }
 }
