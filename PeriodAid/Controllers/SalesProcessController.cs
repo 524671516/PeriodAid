@@ -2412,8 +2412,17 @@ namespace PeriodAid.Controllers
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
-            if (days >= 1)
-            {
+            //测试user_token是否可用
+            string test_url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + token_time.user_token + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest test_request = (HttpWebRequest)WebRequest.Create(test_url);
+            test_request.Method = "get";
+            test_request.ContentType = "application/x-www-form-urlencoded";
+            HttpWebResponse test_response = (HttpWebResponse)test_request.GetResponse();
+            StreamReader myStreamReaders = new StreamReader(test_response.GetResponseStream(), Encoding.UTF8);
+            var retStrings = myStreamReaders.ReadToEnd();
+            myStreamReaders.Close();
+            CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(retStrings);
+            if (r.code != "0" || days >= 1) {
                 string url = "https://api.ikcrm.com/api/v2/auth/login";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "post";
@@ -2450,7 +2459,8 @@ namespace PeriodAid.Controllers
                     CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
                     Thread.Sleep(1000);
                     try_times++;
-                    if (try_times >= 10) {
+                    if (try_times >= 10)
+                    {
                         logs.type = "user_token";
                         logs.exception = "[user_token]获取失败";
                         logs.exception_at = DateTime.Now;
@@ -2463,22 +2473,6 @@ namespace PeriodAid.Controllers
                 }
             }
             return Json(new { result = "SUCCESS" });
-        }
-
-        public int Get_Count(string url_api)
-        {
-            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            string url = "https://api.ikcrm.com"+ url_api + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            var request = WebRequest.Create(url) as HttpWebRequest;
-            request.Method = "get";
-            request.ContentType = "application/x-www-form-urlencoded";
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
-            return r.data.total_count;
         }
 
         public ActionResult GetCustomer(string url_api)
@@ -2679,6 +2673,24 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
+
+
+        public int Get_Count(string url_api)
+        {
+            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
+            string url = "https://api.ikcrm.com" + url_api + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+            var request1 = WebRequest.Create(url) as HttpWebRequest;
+            request1.Method = "get";
+            request1.ContentType = "application/x-www-form-urlencoded";
+
+            HttpWebResponse response1 = (HttpWebResponse)request1.GetResponse();
+            StreamReader myStreamReader = new StreamReader(response1.GetResponseStream(), Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
+            return r.data.total_count;
+        }
+
 
         public ActionResult GetCrmInfo(string url_api)
         {
