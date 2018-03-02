@@ -1050,9 +1050,9 @@ namespace PeriodAid.DAL
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
                     "\"receiver_name\":\"" + order.receiver_name + "\"," +
-                    //"\"receiver_province\":\"" + order.receiver_province + "\"," +
-                   // "\"receiver_city\":\"" + order.receiver_city + "\"," +
-                    //"\"receiver_district\":\"" + order.receiver_district + "\"," +
+                    "\"receiver_province\":\"" + order.receiver_province + "\"," +
+                    "\"receiver_city\":\"" + order.receiver_city + "\"," +
+                    "\"receiver_district\":\"" + order.receiver_district + "\"," +
                     "\"receiver_mobile\":\"" + order.receiver_mobile + "\"," +
                     "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
                     "\"receiver_address\":\"" + order.receiver_address + "\"," +

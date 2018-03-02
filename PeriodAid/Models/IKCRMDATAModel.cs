@@ -189,17 +189,14 @@ namespace PeriodAid.Models
 
         public DateTime? updated_at { get; set; }
 
-        [StringLength(64)]
-        public string express_name { get; set; }
+        [StringLength(256)]
+        public string express_information { get; set; }
 
         [StringLength(64)]
         public string express_code { get; set; }
 
         public string express_state { get; set; }
-
-        [StringLength(128)]
-        public string express_number { get; set; }
-
+        
         [StringLength(128)]
         public string shop_code { get; set; }
 
@@ -212,11 +209,19 @@ namespace PeriodAid.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CRM_ContractDetail> CRM_ContractDetail { get; set; }
         // 收货人
-        public string consignee_name { get; set; }
+        public string receiver_name { get; set; }
         // 收货地址
-        public string consignee_address { get; set; }
+        public string receiver_address { get; set; }
         // 电话
-        public string consignee_tel { get; set; }
+        public string receiver_tel { get; set; }
+        
+        public string receiver_province { get; set; }
+
+        public string receiver_city { get; set; }
+
+        public string receiver_district { get; set; }
+        //地址检测(0通过，-1出错)
+        public int address_status { get; set; }
     }
     
     [Table("CRM_ExceptionLogs")]
@@ -410,10 +415,9 @@ namespace PeriodAid.Models
     public static class UserInfo
     {
         /// 账户名
-        public static string login = "18817958576";
-        //public static string login = "15921503329";
+        public static string login = "13636314852";
         ///账户密码
-        public static string password = "mengyu24";
+        public static string password = "Shouquanzhai2017";
         /// 类型
         public static string device = "dingtalk";
         ///CRM订单状态：未开始
@@ -443,6 +447,8 @@ namespace PeriodAid.Models
         public List<deliverys_List> deliverys { get; set; }
 
         public string platform_code { get; set; }
+
+        public int delivery_state { get; set; }
     }
 
     public partial class deliverys_List
