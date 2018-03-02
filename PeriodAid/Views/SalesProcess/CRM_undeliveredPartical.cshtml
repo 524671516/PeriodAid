@@ -34,10 +34,10 @@
                 <td>@item.CRM_Customer.customer_name</td>
                 <td>@Html.ContractStatus(item.status)</td>
                 <td>
-                    <div data-toggle="distpicker">
-                        <select data-province="浙江省"></select>
-                        <select data-city="杭州市"></select>
-                        <select data-district="西湖区"></select>
+                    <div id="distpicker5">
+                        <select class="select_province"></select>
+                        <select class="select_city"></select>
+                        <select class="select_district"></select>
                     </div>
                 </td>
                 @if (item.status == "3531567")
@@ -60,8 +60,8 @@
         }
     </table>
 </div>
-<script src="~/Scripts/distpicker.js"></script>
 <script src="~/Scripts/distpicker.data.js"></script>
+<script src="~/Scripts/distpicker.js"></script>
 <script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
