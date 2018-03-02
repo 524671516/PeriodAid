@@ -38,7 +38,7 @@
                 <td>@item.CRM_Customer.customer_name</td>
                 @if (item.status == "3531567")
                 {
-                    if (item.address_status == 0)
+                    if (item.address_status == 1)
                     {
                         <td>@item.receiver_address</td>
                     }
@@ -106,7 +106,7 @@
         $("#batch_change_deliverys").hide()
         $("#checkbox-all").attr("data-status", $(".checkbox").attr("data-status"))
         var orderarry = [];
-        $('.checkbox[data-astatus="-1"]').attr("disabled", "disabled")
+        $('.checkbox[data-astatus="0"]').attr("disabled", "disabled")
         //单选
         $(".checkbox").click(function () {
             var that = $(this)
@@ -145,7 +145,7 @@
                 if (that.is(":checked")) {
                     $("#batch_change_status").show()
                     $(".change_status").hide()
-                    $('.checkbox[data-astatus="0"]').prop("checked", true);
+                    $('.checkbox[data-astatus="1"]').prop("checked", true);
                     var list = $(".checkbox:checked")
                     for (i; i < list.length; i++) {
                         var list_data = $(list[i]).attr("data-val")
@@ -325,7 +325,7 @@
         // 同步到ERP等待审核
         $(".change_status").on("click", function () {
             var that = $(this)
-            orderarry.push(that.attr("data-val"), that.attr("data-province"), that.attr("data-city"), that.attr("data-district"))
+            orderarry.push(that.attr("data-val"))
             console.log(orderarry)
             if (that.attr("data-province") == null || that.attr("data-city") == null || that.attr("data-district") == null) {
                 errorAlert("请选择地址")
@@ -337,6 +337,9 @@
                     type: "post",
                     data: {
                         c_id: orderarry,
+                        province: that.attr("data-province"),
+                        city: that.attr("data-city"),
+                        district: that.attr("data-district")
                     },
                     success: function (data) {
                         console.log(data)
