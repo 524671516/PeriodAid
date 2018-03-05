@@ -38,7 +38,7 @@
                 <td>@item.CRM_Customer.customer_name</td>
                 @if (item.status == "3531567")
                 {
-                    if (item.address_status == 0)
+                    if (item.address_status == 1)
                     {
                         <td>@item.receiver_address</td>
                     }
@@ -54,7 +54,7 @@
                     }
 
                     <td class="receiver_address">
-                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status" style="cursor:pointer">同步ERP</a>
+                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
                         <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id">详情</a>
                     </td>
                 }
@@ -62,7 +62,7 @@
                 {
                     <td>@item.receiver_address</td>
                     <td>
-                       <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status" style="cursor:pointer">获取ERP配送信息</a>
+                       <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status"  style="cursor:pointer">获取ERP配送信息</a>
                     </td>
                 }
                 else
@@ -84,29 +84,30 @@
 <script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
+        $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address")
         $(".distpicker5").distpicker({
             autoSelect: false
         });
         $(".select_province").change(function () {
             var options = $(this).children("option:selected");
             console.log(options.val());
-            $(this).parents(".select_address").siblings(".receiver_address").children(".change_status").attr("data-province", options.val())
+            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-province", options.val())
         })
         $(".select_city").change(function () {
             var options = $(this).children("option:selected");
             console.log(options.val());
-            $(this).parents(".select_address").siblings(".receiver_address").children(".change_status").attr("data-city", options.val())
+            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-city", options.val())
         })
         $(".select_district").change(function () {
             var options = $(this).children("option:selected");
             console.log(options.val());
-            $(this).parents(".select_address").siblings(".receiver_address").children(".change_status").attr("data-district", options.val())
+            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-district", options.val())
         })
         $("#batch_change_status").hide()
         $("#batch_change_deliverys").hide()
         $("#checkbox-all").attr("data-status", $(".checkbox").attr("data-status"))
         var orderarry = [];
-        $('.checkbox[data-astatus="-1"]').attr("disabled", "disabled")
+        $('.checkbox[data-astatus="0"]').attr("disabled", "disabled")
         //单选
         $(".checkbox").click(function () {
             var that = $(this)
@@ -145,7 +146,7 @@
                 if (that.is(":checked")) {
                     $("#batch_change_status").show()
                     $(".change_status").hide()
-                    $('.checkbox[data-astatus="0"]').prop("checked", true);
+                    $('.checkbox[data-astatus="1"]').prop("checked", true);
                     var list = $(".checkbox:checked")
                     for (i; i < list.length; i++) {
                         var list_data = $(list[i]).attr("data-val")
@@ -189,7 +190,6 @@
          //批量同步到ERP等待审核
         $("#batch_change_status").click(function () {
             var that = $(this);
-            console.log(orderarry)
             if (orderarry.length == 0) {
 
             } else {
@@ -208,7 +208,6 @@
                                     url_api: "/api/v2/contracts",
                                 },
                                 success: function (data) {
-
                                     $.ajax({
                                         url: "/SalesProcess/CRM_undeliveredPartical/",
                                         data: {
@@ -325,21 +324,63 @@
         // 同步到ERP等待审核
         $(".change_status").on("click", function () {
             var that = $(this)
-            orderarry.push(that.attr("data-val"), that.attr("data-province"), that.attr("data-city"), that.attr("data-district"))
-            console.log(orderarry)
-            if (that.attr("data-province") == null || that.attr("data-city") == null || that.attr("data-district") == null) {
-                errorAlert("请选择地址")
-                orderarry.splice(0, orderarry.length)
-                console.log(orderarry)
+            orderarry.push(that.attr("data-val"))
+            $.ajax({
+                url: "/SalesProcess/createOrder/",
+                type: "post",
+                data: {
+                    c_id: orderarry
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert("已推送至ERP等待审核")
+                        $.ajax({
+                            url: "/SalesProcess/GetCrmInfo/",
+                            data: {
+                                url_api: "/api/v2/contracts",
+                            },
+                            success: function (data) {
+                                $.ajax({
+                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    data: {
+                                        status: "3531567"
+                                    },
+                                    success: function (data) {
+                                        $("#undelivered_list_content").html(data)
+                                    }
+                                })
+                            }
+                        })
+                    } else if (data.result == "FAIL") {
+                        errorAlert("推送失败," + data.data)
+                    } else {
+                        errorAlert("获取信息失败")
+                    }
+
+                }
+            })
+        })
+        //
+        $(".change_address").on("click", function () {
+            var that = $(this)
+            orderarry.push(that.attr("data-val"))
+            var Province=that.attr("data-province")
+            var City=that.attr("data-city")
+            var District = that.attr("data-district")
+            if (District == null || District == "") {
+                errorAlert("请选择区域")
             } else {
                 $.ajax({
                     url: "/SalesProcess/createOrder/",
                     type: "post",
                     data: {
                         c_id: orderarry,
+                        province: Province,
+                        city: City,
+                        district: District,
+
                     },
                     success: function (data) {
-                        console.log(data)
                         if (data.result == "SUCCESS") {
                             alert("已推送至ERP等待审核")
                             $.ajax({
