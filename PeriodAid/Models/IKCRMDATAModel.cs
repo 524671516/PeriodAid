@@ -220,7 +220,7 @@ namespace PeriodAid.Models
         public string receiver_city { get; set; }
 
         public string receiver_district { get; set; }
-        //地址检测(0通过，-1出错)
+        //地址检测(1通过，0出错)
         public int address_status { get; set; }
     }
     

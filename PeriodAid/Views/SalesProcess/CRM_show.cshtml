@@ -22,18 +22,26 @@
 @section scripts{
     <script>
         $(function () {
+            var SubmitFlg = true;
+            setTimeout(function () {
+                SubmitFlg = true;
+                if (SubmitFlg == true) {
+                   
+                }
+            }, 3000)
+
             $("#first_btn").addClass("btn-danger")
             // 获取user_token
             $.ajax({
                 url: "/SalesProcess/GetUserToken/",
-                type:"post",
+                type: "post",
                 success: function (data) {
                 }
             })
             // 获取crm客户数据
             $.ajax({
                 url: "/SalesProcess/GetCustomer/",
-                data:{
+                data: {
                     url_api: "/api/v2/customers"
                 },
                 success: function (data) {
