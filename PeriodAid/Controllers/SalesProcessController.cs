@@ -3160,10 +3160,12 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAULT" }, JsonRequestBehavior.AllowGet);
         }
 
-        public Boolean checkAddress(string full_address, int contract_id)
+        // 判断三级地址
+        public void checkAddress(string full_address, int contract_id)
         {
             var address_arry = full_address.ToCharArray();
             List<int> marks = new List<int>();
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contract_id);
             int i;
             for (i = 0; i < address_arry.Length; i++)
             {
@@ -3174,37 +3176,19 @@ namespace PeriodAid.Controllers
             }
             if (marks.Count() < 3)
             {
-                return false;
+                contract.address_status = 0;
             }
             else
             {
                 var sub_province = full_address.Substring(0, marks[0]);
                 var sub_city = full_address.Substring(marks[0] + 1, marks[1] - marks[0] - 1);
                 var sub_area = full_address.Substring(marks[1] + 1, marks[2] - marks[1] - 1);
-                var check_province = from m in address_db.Province
-                                     where m.Province_name.Contains(sub_province)
-                                     select m;
-                var check_city = from m in address_db.City
-                                 where m.Province.Province_name.Contains(sub_province) && m.City_name.Contains(sub_city) || m.City_name.Contains("市辖区") || m.City_name.Contains("县")
-                                 select m;
-                var check_area = from m in address_db.Area
-                                 where m.City.City_name.Contains(sub_city) && m.Area_name.Contains(sub_area)
-                                 select m;
-                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contract_id);
-                if (check_province != null && check_city != null && check_area != null)
-                {
-                    contract.receiver_province = sub_province;
-                    contract.receiver_city = sub_city;
-                    contract.receiver_district = sub_area;
-                    contract.address_status = 1;
-                }
-                else
-                {
-                    contract.address_status = 0;
-                }
+                contract.receiver_province = sub_province;
+                contract.receiver_city = sub_city;
+                contract.receiver_district = sub_area;
+                contract.address_status = 1;
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
-            return true;
         }
 
 
