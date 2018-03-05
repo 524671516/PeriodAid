@@ -2720,40 +2720,47 @@ namespace PeriodAid.Controllers
                     var customerId = r.data.contracts[i].customer_id;
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
                     var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                    if (check_data == null)
+                    if(r.data.contracts[i].status == UserInfo.status_unsend)
                     {
-                        //new
-                        check_data = new CRM_Contract();
-                        check_data.contract_id = r.data.contracts[i].id;
-                        check_data.user_id = r.data.contracts[i].user_id;
-                        check_data.user_name = r.data.contracts[i].user_name;
-                        check_data.customer_id = check_customer.Id;
-                        check_data.title = r.data.contracts[i].title;
-                        check_data.total_amount = r.data.contracts[i].total_amount;
-                        check_data.status = r.data.contracts[i].status;
-                        check_data.updated_at = r.data.contracts[i].updated_at;
-                        check_data.platform_code = platform_code + r.data.contracts[i].id;
-                        check_data.warehouse_code = "110";
-                        check_data.express_code = "STO";
-                        check_data.shop_code = "006";
-                        check_data.vip_code = check_customer.customer_name;
-                        crm_db.CRM_Contract.Add(check_data);
-                    }
-                    else
+                        if (check_data == null)
+                        {
+                            //new
+                            check_data = new CRM_Contract();
+                            check_data.contract_id = r.data.contracts[i].id;
+                            check_data.user_id = r.data.contracts[i].user_id;
+                            check_data.user_name = r.data.contracts[i].user_name;
+                            check_data.customer_id = check_customer.Id;
+                            check_data.title = r.data.contracts[i].title;
+                            check_data.total_amount = r.data.contracts[i].total_amount;
+                            check_data.status = r.data.contracts[i].status;
+                            check_data.updated_at = r.data.contracts[i].updated_at;
+                            check_data.platform_code = platform_code + r.data.contracts[i].id;
+                            check_data.warehouse_code = "110";
+                            check_data.express_code = "STO";
+                            check_data.shop_code = "006";
+                            check_data.vip_code = check_customer.customer_name;
+                            crm_db.CRM_Contract.Add(check_data);
+                        }
+                        else
+                        {
+                            // update
+                            check_data.contract_id = r.data.contracts[i].id;
+                            check_data.user_id = r.data.contracts[i].user_id;
+                            check_data.user_name = r.data.contracts[i].user_name;
+                            check_data.customer_id = check_customer.Id;
+                            check_data.title = r.data.contracts[i].title;
+                            check_data.total_amount = r.data.contracts[i].total_amount;
+                            check_data.status = r.data.contracts[i].status;
+                            check_data.updated_at = r.data.contracts[i].updated_at;
+                            check_data.warehouse_code = "110";
+                            check_data.express_code = "STO";
+                            check_data.shop_code = "006";
+                            check_data.vip_code = check_customer.customer_name;
+                            crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }else
                     {
-                        // update
-                        check_data.contract_id = r.data.contracts[i].id;
-                        check_data.user_id = r.data.contracts[i].user_id;
-                        check_data.user_name = r.data.contracts[i].user_name;
-                        check_data.customer_id = check_customer.Id;
-                        check_data.title = r.data.contracts[i].title;
-                        check_data.total_amount = r.data.contracts[i].total_amount;
                         check_data.status = r.data.contracts[i].status;
-                        check_data.updated_at = r.data.contracts[i].updated_at;
-                        check_data.warehouse_code = "110";
-                        check_data.express_code = "STO";
-                        check_data.shop_code = "006";
-                        check_data.vip_code = check_customer.customer_name;
                         crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                     }
                 }
@@ -2785,11 +2792,11 @@ namespace PeriodAid.Controllers
             var contracts = from m in crm_db.CRM_Contract
                             where m.status == UserInfo.status_unsend
                             select m;
-            int contract_count = contracts.Count();
             foreach (var C_id in contracts)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == C_id.id);
                 string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+                //Thread.Sleep(500);
                 CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(Get_Request(url));
                 if (r.code == "0")
                 {
@@ -2820,7 +2827,6 @@ namespace PeriodAid.Controllers
                             contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
                         }
-
                     }
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
@@ -2889,6 +2895,7 @@ namespace PeriodAid.Controllers
         {
             var undeliveredData = from m in crm_db.CRM_Contract
                                   where m.status == status
+                                  orderby m.address_status descending
                                   select m;
             return PartialView(undeliveredData);
         }
@@ -2969,7 +2976,7 @@ namespace PeriodAid.Controllers
                                     contract.express_information = r.orders[0].deliverys[i].express_name+ r.orders[0].deliverys[i].mail_no+";";
                                     contract.express_state = "已发货";
                                     contract.express_code = r.orders[0].deliverys[0].express_code;
-                                    contract.status = "3764330";
+                                    contract.status = UserInfo.status_delivered;
                                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                                 }
                             }else
@@ -3135,16 +3142,16 @@ namespace PeriodAid.Controllers
                     {
                         return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
                     }
-
                 }
             }
             return Json(new { result = "FAULT" }, JsonRequestBehavior.AllowGet);
         }
 
-        public Boolean checkAddress(string full_address, int contract_id)
+        public void checkAddress(string full_address, int contract_id)
         {
             var address_arry = full_address.ToCharArray();
             List<int> marks = new List<int>();
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contract_id);
             int i;
             for (i = 0; i < address_arry.Length; i++)
             {
@@ -3155,38 +3162,20 @@ namespace PeriodAid.Controllers
             }
             if (marks.Count() < 3)
             {
-                return false;
+                contract.address_status = 0;
             }
             else
             {
                 var sub_province = full_address.Substring(0, marks[0]);
                 var sub_city = full_address.Substring(marks[0] + 1, marks[1] - marks[0] - 1);
                 var sub_area = full_address.Substring(marks[1] + 1, marks[2] - marks[1] - 1);
-                var check_province = from m in address_db.Province
-                                     where m.Province_name.Contains(sub_province)
-                                     select m;
-                var check_city = from m in address_db.City
-                                 where m.Province.Province_name.Contains(sub_province) && m.City_name.Contains(sub_city) || m.City_name.Contains("市辖区") || m.City_name.Contains("县")
-                                 select m;
-                var check_area = from m in address_db.Area
-                                 where m.City.City_name.Contains(sub_city) && m.Area_name.Contains(sub_area)
-                                 select m;
-                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contract_id);
-                if (check_province != null && check_city != null && check_area != null)
-                {
-                    contract.receiver_province = sub_province;
-                    contract.receiver_city = sub_city;
-                    contract.receiver_district = sub_area;
-                    contract.address_status = 1;
-                }
-                else
-                {
-                    contract.address_status = 0;
-                }
+                contract.receiver_province = sub_province;
+                contract.receiver_city = sub_city;
+                contract.receiver_district = sub_area;
+                contract.address_status = 1;
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
-            return true;
         }
-        
+
     }
 }
