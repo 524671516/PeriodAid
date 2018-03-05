@@ -2415,9 +2415,9 @@ namespace PeriodAid.Controllers
             TimeSpan ts = DateTime.Now - token_time.download_at;
             int days = ts.Days;
             //测试user_token是否可用
-            Thread.Sleep(1000);
             string test_url = "https://api.ikcrm.com/api/v2/contracts/?user_token=" + token_time.user_token + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest test_request = (HttpWebRequest)WebRequest.Create(test_url);
+            test_request.ServicePoint.ConnectionLimit = int.MaxValue;
             test_request.Method = "get";
             test_request.ContentType = "application/x-www-form-urlencoded";
             HttpWebResponse test_response = (HttpWebResponse)test_request.GetResponse();
@@ -2483,6 +2483,7 @@ namespace PeriodAid.Controllers
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             string url = "https://api.ikcrm.com" + url_api + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             var request1 = WebRequest.Create(url) as HttpWebRequest;
+            request1.ServicePoint.ConnectionLimit = int.MaxValue;
             request1.Method = "get";
             request1.ContentType = "application/x-www-form-urlencoded";
 
@@ -2497,6 +2498,7 @@ namespace PeriodAid.Controllers
         public string Get_Request(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.ServicePoint.ConnectionLimit = int.MaxValue;
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -2511,7 +2513,6 @@ namespace PeriodAid.Controllers
             var total_count = Get_Count(url_api);
             int totalCount = total_count * 10;
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            Thread.Sleep(1000);
             string url = "https://api.ikcrm.com/api/v2/customers/?per_page="+ totalCount + "&user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(Get_Request(url));
             if (r.code == "0")
@@ -2698,20 +2699,20 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
         
-        public ActionResult GetCrmInfo(string url_api)
+        public async Task<ActionResult> GetCrmInfo(string url_api)
         {
             var total_count = Get_Count(url_api);
             int totalCount = total_count * 10;
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            Random ran = new Random();
-            int RandKey = ran.Next(01, 99);
             string url = "https://api.ikcrm.com/api/v2/contracts/?per_page="+ totalCount + "&user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
             if (r.code == "0")
             {
                 for (int i = 0; i < r.data.contracts.Count(); i++)
                 {
-                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey + i;
+                    Random ran = new Random();
+                    int RandKey = ran.Next(01, 99);
+                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey ;
                     var contractId = r.data.contracts[i].id;
                     var customerId = r.data.contracts[i].customer_id;
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
@@ -2727,7 +2728,7 @@ namespace PeriodAid.Controllers
                         check_data.total_amount = r.data.contracts[i].total_amount;
                         check_data.status = r.data.contracts[i].status;
                         check_data.updated_at = r.data.contracts[i].updated_at;
-                        check_data.platform_code = platform_code;
+                        check_data.platform_code = platform_code+ r.data.contracts[i].id;
                         check_data.warehouse_code = "110";
                         check_data.express_code = "STO";
                         check_data.shop_code = "006";
@@ -2751,9 +2752,8 @@ namespace PeriodAid.Controllers
                         check_data.vip_code = check_customer.customer_name;
                         crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                     }
-
                 }
-                crm_db.SaveChanges();
+                await crm_db.SaveChangesAsync();
             }
             else
             {
@@ -2770,13 +2770,12 @@ namespace PeriodAid.Controllers
                     try_times = 0;
                     return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
                 }
-                return GetCrmInfo(url_api);
+                return await GetCrmInfo(url_api);
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
-            //return Json(new { data = retString }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetCrmDetailInfo()
+        public async Task<ActionResult>GetCrmDetailInfo()
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             var contracts = from m in crm_db.CRM_Contract
@@ -2837,21 +2836,11 @@ namespace PeriodAid.Controllers
                         try_times = 0;
                         return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
                     }
-                    return GetCrmDetailInfo();
+                    return await GetCrmDetailInfo();
                 }
             }
-            crm_db.SaveChanges();
+            await crm_db.SaveChangesAsync();
             return Json(new { result = "SUCCESS"}, JsonRequestBehavior.AllowGet);
-            //string url = "https://api.ikcrm.com/api/v2/contracts/" + 396562 + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            //request.Method = "get";
-            //request.ContentType = "application/x-www-form-urlencoded";
-            //Thread.Sleep(1000);
-            //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            //StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            //var retString = myStreamReader.ReadToEnd();
-            //myStreamReader.Close();
-            //return Json(new { result = "SUCCESS", data = retString }, JsonRequestBehavior.AllowGet);
         }
         
         public ActionResult UpdateCRM(int[] c_id)
@@ -3022,7 +3011,7 @@ namespace PeriodAid.Controllers
                 //    receiver_name = contract.receiver_name,
                 //    receiver_province = contract.receiver_province,
                 //    receiver_city = contract.receiver_city,
-                //    receiver_district = contract.receiver_province+"-"+ contract.receiver_city+"-"+contract.receiver_district,
+                //    receiver_district = contract.receiver_district,
                 //    receiver_mobile = contract.receiver_tel,
                 //    receiver_zip = contract.CRM_Customer.zip,
                 //    receiver_address = contract.receiver_address,
@@ -3079,6 +3068,31 @@ namespace PeriodAid.Controllers
                 foreach (var _Cid in c_id)
                 {
                     var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid);
+                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid);
+                    string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                    request.Method = "PUT";
+                    request.ContentType = "application/x-www-form-urlencoded";
+
+                    // 添加参数
+                    Dictionary<String, String> dicList = new Dictionary<String, String>();
+                    //只修改了订单状态和备注
+                    dicList.Add("contract[status]", UserInfo.status_undelivered);
+                    String postStr = buildQueryStr(dicList);
+                    byte[] b_data = Encoding.UTF8.GetBytes(postStr);
+                    request.ContentLength = b_data.Length;
+
+                    Stream myRequestStream = request.GetRequestStream();
+                    myRequestStream.Write(b_data, 0, b_data.Length);
+                    myRequestStream.Close();
+
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                    var retString = myStreamReader.ReadToEnd();
+                    myStreamReader.Close();
+                    check_data.status = UserInfo.status_undelivered;
+                    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+
                     //ERPCustomOrder order = new ERPCustomOrder()
                     //{
                     //    platform_code = contract.platform_code,
@@ -3087,6 +3101,9 @@ namespace PeriodAid.Controllers
                     //    warehouse_code = contract.warehouse_code,
                     //    express_code = contract.express_code,
                     //    receiver_name = contract.receiver_name,
+                    //    receiver_province = contract.receiver_province,
+                    //    receiver_city = contract.receiver_city,
+                    //    receiver_district = contract.receiver_district,
                     //    receiver_mobile = contract.receiver_tel,
                     //    receiver_zip = contract.CRM_Customer.zip,
                     //    receiver_address = contract.receiver_address,
@@ -3108,7 +3125,7 @@ namespace PeriodAid.Controllers
                     //Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
                     //if (r.success)
                     //{
-                    //    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contractId);
+                    //    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid);
                     //    string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
                     //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                     //    request.Method = "PUT";
