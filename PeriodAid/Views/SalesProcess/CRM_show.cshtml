@@ -22,14 +22,6 @@
 @section scripts{
     <script>
         $(function () {
-            var SubmitFlg = true;
-            setTimeout(function () {
-                SubmitFlg = true;
-                if (SubmitFlg == true) {
-                   
-                }
-            }, 3000)
-
             $("#first_btn").addClass("btn-danger")
             // 获取user_token
             $.ajax({
@@ -55,16 +47,31 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        //数据保存完再请求数据页面
+                        // 获取合同详情
                         $.ajax({
-                            url: "/SalesProcess/CRM_undeliveredPartical/",
-                            data: {
-                                status: $("#first_btn").attr("data-val")
-                            },
+                            url: "/SalesProcess/GetCrmDetailInfo/",
                             success: function (data) {
-                                $("#undelivered_list_content").html(data)
+                                if (data.result == "SUCCESS") {
+                                    //数据保存完再请求数据页面
+                                    $.ajax({
+                                        url: "/SalesProcess/CRM_undeliveredPartical/",
+                                        data: {
+                                            status: $("#first_btn").attr("data-val")
+                                        },
+                                        success: function (data) {
+                                            $("#undelivered_list_content").html(data)
+                                        }
+                                    })
+                                } else {
+                                    confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                        if (Confirm) {
+                                            window.location.reload();
+                                        }
+                                    })
+                                }
                             }
                         })
+                        
                     } else {
                         confirm("数据获取失败", "是否刷新", function (Confirm) {
                             if (Confirm) {
@@ -74,19 +81,7 @@
                     }
                 }
             })
-            // 获取合同详情
-            $.ajax({
-                url: "/SalesProcess/GetCrmDetailInfo/",
-                success: function (data) {
-                    if (data.result == "FAIL") {
-                        confirm("数据获取失败", "是否刷新", function (Confirm) {
-                            if (Confirm) {
-                                window.location.reload();
-                            }
-                        })
-                    }
-                }
-            })
+            
             // 选择
             $(".status-btn").on("click", function () {
                 var that = $(this)
