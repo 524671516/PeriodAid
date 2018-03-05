@@ -2428,6 +2428,7 @@ namespace PeriodAid.Controllers
             if (r.code != "0" || days >= 1) {
                 string url = "https://api.ikcrm.com/api/v2/auth/login";
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.ServicePoint.ConnectionLimit = int.MaxValue;
                 request.Method = "post";
                 request.ContentType = "application/x-www-form-urlencoded";
 
@@ -2716,9 +2717,10 @@ namespace PeriodAid.Controllers
                     var contractId = r.data.contracts[i].id;
                     var customerId = r.data.contracts[i].customer_id;
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
-                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId && m.status == UserInfo.status_unsend);
                     if (check_data == null)
                     {
+                        //new
                         check_data = new CRM_Contract();
                         check_data.contract_id = r.data.contracts[i].id;
                         check_data.user_id = r.data.contracts[i].user_id;
@@ -2779,6 +2781,7 @@ namespace PeriodAid.Controllers
         {
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             var contracts = from m in crm_db.CRM_Contract
+                            where m.status == UserInfo.status_unsend
                             select m;
             foreach (var C_id in contracts)
             {
@@ -2791,9 +2794,9 @@ namespace PeriodAid.Controllers
                     {
                         var pid = r.data.product_assets_for_new_record[i].product_id;
                         var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.id);
-                        
                         if (contractdetail == null)
                         {
+                            // new
                             contractdetail = new CRM_ContractDetail();
                             contractdetail.contract_id = C_id.id;
                             contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
@@ -2806,6 +2809,7 @@ namespace PeriodAid.Controllers
                         }
                         else
                         {
+                            //update
                             contractdetail.contract_id = C_id.id;
                             contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
@@ -2995,7 +2999,7 @@ namespace PeriodAid.Controllers
             if (province != null)
             {
                 int Cid = c_id[0];
-                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == Cid);
+                var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == Cid && m.status == UserInfo.status_unsend);
                 contract.receiver_province = province;
                 contract.receiver_city = city;
                 contract.receiver_district = district;
@@ -3067,8 +3071,7 @@ namespace PeriodAid.Controllers
                 // 批量
                 foreach (var _Cid in c_id)
                 {
-                    var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid);
-                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid);
+                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.status == UserInfo.status_unsend);
                     string url = "https://api.ikcrm.com/api/v2/contracts/" + check_data.contract_id + "?user_token=" + user_token.user_token + "&device=dingtalk&version_code=9.8.0";
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                     request.Method = "PUT";
