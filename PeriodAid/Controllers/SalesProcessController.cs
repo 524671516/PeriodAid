@@ -2699,7 +2699,7 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-        
+
         public async Task<ActionResult> GetCrmInfo(string url_api)
         {
             var total_count = Get_Count(url_api);
@@ -2886,6 +2886,7 @@ namespace PeriodAid.Controllers
         {
             var undeliveredData = from m in crm_db.CRM_Contract
                                   where m.status == status
+                                  orderby m.address_status descending
                                   select m;
             return PartialView(undeliveredData);
         }
