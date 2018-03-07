@@ -17,10 +17,10 @@
             </th>
             <th style="width:10%">订单号</th>
             <th style="width:15%">合同名称</th>
-            <th style="width:5%">总金额</th>
+            <th style="width:10%">总金额</th>
             <th style="width:15%">客户名称</th>
-            <th style="width:25%">邮寄地址</th>
-            <th style="width:25%">
+            <th style="width:30%">邮寄地址</th>
+            <th style="width:15%">
                 <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
@@ -56,11 +56,11 @@
                     }
                     else
                     {
-                        <td class="select_address" style="width:397px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="@item.receiver_address">
-                            <div class="distpicker5" style="display:inline">
-                                <select class="select_province form-control" style="width:20%"></select>
-                                <select class="select_city form-control" style="width:20%"></select>
-                                <select class="select_district form-control" style="width:20%"></select>
+                        <td class="select_address" title="@item.receiver_address">
+                            <div class="distpicker5">
+                                <select class="select_province form-control" style="width:31%"></select>
+                                <select class="select_city form-control" style="width:31%"></select>
+                                <select class="select_district form-control" style="width:31%"></select>
                             </div>
                             <div>@item.receiver_address</div>
                         </td>
@@ -72,14 +72,14 @@
                 }
                 else if (item.contract_status == "3531568")
                 {
-                    <td style="width:203px;overflow:hidden" title="@item.receiver_address">@item.receiver_address</td>
+                    <td title="@item.receiver_address">@item.receiver_address</td>
                     <td>
                         <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
                     </td>
                 }
                 else if (item.contract_status == "3890335")
                 {
-                    <td style="width:203px;overflow:hidden" title="@item.receiver_address">@item.receiver_address</td>
+                    <td title="@item.receiver_address">@item.receiver_address</td>
                     <td>
                         <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
                     </td>
@@ -103,24 +103,25 @@
 <script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
-        $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address")
+        $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address disabled")
         $(".distpicker5").distpicker({
             autoSelect: false
         });
         $(".select_province").change(function () {
             var options = $(this).children("option:selected");
-            console.log(options.val());
             $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-province", options.val())
         })
         $(".select_city").change(function () {
             var options = $(this).children("option:selected");
-            console.log(options.val());
             $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-city", options.val())
         })
         $(".select_district").change(function () {
             var options = $(this).children("option:selected");
-            console.log(options.val());
-            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-district", options.val())
+            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").removeClass("disabled").attr("data-district", options.val())
+            var district = $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-district")
+            if (district == "") {
+                $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").addClass("disabled")
+            }
         })
         $("#batch_change_status").hide()
         $("#batch_change_deliverys").hide()
@@ -415,12 +416,7 @@
             var Province=that.attr("data-province")
             var City=that.attr("data-city")
             var District = that.attr("data-district")
-            if (District == null || District == "") {
-                confirm("CRM地址信息格式不规范", "请重新选择", function () {
-                    orderarry.remove(that.attr("data-val"))
-                })
-            } else {
-                $.ajax({
+            $.ajax({
                     url: "/SalesProcess/createOrder/",
                     type: "post",
                     data: {
@@ -461,7 +457,6 @@
 
                     }
                 })
-            }
             
         })
         // 详情
