@@ -76,6 +76,7 @@
                                 success: function (data) {
                                     console.log(data)
                                     if (data.result == "SUCCESS") {
+                                        console.log(JSON.parse(data.data))
                                         $("#tm-view-loading").hide()
                                         $(".status-btn").removeClass("disabled")
                                         setTimeout(function () {

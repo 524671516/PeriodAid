@@ -248,6 +248,9 @@ namespace PeriodAid.Models
         public string receiver_district { get; set; }
         //地址检测(1通过，0出错)
         public int address_status { get; set; }
+        //订单回款类型
+        [StringLength(64)]
+        public string received_payments_type { get; set; }
         //绿色通道(为1时生效)
         public int super_admin { get; set; }
        
@@ -285,8 +288,11 @@ namespace PeriodAid.Models
         public string text_asset_eb802b { get; set; }
         // 电话
         public string text_asset_da4211 { get; set; }
+        //回款金额
+        public decimal received_payments_amount { get; set; }
+
     }
-    
+
     public partial class CRM_ContractDetail_CustomerProductList
     {
         public int product_id { get; set; }
