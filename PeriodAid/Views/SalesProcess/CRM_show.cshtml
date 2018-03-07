@@ -53,16 +53,17 @@
                 $(this).addClass("disabled")
                 $(".status-btn").addClass("disabled")
                 $("#tm-view-loading").show()
-                    // 获取crm客户数据
-                    $.ajax({
-                        url: "/SalesProcess/GetCustomer/",
-                        data: {
-                            url_api: "/api/v2/customers"
-                        },
-                        success: function (data) {
-                        }
-                    })
-                    // 获取crm合同数据
+                // 获取crm客户数据
+                    //$.ajax({
+                    //    url: "/SalesProcess/GetCustomer/",
+                    //    data: {
+                    //        url_api: "/api/v2/customers"
+                    //    },
+                    //    success: function (data) {
+                    //    }
+                //})
+
+                // 获取crm合同数据
                     $.ajax({
                         url: "/SalesProcess/GetCrmInfo/",
                         data: {

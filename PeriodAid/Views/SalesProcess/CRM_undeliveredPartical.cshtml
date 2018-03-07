@@ -19,8 +19,8 @@
             <th style="width:15%">合同名称</th>
             <th style="width:10%">总金额</th>
             <th style="width:15%">客户名称</th>
-            <th style="width:20%">邮寄地址</th>
-            <th style="width:25%">
+            <th style="width:30%">邮寄地址</th>
+            <th style="width:15%">
                 <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
@@ -57,10 +57,10 @@
                     else
                     {
                         <td class="select_address" title="@item.receiver_address">
-                            <div class="distpicker5" style="display:inline">
-                                <select class="select_province form-control" style="width:20%"></select>
-                                <select class="select_city form-control" style="width:20%"></select>
-                                <select class="select_district form-control" style="width:20%"></select>
+                            <div class="distpicker5">
+                                <select class="select_province form-control" style="width:31%"></select>
+                                <select class="select_city form-control" style="width:31%"></select>
+                                <select class="select_district form-control" style="width:31%"></select>
                             </div>
                             <div>@item.receiver_address</div>
                         </td>
