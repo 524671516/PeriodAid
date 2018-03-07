@@ -74,6 +74,7 @@
                             $.ajax({
                                 url: "/SalesProcess/GetCrmDetailInfo/",
                                 success: function (data) {
+                                    console.log(data)
                                     if (data.result == "SUCCESS") {
                                         $("#tm-view-loading").hide()
                                         $(".status-btn").removeClass("disabled")

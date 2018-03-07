@@ -206,6 +206,8 @@ namespace PeriodAid.Models
 
         public decimal total_amount { get; set; }
 
+        public decimal received_payments_amount { get; set; }
+
         public string contract_status { get; set; }
 
         public DateTime? updated_at { get; set; }
@@ -246,6 +248,8 @@ namespace PeriodAid.Models
         public string receiver_district { get; set; }
         //地址检测(1通过，0出错)
         public int address_status { get; set; }
+        //绿色通道(为1时生效)
+        public int super_admin { get; set; }
        
     }
     

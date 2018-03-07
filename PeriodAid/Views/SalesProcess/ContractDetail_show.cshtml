@@ -14,16 +14,36 @@
         </tr>
         @foreach (var detail in ViewBag.Detail)
         {
-            <tr>
-                <td>@detail.product_name</td>
-                <td>@detail.product_code</td>
-                <td>@detail.quantity</td>
-                <td>@detail.unit_price</td>
-                <th>@Math.Round(detail.quantity* detail.unit_price,2)</th>
-            </tr>
+        <tr>
+            <td>@detail.product_name</td>
+            <td>@detail.product_code</td>
+            <td class="product_count">@detail.quantity</td>
+            <td>@detail.unit_price</td>
+            <th class="product_price">@Math.Round(detail.quantity * detail.unit_price, 2)</th>
+        </tr>
         }
+        <tr>
+            <th>合计：</th>
+            <th></th>
+            <th id="sum_count"></th>
+            <th></th>
+            <th id="sum_price"></th>
+        </tr>
     </table>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default float-left" data-dismiss="modal">确认</button>
 </div>
+
+<script>
+    $(function () {
+        var i = 0;
+        var sum_count=0, sum_price=0;
+        for (i; i < $(".product_count").length; i++) {
+            sum_count += parseInt($(".product_count:eq(" + i + ")").html())
+            sum_price += parseFloat($(".product_price:eq(" + i + ")").html())
+        }
+        $("#sum_count").html(sum_count)
+        $("#sum_price").html("￥"+sum_price.toFixed(2))
+    })
+</script>
