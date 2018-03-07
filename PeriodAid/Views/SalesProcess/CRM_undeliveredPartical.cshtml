@@ -15,11 +15,11 @@
                     <input type="checkbox" class="btn" id="checkbox-all">
                 </label>
             </th>
-            <th >订单号</th>
-            <th >合同总金额</th>
-            <th >客户名称</th>
-            <th >地址</th>
-            <th >
+            <th>订单号</th>
+            <th>合同名称</th>
+            <th>总金额</th>
+            <th>发货地址</th>
+            <th>
                 <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
@@ -30,13 +30,13 @@
             <tr>
                 <td>
                     <label class="checkbox-custom">
-                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.status" data-astatus="@item.address_status">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-astatus="@item.address_status">
                     </label>
                 </td>
                 <td>@item.platform_code</td>
+                <td>@item.contract_title</td>
                 <td>@item.total_amount</td>
-                <td>@item.CRM_Customer.customer_name</td>
-                @if (item.status == "3531567")
+                @if (item.contract_status == "3531567")
                 {
                     if (item.address_status == 1)
                     {
@@ -44,25 +44,25 @@
                     }
                     else
                     {
-                        <td class="select_address">
-                            <div class="distpicker5">
+                        <td class="select_address" style="width:397px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="@item.receiver_address">
+                            <div class="distpicker5" style="display:inline">
                                 <select class="select_province form-control" style="width:20%"></select>
                                 <select class="select_city form-control" style="width:20%"></select>
                                 <select class="select_district form-control" style="width:20%"></select>
                             </div>
+                            @item.receiver_address
                         </td>
                     }
-
                     <td class="receiver_address">
-                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
-                        <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id">详情</a>
+                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
+                        <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title" >详情</a>
                     </td>
                 }
-                else if (item.status == "3531568")
+                else if (item.contract_status == "3531568")
                 {
                     <td>@item.receiver_address</td>
                     <td>
-                       <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.status"  style="cursor:pointer">获取ERP配送信息</a>
+                       <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status"  style="cursor:pointer">获取ERP配送信息</a>
                     </td>
                 }
                 else
@@ -211,16 +211,18 @@
                                     $.ajax({
                                         url: "/SalesProcess/CRM_undeliveredPartical/",
                                         data: {
-                                            status: "3531567"
+                                            status: "3531568"
                                         },
                                         success: function (data) {
                                             $("#undelivered_list_content").html(data)
+                                            $("#second_btn").addClass("btn-danger")
+                                            $("#firsts_btn").removeClass("btn-danger")
                                         }
                                     })
                                 }
                             })
                         } else if (data.result == "FAIL") {
-                            errorAlert("推送失败," + data.data)
+                            errorAlert("推送失败,请检查订单信息是否完整")
                         } else {
                             errorAlert("获取信息失败")
                         }
@@ -240,7 +242,6 @@
                     c_id: orderarry,
                 },
                 success: function (data) {
-                    console.log(data)
                     if (data.result == "SUCCESS") {
                         alert("已从ERP同步快递信息")
                         $.ajax({
@@ -267,6 +268,8 @@
                         errorAlert("获取失败," + data.data)
                     } else if (data.result == "ERROR") {
                         errorAlert("尚未配发，暂无物流信息")
+                    } else if (data.result == "PORTION") {
+                        alert("部分已配货")
                     }
                     else {
                         errorAlert("未找到ERP订单")
@@ -311,13 +314,15 @@
                         })
                     } else if (data.result == "FAIL") {
                         errorAlert("获取失败,"+data.data)
-                    } else if (data.result == "ERROR") {
+                    } else if (data.result == "PORTION") {
+                        alert("部分已配货")
+                    }
+                    else if (data.result == "ERROR") {
                         errorAlert("尚未配发，暂无物流信息")
                     }
                     else {
                         errorAlert("未找到ERP订单")
                     }
-                    
                 }
             })
         })
@@ -343,16 +348,18 @@
                                 $.ajax({
                                     url: "/SalesProcess/CRM_undeliveredPartical/",
                                     data: {
-                                        status: "3531567"
+                                        status: "3531568"
                                     },
                                     success: function (data) {
                                         $("#undelivered_list_content").html(data)
+                                        $("#second_btn").addClass("btn-danger")
+                                        $("#firsts_btn").removeClass("btn-danger")
                                     }
                                 })
                             }
                         })
                     } else if (data.result == "FAIL") {
-                        errorAlert("推送失败," + data.data)
+                        errorAlert("推送失败,请检查订单信息是否完整")
                     } else {
                         errorAlert("获取信息失败")
                     }
@@ -368,7 +375,10 @@
             var City=that.attr("data-city")
             var District = that.attr("data-district")
             if (District == null || District == "") {
-                errorAlert("请选择区域")
+                confirm("CRM地址信息格式不规范", "请重新选择", function () {
+                    orderarry.remove(that.attr("data-val"))
+                })
+                
             } else {
                 $.ajax({
                     url: "/SalesProcess/createOrder/",
@@ -378,7 +388,6 @@
                         province: Province,
                         city: City,
                         district: District,
-
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
@@ -392,18 +401,22 @@
                                     $.ajax({
                                         url: "/SalesProcess/CRM_undeliveredPartical/",
                                         data: {
-                                            status: "3531567"
+                                            status: "3531568"
                                         },
                                         success: function (data) {
                                             $("#undelivered_list_content").html(data)
+                                            $("#second_btn").addClass("btn-danger")
+                                            $("#firsts_btn").removeClass("btn-danger")
                                         }
                                     })
                                 }
                             })
                         } else if (data.result == "FAIL") {
-                            errorAlert("推送失败," + data.data)
+                            errorAlert("推送失败,请检查订单信息是否完整")
+                            orderarry.remove(that.attr("data-val"))
                         } else {
                             errorAlert("获取信息失败")
+                            orderarry.remove(that.attr("data-val"))
                         }
 
                     }
@@ -413,6 +426,7 @@
         })
         // 详情
         $(".contract_detail").on("click", function () {
+            var that = $(this)
             $.ajax({
                 url: "/SalesProcess/ContractDetail_show",
                 data: {
@@ -421,6 +435,7 @@
                 success: function (data) {
                     $('#modal-content').html(data)
                     $("#myModal").modal('show')
+                    $("#contract-title").text(that.attr("data-title"))
                 }
             })
         })

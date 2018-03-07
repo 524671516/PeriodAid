@@ -15,8 +15,9 @@
 <div class="select-btn">
     <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3531567"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;未同步ERP订单</a>
     <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="3531568"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;已同步ERP订单</a>
-    <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3764330"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货订单</a>
-    <a class="btn btn-info btn-sm status-btn" id="renovate_btn" data-toggle="tooltip" title="每15秒可点击一次" data-placement="right"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
+    <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3764330"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;全部发货订单</a>
+    <a class="btn btn-info btn-sm status-btn" id="fourth_btn" data-val="3890335"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;部分发货订单</a>
+    <a class="btn btn-info btn-sm status-btn" id="renovate_btn" data-toggle="tooltip" title="每10秒可点击一次" data-placement="right"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
 </div>
 <div class="tm-veiw-loading text-center" id="tm-view-loading" hidden>
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i><br><h4>数据加载中，请勿刷新界面！</h4>
@@ -38,22 +39,18 @@
                     $("#undelivered_list_content").html(data)
                 }
             })
+            // 获取user_token
+            $.ajax({
+                url: "/SalesProcess/GetUserToken/",
+                type: "post",
+                success: function (data) {
+                }
+            })
             $("#first_btn").addClass("btn-danger")
             // 刷新
             $("#renovate_btn").on("click", function () {
                 $(this).addClass("disabled")
-                setTimeout(function () {
-                    $("#renovate_btn").removeClass("disabled")
-                }, 15000)
-                $("#undelivered_list_content").html("")
-                $("#tm-view-loading").show()
-                // 获取user_token
-                $.ajax({
-                    url: "/SalesProcess/GetUserToken/",
-                    type: "post",
-                    success: function (data) {
-                    }
-                })
+                $(".status-btn").addClass("disabled")
                 // 获取crm客户数据
                 $.ajax({
                     url: "/SalesProcess/GetCustomer/",
@@ -61,6 +58,8 @@
                         url_api: "/api/v2/customers"
                     },
                     success: function (data) {
+                        $("#tm-view-loading").show()
+                        $("#undelivered_list_content").html("")
                     }
                 })
                 // 获取crm合同数据
@@ -71,15 +70,33 @@
                     },
                     success: function (data) {
                         if (data.result == "SUCCESS") {
-                            $("#tm-view-loading").hide()
-                            //数据保存完再请求数据页面
+                            // 获取合同详情
                             $.ajax({
-                                url: "/SalesProcess/CRM_undeliveredPartical/",
-                                data: {
-                                    status: $("#first_btn").attr("data-val")
-                                },
+                                url: "/SalesProcess/GetCrmDetailInfo/",
                                 success: function (data) {
-                                    $("#undelivered_list_content").html(data)
+                                    if (data.result == "SUCCESS") {
+                                        $("#tm-view-loading").hide()
+                                        $(".status-btn").removeClass("disabled")
+                                        setTimeout(function () {
+                                            $("#renovate_btn").removeClass("disabled")
+                                        }, 6000)
+                                        //数据保存完再请求数据页面
+                                        $.ajax({
+                                            url: "/SalesProcess/CRM_undeliveredPartical/",
+                                            data: {
+                                                status: $("#first_btn").attr("data-val")
+                                            },
+                                            success: function (data) {
+                                                $("#undelivered_list_content").html(data)
+                                            }
+                                        })
+                                    } else {
+                                        confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                            if (Confirm) {
+                                                window.location.reload();
+                                            }
+                                        })
+                                    }
                                 }
                             })
                         } else {
@@ -91,33 +108,20 @@
                         }
                     }
                 })
-                // 获取合同详情
+            })
+            // 选择
+            $(".status-btn").on("click", function () {
+                var that = $(this)
+                $(".select-btn .status-btn").removeClass("btn-danger");
+                that.addClass("btn-danger");
                 $.ajax({
-                    url: "/SalesProcess/GetCrmDetailInfo/",
+                    url: "/SalesProcess/CRM_undeliveredPartical",
+                    data: {
+                        status: $(this).attr("data-val"),
+                    },
                     success: function (data) {
-                        if (data.result == "FAIL") {
-                            confirm("数据获取失败", "是否刷新", function (Confirm) {
-                                if (Confirm) {
-                                    window.location.reload();
-                                }
-                            })
-                        }
+                        $("#undelivered_list_content").html(data)
                     }
-                })
-                // 选择
-                $(".status-btn").on("click", function () {
-                    var that = $(this)
-                    $(".select-btn .status-btn").removeClass("btn-danger");
-                    that.addClass("btn-danger");
-                    $.ajax({
-                        url: "/SalesProcess/CRM_undeliveredPartical",
-                        data: {
-                            status: $(this).attr("data-val"),
-                        },
-                        success: function (data) {
-                            $("#undelivered_list_content").html(data)
-                        }
-                    })
                 })
             })
         });
