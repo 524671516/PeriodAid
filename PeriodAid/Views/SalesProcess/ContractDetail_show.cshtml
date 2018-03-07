@@ -1,10 +1,10 @@
 ﻿@model PeriodAid.Models.CRM_Contract
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="text-center">订单详情</h4>
+    <h4 class="text-center" id="contract-title"></h4>
 </div>
-<div class="modal-body" id="modal-body">
-    <table class="table table-bordered">
+<div class="modal-body" id="modal-body" style="padding:0">
+    <table class="table table-bordered" style="margin-bottom:0">
         <tr>
             <th>产品名称</th>
             <th>产品编号</th>
@@ -23,4 +23,7 @@
             </tr>
         }
     </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default float-left" data-dismiss="modal">确认</button>
 </div>

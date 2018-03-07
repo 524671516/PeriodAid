@@ -158,7 +158,28 @@ namespace PeriodAid.Models
     
     public partial class CRM_Contract_Data
     {
-        public List<CRM_Contract> contracts { get; set; }
+        public List<CRM_ContractResult> contracts { get; set; }
+    }
+
+    public partial class CRM_ContractResult
+    {
+        public string approve_status { get; set; }
+
+        public int id { get; set; }
+
+        public int user_id { get; set; }
+
+        public string user_name { get; set; }
+
+        public int customer_id { get; set; }
+
+        public string title { get; set; }
+
+        public decimal total_amount { get; set; }
+
+        public string status { get; set; }
+
+        public DateTime updated_at { get; set; }
     }
 
     [Table("CRM_Contract")]
@@ -181,11 +202,11 @@ namespace PeriodAid.Models
         public virtual CRM_Customer CRM_Customer { get; set; }
 
         [StringLength(128)]
-        public string title { get; set; }
+        public string contract_title { get; set; }
 
         public decimal total_amount { get; set; }
 
-        public string status { get; set; }
+        public string contract_status { get; set; }
 
         public DateTime? updated_at { get; set; }
 
@@ -194,8 +215,8 @@ namespace PeriodAid.Models
 
         [StringLength(64)]
         public string express_code { get; set; }
-
-        public string express_state { get; set; }
+        [StringLength(32)]
+        public string express_status { get; set; }
         
         [StringLength(128)]
         public string shop_code { get; set; }
@@ -209,19 +230,23 @@ namespace PeriodAid.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CRM_ContractDetail> CRM_ContractDetail { get; set; }
         // 收货人
+        [StringLength(64)]
         public string receiver_name { get; set; }
         // 收货地址
+        [StringLength(256)]
         public string receiver_address { get; set; }
         // 电话
+        [StringLength(64)]
         public string receiver_tel { get; set; }
-        
+        [StringLength(64)]
         public string receiver_province { get; set; }
-
+        [StringLength(64)]
         public string receiver_city { get; set; }
-
+        [StringLength(128)]
         public string receiver_district { get; set; }
         //地址检测(1通过，0出错)
         public int address_status { get; set; }
+       
     }
     
     [Table("CRM_ExceptionLogs")]
@@ -282,9 +307,9 @@ namespace PeriodAid.Models
         public virtual CRM_Contract CRM_Contract { get; set; }
 
         public int product_id { get; set; }
-
+        [StringLength(64)]
         public string product_name { get; set; }
-
+        [StringLength(128)]
         public string product_code { get; set; }
 
         public int quantity { get; set; }
@@ -308,13 +333,13 @@ namespace PeriodAid.Models
 
         [StringLength(64)]
         public string customer_tel { get; set; }
-
+        [StringLength(64)]
         public string province { get; set; }
-
+        [StringLength(64)]
         public string city { get; set; }
-
+        [StringLength(128)]
         public string district { get; set; }
-
+        [StringLength(32)]
         public string zip { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -395,13 +420,13 @@ namespace PeriodAid.Models
         public int customer_id { get; set; }
 
         public virtual CRM_Customer CRM_Customer { get; set; }
-
+        [StringLength(64)]
         public string province { get; set; }
-
+        [StringLength(64)]
         public string city { get; set; }
-
+        [StringLength(128)]
         public string district { get; set; }
-
+        [StringLength(32)]
         public string zip { get; set; }
     }
 
@@ -420,14 +445,22 @@ namespace PeriodAid.Models
         public static string password = "Shouquanzhai2017";
         /// 类型
         public static string device = "dingtalk";
-        ///CRM订单状态：未开始
+        ///CRM订单状态：待提交
         public static string status_unsend = "3531567";
         ///CRM订单状态：已同步待发货
         public static string status_undelivered = "3531568";
         ///CRM订单状态：已发货
         public static string status_delivered = "3764330";
-
-
+        ///CRM订单状态：成功结束
+        public static string status_success = "3531569";
+        ///CRM订单状态：意外终止
+        public static string status_end = "3531570";
+        ///CRM订单状态：部分发货
+        public static string status_part = "3890335";
+        ///CRM订单状态：待审核
+        public static string status_pendingApproval = "3899604";
+        // 审核状态：已通过
+        public static string approved_status = "approved";
     }
 
     public partial class orders_Result
@@ -449,6 +482,8 @@ namespace PeriodAid.Models
         public string platform_code { get; set; }
 
         public int delivery_state { get; set; }
+
+        public int assignState { get; set; }
     }
 
     public partial class deliverys_List
