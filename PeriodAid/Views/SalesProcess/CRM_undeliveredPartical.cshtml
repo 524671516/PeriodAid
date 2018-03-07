@@ -23,6 +23,7 @@
             <th style="width:15%">
                 <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
+                <a class="btn btn-xs btn-success" id="batch_change_Partdeliverys" data-status="3890335" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
 
@@ -125,6 +126,7 @@
         })
         $("#batch_change_status").hide()
         $("#batch_change_deliverys").hide()
+        $("#batch_change_Partdeliverys").hide()
         $("#checkbox-all").attr("data-status", $(".checkbox").attr("data-status"))
         var orderarry = [];
         $('.checkbox[data-astatus="0"]').attr("disabled", "disabled")
