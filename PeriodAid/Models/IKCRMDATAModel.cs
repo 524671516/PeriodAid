@@ -281,6 +281,12 @@ namespace PeriodAid.Models
         public string text_asset_eb802b { get; set; }
         // 电话
         public string text_asset_da4211 { get; set; }
+        // 已回款
+        public decimal received_payments_amount { get; set; }
+        // 未开票
+        public decimal received_payments_plan_amount { get; set; }
+
+
     }
     
     public partial class CRM_ContractDetail_CustomerProductList
@@ -457,7 +463,7 @@ namespace PeriodAid.Models
         public static string status_end = "3531570";
         ///CRM订单状态：部分发货
         public static string status_part = "3890335";
-        ///CRM订单状态：待审核
+        ///CRM订单状态：待财审
         public static string status_pendingApproval = "3899604";
         // 审核状态：已通过
         public static string approved_status = "approved";
