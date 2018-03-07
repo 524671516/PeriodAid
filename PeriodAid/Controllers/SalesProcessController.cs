@@ -2889,6 +2889,7 @@ namespace PeriodAid.Controllers
         {
             var undeliveredData = from m in crm_db.CRM_Contract
                                   where m.status == status
+                                  orderby m.address_status descending
                                   select m;
             return PartialView(undeliveredData);
         }
