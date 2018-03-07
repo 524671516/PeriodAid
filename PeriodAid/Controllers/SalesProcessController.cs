@@ -2704,6 +2704,7 @@ namespace PeriodAid.Controllers
             {
                 for (int i = 0; i < r.data.contracts.Count(); i++)
                 {
+                    crm_contract.Add(r.data.contracts[i].id);
                     Random ran = new Random();
                     int RandKey = ran.Next(01, 99);
                     var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey;
@@ -2820,6 +2821,7 @@ namespace PeriodAid.Controllers
                     contract.receiver_tel = r.data.text_asset_da4211;
                     contract.received_payments_amount = r.data.received_payments_amount;
                     contract.super_admin = 0;
+                    contract.received_payments_type = r.data.text_asset_c33e2b;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     checkAddress(r.data.text_asset_eb802b, C_id.id);
                 }

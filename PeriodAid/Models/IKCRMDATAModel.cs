@@ -290,6 +290,8 @@ namespace PeriodAid.Models
         public string text_asset_da4211 { get; set; }
         //回款金额
         public decimal received_payments_amount { get; set; }
+        //回款类型
+        public string text_asset_c33e2b { get; set; }
 
     }
 
@@ -471,6 +473,11 @@ namespace PeriodAid.Models
         public static string status_pendingApproval = "3899604";
         // 审核状态：已通过
         public static string approved_status = "approved";
+        //订单回款状态：先款后货
+        public static string received_payments = "sel_99ef";
+        //订单回款状态：先货后款
+        public static string unreceived_payments = "sel_1792";
+
     }
 
     public partial class orders_Result
