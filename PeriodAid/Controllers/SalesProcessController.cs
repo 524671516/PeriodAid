@@ -2818,6 +2818,8 @@ namespace PeriodAid.Controllers
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
                     contract.receiver_tel = r.data.text_asset_da4211;
+                    contract.received_payments_amount = r.data.received_payments_amount;
+                    contract.super_admin = 0;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     checkAddress(r.data.text_asset_eb802b, C_id.id);
                 }
