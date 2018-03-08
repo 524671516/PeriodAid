@@ -206,8 +206,6 @@ namespace PeriodAid.Models
 
         public decimal total_amount { get; set; }
 
-        public decimal received_payments_amount { get; set; }
-
         public string contract_status { get; set; }
 
         public DateTime? updated_at { get; set; }
@@ -248,11 +246,9 @@ namespace PeriodAid.Models
         public string receiver_district { get; set; }
         //地址检测(1通过，0出错)
         public int address_status { get; set; }
-        //订单回款类型
+        //订单回款类型(1付清,0未付清)
         [StringLength(64)]
-        public string received_payments_type { get; set; }
-        //绿色通道(为1时生效)
-        public int super_admin { get; set; }
+        public string received_payments_status { get; set; }
        
     }
     
@@ -473,9 +469,9 @@ namespace PeriodAid.Models
         public static string status_pendingApproval = "3899604";
         // 审核状态：已通过
         public static string approved_status = "approved";
-        //订单回款状态：先款后货
+        //订单回款类型：先款后货
         public static string received_payments = "sel_99ef";
-        //订单回款状态：先货后款
+        //订单回款类型：先货后款
         public static string unreceived_payments = "sel_1792";
 
     }

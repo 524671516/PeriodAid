@@ -32,7 +32,7 @@
             <tr>
                 <td>
                     <label class="checkbox-custom">
-                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-astatus="@item.address_status">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
                     </label>
                 </td>
                 <td>
@@ -63,11 +63,11 @@
                                 <select class="select_city form-control" style="width:31%"></select>
                                 <select class="select_district form-control" style="width:31%"></select>
                             </div>
-                            <div>@item.receiver_address</div>
+                            <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.receiver_address</div>
                         </td>
                     }
                     <td class="receiver_address">
-                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
+                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
                         <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title" >详情</a>
                     </td>
                 }
@@ -80,7 +80,7 @@
                 }
                 else if (item.contract_status == "3890335")
                 {
-                    <td title="@item.receiver_address">@item.receiver_address</td>
+                    <td >@item.receiver_address</td>
                     <td>
                         <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
                     </td>
@@ -130,6 +130,7 @@
         $("#checkbox-all").attr("data-status", $(".checkbox").attr("data-status"))
         var orderarry = [];
         $('.checkbox[data-astatus="0"]').attr("disabled", "disabled")
+        $('.checkbox[data-rstauts="0"]').attr("disabled", "disabled")
         //单选
         $(".checkbox").click(function () {
             var that = $(this)
@@ -140,11 +141,14 @@
                 if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").show()
                     $(".change_status").hide()
-                } else {
+                } else if (that.attr("data-status") == "3890335") {
+                    $("#batch_change_Partdeliverys").show()
+                    $(".get_erp_status").hide()
+                }
+                else {
                     $("#batch_change_deliverys").show()
                     $(".get_erp_status").hide()
                 }
-                
             } else {
                 orderarry.remove(C_id)
                 $("#checkbox-all").prop("checked", false)
@@ -153,7 +157,11 @@
                 if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").hide()
                     $(".change_status").show()
-                } else {
+                } else if (that.attr("data-status") == "3890335") {
+                    $("#batch_change_Partdeliverys").hide()
+                    $(".get_erp_status").show()
+                }
+                else {
                     $("#batch_change_deliverys").hide()
                     $(".get_erp_status").show()
                 }
@@ -168,7 +176,7 @@
                 if (that.is(":checked")) {
                     $("#batch_change_status").show()
                     $(".change_status").hide()
-                    $('.checkbox[data-astatus="1"]').prop("checked", true);
+                    $('.checkbox[data-astatus="1"][data-rstauts="1"]').prop("checked", true);
                     var list = $(".checkbox:checked")
                     for (i; i < list.length; i++) {
                         var list_data = $(list[i]).attr("data-val")
@@ -185,9 +193,9 @@
                         orderarry.remove($(list[i]).attr("data-val"))
                     }
                 }
-            } else {
+            } else if (that.attr("data-status") == "3890335") {
                 if (that.is(":checked")) {
-                    $("#batch_change_deliverys").show()
+                    $("#batch_change_Partdeliverys").show()
                     $(".get_erp_status").hide()
                     $("input").prop("checked", true);
                     var list = $(".checkbox:checked")
@@ -198,7 +206,29 @@
                         }
                     }
                 } else {
-                    $("#batch_change_deliverys").hide()
+                    $("#batch_change_Partdeliverys").hide()
+                    $(".get_erp_status").show()
+                    $("input").prop("checked", false);
+                    var list = $(".checkbox:unchecked")
+                    for (i; i < list.length; i++) {
+                        orderarry.remove($(list[i]).attr("data-val"))
+                    }
+                }
+            }
+            else {
+                if (that.is(":checked")) {
+                    $("#batch_change_Partdeliverys").show()
+                    $(".get_erp_status").hide()
+                    $("input").prop("checked", true);
+                    var list = $(".checkbox:checked")
+                    for (i; i < list.length; i++) {
+                        var list_data = $(list[i]).attr("data-val")
+                        if (orderarry.indexOf(list_data) == -1) {
+                            orderarry.push(list_data)
+                        }
+                    }
+                } else {
+                    $("#batch_change_Partdeliverys").hide()
                     $(".get_erp_status").show()
                     $("input").prop("checked", false);
                     var list = $(".checkbox:unchecked")
@@ -252,6 +282,64 @@
                     }
                 })
             }
+        })
+        //
+        $("#batch_change_Partdeliverys").click(function () {
+            var that = $(this)
+            orderarry.push(that.attr("data-val"))
+            $.ajax({
+                url: "/SalesProcess/getERPORDERS/",
+                type: "post",
+                data: {
+                    c_id: orderarry,
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert("已从ERP同步快递信息")
+                        $.ajax({
+                            url: "/SalesProcess/UpdateCRM/",
+                            type: "post",
+                            data: {
+                                c_id: orderarry,
+                            },
+                            success: function () {
+                                $.ajax({
+                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    data: {
+                                        status: "3764330"
+                                    },
+                                    success: function (data) {
+                                        $("#undelivered_list_content").html(data)
+                                        $("#fourth_btn").addClass("btn-danger")
+                                        $("#second_btn").removeClass("btn-danger")
+                                    }
+                                })
+                            }
+                        })
+                    } else if (data.result == "FAIL") {
+                        errorAlert("获取失败," + data.data)
+                    } else if (data.result == "ERROR") {
+                        errorAlert("尚未配发，暂无物流信息")
+                    } else if (data.result == "PORTION") {
+                        alert("部分已配货")
+                        $.ajax({
+                            url: "/SalesProcess/CRM_undeliveredPartical/",
+                            data: {
+                                status: "3890335"
+                            },
+                            success: function (data) {
+                                $("#undelivered_list_content").html(data)
+                                $("#third_btn").addClass("btn-danger")
+                                $("#second_btn").removeClass("btn-danger")
+                            }
+                        })
+                    }
+                    else {
+                        errorAlert("未找到ERP订单")
+                    }
+
+                }
+            })
         })
          //批量获取ERP快递信息
         $("#batch_change_deliverys").click(function () {

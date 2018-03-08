@@ -2833,11 +2833,21 @@ namespace PeriodAid.Controllers
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
+                    contract.received_payments_status = "";
+                    if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments)
+                    {
+                        contract.received_payments_status = "1";
+                    }else if(r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
+                    {
+                        contract.received_payments_status = "1";
+                    }
+                    else
+                    {
+                        contract.received_payments_status = "0";
+                    }
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
                     contract.receiver_tel = r.data.text_asset_da4211;
-                    contract.received_payments_amount = r.data.received_payments_amount;
-                    contract.super_admin = 0;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     checkAddress(r.data.text_asset_eb802b, C_id.id);
                 }
