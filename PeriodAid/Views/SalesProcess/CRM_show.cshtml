@@ -38,12 +38,12 @@
                 }
             })
             // 获取user_token
-            $.ajax({
-                url: "/SalesProcess/GetUserToken/",
-                type: "post",
-                success: function (data) {
-                }
-            })
+            //$.ajax({
+            //    url: "/SalesProcess/GetUserToken/",
+            //    type: "post",
+            //    success: function (data) {
+            //    }
+            //})
             $("#first_btn").addClass("btn-danger")
             // 刷新
             $("#renovate_btn").on("click", function () {
@@ -99,14 +99,14 @@
                         }
                     })
                 // 获取crm客户数据
-                    //$.ajax({
-                    //    url: "/SalesProcess/GetCustomer/",
-                    //    data: {
-                    //        url_api: "/api/v2/customers"
-                    //    },
-                    //    success: function (data) {
-                    //    }
-                //})
+                    $.ajax({
+                        url: "/SalesProcess/GetCustomer/",
+                        data: {
+                            url_api: "/api/v2/customers"
+                        },
+                        success: function (data) {
+                        }
+                })
             })
             // 选择
             $(".status-btn").on("click", function () {

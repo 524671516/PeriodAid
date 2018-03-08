@@ -142,11 +142,13 @@ namespace PeriodAid.Models
     public partial class CRM_User_Token
     {
         public int Id { get; set; }
-
+        
+        public string Key { get; set; }
         [StringLength(256)]
-        public string user_token { get; set; }
+        public string Value { get; set; }
 
         public DateTime download_at { get; set; }
+        
     }
     
     public partial class CRM_Contract_ReturnData
@@ -442,7 +444,12 @@ namespace PeriodAid.Models
     {
         public string code { get; set; }
 
-        public CRM_User_Token data { get; set; }
+        public User_tokenResult data { get; set; }
+    }
+
+    public class User_tokenResult
+    {
+        public string user_token;
     }
 
     public static class UserInfo
@@ -465,8 +472,8 @@ namespace PeriodAid.Models
         public static string status_end = "3531570";
         ///CRM订单状态：部分发货
         public static string status_part = "3890335";
-        ///CRM订单状态：待审核
-        public static string status_pendingApproval = "3899604";
+        ///CRM订单状态：待财审
+        public static string status_pendingApproval = "3907271";
         // 审核状态：已通过
         public static string approved_status = "approved";
         //订单回款类型：先款后货
