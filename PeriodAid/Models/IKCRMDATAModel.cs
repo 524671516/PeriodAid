@@ -325,6 +325,8 @@ namespace PeriodAid.Models
         public int quantity { get; set; }
 
         public decimal unit_price { get; set; }
+        // 0存在 -1删除
+        public int status { get; set; }
         
     }
 
@@ -351,6 +353,8 @@ namespace PeriodAid.Models
         public string district { get; set; }
         [StringLength(32)]
         public string zip { get; set; }
+        // 0 正常 -1删除
+        public int status { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CRM_Contract> CRM_Contract { get; set; }
@@ -428,6 +432,8 @@ namespace PeriodAid.Models
         public string contact_tel { get; set; }
 
         public int customer_id { get; set; }
+        // 0 存在 -1删除
+        public int status { get; set; }
 
         public virtual CRM_Customer CRM_Customer { get; set; }
         [StringLength(64)]
@@ -480,7 +486,8 @@ namespace PeriodAid.Models
         public static string received_payments = "sel_99ef";
         //订单回款类型：先货后款
         public static string unreceived_payments = "sel_1792";
-
+        // 数量
+        public static int Count = 100; 
     }
 
     public partial class orders_Result

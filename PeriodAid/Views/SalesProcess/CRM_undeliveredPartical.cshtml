@@ -186,10 +186,15 @@
                     $(".change_status").hide()
                     $('.checkbox[data-astatus="1"][data-rstauts="1"]').prop("checked", true);
                     var list = $(".checkbox:checked")
-                    for (i; i < list.length; i++) {
-                        var list_data = $(list[i]).attr("data-val")
-                        if (orderarry.indexOf(list_data) == -1) {
-                            orderarry.push(list_data)
+                    if (list.length < 1) {
+                        $("#batch_change_status").addClass("hidden")
+                    } else {
+                        $("#batch_change_status").removeClass("hidden")
+                        for (i; i < list.length; i++) {
+                            var list_data = $(list[i]).attr("data-val")
+                            if (orderarry.indexOf(list_data) == -1) {
+                                orderarry.push(list_data)
+                            }
                         }
                     }
                 } else {
@@ -207,10 +212,15 @@
                     $(".get_erp_status").hide()
                     $("input").prop("checked", true);
                     var list = $(".checkbox:checked")
-                    for (i; i < list.length; i++) {
-                        var list_data = $(list[i]).attr("data-val")
-                        if (orderarry.indexOf(list_data) == -1) {
-                            orderarry.push(list_data)
+                    if (list.length < 1) {
+                        $("#batch_change_Partdeliverys").addClass("hidden")
+                    } else {
+                        $("#batch_change_Partdeliverys").removeClass("hidden")
+                        for (i; i < list.length; i++) {
+                            var list_data = $(list[i]).attr("data-val")
+                            if (orderarry.indexOf(list_data) == -1) {
+                                orderarry.push(list_data)
+                            }
                         }
                     }
                 } else {
@@ -229,10 +239,15 @@
                     $(".get_erp_status").hide()
                     $("input").prop("checked", true);
                     var list = $(".checkbox:checked")
-                    for (i; i < list.length; i++) {
-                        var list_data = $(list[i]).attr("data-val")
-                        if (orderarry.indexOf(list_data) == -1) {
-                            orderarry.push(list_data)
+                    if (list.length < 1) {
+                        $("#batch_change_deliverys").addClass("hidden")
+                    } else {
+                        $("#batch_change_deliverys").removeClass("hidden")
+                        for (i; i < list.length; i++) {
+                            var list_data = $(list[i]).attr("data-val")
+                            if (orderarry.indexOf(list_data) == -1) {
+                                orderarry.push(list_data)
+                            }
                         }
                     }
                 } else {

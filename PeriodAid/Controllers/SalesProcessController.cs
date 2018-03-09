@@ -2464,27 +2464,27 @@ namespace PeriodAid.Controllers
             
         }
 
-        private int Get_Count(string url_api)
-        {
-            string url = "https://api.ikcrm.com" + url_api + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-            var request = WebRequest.Create(url) as HttpWebRequest;
-            request.ServicePoint.ConnectionLimit = int.MaxValue;
-            request.Method = "get";
-            request.ContentType = "application/x-www-form-urlencoded";
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
-            if(r.code == "0")
-            {
-                return r.data.total_count;
-            }else if (r.code == "100401")
-            {
-                RefreshUserToken();
-            }
-            return Get_Count(url_api);
-        }
+        //private int Get_Count(string url_api)
+        //{
+        //    string url = "https://api.ikcrm.com" + url_api + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+        //    var request = WebRequest.Create(url) as HttpWebRequest;
+        //    request.ServicePoint.ConnectionLimit = int.MaxValue;
+        //    request.Method = "get";
+        //    request.ContentType = "application/x-www-form-urlencoded";
+        //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+        //    var retString = myStreamReader.ReadToEnd();
+        //    myStreamReader.Close();
+        //    CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
+        //    if(r.code == "0")
+        //    {
+        //        return r.data.total_count;
+        //    }else if (r.code == "100401")
+        //    {
+        //        RefreshUserToken();
+        //    }
+        //    return Get_Count(url_api);
+        //}
 
         private string Get_Request(string url)
         {
@@ -2501,11 +2501,26 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCustomer(string url_api)
         {
-            var total_count = Get_Count(url_api);
-            int totalCount = total_count * 10;
-            var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
-            string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + totalCount + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count+ "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(Get_Request(url));
+            List<int> customerlist = new List<int>();
+            List<int> CRM_Customerlist = new List<int>();
+            List<int> contactlist = new List<int>();
+            List<int> CRM_Contactlist = new List<int>();
+            var CRM_customer = from m in crm_db.CRM_Customer
+                               where m.status == 0
+                               select m;
+            foreach (var customer in CRM_customer)
+            {
+                CRM_Customerlist.Add(customer.customer_id);
+            }
+            var CRM_contact = from m in crm_db.CRM_Contact
+                              where m.status == 0
+                              select m;
+            foreach (var contact in CRM_contact)
+            {
+                CRM_Contactlist.Add(contact.contact_id);
+            }
             if (r.code == "0")
             {
                 for (int i = 0; i < r.data.customers.Count(); i++)
@@ -2536,6 +2551,7 @@ namespace PeriodAid.Controllers
                     {
                         customersAddressStr = customersAddress;
                     }
+                    customerlist.Add(r.data.customers[i].id);
                     var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
                     if (check_customer == null)
                     {
@@ -2549,6 +2565,7 @@ namespace PeriodAid.Controllers
                         check_customer.province = province;
                         check_customer.city = city;
                         check_customer.district = district;
+                        check_customer.status = 0;
                         crm_db.CRM_Customer.Add(check_customer);
                         crm_db.SaveChanges();
                         for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
@@ -2593,6 +2610,7 @@ namespace PeriodAid.Controllers
                                 check_contact.city = Ctcity;
                                 check_contact.district = Ctdistrict;
                                 check_contact.zip = "200001";
+                                check_contact.status = 0;
                                 crm_db.CRM_Contact.Add(check_contact);
                             }
                         }
@@ -2608,6 +2626,7 @@ namespace PeriodAid.Controllers
                         check_customer.province = province;
                         check_customer.city = city;
                         check_customer.district = district;
+                        check_customer.status = 0;
                         crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
                         for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                         {
@@ -2638,6 +2657,7 @@ namespace PeriodAid.Controllers
                             {
                                 CtAddressStr = ctAddress;
                             }
+                            contactlist.Add(ctId);
                             if (check_contact == null)
                             {
                                 // new
@@ -2651,6 +2671,7 @@ namespace PeriodAid.Controllers
                                 check_contact.city = Ctcity;
                                 check_contact.district = Ctdistrict;
                                 check_contact.zip = "200001";
+                                check_contact.status = 0;
                                 crm_db.CRM_Contact.Add(check_contact);
                             }
                             else
@@ -2665,13 +2686,35 @@ namespace PeriodAid.Controllers
                                 check_contact.city = Ctcity;
                                 check_contact.district = Ctdistrict;
                                 check_contact.zip = "200001";
+                                check_contact.status = 0;
                                 crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
                             }
                         }
                     }
 
                 }
+                var diffArrcustomer = CRM_Customerlist.Where(m => !customerlist.Contains(m)).ToArray();
+                for (int i = 0; i < diffArrcustomer.Count(); i++)
+                {
+                    var customerId = diffArrcustomer[i];
+                    var check_data = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
+                    check_data.status = -1;
+                    crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                }
+                var diffArrcontact = CRM_Contactlist.Where(m => !contactlist.Contains(m)).ToArray();
+                for (int i = 0; i < diffArrcontact.Count(); i++)
+                {
+                    var contactId= diffArrcontact[i];
+                    var check_data = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactId);
+                    check_data.status = -1;
+                    crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                }
                 crm_db.SaveChanges();
+            }
+            else if (r.code == "100401")
+            {
+                 RefreshUserToken();
+                return GetCustomer(url_api);
             }
             else
             {
@@ -2695,9 +2738,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string url_api)
         {
-            var total_count = Get_Count(url_api);
-            int totalCount = total_count * 10;
-            string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + totalCount + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
@@ -2765,7 +2806,7 @@ namespace PeriodAid.Controllers
                 {
                     var contractId = diffArr[i];
                     var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                    check_data.contract_status = "delete";
+                    check_data.contract_status = "-1";
                     crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                 }
                 crm_db.SaveChanges();
@@ -2795,6 +2836,12 @@ namespace PeriodAid.Controllers
             var contracts = from m in crm_db.CRM_Contract
                             where m.contract_status == UserInfo.status_unsend
                             select m;
+            var ContractDetail = from m in crm_db.CRM_ContractDetail
+                          where m.status == 0
+                          select m;
+            List<int> detaillist = new List<int>();
+            List<int> CRM_ContractDetaillist = new List<int>();
+            foreach(var detail in ContractDetail)
             foreach (var C_id in contracts)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == C_id.id);
@@ -2805,7 +2852,8 @@ namespace PeriodAid.Controllers
                     for (int i = 0; i < r.data.product_assets_for_new_record.Count(); i++)
                     {
                         var pid = r.data.product_assets_for_new_record[i].product_id;
-                        var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.id);
+                        var p_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                        var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.id && m.unit_price == p_price);
                         if (contractdetail == null)
                         {
                             // new
@@ -3060,53 +3108,53 @@ namespace PeriodAid.Controllers
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     crm_db.SaveChanges();
                 }
-                ERPCustomOrder order = new ERPCustomOrder()
-                {
-                    platform_code = contract.platform_code,
-                    shop_code = contract.shop_code,
-                    vip_code = contract.vip_code,
-                    warehouse_code = contract.warehouse_code,
-                    express_code = contract.express_code,
-                    receiver_name = contract.receiver_name,
-                    receiver_province = contract.receiver_province,
-                    receiver_city = contract.receiver_city,
-                    receiver_district = contract.receiver_district,
-                    receiver_mobile = contract.receiver_tel,
-                    receiver_zip = contract.CRM_Customer.zip,
-                    receiver_address = contract.receiver_address,
-                    deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                };
-                order.details = new List<ERPCustomOrder_details>();
-                foreach (var item in contract.CRM_ContractDetail)
-                {
-                    ERPCustomOrder_details details = new ERPCustomOrder_details()
-                    {
-                        item_code = item.product_code,
-                        price = item.unit_price,
-                        qty = item.quantity
-                    };
-                    order.details.Add(details);
-                }
-                ERPOrderUtilities util = new ERPOrderUtilities();
-                string result = util.createOrder(order);
-                Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
-                if (r.success)
-                {
-                    contract.contract_status = UserInfo.status_undelivered;
-                    contract.address_status = 1;
-                    var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
-                    if (updatcrm != 1)
-                    {
-                        return Json(new { result = "ERROR" }, JsonRequestBehavior.AllowGet);
-                    }
-                    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
-                }
+                //ERPCustomOrder order = new ERPCustomOrder()
+                //{
+                //    platform_code = contract.platform_code,
+                //    shop_code = contract.shop_code,
+                //    vip_code = contract.vip_code,
+                //    warehouse_code = contract.warehouse_code,
+                //    express_code = contract.express_code,
+                //    receiver_name = contract.receiver_name,
+                //    receiver_province = contract.receiver_province,
+                //    receiver_city = contract.receiver_city,
+                //    receiver_district = contract.receiver_district,
+                //    receiver_mobile = contract.receiver_tel,
+                //    receiver_zip = contract.CRM_Customer.zip,
+                //    receiver_address = contract.receiver_address,
+                //    deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                //};
+                //order.details = new List<ERPCustomOrder_details>();
+                //foreach (var item in contract.CRM_ContractDetail)
+                //{
+                //    ERPCustomOrder_details details = new ERPCustomOrder_details()
+                //    {
+                //        item_code = item.product_code,
+                //        price = item.unit_price,
+                //        qty = item.quantity
+                //    };
+                //    order.details.Add(details);
+                //}
+                //ERPOrderUtilities util = new ERPOrderUtilities();
+                //string result = util.createOrder(order);
+                //Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
+                //if (r.success)
+                //{
+                //    contract.contract_status = UserInfo.status_undelivered;
+                //    contract.address_status = 1;
+                //    var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
+                //    if (updatcrm != 1)
+                //    {
+                //        return Json(new { result = "ERROR" }, JsonRequestBehavior.AllowGet);
+                //    }
+                //    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+                //}
+                //else
+                //{
+                //    return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
+                //}
             }
-            return Json(new { result = "NULL" }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
         public void checkAddress(string full_address, int contract_id)

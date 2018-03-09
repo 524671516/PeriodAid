@@ -57,6 +57,7 @@
                     $.ajax({
                         url: "/SalesProcess/GetCrmInfo/",
                         data: {
+                            url_api: "/api/v2/contracts"
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
