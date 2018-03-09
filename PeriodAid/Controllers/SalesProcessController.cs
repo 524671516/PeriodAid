@@ -2464,7 +2464,7 @@ namespace PeriodAid.Controllers
             
         }
 
-        private int Get_Count(string url_api)
+        /*private int Get_Count(string url_api)
         {
             string url = "https://api.ikcrm.com" + url_api + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             var request = WebRequest.Create(url) as HttpWebRequest;
@@ -2484,7 +2484,7 @@ namespace PeriodAid.Controllers
                 RefreshUserToken();
             }
             return Get_Count(url_api);
-        }
+        }*/
 
         private string Get_Request(string url)
         {
@@ -2501,7 +2501,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCustomer(string url_api)
         {
-            var total_count = Get_Count(url_api);
+            var total_count = 100;
             int totalCount = total_count * 10;
             var user_token = crm_db.CRM_User_Token.SingleOrDefault(m => m.Id == 1);
             string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + totalCount + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -2695,7 +2695,7 @@ namespace PeriodAid.Controllers
 
         public ActionResult GetCrmInfo(string url_api)
         {
-            var total_count = Get_Count(url_api);
+            var total_count = 100;
             int totalCount = total_count * 10;
             string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + totalCount + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
