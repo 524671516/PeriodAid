@@ -336,13 +336,12 @@ namespace PeriodAid.Models
         public int Id { get; set; }
         
         public int customer_id { get; set; }
-
         [StringLength(64)]
         public string customer_name { get; set; }
-
+        [StringLength(32)]
+        public string customer_abbreviation { get; set; }
         [StringLength(256)]
         public string customer_address { get; set; }
-
         [StringLength(64)]
         public string customer_tel { get; set; }
         [StringLength(64)]
@@ -395,6 +394,8 @@ namespace PeriodAid.Models
         public string region_info { get; set; }
 
         public string tel { get; set; }
+        
+        public string wechat { get; set; }
     }
 
     public partial class CRM_CustomerContacts
@@ -487,7 +488,11 @@ namespace PeriodAid.Models
         //订单回款类型：先货后款
         public static string unreceived_payments = "sel_1792";
         // 数量
-        public static int Count = 100; 
+        public static int Count = 100;
+        // 直接提交订单
+        public static string received_payments_status = "1";
+        // 已删除
+        public static string delete = "-1";
     }
 
     public partial class orders_Result
