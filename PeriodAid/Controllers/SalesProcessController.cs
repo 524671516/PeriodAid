@@ -2811,6 +2811,11 @@ namespace PeriodAid.Controllers
                 }
                 crm_db.SaveChanges();
             }
+            else if (r.code == "100401")
+            {
+                RefreshUserToken();
+                return GetCrmInfo(url_api);
+            }
             else
             {
                 CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
@@ -2836,12 +2841,8 @@ namespace PeriodAid.Controllers
             var contracts = from m in crm_db.CRM_Contract
                             where m.contract_status == UserInfo.status_unsend
                             select m;
-            var ContractDetail = from m in crm_db.CRM_ContractDetail
-                          where m.status == 0
-                          select m;
-            List<int> detaillist = new List<int>();
             List<int> CRM_ContractDetaillist = new List<int>();
-            foreach(var detail in ContractDetail)
+            List<int> Detaillist = new List<int>();
             foreach (var C_id in contracts)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == C_id.id);
@@ -2859,22 +2860,24 @@ namespace PeriodAid.Controllers
                             // new
                             contractdetail = new CRM_ContractDetail();
                             contractdetail.contract_id = C_id.id;
-                            contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
+                            contractdetail.product_id = pid;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
-                            contractdetail.unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                            contractdetail.unit_price = p_price;
                             contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
                             contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
+                            contractdetail.status = 0;
                             crm_db.CRM_ContractDetail.Add(contractdetail);
                         }
                         else
                         {
                             //update
                             contractdetail.contract_id = C_id.id;
-                            contractdetail.product_id = r.data.product_assets_for_new_record[i].product_id;
+                            contractdetail.product_id = pid;
                             contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
-                            contractdetail.unit_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                            contractdetail.unit_price = p_price;
                             contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
                             contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
+                            contractdetail.status = 0;
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
@@ -2882,7 +2885,8 @@ namespace PeriodAid.Controllers
                     if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments)
                     {
                         contract.received_payments_status = "1";
-                    }else if(r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
+                    }
+                    else if (r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
                     {
                         contract.received_payments_status = "1";
                     }
@@ -2895,6 +2899,11 @@ namespace PeriodAid.Controllers
                     contract.receiver_tel = r.data.text_asset_da4211;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     checkAddress(r.data.text_asset_eb802b, C_id.id);
+                }
+                else if (r.code == "100401")
+                {
+                    RefreshUserToken();
+                    return GetCrmDetailInfo();
                 }
                 else
                 {
