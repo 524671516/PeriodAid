@@ -29,7 +29,7 @@
 
         @foreach (var item in Model)
         {
-            <tr class="tm_list-item tm-show-task-modal border-blue" data-toggle="tooltip" data-placement="left" title="@item.receiver_address">
+            <tr class="tm_list-item tm-show-task-modal border-blue" data-toggle="tooltip" data-placement="left" title="">
                 <td>
                     <label class="checkbox-custom">
                         <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
@@ -121,8 +121,16 @@
             console.log(border_list[j])
             var data_rstauts = $(border_list[j]).attr("data-rstauts")
             var data_astatus = $(border_list[j]).attr("data-astatus")
-            if (data_rstauts == 0 || data_astatus == 0) {
+            if (data_rstauts == 0 && data_astatus == 0) {
                 $(border_list[j]).parent().parent().addClass("border-red")
+                $(border_list[j]).parent().parent().attr("title", "地址格式错误；订单未回款！")
+            } else if (data_rstauts == 1 && data_astatus == 0) {
+                $(border_list[j]).parent().parent().addClass("border-red")
+                $(border_list[j]).parent().parent().attr("title", "地址格式错误！")
+            }
+            else if (data_rstauts == 0 && data_astatus == 1) {
+                $(border_list[j]).parent().parent().addClass("border-red")
+                $(border_list[j]).parent().parent().attr("title", "订单未回款！")
             }
         }
         $('[data-toggle="tooltip"]').tooltip()
