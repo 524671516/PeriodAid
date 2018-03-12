@@ -1,74 +1,110 @@
-﻿@{
+﻿@model IEnumerable<PeriodAid.Models.CRM_Contract>
+@{
     ViewBag.Title = "CRM_undelivered";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 @*<table class="offline-search-box">
-    <tr>
-        <td class="pull-right">
-            <label>订单名称：</label>
-            <input class="form-control input-sm offline-search-inline" id="storage-product-query" placeholder="搜索内容" />
-            <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
-        </td>
-    </tr>
-</table>*@
+        <tr>
+            <td class="pull-right">
+                <label>订单名称：</label>
+                <input class="form-control input-sm offline-search-inline" id="storage-product-query" placeholder="搜索内容" />
+                <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+            </td>
+        </tr>
+    </table>*@
 <div class="select-btn">
-    <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3531567" ><i class="fa fa-times-circle"></i>&nbsp;&nbsp;待发货</a>
-    <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="3531568" ><i class="fa fa-question-circle"></i>&nbsp;&nbsp;发货待审核</a>
-    <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3764330"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已发货</a>
+    <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3531567"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;未同步ERP订单</a>
+    <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="3531568"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;已同步ERP订单</a>
+    <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3890335"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;部分发货订单</a>
+    <a class="btn btn-info btn-sm status-btn" id="fourth_btn" data-val="3764330"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;全部发货订单</a>
     <a class="btn btn-info btn-sm status-btn" id="renovate_btn"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
+</div>
+<div class="tm-veiw-loading text-center" id="tm-view-loading">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i><br><h4>数据加载中，请勿刷新界面！</h4>
 </div>
 <div id="undelivered_list_content" style="margin-top:20px">
 </div>
 
-
 @section scripts{
     <script>
         $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $("#tm-view-loading").hide()
+            $.ajax({
+                url: "/SalesProcess/CRM_undeliveredPartical/",
+                data: {
+                    status: $("#first_btn").attr("data-val")
+                },
+                success: function (data) {
+                    $("#undelivered_list_content").html(data)
+                }
+            })
             $("#first_btn").addClass("btn-danger")
-            // 获取user_token
-            $.ajax({
-                url: "/SalesProcess/GetUserToken/",
-                type:"post",
-                success: function (data) {
-                }
-            })
-            // 获取crm客户数据
-            $.ajax({
-                url: "/SalesProcess/GetCustomer/",
-                success: function (data) {
-                }
-            })
-            // 获取crm合同数据
-            $.ajax({
-                url: "/SalesProcess/GetCrmInfo/",
-                success: function (data) {
-                    //数据保存完再请求数据页面
+            // 刷新
+            $("#renovate_btn").on("click", function () {
+                var that = $(this)
+                $("#undelivered_list_content").hide()
+                $("#undelivered_list_content").html("")
+                that.addClass("disabled")
+                $(".status-btn").addClass("disabled")
+                $("#tm-view-loading").show()
+                // 获取crm合同数据
                     $.ajax({
-                        url: "/SalesProcess/CRM_undeliveredPartical/",
+                        url: "/SalesProcess/GetCrmInfo/",
                         data: {
-                            status: $("#first_btn").attr("data-val")
+                            url_api: "/api/v2/contracts"
                         },
                         success: function (data) {
-                            $("#undelivered_list_content").html(data)
+                            if (data.result == "SUCCESS") {
+                                // 获取合同详情
+                                $.ajax({
+                                    url: "/SalesProcess/GetCrmDetailInfo/",
+                                    success: function (data) {
+                                        if (data.result == "SUCCESS") {
+                                            setTimeout(function () {
+                                                $("#tm-view-loading").hide()
+                                                $(".status-btn").removeClass("disabled")
+                                                //数据保存完再请求数据页面
+                                                $.ajax({
+                                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                                    data: {
+                                                        status: $("#first_btn").attr("data-val")
+                                                    },
+                                                    success: function (data) {
+                                                        $("#undelivered_list_content").show().html(data)
+                                                        $("#first_btn").addClass("btn-danger")
+                                                        $("#renovate_btn").removeClass("btn-danger")
+                                                    }
+                                                })
+                                            },6000)
+                                        } else {
+                                            confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                                if (Confirm) {
+                                                    window.location.reload();
+                                                }
+                                            })
+                                        }
+                                    }
+                                })
+                            } else {
+                                confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                    if (Confirm) {
+                                        window.location.reload();
+                                    }
+                                })
+                            }
                         }
                     })
-                }
+                // 获取crm客户数据
+                    $.ajax({
+                        url: "/SalesProcess/GetCustomer/",
+                        data: {
+                            url_api: "/api/v2/customers"
+                        },
+                        success: function (data) {
+                        }
+                })
             })
-            // 获取合同详情
-            $.ajax({
-                url: "/SalesProcess/GetCrmDetailInfo/",
-                success: function (data) {
-                    //var crm = JSON.parse(data.data)
-                    //console.log(crm)
-                }
-            })
-
-            // 获取产品信息
-            //$.ajax({
-            //    url: "/SalesProcess/GetProduct/",
-            //    success: function (data) {
-            //    }
-            //})
             // 选择
             $(".status-btn").on("click", function () {
                 var that = $(this)
@@ -77,16 +113,12 @@
                 $.ajax({
                     url: "/SalesProcess/CRM_undeliveredPartical",
                     data: {
-                        status: $(this).attr("data-val"),
+                        status: that.attr("data-val"),
                     },
                     success: function (data) {
-                        $("#undelivered_list_content").html(data)
+                            $("#undelivered_list_content").html(data)
                     }
                 })
-            })
-            // 刷新
-            $("#renovate_btn").on("click", function () {
-                window.location.reload();
             })
         });
     </script>

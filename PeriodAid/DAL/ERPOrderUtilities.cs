@@ -1033,7 +1033,7 @@ namespace PeriodAid.DAL
                     details.Append("\"sku_code\":null");
                     details.Append("},");
                 }
-                if(order.details.Count>1)
+                if(order.details.Count>=1)
                     details.Remove(details.Length - 1, 1);
             }
             StringBuilder json = new StringBuilder();

@@ -292,6 +292,7 @@
     <Compile Include="Models\ShopStorageViewModel.cs" />
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
+    <Compile Include="Models\ThreeLevelAddressModel.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -1210,6 +1211,7 @@
     <Content Include="Views\SalesProcess\AddOrder.cshtml" />
     <Content Include="Views\SalesProcess\CRM_show.cshtml" />
     <Content Include="Views\SalesProcess\CRM_undeliveredPartical.cshtml" />
+    <Content Include="Views\SalesProcess\ContractDetail_show.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

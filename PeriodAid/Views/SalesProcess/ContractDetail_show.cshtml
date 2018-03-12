@@ -1,0 +1,49 @@
+﻿@model PeriodAid.Models.CRM_Contract
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="text-center" id="contract-title"></h4>
+</div>
+<div class="modal-body" id="modal-body" style="padding:0">
+    <table class="table table-bordered" style="margin-bottom:0">
+        <tr>
+            <th>产品名称</th>
+            <th>产品编号</th>
+            <th>销售数量</th>
+            <th>销售价格</th>
+            <th>总价</th>
+        </tr>
+        @foreach (var detail in ViewBag.Detail)
+        {
+        <tr>
+            <td>@detail.product_name</td>
+            <td>@detail.product_code</td>
+            <td class="product_count">@detail.quantity</td>
+            <td>@detail.unit_price</td>
+            <th class="product_price">@Math.Round(detail.quantity * detail.unit_price, 2)</th>
+        </tr>
+        }
+        <tr>
+            <th>合计：</th>
+            <th></th>
+            <th id="sum_count"></th>
+            <th></th>
+            <th id="sum_price"></th>
+        </tr>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default float-left" data-dismiss="modal">确认</button>
+</div>
+
+<script>
+    $(function () {
+        var i = 0;
+        var sum_count=0, sum_price=0;
+        for (i; i < $(".product_count").length; i++) {
+            sum_count += parseInt($(".product_count:eq(" + i + ")").html())
+            sum_price += parseFloat($(".product_price:eq(" + i + ")").html())
+        }
+        $("#sum_count").html(sum_count)
+        $("#sum_price").html("￥"+sum_price.toFixed(2))
+    })
+</script>
