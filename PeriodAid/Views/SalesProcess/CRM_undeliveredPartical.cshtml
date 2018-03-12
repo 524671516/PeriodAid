@@ -44,9 +44,19 @@
                 <td>
                     @item.total_amount
                 </td>
-                <td>
-                    @item.CRM_Customer.customer_name
-                </td>
+                @if (@item.CRM_Customer.customer_abbreviation != null)
+                {
+                    <td>
+                        @item.CRM_Customer.customer_abbreviation
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @item.CRM_Customer.customer_name
+                    </td>
+                }
+                
                 @if (item.contract_status == "3531567")
                 {
                     if (item.address_status == 1)
@@ -67,7 +77,7 @@
                         </td>
                     }
                     <td class="receiver_address">
-                        <a class="change_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" data-toggle="modal" data-target=".bs-example-modal" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
+                        <a class="change_status btn btn-xs btn-success select_btn" role="button" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
                         <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title" >详情</a>
                     </td>
                 }
@@ -100,12 +110,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade bs-example-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" id="modal-content-sm">
-        </div>
-    </div>
-</div>
 <script src="~/Scripts/distpicker.data.js"></script>
 <script src="~/Scripts/distpicker.js"></script>
 <script src="~/Scripts/main.js"></script>
@@ -118,18 +122,23 @@
         });
         $(".select_province").change(function () {
             var options = $(this).children("option:selected");
-            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-province", options.val())
+            $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-province", options.val())
         })
         $(".select_city").change(function () {
             var options = $(this).children("option:selected");
-            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-city", options.val())
+            $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-city", options.val())
         })
         $(".select_district").change(function () {
             var options = $(this).children("option:selected");
-            $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").removeClass("disabled").attr("data-district", options.val())
-            var district = $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").attr("data-district")
+            $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").removeClass("disabled").attr("data-district", options.val())
+            var district = $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-district")
+            var rstatus = $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-rstauts")
+            if (rstatus == "0") {
+                $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").removeClass("change_address").addClass("change_payments")
+            }
             if (district == "") {
-                $(this).parents(".select_address").siblings(".receiver_address").children(".change_address").addClass("disabled")
+                $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").addClass("disabled")
+                $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").removeClass("change_payments").addClass("change_address")
             }
         })
         $("#batch_change_status").hide()
@@ -173,7 +182,7 @@
                     $("#batch_change_deliverys").hide()
                     $(".get_erp_status").show()
                 }
-                
+
             }
         })
         //全选
@@ -261,7 +270,7 @@
                 }
             }
         })
-         //批量同步到ERP等待审核
+        //批量同步到ERP等待审核
         $("#batch_change_status").click(function () {
             var that = $(this);
             if (orderarry.length == 0) {
@@ -346,7 +355,7 @@
                 }
             })
         })
-         //批量获取ERP快递信息
+        //批量获取ERP快递信息
         $("#batch_change_deliverys").click(function () {
             var that = $(this)
             orderarry.push(that.attr("data-val"))
@@ -458,7 +467,7 @@
                         })
                     } else if (data.result == "FAIL") {
                         errorAlert("推送失败,请检查订单信息是否完整")
-                    } else if(data.result == "ERROR") {
+                    } else if (data.result == "ERROR") {
                         errorAlert("CRM同步失败")
                     } else {
                         errorAlert("参数获取失败,请重试")
@@ -468,13 +477,14 @@
             })
         })
         //
-        $(".change_address").on("click", function () {
+        $(".select_btn").on("click", function () {
             var that = $(this)
             orderarry.push(that.attr("data-val"))
-            var Province=that.attr("data-province")
-            var City=that.attr("data-city")
+            var Province = that.attr("data-province")
+            var City = that.attr("data-city")
             var District = that.attr("data-district")
-            $.ajax({
+            if (that.hasClass("change_address")) {
+                $.ajax({
                     url: "/SalesProcess/createOrder/",
                     type: "post",
                     data: {
@@ -500,7 +510,7 @@
                                         success: function (data) {
                                             $("#undelivered_list_content").html(data)
                                             $("#second_btn").addClass("btn-danger")
-                                            $("#firsts_btn").removeClass("btn-danger")
+                                            $("#first_btn").removeClass("btn-danger")
                                         }
                                     })
                                 }
@@ -508,7 +518,7 @@
                         } else if (data.result == "FAIL") {
                             errorAlert("推送失败,请检查订单信息是否完整")
                             orderarry.remove(that.attr("data-val"))
-                        } else if(data.result == "ERROR") {
+                        } else if (data.result == "ERROR") {
                             errorAlert("CRM同步失败")
                             orderarry.remove(that.attr("data-val"))
                         } else {
@@ -518,7 +528,62 @@
 
                     }
                 })
-            
+            } else if (that.hasClass("change_payments")) {
+                $.ajax({
+                    url: "/SalesProcess/Admin_pass",
+                    data: {
+                        c_id: that.attr("data-val")
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/SalesProcess/createOrder/",
+                                type: "post",
+                                data: {
+                                    c_id: orderarry,
+                                    province: Province,
+                                    city: City,
+                                    district: District,
+                                },
+                                success: function (data) {
+                                    if (data.result == "SUCCESS") {
+                                        alert("已推送至ERP等待审核")
+                                        $.ajax({
+                                            url: "/SalesProcess/GetCrmInfo/",
+                                            data: {
+                                                url_api: "/api/v2/contracts",
+                                            },
+                                            success: function (data) {
+                                                $.ajax({
+                                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                                    data: {
+                                                        status: "3531568"
+                                                    },
+                                                    success: function (data) {
+                                                        $("#undelivered_list_content").html(data)
+                                                        $("#second_btn").addClass("btn-danger")
+                                                        $("#firsts_btn").removeClass("btn-danger")
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    } else if (data.result == "FAIL") {
+                                        errorAlert("推送失败,请检查订单信息是否完整")
+                                    } else if (data.result == "ERROR") {
+                                        errorAlert("CRM同步失败")
+                                    } else {
+                                        errorAlert("参数获取失败,请重试")
+                                    }
+
+                                }
+                            })
+                        } else {
+                            errorAlert("回款未完成,无法提交")
+                        }
+                    }
+                })
+            }
+
         })
         // 详情
         $(".contract_detail").on("click", function () {
@@ -535,20 +600,6 @@
                 }
             })
         })
-        // 绿色通道
-        $(".change_payments").on("click", function () {
-            var that = $(this)
-            $.ajax({
-                url: "/SalesProcess/Admin_pass",
-                data: {
-                    c_id: that.attr("data-val")
-                },
-                success: function (data) {
-                    $('#modal-content-sm').html(data)
-                    $("#myModal").modal('show')
-                }
-            })
-            
-        })
     })
+   
 </script>
