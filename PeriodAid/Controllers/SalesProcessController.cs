@@ -3156,6 +3156,7 @@ namespace PeriodAid.Controllers
                     contract.receiver_province = province;
                     contract.receiver_city = city;
                     contract.receiver_district = district;
+                    contract.address_status = 1;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     crm_db.SaveChanges();
                 }
@@ -3196,9 +3197,8 @@ namespace PeriodAid.Controllers
                     var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
                     if (updatcrm != 1)
                     {
-                        return Json(new { result = "ERROR" });
+                        return Json(new { result = "PARTIALSUCCESS" });
                     }
-                    return Json(new { result = "SUCCESS" });
                 }
                 else
                 {

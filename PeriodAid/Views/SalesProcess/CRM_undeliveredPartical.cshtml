@@ -17,7 +17,7 @@
             </th>
             <th style="width:10%">订单号</th>
             <th style="width:15%">合同名称</th>
-            <th style="width:10%">总金额</th>
+            <th style="width:10%" id="money_view">总金额</th>
             <th style="width:15%">客户名称</th>
             <th style="width:30%">邮寄地址</th>
             <th style="width:15%">
@@ -41,7 +41,7 @@
                 <td>
                     @item.contract_title
                 </td>
-                <td>
+                <td class="money_model_view">
                     @item.total_amount
                 </td>
                 @if (@item.CRM_Customer.customer_abbreviation != null)
@@ -90,7 +90,10 @@
                 }
                 else if (item.contract_status == "3890335")
                 {
-                    <td >@item.receiver_address</td>
+                    <td >
+                        @item.receiver_address
+                        <div >@item.express_information</div>
+                    </td>
                     <td>
                         <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
                     </td>
@@ -98,7 +101,7 @@
                 else
                 {
                     <td>@item.receiver_address</td>
-                    <td>@item.express_information</td>
+                    <td style="width:202px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.express_information</td>
                 }
             </tr>
         }
@@ -118,7 +121,6 @@
         var border_list = $(".change_status")
         var j = 0
         for (j; j < border_list.length; j++) {
-            console.log(border_list[j])
             var data_rstauts = $(border_list[j]).attr("data-rstauts")
             var data_astatus = $(border_list[j]).attr("data-astatus")
             if (data_rstauts == 0 && data_astatus == 0) {
@@ -135,7 +137,13 @@
         }
         $('[data-toggle="tooltip"]').tooltip()
         if ($("#fourth_btn").hasClass("btn-danger")) {
-            $("input").attr("disabled",true)
+            $("input").attr("disabled", true)
+            $("#money_view").html("")
+            $(".money_model_view").html("")
+        }
+        if ($("#third_btn").hasClass("btn-danger")) {
+            $("#money_view").html("")
+            $(".money_model_view").html("")
         }
         $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address disabled")
         $('.change_status[data-rstauts="0"]').removeClass("change_status").addClass("change_payments")
@@ -399,6 +407,7 @@
                             success: function (data) {
                                 $("#undelivered_list_content").html(data)
                                 $("#second_btn").removeClass("btn-danger")
+                                $("#third_btn").removeClass("btn-danger")
                                 $("#first_btn").addClass("btn-danger")
                             }
                         })
@@ -438,6 +447,7 @@
                             success: function (data) {
                                 $("#undelivered_list_content").html(data)
                                 $("#second_btn").removeClass("btn-danger")
+                                $("#third_btn").removeClass("btn-danger")
                                 $("#first_btn").addClass("btn-danger")
                             }
                         })
@@ -490,9 +500,10 @@
                         })
                     } else if (data.result == "FAIL") {
                         errorAlert("推送失败,请检查订单信息是否完整")
-                    } else if (data.result == "ERROR") {
+                    } else if (data.result == "PARTIALSUCCESS") {
                         errorAlert("CRM同步失败")
-                    } else {
+                    }
+                    else {
                         errorAlert("参数获取失败,请重试")
                     }
 
@@ -582,6 +593,8 @@
                                                     },
                                                     success: function (data) {
                                                         $("#undelivered_list_content").html(data)
+                                                        $("#first_btn").removeClass("btn-danger")
+                                                        $("#second_btn").addClass("btn-danger")
                                                     }
                                                 })
                                             }
@@ -620,5 +633,4 @@
             })
         })
     })
-   
 </script>
