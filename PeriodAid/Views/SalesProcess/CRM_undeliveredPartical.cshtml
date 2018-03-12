@@ -21,15 +21,15 @@
             <th style="width:15%">客户名称</th>
             <th style="width:30%">邮寄地址</th>
             <th style="width:15%">
-                <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
-                <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
+                <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567" role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
+                <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
                 <a class="btn btn-xs btn-success" id="batch_change_Partdeliverys" data-status="3890335" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
 
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="tm_list-item tm-show-task-modal border-blue">
                 <td>
                     <label class="checkbox-custom">
                         <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
@@ -115,6 +115,17 @@
 <script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
+        var border_list = $(".change_status")
+        var j = 0
+        for (j; j < border_list.length; j++) {
+            console.log(border_list[j])
+            var data_rstauts = $(border_list[j]).attr("data-rstauts")
+            var data_astatus = $(border_list[j]).attr("data-astatus")
+            if (data_rstauts == 0 || data_astatus == 0) {
+                $(border_list[j]).parent().parent().addClass("border-red")
+            }
+        }
+
         $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address disabled")
         $('.change_status[data-rstauts="0"]').removeClass("change_status").addClass("change_payments")
         $(".distpicker5").distpicker({
@@ -157,7 +168,7 @@
                 orderarry.push(C_id)
                 if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").show()
-                    $(".change_status").hide()
+                    $(".change_status").addClass("disabled")
                 } else if (that.attr("data-status") == "3890335") {
                     $("#batch_change_Partdeliverys").show()
                     $(".get_erp_status").hide()
@@ -173,7 +184,7 @@
             if ($("input:checked").length < 2) {
                 if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").hide()
-                    $(".change_status").show()
+                    $(".change_status").removeClass("disabled")
                 } else if (that.attr("data-status") == "3890335") {
                     $("#batch_change_Partdeliverys").hide()
                     $(".get_erp_status").show()
@@ -192,7 +203,7 @@
             if (that.attr("data-status") == "3531567") {
                 if (that.is(":checked")) {
                     $("#batch_change_status").show()
-                    $(".change_status").hide()
+                    $(".change_status").addClass("disabled")
                     $('.checkbox[data-astatus="1"][data-rstauts="1"]').prop("checked", true);
                     var list = $(".checkbox:checked")
                     if (list.length < 1) {
@@ -208,7 +219,7 @@
                     }
                 } else {
                     $("#batch_change_status").hide()
-                    $(".change_status").show()
+                    $(".change_status").removeClass("disabled")
                     $("input").prop("checked", false);
                     var list = $(".checkbox:unchecked")
                     for (i; i < list.length; i++) {
