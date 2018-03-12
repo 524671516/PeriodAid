@@ -2993,9 +2993,9 @@ namespace PeriodAid.Controllers
         {
             var undeliveredData = from m in crm_db.CRM_Contract
                                   where m.contract_status == status
-                                  orderby m.address_status && m.received_payments_status
                                   select m;
-            return PartialView(undeliveredData);
+            var list = undeliveredData.OrderByDescending(m => m.address_status).ThenBy(m => m.address_status).ToList();
+            return PartialView(list);
         }
 
         public ActionResult ContractDetail_show(int c_id)

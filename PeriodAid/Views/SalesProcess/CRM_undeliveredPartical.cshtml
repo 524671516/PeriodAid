@@ -19,7 +19,7 @@
             <th style="width:15%">合同名称</th>
             <th style="width:10%">总金额</th>
             <th style="width:15%">客户名称</th>
-            <th style="width:30%" id="address_view">邮寄地址</th>
+            <th style="width:30%">邮寄地址</th>
             <th style="width:15%">
                 <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
@@ -29,7 +29,7 @@
 
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="tm_list-item tm-show-task-modal border-blue" data-toggle="tooltip" data-placement="left" title="@item.receiver_address">
                 <td>
                     <label class="checkbox-custom">
                         <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
@@ -67,7 +67,7 @@
                     }
                     else
                     {
-                        <td class="select_address" title="@item.receiver_address">
+                        <td class="select_address">
                             <div class="distpicker5">
                                 <select class="select_province form-control" style="width:31%"></select>
                                 <select class="select_city form-control" style="width:31%"></select>
@@ -115,6 +115,17 @@
 <script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
+        var border_list = $(".change_status")
+        var j = 0
+        for (j; j < border_list.length; j++) {
+            console.log(border_list[j])
+            var data_rstauts = $(border_list[j]).attr("data-rstauts")
+            var data_astatus = $(border_list[j]).attr("data-astatus")
+            if (data_rstauts == 0 || data_astatus == 0) {
+                $(border_list[j]).parent().parent().addClass("border-red")
+            }
+        }
+        $('[data-toggle="tooltip"]').tooltip()
         if ($("#fourth_btn").hasClass("btn-danger")) {
             $("input").attr("disabled",true)
         }
