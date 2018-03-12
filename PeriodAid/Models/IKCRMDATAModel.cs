@@ -249,8 +249,7 @@ namespace PeriodAid.Models
         //地址检测(1通过，0出错)
         public int address_status { get; set; }
         //订单回款类型(1付清,0未付清)
-        [StringLength(64)]
-        public string received_payments_status { get; set; }
+        public int received_payments_status { get; set; }
        
     }
     
@@ -490,7 +489,7 @@ namespace PeriodAid.Models
         // 数量
         public static int Count = 100;
         // 直接提交订单
-        public static string received_payments_status = "1";
+        public static int received_payments_status = 1;
         // 已删除
         public static string delete = "-1";
     }

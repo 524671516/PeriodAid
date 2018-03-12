@@ -70,6 +70,8 @@
                                                     },
                                                     success: function (data) {
                                                         $("#undelivered_list_content").show().html(data)
+                                                        $("#first_btn").addClass("btn-danger")
+                                                        $("#renovate_btn").removeClass("btn-danger")
                                                     }
                                                 })
                                             },6000)
@@ -109,10 +111,10 @@
                 $.ajax({
                     url: "/SalesProcess/CRM_undeliveredPartical",
                     data: {
-                        status: $(this).attr("data-val"),
+                        status: that.attr("data-val"),
                     },
                     success: function (data) {
-                        $("#undelivered_list_content").html(data)
+                            $("#undelivered_list_content").html(data)
                     }
                 })
             })

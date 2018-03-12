@@ -19,17 +19,17 @@
             <th style="width:15%">合同名称</th>
             <th style="width:10%">总金额</th>
             <th style="width:15%">客户名称</th>
-            <th style="width:30%">邮寄地址</th>
+            <th style="width:30%" id="address_view">邮寄地址</th>
             <th style="width:15%">
-                <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567" role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
-                <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
+                <a class="btn btn-xs btn-success" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
+                <a class="btn btn-xs btn-success" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
                 <a class="btn btn-xs btn-success" id="batch_change_Partdeliverys" data-status="3890335" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
 
         @foreach (var item in Model)
         {
-            <tr class="tm_list-item tm-show-task-modal border-blue">
+            <tr>
                 <td>
                     <label class="checkbox-custom">
                         <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
@@ -97,8 +97,8 @@
                 }
                 else
                 {
+                    <td>@item.receiver_address</td>
                     <td>@item.express_information</td>
-                    <td></td>
                 }
             </tr>
         }
@@ -115,17 +115,9 @@
 <script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
-        var border_list = $(".change_status")
-        var j = 0
-        for (j; j < border_list.length; j++) {
-            console.log(border_list[j])
-            var data_rstauts = $(border_list[j]).attr("data-rstauts")
-            var data_astatus = $(border_list[j]).attr("data-astatus")
-            if (data_rstauts == 0 || data_astatus == 0) {
-                $(border_list[j]).parent().parent().addClass("border-red")
-            }
+        if ($("#fourth_btn").hasClass("btn-danger")) {
+            $("input").attr("disabled",true)
         }
-
         $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address disabled")
         $('.change_status[data-rstauts="0"]').removeClass("change_status").addClass("change_payments")
         $(".distpicker5").distpicker({
@@ -168,7 +160,7 @@
                 orderarry.push(C_id)
                 if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").show()
-                    $(".change_status").addClass("disabled")
+                    $(".change_status").hide()
                 } else if (that.attr("data-status") == "3890335") {
                     $("#batch_change_Partdeliverys").show()
                     $(".get_erp_status").hide()
@@ -184,7 +176,7 @@
             if ($("input:checked").length < 2) {
                 if (that.attr("data-status") == "3531567") {
                     $("#batch_change_status").hide()
-                    $(".change_status").removeClass("disabled")
+                    $(".change_status").show()
                 } else if (that.attr("data-status") == "3890335") {
                     $("#batch_change_Partdeliverys").hide()
                     $(".get_erp_status").show()
@@ -216,6 +208,7 @@
                                 orderarry.push(list_data)
                             }
                         }
+                        console.log(orderarry)
                     }
                 } else {
                     $("#batch_change_status").hide()
@@ -229,7 +222,7 @@
             } else if (that.attr("data-status") == "3890335") {
                 if (that.is(":checked")) {
                     $("#batch_change_Partdeliverys").show()
-                    $(".get_erp_status").hide()
+                    $(".get_erp_status").addClass("disabled")
                     $("input").prop("checked", true);
                     var list = $(".checkbox:checked")
                     if (list.length < 1) {
@@ -245,7 +238,7 @@
                     }
                 } else {
                     $("#batch_change_Partdeliverys").hide()
-                    $(".get_erp_status").show()
+                    $(".get_erp_status").removeClass("disabled")
                     $("input").prop("checked", false);
                     var list = $(".checkbox:unchecked")
                     for (i; i < list.length; i++) {
@@ -256,7 +249,7 @@
             else if (that.attr("data-status") == "3531568") {
                 if (that.is(":checked")) {
                     $("#batch_change_deliverys").show()
-                    $(".get_erp_status").hide()
+                    $(".get_erp_status").addClass("disabled")
                     $("input").prop("checked", true);
                     var list = $(".checkbox:checked")
                     if (list.length < 1) {
@@ -272,7 +265,7 @@
                     }
                 } else {
                     $("#batch_change_deliverys").hide()
-                    $(".get_erp_status").show()
+                    $(".get_erp_status").removeClass("disabled")
                     $("input").prop("checked", false);
                     var list = $(".checkbox:unchecked")
                     for (i; i < list.length; i++) {
@@ -284,6 +277,7 @@
         //批量同步到ERP等待审核
         $("#batch_change_status").click(function () {
             var that = $(this);
+            console.log(orderarry)
             if (orderarry.length == 0) {
 
             } else {
@@ -309,8 +303,8 @@
                                         },
                                         success: function (data) {
                                             $("#undelivered_list_content").html(data)
+                                            $("#first_btn").removeClass("btn-danger")
                                             $("#second_btn").addClass("btn-danger")
-                                            $("#firsts_btn").removeClass("btn-danger")
                                         }
                                     })
                                 }
@@ -322,7 +316,6 @@
                         } else {
                             errorAlert("参数获取失败,请重试")
                         }
-
                     }
                 })
             }
@@ -347,8 +340,8 @@
                             },
                             success: function (data) {
                                 $("#undelivered_list_content").html(data)
+                                $("#third_btn").removeClass("btn-danger")
                                 $("#first_btn").addClass("btn-danger")
-                                $("#second_btn").removeClass("btn-danger")
                             }
                         })
                     } else if (data.result == "FAIL") {
@@ -386,8 +379,8 @@
                             },
                             success: function (data) {
                                 $("#undelivered_list_content").html(data)
-                                $("#first_btn").addClass("btn-danger")
                                 $("#second_btn").removeClass("btn-danger")
+                                $("#first_btn").addClass("btn-danger")
                             }
                         })
                     } else if (data.result == "FAIL") {
@@ -425,8 +418,8 @@
                             },
                             success: function (data) {
                                 $("#undelivered_list_content").html(data)
-                                $("#first_btn").addClass("btn-danger")
                                 $("#second_btn").removeClass("btn-danger")
+                                $("#first_btn").addClass("btn-danger")
                             }
                         })
                     } else if (data.result == "FAIL") {
@@ -470,8 +463,8 @@
                                     },
                                     success: function (data) {
                                         $("#undelivered_list_content").html(data)
+                                        $("#first_btn").removeClass("btn-danger")
                                         $("#second_btn").addClass("btn-danger")
-                                        $("#firsts_btn").removeClass("btn-danger")
                                     }
                                 })
                             }
@@ -520,8 +513,6 @@
                                         },
                                         success: function (data) {
                                             $("#undelivered_list_content").html(data)
-                                            $("#second_btn").addClass("btn-danger")
-                                            $("#first_btn").removeClass("btn-danger")
                                         }
                                     })
                                 }
@@ -572,8 +563,6 @@
                                                     },
                                                     success: function (data) {
                                                         $("#undelivered_list_content").html(data)
-                                                        $("#second_btn").addClass("btn-danger")
-                                                        $("#firsts_btn").removeClass("btn-danger")
                                                     }
                                                 })
                                             }

@@ -2490,15 +2490,23 @@ namespace PeriodAid.Controllers
 
         private string Get_Request(string url)
         {
+            var retString = "";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.ServicePoint.ConnectionLimit = int.MaxValue;
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            var retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            return retString;
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                return retString;
+            }
+            catch(Exception)
+            {
+                return Get_Request(url);
+            }
         }
 
         public JsonResult GetCustomer(string url_api)
@@ -2897,18 +2905,18 @@ namespace PeriodAid.Controllers
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
-                    contract.received_payments_status = "";
+                    contract.received_payments_status = 0;
                     if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments)
                     {
-                        contract.received_payments_status = "1";
+                        contract.received_payments_status = 1;
                     }
                     else if (r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
                     {
-                        contract.received_payments_status = "1";
+                        contract.received_payments_status = 1;
                     }
                     else
                     {
-                        contract.received_payments_status = "0";
+                        contract.received_payments_status = 0;
                     }
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
@@ -3036,23 +3044,23 @@ namespace PeriodAid.Controllers
 
         public JsonResult getERPORDERS(int[] c_id)
         {
-            var platform_code = "135203459499896714";
+            //var platform_code = "135203459499896714";
             foreach(var cId in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cId);
                 string json = "{" +
                        "\"appkey\":\"" + AppId + "\"," +
                         "\"method\":\"gy.erp.trade.get\"," +
-                        "\"platform_code\":\"" + platform_code + "\"," +
-                        //"\"platform_code\":\"" + contract.platform_code + "\"," +
+                        //"\"platform_code\":\"" + platform_code + "\"," +
+                        "\"platform_code\":\"" + contract.platform_code + "\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"" +
                         "}";
                 string signature = sign(json, AppSecret);
                 string info = "{" +
                        "\"appkey\":\"" + AppId + "\"," +
                         "\"method\":\"gy.erp.trade.get\"," +
-                        "\"platform_code\":\"" + platform_code + "\"," +
-                        //"\"platform_code\":\"" + contract.platform_code + "\"," +
+                        //"\"platform_code\":\"" + platform_code + "\"," +
+                        "\"platform_code\":\"" + contract.platform_code + "\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"," +
                         "\"sign\":\"" + signature + "\"" +
                     "}";
