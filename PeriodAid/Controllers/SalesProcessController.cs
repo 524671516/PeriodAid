@@ -34,6 +34,7 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
+        private ProjectSchemeModels user_db;
         private IKCRMDATAModel crm_db;
         private ThreeLevelAddressModel address_db;
         int try_times = 0;
@@ -42,6 +43,7 @@ namespace PeriodAid.Controllers
             _db = new SalesProcessModel();
             crm_db = new IKCRMDATAModel();
             address_db = new ThreeLevelAddressModel();
+            user_db=new ProjectSchemeModels()
         }
         public ActionResult Index()
         {
@@ -3104,64 +3106,73 @@ namespace PeriodAid.Controllers
 
         public JsonResult createOrder(int[] c_id, string province, string city, string district)
         {
+            var user = getUser(User.Identity.Name);
+            
             // 批量
             foreach (var _Cid in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.contract_status == UserInfo.status_unsend);
-                // 不批量
-                if (province != null)
+                if (contract.received_payments_status != "0" || user.Type == 1)
                 {
-                    contract.receiver_province = province;
-                    contract.receiver_city = city;
-                    contract.receiver_district = district;
-                    crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
-                    crm_db.SaveChanges();
+                    // 不批量
+                    if (province != null)
+                    {
+                        contract.receiver_province = province;
+                        contract.receiver_city = city;
+                        contract.receiver_district = district;
+                        crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                        crm_db.SaveChanges();
+                    }
+                    ERPCustomOrder order = new ERPCustomOrder()
+                    {
+                        platform_code = contract.platform_code,
+                        shop_code = contract.shop_code,
+                        vip_code = contract.vip_code,
+                        warehouse_code = contract.warehouse_code,
+                        express_code = contract.express_code,
+                        receiver_name = contract.receiver_name,
+                        receiver_province = contract.receiver_province,
+                        receiver_city = contract.receiver_city,
+                        receiver_district = contract.receiver_district,
+                        receiver_mobile = contract.receiver_tel,
+                        receiver_zip = contract.CRM_Customer.zip,
+                        receiver_address = contract.receiver_address,
+                        deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    };
+                    order.details = new List<ERPCustomOrder_details>();
+                    foreach (var item in contract.CRM_ContractDetail)
+                    {
+                        ERPCustomOrder_details details = new ERPCustomOrder_details()
+                        {
+                            item_code = item.product_code,
+                            price = item.unit_price,
+                            qty = item.quantity
+                        };
+                        order.details.Add(details);
+                    }
+                    ERPOrderUtilities util = new ERPOrderUtilities();
+                    string result = util.createOrder(order);
+                    Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
+                    if (r.success)
+                    {
+                        contract.contract_status = UserInfo.status_undelivered;
+                        contract.address_status = 1;
+                        var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
+                        if (updatcrm != 1)
+                        {
+                            return Json(new { result = "ERROR" }, JsonRequestBehavior.AllowGet);
+                        }
+                        return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
+                    }
                 }
-                //ERPCustomOrder order = new ERPCustomOrder()
-                //{
-                //    platform_code = contract.platform_code,
-                //    shop_code = contract.shop_code,
-                //    vip_code = contract.vip_code,
-                //    warehouse_code = contract.warehouse_code,
-                //    express_code = contract.express_code,
-                //    receiver_name = contract.receiver_name,
-                //    receiver_province = contract.receiver_province,
-                //    receiver_city = contract.receiver_city,
-                //    receiver_district = contract.receiver_district,
-                //    receiver_mobile = contract.receiver_tel,
-                //    receiver_zip = contract.CRM_Customer.zip,
-                //    receiver_address = contract.receiver_address,
-                //    deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                //};
-                //order.details = new List<ERPCustomOrder_details>();
-                //foreach (var item in contract.CRM_ContractDetail)
-                //{
-                //    ERPCustomOrder_details details = new ERPCustomOrder_details()
-                //    {
-                //        item_code = item.product_code,
-                //        price = item.unit_price,
-                //        qty = item.quantity
-                //    };
-                //    order.details.Add(details);
-                //}
-                //ERPOrderUtilities util = new ERPOrderUtilities();
-                //string result = util.createOrder(order);
-                //Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
-                //if (r.success)
-                //{
-                //    contract.contract_status = UserInfo.status_undelivered;
-                //    contract.address_status = 1;
-                //    var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
-                //    if (updatcrm != 1)
-                //    {
-                //        return Json(new { result = "ERROR" }, JsonRequestBehavior.AllowGet);
-                //    }
-                //    return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
-                //}
-                //else
-                //{
-                //    return Json(new { result = "FAIL", data = r.errorDesc }, JsonRequestBehavior.AllowGet);
-                //}
+                else {
+                    return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
+                }
+
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
@@ -3195,6 +3206,11 @@ namespace PeriodAid.Controllers
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
         }
-        
+
+        public Employee getUser(string username)
+        {
+            var user = user_db.Employee.SingleOrDefault(m => m.UserName == username);
+            return user;
+        }
     }
 }
