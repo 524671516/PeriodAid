@@ -24,9 +24,11 @@
 </div>
 <div id="undelivered_list_content" style="margin-top:20px">
 </div>
+
 @section scripts{
     <script>
         $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
             $("#tm-view-loading").hide()
             $.ajax({
                 url: "/SalesProcess/CRM_undeliveredPartical/",

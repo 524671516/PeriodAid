@@ -2991,11 +2991,17 @@ namespace PeriodAid.Controllers
 
         public ActionResult CRM_undeliveredPartical(string status)
         {
+            List<CRM_Contract> data_list = new List<CRM_Contract>();
             var undeliveredData = from m in crm_db.CRM_Contract
-                                  where m.contract_status == status
-                                  orderby m.address_status || m.received_payments_status
+                                  where m.contract_status == status && m.address_status == 1
                                   select m;
-            return PartialView(undeliveredData);
+            data_list.AddRange(undeliveredData);
+            var undelivered_Data = from m in crm_db.CRM_Contract
+                                   where m.contract_status == status && m.address_status == 0
+                                   orderby m.received_payments_status descending
+                                   select m;
+            data_list.AddRange(undelivered_Data.Except(undeliveredData));
+            return PartialView(data_list);
         }
 
         public ActionResult ContractDetail_show(int c_id)
