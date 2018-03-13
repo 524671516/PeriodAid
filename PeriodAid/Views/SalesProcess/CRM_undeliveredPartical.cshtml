@@ -145,6 +145,10 @@
             $("#money_view").html("")
             $(".money_model_view").html("")
         }
+        if ($("#second_btn").hasClass("btn-danger")) {
+            $("#money_view").html("")
+            $(".money_model_view").html("")
+        }
         $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address disabled")
         $('.change_status[data-rstauts="0"]').removeClass("change_status").addClass("change_payments")
         $(".distpicker5").distpicker({

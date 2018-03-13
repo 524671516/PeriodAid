@@ -2762,7 +2762,6 @@ namespace PeriodAid.Controllers
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
             string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-            Thread.Sleep(500);
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
             var CRM_Contract = from m in crm_db.CRM_Contract
                                where m.contract_status == UserInfo.status_unsend || m.contract_status == UserInfo.status_undelivered
@@ -2930,6 +2929,8 @@ namespace PeriodAid.Controllers
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
                     contract.receiver_tel = r.data.text_asset_da4211;
+                    contract.express_remark = r.data.text_asset_7fd81a;
+                    contract.contract_remark = r.data.special_terms;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     checkAddress(r.data.text_asset_eb802b, C_id.id);
                 }
@@ -2960,7 +2961,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
-        private int UpdateCRM(int cid, string contract_status, string express_information)
+        private int UpdateCRM(int cid, string contract_status, string express_information,string express_remark)
         {
             var contracts = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cid);
             string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -2974,6 +2975,7 @@ namespace PeriodAid.Controllers
             if (express_information != null)
             {
                 dicList.Add("contract[text_area_asset_8f7067]", contracts.express_information);
+                dicList.Add("contract[text_asset_7fd81a]", contracts.express_remark);
             }
             String postStr = buildQueryStr(dicList);
             byte[] data = Encoding.UTF8.GetBytes(postStr);
@@ -3059,24 +3061,73 @@ namespace PeriodAid.Controllers
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
 
+        public string getDeliverys(string mail_no)
+        {
+            string json = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.deliverys.get\"," +
+                        "\"mail_no\":\"" + mail_no + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"" +
+                        "}";
+            string signature = sign(json, AppSecret);
+            string info = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.deliverys.get\"," +
+                    "\"mail_no\":\"" + mail_no + "\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            request.ContentType = "text/json";
+            request.Method = "post";
+            string result = "";
+            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+            try
+            {
+                streamWriter.Write(info);
+                streamWriter.Flush();
+                streamWriter.Close();
+                var response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = reader.ReadToEnd();
+                    StringBuilder sb = new StringBuilder(result);
+                    sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                    sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    deliverys_Result r = JsonConvert.DeserializeObject<deliverys_Result>(sb.ToString());
+                    if (r.success)
+                    {
+                        return r.deliverys[0].seller_memo;
+                    }
+                    return "FAIL";
+                }
+            }
+            catch (Exception)
+            {
+                return getDeliverys(mail_no);
+            }
+        }
+
         public JsonResult getERPORDERS(int[] c_id)
         {
-            //var platform_code = "114323442267625150";
-            foreach(var cId in c_id)
+            //var platform_code = "15589812033";
+            //var mail_no = "3354788962851";
+            foreach (var cId in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cId);
                 string json = "{" +
                        "\"appkey\":\"" + AppId + "\"," +
                         "\"method\":\"gy.erp.trade.get\"," +
-                        //"\"platform_code\":\"" + platform_code + "\"," +
-                        "\"platform_code\":\"" + contract.platform_code + "\"," +
+                        //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                        //"\"platform_code\":\"" + contract.platform_code + "\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"" +
                         "}";
                 string signature = sign(json, AppSecret);
                 string info = "{" +
                        "\"appkey\":\"" + AppId + "\"," +
                         "\"method\":\"gy.erp.trade.get\"," +
-                        //"\"platform_code\":\"" + platform_code + "\"," +
+                        //"\"receiver_mobile\":\"" + platform_code + "\"," +
                         "\"platform_code\":\"" + contract.platform_code + "\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"," +
                         "\"sign\":\"" + signature + "\"" +
@@ -3101,6 +3152,7 @@ namespace PeriodAid.Controllers
                         JavaScriptSerializer serializer = new JavaScriptSerializer();
                         orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
                         List<string> contractlist = new List<string>();
+                        List<string> deliveryslist = new List<string>();
                         if (r.success)
                         {
                             if (r.orders[0].delivery_state == 1)
@@ -3110,9 +3162,12 @@ namespace PeriodAid.Controllers
                                 for (int i = 0; i < r.orders[0].deliverys.Count(); i++)
                                 {
                                     contractlist.Add(r.orders[0].deliverys[i].express_name + r.orders[0].deliverys[i].mail_no);
+                                    deliveryslist.Add(getDeliverys(r.orders[0].deliverys[i].mail_no));
                                 }
                                 string express_information = string.Join(";", contractlist.ToArray());
+                                string express_remark = string.Join(";", deliveryslist.ToArray());
                                 contract.express_information = express_information;
+                                contract.express_remark = express_remark;
                                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                             }
                             else if (r.orders[0].delivery_state == 2)
@@ -3122,9 +3177,12 @@ namespace PeriodAid.Controllers
                                 for (int i = 0; i < r.orders[0].deliverys.Count(); i++)
                                 {
                                     contractlist.Add(r.orders[0].deliverys[i].express_name + r.orders[0].deliverys[i].mail_no);
+                                    deliveryslist.Add(getDeliverys(r.orders[0].deliverys[i].mail_no));
                                 }
                                 string express_information = string.Join(";", contractlist.ToArray());
+                                string express_remark = string.Join(";", deliveryslist.ToArray());
                                 contract.express_information = express_information;
+                                contract.express_remark = express_remark;
                                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                             }
                             else
@@ -3132,7 +3190,7 @@ namespace PeriodAid.Controllers
                                 return Json(new { result = "ERROR" }, JsonRequestBehavior.AllowGet);
                             }
                             crm_db.SaveChanges();
-                            var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information);
+                            var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information,contract.express_remark);
                             if (updatcrm != 1)
                             {
                                 return Json(new { result = "PARTIALSUCCESS" }, JsonRequestBehavior.AllowGet);
@@ -3160,7 +3218,6 @@ namespace PeriodAid.Controllers
             // 批量
             var seller = getSeller(User.Identity.Name);
             var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.User_Name);
-
             foreach (var _Cid in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.contract_status == UserInfo.status_unsend && m.received_payments_status == UserInfo.received_payments_status);
@@ -3211,7 +3268,7 @@ namespace PeriodAid.Controllers
                     contract.employee_id = employee.Id;
                     contract.employee_name = employee.NickName;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
-                    var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
+                    var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information, contract.express_remark);
                     if (updatcrm != 1)
                     {
                         return Json(new { result = "PARTIALSUCCESS" });

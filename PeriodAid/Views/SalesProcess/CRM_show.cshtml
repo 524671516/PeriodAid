@@ -48,62 +48,63 @@
                 that.addClass("disabled")
                 $(".status-btn").addClass("disabled")
                 $("#tm-view-loading").show()
-                // 获取crm合同数据
-                    $.ajax({
-                        url: "/SalesProcess/GetCrmInfo/",
-                        data: {
-                            url_api: "/api/v2/contracts/"
-                        },
-                        success: function (data) {
-                            if (data.result == "SUCCESS") {
-                                // 获取合同详情
-                                $.ajax({
-                                    url: "/SalesProcess/GetCrmDetailInfo/",
-                                    success: function (data) {
-                                        if (data.result == "SUCCESS") {
-                                            setTimeout(function () {
-                                                $("#tm-view-loading").hide()
-                                                $(".status-btn").removeClass("disabled")
-                                                //数据保存完再请求数据页面
-                                                $.ajax({
-                                                    url: "/SalesProcess/CRM_undeliveredPartical/",
-                                                    data: {
-                                                        status: $("#first_btn").attr("data-val")
-                                                    },
-                                                    success: function (data) {
-                                                        $("#undelivered_list_content").show().html(data)
-                                                        $("#first_btn").addClass("btn-danger")
-                                                        $("#renovate_btn").removeClass("btn-danger")
+                // 获取crm客户数据
+                $.ajax({
+                    url: "/SalesProcess/GetCustomer/",
+                    data: {
+                        url_api: "/api/v2/customers/"
+                    },
+                    success: function (data) {
+                        // 获取crm合同数据
+                        $.ajax({
+                            url: "/SalesProcess/GetCrmInfo/",
+                            data: {
+                                url_api: "/api/v2/contracts/"
+                            },
+                            success: function (data) {
+                                if (data.result == "SUCCESS") {
+                                    // 获取合同详情
+                                    $.ajax({
+                                        url: "/SalesProcess/GetCrmDetailInfo/",
+                                        success: function (data) {
+                                            if (data.result == "SUCCESS") {
+                                                setTimeout(function () {
+                                                    $("#tm-view-loading").hide()
+                                                    $(".status-btn").removeClass("disabled")
+                                                    //数据保存完再请求数据页面
+                                                    $.ajax({
+                                                        url: "/SalesProcess/CRM_undeliveredPartical/",
+                                                        data: {
+                                                            status: $("#first_btn").attr("data-val")
+                                                        },
+                                                        success: function (data) {
+                                                            $("#undelivered_list_content").show().html(data)
+                                                            $("#first_btn").addClass("btn-danger")
+                                                            $("#renovate_btn").removeClass("btn-danger")
+                                                        }
+                                                    })
+                                                }, 6000)
+                                            } else {
+                                                confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                                    if (Confirm) {
+                                                        window.location.reload();
                                                     }
                                                 })
-                                            },6000)
-                                        } else {
-                                            confirm("数据获取失败", "是否刷新", function (Confirm) {
-                                                if (Confirm) {
-                                                    window.location.reload();
-                                                }
-                                            })
+                                            }
                                         }
-                                    }
-                                })
-                            } else {
-                                confirm("数据获取失败", "是否刷新", function (Confirm) {
-                                    if (Confirm) {
-                                        window.location.reload();
-                                    }
-                                })
+                                    })
+                                } else {
+                                    confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                        if (Confirm) {
+                                            window.location.reload();
+                                        }
+                                    })
+                                }
                             }
-                        }
-                    })
-                // 获取crm客户数据
-                    $.ajax({
-                        url: "/SalesProcess/GetCustomer/",
-                        data: {
-                            url_api: "/api/v2/customers/"
-                        },
-                        success: function (data) {
-                        }
+                        })
+                    }
                 })
+               
             })
             // 选择
             $(".status-btn").on("click", function () {

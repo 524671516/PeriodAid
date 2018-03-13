@@ -188,6 +188,10 @@ namespace PeriodAid.Models
         public decimal received_payments_amount { get; set; }
         //回款类型
         public string text_asset_c33e2b { get; set; }
+        // 物流备注
+        public string text_asset_7fd81a { get; set; }
+        // 备注
+        public string special_terms { get; set; }
 
     }
 
@@ -425,4 +429,20 @@ namespace PeriodAid.Models
 
     }
 
+    public partial class deliverys_Result
+    {
+        public bool success { get; set; }//响应成功/响应失败
+        public string errorCode { get; set; }//错误代码
+        public string subErrorCode { get; set; }//子错误代码
+        public string errorDesc { get; set; }//错误描述
+        public string subErrorDesc { get; set; }//子错误描述
+        public string requestMethod { get; set; }//请求接口方法
+        public List<deliverys_List> deliverys { get; set; }
+        public int total;
+    }
+
+    public partial class deliverys_List
+    {
+        public string seller_memo { get; set; }
+    }
 }

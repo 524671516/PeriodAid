@@ -1049,7 +1049,7 @@ namespace PeriodAid.DAL
                     //"\"vip_name\":\"" + order.event_name + "\"," +
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
-                    "\"receiver_name\":\"" + order.receiver_name + "\"," +
+                    "\"receiver_name\":\"" + replaceWord(order.receiver_name) + "\"," +
                     "\"receiver_province\":\"" + order.receiver_province + "\"," +
                     "\"receiver_city\":\"" + order.receiver_city + "\"," +
                     "\"receiver_district\":\"" + order.receiver_district + "\"," +
@@ -1103,6 +1103,16 @@ namespace PeriodAid.DAL
             {
                 return null;//return Content(ex.Message);// 出错处理
             }
+        }
+
+        private string replaceWord(string name)
+        {
+            var srtName = "";
+            if (name.Contains("+"))
+            {
+                srtName = name.Replace("+", "-");
+            }
+            return srtName;
         }
 
         private string addTags(string originaltags, string tagname)
