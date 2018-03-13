@@ -415,8 +415,7 @@ namespace PeriodAid.Models
         public string platform_code { get; set; }
 
         public int delivery_state { get; set; }
-
-        public int assignState { get; set; }
+        
     }
 
     public partial class deliverys_List

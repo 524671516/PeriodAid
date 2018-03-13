@@ -1048,6 +1048,7 @@ namespace PeriodAid.DAL
                     "\"vip_code\":\"" + order.vip_code + "\"," +
                     //"\"vip_name\":\"" + order.event_name + "\"," +
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
+                    "\"buyer_memo\":\"" + order.buyer_memo + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
                     "\"receiver_name\":\"" + replaceWord(order.receiver_name) + "\"," +
                     "\"receiver_province\":\"" + order.receiver_province + "\"," +
@@ -1157,6 +1158,7 @@ namespace PeriodAid.DAL
         public string warehouse_code { get; set; }
         public string vip_code { get; set; }
         public string deal_datetime { get; set; }
+        public string buyer_memo { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
     }
     public class ERPCustomOrder_details

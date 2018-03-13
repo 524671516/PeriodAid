@@ -3245,6 +3245,7 @@ namespace PeriodAid.Controllers
                     receiver_mobile = contract.receiver_tel,
                     receiver_zip = contract.CRM_Customer.zip,
                     receiver_address = contract.receiver_address,
+                    buyer_memo = contract.express_remark,
                     deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 };
                 order.details = new List<ERPCustomOrder_details>();
