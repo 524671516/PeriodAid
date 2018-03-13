@@ -3053,7 +3053,7 @@ namespace PeriodAid.Controllers
 
         public JsonResult getERPORDERS(int[] c_id)
         {
-            //var platform_code = "135191120293142884";
+            //var platform_code = "114323442267625150";
             foreach(var cId in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cId);
