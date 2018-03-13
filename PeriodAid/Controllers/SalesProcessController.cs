@@ -2465,7 +2465,7 @@ namespace PeriodAid.Controllers
             }
             
         }
-
+        
         private string Get_Request(string url)
         {
             var retString = "";
@@ -2487,11 +2487,36 @@ namespace PeriodAid.Controllers
             }
         }
 
+        private int Get_Count(string url_api)
+        {
+            string url = "https://api.ikcrm.com"+ url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            string result = "";
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                result = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(result);
+                if (r != null)
+                {
+                    return r.data.total_count;
+                }
+                return 100;
+            }
+            catch (Exception)
+            {
+                return Get_Count(url_api);
+            }
+        }
+
         public JsonResult GetCustomer(string url_api)
         {
-            string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count+ "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-
-            CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(Get_Request(url));
+            var count = Get_Count(url_api);
+            var page = count / UserInfo.Count+1;
             List<int> customerlist = new List<int>();
             List<int> CRM_Customerlist = new List<int>();
             List<int> contactlist = new List<int>();
@@ -2510,234 +2535,239 @@ namespace PeriodAid.Controllers
             {
                 CRM_Contactlist.Add(contact.contact_id);
             }
-            if (r.code == "0")
+            for (int x=1;x <= page; x++)
             {
-                for (int i = 0; i < r.data.customers.Count(); i++)
+                string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(Get_Request(url));
+                if (r.code == "0")
                 {
-                    var Cid = r.data.customers[i].id;
-                    string customersAddress = r.data.customers[i].address.region_info;
-                    int indexAddress = 0;
-                    int indexprovince = 0;
-                    string customersAddressStr = "";
-                    string customersProvinceStr = "";
-                    string province = "";
-                    string city = "";
-                    string district = "";
-                    if (customersAddress == null)
+                    for (int i = 0; i < r.data.customers.Count(); i++)
                     {
-                    }
-                    else if (customersAddress.Count() > 3)
-                    {
-                        customersAddressStr = customersAddress.Remove(0, 3);
-                        indexAddress = customersAddressStr.IndexOf(" ");
-                        province = customersAddressStr.Substring(0, indexAddress);
-                        customersProvinceStr = customersAddressStr.Remove(0, indexAddress + 1);
-                        indexprovince = customersProvinceStr.IndexOf(" ");
-                        city = customersProvinceStr.Substring(0, indexprovince);
-                        district = customersAddressStr.Replace(" ", "-");
-                    }
-                    else
-                    {
-                        customersAddressStr = customersAddress;
-                    }
-                    customerlist.Add(r.data.customers[i].id);
-                    var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
-                    if (check_customer == null)
-                    {
-                        // new
-                        check_customer = new CRM_Customer();
-                        check_customer.customer_id = Cid;
-                        check_customer.customer_name = r.data.customers[i].name;
-                        check_customer.customer_address = customersAddressStr + " " + r.data.customers[i].address.detail_address;
-                        check_customer.customer_tel = r.data.customers[i].address.tel;
-                        check_customer.zip = "200001";
-                        check_customer.province = province;
-                        check_customer.city = city;
-                        check_customer.district = district;
-                        check_customer.status = 0;
-                        check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
-                        crm_db.CRM_Customer.Add(check_customer);
-                        crm_db.SaveChanges();
-                        for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
+                        var Cid = r.data.customers[i].id;
+                        string customersAddress = r.data.customers[i].address.region_info;
+                        int indexAddress = 0;
+                        int indexprovince = 0;
+                        string customersAddressStr = "";
+                        string customersProvinceStr = "";
+                        string province = "";
+                        string city = "";
+                        string district = "";
+                        if (customersAddress == null)
                         {
-                            var ctId = r.data.customers[i].contacts[j].address.addressable_id;
-                            var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId && m.CRM_Customer.status != -1);
-                            string ctAddress = r.data.customers[i].contacts[j].address.region_info;
-                            int indexCtAddress = 0;
-                            int indexCtProvince = 0;
-                            string CtAddressStr = "";
-                            string CtProvinceStr = "";
-                            string Ctprovince = "";
-                            string Ctcity = "";
-                            string Ctdistrict = "";
-                            if (ctAddress == null)
+                        }
+                        else if (customersAddress.Count() > 3)
+                        {
+                            customersAddressStr = customersAddress.Remove(0, 3);
+                            indexAddress = customersAddressStr.IndexOf(" ");
+                            province = customersAddressStr.Substring(0, indexAddress);
+                            customersProvinceStr = customersAddressStr.Remove(0, indexAddress + 1);
+                            indexprovince = customersProvinceStr.IndexOf(" ");
+                            city = customersProvinceStr.Substring(0, indexprovince);
+                            district = customersAddressStr.Replace(" ", "-");
+                        }
+                        else
+                        {
+                            customersAddressStr = customersAddress;
+                        }
+                        customerlist.Add(r.data.customers[i].id);
+                        var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
+                        if (check_customer == null)
+                        {
+                            // new
+                            check_customer = new CRM_Customer();
+                            check_customer.customer_id = Cid;
+                            check_customer.customer_name = r.data.customers[i].name;
+                            check_customer.customer_address = customersAddressStr + " " + r.data.customers[i].address.detail_address;
+                            check_customer.customer_tel = r.data.customers[i].address.tel;
+                            check_customer.zip = "200001";
+                            check_customer.province = province;
+                            check_customer.city = city;
+                            check_customer.district = district;
+                            check_customer.status = 0;
+                            check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
+                            crm_db.CRM_Customer.Add(check_customer);
+                            crm_db.SaveChanges();
+                            for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                             {
+                                var ctId = r.data.customers[i].contacts[j].address.addressable_id;
+                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId && m.CRM_Customer.status != -1);
+                                string ctAddress = r.data.customers[i].contacts[j].address.region_info;
+                                int indexCtAddress = 0;
+                                int indexCtProvince = 0;
+                                string CtAddressStr = "";
+                                string CtProvinceStr = "";
+                                string Ctprovince = "";
+                                string Ctcity = "";
+                                string Ctdistrict = "";
+                                if (ctAddress == null)
+                                {
+                                }
+                                else if (ctAddress.Count() > 3)
+                                {
+                                    CtAddressStr = ctAddress.Remove(0, 3);
+                                    indexCtAddress = CtAddressStr.IndexOf(" ");
+                                    Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
+                                    CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
+                                    indexCtProvince = CtProvinceStr.IndexOf(" ");
+                                    Ctcity = CtProvinceStr.Substring(0, indexprovince);
+                                    Ctdistrict = CtAddressStr.Replace(" ", "-");
+                                }
+                                else
+                                {
+                                    CtAddressStr = ctAddress;
+                                }
+                                if (check_contact == null)
+                                {
+                                    // new
+                                    check_contact = new CRM_Contact();
+                                    check_contact.contact_id = ctId;
+                                    check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                    check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
+                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                    check_contact.customer_id = check_customer.Id;
+                                    check_contact.province = Ctprovince;
+                                    check_contact.city = Ctcity;
+                                    check_contact.district = Ctdistrict;
+                                    check_contact.zip = "200001";
+                                    check_contact.status = 0;
+                                    check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
+                                    crm_db.CRM_Contact.Add(check_contact);
+                                }
                             }
-                            else if (ctAddress.Count() > 3)
+                        }
+                        else
+                        {
+                            // update
+                            check_customer.customer_id = Cid;
+                            check_customer.customer_name = r.data.customers[i].name;
+                            check_customer.customer_address = customersAddressStr + " " + r.data.customers[i].address.detail_address;
+                            check_customer.customer_tel = r.data.customers[i].address.tel;
+                            check_customer.zip = "200001";
+                            check_customer.province = province;
+                            check_customer.city = city;
+                            check_customer.district = district;
+                            check_customer.status = 0;
+                            check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
+                            crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
+                            for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                             {
-                                CtAddressStr = ctAddress.Remove(0, 3);
-                                indexCtAddress = CtAddressStr.IndexOf(" ");
-                                Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
-                                CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
-                                indexCtProvince = CtProvinceStr.IndexOf(" ");
-                                Ctcity = CtProvinceStr.Substring(0, indexprovince);
-                                Ctdistrict = CtAddressStr.Replace(" ", "-");
-                            }
-                            else
-                            {
-                                CtAddressStr = ctAddress;
-                            }
-                            if (check_contact == null)
-                            {
-                                // new
-                                check_contact = new CRM_Contact();
-                                check_contact.contact_id = ctId;
-                                check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
-                                check_contact.customer_id = check_customer.Id;
-                                check_contact.province = Ctprovince;
-                                check_contact.city = Ctcity;
-                                check_contact.district = Ctdistrict;
-                                check_contact.zip = "200001";
-                                check_contact.status = 0;
-                                check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
-                                crm_db.CRM_Contact.Add(check_contact);
+                                var ctId = r.data.customers[i].contacts[j].address.addressable_id;
+                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
+                                string ctAddress = r.data.customers[i].contacts[j].address.region_info;
+                                int indexCtAddress = 0;
+                                int indexCtProvince = 0;
+                                string CtAddressStr = "";
+                                string CtProvinceStr = "";
+                                string Ctprovince = "";
+                                string Ctcity = "";
+                                string Ctdistrict = "";
+                                if (ctAddress == null)
+                                {
+                                }
+                                else if (ctAddress.Count() > 3)
+                                {
+                                    CtAddressStr = ctAddress.Remove(0, 3);
+                                    indexCtAddress = CtAddressStr.IndexOf(" ");
+                                    Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
+                                    CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
+                                    indexCtProvince = CtProvinceStr.IndexOf(" ");
+                                    Ctcity = CtProvinceStr.Substring(0, indexprovince);
+                                    Ctdistrict = CtAddressStr.Replace(" ", "-");
+                                }
+                                else
+                                {
+                                    CtAddressStr = ctAddress;
+                                }
+                                contactlist.Add(ctId);
+                                if (check_contact == null)
+                                {
+                                    // new
+                                    check_contact = new CRM_Contact();
+                                    check_contact.contact_id = ctId;
+                                    check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                    check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
+                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                    check_contact.customer_id = check_customer.Id;
+                                    check_contact.province = Ctprovince;
+                                    check_contact.city = Ctcity;
+                                    check_contact.district = Ctdistrict;
+                                    check_contact.zip = "200001";
+                                    check_contact.status = 0;
+                                    crm_db.CRM_Contact.Add(check_contact);
+                                }
+                                else
+                                {
+                                    //update
+                                    check_contact.contact_id = ctId;
+                                    check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                    check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
+                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                    check_contact.customer_id = check_customer.Id;
+                                    check_contact.province = Ctprovince;
+                                    check_contact.city = Ctcity;
+                                    check_contact.district = Ctdistrict;
+                                    check_contact.zip = "200001";
+                                    check_contact.status = 0;
+                                    crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
+                                }
                             }
                         }
                     }
-                    else
+                    var diffArrcustomer = CRM_Customerlist.Where(m => !customerlist.Contains(m)).ToArray();
+                    for (int i = 0; i < diffArrcustomer.Count(); i++)
                     {
-                        // update
-                        check_customer.customer_id = Cid;
-                        check_customer.customer_name = r.data.customers[i].name;
-                        check_customer.customer_address = customersAddressStr + " " + r.data.customers[i].address.detail_address;
-                        check_customer.customer_tel = r.data.customers[i].address.tel;
-                        check_customer.zip = "200001";
-                        check_customer.province = province;
-                        check_customer.city = city;
-                        check_customer.district = district;
-                        check_customer.status = 0;
-                        check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
-                        crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
-                        for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
-                        {
-                            var ctId = r.data.customers[i].contacts[j].address.addressable_id;
-                            var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
-                            string ctAddress = r.data.customers[i].contacts[j].address.region_info;
-                            int indexCtAddress = 0;
-                            int indexCtProvince = 0;
-                            string CtAddressStr = "";
-                            string CtProvinceStr = "";
-                            string Ctprovince = "";
-                            string Ctcity = "";
-                            string Ctdistrict = "";
-                            if (ctAddress == null)
-                            {
-                            }
-                            else if (ctAddress.Count() > 3)
-                            {
-                                CtAddressStr = ctAddress.Remove(0, 3);
-                                indexCtAddress = CtAddressStr.IndexOf(" ");
-                                Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
-                                CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
-                                indexCtProvince = CtProvinceStr.IndexOf(" ");
-                                Ctcity = CtProvinceStr.Substring(0, indexprovince);
-                                Ctdistrict = CtAddressStr.Replace(" ", "-");
-                            }
-                            else
-                            {
-                                CtAddressStr = ctAddress;
-                            }
-                            contactlist.Add(ctId);
-                            if (check_contact == null)
-                            {
-                                // new
-                                check_contact = new CRM_Contact();
-                                check_contact.contact_id = ctId;
-                                check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
-                                check_contact.customer_id = check_customer.Id;
-                                check_contact.province = Ctprovince;
-                                check_contact.city = Ctcity;
-                                check_contact.district = Ctdistrict;
-                                check_contact.zip = "200001";
-                                check_contact.status = 0;
-                                crm_db.CRM_Contact.Add(check_contact);
-                            }
-                            else
-                            {
-                                //update
-                                check_contact.contact_id = ctId;
-                                check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
-                                check_contact.customer_id = check_customer.Id;
-                                check_contact.province = Ctprovince;
-                                check_contact.city = Ctcity;
-                                check_contact.district = Ctdistrict;
-                                check_contact.zip = "200001";
-                                check_contact.status = 0;
-                                crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
-                            }
-                        }
+                        var customerId = diffArrcustomer[i];
+                        var check_data = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
+                        check_data.status = -1;
+                        crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                     }
-                }
-                var diffArrcustomer = CRM_Customerlist.Where(m => !customerlist.Contains(m)).ToArray();
-                for (int i = 0; i < diffArrcustomer.Count(); i++)
-                {
-                    var customerId = diffArrcustomer[i];
-                    var check_data = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
-                    check_data.status = -1;
-                    crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
-                }
-                var diffArrcontact = CRM_Contactlist.Where(m => !contactlist.Contains(m)).ToArray();
-                for (int i = 0; i < diffArrcontact.Count(); i++)
-                {
-                    var contactId = diffArrcontact[i];
-                    var check_data = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactId);
-                    check_data.status = -1;
-                    crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
-                }
-                crm_db.SaveChanges();
-            }
-            else if (r.code == "100401")
-            {
-                RefreshUserToken();
-                return GetCustomer(url_api);
-            }
-            else
-            {
-                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
-                Thread.Sleep(1000);
-                try_times++;
-                if (try_times >= 10)
-                {
-                    logs.type = "customer";
-                    logs.exception = "[customer]获取失败";
-                    logs.exception_at = DateTime.Now;
-                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    var diffArrcontact = CRM_Contactlist.Where(m => !contactlist.Contains(m)).ToArray();
+                    for (int i = 0; i < diffArrcontact.Count(); i++)
+                    {
+                        var contactId = diffArrcontact[i];
+                        var check_data = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactId);
+                        check_data.status = -1;
+                        crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                    }
                     crm_db.SaveChanges();
-                    try_times = 0;
-                    return Json(new { result = "FAIL" });
                 }
-                return GetCustomer(url_api);
+                else if (r.code == "100401")
+                {
+                    RefreshUserToken();
+                    return GetCustomer(url_api);
+                }
+                else
+                {
+                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                    Thread.Sleep(1000);
+                    try_times++;
+                    if (try_times >= 10)
+                    {
+                        logs.type = "customer";
+                        logs.exception = "[customer]获取失败";
+                        logs.exception_at = DateTime.Now;
+                        crm_db.CRM_ExceptionLogs.Add(logs);
+                        crm_db.SaveChanges();
+                        try_times = 0;
+                        return Json(new { result = "FAIL" });
+                    }
+                    return GetCustomer(url_api);
+                }
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult GetCrmInfo(string url_api)
         {
+            List<int> contractlist = new List<int>();
+            List<int> CRM_Contractlist = new List<int>();
             string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             Thread.Sleep(500);
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
-            List<int> contractlist = new List<int>();
-            List<int> CRM_Contractlist = new List<int>();
             var CRM_Contract = from m in crm_db.CRM_Contract
                                where m.contract_status == UserInfo.status_unsend || m.contract_status == UserInfo.status_undelivered
                                select m;
-            foreach(var crm in CRM_Contract)
+            foreach (var crm in CRM_Contract)
             {
                 CRM_Contractlist.Add(crm.contract_id);
             }
@@ -2747,9 +2777,7 @@ namespace PeriodAid.Controllers
                 {
                     if (r.data.contracts[i].approve_status == UserInfo.approved_status)
                     {
-                        Random ran = new Random();
-                        int RandKey = ran.Next(01, 99);
-                        var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + RandKey;
+                        var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + r.data.contracts[i].id;
                         var contractId = r.data.contracts[i].id;
                         var customerId = r.data.contracts[i].customer_id;
                         var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
@@ -2767,14 +2795,15 @@ namespace PeriodAid.Controllers
                             check_data.total_amount = r.data.contracts[i].total_amount;
                             check_data.contract_status = r.data.contracts[i].status;
                             check_data.updated_at = r.data.contracts[i].updated_at;
-                            check_data.platform_code = platform_code + r.data.contracts[i].id;
+                            check_data.platform_code = platform_code;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
                             check_data.shop_code = "006";
-                            if(check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
+                            if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
-                            }else
+                            }
+                            else
                             {
                                 check_data.vip_code = check_customer.customer_abbreviation;
                             }
@@ -2807,7 +2836,7 @@ namespace PeriodAid.Controllers
                     }
                 }
                 var diffArr = CRM_Contractlist.Where(m => !contractlist.Contains(m)).ToArray();
-                for(int i = 0;i< diffArr.Count(); i++)
+                for (int i = 0; i < diffArr.Count(); i++)
                 {
                     var contractId = diffArr[i];
                     var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
