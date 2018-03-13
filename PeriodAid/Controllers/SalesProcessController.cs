@@ -2490,6 +2490,7 @@ namespace PeriodAid.Controllers
         public JsonResult GetCustomer(string url_api)
         {
             string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count+ "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+
             CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(Get_Request(url));
             List<int> customerlist = new List<int>();
             List<int> CRM_Customerlist = new List<int>();
@@ -2593,7 +2594,7 @@ namespace PeriodAid.Controllers
                                 check_contact.contact_id = ctId;
                                 check_contact.contact_name = r.data.customers[i].contacts[j].name;
                                 check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.tel;
+                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                 check_contact.customer_id = check_customer.Id;
                                 check_contact.province = Ctprovince;
                                 check_contact.city = Ctcity;
@@ -2656,7 +2657,7 @@ namespace PeriodAid.Controllers
                                 check_contact.contact_id = ctId;
                                 check_contact.contact_name = r.data.customers[i].contacts[j].name;
                                 check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.tel;
+                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                 check_contact.customer_id = check_customer.Id;
                                 check_contact.province = Ctprovince;
                                 check_contact.city = Ctcity;
@@ -2671,7 +2672,7 @@ namespace PeriodAid.Controllers
                                 check_contact.contact_id = ctId;
                                 check_contact.contact_name = r.data.customers[i].contacts[j].name;
                                 check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.tel;
+                                check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                 check_contact.customer_id = check_customer.Id;
                                 check_contact.province = Ctprovince;
                                 check_contact.city = Ctcity;

@@ -310,7 +310,7 @@ namespace PeriodAid.Models
 
         public string detail_address { get; set; }
 
-        public string tel { get; set; }
+        public string phone { get; set; }
     }
 
     [Table("CRM_Contact")]
