@@ -2756,7 +2756,7 @@ namespace PeriodAid.Controllers
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
             var CRM_Contract = from m in crm_db.CRM_Contract
-                               where m.contract_status == UserInfo.status_unsend
+                               where m.contract_status == UserInfo.status_unsend || m.contract_status == UserInfo.status_undelivered
                                select m;
             foreach(var crm in CRM_Contract)
             {
@@ -3152,6 +3152,7 @@ namespace PeriodAid.Controllers
             // 批量
             var seller = getSeller(User.Identity.Name);
             var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.User_Name);
+
             foreach (var _Cid in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.contract_status == UserInfo.status_unsend && m.received_payments_status == UserInfo.received_payments_status);
@@ -3201,6 +3202,7 @@ namespace PeriodAid.Controllers
                     contract.address_status = 1;
                     contract.employee_id = employee.Id;
                     contract.employee_name = employee.NickName;
+                    crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
                     if (updatcrm != 1)
                     {
@@ -3212,6 +3214,7 @@ namespace PeriodAid.Controllers
                     return Json(new { result = "FAIL", data = r.errorDesc });
                 }
             }
+            crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
 
