@@ -2466,28 +2466,6 @@ namespace PeriodAid.Controllers
             
         }
 
-        //private int Get_Count(string url_api)
-        //{
-        //    string url = "https://api.ikcrm.com" + url_api + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-        //    var request = WebRequest.Create(url) as HttpWebRequest;
-        //    request.ServicePoint.ConnectionLimit = int.MaxValue;
-        //    request.Method = "get";
-        //    request.ContentType = "application/x-www-form-urlencoded";
-        //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-        //    var retString = myStreamReader.ReadToEnd();
-        //    myStreamReader.Close();
-        //    CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(retString);
-        //    if(r.code == "0")
-        //    {
-        //        return r.data.total_count;
-        //    }else if (r.code == "100401")
-        //    {
-        //        RefreshUserToken();
-        //    }
-        //    return Get_Count(url_api);
-        //}
-
         private string Get_Request(string url)
         {
             var retString = "";
