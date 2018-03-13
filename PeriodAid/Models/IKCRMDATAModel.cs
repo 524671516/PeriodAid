@@ -250,7 +250,12 @@ namespace PeriodAid.Models
         public int address_status { get; set; }
         //订单回款类型(1付清,0未付清)
         public int received_payments_status { get; set; }
-       
+
+        public int employee_id { get; set; }
+
+        public string employee_name { get; set; }
+
+
     }
     
     [Table("CRM_ExceptionLogs")]

@@ -2751,6 +2751,7 @@ namespace PeriodAid.Controllers
         public JsonResult GetCrmInfo(string url_api)
         {
             string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            Thread.Sleep(500);
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
@@ -3022,6 +3023,8 @@ namespace PeriodAid.Controllers
             if (employee.Type == 1)
             {
                 contract.received_payments_status = UserInfo.received_payments_status;
+                contract.employee_id = employee.Id;
+                contract.employee_name = employee.NickName;
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
             else
@@ -3050,7 +3053,7 @@ namespace PeriodAid.Controllers
 
         public JsonResult getERPORDERS(int[] c_id)
         {
-            //var platform_code = "135203459499896714";
+            //var platform_code = "135191120293142884";
             foreach(var cId in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cId);
@@ -3092,7 +3095,7 @@ namespace PeriodAid.Controllers
                         List<string> contractlist = new List<string>();
                         if (r.success)
                         {
-                            if (r.orders[0].assignState == 1)
+                            if (r.orders[0].delivery_state == 1)
                             {
                                 contract.express_status = "部分发货";
                                 contract.contract_status = UserInfo.status_part;
@@ -3104,7 +3107,7 @@ namespace PeriodAid.Controllers
                                 contract.express_information = express_information;
                                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                             }
-                            else if (r.orders[0].assignState == 2)
+                            else if (r.orders[0].delivery_state == 2)
                             {
                                 contract.express_status = "全部发货";
                                 contract.contract_status = UserInfo.status_delivered;
@@ -3147,6 +3150,8 @@ namespace PeriodAid.Controllers
         public JsonResult createOrder(int[] c_id, string province, string city, string district)
         {
             // 批量
+            var seller = getSeller(User.Identity.Name);
+            var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.User_Name);
             foreach (var _Cid in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.contract_status == UserInfo.status_unsend && m.received_payments_status == UserInfo.received_payments_status);
@@ -3194,6 +3199,8 @@ namespace PeriodAid.Controllers
                 {
                     contract.contract_status = UserInfo.status_undelivered;
                     contract.address_status = 1;
+                    contract.employee_id = employee.Id;
+                    contract.employee_name = employee.NickName;
                     var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information);
                     if (updatcrm != 1)
                     {
