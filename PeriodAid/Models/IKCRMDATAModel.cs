@@ -106,6 +106,9 @@ namespace PeriodAid.Models
         public string contract_status { get; set; }
         [StringLength(256)]
         public string contract_remark { get; set; }
+        // 类型
+        [StringLength(64)]
+        public string contract_type { get; set; }
 
         public DateTime? updated_at { get; set; }
         [StringLength(256)]
@@ -149,7 +152,6 @@ namespace PeriodAid.Models
 
         public string employee_name { get; set; }
 
-
     }
 
     [Table("CRM_ExceptionLogs")]
@@ -192,7 +194,10 @@ namespace PeriodAid.Models
         public string text_asset_7fd81a { get; set; }
         // 备注
         public string special_terms { get; set; }
-
+        // 店铺
+        public string text_asset_615f62_display { get; set; }
+        // 订单类型
+        public string category_mapped { get; set; }
     }
 
     public partial class CRM_ContractDetail_CustomerProductList
@@ -394,6 +399,8 @@ namespace PeriodAid.Models
         public static int received_payments_status = 1;
         // 已删除
         public static string delete = "-1";
+        // 线下订单code
+        public static string offline = "006";
     }
 
     public partial class orders_Result

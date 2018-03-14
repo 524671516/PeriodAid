@@ -173,7 +173,7 @@ namespace PeriodAid.Controllers
 
         private int Get_Count(string url_api)
         {
-            string url = "https://api.ikcrm.com"+ url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/"+ url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -481,7 +481,6 @@ namespace PeriodAid.Controllers
                             check_data.platform_code = platform_code;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
-                            check_data.shop_code = "006";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
@@ -505,7 +504,6 @@ namespace PeriodAid.Controllers
                             check_data.updated_at = r.data.contracts[i].updated_at;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
-                            check_data.shop_code = "006";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
@@ -598,6 +596,7 @@ namespace PeriodAid.Controllers
                         }
                     }
                     contract.received_payments_status = 0;
+                    contract.shop_code = UserInfo.offline;
                     if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments)
                     {
                         contract.received_payments_status = 1;
@@ -606,15 +605,16 @@ namespace PeriodAid.Controllers
                     {
                         contract.received_payments_status = 1;
                     }
-                    else
+                    if(r.data.text_asset_615f62_display != null || r.data.text_asset_615f62_display != "")
                     {
-                        contract.received_payments_status = 0;
+                        contract.shop_code = UserInfo.offline;
                     }
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
                     contract.receiver_tel = r.data.text_asset_da4211;
                     contract.express_remark = r.data.text_asset_7fd81a;
                     contract.contract_remark = r.data.special_terms;
+                    contract.contract_type = r.data.category_mapped;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     checkAddress(r.data.text_asset_eb802b, C_id.id);
                 }
@@ -930,6 +930,7 @@ namespace PeriodAid.Controllers
                     receiver_zip = contract.CRM_Customer.zip,
                     receiver_address = contract.receiver_address,
                     buyer_memo = contract.express_remark,
+                    order_type_code = contract.contract_type,
                     deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 };
                 order.details = new List<ERPCustomOrder_details>();
