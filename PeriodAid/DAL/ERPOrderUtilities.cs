@@ -1041,7 +1041,7 @@ namespace PeriodAid.DAL
                     "\"appkey\":\"" + AppId + "\"," +
                     "\"method\":\"gy.erp.trade.add\"," +
                     "\"sessionkey\":\"" + SessionKey + "\"," +
-                    "\"order_type_code\":\"" + order.order_type_code + "\"," +
+                    "\"order_type_code\":\"销售订单\"," +
                     "\"platform_code\":\"" + order.platform_code + "\"," +
                     "\"shop_code\":\"" + order.shop_code + "\"," +
                     //"\"qty\": 1," +

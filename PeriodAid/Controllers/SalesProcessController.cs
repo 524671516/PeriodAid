@@ -446,7 +446,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public JsonResult GetCrmInfo(string url_api)
+        public JsonResult GetCrmInfo()
         {
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
@@ -534,7 +534,7 @@ namespace PeriodAid.Controllers
             else if (r.code == "100401")
             {
                 RefreshUserToken();
-                return GetCrmInfo(url_api);
+                return GetCrmInfo();
             }
             else
             {
@@ -551,11 +551,11 @@ namespace PeriodAid.Controllers
                     try_times = 0;
                     return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
                 }
-                return GetCrmInfo(url_api);
+                return GetCrmInfo();
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-
+        [HttpPost]
         public JsonResult GetCrmDetailInfo()
         {
             var contracts = from m in crm_db.CRM_Contract
@@ -933,7 +933,7 @@ namespace PeriodAid.Controllers
                     receiver_mobile = contract.receiver_tel,
                     receiver_zip = contract.CRM_Customer.zip,
                     receiver_address = contract.receiver_address,
-                    buyer_memo = contract.express_remark,
+                    buyer_memo = contract.contract_remark,
                     order_type_code = contract.contract_type,
                     deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 };
