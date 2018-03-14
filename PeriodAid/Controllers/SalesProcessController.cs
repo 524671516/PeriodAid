@@ -2415,11 +2415,18 @@ namespace PeriodAid.Controllers
         {
             // 取数据库
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Key == "CRM_UserToken");
-            TimeSpan ts = DateTime.Now - token_time.download_at;
-            int days = ts.Days;
-            if (days >= 1)
+            try
             {
-                RefreshUserToken();
+                TimeSpan ts = DateTime.Now - token_time.download_at;
+                int days = ts.Days;
+                if (days >= 1)
+                {
+                    return RefreshUserToken();
+                }
+            }
+            catch (Exception)
+            {
+                return RefreshUserToken();
             }
             return token_time.Value;
         }
@@ -2451,19 +2458,29 @@ namespace PeriodAid.Controllers
             result_Data resultdata = JsonConvert.DeserializeObject<result_Data>(retString);
             if (resultdata.code == "0")
             {
-                token_time.Key = "CRM_UserToken";
-                token_time.Value = resultdata.data.user_token;
-                token_time.download_at = DateTime.Now;
-                crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
+                if (token_time == null)
+                {
+                    token_time = new CRM_User_Token();
+                    token_time.Key = "CRM_UserToken";
+                    token_time.Value = resultdata.data.user_token;
+                    token_time.download_at = DateTime.Now;
+                    crm_db.CRM_User_Token.Add(token_time);
+                }
+                else
+                {
+                    token_time.Key = "CRM_UserToken";
+                    token_time.Value = resultdata.data.user_token;
+                    token_time.download_at = DateTime.Now;
+                    crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
+                }
                 crm_db.SaveChanges();
-                return token_time.Value;
             }
             else
             {
                 Thread.Sleep(1000);
                 return RefreshUserToken();
             }
-            
+            return token_time.Value;
         }
         
         private string Get_Request(string url)
@@ -3120,7 +3137,7 @@ namespace PeriodAid.Controllers
                        "\"appkey\":\"" + AppId + "\"," +
                         "\"method\":\"gy.erp.trade.get\"," +
                         //"\"receiver_mobile\":\"" + platform_code + "\"," +
-                        //"\"platform_code\":\"" + contract.platform_code + "\"," +
+                        "\"platform_code\":\"" + contract.platform_code + "\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"" +
                         "}";
                 string signature = sign(json, AppSecret);
@@ -3313,6 +3330,5 @@ namespace PeriodAid.Controllers
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
         }
-        
     }
 }
