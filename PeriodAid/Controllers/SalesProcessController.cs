@@ -2529,7 +2529,7 @@ namespace PeriodAid.Controllers
                 return Get_Count(url_api);
             }
         }
-
+        [HttpPost]
         public JsonResult GetCustomer(string url_api)
         {
             var count = Get_Count(url_api);
@@ -2773,7 +2773,7 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-
+        [HttpPost]
         public JsonResult GetCrmInfo(string url_api)
         {
             List<int> contractlist = new List<int>();
@@ -3011,12 +3011,12 @@ namespace PeriodAid.Controllers
             }
             return 0;
         }
-
+        [Authorize(Roles = "CRM")]
         public ActionResult CRM_show()
         {
             return View();
         }
-
+        [Authorize(Roles = "CRM")]
         public ActionResult CRM_undeliveredPartical(string status)
         {
             List<CRM_Contract> data_list = new List<CRM_Contract>();
@@ -3031,7 +3031,7 @@ namespace PeriodAid.Controllers
             data_list.AddRange(undelivered_Data.Except(undeliveredData));
             return PartialView(data_list);
         }
-
+        [Authorize(Roles = "CRM")]
         public ActionResult ContractDetail_show(int c_id)
         {
             var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == c_id);
@@ -3041,7 +3041,7 @@ namespace PeriodAid.Controllers
             ViewBag.Detail = contractDetail;
             return PartialView(contract);
         }
-
+        [Authorize(Roles = "CRM")]
         public JsonResult Admin_pass(int c_id)
         {
             var seller = getSeller(User.Identity.Name);
@@ -3125,7 +3125,7 @@ namespace PeriodAid.Controllers
                 return getDeliverys(mail_no);
             }
         }
-
+        [HttpPost]
         public JsonResult getERPORDERS(int[] c_id)
         {
             //var platform_code = "15589812033";
