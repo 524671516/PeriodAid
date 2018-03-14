@@ -173,7 +173,7 @@ namespace PeriodAid.Controllers
 
         private int Get_Count(string url_api)
         {
-            string url = "https://api.ikcrm.com/"+ url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com"+ url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -185,9 +185,13 @@ namespace PeriodAid.Controllers
                 result = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(result);
-                if (r != null)
+                if (r.code == "0")
                 {
                     return r.data.total_count;
+                }else if (r.code == "100401")
+                {
+                    RefreshUserToken();
+                    return Get_Count(url_api);
                 }
                 return 100;
             }

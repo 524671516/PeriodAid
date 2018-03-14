@@ -53,7 +53,7 @@
                     url: "/SalesProcess/GetCustomer/",
                     type:"post",
                     data: {
-                        url_api: "api/v2/customers/"
+                        url_api: "/api/v2/customers/"
                     },
                     success: function (data) {
                         // 获取crm合同数据
@@ -61,7 +61,7 @@
                             url: "/SalesProcess/GetCrmInfo/",
                             type:"post",
                             data: {
-                                url_api: "api/v2/contracts/"
+                                url_api: "/api/v2/contracts/"
                             },
                             success: function (data) {
                                 if (data.result == "SUCCESS") {
