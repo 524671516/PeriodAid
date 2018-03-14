@@ -278,7 +278,7 @@ namespace PeriodAid.Controllers
                             for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                             {
                                 var ctId = r.data.customers[i].contacts[j].address.addressable_id;
-                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId && m.CRM_Customer.status != -1);
+                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
                                 string ctAddress = r.data.customers[i].contacts[j].address.region_info;
                                 int indexCtAddress = 0;
                                 int indexCtProvince = 0;
@@ -340,6 +340,7 @@ namespace PeriodAid.Controllers
                             for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                             {
                                 var ctId = r.data.customers[i].contacts[j].address.addressable_id;
+                                var ctphone = r.data.customers[i].contacts[j].address.phone;
                                 var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
                                 string ctAddress = r.data.customers[i].contacts[j].address.region_info;
                                 int indexCtAddress = 0;
@@ -374,7 +375,7 @@ namespace PeriodAid.Controllers
                                     check_contact.contact_id = ctId;
                                     check_contact.contact_name = r.data.customers[i].contacts[j].name;
                                     check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                    check_contact.contact_tel = ctphone;
                                     check_contact.customer_id = check_customer.Id;
                                     check_contact.province = Ctprovince;
                                     check_contact.city = Ctcity;
@@ -389,7 +390,7 @@ namespace PeriodAid.Controllers
                                     check_contact.contact_id = ctId;
                                     check_contact.contact_name = r.data.customers[i].contacts[j].name;
                                     check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                    check_contact.contact_tel = ctphone;
                                     check_contact.customer_id = check_customer.Id;
                                     check_contact.province = Ctprovince;
                                     check_contact.city = Ctcity;
@@ -564,7 +565,6 @@ namespace PeriodAid.Controllers
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == C_id.id);
                 string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-                Thread.Sleep(500);
                 CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(Get_Request(url));
                 if (r.code == "0")
                 {
