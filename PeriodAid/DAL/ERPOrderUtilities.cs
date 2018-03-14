@@ -1112,6 +1112,21 @@ namespace PeriodAid.DAL
             if (name.Contains("+"))
             {
                 srtName = name.Replace("+", "-");
+            }else if (name.Contains(":"))
+            {
+                srtName = name.Replace(":", "-");
+            }
+            else if (name.Contains(","))
+            {
+                srtName = name.Replace(",", "-");
+            }
+            else if (name.Contains("/"))
+            {
+                srtName = name.Replace("/", "-");
+            }
+            else if (name.Contains("\\"))
+            {
+                srtName = name.Replace("\\", "-");
             }
             return srtName;
         }
