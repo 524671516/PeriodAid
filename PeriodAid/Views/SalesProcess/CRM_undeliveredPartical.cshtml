@@ -567,6 +567,7 @@
             } else if (that.hasClass("change_payments")) {
                 $.ajax({
                     url: "/SalesProcess/Admin_pass",
+                    type:"post",
                     data: {
                         c_id: that.attr("data-val")
                     },

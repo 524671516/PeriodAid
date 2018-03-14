@@ -709,6 +709,7 @@ namespace PeriodAid.Controllers
             return PartialView(contract);
         }
         [Authorize(Roles = "CRM")]
+        [HttpPost]
         public JsonResult Admin_pass(int c_id)
         {
             var seller = getSeller(User.Identity.Name);
