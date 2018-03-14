@@ -2746,6 +2746,7 @@ namespace PeriodAid.Controllers
                         check_data.status = -1;
                         crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                     }
+                    crm_db.SaveChanges();
                 }
                 else if (r.code == "100401")
                 {
@@ -2770,7 +2771,6 @@ namespace PeriodAid.Controllers
                     return GetCustomer(url_api);
                 }
             }
-            crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
