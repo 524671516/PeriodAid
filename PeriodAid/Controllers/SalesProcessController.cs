@@ -64,7 +64,8 @@ namespace PeriodAid.Controllers
             var seller = _db.SP_Seller.SingleOrDefault(m => m.User_Name == username);
             return seller;
         }
-        
+
+        //CRM
         public static String buildQueryStr(Dictionary<String, String> dicList)
         {
             String postStr = "";
@@ -148,7 +149,7 @@ namespace PeriodAid.Controllers
             }
             return token_time.Value;
         }
-        
+
         private string Get_Request(string url)
         {
             var retString = "";
@@ -164,7 +165,7 @@ namespace PeriodAid.Controllers
                 myStreamReader.Close();
                 return retString;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return Get_Request(url);
             }
@@ -172,7 +173,7 @@ namespace PeriodAid.Controllers
 
         private int Get_Count(string url_api)
         {
-            string url = "https://api.ikcrm.com"+ url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com" + url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -195,11 +196,11 @@ namespace PeriodAid.Controllers
                 return Get_Count(url_api);
             }
         }
-
+        [HttpPost]
         public JsonResult GetCustomer(string url_api)
         {
             var count = Get_Count(url_api);
-            var page = count / UserInfo.Count+1;
+            var page = count / UserInfo.Count + 1;
             List<int> customerlist = new List<int>();
             List<int> CRM_Customerlist = new List<int>();
             List<int> contactlist = new List<int>();
@@ -218,7 +219,7 @@ namespace PeriodAid.Controllers
             {
                 CRM_Contactlist.Add(contact.contact_id);
             }
-            for (int x=1;x <= page; x++)
+            for (int x = 1; x <= page; x++)
             {
                 string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
                 CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(Get_Request(url));
@@ -439,7 +440,7 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-
+        [HttpPost]
         public JsonResult GetCrmInfo(string url_api)
         {
             List<int> contractlist = new List<int>();
@@ -644,7 +645,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
-        private int UpdateCRM(int cid, string contract_status, string express_information,string express_remark)
+        private int UpdateCRM(int cid, string contract_status, string express_information, string express_remark)
         {
             var contracts = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cid);
             string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -677,12 +678,12 @@ namespace PeriodAid.Controllers
             }
             return 0;
         }
-
+        [Authorize(Roles = "CRM")]
         public ActionResult CRM_show()
         {
             return View();
         }
-
+        [Authorize(Roles = "CRM")]
         public ActionResult CRM_undeliveredPartical(string status)
         {
             List<CRM_Contract> data_list = new List<CRM_Contract>();
@@ -697,7 +698,7 @@ namespace PeriodAid.Controllers
             data_list.AddRange(undelivered_Data.Except(undeliveredData));
             return PartialView(data_list);
         }
-
+        [Authorize(Roles = "CRM")]
         public ActionResult ContractDetail_show(int c_id)
         {
             var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == c_id);
@@ -707,7 +708,7 @@ namespace PeriodAid.Controllers
             ViewBag.Detail = contractDetail;
             return PartialView(contract);
         }
-
+        [Authorize(Roles = "CRM")]
         public JsonResult Admin_pass(int c_id)
         {
             var seller = getSeller(User.Identity.Name);
@@ -727,7 +728,7 @@ namespace PeriodAid.Controllers
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-        
+
         private static string AppId = "130412";
         private static string AppSecret = "26d2e926f42a4f2181dd7d1b7f7d55c0";
         private static string SessionKey = "8a503b3d9d0d4119be2868cc69a8ef5a";
@@ -791,7 +792,7 @@ namespace PeriodAid.Controllers
                 return getDeliverys(mail_no);
             }
         }
-
+        [HttpPost]
         public JsonResult getERPORDERS(int[] c_id)
         {
             //var platform_code = "15589812033";
@@ -873,7 +874,7 @@ namespace PeriodAid.Controllers
                                 return Json(new { result = "ERROR" }, JsonRequestBehavior.AllowGet);
                             }
                             crm_db.SaveChanges();
-                            var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information,contract.express_remark);
+                            var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information, contract.express_remark);
                             if (updatcrm != 1)
                             {
                                 return Json(new { result = "PARTIALSUCCESS" }, JsonRequestBehavior.AllowGet);
