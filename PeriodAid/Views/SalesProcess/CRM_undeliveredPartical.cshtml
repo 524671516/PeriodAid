@@ -340,7 +340,7 @@
                                 }
                             })
                         } else if (data.result == "FAIL") {
-                            errorAlert("推送失败,请检查订单信息是否完整")
+                            errorAlert("推送失败,请检查订单信息是否完整"+ data.data)
                         } else if (data.result == "ERROR") {
                             errorAlert("CRM同步失败")
                         } else {
@@ -502,7 +502,7 @@
                             }
                         })
                     } else if (data.result == "FAIL") {
-                        errorAlert("推送失败,请检查订单信息是否完整")
+                        errorAlert("推送失败,请检查订单信息是否完整"+data.data)
                     } else if (data.result == "PARTIALSUCCESS") {
                         errorAlert("CRM同步失败")
                     }
@@ -551,7 +551,7 @@
                                 }
                             })
                         } else if (data.result == "FAIL") {
-                            errorAlert("推送失败,请检查订单信息是否完整")
+                            errorAlert("推送失败,请检查订单信息是否完整"+data.data)
                             orderarry.remove(that.attr("data-val"))
                         } else if (data.result == "ERROR") {
                             errorAlert("CRM同步失败")
@@ -604,7 +604,7 @@
                                             }
                                         })
                                     } else if (data.result == "FAIL") {
-                                        errorAlert("推送失败,请检查订单信息是否完整")
+                                        errorAlert("推送失败,请检查订单信息是否完整"+data.data)
                                     } else if (data.result == "ERROR") {
                                         errorAlert("CRM同步失败")
                                     } else {

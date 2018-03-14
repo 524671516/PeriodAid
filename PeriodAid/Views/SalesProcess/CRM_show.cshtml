@@ -29,7 +29,7 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
-            $("#tm-view-loading").hide()
+            $("#tm-view-loading").show()
             $.ajax({
                 url: "/SalesProcess/CRM_undeliveredPartical/",
                 data: {
@@ -37,6 +37,7 @@
                 },
                 success: function (data) {
                     $("#undelivered_list_content").html(data)
+                    $("#tm-view-loading").hide()
                 }
             })
             $("#first_btn").addClass("btn-danger")
