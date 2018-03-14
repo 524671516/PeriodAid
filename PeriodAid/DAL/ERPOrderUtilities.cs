@@ -244,7 +244,7 @@ namespace PeriodAid.DAL
                    "\"appkey\":\"" + AppId + "\"," +
                    "\"method\":\"gy.erp.trade.get\"," +
                    "\"sessionkey\":\"" + SessionKey + "\"," +
-                   "\"shop_code\":\"" +shop_code+"\","+
+                   "\"shop_code\":\"" + shop_code + "\"," +
                    "\"platform_code\":\"" + platform_code + "\"" +
                    "}";
             string signature = sign(json, AppSecret);
@@ -359,7 +359,7 @@ namespace PeriodAid.DAL
                                 erpdb.orders.AddRange(r.orders);
                                 erpdb.SaveChanges();
                                 flag = true;
-                                
+
                                 status.currentcount += 100;
                                 erpdb.Entry(status).State = System.Data.Entity.EntityState.Modified;
                                 erpdb.SaveChanges();
@@ -581,7 +581,7 @@ namespace PeriodAid.DAL
                             Vips_Result r = JsonConvert.DeserializeObject<Vips_Result>(result);
                             if (r != null)
                             {
-                                
+
                                 if (r.vips.Count > 0)
                                 {
                                     foreach (var item in r.vips)
@@ -713,7 +713,7 @@ namespace PeriodAid.DAL
                     "\"method\":\"gy.erp.shop.get\"," +
                     "\"sessionkey\":\"" + SessionKey + "\"," +
                     "\"page_size\":100," +
-                    "\"page_no\":" + 1 +"," +
+                    "\"page_no\":" + 1 + "," +
                     "\"sign\":\"" + signature + "\"" +
                 "}";
             //return Content(info);
@@ -821,7 +821,7 @@ namespace PeriodAid.DAL
                         "\"method\":\"gy.erp.items.get\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"," +
                         "\"page_size\":100," +
-                        "\"page_no\":" + page + 
+                        "\"page_no\":" + page +
                         "}";
                 string signature = sign(json, AppSecret);
                 string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
@@ -863,7 +863,7 @@ namespace PeriodAid.DAL
 
                                 if (r.items.Count > 0)
                                 {
-                                    
+
                                     erpdb.items.AddRange(r.items);
                                     erpdb.SaveChanges();
                                     flag = true;
@@ -1010,7 +1010,7 @@ namespace PeriodAid.DAL
             }
             string formated_ids = string.Join(",", resultstring.ToArray());
             string sql = "SELECT T1.[id] FROM [ORDERERP].[dbo].[vips] as T1 "
-                +"where T1.name in (" + formated_ids + ") group by T1.[id]";
+                + "where T1.name in (" + formated_ids + ") group by T1.[id]";
             //SqlParameter[] parm = { new SqlParameter("content", formated_ids) };
             var vipids = erpdb.Database.SqlQuery<VipIds>(sql);
             return vipids;
@@ -1033,7 +1033,7 @@ namespace PeriodAid.DAL
                     details.Append("\"sku_code\":null");
                     details.Append("},");
                 }
-                if(order.details.Count>=1)
+                if (order.details.Count >= 1)
                     details.Remove(details.Length - 1, 1);
             }
             StringBuilder json = new StringBuilder();
@@ -1112,6 +1112,22 @@ namespace PeriodAid.DAL
             if (name.Contains("+"))
             {
                 srtName = name.Replace("+", "-");
+            }
+            else if (name.Contains(":"))
+            {
+                srtName = name.Replace(":", "-");
+            }
+            else if (name.Contains(","))
+            {
+                srtName = name.Replace(",", "-");
+            }
+            else if (name.Contains("/"))
+            {
+                srtName = name.Replace("/", "-");
+            }
+            else if (name.Contains("\\"))
+            {
+                srtName = name.Replace("\\", "-");
             }
             return srtName;
         }
