@@ -399,8 +399,6 @@ namespace PeriodAid.Models
         public static int received_payments_status = 1;
         // 已删除
         public static string delete = "-1";
-        // 线下订单code
-        public static string offline = "006";
     }
 
     public partial class orders_Result

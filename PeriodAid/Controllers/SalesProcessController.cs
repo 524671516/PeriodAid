@@ -443,7 +443,7 @@ namespace PeriodAid.Controllers
                     return GetCustomer(url_api);
                 }
             }
-            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS" });
         }
         [HttpPost]
         public JsonResult GetCrmInfo()
@@ -549,11 +549,11 @@ namespace PeriodAid.Controllers
                     crm_db.CRM_ExceptionLogs.Add(logs);
                     crm_db.SaveChanges();
                     try_times = 0;
-                    return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { result = "FAIL" });
                 }
                 return GetCrmInfo();
             }
-            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS" });
         }
         [HttpPost]
         public JsonResult GetCrmDetailInfo()
@@ -599,8 +599,6 @@ namespace PeriodAid.Controllers
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
-                    contract.received_payments_status = 0;
-                    contract.shop_code = UserInfo.offline;
                     if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments)
                     {
                         contract.received_payments_status = 1;
@@ -608,10 +606,30 @@ namespace PeriodAid.Controllers
                     else if (r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
                     {
                         contract.received_payments_status = 1;
-                    }
-                    if(r.data.text_asset_615f62_display != null || r.data.text_asset_615f62_display != "")
+                    }else
                     {
-                        contract.shop_code = UserInfo.offline;
+                        contract.received_payments_status = 0;
+                    }
+                    var shop_code = r.data.text_asset_615f62_display;
+                    if (shop_code != null || shop_code != "")
+                    {
+                        if (shop_code.Contains("零售/团购"))
+                        {
+                            contract.shop_code = "线下零售/团购";
+                        }else if (shop_code.Contains("其他渠道"))
+                        {
+                            contract.shop_code = "线上其他渠道";
+                        }else if (shop_code.Contains("自营渠道"))
+                        {
+                            contract.shop_code = "自营渠道";
+                        }else if (shop_code.Contains("展会/促销"))
+                        {
+                            contract.shop_code = "线下展会/促销物料";
+                        }
+                        else
+                        {
+                            contract.shop_code = "006";
+                        }
                     }
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
@@ -640,13 +658,13 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
-                        return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
+                        return Json(new { result = "FAIL" });
                     }
                     return GetCrmDetailInfo();
                 }
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS" });
         }
 
         private int UpdateCRM(int cid, string contract_status, string express_information,string express_remark)
@@ -713,6 +731,7 @@ namespace PeriodAid.Controllers
             return PartialView(contract);
         }
         [Authorize(Roles = "CRM")]
+        [HttpPost]
         public JsonResult Admin_pass(int c_id)
         {
             var seller = getSeller(User.Identity.Name);
@@ -727,10 +746,10 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
+                return Json(new { result = "FAIL" });
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = "SUCCESS" });
         }
         
         private static string AppId = "130412";
@@ -934,7 +953,6 @@ namespace PeriodAid.Controllers
                     receiver_zip = contract.CRM_Customer.zip,
                     receiver_address = contract.receiver_address,
                     buyer_memo = contract.contract_remark,
-                    order_type_code = contract.contract_type,
                     deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 };
                 order.details = new List<ERPCustomOrder_details>();

@@ -1190,7 +1190,6 @@ namespace PeriodAid.DAL
         public string vip_code { get; set; }
         public string deal_datetime { get; set; }
         public string buyer_memo { get; set; }
-        public string order_type_code { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
     }
     public class ERPCustomOrder_details
