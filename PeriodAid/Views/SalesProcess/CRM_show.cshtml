@@ -51,6 +51,7 @@
                 // 获取crm客户数据
                 $.ajax({
                     url: "/SalesProcess/GetCustomer/",
+                    type:"post",
                     data: {
                         url_api: "/api/v2/customers/"
                     },
@@ -58,6 +59,7 @@
                         // 获取crm合同数据
                         $.ajax({
                             url: "/SalesProcess/GetCrmInfo/",
+                            type: "post",
                             data: {
                                 url_api: "/api/v2/contracts/"
                             },
