@@ -450,7 +450,7 @@ namespace PeriodAid.Controllers
         {
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
-            string url = "https://api.ikcrm.com/api/v2/contracts/428491?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
             var CRM_Contract = from m in crm_db.CRM_Contract
                                where m.contract_status == UserInfo.status_unsend || m.contract_status == UserInfo.status_undelivered
