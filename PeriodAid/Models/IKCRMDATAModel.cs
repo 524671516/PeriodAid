@@ -101,7 +101,7 @@ namespace PeriodAid.Models
         [StringLength(128)]
         public string contract_title { get; set; }
 
-        public decimal total_amount { get; set; }
+        public double total_amount { get; set; }
         [StringLength(32)]
         public string contract_status { get; set; }
         [StringLength(256)]

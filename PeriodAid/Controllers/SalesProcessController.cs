@@ -470,6 +470,7 @@ namespace PeriodAid.Controllers
                         var customerId = r.data.contracts[i].customer_id;
                         var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
                         var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                        var total_amount = r.data.contracts[i].total_amount;
                         contractlist.Add(r.data.contracts[i].id);
                         if (check_data == null)
                         {
@@ -480,7 +481,7 @@ namespace PeriodAid.Controllers
                             check_data.user_name = r.data.contracts[i].user_name;
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
-                            check_data.total_amount = r.data.contracts[i].total_amount;
+                            check_data.total_amount = (double)total_amount;
                             check_data.contract_status = r.data.contracts[i].status;
                             check_data.updated_at = r.data.contracts[i].updated_at;
                             check_data.platform_code = platform_code;
@@ -505,7 +506,7 @@ namespace PeriodAid.Controllers
                             check_data.user_name = r.data.contracts[i].user_name;
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
-                            check_data.total_amount = r.data.contracts[i].total_amount;
+                            check_data.total_amount = (double)total_amount;
                             check_data.contract_status = r.data.contracts[i].status;
                             check_data.updated_at = r.data.contracts[i].updated_at;
                             check_data.warehouse_code = "110";
@@ -607,7 +608,7 @@ namespace PeriodAid.Controllers
                     {
                         contract.received_payments_status = 1;
                     }
-                    else if (r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
+                    else if ((double)r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
                     {
                         contract.received_payments_status = 1;
                     }
@@ -950,13 +951,11 @@ namespace PeriodAid.Controllers
                     order.details.Add(details);
                 }
                 order.payments = new List<ERPCustomOrder_payments>();
-                var time = "";
                 foreach (var item in contract.CRM_ContractDetail)
                 {
                     ERPCustomOrder_payments payments = new ERPCustomOrder_payments()
                     {
-                        pay_type_code = "1012014021233754645",
-                        paytime = DateTime.Now,
+                        pay_type_code = "支付宝",
                         payment = item.CRM_Contract.total_amount
                     };
                     order.payments.Add(payments);

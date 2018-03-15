@@ -1058,11 +1058,11 @@ namespace PeriodAid.DAL
                     "\"receiver_mobile\":\"" + order.receiver_mobile + "\"," +
                     "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
                     "\"receiver_address\":\"" + order.receiver_address + "\"," +
-                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," 
-                    //"\"payments\":[{" +
-                    //"\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
-                    //"\"paytime\":\"" + order.payments[0].paytime + "\"," +
-                    //"\"payment\":" + 6.60 + "}],"
+                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                    "\"payments\":[{" +
+                    "\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
+                    "\"paytime\":\"" + DateTime.Now + "\"," +
+                    "\"payment\":" + order.payments[0].payment + "}],"
                     + "\"details\":[");
             json.Append(details);
             json.Append("]}");
@@ -1189,8 +1189,8 @@ namespace PeriodAid.DAL
     public class ERPCustomOrder_payments
     {
         public string pay_type_code { get; set; }
-        public DateTime paytime { get; set; }
-        public decimal payment { get; set; }
+        public DateTime? paytime { get; set; }
+        public double payment { get; set; }
     }
     public class Orders_Result
     {
