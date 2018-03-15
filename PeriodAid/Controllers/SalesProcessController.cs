@@ -450,7 +450,7 @@ namespace PeriodAid.Controllers
         {
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
-            string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&approve_status=approved&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
             var CRM_Contract = from m in crm_db.CRM_Contract
                                where m.contract_status == UserInfo.status_unsend || m.contract_status == UserInfo.status_undelivered
@@ -463,63 +463,60 @@ namespace PeriodAid.Controllers
             {
                 for (int i = 0; i < r.data.contracts.Count(); i++)
                 {
-                    if (r.data.contracts[i].approve_status == UserInfo.approved_status)
+                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + r.data.contracts[i].id;
+                    var contractId = r.data.contracts[i].id;
+                    var customerId = r.data.contracts[i].customer_id;
+                    var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
+                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                    var total_amount = r.data.contracts[i].total_amount;
+                    contractlist.Add(r.data.contracts[i].id);
+                    if (check_data == null)
                     {
-                        var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + r.data.contracts[i].id;
-                        var contractId = r.data.contracts[i].id;
-                        var customerId = r.data.contracts[i].customer_id;
-                        var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
-                        var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                        var total_amount = r.data.contracts[i].total_amount;
-                        contractlist.Add(r.data.contracts[i].id);
-                        if (check_data == null)
+                        //new
+                        check_data = new CRM_Contract();
+                        check_data.contract_id = r.data.contracts[i].id;
+                        check_data.user_id = r.data.contracts[i].user_id;
+                        check_data.user_name = r.data.contracts[i].user_name;
+                        check_data.customer_id = check_customer.Id;
+                        check_data.contract_title = r.data.contracts[i].title;
+                        check_data.total_amount = (double)total_amount;
+                        check_data.contract_status = r.data.contracts[i].status;
+                        check_data.updated_at = r.data.contracts[i].updated_at;
+                        check_data.platform_code = platform_code;
+                        check_data.warehouse_code = "110";
+                        check_data.express_code = "STO";
+                        if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                         {
-                            //new
-                            check_data = new CRM_Contract();
-                            check_data.contract_id = r.data.contracts[i].id;
-                            check_data.user_id = r.data.contracts[i].user_id;
-                            check_data.user_name = r.data.contracts[i].user_name;
-                            check_data.customer_id = check_customer.Id;
-                            check_data.contract_title = r.data.contracts[i].title;
-                            check_data.total_amount = (double)total_amount;
-                            check_data.contract_status = r.data.contracts[i].status;
-                            check_data.updated_at = r.data.contracts[i].updated_at;
-                            check_data.platform_code = platform_code;
-                            check_data.warehouse_code = "110";
-                            check_data.express_code = "STO";
-                            if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
-                            {
-                                check_data.vip_code = check_customer.customer_name;
-                            }
-                            else
-                            {
-                                check_data.vip_code = check_customer.customer_abbreviation;
-                            }
-                            crm_db.CRM_Contract.Add(check_data);
+                            check_data.vip_code = check_customer.customer_name;
                         }
                         else
                         {
-                            // update
-                            check_data.contract_id = r.data.contracts[i].id;
-                            check_data.user_id = r.data.contracts[i].user_id;
-                            check_data.user_name = r.data.contracts[i].user_name;
-                            check_data.customer_id = check_customer.Id;
-                            check_data.contract_title = r.data.contracts[i].title;
-                            check_data.total_amount = (double)total_amount;
-                            check_data.contract_status = r.data.contracts[i].status;
-                            check_data.updated_at = r.data.contracts[i].updated_at;
-                            check_data.warehouse_code = "110";
-                            check_data.express_code = "STO";
-                            if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
-                            {
-                                check_data.vip_code = check_customer.customer_name;
-                            }
-                            else
-                            {
-                                check_data.vip_code = check_customer.customer_abbreviation;
-                            }
-                            crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                            check_data.vip_code = check_customer.customer_abbreviation;
                         }
+                        crm_db.CRM_Contract.Add(check_data);
+                    }
+                    else
+                    {
+                        // update
+                        check_data.contract_id = r.data.contracts[i].id;
+                        check_data.user_id = r.data.contracts[i].user_id;
+                        check_data.user_name = r.data.contracts[i].user_name;
+                        check_data.customer_id = check_customer.Id;
+                        check_data.contract_title = r.data.contracts[i].title;
+                        check_data.total_amount = (double)total_amount;
+                        check_data.contract_status = r.data.contracts[i].status;
+                        check_data.updated_at = r.data.contracts[i].updated_at;
+                        check_data.warehouse_code = "110";
+                        check_data.express_code = "STO";
+                        if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
+                        {
+                            check_data.vip_code = check_customer.customer_name;
+                        }
+                        else
+                        {
+                            check_data.vip_code = check_customer.customer_abbreviation;
+                        }
+                        crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                     }
                 }
                 var diffArr = CRM_Contractlist.Where(m => !contractlist.Contains(m)).ToArray();
