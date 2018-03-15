@@ -326,17 +326,17 @@
                                 data: {
                                 },
                                 success: function (data) {
-                                    $.ajax({
-                                        url: "/SalesProcess/CRM_undeliveredPartical/",
-                                        data: {
-                                            status: "3531568"
-                                        },
-                                        success: function (data) {
-                                            $("#undelivered_list_content").html(data)
-                                            $("#first_btn").removeClass("btn-danger")
-                                            $("#second_btn").addClass("btn-danger")
-                                        }
-                                    })
+                                }
+                            })
+                            $.ajax({
+                                url: "/SalesProcess/CRM_undeliveredPartical/",
+                                data: {
+                                    status: "3531568"
+                                },
+                                success: function (data) {
+                                    $("#undelivered_list_content").html(data)
+                                    $("#first_btn").removeClass("btn-danger")
+                                    $("#second_btn").addClass("btn-danger")
                                 }
                             })
                         } else if (data.result == "FAIL") {
@@ -488,17 +488,17 @@
                             data: {
                             },
                             success: function (data) {
-                                $.ajax({
-                                    url: "/SalesProcess/CRM_undeliveredPartical/",
-                                    data: {
-                                        status: "3531568"
-                                    },
-                                    success: function (data) {
-                                        $("#undelivered_list_content").html(data)
-                                        $("#first_btn").removeClass("btn-danger")
-                                        $("#second_btn").addClass("btn-danger")
-                                    }
-                                })
+                            }
+                        })
+                        $.ajax({
+                            url: "/SalesProcess/CRM_undeliveredPartical/",
+                            data: {
+                                status: "3531568"
+                            },
+                            success: function (data) {
+                                $("#undelivered_list_content").html(data)
+                                $("#first_btn").removeClass("btn-danger")
+                                $("#second_btn").addClass("btn-danger")
                             }
                         })
                     } else if (data.result == "FAIL") {
@@ -539,15 +539,15 @@
                                 data: {
                                 },
                                 success: function (data) {
-                                    $.ajax({
-                                        url: "/SalesProcess/CRM_undeliveredPartical/",
-                                        data: {
-                                            status: "3531568"
-                                        },
-                                        success: function (data) {
-                                            $("#undelivered_list_content").html(data)
-                                        }
-                                    })
+                                }
+                            })
+                            $.ajax({
+                                url: "/SalesProcess/CRM_undeliveredPartical/",
+                                data: {
+                                    status: "3531568"
+                                },
+                                success: function (data) {
+                                    $("#undelivered_list_content").html(data)
                                 }
                             })
                         } else if (data.result == "FAIL") {
@@ -590,17 +590,18 @@
                                             data: {
                                             },
                                             success: function (data) {
-                                                $.ajax({
-                                                    url: "/SalesProcess/CRM_undeliveredPartical/",
-                                                    data: {
-                                                        status: "3531568"
-                                                    },
-                                                    success: function (data) {
-                                                        $("#undelivered_list_content").html(data)
-                                                        $("#first_btn").removeClass("btn-danger")
-                                                        $("#second_btn").addClass("btn-danger")
-                                                    }
-                                                })
+                                               
+                                            }
+                                        })
+                                        $.ajax({
+                                            url: "/SalesProcess/CRM_undeliveredPartical/",
+                                            data: {
+                                                status: "3531568"
+                                            },
+                                            success: function (data) {
+                                                $("#undelivered_list_content").html(data)
+                                                $("#first_btn").removeClass("btn-danger")
+                                                $("#second_btn").addClass("btn-danger")
                                             }
                                         })
                                     } else if (data.result == "FAIL") {
