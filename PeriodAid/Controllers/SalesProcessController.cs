@@ -606,7 +606,7 @@ namespace PeriodAid.Controllers
                     {
                         contract.received_payments_status = 1;
                     }
-                    else if ((double)r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
+                    else if ((double)r.data.received_payments_amount >= contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
                     {
                         contract.received_payments_status = 1;
                     }
