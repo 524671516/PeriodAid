@@ -1061,7 +1061,7 @@ namespace PeriodAid.DAL
                     "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
                     "\"payments\":[{" +
                     "\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
-                    "\"paytime\":\"" + DateTime.Now + "\"," +
+                    "\"paytime\":\"" + ConvertDateTimeToInt(DateTime.Now) + "\"," +
                     "\"payment\":" + order.payments[0].payment + "}],"
                     + "\"details\":[");
             json.Append(details);
@@ -1103,7 +1103,12 @@ namespace PeriodAid.DAL
                 return null;//return Content(ex.Message);// 出错处理
             }
         }
-
+        public static long ConvertDateTimeToInt(DateTime time)
+        {
+            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
+            long t = (time.Ticks - startTime.Ticks) / 10000;    
+            return t;
+        }
         private string replaceWord(string name)
         {
             var srtName = "";
