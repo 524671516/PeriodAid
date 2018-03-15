@@ -487,7 +487,6 @@ namespace PeriodAid.Controllers
                             check_data.platform_code = platform_code;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
-                            check_data.shop_code = "006";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
@@ -511,7 +510,6 @@ namespace PeriodAid.Controllers
                             check_data.updated_at = r.data.contracts[i].updated_at;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
-                            check_data.shop_code = "006";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
@@ -616,28 +614,29 @@ namespace PeriodAid.Controllers
                     {
                         contract.received_payments_status = 0;
                     }
-                    var contract_type = r.data.text_asset_615f62_display;
-                    if (contract_type != null || contract_type != "")
+                    var shop_code = r.data.text_asset_615f62_display;
+                    if (shop_code != null || shop_code != "")
                     {
-                        if (contract_type.Contains("零售/团购"))
+                        if (shop_code.Contains("零售/团购"))
                         {
-                            contract.contract_type = "线下零售/团购";
-                        }else if (contract_type.Contains("线上其他渠道"))
+                            contract.shop_code = "线下零售/团购";
+                        }else if (shop_code.Contains("线上其他渠道"))
                         {
-                            contract.contract_type = "线上其他渠道";
+                            contract.shop_code = "线上其他渠道";
                         }
-                        else if (contract_type.Contains("自营渠道"))
+                        else if (shop_code.Contains("自营渠道"))
                         {
-                            contract.contract_type = "自营渠道";
+                            contract.shop_code = "自营渠道";
                         }
-                        else if (contract_type.Contains("展会/促销"))
+                        else if (shop_code.Contains("展会/促销"))
                         {
-                            contract.contract_type = "线下展会/促销物料";
+                            contract.shop_code = "线下展会/促销物料";
                         }else
                         {
-                            contract.contract_type = "006";
+                            contract.shop_code = "006";
                         }
                     }
+                    contract.contract_type = r.data.category_mapped;
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
                     contract.receiver_tel = r.data.text_asset_da4211;
