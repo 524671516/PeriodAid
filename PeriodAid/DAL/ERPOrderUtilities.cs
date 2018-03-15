@@ -1058,11 +1058,11 @@ namespace PeriodAid.DAL
                     "\"receiver_mobile\":\"" + order.receiver_mobile + "\"," +
                     "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
                     "\"receiver_address\":\"" + order.receiver_address + "\"," +
-                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
-                    "\"payments\":[{" +
-                    "\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
+                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," 
+                    //"\"payments\":[{" +
+                    //"\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
                     //"\"paytime\":\"" + order.payments[0].paytime + "\"," +
-                    "\"payment\":" + 6.60 + "}],"
+                    //"\"payment\":" + 6.60 + "}],"
                     + "\"details\":[");
             json.Append(details);
             json.Append("]}");
@@ -1126,6 +1126,9 @@ namespace PeriodAid.DAL
             else if (name.Contains("\\"))
             {
                 srtName = name.Replace("\\", "-");
+            }else
+            {
+                srtName = name;
             }
             return srtName;
         }
