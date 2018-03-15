@@ -950,12 +950,13 @@ namespace PeriodAid.Controllers
                     order.details.Add(details);
                 }
                 order.payments = new List<ERPCustomOrder_payments>();
+                var time = "";
                 foreach (var item in contract.CRM_ContractDetail)
                 {
                     ERPCustomOrder_payments payments = new ERPCustomOrder_payments()
                     {
-                        pay_type_code = "支付宝",
-                        paytime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        pay_type_code = "1012014021233754645",
+                        paytime = DateTime.Now,
                         payment = item.CRM_Contract.total_amount
                     };
                     order.payments.Add(payments);

@@ -1062,16 +1062,10 @@ namespace PeriodAid.DAL
                     "\"payments\":[{" +
                     "\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
                     //"\"paytime\":\"" + order.payments[0].paytime + "\"," +
-                    "\"payment\":" + 10.01 + "}],"
+                    "\"payment\":" + 6.60 + "}],"
                     + "\"details\":[");
             json.Append(details);
             json.Append("]}");
-            //json.Append("\"payment\":0,\"paytime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
-            //json.Append("\"account\":null,\"pay_type_code\":\"支付宝\",\"pay_code\":null");
-            //json.Append("}],");
-            //json.Append("\"invoices\":null}");
-            //json.Append("\"invoices\":[{\"invoice_type\":1,\"invoice_title\":null,\"invoice_content\":null,\"invoice_amount\":null,\"bill_amount\":null}]}");
-            //return json.ToString();
             string signature = sign(json.ToString(), AppSecret);
             string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
             var request = WebRequest.Create(post_url) as HttpWebRequest;
@@ -1192,7 +1186,7 @@ namespace PeriodAid.DAL
     public class ERPCustomOrder_payments
     {
         public string pay_type_code { get; set; }
-        public string paytime { get; set; }
+        public DateTime paytime { get; set; }
         public decimal payment { get; set; }
     }
     public class Orders_Result
