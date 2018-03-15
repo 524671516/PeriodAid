@@ -1049,6 +1049,7 @@ namespace PeriodAid.DAL
                     //"\"vip_name\":\"" + order.event_name + "\"," +
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
                     "\"buyer_memo\":\"" + order.buyer_memo + "\"," +
+                    "\"seller_memo\":\"" + order.seller_memo + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
                     "\"receiver_name\":\"" + replaceWord(order.receiver_name) + "\"," +
                     "\"receiver_province\":\"" + order.receiver_province + "\"," +
@@ -1057,11 +1058,14 @@ namespace PeriodAid.DAL
                     "\"receiver_mobile\":\"" + order.receiver_mobile + "\"," +
                     "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
                     "\"receiver_address\":\"" + order.receiver_address + "\"," +
-                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\","
+                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                    "\"payments\":[{" +
+                    "\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
+                    //"\"paytime\":\"" + order.payments[0].paytime + "\"," +
+                    "\"payment\":" + 10.01 + "}],"
                     + "\"details\":[");
             json.Append(details);
             json.Append("]}");
-            //json.Append("\"payments\":[{");
             //json.Append("\"payment\":0,\"paytime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
             //json.Append("\"account\":null,\"pay_type_code\":\"支付宝\",\"pay_code\":null");
             //json.Append("}],");
@@ -1112,21 +1116,6 @@ namespace PeriodAid.DAL
             if (name.Contains("+"))
             {
                 srtName = name.Replace("+", "-");
-            }else if (name.Contains(":"))
-            {
-                srtName = name.Replace(":", "-");
-            }
-            else if (name.Contains(","))
-            {
-                srtName = name.Replace(",", "-");
-            }
-            else if (name.Contains("/"))
-            {
-                srtName = name.Replace("/", "-");
-            }
-            else if (name.Contains("\\"))
-            {
-                srtName = name.Replace("\\", "-");
             }
             else if (name.Contains(":"))
             {
@@ -1190,13 +1179,21 @@ namespace PeriodAid.DAL
         public string vip_code { get; set; }
         public string deal_datetime { get; set; }
         public string buyer_memo { get; set; }
+        public string seller_memo { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
+        public List<ERPCustomOrder_payments> payments { get; set; }
     }
     public class ERPCustomOrder_details
     {
         public int qty { get; set; }
         public decimal price { get; set; }
         public string item_code { get; set; }
+    }
+    public class ERPCustomOrder_payments
+    {
+        public string pay_type_code { get; set; }
+        public string paytime { get; set; }
+        public decimal payment { get; set; }
     }
     public class Orders_Result
     {

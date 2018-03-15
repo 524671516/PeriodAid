@@ -149,7 +149,7 @@ namespace PeriodAid.Controllers
             }
             return token_time.Value;
         }
-        
+
         private string Get_Request(string url)
         {
             var retString = "";
@@ -165,7 +165,7 @@ namespace PeriodAid.Controllers
                 myStreamReader.Close();
                 return retString;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return Get_Request(url);
             }
@@ -173,7 +173,7 @@ namespace PeriodAid.Controllers
 
         private int Get_Count(string url_api)
         {
-            string url = "https://api.ikcrm.com"+ url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com" + url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -188,7 +188,8 @@ namespace PeriodAid.Controllers
                 if (r.code == "0")
                 {
                     return r.data.total_count;
-                }else if (r.code == "100401")
+                }
+                else if (r.code == "100401")
                 {
                     RefreshUserToken();
                     return Get_Count(url_api);
@@ -204,7 +205,7 @@ namespace PeriodAid.Controllers
         public JsonResult GetCustomer(string url_api)
         {
             var count = Get_Count(url_api);
-            var page = count / UserInfo.Count+1;
+            var page = count / UserInfo.Count + 1;
             List<int> customerlist = new List<int>();
             List<int> CRM_Customerlist = new List<int>();
             List<int> contactlist = new List<int>();
@@ -223,7 +224,7 @@ namespace PeriodAid.Controllers
             {
                 CRM_Contactlist.Add(contact.contact_id);
             }
-            for (int x=1;x <= page; x++)
+            for (int x = 1; x <= page; x++)
             {
                 string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
                 CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(Get_Request(url));
@@ -340,7 +341,6 @@ namespace PeriodAid.Controllers
                             for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                             {
                                 var ctId = r.data.customers[i].contacts[j].address.addressable_id;
-                                var ctphone = r.data.customers[i].contacts[j].address.phone;
                                 var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
                                 string ctAddress = r.data.customers[i].contacts[j].address.region_info;
                                 int indexCtAddress = 0;
@@ -375,7 +375,7 @@ namespace PeriodAid.Controllers
                                     check_contact.contact_id = ctId;
                                     check_contact.contact_name = r.data.customers[i].contacts[j].name;
                                     check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                    check_contact.contact_tel = ctphone;
+                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                     check_contact.customer_id = check_customer.Id;
                                     check_contact.province = Ctprovince;
                                     check_contact.city = Ctcity;
@@ -390,7 +390,7 @@ namespace PeriodAid.Controllers
                                     check_contact.contact_id = ctId;
                                     check_contact.contact_name = r.data.customers[i].contacts[j].name;
                                     check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
-                                    check_contact.contact_tel = ctphone;
+                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                     check_contact.customer_id = check_customer.Id;
                                     check_contact.province = Ctprovince;
                                     check_contact.city = Ctcity;
@@ -443,7 +443,7 @@ namespace PeriodAid.Controllers
                     return GetCustomer(url_api);
                 }
             }
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult GetCrmInfo()
@@ -486,6 +486,7 @@ namespace PeriodAid.Controllers
                             check_data.platform_code = platform_code;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
+                            check_data.shop_code = "006";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
@@ -509,6 +510,7 @@ namespace PeriodAid.Controllers
                             check_data.updated_at = r.data.contracts[i].updated_at;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
+                            check_data.shop_code = "006";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
@@ -549,13 +551,13 @@ namespace PeriodAid.Controllers
                     crm_db.CRM_ExceptionLogs.Add(logs);
                     crm_db.SaveChanges();
                     try_times = 0;
-                    return Json(new { result = "FAIL" });
+                    return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
                 }
                 return GetCrmInfo();
             }
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-        [HttpPost]
+
         public JsonResult GetCrmDetailInfo()
         {
             var contracts = from m in crm_db.CRM_Contract
@@ -565,6 +567,7 @@ namespace PeriodAid.Controllers
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == C_id.id);
                 string url = "https://api.ikcrm.com/api/v2/contracts/" + C_id.contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                Thread.Sleep(500);
                 CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(Get_Request(url));
                 if (r.code == "0")
                 {
@@ -599,6 +602,7 @@ namespace PeriodAid.Controllers
                             crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
+                    contract.received_payments_status = 0;
                     if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments)
                     {
                         contract.received_payments_status = 1;
@@ -606,37 +610,16 @@ namespace PeriodAid.Controllers
                     else if (r.data.received_payments_amount == contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
                     {
                         contract.received_payments_status = 1;
-                    }else
+                    }
+                    else
                     {
                         contract.received_payments_status = 0;
-                    }
-                    var shop_code = r.data.text_asset_615f62_display;
-                    if (shop_code != null || shop_code != "")
-                    {
-                        if (shop_code.Contains("零售/团购"))
-                        {
-                            contract.shop_code = "线下零售/团购";
-                        }else if (shop_code.Contains("其他渠道"))
-                        {
-                            contract.shop_code = "线上其他渠道";
-                        }else if (shop_code.Contains("自营渠道"))
-                        {
-                            contract.shop_code = "自营渠道";
-                        }else if (shop_code.Contains("展会/促销"))
-                        {
-                            contract.shop_code = "线下展会/促销物料";
-                        }
-                        else
-                        {
-                            contract.shop_code = "006";
-                        }
                     }
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
                     contract.receiver_tel = r.data.text_asset_da4211;
                     contract.express_remark = r.data.text_asset_7fd81a;
                     contract.contract_remark = r.data.special_terms;
-                    contract.contract_type = r.data.category_mapped;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     checkAddress(r.data.text_asset_eb802b, C_id.id);
                 }
@@ -658,16 +641,16 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
-                        return Json(new { result = "FAIL" });
+                        return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
                     }
                     return GetCrmDetailInfo();
                 }
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
 
-        private int UpdateCRM(int cid, string contract_status, string express_information,string express_remark)
+        private int UpdateCRM(int cid, string contract_status, string express_information, string express_remark)
         {
             var contracts = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cid);
             string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -731,7 +714,6 @@ namespace PeriodAid.Controllers
             return PartialView(contract);
         }
         [Authorize(Roles = "CRM")]
-        [HttpPost]
         public JsonResult Admin_pass(int c_id)
         {
             var seller = getSeller(User.Identity.Name);
@@ -746,12 +728,12 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return Json(new { result = "FAIL" });
+                return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
-        
+
         private static string AppId = "130412";
         private static string AppSecret = "26d2e926f42a4f2181dd7d1b7f7d55c0";
         private static string SessionKey = "8a503b3d9d0d4119be2868cc69a8ef5a";
@@ -897,7 +879,7 @@ namespace PeriodAid.Controllers
                                 return Json(new { result = "ERROR" }, JsonRequestBehavior.AllowGet);
                             }
                             crm_db.SaveChanges();
-                            var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information,contract.express_remark);
+                            var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information, contract.express_remark);
                             if (updatcrm != 1)
                             {
                                 return Json(new { result = "PARTIALSUCCESS" }, JsonRequestBehavior.AllowGet);
@@ -953,6 +935,7 @@ namespace PeriodAid.Controllers
                     receiver_zip = contract.CRM_Customer.zip,
                     receiver_address = contract.receiver_address,
                     buyer_memo = contract.contract_remark,
+                    seller_memo = contract.contract_title,
                     deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 };
                 order.details = new List<ERPCustomOrder_details>();
@@ -965,6 +948,17 @@ namespace PeriodAid.Controllers
                         qty = item.quantity
                     };
                     order.details.Add(details);
+                }
+                order.payments = new List<ERPCustomOrder_payments>();
+                foreach (var item in contract.CRM_ContractDetail)
+                {
+                    ERPCustomOrder_payments payments = new ERPCustomOrder_payments()
+                    {
+                        pay_type_code = "支付宝",
+                        paytime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        payment = item.CRM_Contract.total_amount
+                    };
+                    order.payments.Add(payments);
                 }
                 ERPOrderUtilities util = new ERPOrderUtilities();
                 string result = util.createOrder(order);
