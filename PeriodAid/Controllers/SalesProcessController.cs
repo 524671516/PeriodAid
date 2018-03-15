@@ -556,7 +556,7 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "SUCCESS"}, JsonRequestBehavior.AllowGet);
         }
-
+        [HttpPost]
         public JsonResult GetCrmDetailInfo()
         {
             var contracts = from m in crm_db.CRM_Contract

@@ -57,55 +57,54 @@
                         url_api: "/api/v2/customers/"
                     },
                     success: function (data) {
-                        // 获取crm合同数据
-                        $.ajax({
-                            url: "/SalesProcess/GetCrmInfo/",
-                            type:"post",
-                            data: {
-                            },
-                            success: function (data) {
-                                if (data.result == "SUCCESS") {
-                                    // 获取合同详情
-                                    $.ajax({
-                                        url: "/SalesProcess/GetCrmDetailInfo/",
-                                        type: "post",
-                                        success: function (data) {
-                                            if (data.result == "SUCCESS") {
-                                                $("#tm-view-loading").hide()
-                                                $(".status-btn").removeClass("disabled")
-                                                //数据保存完再请求数据页面
-                                                $.ajax({
-                                                    url: "/SalesProcess/CRM_undeliveredPartical/",
-                                                    data: {
-                                                        status: $("#first_btn").attr("data-val")
-                                                    },
-                                                    success: function (data) {
-                                                        $("#undelivered_list_content").show().html(data)
-                                                        $("#first_btn").addClass("btn-danger")
-                                                        $("#renovate_btn").removeClass("btn-danger")
-                                                    }
-                                                })
-                                            } else {
-                                                confirm("数据获取失败", "是否刷新", function (Confirm) {
-                                                    if (Confirm) {
-                                                        window.location.reload();
-                                                    }
-                                                })
-                                            }
-                                        }
-                                    })
-                                } else {
-                                    confirm("数据获取失败", "是否刷新", function (Confirm) {
-                                        if (Confirm) {
-                                            window.location.reload();
-                                        }
-                                    })
-                                }
-                            }
-                        })
                     }
                 })
-               
+                // 获取crm合同数据
+                $.ajax({
+                    url: "/SalesProcess/GetCrmInfo/",
+                    type: "post",
+                    data: {
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            // 获取合同详情
+                            $.ajax({
+                                url: "/SalesProcess/GetCrmDetailInfo/",
+                                type: "post",
+                                success: function (data) {
+                                    if (data.result == "SUCCESS") {
+                                        $("#tm-view-loading").hide()
+                                        $(".status-btn").removeClass("disabled")
+                                        //数据保存完再请求数据页面
+                                        $.ajax({
+                                            url: "/SalesProcess/CRM_undeliveredPartical/",
+                                            data: {
+                                                status: $("#first_btn").attr("data-val")
+                                            },
+                                            success: function (data) {
+                                                $("#undelivered_list_content").show().html(data)
+                                                $("#first_btn").addClass("btn-danger")
+                                                $("#renovate_btn").removeClass("btn-danger")
+                                            }
+                                        })
+                                    } else {
+                                        confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                            if (Confirm) {
+                                                window.location.reload();
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        } else {
+                            confirm("数据获取失败", "是否刷新", function (Confirm) {
+                                if (Confirm) {
+                                    window.location.reload();
+                                }
+                            })
+                        }
+                    }
+                })
             })
             // 选择
             $(".status-btn").on("click", function () {
