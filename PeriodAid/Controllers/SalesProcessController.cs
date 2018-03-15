@@ -573,33 +573,26 @@ namespace PeriodAid.Controllers
                     for (int i = 0; i < r.data.product_assets_for_new_record.Count(); i++)
                     {
                         var pid = r.data.product_assets_for_new_record[i].product_id;
-                        var p_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
-                        var contractdetail = crm_db.CRM_ContractDetail.SingleOrDefault(m => m.product_id == pid && m.contract_id == C_id.id && m.unit_price == p_price);
-                        if (contractdetail == null)
+                        var s_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
+                        var quantity = r.data.product_assets_for_new_record[i].quantity;
+                        var product_name = r.data.product_assets_for_new_record[i].name;
+                        var product_code = r.data.product_assets_for_new_record[i].product_no;
+                        var contractdetail = from m in crm_db.CRM_ContractDetail
+                                             where m.contract_id == C_id.id
+                                             select m;
+                        if (contractdetail != null)
                         {
-                            // new
-                            contractdetail = new CRM_ContractDetail();
-                            contractdetail.contract_id = C_id.id;
-                            contractdetail.product_id = pid;
-                            contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
-                            contractdetail.unit_price = p_price;
-                            contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
-                            contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
-                            contractdetail.status = 0;
-                            crm_db.CRM_ContractDetail.Add(contractdetail);
+
+                            crm_db.CRM_ContractDetail.RemoveRange(contractdetail);
                         }
-                        else
-                        {
-                            //update
-                            contractdetail.contract_id = C_id.id;
-                            contractdetail.product_id = pid;
-                            contractdetail.quantity = r.data.product_assets_for_new_record[i].quantity;
-                            contractdetail.unit_price = p_price;
-                            contractdetail.product_name = r.data.product_assets_for_new_record[i].name;
-                            contractdetail.product_code = r.data.product_assets_for_new_record[i].product_no;
-                            contractdetail.status = 0;
-                            crm_db.Entry(contractdetail).State = System.Data.Entity.EntityState.Modified;
-                        }
+                        var contractDetail = new CRM_ContractDetail();
+                        contractDetail.contract_id = C_id.id;
+                        contractDetail.product_id = pid;
+                        contractDetail.quantity = quantity;
+                        contractDetail.unit_price = s_price;
+                        contractDetail.product_name = product_name;
+                        contractDetail.product_code = product_code;
+                        crm_db.CRM_ContractDetail.Add(contractDetail);
                     }
                     contract.received_payments_status = 0;
                     if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments)
