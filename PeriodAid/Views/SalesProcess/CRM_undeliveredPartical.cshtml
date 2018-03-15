@@ -83,7 +83,9 @@
                 }
                 else if (item.contract_status == "3531568")
                 {
-                    <td title="@item.receiver_address">@item.receiver_address</td>
+                    <td>
+                        <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+                    </td>
                     <td>
                         <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
                     </td>
