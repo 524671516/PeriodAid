@@ -712,7 +712,8 @@ namespace PeriodAid.Controllers
                                    where m.contract_status == status && m.address_status == 0
                                    orderby m.received_payments_status descending
                                    select m;
-            data_list.AddRange(undelivered_Data.Except(undeliveredData).ToPagedList(_page, 15));
+            data_list.AddRange(undelivered_Data.Except(undeliveredData));
+            data_list.ToPagedList(_page, 15);
             return PartialView(data_list);
         }
         [Authorize(Roles = "CRM")]
