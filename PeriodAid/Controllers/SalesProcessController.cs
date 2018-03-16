@@ -702,8 +702,7 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "CRM")]
         public ActionResult CRM_undeliveredPartical(string status,int? page)
         {
-            var _page = page ?1: page;
-            
+            int _page = page ?? 1;
             List<CRM_Contract> data_list = new List<CRM_Contract>();
             var undeliveredData = from m in crm_db.CRM_Contract
                                   where m.contract_status == status && m.address_status == 1

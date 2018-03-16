@@ -110,7 +110,7 @@
         }
     </table>
     <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("ClientListPartial", new { page }))
+        @Html.PagedListPager(Model, page => Url.Action("CRM_undeliveredPartical", new { page }))
     </div>
 </div>
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -124,6 +124,21 @@
 <script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
+        //页码
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    page: 1,
+                    status: $(".status-btn").hasClass("btn-danger").attr("data-val")
+                },
+                success: function (data) {
+                    $("#undelivered_list_content").html(data);
+                }
+            });
+            return false;
+        });
         var border_list = $(".change_status")
         var j = 0
         for (j; j < border_list.length; j++) {
