@@ -1058,6 +1058,8 @@ namespace PeriodAid.DAL
                     "\"receiver_mobile\":\"" + order.receiver_mobile + "\"," +
                     "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
                     "\"receiver_address\":\"" + order.receiver_address + "\"," +
+                    //"\"business_man_code\":\"03004889\"," +
+                    "\"business_man_code\":\"" + order.business_man_code + "\"," +
                     "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
                     "\"payments\":[{" +
                     "\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
@@ -1182,6 +1184,7 @@ namespace PeriodAid.DAL
         public string deal_datetime { get; set; }
         public string buyer_memo { get; set; }
         public string seller_memo { get; set; }
+        public string business_man_code { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
         public List<ERPCustomOrder_payments> payments { get; set; }
     }

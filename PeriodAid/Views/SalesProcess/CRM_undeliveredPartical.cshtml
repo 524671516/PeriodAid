@@ -347,6 +347,7 @@
                                 url: "/SalesProcess/GetCrmInfo/",
                                 type: "post",
                                 data: {
+                                    url_api: "/api/v2/contracts/"
                                 },
                                 success: function (data) {
                                 }
@@ -354,19 +355,19 @@
                             $.ajax({
                                 url: "/SalesProcess/CRM_undeliveredPartical/",
                                 data: {
-                                    status: "3531568"
+                                    status: "3531567"
                                 },
                                 success: function (data) {
                                     $("#undelivered_list_content").html(data)
-                                    $("#first_btn").removeClass("btn-danger")
-                                    $("#second_btn").addClass("btn-danger")
                                 }
                             })
                         } else if (data.result == "FAIL") {
-                            errorAlert("推送失败,请检查订单信息是否完整"+ data.data)
-                        } else if (data.result == "ERROR") {
+                            errorAlert("推送失败,请检查订单信息是否完整" + data.data)
+                        }
+                        else if (data.result == "PARTIALSUCCESS") {
                             errorAlert("CRM同步失败")
-                        } else {
+                        }
+                        else {
                             errorAlert("参数获取失败,请重试")
                         }
                     }
@@ -509,6 +510,7 @@
                             url: "/SalesProcess/GetCrmInfo/",
                             type: "post",
                             data: {
+                                url_api: "/api/v2/contracts/"
                             },
                             success: function (data) {
                             }
@@ -516,15 +518,14 @@
                         $.ajax({
                             url: "/SalesProcess/CRM_undeliveredPartical/",
                             data: {
-                                status: "3531568"
+                                status: "3531567"
                             },
                             success: function (data) {
                                 $("#undelivered_list_content").html(data)
-                                $("#first_btn").removeClass("btn-danger")
-                                $("#second_btn").addClass("btn-danger")
                             }
                         })
-                    } else if (data.result == "FAIL") {
+                    }
+                    else if (data.result == "FAIL") {
                         errorAlert("推送失败,请检查订单信息是否完整"+data.data)
                     }
                     else if (data.result == "PARTIALSUCCESS") {
@@ -558,8 +559,9 @@
                             alert("已推送至ERP等待审核")
                             $.ajax({
                                 url: "/SalesProcess/GetCrmInfo/",
-                                type:"post",
+                                type: "post",
                                 data: {
+                                    url_api: "/api/v2/contracts/"
                                 },
                                 success: function (data) {
                                 }
@@ -567,21 +569,21 @@
                             $.ajax({
                                 url: "/SalesProcess/CRM_undeliveredPartical/",
                                 data: {
-                                    status: "3531568"
+                                    status: "3531567"
                                 },
                                 success: function (data) {
                                     $("#undelivered_list_content").html(data)
                                 }
                             })
-                        } else if (data.result == "FAIL") {
-                            errorAlert("推送失败,请检查订单信息是否完整"+data.data)
-                            orderarry.remove(that.attr("data-val"))
-                        } else if (data.result == "ERROR") {
+                        }
+                        else if (data.result == "FAIL") {
+                            errorAlert("推送失败,请检查订单信息是否完整" + data.data)
+                        }
+                        else if (data.result == "PARTIALSUCCESS") {
                             errorAlert("CRM同步失败")
-                            orderarry.remove(that.attr("data-val"))
-                        } else {
-                            errorAlert("参数获取失败，请重试")
-                            orderarry.remove(that.attr("data-val"))
+                        }
+                        else {
+                            errorAlert("参数获取失败,请重试")
                         }
 
                     }
@@ -609,29 +611,30 @@
                                         alert("已推送至ERP等待审核")
                                         $.ajax({
                                             url: "/SalesProcess/GetCrmInfo/",
-                                            type:"post",
+                                            type: "post",
                                             data: {
+                                                url_api: "/api/v2/contracts/"
                                             },
                                             success: function (data) {
-                                               
                                             }
                                         })
                                         $.ajax({
                                             url: "/SalesProcess/CRM_undeliveredPartical/",
                                             data: {
-                                                status: "3531568"
+                                                status: "3531567"
                                             },
                                             success: function (data) {
                                                 $("#undelivered_list_content").html(data)
-                                                $("#first_btn").removeClass("btn-danger")
-                                                $("#second_btn").addClass("btn-danger")
                                             }
                                         })
-                                    } else if (data.result == "FAIL") {
-                                        errorAlert("推送失败,请检查订单信息是否完整"+data.data)
-                                    } else if (data.result == "ERROR") {
+                                    }
+                                    else if (data.result == "FAIL") {
+                                        errorAlert("推送失败,请检查订单信息是否完整" + data.data)
+                                    }
+                                    else if (data.result == "PARTIALSUCCESS") {
                                         errorAlert("CRM同步失败")
-                                    } else {
+                                    }
+                                    else {
                                         errorAlert("参数获取失败,请重试")
                                     }
 

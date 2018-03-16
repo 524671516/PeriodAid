@@ -418,7 +418,7 @@ namespace PeriodAid.Controllers
                         check_data.status = -1;
                         crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                     }
-                    crm_db.SaveChanges();
+                    
                 }
                 else if (r.code == "100401")
                 {
@@ -443,114 +443,119 @@ namespace PeriodAid.Controllers
                     return GetCustomer(url_api);
                 }
             }
+            crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" }, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public JsonResult GetCrmInfo()
+        public JsonResult GetCrmInfo(string url_api)
         {
+            var count = Get_Count(url_api);
+            var page = count / UserInfo.Count + 1;
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
             string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&approve_status=approved&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
             var CRM_Contract = from m in crm_db.CRM_Contract
-                               where m.contract_status == UserInfo.status_unsend || m.contract_status == UserInfo.status_undelivered
                                select m;
             foreach (var crm in CRM_Contract)
             {
                 CRM_Contractlist.Add(crm.contract_id);
             }
-            if (r.code == "0")
+            for (int x = 1; x <= page; x++)
             {
-                for (int i = 0; i < r.data.contracts.Count(); i++)
+                if (r.code == "0")
                 {
-                    var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + r.data.contracts[i].id;
-                    var contractId = r.data.contracts[i].id;
-                    var customerId = r.data.contracts[i].customer_id;
-                    var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
-                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                    var total_amount = r.data.contracts[i].total_amount;
-                    contractlist.Add(r.data.contracts[i].id);
-                    if (check_data == null)
+                    for (int i = 0; i < r.data.contracts.Count(); i++)
                     {
-                        //new
-                        check_data = new CRM_Contract();
-                        check_data.contract_id = r.data.contracts[i].id;
-                        check_data.user_id = r.data.contracts[i].user_id;
-                        check_data.user_name = r.data.contracts[i].user_name;
-                        check_data.customer_id = check_customer.Id;
-                        check_data.contract_title = r.data.contracts[i].title;
-                        check_data.total_amount = (double)total_amount;
-                        check_data.contract_status = r.data.contracts[i].status;
-                        check_data.updated_at = r.data.contracts[i].updated_at;
-                        check_data.platform_code = platform_code;
-                        check_data.warehouse_code = "110";
-                        check_data.express_code = "STO";
-                        if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
+                        var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + r.data.contracts[i].id;
+                        var contractId = r.data.contracts[i].id;
+                        var customerId = r.data.contracts[i].customer_id;
+                        var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
+                        var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                        var total_amount = r.data.contracts[i].total_amount;
+                        if (check_data == null)
                         {
-                            check_data.vip_code = check_customer.customer_name;
+                            //new
+                            check_data = new CRM_Contract();
+                            check_data.contract_id = r.data.contracts[i].id;
+                            check_data.user_id = r.data.contracts[i].user_id;
+                            check_data.user_name = r.data.contracts[i].user_name;
+                            check_data.customer_id = check_customer.Id;
+                            check_data.contract_title = r.data.contracts[i].title;
+                            check_data.total_amount = (double)total_amount;
+                            check_data.contract_status = r.data.contracts[i].status;
+                            check_data.updated_at = r.data.contracts[i].updated_at;
+                            check_data.platform_code = platform_code;
+                            check_data.warehouse_code = "110";
+                            check_data.express_code = "STO";
+                            if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
+                            {
+                                check_data.vip_code = check_customer.customer_name;
+                            }
+                            else
+                            {
+                                check_data.vip_code = check_customer.customer_abbreviation;
+                            }
+                            crm_db.CRM_Contract.Add(check_data);
                         }
                         else
                         {
-                            check_data.vip_code = check_customer.customer_abbreviation;
+                            // update
+                            check_data.contract_id = r.data.contracts[i].id;
+                            check_data.user_id = r.data.contracts[i].user_id;
+                            check_data.user_name = r.data.contracts[i].user_name;
+                            check_data.customer_id = check_customer.Id;
+                            check_data.contract_title = r.data.contracts[i].title;
+                            check_data.total_amount = (double)total_amount;
+                            check_data.contract_status = r.data.contracts[i].status;
+                            check_data.updated_at = r.data.contracts[i].updated_at;
+                            check_data.warehouse_code = "110";
+                            check_data.express_code = "STO";
+                            if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
+                            {
+                                check_data.vip_code = check_customer.customer_name;
+                            }
+                            else
+                            {
+                                check_data.vip_code = check_customer.customer_abbreviation;
+                            }
+                            crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                         }
-                        crm_db.CRM_Contract.Add(check_data);
                     }
-                    else
+                }
+                else if (r.code == "100401")
+                {
+                    RefreshUserToken();
+                    return GetCrmInfo(url_api);
+                }
+                else
+                {
+                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                    Thread.Sleep(1000);
+                    try_times++;
+                    if (try_times >= 10)
                     {
-                        // update
-                        check_data.contract_id = r.data.contracts[i].id;
-                        check_data.user_id = r.data.contracts[i].user_id;
-                        check_data.user_name = r.data.contracts[i].user_name;
-                        check_data.customer_id = check_customer.Id;
-                        check_data.contract_title = r.data.contracts[i].title;
-                        check_data.total_amount = (double)total_amount;
-                        check_data.contract_status = r.data.contracts[i].status;
-                        check_data.updated_at = r.data.contracts[i].updated_at;
-                        check_data.warehouse_code = "110";
-                        check_data.express_code = "STO";
-                        if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
-                        {
-                            check_data.vip_code = check_customer.customer_name;
-                        }
-                        else
-                        {
-                            check_data.vip_code = check_customer.customer_abbreviation;
-                        }
-                        crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                        logs.type = "contracts";
+                        logs.exception = "[合同]获取失败";
+                        logs.exception_at = DateTime.Now;
+                        crm_db.CRM_ExceptionLogs.Add(logs);
+                        crm_db.SaveChanges();
+                        try_times = 0;
+                        return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
                     }
+                    return GetCrmInfo(url_api);
                 }
-                var diffArr = CRM_Contractlist.Where(m => !contractlist.Contains(m)).ToArray();
-                for (int i = 0; i < diffArr.Count(); i++)
-                {
-                    var contractId = diffArr[i];
-                    var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                    check_data.contract_status = "-1";
-                    crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
-                }
-                crm_db.SaveChanges();
             }
-            else if (r.code == "100401")
+            var diffArr = CRM_Contractlist.Where(m => !contractlist.Contains(m)).ToArray();
+            //var diffArr = contractlist.Where(m => !CRM_Contractlist.Contains(m)).ToArray();
+            for (int i = 0; i < diffArr.Count(); i++)
             {
-                RefreshUserToken();
-                return GetCrmInfo();
+                var contractId = diffArr[i];
+                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                check_data.contract_status = "-1";
+                crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
             }
-            else
-            {
-                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
-                Thread.Sleep(1000);
-                try_times++;
-                if (try_times >= 10)
-                {
-                    logs.type = "contracts";
-                    logs.exception = "[合同]获取失败";
-                    logs.exception_at = DateTime.Now;
-                    crm_db.CRM_ExceptionLogs.Add(logs);
-                    crm_db.SaveChanges();
-                    try_times = 0;
-                    return Json(new { result = "FAIL" }, JsonRequestBehavior.AllowGet);
-                }
-                return GetCrmInfo();
-            }
+            crm_db.SaveChanges();
             return Json(new { result = "SUCCESS"}, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
@@ -703,7 +708,7 @@ namespace PeriodAid.Controllers
         public ActionResult CRM_undeliveredPartical(string status,int? page)
         {
             int _page = page ?? 1;
-            List<CRM_Contract> data_list = new List<CRM_Contract>();
+            //List<CRM_Contract> data_list = new List<CRM_Contract>();
             var undeliveredData = (from m in crm_db.CRM_Contract
                                   where m.contract_status == status
                                   orderby m.edit_time descending
@@ -953,6 +958,7 @@ namespace PeriodAid.Controllers
                     buyer_memo = contract.contract_remark,
                     seller_memo = contract.contract_title,
                     deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    business_man_code = contract.user_name
                 };
                 order.details = new List<ERPCustomOrder_details>();
                 foreach (var item in contract.CRM_ContractDetail)
