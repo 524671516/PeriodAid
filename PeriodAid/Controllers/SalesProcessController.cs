@@ -704,17 +704,18 @@ namespace PeriodAid.Controllers
         {
             int _page = page ?? 1;
             List<CRM_Contract> data_list = new List<CRM_Contract>();
-            var undeliveredData = from m in crm_db.CRM_Contract
-                                  where m.contract_status == status && m.address_status == 1
-                                  select m;
-            data_list.AddRange(undeliveredData);
-            var undelivered_Data = from m in crm_db.CRM_Contract
-                                   where m.contract_status == status && m.address_status == 0
-                                   orderby m.received_payments_status descending
-                                   select m;
-            data_list.AddRange(undelivered_Data.Except(undeliveredData));
-            data_list.ToPagedList(_page, 15);
-            return PartialView(data_list);
+            var undeliveredData = (from m in crm_db.CRM_Contract
+                                  where m.contract_status == status
+                                  orderby m.updated_at descending
+                                  select m).ToPagedList(_page,10);
+            //data_list.AddRange(undeliveredData);
+            //var undelivered_Data = from m in crm_db.CRM_Contract
+            //                       where m.contract_status == status && m.address_status == 0
+            //                       orderby m.received_payments_status descending
+            //                       select m;
+            //data_list.AddRange(undelivered_Data.Except(undeliveredData));
+            //return PartialView(data_list.ToPagedList(_page,15));
+            return PartialView(undeliveredData);
         }
         [Authorize(Roles = "CRM")]
         public ActionResult ContractDetail_show(int c_id)

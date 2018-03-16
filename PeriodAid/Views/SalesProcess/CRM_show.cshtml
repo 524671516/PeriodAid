@@ -114,10 +114,11 @@
                 $.ajax({
                     url: "/SalesProcess/CRM_undeliveredPartical",
                     data: {
+                        page:1,
                         status: that.attr("data-val"),
                     },
                     success: function (data) {
-                            $("#undelivered_list_content").html(data)
+                        $("#undelivered_list_content").html(data)
                     }
                 })
             })
