@@ -706,7 +706,7 @@ namespace PeriodAid.Controllers
             List<CRM_Contract> data_list = new List<CRM_Contract>();
             var undeliveredData = (from m in crm_db.CRM_Contract
                                   where m.contract_status == status
-                                  orderby m.updated_at descending
+                                  orderby m.edit_time descending
                                   select m).ToPagedList(_page,10);
             //data_list.AddRange(undeliveredData);
             //var undelivered_Data = from m in crm_db.CRM_Contract
@@ -862,6 +862,7 @@ namespace PeriodAid.Controllers
                             {
                                 contract.express_status = "部分发货";
                                 contract.contract_status = UserInfo.status_part;
+                                contract.edit_time = DateTime.Now;
                                 for (int i = 0; i < r.orders[0].deliverys.Count(); i++)
                                 {
                                     contractlist.Add(r.orders[0].deliverys[i].express_name + r.orders[0].deliverys[i].mail_no);
@@ -877,6 +878,7 @@ namespace PeriodAid.Controllers
                             {
                                 contract.express_status = "全部发货";
                                 contract.contract_status = UserInfo.status_delivered;
+                                contract.edit_time = DateTime.Now;
                                 for (int i = 0; i < r.orders[0].deliverys.Count(); i++)
                                 {
                                     contractlist.Add(r.orders[0].deliverys[i].express_name + r.orders[0].deliverys[i].mail_no);
@@ -982,6 +984,7 @@ namespace PeriodAid.Controllers
                     contract.address_status = 1;
                     contract.employee_id = employee.Id;
                     contract.employee_name = employee.NickName;
+                    contract.edit_time = DateTime.Now;
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information, contract.express_remark);
                     if (updatcrm != 1)

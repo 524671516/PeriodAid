@@ -111,6 +111,8 @@ namespace PeriodAid.Models
         public string contract_type { get; set; }
 
         public DateTime? updated_at { get; set; }
+
+        public DateTime? edit_time { get; set; }
         [StringLength(256)]
         public string express_information { get; set; }
         [StringLength(64)]
