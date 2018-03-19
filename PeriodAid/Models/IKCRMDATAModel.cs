@@ -151,9 +151,8 @@ namespace PeriodAid.Models
         public int received_payments_status { get; set; }
 
         public int employee_id { get; set; }
-
+        [StringLength(64)]
         public string employee_name { get; set; }
-
     }
 
     [Table("CRM_ExceptionLogs")]
@@ -200,7 +199,18 @@ namespace PeriodAid.Models
         public string text_asset_615f62_display { get; set; }
         // 订单类型
         public string category_mapped { get; set; }
+        // 支付类型
+        public string payment_type_mapped { get; set; }
+        // 创建者
+        //public List<contractsCreator> creator { get; set; }
     }
+
+    //public partial class contractsCreator
+    //{
+    //    public int id { get; set; }
+
+    //    public string name { get; set; }
+    //}
 
     public partial class CRM_ContractDetail_CustomerProductList
     {
@@ -395,13 +405,30 @@ namespace PeriodAid.Models
         public static string received_payments = "sel_99ef";
         //订单回款类型：先货后款
         public static string unreceived_payments = "sel_1792";
+        //订单回款类型：无需回款
+        public static string nonEssential_payments = "sel_3235";
         // 数量
         public static int Count = 100;
         // 直接提交订单
         public static int received_payments_status = 1;
         // 已删除
         public static string delete = "-1";
+        
     }
+
+    //public static class shopList
+    //{
+    //    //// 线下订单
+    //    //public static string offline = "006";
+    //    //// 线下零售/团购
+    //    //public static string retail = "线下零售/团购";
+    //    //// 线下展会/促销物料 
+    //    //public static string exhibition = "线下展会/促销物料";
+    //    //// 线上其他渠道 
+    //    //public static string online_other = "线上其他渠道";
+    //    //// 线上自营渠道
+    //    //public static string online_selfSupport = "自营渠道";
+    //}
 
     public partial class orders_Result
     {
