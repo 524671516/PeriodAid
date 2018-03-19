@@ -1049,7 +1049,7 @@ namespace PeriodAid.DAL
                     //"\"vip_name\":\"" + order.event_name + "\"," +
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
                     "\"buyer_memo\":\"" + order.buyer_memo + "\"," +
-                    "\"seller_memo\":\"" + order.seller_memo + "\"," +
+                    "\"seller_memo_late\":\"" + order.seller_memo_late + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
                     "\"receiver_name\":\"" + replaceWord(order.receiver_name) + "\"," +
                     "\"receiver_province\":\"" + order.receiver_province + "\"," +
@@ -1185,6 +1185,7 @@ namespace PeriodAid.DAL
         public string buyer_memo { get; set; }
         public string seller_memo { get; set; }
         public string business_man_code { get; set; }
+        public string seller_memo_late { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
         public List<ERPCustomOrder_payments> payments { get; set; }
     }
