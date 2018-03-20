@@ -131,7 +131,8 @@
             $.ajax({
                 url: l,
                 data: {
-                    status: $(".btn-danger").attr("data-val")
+                    status: $(".btn-danger").attr("data-val"),
+                    shopCode: $(".active").children(".shop_btn").attr("data-id")
                 },
                 success: function (data) {
                     $("#undelivered_list_content").html(data);
