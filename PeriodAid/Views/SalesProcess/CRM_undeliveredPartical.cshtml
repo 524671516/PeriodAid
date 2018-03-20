@@ -2,11 +2,11 @@
 @model PagedList.IPagedList<PeriodAid.Models.CRM_Contract>
 @using PagedList.Mvc;
 <style>
-    .form-control{
-        display:initial;
-        width:auto;
-        height:auto;
-        padding:0;
+    .form-control {
+        display: initial;
+        width: auto;
+        height: auto;
+        padding: 0;
     }
 </style>
 <div>
@@ -14,17 +14,18 @@
         <tr style="background-color:#f9f9f9">
             <th style="width:5%">
                 @*<label class="checkbox-custom">
-                    <input type="checkbox" class="btn" id="checkbox-all">
-                </label>*@
+                        <input type="checkbox" class="btn" id="checkbox-all">
+                    </label>*@
             </th>
+            <th style="width:10%">负责人</th>
             <th style="width:10%">订单号</th>
-            <th style="width:15%">合同名称</th>
+            <th style="width:15%">订单标题</th>
             <th style="width:15%" id="money_view">总金额</th>
             <th style="width:10%">客户名称</th>
             <th style="width:30%">邮寄地址</th>
             <th style="width:15%">
-                <a class="btn btn-xs btn-success hidden" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
-                <a class="btn btn-xs btn-success hidden" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
+                <a class="btn btn-xs btn-success hidden" id="batch_change_status" data-status="3531567" role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
+                <a class="btn btn-xs btn-success hidden" id="batch_change_deliverys" data-status="3531568" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
                 <a class="btn btn-xs btn-success hidden" id="batch_change_Partdeliverys" data-status="3890335" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
@@ -38,11 +39,14 @@
                     </label>
                 </td>
                 <td>
+                    @item.user_name
+                </td>
+                <td>
                     @item.platform_code
                 </td>
                 <td>
                     <div style="width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.contract_title">@item.contract_title</div>
-                   
+
                 </td>
                 <td class="money_model_view">
                     @item.total_amount
@@ -59,7 +63,7 @@
                         @item.CRM_Customer.customer_name
                     </td>
                 }
-                
+
                 @if (item.contract_status == "3531567")
                 {
                     if (item.address_status == 1)
@@ -81,7 +85,7 @@
                     }
                     <td class="receiver_address">
                         <a class="change_status btn btn-xs btn-success select_btn" role="button" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
-                        <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title" >详情</a>
+                        <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title">详情</a>
                     </td>
                 }
                 else if (item.contract_status == "3531568")
@@ -95,9 +99,9 @@
                 }
                 else if (item.contract_status == "3890335")
                 {
-                    <td >
+                    <td>
                         @item.receiver_address
-                        <div >@item.express_information</div>
+                        <div>@item.express_information</div>
                     </td>
                     <td>
                         <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
@@ -123,6 +127,7 @@
 </div>
 <script src="~/Scripts/distpicker.js"></script>
 <script src="~/Scripts/main.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
 <script>
     $(function () {
         //页码
@@ -376,7 +381,7 @@
         //
         $("#batch_change_Partdeliverys").click(function () {
             var that = $(this)
-            if (orderarry.length!=0) {
+            if (orderarry.length != 0) {
                 $.ajax({
                     url: "/SalesProcess/getERPORDERS/",
                     type: "post",
@@ -486,7 +491,7 @@
                     } else if (data.result == "FAIL") {
                         errorAlert("获取失败," + data.data)
                     } else if (data.result == "ERROR") {
-                        errorAlert("尚未配发，暂无物流信息",data.data)
+                        errorAlert("尚未配发，暂无物流信息", data.data)
                     }
                     else if (data.result == "PARTIALSUCCESS") {
                         errorAlert("同步CRM参数错误,请联系管理员")
@@ -534,7 +539,7 @@
                         })
                     }
                     else if (data.result == "FAIL") {
-                        errorAlert("推送失败,请检查订单信息是否完整"+data.data)
+                        errorAlert("推送失败,请检查订单信息是否完整" + data.data)
                     }
                     else if (data.result == "PARTIALSUCCESS") {
                         errorAlert("CRM同步失败")
@@ -602,7 +607,7 @@
             } else if (that.hasClass("change_payments")) {
                 $.ajax({
                     url: "/SalesProcess/Admin_pass",
-                    type:"post",
+                    type: "post",
                     data: {
                         c_id: that.attr("data-val")
                     },
