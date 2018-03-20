@@ -438,6 +438,7 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
+                        return Json(new { result = "FAIL" });
                     }
                     return GetCustomer(url_api);
                 }
@@ -541,6 +542,7 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
+                        return Json(new { result = "FAIL" });
                     }
                     return GetCrmInfo(url_api);
                 }
@@ -655,6 +657,7 @@ namespace PeriodAid.Controllers
                         crm_db.CRM_ExceptionLogs.Add(logs);
                         crm_db.SaveChanges();
                         try_times = 0;
+                        return Json(new { result = "FAIL" });
                     }
                     return GetCrmDetailInfo();
                 }
@@ -693,6 +696,10 @@ namespace PeriodAid.Controllers
             if (r.code == "0")
             {
                 return 1; // 1 正确
+            }else if (r.code == "100401")
+            {
+                RefreshUserToken();
+                return UpdateCRM(cid,contract_status,express_information,express_remark);
             }
             return 0;
         }
@@ -821,6 +828,12 @@ namespace PeriodAid.Controllers
             }
             catch (Exception)
             {
+                try_times++;
+                if (try_times >= 5)
+                {
+                    try_times = 0;
+                    return "FAIL";
+                }
                 return getDeliverys(mail_no);
             }
         }
@@ -922,7 +935,7 @@ namespace PeriodAid.Controllers
                             }
                             else
                             {
-                                return Json(new { result = "ERROR" , data = r.errorDesc });
+                                return Json(new { result = "ERROR" });
                             }
                             var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information, contract.express_remark);
                             if (updatcrm != 1)
@@ -939,8 +952,13 @@ namespace PeriodAid.Controllers
                 catch (Exception)
                 {
                     streamWriter.Close();
-                    //CommonUtilities.writeLog("page: " + page + ", Exception: " + ex.Message);
-                    getERPORDERS(c_id);
+                    try_times++;
+                    if (try_times >= 5)
+                    {
+                        try_times = 0;
+                        return Json(new { result = "FAIL"});
+                    }
+                    return getERPORDERS(c_id);
                 }
                 //return null;
             }

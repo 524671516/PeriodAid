@@ -13,9 +13,9 @@
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
             <th style="width:5%">
-                @*<label class="checkbox-custom">
-                    <input type="checkbox" class="btn" id="checkbox-all">
-                </label>*@
+                <label style="margin-left:5px" class="checkbox-custom">
+                    <input type="checkbox" class="btn hidden" id="checkbox-all">
+                </label>
             </th>
             <th style="width:10%">订单号</th>
             <th style="width:15%">合同名称</th>
@@ -201,94 +201,99 @@
         //$("#batch_change_deliverys").hide()
         //$("#batch_change_Partdeliverys").hide()
         $("#checkbox-all").attr("data-status", $(".checkbox").attr("data-status"))
+        $('#checkbox-all[data-status="3531567"]').removeClass("hidden")
         $('.checkbox[data-astatus="0"]').attr("disabled", "disabled")
         $('.checkbox[data-rstauts="0"]').attr("disabled", "disabled")
         //全选
-        //$("#checkbox-all").click(function () {
-        //    var i = 0
-        //    var that = $(this)
-        //    if (that.attr("data-status") == "3531567") {
-        //        if (that.is(":checked")) {
-        //            $("#batch_change_status").show()
-        //            $(".change_status").addClass("disabled")
-        //            $('.checkbox[data-astatus="1"][data-rstauts="1"]').prop("checked", true);
-        //            var list = $(".checkbox:checked")
-        //            if (list.length < 1) {
-        //                $("#batch_change_status").addClass("hidden")
-        //            } else {
-        //                $("#batch_change_status").removeClass("hidden")
-        //                for (i; i < list.length; i++) {
-        //                    var list_data = $(list[i]).attr("data-val")
-        //                    if (orderarry.indexOf(list_data) == -1) {
-        //                        orderarry.push(list_data)
-        //                    }
-        //                }
-        //                console.log(orderarry)
-        //            }
-        //        } else {
-        //            $("#batch_change_status").hide()
-        //            $(".change_status").removeClass("disabled")
-        //            $("input").prop("checked", false);
-        //            var list = $(".checkbox:unchecked")
-        //            for (i; i < list.length; i++) {
-        //                orderarry.remove($(list[i]).attr("data-val"))
-        //            }
-        //        }
-        //    } else if (that.attr("data-status") == "3890335") {
-        //        if (that.is(":checked")) {
-        //            $("#batch_change_Partdeliverys").show()
-        //            $(".get_erp_status").addClass("disabled")
-        //            $("input").prop("checked", true);
-        //            var list = $(".checkbox:checked")
-        //            if (list.length < 1) {
-        //                $("#batch_change_Partdeliverys").addClass("hidden")
-        //            } else {
-        //                $("#batch_change_Partdeliverys").removeClass("hidden")
-        //                for (i; i < list.length; i++) {
-        //                    var list_data = $(list[i]).attr("data-val")
-        //                    if (orderarry.indexOf(list_data) == -1) {
-        //                        orderarry.push(list_data)
-        //                    }
-        //                }
-        //            }
-        //        } else {
-        //            $("#batch_change_Partdeliverys").hide()
-        //            $(".get_erp_status").removeClass("disabled")
-        //            $("input").prop("checked", false);
-        //            var list = $(".checkbox:unchecked")
-        //            for (i; i < list.length; i++) {
-        //                orderarry.remove($(list[i]).attr("data-val"))
-        //            }
-        //        }
-        //    }
-        //    else if (that.attr("data-status") == "3531568") {
-        //        if (that.is(":checked")) {
-        //            $("#batch_change_deliverys").show()
-        //            $(".get_erp_status").addClass("disabled")
-        //            $("input").prop("checked", true);
-        //            var list = $(".checkbox:checked")
-        //            if (list.length < 1) {
-        //                $("#batch_change_deliverys").addClass("hidden")
-        //            } else {
-        //                $("#batch_change_deliverys").removeClass("hidden")
-        //                for (i; i < list.length; i++) {
-        //                    var list_data = $(list[i]).attr("data-val")
-        //                    if (orderarry.indexOf(list_data) == -1) {
-        //                        orderarry.push(list_data)
-        //                    }
-        //                }
-        //            }
-        //        } else {
-        //            $("#batch_change_deliverys").hide()
-        //            $(".get_erp_status").removeClass("disabled")
-        //            $("input").prop("checked", false);
-        //            var list = $(".checkbox:unchecked")
-        //            for (i; i < list.length; i++) {
-        //                orderarry.remove($(list[i]).attr("data-val"))
-        //            }
-        //        }
-        //    }
-        //})
+        $("#checkbox-all").click(function () {
+            var i = 0
+            var that = $(this)
+            if (that.attr("data-status") == "3531567")
+            {
+                if (that.is(":checked")) {
+                    $("#batch_change_status").removeClass("hidden")
+                    $(".change_status").addClass("disabled")
+                    $('.checkbox[data-astatus="1"][data-rstauts="1"]').prop("checked", true);
+                    var list = $(".checkbox:checked")
+                    if (list.length < 1) {
+                        $("#batch_change_status").addClass("hidden")
+                    } else {
+                        $("#batch_change_status").removeClass("hidden")
+                        for (i; i < list.length; i++) {
+                            var list_data = $(list[i]).attr("data-val")
+                            if (orderarry.indexOf(list_data) == -1) {
+                                orderarry.push(list_data)
+                            }
+                        }
+                    }
+                }
+                else {
+                    $("#batch_change_status").addClass("hidden")
+                    $(".change_status").removeClass("disabled")
+                    $("input").prop("checked", false);
+                    var list = $(".checkbox:unchecked")
+                    for (i; i < list.length; i++) {
+                        orderarry.remove($(list[i]).attr("data-val"))
+                    }
+                }
+            }
+            //else if (that.attr("data-status") == "3890335") {
+            //    if (that.is(":checked")) {
+            //        $("#batch_change_Partdeliverys").removeClass("hidden")
+            //        $(".get_erp_status").addClass("disabled")
+            //        $("input").prop("checked", true);
+            //        var list = $(".checkbox:checked")
+            //        if (list.length < 1) {
+            //            $("#batch_change_Partdeliverys").addClass("hidden")
+            //        } else {
+            //            $("#batch_change_Partdeliverys").removeClass("hidden")
+            //            for (i; i < list.length; i++) {
+            //                var list_data = $(list[i]).attr("data-val")
+            //                if (orderarry.indexOf(list_data) == -1) {
+            //                    orderarry.push(list_data)
+            //                }
+            //            }
+            //        }
+            //    } else {
+            //        $("#batch_change_Partdeliverys").addClass("hidden")
+            //        $(".get_erp_status").removeClass("disabled")
+            //        $("input").prop("checked", false);
+            //        var list = $(".checkbox:unchecked")
+            //        for (i; i < list.length; i++) {
+            //            orderarry.remove($(list[i]).attr("data-val"))
+            //        }
+            //    }
+            //}
+            //else if (that.attr("data-status") == "3531568") {
+            //    if (that.is(":checked")) {
+            //        $("#batch_change_deliverys").removeClass("hidden")
+            //        $(".get_erp_status").addClass("disabled")
+            //        $("input").prop("checked", true);
+            //        var list = $(".checkbox:checked")
+            //        if (list.length < 1) {
+            //            $("#batch_change_deliverys").addClass("hidden")
+            //        } else {
+            //            $("#batch_change_deliverys").removeClass("hidden")
+            //            for (i; i < list.length; i++) {
+            //                var list_data = $(list[i]).attr("data-val")
+            //                if (orderarry.indexOf(list_data) == -1) {
+            //                    orderarry.push(list_data)
+            //                }
+            //            }
+            //            console.log(orderarry)
+            //        }
+            //    } else {
+            //        $("#batch_change_deliverys").addClass("hidden")
+            //        $(".get_erp_status").removeClass("disabled")
+            //        $("input").prop("checked", false);
+            //        var list = $(".checkbox:unchecked")
+            //        for (i; i < list.length; i++) {
+            //            orderarry.remove($(list[i]).attr("data-val"))
+            //        }
+            //        console.log(orderarry)
+            //    }
+            //}
+        })
         var orderarry = [];
         //单选
         $(".checkbox").on("click", function () {
@@ -296,36 +301,36 @@
             var C_id = that.attr("data-val")
             var select = that.is(":checked");
             if (select) {
-                orderarry.push(C_id)
                 if ($("input:checked").length > 1) {
                     if (that.attr("data-status") == "3531567") {
+                        orderarry.push(C_id)
                         $("#batch_change_status").removeClass("hidden")
                         $(".change_status").hide()
                     }
-                    else if (that.attr("data-status") == "3890335") {
-                        $("#batch_change_Partdeliverys").removeClass("hidden")
-                        $(".get_erp_status").hide()
-                    }
-                    else {
-                        $("#batch_change_deliverys").removeClass("hidden")
-                        $(".get_erp_status").hide()
-                    }
+                    //else if (that.attr("data-status") == "3890335") {
+                    //    $("#batch_change_Partdeliverys").removeClass("hidden")
+                    //    $(".get_erp_status").hide()
+                    //}
+                    //else {
+                    //    $("#batch_change_deliverys").removeClass("hidden")
+                    //    $(".get_erp_status").hide()
+                    //}
                 }
             } else {
-                orderarry.remove(C_id)
                 if (orderarry.length < 2) {
                     if (that.attr("data-status") == "3531567") {
+                        orderarry.remove(C_id)
                         $("#batch_change_status").addClass("hidden")
                         $(".change_status").show()
                     }
-                    else if (that.attr("data-status") == "3890335") {
-                        $("#batch_change_Partdeliverys").addClass("hidden")
-                        $(".get_erp_status").show()
-                    }
-                    else {
-                        $("#batch_change_deliverys").addClass("hidden")
-                        $(".get_erp_status").show()
-                    }
+                    //else if (that.attr("data-status") == "3890335") {
+                    //    $("#batch_change_Partdeliverys").addClass("hidden")
+                    //    $(".get_erp_status").show()
+                    //}
+                    //else {
+                    //    $("#batch_change_deliverys").addClass("hidden")
+                    //    $(".get_erp_status").show()
+                    //}
                 }
             }
         })
@@ -555,6 +560,7 @@
             var Province = that.attr("data-province")
             var City = that.attr("data-city")
             var District = that.attr("data-district")
+            $("#tm-view-loading").show()
             if (that.hasClass("change_address")) {
                 $.ajax({
                     url: "/SalesProcess/createOrder/",
