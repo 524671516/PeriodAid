@@ -554,11 +554,12 @@
                     c_id: orderarry
                 },
                 success: function (data) {
+                    console.log(data.faillist.length)
                     if (data.result == "SUCCESS") {
                         if (data.faillist.length != 0) {
                             errorAlert(data.faillist[0])
-                        } else if (data.partialList.length != 0) {
-                            errorAlert(data.partialList[0])
+                        } else if (data.partiallist.length != 0) {
+                            errorAlert(data.partiallist[0])
                         } else {
                             alert("已推送至ERP等待审核")
                             $.ajax({
