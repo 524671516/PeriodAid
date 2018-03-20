@@ -561,6 +561,7 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult GetCrmDetailInfo()
         {
+            // 只获取待提交订单详情
             var contracts = from m in crm_db.CRM_Contract
                             where m.contract_status == UserInfo.status_unsend && m.contract_status != UserInfo.delete
                             select m;
@@ -842,6 +843,9 @@ namespace PeriodAid.Controllers
         {
             //var platform_code = "IK20180316144326431356";
             //var mail_no = "3354788962851";
+            List<string> errorList = new List<string>();
+            List<string> failList = new List<string>();
+            List<string> partialList = new List<string>();
             foreach (var cId in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cId);
@@ -935,17 +939,20 @@ namespace PeriodAid.Controllers
                             }
                             else
                             {
-                                return Json(new { result = "ERROR" });
+                                //return Json(new { result = "ERROR" });
+                                errorList.Add(contract.platform_code + " 暂未发货");
                             }
                             var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information, contract.express_remark);
                             if (updatcrm != 1)
                             {
-                                return Json(new { result = "PARTIALSUCCESS" });
+                                //return Json(new { result = "PARTIALSUCCESS" });
+                                partialList.Add(contract.contract_title + " 同步CRM失败");
                             }
                         }
                         else
                         {
-                            return Json(new { result = "FAIL", data = r.errorDesc });
+                            //return Json(new { result = "FAIL", data = r.errorDesc });
+                            failList.Add(contract.contract_title + " " + r.errorDesc);
                         }
                     }
                 }
@@ -963,18 +970,18 @@ namespace PeriodAid.Controllers
                 //return null;
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "SUCCESS" ,errorlist = errorList ,faillist = failList , partiallist = partialList });
         }
         [HttpPost]
         public JsonResult createOrder(int[] c_id, string province, string city, string district)
         {
-            // 批量
+            List<string> failList = new List<string>();
+            List<string> partialList = new List<string>();
             var seller = getSeller(User.Identity.Name);
             var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.User_Name);
             foreach (var _Cid in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.contract_status == UserInfo.status_unsend && m.received_payments_status == UserInfo.received_payments_status);
-                // 不批量
                 if (province != null)
                 {
                     contract.receiver_province = province;
@@ -1038,16 +1045,18 @@ namespace PeriodAid.Controllers
                     var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information, contract.express_remark);
                     if (updatcrm != 1)
                     {
-                        return Json(new { result = "PARTIALSUCCESS" });
+                        //return Json(new { result = "PARTIALSUCCESS" });
+                        partialList.Add(contract.contract_title + " " + " 同步CRM失败");
                     }
                 }
                 else
                 {
-                    return Json(new { result = "FAIL", data = r.errorDesc });
+                    //return Json(new { result = "FAIL", data = r.errorDesc });
+                    failList.Add(contract.contract_title+" "+ r.errorDesc);
                 }
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "SUCCESS" , faillist = failList, partiallist = partialList });
         }
 
         public void checkAddress(string full_address, int contract_id)
@@ -1079,5 +1088,6 @@ namespace PeriodAid.Controllers
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
         }
+        
     }
 }
