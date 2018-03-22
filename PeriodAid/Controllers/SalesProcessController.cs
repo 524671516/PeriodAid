@@ -61,9 +61,9 @@ namespace PeriodAid.Controllers
             return ArrayByte;
         }
 
-        public SP_Seller getSeller(string username)
+        public Employee getSeller(string username)
         {
-            var seller = _db.SP_Seller.SingleOrDefault(m => m.User_Name == username);
+            var seller = projrct_db.Employee.SingleOrDefault(m => m.UserName == username);
             return seller;
         }
         
@@ -595,7 +595,7 @@ namespace PeriodAid.Controllers
                             check_data = new CRM_Contract();
                             check_data.contract_id = r.data.contracts[i].id;
                             check_data.user_id = userId;
-                            check_data.user_name = r.data.contracts[i].user_name;
+                            check_data.user_name = r.data.contracts[i].user_name; 
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
                             check_data.total_amount = (double)total_amount;
@@ -725,28 +725,28 @@ namespace PeriodAid.Controllers
                     {
                         contract.received_payments_status = 0;
                     }
-                    var shop_code = r.data.text_asset_615f62_display;
-                    if (shop_code != null || shop_code != "")
-                    {
-                        if (shop_code.Contains("零售/团购"))
-                        {
-                            contract.shop_code = "线下零售/团购";
-                        }else if (shop_code.Contains("线上其他渠道"))
-                        {
-                            contract.shop_code = "线上其他渠道";
-                        }
-                        else if (shop_code.Contains("自营渠道"))
-                        {
-                            contract.shop_code = "自营渠道";
-                        }
-                        else if (shop_code.Contains("展会/促销"))
-                        {
-                            contract.shop_code = "线下展会/促销物料";
-                        }else
-                        {
-                            contract.shop_code = "006";
-                        }
-                    }
+                    //var shop_code = r.data.text_asset_615f62_display;
+                    //if (shop_code != null || shop_code != "")
+                    //{
+                    //    if (shop_code.Contains("零售/团购"))
+                    //    {
+                    //        contract.shop_code = "线下零售/团购";
+                    //    }else if (shop_code.Contains("线上其他渠道"))
+                    //    {
+                    //        contract.shop_code = "线上其他渠道";
+                    //    }
+                    //    else if (shop_code.Contains("自营渠道"))
+                    //    {
+                    //        contract.shop_code = "自营渠道";
+                    //    }
+                    //    else if (shop_code.Contains("展会/促销"))
+                    //    {
+                    //        contract.shop_code = "线下展会/促销物料";
+                    //    }else
+                    //    {
+                    //        contract.shop_code = "006";
+                    //    }
+                    //}
                     contract.contract_type = r.data.category_mapped;
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
@@ -911,7 +911,7 @@ namespace PeriodAid.Controllers
         public JsonResult Admin_pass(int c_id)
         {
             var seller = getSeller(User.Identity.Name);
-            var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.User_Name);
+            var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.UserName);
             var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == c_id);
             if (employee.Type == 1)
             {
@@ -1143,7 +1143,7 @@ namespace PeriodAid.Controllers
             List<string> partialList = new List<string>();
             List<string> successList = new List<string>();
             var seller = getSeller(User.Identity.Name);
-            var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.User_Name);
+            var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.UserName);
             foreach (var _Cid in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.contract_status == UserInfo.status_unsend && m.received_payments_status == UserInfo.received_payments_status);
