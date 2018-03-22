@@ -636,6 +636,7 @@ namespace PeriodAid.Controllers
                             crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                         }
                         contractlist.Add(r.data.contracts[i].id);
+                        await crm_db.SaveChangesAsync();
                     }
                 }
                 else if (r.code == "100401")
