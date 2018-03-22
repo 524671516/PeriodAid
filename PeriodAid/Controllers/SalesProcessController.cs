@@ -554,7 +554,7 @@ namespace PeriodAid.Controllers
             return true;
         }
         [HttpPost]
-        public async Task<string> GetCrmInfo(string url_api)
+        public async Task<JsonResult> GetCrmInfo(string url_api)
         {
             //刷新组织架构和使用用户
             //GetUserInfo();
@@ -637,6 +637,7 @@ namespace PeriodAid.Controllers
                         }
                         contractlist.Add(r.data.contracts[i].id);
                         await crm_db.SaveChangesAsync();
+                        var detail = getSingleCrmDetailInfo(r.data.contracts[i].id);
                     }
                 }
                 else if (r.code == "100401")
@@ -658,28 +659,28 @@ namespace PeriodAid.Controllers
                 crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
             }
             crm_db.SaveChanges();
-            return "SUCCESS";
+            return Json(new { result = "SUCCESS"});
         }
-        [HttpPost]
-        public JsonResult GetCrmDetailInfo(string url_api)
-        {
-            var contract = GetCrmInfo(url_api);
-            if(contract.Result == "SUCCESS")
-            {
-                var contracts = from m in crm_db.CRM_Contract
-                                where m.contract_status == UserInfo.status_unsend && m.contract_status != UserInfo.delete
-                                select m;
-                foreach (var C_id in contracts)
-                {
-                    var result = getSingleCrmDetailInfo(C_id.contract_id);
-                }
-            }else
-            {
-                return Json(new { result = "FAIL" });
-            }
-            crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-        }
+        //[HttpPost]
+        //public JsonResult GetCrmDetailInfo(string url_api)
+        //{
+        //    var contract = GetCrmInfo(url_api);
+        //    if(contract.Result == "SUCCESS")
+        //    {
+        //        var contracts = from m in crm_db.CRM_Contract
+        //                        where m.contract_status == UserInfo.status_unsend && m.contract_status != UserInfo.delete
+        //                        select m;
+        //        foreach (var C_id in contracts)
+        //        {
+        //            var result = getSingleCrmDetailInfo(C_id.contract_id);
+        //        }
+        //    }else
+        //    {
+        //        return Json(new { result = "FAIL" });
+        //    }
+        //    crm_db.SaveChanges();
+        //    return Json(new { result = "SUCCESS" });
+        //}
 
         public async Task<string> getSingleCrmDetailInfo(int contract_id)
         {
