@@ -513,7 +513,17 @@ namespace PeriodAid.Models
         public static int received_payments_status = 1;
         // 已删除
         public static string delete = "-1";
-        
+        //权限
+        //超管
+        public static int SuperAdmin = 22;
+        //主管
+        public static int Manager = 20;
+        //内勤
+        public static int Assistant = 19;
+        //财务
+        public static int Finance = 17;
+        //销售
+        public static int Seller = 18;
     }
 
     //public static class shopList

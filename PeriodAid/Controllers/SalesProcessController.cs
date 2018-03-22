@@ -833,9 +833,10 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "CRM")]
         public ActionResult CRM_undeliveredPartical(string status,int? page,string shopCode)
         {
-            var user = getEmployee(User.Identity.Name);
+            var user = getUser(User.Identity.Name);
             int _page = page ?? 1;
-            if (user.Type == 1) {
+            if (user.role_id == UserInfo.SuperAdmin || user.role_id == UserInfo.Finance)
+            {
                 if (shopCode == "0")
                 {
                     var undeliveredData = (from m in crm_db.CRM_Contract
@@ -852,10 +853,12 @@ namespace PeriodAid.Controllers
                                            select m).ToPagedList(_page, 20);
                     return PartialView(undeliveredData);
                 }
-            } else {
-                var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.UserName);
+            }
+            else if (user.role_id == UserInfo.Assistant || user.role_id == UserInfo.Manager )
+            {
+                var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.email);
                 var employee = from m in crm_db.CRM_User
-                               where m.department_id == crm_user.department_id
+                               where m.department_id == crm_user.department_id || m.department_id == (m.CRM_Department.parent_id != null ? m.CRM_Department.parent_id : 0)
                                select m;
                 List<CRM_Contract> datalist = new List<CRM_Contract>();
                 if (shopCode == "0")
@@ -883,7 +886,24 @@ namespace PeriodAid.Controllers
                     return PartialView(datalist);
                 }
             }
-            
+            else {
+                if (shopCode == "0")
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.user_id == user.system_code
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+                else
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.shop_code == shopCode && m.user_id == user.system_code
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+            }
 
         }
         [Authorize(Roles = "CRM")]
@@ -917,9 +937,9 @@ namespace PeriodAid.Controllers
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
-        public Employee getEmployee(string username)
+        public CRM_User getUser(string username)
         {
-            var user = e_db.Employee.SingleOrDefault(m => m.UserName == username);
+            var user = crm_db.CRM_User.SingleOrDefault(m => m.email == username);
             return user;
         }
         private static string AppId = "130412";
