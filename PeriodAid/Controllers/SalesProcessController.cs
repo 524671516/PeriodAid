@@ -1036,7 +1036,7 @@ namespace PeriodAid.Controllers
                 {
                     ERPCustomOrder_payments payments = new ERPCustomOrder_payments()
                     {
-                        pay_type_code = "支付宝",
+                        pay_type_code = "zhifubao",
                         payment = item.CRM_Contract.total_amount
                     };
                     order.payments.Add(payments);
@@ -1056,13 +1056,11 @@ namespace PeriodAid.Controllers
                     var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information, contract.express_remark);
                     if (updatcrm != 1)
                     {
-                        //return Json(new { result = "PARTIALSUCCESS" });
                         partialList.Add(contract.platform_code+" "+ contract.contract_title);
                     }
                 }
                 else
                 {
-                    //return Json(new { result = "FAIL", data = r.errorDesc });
                     failList.Add(contract.platform_code + " " + contract.contract_title + " "+ r.errorDesc);
                 }
             }
