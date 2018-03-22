@@ -725,28 +725,30 @@ namespace PeriodAid.Controllers
                     {
                         contract.received_payments_status = 0;
                     }
-                    //var shop_code = r.data.text_asset_615f62_display;
-                    //if (shop_code != null || shop_code != "")
-                    //{
-                    //    if (shop_code.Contains("零售/团购"))
-                    //    {
-                    //        contract.shop_code = "线下零售/团购";
-                    //    }else if (shop_code.Contains("线上其他渠道"))
-                    //    {
-                    //        contract.shop_code = "线上其他渠道";
-                    //    }
-                    //    else if (shop_code.Contains("自营渠道"))
-                    //    {
-                    //        contract.shop_code = "自营渠道";
-                    //    }
-                    //    else if (shop_code.Contains("展会/促销"))
-                    //    {
-                    //        contract.shop_code = "线下展会/促销物料";
-                    //    }else
-                    //    {
-                    //        contract.shop_code = "006";
-                    //    }
-                    //}
+                    var shop_code = r.data.text_asset_615f62_display;
+                    if (shop_code != null || shop_code != "")
+                    {
+                        if (shop_code.Contains("零售/团购"))
+                        {
+                            contract.shop_code = "线下零售/团购";
+                        }
+                        else if (shop_code.Contains("线上其他渠道"))
+                        {
+                            contract.shop_code = "线上其他渠道";
+                        }
+                        else if (shop_code.Contains("自营渠道"))
+                        {
+                            contract.shop_code = "自营渠道";
+                        }
+                        else if (shop_code.Contains("展会/促销"))
+                        {
+                            contract.shop_code = "线下展会/促销物料";
+                        }
+                        else
+                        {
+                            contract.shop_code = "006";
+                        }
+                    }
                     contract.contract_type = r.data.category_mapped;
                     contract.receiver_name = r.data.text_asset_73f972;
                     contract.receiver_address = r.data.text_asset_eb802b;
