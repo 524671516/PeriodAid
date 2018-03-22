@@ -562,7 +562,7 @@ namespace PeriodAid.Controllers
         public JsonResult GetCrmInfo(string url_api)
         {
             //刷新组织架构和使用用户
-            GetUserInfo();
+            //GetUserInfo();
             var count = Get_Count(url_api);
             var page = count / UserInfo.Count + 1;
             List<int> contractlist = new List<int>();
