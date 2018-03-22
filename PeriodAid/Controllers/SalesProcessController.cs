@@ -59,14 +59,7 @@ namespace PeriodAid.Controllers
             stream.Read(ArrayByte, 0, File.ContentLength);
             stream.Close();
             return ArrayByte;
-        }
-
-        public Employee getSeller(string username)
-        {
-            var seller = projrct_db.Employee.SingleOrDefault(m => m.UserName == username);
-            return seller;
-        }
-        
+        }        
         //CRM
         public static String buildQueryStr(Dictionary<String, String> dicList)
         {
@@ -576,6 +569,7 @@ namespace PeriodAid.Controllers
             for (int x = 1; x <= page; x++)
             {
                 string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                var res = Get_Request(url);
                 CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(Get_Request(url));
                 if (r.code == "0")
                 {
@@ -589,6 +583,7 @@ namespace PeriodAid.Controllers
                         var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
                         var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
                         var total_amount = r.data.contracts[i].total_amount;
+                        var unreceived_amount = r.data.contracts[i].unreceived_amount;
                         if (check_data == null)
                         {
                             //new
@@ -599,6 +594,7 @@ namespace PeriodAid.Controllers
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
                             check_data.total_amount = (double)total_amount;
+                            check_data.unreceived_amount = (double)unreceived_amount;
                             check_data.contract_status = r.data.contracts[i].status;
                             check_data.updated_at = r.data.contracts[i].updated_at;
                             check_data.platform_code = platform_code;
@@ -844,11 +840,12 @@ namespace PeriodAid.Controllers
             return View();
         }
         [Authorize(Roles = "CRM")]
-        public ActionResult CRM_undeliveredPartical(string status,int? page,string shopCode)
+        public ActionResult CRM_undeliveredPartical(string status, int? page, string shopCode)
         {
-            var user = getEmployee(User.Identity.Name);
+            var user = getUser(User.Identity.Name);
             int _page = page ?? 1;
-            if (user.Type == 1) {
+            if (user.role_id == UserInfo.SuperAdmin || user.role_id == UserInfo.Finance)
+            {
                 if (shopCode == "0")
                 {
                     var undeliveredData = (from m in crm_db.CRM_Contract
@@ -866,10 +863,11 @@ namespace PeriodAid.Controllers
                     return PartialView(undeliveredData);
                 }
             }
-            else {
-                var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.UserName);
+            else if (user.role_id == UserInfo.Assistant || user.role_id == UserInfo.Manager)
+            {
+                var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.email);
                 var employee = from m in crm_db.CRM_User
-                               where m.department_id == crm_user.department_id
+                               where m.department_id == crm_user.department_id || m.department_id == (m.CRM_Department.parent_id != null ? m.CRM_Department.parent_id : 0)
                                select m;
                 List<CRM_Contract> datalist = new List<CRM_Contract>();
                 if (shopCode == "0")
@@ -897,6 +895,25 @@ namespace PeriodAid.Controllers
                     return PartialView(datalist);
                 }
             }
+            else
+            {
+                if (shopCode == "0")
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.user_id == user.system_code
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+                else
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.shop_code == shopCode && m.user_id == user.system_code
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+            }
         }
         [Authorize(Roles = "CRM")]
         public ActionResult ContractDetail_show(int c_id)
@@ -912,14 +929,13 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult Admin_pass(int c_id)
         {
-            var seller = getSeller(User.Identity.Name);
-            var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.UserName);
+            var seller = getUser(User.Identity.Name);
             var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == c_id);
-            if (employee.Type == 1)
+            if (seller.role_id == UserInfo.SuperAdmin)
             {
                 contract.received_payments_status = UserInfo.received_payments_status;
-                contract.employee_id = employee.Id;
-                contract.employee_name = employee.NickName;
+                contract.employee_id = seller.Id;
+                contract.employee_name = seller.name;
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
             else
@@ -930,9 +946,9 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
 
-        public Employee getEmployee(string username)
+        public CRM_User getUser(string username)
         {
-            var user = e_db.Employee.SingleOrDefault(m => m.UserName == username);
+            var user = crm_db.CRM_User.SingleOrDefault(m => m.email == username);
             return user;
         }
 
@@ -1144,8 +1160,7 @@ namespace PeriodAid.Controllers
             List<string> failList = new List<string>();
             List<string> partialList = new List<string>();
             List<string> successList = new List<string>();
-            var seller = getSeller(User.Identity.Name);
-            var employee = projrct_db.Employee.SingleOrDefault(m => m.UserName == seller.UserName);
+            var seller = getUser(User.Identity.Name);
             foreach (var _Cid in c_id)
             {
                 var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == _Cid && m.contract_status == UserInfo.status_unsend && m.received_payments_status == UserInfo.received_payments_status);
@@ -1205,8 +1220,8 @@ namespace PeriodAid.Controllers
                 {
                     contract.contract_status = UserInfo.status_undelivered;
                     contract.address_status = 1;
-                    contract.employee_id = employee.Id;
-                    contract.employee_name = employee.NickName;
+                    contract.employee_id = seller.Id;
+                    contract.employee_name = seller.name;
                     contract.edit_time = DateTime.Now;
                     successList.Add(contract.platform_code + " " + contract.contract_title);
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
