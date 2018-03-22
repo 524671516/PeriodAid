@@ -34,7 +34,6 @@ namespace PeriodAid.Models
             modelBuilder.Entity<CRM_Contract>().HasMany(m => m.CRM_ContractDetail).WithRequired(m => m.CRM_Contract).HasForeignKey(m => m.contract_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Department>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Department).HasForeignKey(m => m.department_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Role>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Role).HasForeignKey(m => m.role_id).WillCascadeOnDelete(false);
-            
         }
     }
 
@@ -128,7 +127,7 @@ namespace PeriodAid.Models
 
         public int user_id { get; set; }
 
-        public string user_name{ get; set; }
+        public string user_name { get; set; }
 
         public int customer_id { get; set; }
 
@@ -220,8 +219,6 @@ namespace PeriodAid.Models
         public int quantity { get; set; }
 
         public decimal unit_price { get; set; }
-        // 0存在 -1删除
-        public int status { get; set; }
 
     }
 
@@ -509,15 +506,15 @@ namespace PeriodAid.Models
         public static string delete = "-1";
         //权限
         //超管
-        public static int SuperAdmin = 22;
+        public static int SuperAdmin = 25;
         //主管
-        public static int Manager = 20;
+        public static int Manager = 23;
         //内勤
-        public static int Assistant = 19;
+        public static int Assistant = 28;
         //财务
-        public static int Finance = 17;
+        public static int Finance = 24;
         //销售
-        public static int Seller = 18;
+        public static int Seller = 27;
     }
     
     public partial class orders_Result
