@@ -1048,7 +1048,7 @@ namespace PeriodAid.DAL
                     "\"vip_code\":\"" + order.vip_code + "\"," +
                     //"\"vip_name\":\"" + order.event_name + "\"," +
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
-                    "\"buyer_memo\":\"" + order.buyer_memo + "\"," +
+                    "\"buyer_memo\":\"" + replaceWord(order.buyer_memo) + "\"," +
                     "\"seller_memo_late\":\"" + order.seller_memo_late + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
                     "\"receiver_name\":\"" + replaceWord(order.receiver_name) + "\"," +
@@ -1111,33 +1111,38 @@ namespace PeriodAid.DAL
             long t = (time.Ticks - startTime.Ticks) / 10000;    
             return t;
         }
-        private string replaceWord(string name)
+        private string replaceWord(string str)
         {
-            var srtName = "";
-            if (name.Contains("+"))
+            var strword = "";
+            if (str.Contains("+"))
             {
-                srtName = name.Replace("+", "-");
+                strword = strword.Replace("+", "加");
             }
-            else if (name.Contains(":"))
+            else if (str.Contains(":"))
             {
-                srtName = name.Replace(":", "-");
+                strword = str.Replace(":", "-");
             }
-            else if (name.Contains(","))
+            else if (str.Contains(","))
             {
-                srtName = name.Replace(",", "-");
+                strword = str.Replace(",", "-");
             }
-            else if (name.Contains("/"))
+            else if (str.Contains("/"))
             {
-                srtName = name.Replace("/", "-");
+                strword = str.Replace("/", "-");
             }
-            else if (name.Contains("\\"))
+            else if (str.Contains("\\"))
             {
-                srtName = name.Replace("\\", "-");
-            }else
-            {
-                srtName = name;
+                strword = str.Replace("\\", "-");
             }
-            return srtName;
+            else if (str.Contains(" "))
+            {
+                strword = str.Replace(" ", "-");
+            }
+            else
+            {
+                strword = str;
+            }
+            return strword;
         }
 
         private string addTags(string originaltags, string tagname)
