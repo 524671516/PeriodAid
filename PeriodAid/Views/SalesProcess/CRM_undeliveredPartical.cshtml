@@ -17,98 +17,100 @@
                     <input type="checkbox" class="btn hidden" id="checkbox-all">
                 </label>
             </th>
+            <th style="width:10%">负责人</th>
             <th style="width:10%">订单号</th>
             <th style="width:15%">合同名称</th>
             <th style="width:15%" id="money_view">总金额</th>
             <th style="width:10%">客户名称</th>
             <th style="width:30%">邮寄地址</th>
             <th style="width:15%">
-                <a class="btn btn-xs btn-success hidden" id="batch_change_status" data-status="3531567"  role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
-                <a class="btn btn-xs btn-success hidden" id="batch_change_deliverys" data-status="3531568"   role="button" style="cursor:pointer">批量获取ERP配送信息</a>
+                <a class="btn btn-xs btn-success hidden" id="batch_change_status" data-status="3531567" role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
+                <a class="btn btn-xs btn-success hidden" id="batch_change_deliverys" data-status="3531568" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
                 <a class="btn btn-xs btn-success hidden" id="batch_change_Partdeliverys" data-status="3890335" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
             </th>
         </tr>
 
         @foreach (var item in Model)
         {
-            <tr class="tm_list-item tm-show-task-modal border-blue" data-toggle="tooltip" data-placement="left" title="">
-                <td>
-                    <label class="checkbox-custom">
-                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
-                    </label>
-                </td>
-                <td>
-                    @item.platform_code
-                </td>
-                <td>
-                    <div style="width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.contract_title">@item.contract_title</div>
-                   
-                </td>
-                <td class="money_model_view">
-                    @item.total_amount
-                </td>
-                @if (@item.CRM_Customer.customer_abbreviation != null)
-                {
-                    <td>
-                        @item.CRM_Customer.customer_abbreviation
-                    </td>
-                }
-                else
-                {
-                    <td>
-                        @item.CRM_Customer.customer_name
-                    </td>
-                }
-                
-                @if (item.contract_status == "3531567")
-                {
-                    if (item.address_status == 1)
-                    {
-                        <td>
-                            <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
-                        </td>
-                    }
-                    else
-                    {
-                        <td class="select_address">
-                            <div class="distpicker5">
-                                <select class="select_province form-control" style="width:31%"></select>
-                                <select class="select_city form-control" style="width:31%"></select>
-                                <select class="select_district form-control" style="width:31%"></select>
-                            </div>
-                            <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.receiver_address</div>
-                        </td>
-                    }
-                    <td class="receiver_address">
-                        <a class="change_status btn btn-xs btn-success select_btn" role="button" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
-                        <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title" >详情</a>
-                    </td>
-                }
-                else if (item.contract_status == "3531568")
-                {
-                    <td>
-                        <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
-                    </td>
-                    <td>
-                        <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
-                    </td>
-                }
-                else if (item.contract_status == "3890335")
-                {
-                    <td >
-                        @item.receiver_address
-                        <div >@item.express_information</div>
-                    </td>
-                    <td>
-                        <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
-                    </td>
-                }
-                else
-                {
-                    <td><div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div></td>
-                    <td style="width:202px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.express_information</td>
-                }
-            </tr>
+        <tr class="tm_list-item tm-show-task-modal border-blue" data-toggle="tooltip" data-placement="left" title="">
+            <td>
+                <label class="checkbox-custom">
+                    <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
+                </label>
+            </td>
+            <td>@item.user_name</td>
+            <td>
+                @item.platform_code
+            </td>
+            <td>
+                <div style="width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.contract_title">@item.contract_title</div>
+
+            </td>
+            <td class="money_model_view">
+                @item.total_amount
+            </td>
+            @if (@item.CRM_Customer.customer_abbreviation != null)
+    {
+        <td>
+            @item.CRM_Customer.customer_abbreviation
+        </td>
+}
+else
+{
+        <td>
+            @item.CRM_Customer.customer_name
+        </td>
+}
+
+            @if (item.contract_status == "3531567")
+    {
+        if (item.address_status == 1)
+        {
+            <td>
+                <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+            </td>
+}
+else
+{
+        <td class="select_address">
+            <div class="distpicker5">
+                <select class="select_province form-control" style="width:31%"></select>
+                <select class="select_city form-control" style="width:31%"></select>
+                <select class="select_district form-control" style="width:31%"></select>
+            </div>
+            <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.receiver_address</div>
+        </td>
+}
+        <td class="receiver_address">
+            <a class="change_status btn btn-xs btn-success select_btn" role="button" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status" style="cursor:pointer">同步ERP</a>
+            <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title">详情</a>
+        </td>
+}
+else if (item.contract_status == "3531568")
+{
+        <td>
+            <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+        </td>
+        <td>
+            <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
+        </td>
+}
+else if (item.contract_status == "3890335")
+{
+        <td>
+            @item.receiver_address
+            <div>@item.express_information</div>
+        </td>
+        <td>
+            <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
+        </td>
+}
+else
+{
+        <td><div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div></td>
+        <td style="width:202px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.express_information</td>
+}
+        </tr>
         }
     </table>
     <div class="text-right">

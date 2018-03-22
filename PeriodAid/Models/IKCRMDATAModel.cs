@@ -24,11 +24,16 @@ namespace PeriodAid.Models
         public virtual DbSet<CRM_ExceptionLogs> CRM_ExceptionLogs { get; set; }
         public virtual DbSet<CRM_Customer> CRM_Customer { get; set; }
         public virtual DbSet<CRM_Contact> CRM_Contact { get; set; }
+        public virtual DbSet<CRM_User> CRM_User { get; set; }
+        public virtual DbSet<CRM_Department> CRM_Department { get; set; }
+        public virtual DbSet<CRM_Role> CRM_Role { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CRM_Customer>().HasMany(m => m.CRM_Contract).WithRequired(m => m.CRM_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Customer>().HasMany(m => m.CRM_Contact).WithRequired(m => m.CRM_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Contract>().HasMany(m => m.CRM_ContractDetail).WithRequired(m => m.CRM_Contract).HasForeignKey(m => m.contract_id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<CRM_Department>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Department).HasForeignKey(m => m.department_id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<CRM_Role>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Role).HasForeignKey(m => m.role_id).WillCascadeOnDelete(false);
 
         }
     }
@@ -45,38 +50,68 @@ namespace PeriodAid.Models
         public DateTime download_at { get; set; }
 
     }
-
-    public partial class CRM_Contract_ReturnData
+    [Table("CRM_Department")]
+    public partial class CRM_Department
     {
-        public string code { get; set; }
+        public int Id { get; set; }
 
-        public CRM_Contract_Data data { get; set; }
+        [StringLength(32)]
+        public string name { get; set; }
+
+        public int level { get; set; }
+
+        public int? parent_id { get; set; }
+
+        public Boolean can_use { get; set; }
+
+        public int system_code { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CRM_User> CRM_User { get; set; }
     }
-
-    public partial class CRM_Contract_Data
+    [Table("CRM_Role")]
+    public partial class CRM_Role
     {
-        public List<CRM_ContractResult> contracts { get; set; }
+        public int Id { get; set; }
+
+        [StringLength(32)]
+        public string name { get; set; }
+
+        [StringLength(64)]
+        public string entity_grant_scope { get; set; }
+
+        public int system_code { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CRM_User> CRM_User { get; set; }
     }
-
-    public partial class CRM_ContractResult
+    [Table("CRM_User")]
+    public partial class CRM_User
     {
-        public string approve_status { get; set; }
+        public int Id { get; set; }
 
-        public int id { get; set; }
+        [StringLength(32)]
+        public string email { get; set; }
 
-        public int user_id { get; set; }
+        public DateTime? created_at { get; set; }
 
-        public string user_name { get; set; }
+        [StringLength(32)]
+        public string name { get; set; }
 
-        public int customer_id { get; set; }
+        [StringLength(16), RegularExpression("1[3|5|7|8|][0-9]{9}", ErrorMessage = "手机号码格式错误")]
+        public string phone { get; set; }
 
-        public string title { get; set; }
+        public int role_id { get; set; }
+        
+        public int department_id { get; set; }
 
-        public decimal total_amount { get; set; }
+        public int superior_id { get; set; }
 
-        public string status { get; set; }
+        public int system_code { get; set; }
 
-        public DateTime updated_at { get; set; }
+        public virtual CRM_Department CRM_Department { get; set; }
+
+        public virtual CRM_Role CRM_Role { get; set; }
     }
 
     [Table("CRM_Contract")]
@@ -166,65 +201,6 @@ namespace PeriodAid.Models
 
         public DateTime exception_at { get; set; }
     }
-
-    public class CRM_ContractDetail_ReturnData
-    {
-        public string code { get; set; }
-
-        public CRM_ContractDetail_Data data { get; set; }
-    }
-
-    public partial class CRM_ContractDetail_Data
-    {
-        public List<CRM_ContractDetail_CustomerProductList> product_assets_for_new_record { get; set; }
-
-        public int id { get; set; }
-
-        public string text_asset_1e30f4 { get; set; }
-        // 收件人
-        public string text_asset_73f972 { get; set; }
-        // 收货地址
-        public string text_asset_eb802b { get; set; }
-        // 电话
-        public string text_asset_da4211 { get; set; }
-        //回款金额
-        public decimal received_payments_amount { get; set; }
-        //回款类型
-        public string text_asset_c33e2b { get; set; }
-        // 物流备注
-        public string text_asset_7fd81a { get; set; }
-        // 备注
-        public string special_terms { get; set; }
-        // 店铺
-        public string text_asset_615f62_display { get; set; }
-        // 订单类型
-        public string category_mapped { get; set; }
-        // 支付类型
-        public string payment_type_mapped { get; set; }
-        // 创建者
-        //public List<contractsCreator> creator { get; set; }
-    }
-
-    //public partial class contractsCreator
-    //{
-    //    public int id { get; set; }
-
-    //    public string name { get; set; }
-    //}
-
-    public partial class CRM_ContractDetail_CustomerProductList
-    {
-        public int product_id { get; set; }
-
-        public string product_no { get; set; }
-
-        public int quantity { get; set; }
-
-        public decimal recommended_unit_price { get; set; }
-
-        public string name { get; set; }
-    }
-    
     [Table("CRM_ContractDetail")]
     public partial class CRM_ContractDetail
     {
@@ -280,6 +256,161 @@ namespace PeriodAid.Models
         public virtual ICollection<CRM_Contact> CRM_Contact { get; set; }
     }
 
+    [Table("CRM_Contact")]
+    public partial class CRM_Contact
+    {
+        public int Id { get; set; }
+
+        public int contact_id { get; set; }
+
+        [StringLength(64)]
+        public string contact_name { get; set; }
+
+        [StringLength(256)]
+        public string contact_address { get; set; }
+
+        [StringLength(64)]
+        public string contact_tel { get; set; }
+
+        public int customer_id { get; set; }
+        // 0 存在 -1删除
+        public int status { get; set; }
+
+        public virtual CRM_Customer CRM_Customer { get; set; }
+        [StringLength(64)]
+        public string province { get; set; }
+        [StringLength(64)]
+        public string city { get; set; }
+        [StringLength(128)]
+        public string district { get; set; }
+        [StringLength(32)]
+        public string zip { get; set; }
+    }
+    public partial class CRM_Contract_ReturnData
+    {
+        public string code { get; set; }
+
+        public CRM_Contract_Data data { get; set; }
+    }
+
+    public partial class CRM_Contract_Data
+    {
+        public List<CRM_ContractResult> contracts { get; set; }
+    }
+
+    public partial class CRM_ContractResult
+    {
+        public string approve_status { get; set; }
+
+        public int id { get; set; }
+
+        public int user_id { get; set; }
+
+        public string user_name { get; set; }
+
+        public int customer_id { get; set; }
+
+        public string title { get; set; }
+
+        public decimal total_amount { get; set; }
+
+        public string status { get; set; }
+
+        public DateTime updated_at { get; set; }
+    }
+
+    public class CRM_ContractDetail_ReturnData
+    {
+        public string code { get; set; }
+
+        public CRM_ContractDetail_Data data { get; set; }
+    }
+
+    public partial class CRM_ContractDetail_Data
+    {
+        public List<CRM_ContractDetail_CustomerProductList> product_assets_for_new_record { get; set; }
+
+        public int id { get; set; }
+
+        public string text_asset_1e30f4 { get; set; }
+        // 收件人
+        public string text_asset_73f972 { get; set; }
+        // 收货地址
+        public string text_asset_eb802b { get; set; }
+        // 电话
+        public string text_asset_da4211 { get; set; }
+        //回款金额
+        public decimal received_payments_amount { get; set; }
+        //回款类型
+        public string text_asset_c33e2b { get; set; }
+        // 物流备注
+        public string text_asset_7fd81a { get; set; }
+        // 备注
+        public string special_terms { get; set; }
+        // 店铺
+        public string text_asset_615f62_display { get; set; }
+        // 订单类型
+        public string category_mapped { get; set; }
+        // 支付类型
+        public string payment_type_mapped { get; set; }
+
+        public List<CRM_Department> options { get; set; }
+
+        public List<users> users { get; set; }
+        // 创建者
+        //public List<contractsCreator> creator { get; set; }
+    }
+
+    public partial class users
+    {
+        public int Id { get; set; }
+
+        public string email { get; set; }
+
+        public DateTime? created_at { get; set; }
+
+        public string name { get; set; }
+
+        public string phone { get; set; }
+
+        public int role_id { get; set; }
+
+        public int department_id { get; set; }
+
+        public int superior_id { get; set; }
+
+        public role_json role_json { get; set; }
+    }
+
+    public partial class role_json
+    {
+        public int Id { get; set; }
+
+        public string name { get; set; }
+
+        public string entity_grant_scope { get; set; }
+    }
+
+    //public partial class contractsCreator
+    //{
+    //    public int id { get; set; }
+
+    //    public string name { get; set; }
+    //}
+
+    public partial class CRM_ContractDetail_CustomerProductList
+    {
+        public int product_id { get; set; }
+
+        public string product_no { get; set; }
+
+        public int quantity { get; set; }
+
+        public decimal recommended_unit_price { get; set; }
+
+        public string name { get; set; }
+    }   
+   
     public partial class CRM_Customer_ReturnData
     {
         public string code { get; set; }
@@ -332,37 +463,6 @@ namespace PeriodAid.Models
         public string detail_address { get; set; }
 
         public string phone { get; set; }
-    }
-
-    [Table("CRM_Contact")]
-    public partial class CRM_Contact
-    {
-        public int Id { get; set; }
-
-        public int contact_id { get; set; }
-
-        [StringLength(64)]
-        public string contact_name { get; set; }
-
-        [StringLength(256)]
-        public string contact_address { get; set; }
-
-        [StringLength(64)]
-        public string contact_tel { get; set; }
-
-        public int customer_id { get; set; }
-        // 0 存在 -1删除
-        public int status { get; set; }
-
-        public virtual CRM_Customer CRM_Customer { get; set; }
-        [StringLength(64)]
-        public string province { get; set; }
-        [StringLength(64)]
-        public string city { get; set; }
-        [StringLength(128)]
-        public string district { get; set; }
-        [StringLength(32)]
-        public string zip { get; set; }
     }
 
     public class result_Data
