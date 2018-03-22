@@ -137,6 +137,9 @@ namespace PeriodAid.Models
         public string contract_title { get; set; }
 
         public double total_amount { get; set; }
+
+        public double unreceived_amount { get; set; }
+
         [StringLength(32)]
         public string contract_status { get; set; }
         [StringLength(256)]
@@ -311,6 +314,8 @@ namespace PeriodAid.Models
         public string title { get; set; }
 
         public decimal total_amount { get; set; }
+
+        public decimal unreceived_amount { get; set; }
 
         public string status { get; set; }
 

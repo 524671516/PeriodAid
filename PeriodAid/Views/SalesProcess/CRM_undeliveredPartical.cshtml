@@ -39,7 +39,7 @@
         <tr class="tm_list-item tm-show-task-modal border-blue" data-toggle="tooltip" data-placement="left" title="">
             <td>
                 <label class="checkbox-custom">
-                    <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
+                    <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-total_amount="@item.total_amount" data-unreceived_amount="@item.unreceived_amount" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
                 </label>
             </td>
             @*<td>@item.user_name</td>*@
@@ -160,7 +160,7 @@ else
             }
             else if (data_rstauts == 0 && data_astatus == 1) {
                 $(border_list[j]).parent().parent().addClass("border-red")
-                $(border_list[j]).parent().parent().attr("title", "订单未回款！")
+                $(border_list[j]).parent().parent().attr("title", "订单回款未完成，已回款：" + $(border_list[j]).attr("data-total_amount") + "，未回款：" + $(border_list[j]).attr("data-unreceived_amount")+"！")
             }
         }
         $('[data-toggle="tooltip"]').tooltip()
