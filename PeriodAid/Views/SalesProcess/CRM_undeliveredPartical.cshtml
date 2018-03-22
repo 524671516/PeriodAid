@@ -9,7 +9,7 @@
         padding:0;
     }
     .jconfirm-box-container{
-        top:-300px;
+        top:-180px;
         left:480px
     }
 </style>
@@ -21,7 +21,7 @@
                     <input type="checkbox" class="btn" id="checkbox-all">
                 </label>
             </th>
-            <th style="width:10%">负责人</th>
+            @*<th style="width:10%">负责人</th>*@
             <th style="width:10%">订单号</th>
             <th style="width:15%">合同名称</th>
             <th style="width:15%" id="money_view">总金额</th>
@@ -42,7 +42,7 @@
                     <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-rstauts="@item.received_payments_status" data-astatus="@item.address_status">
                 </label>
             </td>
-            <td>@item.user_name</td>
+            @*<td>@item.user_name</td>*@
             <td>
                 @item.platform_code
             </td>

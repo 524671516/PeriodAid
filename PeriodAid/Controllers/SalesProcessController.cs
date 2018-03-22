@@ -483,6 +483,11 @@ namespace PeriodAid.Controllers
                 }
                 crm_db.SaveChanges();
             }
+            else if (department_data.code == "100401")
+            {
+                RefreshUserToken();
+                return GetUserInfo();
+            }
             else {
                 return GetUserInfo();
             }
@@ -543,11 +548,15 @@ namespace PeriodAid.Controllers
                 }
                 crm_db.SaveChanges();
             }
-            else {
+            else if(user_data.code == "100401") {
+                RefreshUserToken();
+                return GetUserInfo();
+            }
+            else
+            {
                 return GetUserInfo();
             }
             return true;
-
         }
         [HttpPost]
         public JsonResult GetCrmInfo(string url_api)
@@ -575,6 +584,8 @@ namespace PeriodAid.Controllers
                         var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + r.data.contracts[i].id;
                         var contractId = r.data.contracts[i].id;
                         var customerId = r.data.contracts[i].customer_id;
+                        var userId = r.data.contracts[i].user_id;
+                        //var user_data = crm_db.CRM_User.SingleOrDefault(m => m.system_code == userId);
                         var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
                         var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
                         var total_amount = r.data.contracts[i].total_amount;
@@ -583,7 +594,7 @@ namespace PeriodAid.Controllers
                             //new
                             check_data = new CRM_Contract();
                             check_data.contract_id = r.data.contracts[i].id;
-                            check_data.user_id = r.data.contracts[i].user_id;
+                            check_data.user_id = userId;
                             check_data.user_name = r.data.contracts[i].user_name;
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
@@ -607,7 +618,7 @@ namespace PeriodAid.Controllers
                         {
                             // update
                             check_data.contract_id = r.data.contracts[i].id;
-                            check_data.user_id = r.data.contracts[i].user_id;
+                            check_data.user_id = userId;
                             check_data.user_name = r.data.contracts[i].user_name;
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
@@ -852,7 +863,8 @@ namespace PeriodAid.Controllers
                                            select m).ToPagedList(_page, 20);
                     return PartialView(undeliveredData);
                 }
-            } else {
+            }
+            else {
                 var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.UserName);
                 var employee = from m in crm_db.CRM_User
                                where m.department_id == crm_user.department_id
@@ -883,8 +895,6 @@ namespace PeriodAid.Controllers
                     return PartialView(datalist);
                 }
             }
-            
-
         }
         [Authorize(Roles = "CRM")]
         public ActionResult ContractDetail_show(int c_id)
@@ -917,11 +927,13 @@ namespace PeriodAid.Controllers
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
+
         public Employee getEmployee(string username)
         {
             var user = e_db.Employee.SingleOrDefault(m => m.UserName == username);
             return user;
         }
+
         private static string AppId = "130412";
         private static string AppSecret = "26d2e926f42a4f2181dd7d1b7f7d55c0";
         private static string SessionKey = "8a503b3d9d0d4119be2868cc69a8ef5a";

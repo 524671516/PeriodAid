@@ -34,7 +34,7 @@ namespace PeriodAid.Models
             modelBuilder.Entity<CRM_Contract>().HasMany(m => m.CRM_ContractDetail).WithRequired(m => m.CRM_Contract).HasForeignKey(m => m.contract_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Department>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Department).HasForeignKey(m => m.department_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Role>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Role).HasForeignKey(m => m.role_id).WillCascadeOnDelete(false);
-
+            
         }
     }
 
@@ -112,6 +112,8 @@ namespace PeriodAid.Models
         public virtual CRM_Department CRM_Department { get; set; }
 
         public virtual CRM_Role CRM_Role { get; set; }
+        
+
     }
 
     [Table("CRM_Contract")]
@@ -126,8 +128,7 @@ namespace PeriodAid.Models
 
         public int user_id { get; set; }
 
-        [StringLength(64)]
-        public string user_name { get; set; }
+        public string user_name{ get; set; }
 
         public int customer_id { get; set; }
 
@@ -390,14 +391,7 @@ namespace PeriodAid.Models
 
         public string entity_grant_scope { get; set; }
     }
-
-    //public partial class contractsCreator
-    //{
-    //    public int id { get; set; }
-
-    //    public string name { get; set; }
-    //}
-
+    
     public partial class CRM_ContractDetail_CustomerProductList
     {
         public int product_id { get; set; }
@@ -515,21 +509,7 @@ namespace PeriodAid.Models
         public static string delete = "-1";
         
     }
-
-    //public static class shopList
-    //{
-    //    //// 线下订单
-    //    //public static string offline = "006";
-    //    //// 线下零售/团购
-    //    //public static string retail = "线下零售/团购";
-    //    //// 线下展会/促销物料 
-    //    //public static string exhibition = "线下展会/促销物料";
-    //    //// 线上其他渠道 
-    //    //public static string online_other = "线上其他渠道";
-    //    //// 线上自营渠道
-    //    //public static string online_selfSupport = "自营渠道";
-    //}
-
+    
     public partial class orders_Result
     {
         public bool success { get; set; }//响应成功/响应失败
