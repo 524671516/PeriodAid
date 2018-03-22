@@ -34,6 +34,7 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private SalesProcessModel _db;
+        private ProjectSchemeModels e_db;
         private IKCRMDATAModel crm_db;
         private ThreeLevelAddressModel address_db;
         private ProjectSchemeModels projrct_db;
@@ -44,6 +45,7 @@ namespace PeriodAid.Controllers
             crm_db = new IKCRMDATAModel();
             address_db = new ThreeLevelAddressModel();
             projrct_db = new ProjectSchemeModels();
+            e_db = new ProjectSchemeModels();
         }
         public ActionResult Index()
         {
@@ -447,8 +449,111 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
         [HttpPost]
+        private bool GetUserInfo()
+        {
+            //部门
+            string get_department = "https://api.ikcrm.com/api/v2/user/department_list?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            CRM_ContractDetail_ReturnData department_data = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(Get_Request(get_department));
+            if (department_data.code == "0")
+            {
+                foreach (var item in department_data.data.options)
+                {
+                    var department = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == item.Id);
+                    if (department == null)
+                    {
+                        CRM_Department newdepartment = new CRM_Department();
+                        newdepartment.system_code = item.Id;
+                        newdepartment.name = item.name;
+                        newdepartment.level = item.level;
+                        newdepartment.parent_id = item.parent_id;
+                        newdepartment.can_use = item.can_use;
+                        crm_db.CRM_Department.Add(newdepartment);
+                        crm_db.SaveChanges();
+                    }
+                    else
+                    {
+                        department.system_code = item.Id;
+                        department.name = item.name;
+                        department.level = item.level;
+                        department.parent_id = item.parent_id;
+                        department.can_use = item.can_use;
+                        crm_db.Entry(department).State = System.Data.Entity.EntityState.Modified;
+                        crm_db.SaveChanges();
+                    }
+                }
+                crm_db.SaveChanges();
+            }
+            else {
+                return GetUserInfo();
+            }
+            //角色和用户
+            string get_user = "https://api.ikcrm.com/api/v2/user/list?per_page=" + UserInfo.Count + "&sort=superior_id&order=asc&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            var res = Get_Request(get_user);
+            CRM_ContractDetail_ReturnData user_data = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res);
+            if (user_data.code == "0")
+            {
+                foreach (var item in user_data.data.users) {
+                    //角色
+                    var role = crm_db.CRM_Role.SingleOrDefault(m => m.system_code == item.role_json.Id);
+                    if (role == null)
+                    {
+                        CRM_Role newrole = new CRM_Role();
+                        newrole.name = item.role_json.name;
+                        newrole.entity_grant_scope = item.role_json.entity_grant_scope;
+                        newrole.system_code = item.role_json.Id;
+                        crm_db.CRM_Role.Add(newrole);
+                    }
+                    else
+                    {
+                        role.name = item.role_json.name;
+                        role.entity_grant_scope = item.role_json.entity_grant_scope;
+                        role.system_code = item.role_json.Id;
+                        crm_db.Entry(role).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    crm_db.SaveChanges();
+                    //用户
+                    var user = crm_db.CRM_User.SingleOrDefault(m => m.email == item.email);
+                    if (user == null)
+                    {
+                        CRM_User newuser = new CRM_User();
+                        newuser.system_code = item.Id;
+                        newuser.email = item.email;
+                        newuser.created_at = item.created_at;
+                        newuser.name = item.name;
+                        newuser.phone = item.phone;
+                        newuser.role_id = crm_db.CRM_Role.SingleOrDefault(m => m.system_code == item.role_id).Id;
+                        var superior = crm_db.CRM_User.SingleOrDefault(m => m.system_code == item.superior_id);
+                        newuser.superior_id = superior != null ? superior.Id : 0;
+                        newuser.department_id = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == item.department_id).Id;
+                        crm_db.CRM_User.Add(newuser);
+                    }
+                    else
+                    {
+                        user.system_code = item.Id;
+                        user.email = item.email;
+                        user.created_at = item.created_at;
+                        user.name = item.name;
+                        user.phone = item.phone;
+                        user.role_id = crm_db.CRM_Role.SingleOrDefault(m => m.system_code == item.role_id).Id;
+                        var superior = crm_db.CRM_User.SingleOrDefault(m => m.system_code == item.superior_id);
+                        user.superior_id = superior != null ? superior.Id : 0;
+                        user.department_id = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == item.department_id).Id;
+                        crm_db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    }
+                }
+                crm_db.SaveChanges();
+            }
+            else {
+                return GetUserInfo();
+            }
+            return true;
+
+        }
+        [HttpPost]
         public JsonResult GetCrmInfo(string url_api)
         {
+            //刷新组织架构和使用用户
+            //GetUserInfo();
             var count = Get_Count(url_api);
             var page = count / UserInfo.Count + 1;
             List<int> contractlist = new List<int>();
@@ -728,21 +833,55 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "CRM")]
         public ActionResult CRM_undeliveredPartical(string status,int? page,string shopCode)
         {
+            var user = getEmployee(User.Identity.Name);
             int _page = page ?? 1;
-            if(shopCode == "0")
-            {
-                var undeliveredData = (from m in crm_db.CRM_Contract
-                                       where m.contract_status == status
-                                       orderby m.edit_time descending
-                                       select m).ToPagedList(_page, 20);
-                return PartialView(undeliveredData);
-            }else
-            {
-                var undeliveredData = (from m in crm_db.CRM_Contract
-                                       where m.contract_status == status && m.shop_code == shopCode
-                                       orderby m.edit_time descending
-                                       select m).ToPagedList(_page, 20);
-                return PartialView(undeliveredData);
+            if (user.Type == 1) {
+                if (shopCode == "0")
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+                else
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.shop_code == shopCode
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+            } else {
+                var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.UserName);
+                var employee = from m in crm_db.CRM_User
+                               where m.department_id == crm_user.department_id
+                               select m;
+                List<CRM_Contract> datalist = new List<CRM_Contract>();
+                if (shopCode == "0")
+                {
+                    foreach (var emp in employee)
+                    {
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               where m.contract_status == status && m.user_id == emp.system_code
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        datalist.AddRange(undeliveredData);
+                    }
+                    return PartialView(datalist.ToPagedList(_page, 20));
+                }
+                else
+                {
+                    foreach (var emp in employee)
+                    {
+                        var undelivereddata = (from m in crm_db.CRM_Contract
+                                               where m.contract_status == status && m.shop_code == shopCode && m.user_id == emp.system_code
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        datalist.AddRange(undelivereddata.ToPagedList(_page, 20));
+                    }
+                    return PartialView(datalist);
+                }
             }
             
 
@@ -778,7 +917,11 @@ namespace PeriodAid.Controllers
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
-
+        public Employee getEmployee(string username)
+        {
+            var user = e_db.Employee.SingleOrDefault(m => m.UserName == username);
+            return user;
+        }
         private static string AppId = "130412";
         private static string AppSecret = "26d2e926f42a4f2181dd7d1b7f7d55c0";
         private static string SessionKey = "8a503b3d9d0d4119be2868cc69a8ef5a";
