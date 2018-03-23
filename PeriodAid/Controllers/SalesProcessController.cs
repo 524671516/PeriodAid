@@ -609,7 +609,7 @@ namespace PeriodAid.Controllers
                 }
                 else if (r.code == "100401")
                 {
-                    RefreshUserToken();
+                    await RefreshUserToken();
                     return await GetCrmInfo(url_api);
                 }
                 else
