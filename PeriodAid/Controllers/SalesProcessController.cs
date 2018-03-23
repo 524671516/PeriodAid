@@ -83,12 +83,12 @@ namespace PeriodAid.Controllers
                 int days = ts.Days;
                 if (days >= 1)
                 {
-                    return await RefreshUserToken();
+                    return await  RefreshUserToken();
                 }
             }
             catch (Exception)
             {
-                return await RefreshUserToken();
+                return await  RefreshUserToken();
             }
             return token_time.Value;
         }
@@ -135,7 +135,7 @@ namespace PeriodAid.Controllers
                     token_time.download_at = DateTime.Now;
                     crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
                 }
-                await crm_db.SaveChangesAsync();
+                crm_db.SaveChanges();
             }
             else
             {
@@ -186,15 +186,15 @@ namespace PeriodAid.Controllers
                 }
                 else if (r.code == "100401")
                 {
-                    RefreshUserToken();
+                    await RefreshUserToken();
                     return await Get_Count(url_api);
                 }
-                return 100;
             }
             catch (Exception)
             {
                 return await Get_Count(url_api);
             }
+            return 100;
         }
         [HttpPost]
         public async Task<JsonResult> GetCustomer(string url_api)
@@ -303,6 +303,7 @@ namespace PeriodAid.Controllers
                                     check_contact.status = 0;
                                     check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
                                     crm_db.CRM_Contact.Add(check_contact);
+                                    await crm_db.SaveChangesAsync();
                                 }
                             }
                         }
@@ -366,6 +367,7 @@ namespace PeriodAid.Controllers
                                     check_contact.status = 0;
                                     crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
                                 }
+                                await crm_db.SaveChangesAsync();
                             }
                         }
                     }
@@ -385,7 +387,6 @@ namespace PeriodAid.Controllers
                         check_data.status = -1;
                         crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                     }
-                    
                 }
                 else if (r.code == "100401")
                 {
@@ -394,16 +395,9 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
-                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
-                    Thread.Sleep(1000);
                     try_times++;
-                    if (try_times >= 10)
+                    if (try_times >= 5)
                     {
-                        logs.type = "customer";
-                        logs.exception = "[customer]获取失败";
-                        logs.exception_at = DateTime.Now;
-                        crm_db.CRM_ExceptionLogs.Add(logs);
-                        crm_db.SaveChanges();
                         try_times = 0;
                         return Json(new { result = "FAIL" });
                     }
@@ -533,13 +527,6 @@ namespace PeriodAid.Controllers
             var page = count.Result / UserInfo.Count + 1;
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
-            var CRM_Contract = from m in crm_db.CRM_Contract
-                               where m.contract_status == UserInfo.status_unsend && m.contract_status != UserInfo.delete
-                               select m;
-            foreach (var crm in CRM_Contract)
-            {
-                CRM_Contractlist.Add(crm.contract_id);
-            }
             for (int x = 1; x <= page; x++)
             {
                 string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status="+UserInfo.status_unsend + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -547,6 +534,13 @@ namespace PeriodAid.Controllers
                 CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res.Result);
                 if (r.code == "0")
                 {
+                    var CRM_Contract = from m in crm_db.CRM_Contract
+                                       where m.contract_status == UserInfo.status_unsend && m.contract_status != UserInfo.delete
+                                       select m;
+                    foreach (var crm in CRM_Contract)
+                    {
+                        CRM_Contractlist.Add(crm.contract_id);
+                    }
                     for (int i = 0; i < r.data.contracts.Count(); i++)
                     {
                         var contractId = r.data.contracts[i].id;
@@ -560,7 +554,7 @@ namespace PeriodAid.Controllers
                         {
                             //new
                             check_data = new CRM_Contract();
-                            check_data.contract_id = r.data.contracts[i].id;
+                            check_data.contract_id = contractId;
                             check_data.user_id = userId;
                             check_data.user_name = r.data.contracts[i].user_name; 
                             check_data.customer_id = check_customer.Id;
@@ -583,7 +577,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             // update
-                            check_data.contract_id = r.data.contracts[i].id;
+                            check_data.contract_id = contractId;
                             check_data.user_id = userId;
                             check_data.user_name = r.data.contracts[i].user_name;
                             check_data.customer_id = check_customer.Id;
@@ -614,6 +608,12 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
+                    try_times++;
+                    if (try_times >= 5)
+                    {
+                        try_times = 0;
+                        return Json(new { result = "FAIL" });
+                    }
                     return await GetCrmInfo(url_api);
                 }
             }
@@ -730,21 +730,28 @@ namespace PeriodAid.Controllers
             }
             else if (r.code == "100401")
             {
-                RefreshUserToken();
+                await RefreshUserToken();
                 return await getSingleCrmDetailInfo(contract_id);
             }
             else
             {
+                try_times++;
+                if (try_times >= 5)
+                {
+                    try_times = 0;
+                    return "FAIL";
+                }
                 return await getSingleCrmDetailInfo(contract_id);
+
             }
             await crm_db.SaveChangesAsync();
-            return "Success";
+            return "SUCCESS";
         }
 
-        private int UpdateCRM(int cid, string contract_status, string express_information, string express_remark)
+        private async Task<int> UpdateCRM(int cid, string contract_status, string express_information, string express_remark)
         {
             var contracts = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cid);
-            string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "PUT";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -774,7 +781,7 @@ namespace PeriodAid.Controllers
             }
             catch (Exception)
             {
-                return UpdateCRM(cid, contract_status, express_information, express_remark);
+                return await UpdateCRM(cid, contract_status, express_information, express_remark);
             }
             CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(retString);
             if (r.code == "0")
@@ -783,8 +790,8 @@ namespace PeriodAid.Controllers
             }
             else if (r.code == "100401")
             {
-                RefreshUserToken();
-                return UpdateCRM(cid, contract_status, express_information, express_remark);
+                await RefreshUserToken();
+                return await UpdateCRM(cid, contract_status, express_information, express_remark);
             }
             return 0;
         }
@@ -1088,7 +1095,7 @@ namespace PeriodAid.Controllers
                                 errorList.Add(contract.platform_code + " " + contract.contract_title);
                             }
                             var updatcrm = UpdateCRM(cId, contract.contract_status, contract.express_information, contract.express_remark);
-                            if (updatcrm != 1)
+                            if (updatcrm.Result != 1)
                             {
                                 partialList.Add(contract.platform_code +" "+ contract.contract_title);
                             }
@@ -1186,7 +1193,7 @@ namespace PeriodAid.Controllers
                     successList.Add(contract.platform_code + " " + contract.contract_title);
                     crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                     var updatcrm = UpdateCRM(_Cid, contract.contract_status, contract.express_information, contract.express_remark);
-                    if (updatcrm != 1)
+                    if (updatcrm.Result != 1)
                     {
                         partialList.Add(contract.platform_code+" "+ contract.contract_title);
                     }
@@ -1200,6 +1207,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" , successlist = successList, faillist = failList, partiallist = partialList });
         }
 
+        
         public void checkAddress(string full_address, int contract_id)
         {
             var address_arry = full_address.ToCharArray();
