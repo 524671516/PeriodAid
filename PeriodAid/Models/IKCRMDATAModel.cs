@@ -148,7 +148,7 @@ namespace PeriodAid.Models
         [StringLength(64)]
         public string contract_type { get; set; }
 
-        public DateTime? updated_at { get; set; }
+        public DateTime? created_at { get; set; }
 
         public DateTime? edit_time { get; set; }
         [StringLength(256)]
@@ -319,7 +319,6 @@ namespace PeriodAid.Models
 
         public string status { get; set; }
 
-        public DateTime updated_at { get; set; }
     }
 
     public class CRM_ContractDetail_ReturnData
@@ -360,6 +359,8 @@ namespace PeriodAid.Models
         public List<CRM_Department> options { get; set; }
 
         public List<users> users { get; set; }
+
+        public DateTime created_at { get; set; }
         // 创建者
         //public List<contractsCreator> creator { get; set; }
     }

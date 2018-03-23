@@ -578,7 +578,6 @@ namespace PeriodAid.Controllers
                 {
                     for (int i = 0; i < r.data.contracts.Count(); i++)
                     {
-                        var platform_code = "IK" + DateTime.Now.ToString("yyyyMMddHHmmss") + r.data.contracts[i].id;
                         var contractId = r.data.contracts[i].id;
                         var customerId = r.data.contracts[i].customer_id;
                         var userId = r.data.contracts[i].user_id;
@@ -598,8 +597,6 @@ namespace PeriodAid.Controllers
                             check_data.total_amount = (double)total_amount;
                             check_data.unreceived_amount = (double)unreceived_amount;
                             check_data.contract_status = r.data.contracts[i].status;
-                            check_data.updated_at = r.data.contracts[i].updated_at;
-                            check_data.platform_code = platform_code;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
@@ -622,7 +619,6 @@ namespace PeriodAid.Controllers
                             check_data.contract_title = r.data.contracts[i].title;
                             check_data.total_amount = (double)total_amount;
                             check_data.contract_status = r.data.contracts[i].status;
-                            check_data.updated_at = r.data.contracts[i].updated_at;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
@@ -637,7 +633,7 @@ namespace PeriodAid.Controllers
                         }
                         contractlist.Add(r.data.contracts[i].id);
                         await crm_db.SaveChangesAsync();
-                        var detail = getSingleCrmDetailInfo(r.data.contracts[i].id);
+                        var detail = await getSingleCrmDetailInfo(r.data.contracts[i].id);
                     }
                 }
                 else if (r.code == "100401")
@@ -757,6 +753,8 @@ namespace PeriodAid.Controllers
                 contract.receiver_tel = r.data.text_asset_da4211;
                 contract.express_remark = r.data.text_asset_7fd81a;
                 contract.contract_remark = r.data.special_terms;
+                contract.created_at = r.data.created_at;
+                contract.platform_code = "IK" + r.data.created_at.ToString("yyyyMMddHHmmss") + contract_id;
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
                 checkAddress(r.data.text_asset_eb802b, contract.id);
             }
@@ -769,6 +767,7 @@ namespace PeriodAid.Controllers
             {
                 result = await getSingleCrmDetailInfo(contract_id);
             }
+            await crm_db.SaveChangesAsync();
             return "Success";
         }
 
