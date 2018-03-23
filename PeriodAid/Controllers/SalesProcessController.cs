@@ -73,7 +73,7 @@ namespace PeriodAid.Controllers
             return postStr;
         }
         // 获取当前TOKEN
-        private string getUserToken()
+        private async Task<string> getUserToken()
         {
             // 取数据库
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Key == "CRM_UserToken");
@@ -83,17 +83,17 @@ namespace PeriodAid.Controllers
                 int days = ts.Days;
                 if (days >= 1)
                 {
-                    return RefreshUserToken();
+                    return await RefreshUserToken();
                 }
             }
             catch (Exception)
             {
-                return RefreshUserToken();
+                return await RefreshUserToken();
             }
             return token_time.Value;
         }
 
-        private string RefreshUserToken()
+        private async Task<string> RefreshUserToken()
         {
             // 远程获取
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Key == "CRM_UserToken");
@@ -135,12 +135,12 @@ namespace PeriodAid.Controllers
                     token_time.download_at = DateTime.Now;
                     crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
                 }
-                crm_db.SaveChanges();
+                await crm_db.SaveChangesAsync();
             }
             else
             {
                 Thread.Sleep(1000);
-                return RefreshUserToken();
+                return await RefreshUserToken();
             }
             return token_time.Value;
         }
@@ -168,7 +168,7 @@ namespace PeriodAid.Controllers
 
         private async Task<int> Get_Count(string url_api)
         {
-            string url = "https://api.ikcrm.com" + url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com" + url_api + "?per_page=" + UserInfo.Count + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -197,7 +197,7 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost]
-        public JsonResult GetCustomer(string url_api)
+        public async Task<JsonResult> GetCustomer(string url_api)
         {
             var count = Get_Count(url_api);
             var page = count.Result / UserInfo.Count + 1;
@@ -221,7 +221,7 @@ namespace PeriodAid.Controllers
             }
             for (int x = 1; x <= page; x++)
             {
-                string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
                 var res = Get_Request(url);
                 CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(res.Result);
                 if (r.code == "0")
@@ -230,30 +230,27 @@ namespace PeriodAid.Controllers
                     {
                         var Cid = r.data.customers[i].id;
                         string customersAddress = r.data.customers[i].address.region_info;
-                        int indexAddress = 0;
-                        int indexprovince = 0;
-                        string customersAddressStr = "";
-                        string customersProvinceStr = "";
-                        string province = "";
-                        string city = "";
-                        string district = "";
-                        if (customersAddress == null)
-                        {
-                        }
-                        else if (customersAddress.Count() > 3)
-                        {
-                            customersAddressStr = customersAddress.Remove(0, 3);
-                            indexAddress = customersAddressStr.IndexOf(" ");
-                            province = customersAddressStr.Substring(0, indexAddress);
-                            customersProvinceStr = customersAddressStr.Remove(0, indexAddress + 1);
-                            indexprovince = customersProvinceStr.IndexOf(" ");
-                            city = customersProvinceStr.Substring(0, indexprovince);
-                            district = customersAddressStr.Replace(" ", "-");
-                        }
-                        else
-                        {
-                            customersAddressStr = customersAddress;
-                        }
+                        //int indexAddress = 0;
+                        //int indexprovince = 0;
+                        //string customersAddressStr = "";
+                        //string customersProvinceStr = "";
+                        //string province = "";
+                        //string city = "";
+                        //string district = "";
+                        //if (customersAddress.Count() > 3)
+                        //{
+                        //    customersAddressStr = customersAddress.Remove(0, 3);
+                        //    indexAddress = customersAddressStr.IndexOf(" ");
+                        //    province = customersAddressStr.Substring(0, indexAddress);
+                        //    customersProvinceStr = customersAddressStr.Remove(0, indexAddress + 1);
+                        //    indexprovince = customersProvinceStr.IndexOf(" ");
+                        //    city = customersProvinceStr.Substring(0, indexprovince);
+                        //    district = customersAddressStr.Replace(" ", "-");
+                        //}
+                        //else
+                        //{
+                        //    customersAddressStr = customersAddress;
+                        //}
                         customerlist.Add(r.data.customers[i].id);
                         var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
                         if (check_customer == null)
@@ -262,58 +259,47 @@ namespace PeriodAid.Controllers
                             check_customer = new CRM_Customer();
                             check_customer.customer_id = Cid;
                             check_customer.customer_name = r.data.customers[i].name;
-                            check_customer.customer_address = customersAddressStr + " " + r.data.customers[i].address.detail_address;
+                            check_customer.customer_address = customersAddress;
                             check_customer.customer_tel = r.data.customers[i].address.tel;
-                            check_customer.zip = "200001";
-                            check_customer.province = province;
-                            check_customer.city = city;
-                            check_customer.district = district;
                             check_customer.status = 0;
                             check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
                             crm_db.CRM_Customer.Add(check_customer);
-                            crm_db.SaveChanges();
+                            await crm_db.SaveChangesAsync();
                             for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                             {
                                 var ctId = r.data.customers[i].contacts[j].address.addressable_id;
                                 var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
                                 string ctAddress = r.data.customers[i].contacts[j].address.region_info;
-                                int indexCtAddress = 0;
-                                int indexCtProvince = 0;
-                                string CtAddressStr = "";
-                                string CtProvinceStr = "";
-                                string Ctprovince = "";
-                                string Ctcity = "";
-                                string Ctdistrict = "";
-                                if (ctAddress == null)
-                                {
-                                }
-                                else if (ctAddress.Count() > 3)
-                                {
-                                    CtAddressStr = ctAddress.Remove(0, 3);
-                                    indexCtAddress = CtAddressStr.IndexOf(" ");
-                                    Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
-                                    CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
-                                    indexCtProvince = CtProvinceStr.IndexOf(" ");
-                                    Ctcity = CtProvinceStr.Substring(0, indexprovince);
-                                    Ctdistrict = CtAddressStr.Replace(" ", "-");
-                                }
-                                else
-                                {
-                                    CtAddressStr = ctAddress;
-                                }
+                                //int indexCtAddress = 0;
+                                //int indexCtProvince = 0;
+                                //string CtAddressStr = "";
+                                //string CtProvinceStr = "";
+                                //string Ctprovince = "";
+                                //string Ctcity = "";
+                                //string Ctdistrict = "";
+                                //if (ctAddress.Count() > 3)
+                                //{
+                                //    CtAddressStr = ctAddress.Remove(0, 3);
+                                //    indexCtAddress = CtAddressStr.IndexOf(" ");
+                                //    Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
+                                //    CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
+                                //    indexCtProvince = CtProvinceStr.IndexOf(" ");
+                                //    Ctcity = CtProvinceStr.Substring(0, indexprovince);
+                                //    Ctdistrict = CtAddressStr.Replace(" ", "-");
+                                //}
+                                //else
+                                //{
+                                //    CtAddressStr = ctAddress;
+                                //}
                                 if (check_contact == null)
                                 {
                                     // new
                                     check_contact = new CRM_Contact();
                                     check_contact.contact_id = ctId;
                                     check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                    check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
+                                    check_contact.contact_address = ctAddress;
                                     check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                     check_contact.customer_id = check_customer.Id;
-                                    check_contact.province = Ctprovince;
-                                    check_contact.city = Ctcity;
-                                    check_contact.district = Ctdistrict;
-                                    check_contact.zip = "200001";
                                     check_contact.status = 0;
                                     check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
                                     crm_db.CRM_Contact.Add(check_contact);
@@ -325,12 +311,8 @@ namespace PeriodAid.Controllers
                             // update
                             check_customer.customer_id = Cid;
                             check_customer.customer_name = r.data.customers[i].name;
-                            check_customer.customer_address = customersAddressStr + " " + r.data.customers[i].address.detail_address;
+                            check_customer.customer_address = customersAddress;
                             check_customer.customer_tel = r.data.customers[i].address.tel;
-                            check_customer.zip = "200001";
-                            check_customer.province = province;
-                            check_customer.city = city;
-                            check_customer.district = district;
                             check_customer.status = 0;
                             check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
                             crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
@@ -339,30 +321,27 @@ namespace PeriodAid.Controllers
                                 var ctId = r.data.customers[i].contacts[j].address.addressable_id;
                                 var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
                                 string ctAddress = r.data.customers[i].contacts[j].address.region_info;
-                                int indexCtAddress = 0;
-                                int indexCtProvince = 0;
-                                string CtAddressStr = "";
-                                string CtProvinceStr = "";
-                                string Ctprovince = "";
-                                string Ctcity = "";
-                                string Ctdistrict = "";
-                                if (ctAddress == null)
-                                {
-                                }
-                                else if (ctAddress.Count() > 3)
-                                {
-                                    CtAddressStr = ctAddress.Remove(0, 3);
-                                    indexCtAddress = CtAddressStr.IndexOf(" ");
-                                    Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
-                                    CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
-                                    indexCtProvince = CtProvinceStr.IndexOf(" ");
-                                    Ctcity = CtProvinceStr.Substring(0, indexprovince);
-                                    Ctdistrict = CtAddressStr.Replace(" ", "-");
-                                }
-                                else
-                                {
-                                    CtAddressStr = ctAddress;
-                                }
+                                //int indexCtAddress = 0;
+                                //int indexCtProvince = 0;
+                                //string CtAddressStr = "";
+                                //string CtProvinceStr = "";
+                                //string Ctprovince = "";
+                                //string Ctcity = "";
+                                //string Ctdistrict = "";
+                                //if (ctAddress.Count() > 3)
+                                //{
+                                //    CtAddressStr = ctAddress.Remove(0, 3);
+                                //    indexCtAddress = CtAddressStr.IndexOf(" ");
+                                //    Ctprovince = CtAddressStr.Substring(0, indexCtAddress);
+                                //    CtProvinceStr = CtAddressStr.Remove(0, indexCtAddress + 1);
+                                //    indexCtProvince = CtProvinceStr.IndexOf(" ");
+                                //    Ctcity = CtProvinceStr.Substring(0, indexprovince);
+                                //    Ctdistrict = CtAddressStr.Replace(" ", "-");
+                                //}
+                                //else
+                                //{
+                                //    CtAddressStr = ctAddress;
+                                //}
                                 contactlist.Add(ctId);
                                 if (check_contact == null)
                                 {
@@ -370,13 +349,9 @@ namespace PeriodAid.Controllers
                                     check_contact = new CRM_Contact();
                                     check_contact.contact_id = ctId;
                                     check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                    check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
+                                    check_contact.contact_address = ctAddress;
                                     check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                     check_contact.customer_id = check_customer.Id;
-                                    check_contact.province = Ctprovince;
-                                    check_contact.city = Ctcity;
-                                    check_contact.district = Ctdistrict;
-                                    check_contact.zip = "200001";
                                     check_contact.status = 0;
                                     crm_db.CRM_Contact.Add(check_contact);
                                 }
@@ -385,13 +360,9 @@ namespace PeriodAid.Controllers
                                     //update
                                     check_contact.contact_id = ctId;
                                     check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                    check_contact.contact_address = CtAddressStr + " " + r.data.customers[i].contacts[j].address.detail_address;
+                                    check_contact.contact_address = ctAddress;
                                     check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
                                     check_contact.customer_id = check_customer.Id;
-                                    check_contact.province = Ctprovince;
-                                    check_contact.city = Ctcity;
-                                    check_contact.district = Ctdistrict;
-                                    check_contact.zip = "200001";
                                     check_contact.status = 0;
                                     crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
                                 }
@@ -418,8 +389,8 @@ namespace PeriodAid.Controllers
                 }
                 else if (r.code == "100401")
                 {
-                    RefreshUserToken();
-                    return GetCustomer(url_api);
+                    await RefreshUserToken();
+                    return await GetCustomer(url_api);
                 }
                 else
                 {
@@ -436,7 +407,7 @@ namespace PeriodAid.Controllers
                         try_times = 0;
                         return Json(new { result = "FAIL" });
                     }
-                    return GetCustomer(url_api);
+                    return await GetCustomer(url_api);
                 }
             }
             crm_db.SaveChanges();
@@ -571,7 +542,7 @@ namespace PeriodAid.Controllers
             }
             for (int x = 1; x <= page; x++)
             {
-                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status="+UserInfo.status_unsend + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status="+UserInfo.status_unsend + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
                 var res = Get_Request(url);
                 CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res.Result);
                 if (r.code == "0")
@@ -633,7 +604,7 @@ namespace PeriodAid.Controllers
                         }
                         contractlist.Add(r.data.contracts[i].id);
                         await crm_db.SaveChangesAsync();
-                        var detail = await getSingleCrmDetailInfo(r.data.contracts[i].id);
+                        await getSingleCrmDetailInfo(r.data.contracts[i].id);
                     }
                 }
                 else if (r.code == "100401")
@@ -681,8 +652,7 @@ namespace PeriodAid.Controllers
         public async Task<string> getSingleCrmDetailInfo(int contract_id)
         {
             var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contract_id);
-            var result = "";
-            string url = "https://api.ikcrm.com/api/v2/contracts/" + contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + contract_id + "?user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
             var res = Get_Request(url);
             CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res.Result);
             if (r.code == "0")
@@ -761,11 +731,11 @@ namespace PeriodAid.Controllers
             else if (r.code == "100401")
             {
                 RefreshUserToken();
-                result = await getSingleCrmDetailInfo(contract_id);
+                return await getSingleCrmDetailInfo(contract_id);
             }
             else
             {
-                result = await getSingleCrmDetailInfo(contract_id);
+                return await getSingleCrmDetailInfo(contract_id);
             }
             await crm_db.SaveChangesAsync();
             return "Success";
@@ -1175,7 +1145,7 @@ namespace PeriodAid.Controllers
                     receiver_city = contract.receiver_city,
                     receiver_district = contract.receiver_district,
                     receiver_mobile = contract.receiver_tel,
-                    receiver_zip = contract.CRM_Customer.zip,
+                    receiver_zip = "200000",
                     receiver_address = contract.receiver_address,
                     buyer_memo = contract.contract_remark,
                     seller_memo_late = contract.contract_title,

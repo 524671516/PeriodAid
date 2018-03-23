@@ -239,14 +239,14 @@ namespace PeriodAid.Models
         public string customer_address { get; set; }
         [StringLength(64)]
         public string customer_tel { get; set; }
-        [StringLength(64)]
-        public string province { get; set; }
-        [StringLength(64)]
-        public string city { get; set; }
-        [StringLength(128)]
-        public string district { get; set; }
-        [StringLength(32)]
-        public string zip { get; set; }
+        //[StringLength(64)]
+        //public string province { get; set; }
+        //[StringLength(64)]
+        //public string city { get; set; }
+        //[StringLength(128)]
+        //public string district { get; set; }
+        //[StringLength(32)]
+        //public string zip { get; set; }
         // 0 正常 -1删除
         public int status { get; set; }
 
@@ -278,14 +278,14 @@ namespace PeriodAid.Models
         public int status { get; set; }
 
         public virtual CRM_Customer CRM_Customer { get; set; }
-        [StringLength(64)]
-        public string province { get; set; }
-        [StringLength(64)]
-        public string city { get; set; }
-        [StringLength(128)]
-        public string district { get; set; }
-        [StringLength(32)]
-        public string zip { get; set; }
+        //[StringLength(64)]
+        //public string province { get; set; }
+        //[StringLength(64)]
+        //public string city { get; set; }
+        //[StringLength(128)]
+        //public string district { get; set; }
+        //[StringLength(32)]
+        //public string zip { get; set; }
     }
     public partial class CRM_Contract_ReturnData
     {
