@@ -34,6 +34,7 @@ namespace PeriodAid.Models
             modelBuilder.Entity<CRM_Contract>().HasMany(m => m.CRM_ContractDetail).WithRequired(m => m.CRM_Contract).HasForeignKey(m => m.contract_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Department>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Department).HasForeignKey(m => m.department_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<CRM_Role>().HasMany(m => m.CRM_User).WithRequired(m => m.CRM_Role).HasForeignKey(m => m.role_id).WillCascadeOnDelete(false);
+            //modelBuilder.Entity<CRM_User>().HasMany(m => m.CRM_Contract).WithRequired(m => m.CRM_User).HasForeignKey(m => m.user_id).WillCascadeOnDelete(false);
         }
     }
 
@@ -107,6 +108,9 @@ namespace PeriodAid.Models
         public int superior_id { get; set; }
 
         public int system_code { get; set; }
+
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        //public virtual ICollection<CRM_Contract> CRM_Contract { get; set; }
 
         public virtual CRM_Department CRM_Department { get; set; }
 
@@ -191,6 +195,8 @@ namespace PeriodAid.Models
         public int employee_id { get; set; }
         [StringLength(64)]
         public string employee_name { get; set; }
+
+        //public virtual CRM_User CRM_User { get; set; }
     }
 
     [Table("CRM_ExceptionLogs")]
