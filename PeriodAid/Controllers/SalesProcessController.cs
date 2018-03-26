@@ -73,7 +73,7 @@ namespace PeriodAid.Controllers
             return postStr;
         }
         // 获取当前TOKEN
-        private string getUserToken()
+        private async Task<string> getUserToken()
         {
             // 取数据库
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Key == "CRM_UserToken");
@@ -83,17 +83,17 @@ namespace PeriodAid.Controllers
                 int days = ts.Days;
                 if (days >= 1)
                 {
-                    return  RefreshUserToken();
+                    return await RefreshUserToken();
                 }
             }
             catch (Exception)
             {
-                return  RefreshUserToken();
+                return await RefreshUserToken();
             }
             return token_time.Value;
         }
 
-        private string RefreshUserToken()
+        private async Task<string> RefreshUserToken()
         {
             // 远程获取
             var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Key == "CRM_UserToken");
@@ -142,7 +142,7 @@ namespace PeriodAid.Controllers
             }
             catch (Exception)
             {
-                return RefreshUserToken();
+                return await RefreshUserToken();
             }
             return token_time.Value;
         }
@@ -170,7 +170,7 @@ namespace PeriodAid.Controllers
 
         private async Task<int> Get_Count(string url_api)
         {
-            string url = "https://api.ikcrm.com" + url_api + "?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com" + url_api + "?per_page=" + UserInfo.Count + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "get";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -188,7 +188,7 @@ namespace PeriodAid.Controllers
                 }
                 else if (r.code == "100401")
                 {
-                    RefreshUserToken();
+                    await RefreshUserToken();
                     return await Get_Count(url_api);
                 }
             }
@@ -201,30 +201,30 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public async Task<JsonResult> GetCustomer(string url_api)
         {
-            var count = Get_Count(url_api);
-            var page = count.Result / UserInfo.Count + 1;
+            var count = await Get_Count(url_api);
+            var page = count / UserInfo.Count + 1;
             List<int> customerlist = new List<int>();
             List<int> CRM_Customerlist = new List<int>();
             List<int> contactlist = new List<int>();
             List<int> CRM_Contactlist = new List<int>();
             for (int x = 1; x <= page; x++)
             {
-                string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-                var res = Get_Request(url);
-                CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(res.Result);
+                string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                var res = await Get_Request(url);
+                CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(res);
                 if (r.code == "0")
                 {
                     for (int i = 0; i < r.data.customers.Count(); i++)
                     {
-                        var Cid = r.data.customers[i].id;
+                        var costomerid = r.data.customers[i].id;
                         string customersAddress = r.data.customers[i].address.region_info;
                         customerlist.Add(r.data.customers[i].id);
-                        var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == Cid);
+                        var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == costomerid);
                         if (check_customer == null)
                         {
                             // new
                             check_customer = new CRM_Customer();
-                            check_customer.customer_id = Cid;
+                            check_customer.customer_id = costomerid;
                             check_customer.customer_name = r.data.customers[i].name;
                             check_customer.customer_address = customersAddress;
                             check_customer.customer_tel = r.data.customers[i].address.tel;
@@ -256,56 +256,60 @@ namespace PeriodAid.Controllers
                         else
                         {
                             // update
-                            check_customer.customer_id = Cid;
-                            check_customer.customer_name = r.data.customers[i].name;
-                            check_customer.customer_address = customersAddress;
-                            check_customer.customer_tel = r.data.customers[i].address.tel;
-                            check_customer.status = 0;
-                            check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
-                            crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
-                            for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
+                            if (check_customer.customer_id != costomerid || check_customer.customer_address != customersAddress|| check_customer.customer_tel != r.data.customers[i].address.tel|| check_customer.customer_abbreviation != r.data.customers[i].address.wechat)
                             {
-                                var ctId = r.data.customers[i].contacts[j].address.addressable_id;
-                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
-                                string ctAddress = r.data.customers[i].contacts[j].address.region_info;
-                                contactlist.Add(ctId);
-                                if (check_contact == null)
+                                check_customer.customer_id = costomerid;
+                                check_customer.customer_name = r.data.customers[i].name;
+                                check_customer.customer_address = customersAddress;
+                                check_customer.customer_tel = r.data.customers[i].address.tel;
+                                check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
+                                crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
+                                for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
                                 {
-                                    // new
-                                    check_contact = new CRM_Contact();
-                                    check_contact.contact_id = ctId;
-                                    check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                    check_contact.contact_address = ctAddress;
-                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
-                                    check_contact.customer_id = check_customer.Id;
-                                    check_contact.status = 0;
-                                    crm_db.CRM_Contact.Add(check_contact);
+                                    var contactId = r.data.customers[i].contacts[j].address.addressable_id;
+                                    var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactId);
+                                    string ctAddress = r.data.customers[i].contacts[j].address.region_info;
+                                    contactlist.Add(contactId);
+                                    if (check_contact == null)
+                                    {
+                                        // new
+                                        check_contact = new CRM_Contact();
+                                        check_contact.contact_id = contactId;
+                                        check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                        check_contact.contact_address = ctAddress;
+                                        check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                        check_contact.customer_id = check_customer.Id;
+                                        check_contact.status = 0;
+                                        crm_db.CRM_Contact.Add(check_contact);
+                                    }
+                                    else
+                                    {
+                                        //update
+                                        if (check_contact.contact_id != contactId || check_contact.contact_address != ctAddress || check_contact.contact_tel != r.data.customers[i].contacts[j].address.phone || check_contact.customer_id != check_customer.Id)
+                                        {
+                                            check_contact.contact_id = contactId;
+                                            check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                            check_contact.contact_address = ctAddress;
+                                            check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                            check_contact.customer_id = check_customer.Id;
+                                            crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
+                                        }
+                                    }
+                                    await crm_db.SaveChangesAsync();
                                 }
-                                else
-                                {
-                                    //update
-                                    check_contact.contact_id = ctId;
-                                    check_contact.contact_name = r.data.customers[i].contacts[j].name;
-                                    check_contact.contact_address = ctAddress;
-                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
-                                    check_contact.customer_id = check_customer.Id;
-                                    check_contact.status = 0;
-                                    crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
-                                }
-                                await crm_db.SaveChangesAsync();
                             }
                         }
                     }
                 }
                 else if (r.code == "100401")
                 {
-                    RefreshUserToken();
+                    await RefreshUserToken();
                     return await GetCustomer(url_api);
                 }
                 else
                 {
                     try_times++;
-                    if (try_times >= 5)
+                    if (try_times >= 2)
                     {
                         try_times = 0;
                         return Json(new { result = "FAIL" });
@@ -462,15 +466,15 @@ namespace PeriodAid.Controllers
         {
             //刷新组织架构和使用用户
             //GetUserInfo();
-            var count = Get_Count(url_api);
-            var page = count.Result / UserInfo.Count + 1;
+            var count = await Get_Count(url_api);
+            var page = count / UserInfo.Count + 1;
             List<int> contractlist = new List<int>();
             List<int> CRM_Contractlist = new List<int>();
             for (int x = 1; x <= page; x++)
             {
-                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status=" + UserInfo.status_unsend + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-                var res = Get_Request(url);
-                CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res.Result);
+                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status=" + UserInfo.status_unsend + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                var res = await Get_Request(url);
+                CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res);
                 if (r.code == "0")
                 {
                     for (int i = 0; i < r.data.contracts.Count(); i++)
@@ -510,15 +514,15 @@ namespace PeriodAid.Controllers
                         else
                         {
                             // update
-                            check_data.user_id = userId.Id;
-                            check_data.user_name = userId.name;
-                            check_data.customer_id = check_customer.Id;
-                            check_data.contract_title = r.data.contracts[i].title;
-                            check_data.total_amount = (double)total_amount;
-                            check_data.contract_status = r.data.contracts[i].status;
-                            check_data.warehouse_code = "110";
-                            check_data.express_code = "STO";
-                            check_data.unreceived_amount = (double)unreceived_amount;
+                            if(check_data.user_id != userId.Id || check_data.customer_id != check_customer.Id || check_data.contract_title != r.data.contracts[i].title || check_data.total_amount != (double)total_amount)
+                            {
+                                check_data.user_id = userId.Id;
+                                check_data.user_name = userId.name;
+                                check_data.customer_id = check_customer.Id;
+                                check_data.contract_title = r.data.contracts[i].title;
+                                check_data.total_amount = (double)total_amount;
+                                check_data.unreceived_amount = (double)unreceived_amount;
+                            }
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
                                 check_data.vip_code = check_customer.customer_name;
@@ -536,13 +540,13 @@ namespace PeriodAid.Controllers
                 }
                 else if (r.code == "100401")
                 {
-                    RefreshUserToken();
+                    await RefreshUserToken();
                     return await GetCrmInfo(url_api);
                 }
                 else
                 {
                     try_times++;
-                    if (try_times >= 5)
+                    if (try_times >= 2)
                     {
                         try_times = 0;
                         return Json(new { result = "FAIL" });
@@ -568,13 +572,13 @@ namespace PeriodAid.Controllers
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS"});
         }
-
+        
         public async Task<string> getSingleCrmDetailInfo(int contract_id)
         {
             var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contract_id);
-            string url = "https://api.ikcrm.com/api/v2/contracts/" + contract.contract_id + "?user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
-            var res = Get_Request(url);
-            CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res.Result);
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + contract.contract_id + "?user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            var res = await Get_Request(url);
+            CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res);
             if (r.code == "0")
             {
                 for (int i = 0; i < r.data.product_assets_for_new_record.Count(); i++)
@@ -654,13 +658,13 @@ namespace PeriodAid.Controllers
             }
             else if (r.code == "100401")
             {
-                RefreshUserToken();
+                await RefreshUserToken();
                 return await getSingleCrmDetailInfo(contract_id);
             }
             else
             {
                 try_times++;
-                if (try_times >= 5)
+                if (try_times >= 2)
                 {
                     try_times = 0;
                     return "FAIL";
@@ -675,7 +679,7 @@ namespace PeriodAid.Controllers
         private async Task<int> UpdateCRM(int cid, string contract_status, string express_information, string express_remark)
         {
             var contracts = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cid);
-            string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" +  getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" + await  getUserToken() + "&device=dingtalk&version_code=9.8.0";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "PUT";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -714,7 +718,7 @@ namespace PeriodAid.Controllers
             }
             else if (r.code == "100401")
             {
-                RefreshUserToken();
+                await RefreshUserToken();
                 return await UpdateCRM(cid, contract_status, express_information, express_remark);
             }
             return 0;
