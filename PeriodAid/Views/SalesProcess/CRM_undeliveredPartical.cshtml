@@ -23,10 +23,11 @@
             </th>
             @*<th style="width:10%">负责人</th>*@
             <th style="width:10%">订单号</th>
-            <th style="width:15%">合同名称</th>
+            <th style="width:15%">订单名称</th>
             <th style="width:15%" id="money_view">总金额</th>
             <th style="width:10%">客户名称</th>
             <th style="width:30%">邮寄地址</th>
+            <th style="width:10%" id="expressInfo">物流信息</th>
             <th style="width:15%">
                 <a class="btn btn-xs btn-success hidden" id="batch_change_status" data-status="3531567" role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
                 <a class="btn btn-xs btn-success hidden" id="batch_change_deliverys" data-status="3531568" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
@@ -47,7 +48,7 @@
                 @item.platform_code
             </td>
             <td>
-                <div style="width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.contract_title">@item.contract_title</div>
+                <div style="width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.user_name：@item.contract_title">@item.contract_title</div>
 
             </td>
             <td class="money_model_view">
@@ -210,6 +211,7 @@ else
         var orderarry = [];
         //全选
         $("#checkbox-all").click(function () {
+            $("#expressInfo").hide()
             var i = 0
             var that = $(this)
             if (that.attr("data-status") == "3531567")
@@ -727,14 +729,11 @@ else
                             $.ajax({
                                 url: "/SalesProcess/CRM_undeliveredPartical/",
                                 data: {
-                                    status: "3764330",
+                                    status: "3531568",
                                     shopCode: $(".active").children(".shop_btn").attr("data-id")
                                 },
                                 success: function (data) {
                                     $("#undelivered_list_content").html(data)
-                                    $("#second_btn").removeClass("btn-danger")
-                                    $("#third_btn").removeClass("btn-danger")
-                                    $("#fourth_btn").addClass("btn-danger")
                                 }
                             })
                         }
@@ -1025,6 +1024,5 @@ else
                 }
             })
         })
-
     })
 </script>
