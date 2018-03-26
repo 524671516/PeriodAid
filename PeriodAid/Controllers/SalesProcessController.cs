@@ -408,7 +408,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
         [HttpPost]
-        private bool GetUserInfo()
+        private async Task<bool> GetUserInfo()
         {
             //部门
             string get_department = "https://api.ikcrm.com/api/v2/user/department_list?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -445,11 +445,11 @@ namespace PeriodAid.Controllers
             }
             else if (department_data.code == "100401")
             {
-                RefreshUserToken();
-                return GetUserInfo();
+                await RefreshUserToken();
+                return await GetUserInfo();
             }
             else {
-                return GetUserInfo();
+                return await GetUserInfo();
             }
             //角色和用户
             string get_user = "https://api.ikcrm.com/api/v2/user/list?per_page=" + UserInfo.Count + "&sort=superior_id&order=asc&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -509,12 +509,12 @@ namespace PeriodAid.Controllers
                 crm_db.SaveChanges();
             }
             else if(user_data.code == "100401") {
-                RefreshUserToken();
-                return GetUserInfo();
+                await RefreshUserToken();
+                return await GetUserInfo();
             }
             else
             {
-                return GetUserInfo();
+                return await GetUserInfo();
             }
             return true;
         }
@@ -833,33 +833,57 @@ namespace PeriodAid.Controllers
             else if (user.role_id == UserInfo.Assistant || user.role_id == UserInfo.Manager)
             {
                 var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.email);
-                var employee = from m in crm_db.CRM_User
-                               where m.department_id == crm_user.department_id || m.department_id == (m.CRM_Department.parent_id != null ? m.CRM_Department.parent_id : 0)
-                               select m;
-                List<CRM_Contract> datalist = new List<CRM_Contract>();
-                if (shopCode == "0")
+                if (crm_user.CRM_Department.parent_id == null)
                 {
-                    foreach (var emp in employee)
+                    var employee = from m in crm_db.CRM_User
+                                   where m.department_id == crm_user.department_id
+                                   select m;
+                    if (shopCode == "0")
                     {
                         var undeliveredData = (from m in crm_db.CRM_Contract
-                                               where m.contract_status == status && m.user_id == emp.system_code
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
-                        datalist.AddRange(undeliveredData);
+                        return PartialView(undeliveredData);
                     }
-                    return PartialView(datalist.ToPagedList(_page, 20));
+                    else
+                    {
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status && m.shop_code == shopCode
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undeliveredData);
+                    }
                 }
                 else
                 {
-                    foreach (var emp in employee)
+                    var parent_department = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == crm_user.CRM_Department.parent_id);
+                    var sub_department = from m in crm_db.CRM_Department
+                                         where m.parent_id == parent_department.system_code || m.system_code == parent_department.system_code
+                                         select m;
+                    var employee = from m in crm_db.CRM_User
+                                   join c in sub_department on m.department_id equals c.Id
+                                   select m;
+                    if (shopCode == "0")
                     {
-                        var undelivereddata = (from m in crm_db.CRM_Contract
-                                               where m.contract_status == status && m.shop_code == shopCode && m.user_id == emp.system_code
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
-                        datalist.AddRange(undelivereddata.ToPagedList(_page, 20));
+                        return PartialView(undeliveredData);
                     }
-                    return PartialView(datalist);
+                    else
+                    {
+                        var undelivereddata = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status && m.shop_code == shopCode
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undelivereddata);
+                    }
                 }
             }
             else
