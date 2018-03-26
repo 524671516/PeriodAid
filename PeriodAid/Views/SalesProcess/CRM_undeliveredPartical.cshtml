@@ -1026,5 +1026,18 @@
                 }
             })
         })
+        //刷新组织架构
+        $("#expressInfo").dblclick(function () {
+            $("#refresh_org").slideToggle()
+        });
+        $("#refresh_org").click(function () {
+            $.ajax({
+                url: "/SalesProcess/GetUserInfo/",
+                type:"post",
+                success: function (data) {
+                    alert("组织机构刷新成功")
+                }
+            })
+        })
     })
 </script>
