@@ -512,15 +512,15 @@ namespace PeriodAid.Models
         public static string delete = "-1";
         //权限
         //超管
-        public static int SuperAdmin = 25;
+        public static int SuperAdmin = 3;
         //主管
-        public static int Manager = 23;
+        public static int Manager = 1;
         //内勤
-        public static int Assistant = 28;
+        public static int Assistant = 5;
         //财务
-        public static int Finance = 24;
+        public static int Finance = 2;
         //销售
-        public static int Seller = 27;
+        public static int Seller = 4;
     }
     
     public partial class orders_Result
