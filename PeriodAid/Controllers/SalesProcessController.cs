@@ -529,7 +529,7 @@ namespace PeriodAid.Controllers
             List<int> CRM_Contractlist = new List<int>();
             for (int x = 1; x <= page; x++)
             {
-                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status="+UserInfo.status_unsend + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
                 var res = Get_Request(url);
                 CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res.Result);
                 if (r.code == "0")
@@ -555,7 +555,7 @@ namespace PeriodAid.Controllers
                             //new
                             check_data = new CRM_Contract();
                             check_data.contract_id = contractId;
-                            check_data.user_id = userId;
+                            check_data.user_id = crm_db.CRM_User.SingleOrDefault(m => m.system_code == userId).Id;
                             check_data.user_name = r.data.contracts[i].user_name; 
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
@@ -578,7 +578,7 @@ namespace PeriodAid.Controllers
                         {
                             // update
                             check_data.contract_id = contractId;
-                            check_data.user_id = userId;
+                            check_data.user_id = crm_db.CRM_User.SingleOrDefault(m => m.system_code == userId).Id;
                             check_data.user_name = r.data.contracts[i].user_name;
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
