@@ -481,13 +481,15 @@ namespace PeriodAid.Controllers
                         var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
                         var total_amount = r.data.contracts[i].total_amount;
                         var unreceived_amount = r.data.contracts[i].unreceived_amount;
+                        var user_id = r.data.contracts[i].user_id;
+                        var userId = crm_db.CRM_User.SingleOrDefault(m => m.system_code == user_id);
                         if (check_data == null)
                         {
                             //new
                             check_data = new CRM_Contract();
                             check_data.contract_id = r.data.contracts[i].id;
-                            check_data.user_id = r.data.contracts[i].user_id;
-                            check_data.user_name = r.data.contracts[i].user_name;
+                            check_data.user_id = userId.Id;
+                            check_data.user_name = userId.name;
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
                             check_data.total_amount = (double)total_amount;
@@ -508,8 +510,8 @@ namespace PeriodAid.Controllers
                         else
                         {
                             // update
-                            check_data.user_id = r.data.contracts[i].user_id;
-                            check_data.user_name = r.data.contracts[i].user_name;
+                            check_data.user_id = userId.Id;
+                            check_data.user_name = userId.name;
                             check_data.customer_id = check_customer.Id;
                             check_data.contract_title = r.data.contracts[i].title;
                             check_data.total_amount = (double)total_amount;
@@ -755,33 +757,57 @@ namespace PeriodAid.Controllers
             else if (user.role_id == UserInfo.Assistant || user.role_id == UserInfo.Manager)
             {
                 var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.email);
-                var employee = from m in crm_db.CRM_User
-                               where m.department_id == crm_user.department_id || m.department_id == (m.CRM_Department.parent_id != null ? m.CRM_Department.parent_id : 0)
-                               select m;
-                List<CRM_Contract> datalist = new List<CRM_Contract>();
-                if (shopCode == "0")
+                if (crm_user.CRM_Department.parent_id == null)
                 {
-                    foreach (var emp in employee)
+                    var employee = from m in crm_db.CRM_User
+                                   where m.department_id == crm_user.department_id
+                                   select m;
+                    if (shopCode == "0")
                     {
                         var undeliveredData = (from m in crm_db.CRM_Contract
-                                               where m.contract_status == status && m.user_id == emp.system_code
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
-                        datalist.AddRange(undeliveredData.ToPagedList(_page, 20));
+                        return PartialView(undeliveredData);
                     }
-                    return PartialView(datalist);
+                    else
+                    {
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status && m.shop_code == shopCode
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undeliveredData);
+                    }
                 }
                 else
                 {
-                    foreach (var emp in employee)
+                    var parent_department = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == crm_user.CRM_Department.parent_id);
+                    var sub_department = from m in crm_db.CRM_Department
+                                         where m.parent_id == parent_department.system_code || m.system_code == parent_department.system_code
+                                         select m;
+                    var employee = from m in crm_db.CRM_User
+                                   join c in sub_department on m.department_id equals c.Id
+                                   select m;
+                    if (shopCode == "0")
                     {
-                        var undelivereddata = (from m in crm_db.CRM_Contract
-                                               where m.contract_status == status && m.shop_code == shopCode && m.user_id == emp.system_code
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
-                        datalist.AddRange(undelivereddata.ToPagedList(_page, 20));
+                        return PartialView(undeliveredData);
                     }
-                    return PartialView(datalist);
+                    else
+                    {
+                        var undelivereddata = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.system_code
+                                               where m.contract_status == status && m.shop_code == shopCode
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undelivereddata);
+                    }
                 }
             }
             else
