@@ -214,40 +214,40 @@ namespace PeriodAid.Controllers
                 CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(res);
                 if (r.code == "0")
                 {
-                    for (int i = 0; i < r.data.customers.Count(); i++)
+                    foreach (var item in r.data.customers)
                     {
-                        var costomerid = r.data.customers[i].id;
-                        string customersAddress = r.data.customers[i].address.region_info;
-                        customerlist.Add(r.data.customers[i].id);
+                        var costomerid = item.id;
+                        string customersAddress = item.address.region_info;
+                        customerlist.Add(item.id);
                         var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == costomerid);
                         if (check_customer == null)
                         {
                             // new
                             check_customer = new CRM_Customer();
                             check_customer.customer_id = costomerid;
-                            check_customer.customer_name = r.data.customers[i].name;
+                            check_customer.customer_name = item.name;
                             check_customer.customer_address = customersAddress;
-                            check_customer.customer_tel = r.data.customers[i].address.tel;
+                            check_customer.customer_tel = item.address.tel;
                             check_customer.status = 0;
-                            check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
+                            check_customer.customer_abbreviation = item.address.wechat;
                             crm_db.CRM_Customer.Add(check_customer);
                             await crm_db.SaveChangesAsync();
-                            for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
+                            for (int i = 0; i < item.contacts.Count(); i++)
                             {
-                                var ctId = r.data.customers[i].contacts[j].address.addressable_id;
-                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == ctId);
-                                string ctAddress = r.data.customers[i].contacts[j].address.region_info;
+                                var contactsId = item.contacts[i].address.addressable_id;
+                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactsId);
+                                string ctAddress = item.contacts[i].address.region_info;
                                 if (check_contact == null)
                                 {
                                     // new
                                     check_contact = new CRM_Contact();
-                                    check_contact.contact_id = ctId;
-                                    check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                    check_contact.contact_id = contactsId;
+                                    check_contact.contact_name = item.contacts[i].name;
                                     check_contact.contact_address = ctAddress;
-                                    check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                    check_contact.contact_tel = item.contacts[i].address.phone;
                                     check_contact.customer_id = check_customer.Id;
                                     check_contact.status = 0;
-                                    check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
+                                    check_customer.customer_abbreviation =item.address.wechat;
                                     crm_db.CRM_Contact.Add(check_contact);
                                     await crm_db.SaveChangesAsync();
                                 }
@@ -256,28 +256,28 @@ namespace PeriodAid.Controllers
                         else
                         {
                             // update
-                            if (check_customer.customer_id != costomerid || check_customer.customer_address != customersAddress|| check_customer.customer_tel != r.data.customers[i].address.tel|| check_customer.customer_abbreviation != r.data.customers[i].address.wechat)
+                            if (check_customer.customer_id != costomerid || check_customer.customer_address != customersAddress|| check_customer.customer_tel != item.address.tel|| check_customer.customer_abbreviation != item.address.wechat)
                             {
                                 check_customer.customer_id = costomerid;
-                                check_customer.customer_name = r.data.customers[i].name;
+                                check_customer.customer_name = item.name;
                                 check_customer.customer_address = customersAddress;
-                                check_customer.customer_tel = r.data.customers[i].address.tel;
-                                check_customer.customer_abbreviation = r.data.customers[i].address.wechat;
+                                check_customer.customer_tel = item.address.tel;
+                                check_customer.customer_abbreviation = item.address.wechat;
                                 crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
-                                for (int j = 0; j < r.data.customers[i].contacts.Count(); j++)
+                                for (int i = 0; i < item.contacts.Count(); i++)
                                 {
-                                    var contactId = r.data.customers[i].contacts[j].address.addressable_id;
+                                    var contactId = item.contacts[i].address.addressable_id;
                                     var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactId);
-                                    string ctAddress = r.data.customers[i].contacts[j].address.region_info;
+                                    string ctAddress = item.contacts[i].address.region_info;
                                     contactlist.Add(contactId);
                                     if (check_contact == null)
                                     {
                                         // new
                                         check_contact = new CRM_Contact();
                                         check_contact.contact_id = contactId;
-                                        check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                        check_contact.contact_name = item.contacts[i].name;
                                         check_contact.contact_address = ctAddress;
-                                        check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                        check_contact.contact_tel = item.contacts[i].address.phone;
                                         check_contact.customer_id = check_customer.Id;
                                         check_contact.status = 0;
                                         crm_db.CRM_Contact.Add(check_contact);
@@ -285,12 +285,12 @@ namespace PeriodAid.Controllers
                                     else
                                     {
                                         //update
-                                        if (check_contact.contact_id != contactId || check_contact.contact_address != ctAddress || check_contact.contact_tel != r.data.customers[i].contacts[j].address.phone || check_contact.customer_id != check_customer.Id)
+                                        if (check_contact.contact_id != contactId || check_contact.contact_address != ctAddress || check_contact.contact_tel != item.contacts[i].address.phone || check_contact.customer_id != check_customer.Id)
                                         {
                                             check_contact.contact_id = contactId;
-                                            check_contact.contact_name = r.data.customers[i].contacts[j].name;
+                                            check_contact.contact_name = item.contacts[i].name;
                                             check_contact.contact_address = ctAddress;
-                                            check_contact.contact_tel = r.data.customers[i].contacts[j].address.phone;
+                                            check_contact.contact_tel = item.contacts[i].address.phone;
                                             check_contact.customer_id = check_customer.Id;
                                             crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
                                         }
@@ -351,10 +351,10 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
         [HttpPost]
-        private bool GetUserInfo()
+        public bool GetUserInfo()
         {
             //部门
-            string get_department = "https://api.ikcrm.com/api/v2/user/department_list?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string get_department = "https://api.ikcrm.com/api/v2/user/department_list?per_page=" + UserInfo.Count + "&user_token=" + getUserToken().Result + "&device=dingtalk&version_code=9.8.0";
             var res = Get_Request(get_department);
             CRM_ContractDetail_ReturnData department_data = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res.Result);
             if (department_data.code == "0")
@@ -371,17 +371,18 @@ namespace PeriodAid.Controllers
                         newdepartment.parent_id = item.parent_id;
                         newdepartment.can_use = item.can_use;
                         crm_db.CRM_Department.Add(newdepartment);
-                        crm_db.SaveChanges();
                     }
                     else
                     {
-                        department.system_code = item.Id;
-                        department.name = item.name;
-                        department.level = item.level;
-                        department.parent_id = item.parent_id;
-                        department.can_use = item.can_use;
-                        crm_db.Entry(department).State = System.Data.Entity.EntityState.Modified;
-                        crm_db.SaveChanges();
+                        if (department.system_code != item.Id || department.level != item.level|| department.name != item.name|| department.parent_id != item.parent_id|| department.can_use != item.can_use)
+                        {
+                            department.system_code = item.Id;
+                            department.name = item.name;
+                            department.level = item.level;
+                            department.parent_id = item.parent_id;
+                            department.can_use = item.can_use;
+                            crm_db.Entry(department).State = System.Data.Entity.EntityState.Modified;
+                        }
                     }
                 }
                 crm_db.SaveChanges();
@@ -395,7 +396,7 @@ namespace PeriodAid.Controllers
                 return GetUserInfo();
             }
             //角色和用户
-            string get_user = "https://api.ikcrm.com/api/v2/user/list?per_page=" + UserInfo.Count + "&sort=superior_id&order=asc&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            string get_user = "https://api.ikcrm.com/api/v2/user/list?per_page=" + UserInfo.Count + "&sort=superior_id&order=asc&user_token=" + getUserToken().Result + "&device=dingtalk&version_code=9.8.0";
             var rest = Get_Request(get_user);
             CRM_ContractDetail_ReturnData user_data = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(rest.Result);
             if (user_data.code == "0")
@@ -413,10 +414,13 @@ namespace PeriodAid.Controllers
                     }
                     else
                     {
-                        role.name = item.role_json.name;
-                        role.entity_grant_scope = item.role_json.entity_grant_scope;
-                        role.system_code = item.role_json.Id;
-                        crm_db.Entry(role).State = System.Data.Entity.EntityState.Modified;
+                        if (role.name != item.role_json.name || role.entity_grant_scope != item.role_json.entity_grant_scope|| role.system_code != item.role_json.Id)
+                        {
+                            role.name = item.role_json.name;
+                            role.entity_grant_scope = item.role_json.entity_grant_scope;
+                            role.system_code = item.role_json.Id;
+                            crm_db.Entry(role).State = System.Data.Entity.EntityState.Modified;
+                        }
                     }
                     crm_db.SaveChanges();
                     //用户
@@ -464,8 +468,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public async Task<JsonResult> GetCrmInfo(string url_api)
         {
-            //刷新组织架构和使用用户
-            //GetUserInfo();
             var count = await Get_Count(url_api);
             var page = count / UserInfo.Count + 1;
             List<int> contractlist = new List<int>();
@@ -477,28 +479,28 @@ namespace PeriodAid.Controllers
                 CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res);
                 if (r.code == "0")
                 {
-                    for (int i = 0; i < r.data.contracts.Count(); i++)
+                    foreach (var item in r.data.contracts)
                     {
-                        var contractId = r.data.contracts[i].id;
-                        var customerId = r.data.contracts[i].customer_id;
+                        var contractId = item.id;
+                        var customerId = item.customer_id;
                         var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
                         var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
-                        var total_amount = r.data.contracts[i].total_amount;
-                        var unreceived_amount = r.data.contracts[i].unreceived_amount;
-                        var user_id = r.data.contracts[i].user_id;
+                        var total_amount = item.total_amount;
+                        var unreceived_amount = item.unreceived_amount;
+                        var user_id = item.user_id;
                         var userId = crm_db.CRM_User.SingleOrDefault(m => m.system_code == user_id);
                         if (check_data == null)
                         {
                             //new
                             check_data = new CRM_Contract();
-                            check_data.contract_id = r.data.contracts[i].id;
+                            check_data.contract_id = item.id;
                             check_data.user_id = userId.Id;
                             check_data.user_name = userId.name;
                             check_data.customer_id = check_customer.Id;
-                            check_data.contract_title = r.data.contracts[i].title;
+                            check_data.contract_title = item.title;
                             check_data.total_amount = (double)total_amount;
                             check_data.unreceived_amount = (double)unreceived_amount;
-                            check_data.contract_status = r.data.contracts[i].status;
+                            check_data.contract_status = item.status;
                             check_data.warehouse_code = "110";
                             check_data.express_code = "STO";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
@@ -514,12 +516,12 @@ namespace PeriodAid.Controllers
                         else
                         {
                             // update
-                            if(check_data.user_id != userId.Id || check_data.customer_id != check_customer.Id || check_data.contract_title != r.data.contracts[i].title || check_data.total_amount != (double)total_amount)
+                            if(check_data.user_id != userId.Id || check_data.customer_id != check_customer.Id || check_data.contract_title != item.title || check_data.total_amount != (double)total_amount)
                             {
                                 check_data.user_id = userId.Id;
                                 check_data.user_name = userId.name;
                                 check_data.customer_id = check_customer.Id;
-                                check_data.contract_title = r.data.contracts[i].title;
+                                check_data.contract_title = item.title;
                                 check_data.total_amount = (double)total_amount;
                                 check_data.unreceived_amount = (double)unreceived_amount;
                             }
@@ -533,9 +535,9 @@ namespace PeriodAid.Controllers
                             }
                             crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                         }
-                        contractlist.Add(r.data.contracts[i].id);
+                        contractlist.Add(item.id);
                         await crm_db.SaveChangesAsync();
-                        await getSingleCrmDetailInfo(r.data.contracts[i].id);
+                        await getSingleCrmDetailInfo(item.id);
                     }
                 }
                 else if (r.code == "100401")
@@ -581,13 +583,13 @@ namespace PeriodAid.Controllers
             CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res);
             if (r.code == "0")
             {
-                for (int i = 0; i < r.data.product_assets_for_new_record.Count(); i++)
+                foreach (var item in r.data.product_assets_for_new_record)
                 {
-                    var pid = r.data.product_assets_for_new_record[i].product_id;
-                    var s_price = r.data.product_assets_for_new_record[i].recommended_unit_price;
-                    var quantity = r.data.product_assets_for_new_record[i].quantity;
-                    var product_name = r.data.product_assets_for_new_record[i].name;
-                    var product_code = r.data.product_assets_for_new_record[i].product_no;
+                    var pid = item.product_id;
+                    var s_price = item.recommended_unit_price;
+                    var quantity = item.quantity;
+                    var product_name = item.name;
+                    var product_code = item.product_no;
                     var contractdetail = from m in crm_db.CRM_ContractDetail
                                          where m.contract_id == contract.id && m.CRM_Contract.contract_status != UserInfo.delete
                                          select m;

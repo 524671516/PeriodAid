@@ -1030,11 +1030,12 @@
         $("#expressInfo").dblclick(function () {
             $("#refresh_org").slideToggle()
         });
-        $("#refresh_org").click(function () {
+        $("#refresh_org").unbind("click").click( function () {
             $.ajax({
-                url: "/SalesProcess/GetUserInfo/",
-                type:"post",
+                url: "/SalesProcess/GetUserInfo",
+                type: "post",
                 success: function (data) {
+                    console.log(data)
                     alert("组织机构刷新成功")
                 }
             })
