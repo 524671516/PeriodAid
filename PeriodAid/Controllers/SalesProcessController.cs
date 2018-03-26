@@ -347,7 +347,7 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS" });
         }
         [HttpPost]
-        private bool GetUserInfo()
+        public bool GetUserInfo()
         {
             //部门
             string get_department = "https://api.ikcrm.com/api/v2/user/department_list?per_page=" + UserInfo.Count + "&user_token=" + getUserToken() + "&device=dingtalk&version_code=9.8.0";
@@ -460,8 +460,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public async Task<JsonResult> GetCrmInfo(string url_api)
         {
-            //刷新组织架构和使用用户
-            //GetUserInfo();
             var count = Get_Count(url_api);
             var page = count.Result / UserInfo.Count + 1;
             List<int> contractlist = new List<int>();

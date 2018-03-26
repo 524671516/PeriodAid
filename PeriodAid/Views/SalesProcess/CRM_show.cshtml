@@ -29,6 +29,7 @@
     <a class="btn btn-info btn-sm status-btn" id="third_btn" data-val="3890335"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;部分发货订单</a>
     <a class="btn btn-info btn-sm status-btn" id="fourth_btn" data-val="3764330"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;全部发货订单</a>
     <a class="btn btn-info btn-sm status-btn" id="renovate_btn"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</a>
+    <a class="btn btn-info btn-sm status-btn float-right btn-danger" id="refresh_org"><i class="fa fa-refresh"></i>&nbsp;&nbsp;组织架构刷新</a>
 </div>
 <ul class="nav nav-tabs" style="margin-top:20px" role="tablist">
     <li role="presentation" class="shop-list-li active"><a class="shop_btn" aria-controls="home" role="tab" data-toggle="tab" data-id="0" style="cursor:pointer">全部订单</a></li>
@@ -50,6 +51,7 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
+            $("#refresh_org").hide()
             $("#tm-view-loading").show()
             $.ajax({
                 url: "/SalesProcess/CRM_undeliveredPartical/",
