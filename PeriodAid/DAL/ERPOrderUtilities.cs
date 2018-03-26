@@ -10,6 +10,7 @@ using System.Web.Script.Serialization;
 using System.Text;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace PeriodAid.DAL
 {
@@ -1049,7 +1050,7 @@ namespace PeriodAid.DAL
                     //"\"vip_name\":\"" + order.event_name + "\"," +
                     "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
                     "\"buyer_memo\":\"" + replaceWord(order.buyer_memo) + "\"," +
-                    "\"seller_memo_late\":\"" + order.seller_memo_late + "\"," +
+                    "\"seller_memo_late\":\"" + replaceWord(order.seller_memo_late) + "\"," +
                     "\"express_code\":\"" + order.express_code + "\"," +
                     "\"receiver_name\":\"" + replaceWord(order.receiver_name) + "\"," +
                     "\"receiver_province\":\"" + order.receiver_province + "\"," +
@@ -1136,7 +1137,7 @@ namespace PeriodAid.DAL
             }
             else if (str.Contains(" "))
             {
-                strword = str.Replace(" ", "-");
+                strword = Regex.Replace(str, "\\s{2,}", "-");
             }
             else
             {
