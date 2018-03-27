@@ -88,6 +88,18 @@ namespace PeriodAid.Controllers
             }
             catch (Exception)
             {
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                try_times++;
+                if (try_times >= 5)
+                {
+                    logs.type = "User_Token";
+                    logs.exception = "[User_Token]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return "FAIL";
+                }
                 return await RefreshUserToken();
             }
             return token_time.Value;
@@ -142,6 +154,18 @@ namespace PeriodAid.Controllers
             }
             catch (Exception)
             {
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                try_times++;
+                if (try_times >= 5)
+                {
+                    logs.type = "User_Token";
+                    logs.exception = "[User_Token]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return "FAIL";
+                }
                 return await RefreshUserToken();
             }
             return token_time.Value;
@@ -308,9 +332,15 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
+                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
                     try_times++;
-                    if (try_times >= 2)
+                    if (try_times >= 5)
                     {
+                        logs.type = "customer";
+                        logs.exception = "[customer]获取失败";
+                        logs.exception_at = DateTime.Now;
+                        crm_db.CRM_ExceptionLogs.Add(logs);
+                        crm_db.SaveChanges();
                         try_times = 0;
                         return Json(new { result = "FAIL" });
                     }
@@ -547,9 +577,15 @@ namespace PeriodAid.Controllers
                 }
                 else
                 {
+                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
                     try_times++;
-                    if (try_times >= 2)
+                    if (try_times >= 5)
                     {
+                        logs.type = "contract";
+                        logs.exception = "[contract]获取失败";
+                        logs.exception_at = DateTime.Now;
+                        crm_db.CRM_ExceptionLogs.Add(logs);
+                        crm_db.SaveChanges();
                         try_times = 0;
                         return Json(new { result = "FAIL" });
                     }
@@ -665,9 +701,15 @@ namespace PeriodAid.Controllers
             }
             else
             {
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
                 try_times++;
-                if (try_times >= 2)
+                if (try_times >= 5)
                 {
+                    logs.type = "contractDetial";
+                    logs.exception = "[contractDetial]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
                     try_times = 0;
                     return "FAIL";
                 }
