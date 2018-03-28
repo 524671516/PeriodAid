@@ -531,14 +531,11 @@
                                 $.ajax({
                                     url: "/SalesProcess/CRM_undeliveredPartical/",
                                     data: {
-                                        status: "3764330",
+                                        status: "3890335",
                                         shopCode: $(".active").children(".shop_btn").attr("data-id")
                                     },
                                     success: function (data) {
                                         $("#undelivered_list_content").html(data)
-                                        $("#second_btn").removeClass("btn-danger")
-                                        $("#third_btn").removeClass("btn-danger")
-                                        $("#first_btn").addClass("btn-danger")
                                     }
                                 })
                             }
@@ -645,14 +642,11 @@
                                 $.ajax({
                                     url: "/SalesProcess/CRM_undeliveredPartical/",
                                     data: {
-                                        status: "3764330",
+                                        status: "3531568",
                                         shopCode: $(".active").children(".shop_btn").attr("data-id")
                                     },
                                     success: function (data) {
                                         $("#undelivered_list_content").html(data)
-                                        $("#second_btn").removeClass("btn-danger")
-                                        $("#third_btn").removeClass("btn-danger")
-                                        $("#first_btn").addClass("btn-danger")
                                     }
                                 })
                             } finally {
