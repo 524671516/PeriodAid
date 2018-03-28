@@ -1142,11 +1142,17 @@ namespace PeriodAid.Controllers
             catch (Exception)
             {
                 streamWriter.Close();
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
                 try_times++;
-                if (try_times >= 2)
+                if (try_times >= 5)
                 {
+                    logs.type = "getErpOrder";
+                    logs.exception = "[ErpOrder]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
                     try_times = 0;
-                    return "未发现订单";
+                    return  "FAIL";
                 }
                 return getSingleErpOrders(contractId);
             }
