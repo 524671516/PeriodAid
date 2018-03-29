@@ -546,7 +546,7 @@ namespace PeriodAid.Controllers
                         else
                         {
                             // update
-                            if(check_data.user_id != userId.Id || check_data.customer_id != check_customer.Id || check_data.contract_title != item.title || check_data.total_amount != (double)total_amount)
+                            if (check_data.user_id != userId.Id || check_data.customer_id != check_customer.Id || check_data.contract_title != item.title || check_data.total_amount != (double)total_amount)
                             {
                                 check_data.user_id = userId.Id;
                                 check_data.user_name = userId.name;
