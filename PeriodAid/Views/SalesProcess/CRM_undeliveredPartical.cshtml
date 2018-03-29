@@ -2,15 +2,16 @@
 @model PagedList.IPagedList<PeriodAid.Models.CRM_Contract>
 @using PagedList.Mvc;
 <style>
-    .form-control{
-        display:initial;
-        width:auto;
-        height:auto;
-        padding:0;
+    .form-control {
+        display: initial;
+        width: auto;
+        height: auto;
+        padding: 0;
     }
-    .jconfirm-box-container{
-        top:-150px;
-        left:480px
+
+    .jconfirm-box-container {
+        top: -180px;
+        left: 480px;
     }
 </style>
 <div>
@@ -115,7 +116,7 @@
                 }
             </tr>
         }
-        
+
     </table>
     <div class="text-right">
         @Html.PagedListPager(Model, page => Url.Action("CRM_undeliveredPartical", new { page }))
@@ -137,7 +138,8 @@
                 url: l,
                 data: {
                     status: $(".btn-danger").attr("data-val"),
-                    shopCode: $(".active").children(".shop_btn").attr("data-id")
+                    shopCode: $(".active").children(".shop_btn").attr("data-id"),
+                    query: $("#contract_query").val()
                 },
                 success: function (data) {
                     $("#undelivered_list_content").html(data);
@@ -145,7 +147,7 @@
             });
             return false;
         });
-        var border_list = $(".change_status")
+        var border_list = $(".select_btn")
         var j = 0
         for (j; j < border_list.length; j++) {
             var data_rstatus = $(border_list[j]).attr("data-rstatus")
@@ -167,7 +169,7 @@
         $("#expressInfo").addClass("hidden")
         $('[data-toggle="tooltip"]').tooltip()
         if ($("#fourth_btn").hasClass("btn-danger")) {
-            $("input").attr("disabled", true)
+            $(".checkbox-custom .btn").attr("disabled", true)
             $("#money_view").html("")
             $(".money_model_view").html("")
             $("#expressInfo").removeClass("hidden")
@@ -233,7 +235,6 @@
                             }
                         }
                     }
-                    console.log(orderarry)
                 }
                 else {
                     $("#batch_change_status").addClass("hidden")
@@ -243,7 +244,6 @@
                     for (i; i < list.length; i++) {
                         orderarry.remove($(list[i]).attr("data-val"))
                     }
-                    console.log(orderarry)
                 }
             }
             else if (that.attr("data-status") == "3890335") {
@@ -365,7 +365,7 @@
                         if (data.result == "SUCCESS") {
                             $("#tm-view-loading").hide()
                             try {
-                                
+
                                 // fail
                                 if (data.faillist.length != 0)
                                 {
@@ -530,11 +530,14 @@
                                 $.ajax({
                                     url: "/SalesProcess/CRM_undeliveredPartical/",
                                     data: {
-                                        status: "3890335",
+                                        status: "3764330",
                                         shopCode: $(".active").children(".shop_btn").attr("data-id")
                                     },
                                     success: function (data) {
                                         $("#undelivered_list_content").html(data)
+                                        $("#second_btn").removeClass("btn-danger")
+                                        $("#third_btn").removeClass("btn-danger")
+                                        $("#first_btn").addClass("btn-danger")
                                     }
                                 })
                             }
@@ -641,18 +644,21 @@
                                 $.ajax({
                                     url: "/SalesProcess/CRM_undeliveredPartical/",
                                     data: {
-                                        status: "3531568",
+                                        status: "3764330",
                                         shopCode: $(".active").children(".shop_btn").attr("data-id")
                                     },
                                     success: function (data) {
                                         $("#undelivered_list_content").html(data)
+                                        $("#second_btn").removeClass("btn-danger")
+                                        $("#third_btn").removeClass("btn-danger")
+                                        $("#first_btn").addClass("btn-danger")
                                     }
                                 })
                             } finally {
                                 that.removeClass("disabled")
                                 $("input").attr("checked", false)
                                 orderarry.splice(0, orderarry.length)
-                                $("#batch_change_deliverys").addClass("hidden")
+                                $("#batch_change_Partdeliverys").addClass("hidden")
                                 $(".get_erp_status").removeClass("hidden")
                             }
                         }
@@ -1023,12 +1029,12 @@
         $("#expressInfo").dblclick(function () {
             $("#refresh_org").slideToggle()
         });
-        $("#refresh_org").unbind("click").click( function () {
+        $("#refresh_org").unbind("click")
+        $("#refresh_org").on("click",function () {
             $.ajax({
-                url: "/SalesProcess/GetUserInfo",
-                type: "post",
+                url: "/SalesProcess/GetUserInfo/",
+                type:"post",
                 success: function (data) {
-                    console.log(data)
                     alert("组织机构刷新成功")
                 }
             })
