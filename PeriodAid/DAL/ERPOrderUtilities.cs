@@ -1109,41 +1109,50 @@ namespace PeriodAid.DAL
         public static long ConvertDateTimeToInt(DateTime time)
         {
             DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
-            long t = (time.Ticks - startTime.Ticks) / 10000;    
+            long t = (time.Ticks - startTime.Ticks) / 10000;
             return t;
         }
         private string replaceWord(string str)
         {
-            var strword = "";
-            if (str.Contains("+"))
+            var strword = str;
+            try
             {
-                strword = strword.Replace("+", "加");
+                if (str.Contains("+"))
+
+                    strword = strword.Replace("+", "加");
+
+                if (str.Contains(":"))
+
+                    strword = strword.Replace(":", " ");
+
+                if (str.Contains(","))
+
+                    strword = strword.Replace(",", ".");
+
+                if (str.Contains("，"))
+
+                    strword = strword.Replace("，", ".");
+
+                if (str.Contains("/"))
+
+                    strword = strword.Replace("/", ".");
+
+                if (str.Contains("\\"))
+
+                    strword = strword.Replace("\\", " ");
+
+                if (str.Contains("、"))
+
+                    strword = strword.Replace("、", ".");
+
+                if (str.Contains(" "))
+
+                    strword = Regex.Replace(strword, "\\s{2,}", " ");
+                if (str.Contains("-"))
+
+                    strword = strword.Replace("-", ".");
             }
-            else if (str.Contains(":"))
-            {
-                strword = str.Replace(":", "-");
-            }
-            else if (str.Contains(","))
-            {
-                strword = str.Replace(",", "-");
-            }
-            else if (str.Contains("/"))
-            {
-                strword = str.Replace("/", "-");
-            }
-            else if (str.Contains("\\"))
-            {
-                strword = str.Replace("\\", "-");
-            }
-            else if (str.Contains("、"))
-            {
-                strword = str.Replace("、", " ");
-            }
-            else if (str.Contains(" "))
-            {
-                strword = Regex.Replace(str, "\\s{2,}", "-");
-            }
-            else
+            catch
             {
                 strword = str;
             }
