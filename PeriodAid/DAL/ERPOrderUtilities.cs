@@ -1135,6 +1135,10 @@ namespace PeriodAid.DAL
             {
                 strword = str.Replace("\\", "-");
             }
+            else if (str.Contains("、"))
+            {
+                strword = str.Replace("、", " ");
+            }
             else if (str.Contains(" "))
             {
                 strword = Regex.Replace(str, "\\s{2,}", "-");
