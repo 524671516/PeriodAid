@@ -779,7 +779,7 @@ namespace PeriodAid.Controllers
             return View();
         }
         [Authorize(Roles = "CRM")]
-        public ActionResult CRM_undeliveredPartical(string status, int? page, string shopCode)
+        public ActionResult CRM_undeliveredPartical(string status, int? page, string shopCode, string query)
         {
             var user = getUser(User.Identity.Name);
             int _page = page ?? 1;
@@ -788,7 +788,9 @@ namespace PeriodAid.Controllers
                 if (shopCode == "0")
                 {
                     var undeliveredData = (from m in crm_db.CRM_Contract
-                                           where m.contract_status == status
+                                           where m.contract_status == status && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                            orderby m.edit_time descending
                                            select m).ToPagedList(_page, 20);
                     return PartialView(undeliveredData);
@@ -796,7 +798,9 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var undeliveredData = (from m in crm_db.CRM_Contract
-                                           where m.contract_status == status && m.shop_code == shopCode
+                                           where m.contract_status == status && m.shop_code == shopCode && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                            orderby m.edit_time descending
                                            select m).ToPagedList(_page, 20);
                     return PartialView(undeliveredData);
@@ -813,8 +817,10 @@ namespace PeriodAid.Controllers
                     if (shopCode == "0")
                     {
                         var undeliveredData = (from m in crm_db.CRM_Contract
-                                               join c in employee on m.user_id equals c.system_code
-                                               where m.contract_status == status
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
                         return PartialView(undeliveredData);
@@ -822,8 +828,10 @@ namespace PeriodAid.Controllers
                     else
                     {
                         var undeliveredData = (from m in crm_db.CRM_Contract
-                                               join c in employee on m.user_id equals c.system_code
-                                               where m.contract_status == status && m.shop_code == shopCode
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && m.shop_code == shopCode && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
                         return PartialView(undeliveredData);
@@ -841,8 +849,10 @@ namespace PeriodAid.Controllers
                     if (shopCode == "0")
                     {
                         var undeliveredData = (from m in crm_db.CRM_Contract
-                                               join c in employee on m.user_id equals c.system_code
-                                               where m.contract_status == status
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
                         return PartialView(undeliveredData);
@@ -850,8 +860,10 @@ namespace PeriodAid.Controllers
                     else
                     {
                         var undelivereddata = (from m in crm_db.CRM_Contract
-                                               join c in employee on m.user_id equals c.system_code
-                                               where m.contract_status == status && m.shop_code == shopCode
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && m.shop_code == shopCode && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                                orderby m.edit_time descending
                                                select m).ToPagedList(_page, 20);
                         return PartialView(undelivereddata);
@@ -863,7 +875,9 @@ namespace PeriodAid.Controllers
                 if (shopCode == "0")
                 {
                     var undeliveredData = (from m in crm_db.CRM_Contract
-                                           where m.contract_status == status && m.user_id == user.system_code
+                                           where m.contract_status == status && m.user_id == user.Id && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                            orderby m.edit_time descending
                                            select m).ToPagedList(_page, 20);
                     return PartialView(undeliveredData);
@@ -871,7 +885,9 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var undeliveredData = (from m in crm_db.CRM_Contract
-                                           where m.contract_status == status && m.shop_code == shopCode && m.user_id == user.system_code
+                                           where m.contract_status == status && m.shop_code == shopCode && m.user_id == user.Id && m.user_id == user.Id && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
                                            orderby m.edit_time descending
                                            select m).ToPagedList(_page, 20);
                     return PartialView(undeliveredData);
