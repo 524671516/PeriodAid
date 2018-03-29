@@ -4,25 +4,24 @@
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 <style>
-    #tm-view-loading{
-    left: 10px;
-    width: 1000px;
-    height: 750px;
-    position: absolute;
-    background: white;
-    z-index: 1000;
+    #tm-view-loading {
+        left: 10px;
+        width: 1000px;
+        height: 750px;
+        position: absolute;
+        background: white;
+        z-index: 1000;
     }
-    
 </style>
-@*<table class="offline-search-box">
-        <tr>
-            <td class="pull-right">
-                <label>订单名称：</label>
-                <input class="form-control input-sm offline-search-inline" id="storage-product-query" placeholder="搜索内容" />
-                <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
-            </td>
-        </tr>
-    </table>*@
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>搜索内容：</label>
+            <input class="form-control input-sm offline-search-inline" style="height:30px;text-indent:12px" id="contract_query" placeholder="请输入内容" data-toggle="tooltip" data-placement="bottom" title="支持【订单号/订单名称/客户名称】的模糊搜索" />
+            <a class="btn btn-info btn-sm" id="contract_search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
 <div class="select-btn">
     <a class="btn btn-info btn-sm status-btn" id="first_btn" data-val="3531567"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;未同步ERP订单</a>
     <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="3531568"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;已同步ERP订单</a>
@@ -127,7 +126,8 @@
                     data: {
                         page:1,
                         status: that.attr("data-val"),
-                        shopCode: $(".active").children(".shop_btn").attr("data-id")
+                        shopCode: $(".active").children(".shop_btn").attr("data-id"),
+                        query: $("#contract_query").val()
                     },
                     success: function (data) {
                         $("#undelivered_list_content").html(data)
@@ -143,12 +143,35 @@
                         page: 1,
                         status: $(".btn-danger").attr("data-val"),
                         shopCode: that.attr("data-id"),
+                        query: $("#contract_query").val()
                     },
                     success: function (data) {
                         $("#undelivered_list_content").html(data)
                     }
                 })
             })
+            //搜索
+            $("#contract_search").on("click", function () {
+                $.ajax({
+                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                    type: "post",
+                    data: {
+                        page: 1,
+                        status: $(".btn-danger").attr("data-val"),
+                        shopCode: $(".shop-list-li.active .shop_btn").attr("data-id"),
+                        query: $("#contract_query").val()
+                    },
+                    success: function (data) {
+                        $("#undelivered_list_content").html(data)
+                    }
+                })
+            })
+            //回车绑定
+            $(document).keyup(function (event) {
+                if (event.keyCode == 13) {
+                    $("#contract_search").trigger("click")
+                }
+            });
         });
     </script>
 }
