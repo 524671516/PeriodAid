@@ -1,32 +1,52 @@
-﻿@model PeriodAid.Models.MD_Order
+﻿@model PagedList.IPagedList<PeriodAid.Models.MD_Order>
+@using PagedList.Mvc;
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th>平台单号</th>
-            <th>客户名称</th>
-            <th>邮寄地址</th>
-            <th>未发次数</th>
-            <th>发货日期</th>
-            <th></th>
+            <th style="width:15%">平台单号</th>
+            <th style="width:15%">客户名称</th>
+            <th style="width:10%">未发次数</th>
+            <th style="width:10%">首单发货日期</th>
+            <th style="width:30%">邮寄地址</th>
+            <th style="width:20%"></th>
         </tr>
-        @foreach (var item in ViewBag.Order)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>@item.order_code</td>
                 <td>@item.MD_Customer.customer_name</td>
+                <td style="text-indent:18px">0</td>
+                <td style="text-indent:5px">@item.receiver_date.ToString("yyyy-MM-dd")</td>
                 <td>@item.MD_Customer.customer_address</td>
-                <td>0</td>
-                <td>@item.receiver_date.ToString("yyyy-MM-dd")</td>
                 <td>
-                    <a class="btn btn-xs btn-success" role="button" style="cursor:pointer">合并发送</a>
-                    <a class="btn btn-xs btn-info" role="button">详情</a>
-                    <a class="btn btn-xs btn-danger" role="button">取消发送</a>
+                    <a class="btn btn-xs btn-success" role="button" data-id="@item.Id">合并发送</a>
+                    <a class="btn btn-xs btn-info orderDetail_btn" role="button" data-id="@item.Id">详情</a>
+                    <a class="btn btn-xs btn-danger" role="button" data-id="@item.Id">取消发送</a>
                 </td>
             </tr>
         }
-
     </table>
-    @*<div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("CRM_undeliveredPartical", new { page }))
-    </div>*@
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("MD_OrderPartialView", new { page }))
+    </div>
 </div>
+<script>
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data: {
+                query: $("#order_query").val()
+            },
+            success: function (data) {
+                $("#order_list_content").html(data);
+            }
+        });
+        return false;
+    });
+    $(".orderDetail_btn").on("click", function () {
+        var that = $(this);
+        var orderId = that.attr("data-id")
+        that.attr("href", "/SalesProcess/MD_OrderDetailView/?order_id=" + orderId)
+    })
+</script>

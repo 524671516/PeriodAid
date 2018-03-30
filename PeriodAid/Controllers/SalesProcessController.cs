@@ -1320,11 +1320,42 @@ namespace PeriodAid.Controllers
         public ActionResult MD_OrderPartialView(int? page,string query)
         {
             int _page = page ?? 1;
-            if(query == null)
+            if (query != "")
             {
-
+                var order = from m in md_db.MD_Order
+                            where m.order_status != -1
+                            select m;
+                var SearchResult = (from m in order
+                                    where m.order_code.Contains(query) || m.MD_Customer.customer_name.Contains(query)
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
             }
-            return PartialView();
+            else
+            {
+                var SearchResult = (from m in md_db.MD_Order
+                                    where m.order_status != -1
+                                    orderby m.Id descending
+                                    select m).ToPagedList(_page, 15);
+                return PartialView(SearchResult);
+            }
         }
+
+        public ActionResult MD_OrderDetailView(int order_id)
+        {
+            var orderdetail = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id);
+            ViewBag.orderDetail = orderdetail.Id;
+            return View();
+        }
+
+        public ActionResult MD_DetailPartialView(int order_id)
+        {
+            var orderDetail = from m in md_db.MD_SubOrder
+                              where m.order_id == order_id
+                              orderby m.Id descending
+                              select m;
+            return PartialView(orderDetail);
+        }
+    
     }
 }

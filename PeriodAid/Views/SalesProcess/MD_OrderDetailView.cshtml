@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "MD_OrderDetailView";
+    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+}
+<div class="h2 text-center" id="orderId" data-id="@ViewBag.orderDetail">订单详情</div>
+<div id="orderdetail_list_content">
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/SalesProcess/MD_DetailPartialView/",
+                data: {
+                    order_id: $("#orderId").attr("data-id")
+                },
+                success: function (data) {
+                    $("#orderdetail_list_content").html(data)
+                }
+            })
+        })
+    </script>
+
+
+}

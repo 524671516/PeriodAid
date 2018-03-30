@@ -88,7 +88,7 @@ namespace PeriodAid.Models
         [StringLength(64)]
         public string product_name { get; set; }
 
-        public int quantity { get; set; }
+        public int total_quantity { get; set; }
 
         public int order_id { get; set; }
 
