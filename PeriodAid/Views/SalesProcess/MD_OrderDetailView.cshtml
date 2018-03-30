@@ -4,6 +4,11 @@
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 <div class="h2 text-center" id="orderId" data-id="@ViewBag.orderDetail">订单详情</div>
+<ol class="breadcrumb">
+    当前位置：
+    <li class="active">订单详情</li>
+    <li class="backBtn"><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
+</ol>
 <div id="orderdetail_list_content" style="margin-top:20px">
 </div>
 @section scripts{
