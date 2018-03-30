@@ -33,19 +33,13 @@ namespace PeriodAid.Controllers
         // GET: SalesProcess
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private SalesProcessModel _db;
-        private ProjectSchemeModels e_db;
         private IKCRMDATAModel crm_db;
-        private ThreeLevelAddressModel address_db;
-        private ProjectSchemeModels projrct_db;
+        private MonthlyDeliveryModel md_db;
         int try_times = 0;
         public SalesProcessController()
         {
-            _db = new SalesProcessModel();
             crm_db = new IKCRMDATAModel();
-            address_db = new ThreeLevelAddressModel();
-            projrct_db = new ProjectSchemeModels();
-            e_db = new ProjectSchemeModels();
+            md_db = new MonthlyDeliveryModel();
         }
         public ActionResult Index()
         {
@@ -1316,6 +1310,16 @@ namespace PeriodAid.Controllers
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
         }
+
+        // YYS
+        public ActionResult MD_show()
+        {
+            return View();
+        }
         
+        public ActionResult MD_PartialView()
+        {
+
+        }
     }
 }

@@ -5,14 +5,14 @@ namespace PeriodAid.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.IKCRMDATAModel>
+    internal sealed class Configuration : DbMigrationsConfiguration<PeriodAid.Models.MonthlyDeliveryModel>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(PeriodAid.Models.IKCRMDATAModel context)
+        protected override void Seed(PeriodAid.Models.MonthlyDeliveryModel context)
         {
             //  This method will be called after migrating to the latest version.
 
