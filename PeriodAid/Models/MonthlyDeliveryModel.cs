@@ -19,13 +19,11 @@ namespace PeriodAid.Models
         }
         public virtual DbSet<MD_Customer> MD_Customer { get; set; }
         public virtual DbSet<MD_Order> MD_Order { get; set; }
-        public virtual DbSet<MD_SubOrder> MD_SubOrder { get; set; }
         public virtual DbSet<MD_OrderDetail> MD_OrderDetail { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MD_Customer>().HasMany(m => m.MD_Order).WithRequired(m => m.MD_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
             modelBuilder.Entity<MD_Order>().HasMany(m => m.MD_OrderDetail).WithRequired(m => m.MD_Order).HasForeignKey(m => m.order_id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<MD_Order>().HasMany(m => m.MD_SubOrder).WithRequired(m => m.MD_Order).HasForeignKey(m => m.order_id).WillCascadeOnDelete(false);
         }
     }
 
@@ -60,6 +58,11 @@ namespace PeriodAid.Models
 
         public DateTime receiver_date { get; set; }
 
+        [StringLength(32)]
+        public string receiver_area { get; set; }
+        [StringLength(128)]
+        public string receiver_address { get; set; }
+
         public int receiver_status { get; set; }
 
         public int order_status { get; set; }
@@ -70,19 +73,21 @@ namespace PeriodAid.Models
 
         public int customer_id { get; set; }
 
+        public int parentOrder_id { get; set; }
+
+        public int times { get; set; }
+
         public virtual MD_Customer MD_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MD_OrderDetail> MD_OrderDetail { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MD_SubOrder> MD_SubOrder { get; set; }
     }
 
     [Table("MD_OrderDetail")]
     public partial class MD_OrderDetail
     {
         public int Id { get; set; }
+        
         [StringLength(64)]
         public string product_code { get; set; }
         [StringLength(64)]
@@ -95,34 +100,5 @@ namespace PeriodAid.Models
         public virtual MD_Order MD_Order { get; set; }
 
     }
-
-    [Table("MD_SubOrder")]
-    public partial class MD_SubOrder
-    {
-        public int Id { get; set; }
-
-        public string sub_orderCode { get; set; }
-
-        public int quantity { get; set; }
-
-        public DateTime receiver_date { get; set; }
-
-        [StringLength(32)]
-        public string receiver_tel { get; set; }
-        [StringLength(32)]
-        public string receiver_area { get; set; }
-        [StringLength(128)]
-        public string receiver_address { get; set; }
-
-        public int receiver_status { get; set; }
-        [StringLength(128)]
-        public string express_information { get; set; }
-
-        public int status { get; set; }
-
-        public int order_id { get; set; }
-
-        public virtual MD_Order MD_Order { get; set; }
-
-    }
+    
 }

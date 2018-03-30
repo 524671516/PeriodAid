@@ -196,6 +196,19 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
+        // YYS
+        public static string ReceiverStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "待发货";
+                case 2:
+                    return "已发货";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string SellerStatus(this HtmlHelper helper, int status)
         {

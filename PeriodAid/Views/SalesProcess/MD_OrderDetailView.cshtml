@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 <div class="h2 text-center" id="orderId" data-id="@ViewBag.orderDetail">订单详情</div>
-<div id="orderdetail_list_content">
+<div id="orderdetail_list_content" style="margin-top:20px">
 </div>
 @section scripts{
     <script>
@@ -12,7 +12,7 @@
             $.ajax({
                 url: "/SalesProcess/MD_DetailPartialView/",
                 data: {
-                    order_id: $("#orderId").attr("data-id")
+                    parentOrder_id: $("#orderId").attr("data-id")
                 },
                 success: function (data) {
                     $("#orderdetail_list_content").html(data)

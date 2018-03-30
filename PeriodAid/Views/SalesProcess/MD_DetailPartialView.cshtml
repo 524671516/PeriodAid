@@ -1,18 +1,40 @@
-﻿@model IEnumerable<PeriodAid.Models.MD_SubOrder>
+﻿@model IEnumerable<PeriodAid.Models.MD_Order>
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th style="width:15%">平台单号</th>
-            <th style="width:15%">客户名称</th>
-            <th style="width:10%">未发次数</th>
-            <th style="width:10%">首单发货日期</th>
-            <th style="width:30%">邮寄地址</th>
+            <th style="width:20%">平台单号</th>
+            <th style="width:10%">发货状态</th>
+            <th style="width:10%">发货时间</th>
+            <th style="width:20%">邮寄地址</th>
+            <th style="width:20%">物流单号</th>
             <th style="width:20%"></th>
         </tr>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@item.order_code</td>
+                <td>@Html.ReceiverStatus(item.receiver_status)</td>
+                <td>@item.receiver_date.ToString("yyyy-MM-dd")</td>
+                @if (@item.receiver_address== null)
+                {
+                    <td>@item.MD_Customer.customer_address</td>
+                }
+                else
+                {
+                    <td>@item.receiver_area</td>
+                }
+
+                <td>@item.express_information</td>
+                <td>
+                    <a class="btn btn-xs btn-success" role="button" data-id="@item.Id">编辑</a>
+                    <a class="btn btn-xs btn-danger" role="button" data-id="@item.Id">产品详情</a>
+                </td>
             </tr>
         }
     </table>
 </div>
+<script>
+    $(function () {
+        $("#ul-hover li").eq(1).addClass("current")
+    })
+</script>
