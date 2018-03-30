@@ -14,12 +14,20 @@
 <div class="tm-veiw-loading text-center" id="tm-view-loading" style="height:100%">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i><br><h4>数据加载中，请勿刷新界面！</h4>
 </div>
-<div id="order_list">
+<div id="order_list_content">
 </div>
 @section scripts{
     <script>
         $(function () {
-            $("#tm-view-loading").hide()
+            $.ajax({
+                url: "/SalesProcess/MD_OrderPartialView/",
+                data: {
+                },
+                success: function (data) {
+                    $("#order_list_content").html(data)
+                    $("#tm-view-loading").hide()
+                }
+            })
         })
     </script>
     

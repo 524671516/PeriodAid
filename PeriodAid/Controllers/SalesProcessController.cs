@@ -1317,9 +1317,14 @@ namespace PeriodAid.Controllers
             return View();
         }
         
-        public ActionResult MD_PartialView()
+        public ActionResult MD_OrderPartialView(int? page,string query)
         {
+            int _page = page ?? 1;
+            if(query == null)
+            {
 
+            }
+            return PartialView();
         }
     }
 }
