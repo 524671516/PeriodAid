@@ -14,7 +14,7 @@
             <tr class="data_view" data-toggle="tooltip" data-placement="left" title="">
                 <td>@item.order_code</td>
                 <td>@Html.ReceiverStatus(item.receiver_status)</td>
-                <td>@item.receiver_date.ToString("yyyy-MM-dd")</td>
+                <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 @if (@item.receiver_address == null)
                 {
                     <td>@item.MD_Customer.customer_address</td>
@@ -69,6 +69,7 @@
                 success: function (data) {
                     $('#modal-content').html(data)
                     $("#myModal").modal('show')
+                    $("#orderId_show").attr("data-id", $("#orderId").attr("data-id"))
                 }
             })
         })

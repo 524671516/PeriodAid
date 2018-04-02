@@ -3,6 +3,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改订单信息</h2>
 </div>
+<div class="hidden" id="orderId_show"></div>
 <div class="modal-body" id="modal-body">
     @using (Html.BeginForm("MD_EditOrderInfo", "SalesProcess", FormMethod.Post, new { @id = "order-form" }))
     {
@@ -10,10 +11,16 @@
         <div class="form-horizontal">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
-            <div class="form-group">
-                <label class="col-md-2 control-label">活动日期</label>
+            <div class="form-group hidden">
                 <div class="col-md-10">
-                    <input class="form-control" id="receiverDate" name="receiverDate" type="datetime" autocomplete="off">
+                    <input id="customer_id" type="text" value="@ViewBag.Order.customer_id" class="form-control" name="customer_id" />
+                    @Html.ValidationMessageFor(model => model.customer_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">邮寄日期</label>
+                <div class="col-md-10">
+                    <input id="receiverDate" type="text" value="@ViewBag.Order.receiver_date.ToString("yyyy-MM-dd")" class="form-control date-readonly order_control" autocomplete="off" name="receiverDate" readonly="readonly" required />
                     @Html.ValidationMessageFor(model => model.receiver_date, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -31,7 +38,6 @@
         window.moment = Kalendae.moment;
         var k4 = new Kalendae.Input('receiverDate', {
             months: 1,
-            mode: 'multiple',
             titleFormat: "MM月, YYYY年",
             format: "YYYY-MM-DD"
         });
@@ -39,7 +45,30 @@
     $("#save-btn").on("click", function () {
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")
-            $("#order-form").submit();
+            $("#order-form").ajaxSubmit({
+                url: '/SalesProcess/MD_EditOrderInfo',
+                type: 'post',
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        alert('保存成功')
+                        $("#myModal").modal('hide');
+                        $.ajax({
+                            url: "/SalesProcess/MD_OrderDetailPartialView/",
+                            data: {
+                                parentOrder_id: $("#orderId_show").attr("data-id")
+                            },
+                            success: function (data) {
+                                $("#orderdetail_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        })
+                    } else {
+                        errorAlert('保存失败')
+                    }
+                }
+            })
+            return false;
         }
     })
 </script>

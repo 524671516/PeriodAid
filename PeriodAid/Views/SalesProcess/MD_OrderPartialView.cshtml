@@ -20,7 +20,7 @@
             <tr class="times_view" data-id="@item.Id" data-toggle="tooltip" data-placement="left">
                 <td>@item.order_code</td>
                 <td>@item.MD_Customer.customer_name</td>
-                <td style="text-indent:5px">@item.receiver_date.ToString("yyyy-MM-dd")</td>
+                <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
                     <div style="width:312px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                         @item.MD_Customer.customer_address

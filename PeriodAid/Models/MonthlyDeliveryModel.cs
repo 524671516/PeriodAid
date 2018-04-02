@@ -56,7 +56,7 @@ namespace PeriodAid.Models
         // 总金额
         public double total_amount { get; set; }
 
-        public DateTime receiver_date { get; set; }
+        public DateTime? receiver_date { get; set; }
 
         [StringLength(32)]
         public string receiver_area { get; set; }
@@ -70,6 +70,8 @@ namespace PeriodAid.Models
         public string express_information { get; set; }
         [StringLength(128)]
         public string remark { get; set; }
+        // 0 未推送 1已推送
+        public int upload_status { get; set; }
 
         public int customer_id { get; set; }
 

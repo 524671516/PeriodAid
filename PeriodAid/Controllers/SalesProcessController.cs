@@ -1396,39 +1396,25 @@ namespace PeriodAid.Controllers
         public ActionResult MD_EditOrderInfo(int order_id)
         {
             var order = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id);
+            ViewBag.Order = order;
             return PartialView(order);
         }
-        //[HttpPost]
-        //public ActionResult EditOrderPriceInfo(SP_OrderPrice model)
-        //{
-        //    bool Order = _db.SP_OrderPrice.Any(m => m.Product_Id == model.Product_Id && m.Order_Count == model.Order_Count && m.OrderPrice_Remark == model.OrderPrice_Remark && m.Order_Price == model.Order_Price && m.OrderPrice_Discount == model.OrderPrice_Discount && m.OrderPrice_Status != -1);
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (Order)
-        //        {
-        //            return Json(new { result = "UNAUTHORIZED" });
-        //        }
-        //        else
-        //        {
-        //            var order = _db.SP_Order.SingleOrDefault(m => m.Id == model.Order_Id);
-        //            if (order.Order_Type != 0)
-        //            {
-        //                SP_OrderPrice orderPrice = new SP_OrderPrice();
-        //                if (TryUpdateModel(orderPrice))
-        //                {
-        //                    _db.Entry(orderPrice).State = System.Data.Entity.EntityState.Modified;
-        //                    _db.SaveChanges();
-        //                    return Json(new { result = "SUCCESS" });
-        //                }
-        //            }
-        //            else
-        //            {
-        //                return Json(new { result = "WARNING" });
-        //            }
-        //        }
-        //    }
-        //    return Json(new { result = "FAIL" });
-        //}
+        [HttpPost]
+        public ActionResult MD_EditOrderInfo(MD_Order model)
+        {
+            ModelState.Remove("receiver_date");
+            if (ModelState.IsValid)
+            {
+                MD_Order Orders = new MD_Order();
+                if (TryUpdateModel(Orders))
+                {
+                    md_db.Entry(Orders).State = System.Data.Entity.EntityState.Modified;
+                    md_db.SaveChanges();
+                    return Json(new { result = "SUCCESS" });
+                }
+            }
+            return Json(new { result = "FAIL" });
+        }
 
     }
 }
