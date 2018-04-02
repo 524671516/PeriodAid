@@ -51,9 +51,9 @@ namespace PeriodAid.Models
         public int Id { get; set; }
         [StringLength(128)]
         public string order_code { get; set; }
-
+        // 数量
         public int quantity { get; set; }
-
+        // 总金额
         public double total_amount { get; set; }
 
         public DateTime receiver_date { get; set; }
@@ -64,7 +64,7 @@ namespace PeriodAid.Models
         public string receiver_address { get; set; }
 
         public int receiver_status { get; set; }
-
+        // -1 取消 0 分批 1 合并
         public int order_status { get; set; }
         [StringLength(128)]
         public string express_information { get; set; }
@@ -92,7 +92,7 @@ namespace PeriodAid.Models
         public string product_code { get; set; }
         [StringLength(64)]
         public string product_name { get; set; }
-
+        // 总数量
         public int total_quantity { get; set; }
 
         public int order_id { get; set; }

@@ -1312,7 +1312,7 @@ namespace PeriodAid.Controllers
         }
 
         // YYS
-        public ActionResult MD_show()
+        public ActionResult MD_OrderView()
         {
             return View();
         }
@@ -1356,13 +1356,79 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult MD_DetailPartialView(int parentOrder_id)
+        public ActionResult MD_OrderDetailPartialView(int parentOrder_id)
         {
             var orderDetail = from m in md_db.MD_Order
                               where m.parentOrder_id == parentOrder_id
                               select m;
             return PartialView(orderDetail);
         }
-    
+        // 合并
+        [HttpPost]
+        public JsonResult Amalgamate_Order(int order_id)
+        {
+            var order = from m in md_db.MD_Order
+                        where m.parentOrder_id == order_id && m.order_status == 0 && m.receiver_status == 0
+                        select m;
+            foreach(var Order in order)
+            {
+                Order.order_status = 1;
+                md_db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
+            }
+            md_db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
+        // 取消发送
+        public JsonResult Cancel_Order(int order_id)
+        {
+            var order = from m in md_db.MD_Order
+                        where m.parentOrder_id == order_id && m.order_status == 0 && m.receiver_status == 0
+                        select m;
+            foreach (var Order in order)
+            {
+                Order.order_status = -1;
+                md_db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
+            }
+            md_db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
+        // 更改
+        public ActionResult MD_EditOrderInfo(int order_id)
+        {
+            var order = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id);
+            return PartialView(order);
+        }
+        //[HttpPost]
+        //public ActionResult EditOrderPriceInfo(SP_OrderPrice model)
+        //{
+        //    bool Order = _db.SP_OrderPrice.Any(m => m.Product_Id == model.Product_Id && m.Order_Count == model.Order_Count && m.OrderPrice_Remark == model.OrderPrice_Remark && m.Order_Price == model.Order_Price && m.OrderPrice_Discount == model.OrderPrice_Discount && m.OrderPrice_Status != -1);
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (Order)
+        //        {
+        //            return Json(new { result = "UNAUTHORIZED" });
+        //        }
+        //        else
+        //        {
+        //            var order = _db.SP_Order.SingleOrDefault(m => m.Id == model.Order_Id);
+        //            if (order.Order_Type != 0)
+        //            {
+        //                SP_OrderPrice orderPrice = new SP_OrderPrice();
+        //                if (TryUpdateModel(orderPrice))
+        //                {
+        //                    _db.Entry(orderPrice).State = System.Data.Entity.EntityState.Modified;
+        //                    _db.SaveChanges();
+        //                    return Json(new { result = "SUCCESS" });
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return Json(new { result = "WARNING" });
+        //            }
+        //        }
+        //    }
+        //    return Json(new { result = "FAIL" });
+        //}
+
     }
 }

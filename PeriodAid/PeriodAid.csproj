@@ -1171,10 +1171,11 @@
     <Content Include="Views\SalesProcess\CRM_show.cshtml" />
     <Content Include="Views\SalesProcess\CRM_undeliveredPartical.cshtml" />
     <Content Include="Views\SalesProcess\ContractDetail_show.cshtml" />
-    <Content Include="Views\SalesProcess\MD_show.cshtml" />
+    <Content Include="Views\SalesProcess\MD_OrderView.cshtml" />
     <Content Include="Views\SalesProcess\MD_OrderPartialView.cshtml" />
     <Content Include="Views\SalesProcess\MD_OrderDetailView.cshtml" />
-    <Content Include="Views\SalesProcess\MD_DetailPartialView.cshtml" />
+    <Content Include="Views\SalesProcess\MD_OrderDetailPartialView.cshtml" />
+    <Content Include="Views\SalesProcess\MD_EditOrderInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

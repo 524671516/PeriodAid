@@ -15,7 +15,7 @@
                 <td>@item.order_code</td>
                 <td>@Html.ReceiverStatus(item.receiver_status)</td>
                 <td>@item.receiver_date.ToString("yyyy-MM-dd")</td>
-                @if (@item.receiver_address== null)
+                @if (@item.receiver_address == null)
                 {
                     <td>@item.MD_Customer.customer_address</td>
                 }
@@ -26,15 +26,27 @@
 
                 <td>@item.express_information</td>
                 <td>
-                    <a class="btn btn-xs btn-success" role="button" data-id="@item.Id">编辑</a>
+                    <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-status="@item.order_status" data-toggle="modal" data-target="#myModal">编辑</a>
                     <a class="btn btn-xs btn-danger" role="button" data-id="@item.Id">产品详情</a>
                 </td>
             </tr>
         }
     </table>
 </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
 <script>
     $(function () {
+        $('.edit_btn[data-status="-1"]').addClass("disabled")
+        $('.edit_btn[data-status="1"]').addClass("disabled")
         $("#ul-hover li").eq(1).addClass("current")
+        // 编辑
+        $(".edit_btn").on("click", function () {
+            var that = $(this)
+        })
     })
-</script>
+</script>            
