@@ -11,9 +11,10 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
             <div class="form-group">
-                <label class="control-label col-md-2">选择配送日期</label>
+                <label class="col-md-2 control-label">活动日期</label>
                 <div class="col-md-10">
-
+                    <input class="form-control" id="receiverDate" name="receiverDate" type="datetime" autocomplete="off">
+                    @Html.ValidationMessageFor(model => model.receiver_date, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -27,73 +28,18 @@
 </div>
 <script>
     $(function () {
+        window.moment = Kalendae.moment;
+        var k4 = new Kalendae.Input('receiverDate', {
+            months: 1,
+            mode: 'multiple',
+            titleFormat: "MM月, YYYY年",
+            format: "YYYY-MM-DD"
+        });
     })
     $("#save-btn").on("click", function () {
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")
-            $("#seller-form").submit();
+            $("#order-form").submit();
         }
     })
-    //新建项目表单验证   详细用法请查看validate插件
-    $("#seller-form").validate({
-        debug: true,
-        rules:{
-            Seller_Name: {
-                required: true,
-                maxlength: 16
-            },
-            Seller_Mobile: {
-                required: true,
-                minlength: 11,
-                isMobile: true
-            },
-        },
-        messages:{
-            Seller_Name: {
-                required: "姓名是必填的"
-            },
-            Seller_Mobile: {
-                required: "请输入手机号",
-                minlength: "确认手机不能小于11个字符",
-                isMobile: "请正确填写您的手机号码"
-            },
-        },
-        //验证通过的正式提交函数
-        submitHandler: function (form) {
-            $(form).ajaxSubmit(function (data) {
-                if (data.result == "SUCCESS") {
-                    $("#save-btn").removeClass("disabled")
-                    alert('保存成功')
-                    $("#myModal").modal('hide');
-                    $.ajax({
-                        url: "/SalesProcess/SellerListPartial",
-                        data: {
-                            page: 1,
-                            query: $("#seller-query").val()
-                        },
-                        success: function (data) {
-                            $("#seller_list_content").html(data);
-                            $('.modal-backdrop.in').remove()
-                            $('body').removeClass('modal-open')
-                        }
-                    });
-                } else if (data.result == "UNAUTHORIZED") {
-                    $("#save-btn").removeClass("disabled")
-                    errorAlert('信息未修改')
-                } else if (data.result == "FAIL") {
-                    $("#save-btn").removeClass("disabled")
-                    errorAlert('保存失败')
-                } else {
-                    $("#save-btn").removeClass("disabled")
-                    errorAlert(data.errmsg);
-                }
-            })
-        },
-        errorClass: "has-error",
-        //验证失败
-        errorPlacement: function (error, element) {
-            $("#save-btn").removeClass("disabled")
-            error.appendTo(element.parent())
-        }
-    });
 </script>
