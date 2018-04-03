@@ -1326,7 +1326,7 @@ namespace PeriodAid.Controllers
             if (query != "")
             {
                 var SearchResult = (from m in order
-                                    where m.order_code.Contains(query) || m.MD_Customer.customer_name.Contains(query)
+                                    where m.order_code.Contains(query)
                                     orderby m.Id descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
@@ -1370,13 +1370,42 @@ namespace PeriodAid.Controllers
             var order = from m in md_db.MD_Order
                         where m.parentOrder_id == order_id && m.order_status == 0 && m.receiver_status == 0
                         select m;
-            foreach(var Order in order)
+            var count = order.Count();
+            if(count != 0)
             {
-                Order.order_status = 1;
-                md_db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
+                var Order = md_db.MD_Order.Where(m => m.parentOrder_id == order_id && m.receiver_status == 2 && m.order_status == 0).OrderByDescending(m => m.times).FirstOrDefault();
+                var total_quantity = count * Order.quantity;
+                md_db.MD_Order.RemoveRange(order);
+                var OrderDetail = new MD_Order();
+                if (Order.order_code.Contains("YYS"))
+                {
+                    OrderDetail.order_code = Order.order_code + Order.times + 1;
+                }
+                else
+                {
+
+                    OrderDetail.order_code = "YYS" + Order.order_code + Order.times + 1;
+                }
+                OrderDetail.quantity = total_quantity;
+                OrderDetail.total_amount = 0;
+                OrderDetail.receiver_date = Order.receiver_date.Value.AddDays(30);
+                OrderDetail.receiver_status = 0;
+                OrderDetail.order_status = 1;
+                OrderDetail.receiver_area = Order.receiver_area;
+                OrderDetail.receiver_address = Order.receiver_address;
+                OrderDetail.parentOrder_id = Order.parentOrder_id;
+                OrderDetail.receiver_tel = Order.receiver_tel;
+                OrderDetail.product_id = Order.product_id;
+                OrderDetail.vip_code = Order.vip_code;
+                OrderDetail.times = Order.times + 1;
+                md_db.MD_Order.Add(OrderDetail);
+                md_db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }else
+            {
+                return Json(new { result = "FAIL" });
             }
-            md_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            
         }
         // 取消发送
         public JsonResult Cancel_Order(int order_id)
@@ -1384,13 +1413,15 @@ namespace PeriodAid.Controllers
             var order = from m in md_db.MD_Order
                         where m.parentOrder_id == order_id && m.order_status == 0 && m.receiver_status == 0
                         select m;
-            foreach (var Order in order)
+            if(order.Count() != 0)
             {
-                Order.order_status = -1;
-                md_db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
+                md_db.MD_Order.RemoveRange(order);
+                md_db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }else
+            {
+                return Json(new { result = "FAIL" });
             }
-            md_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
         }
         // 更改
         public ActionResult MD_EditOrderInfo(int order_id)
@@ -1402,7 +1433,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult MD_EditOrderInfo(MD_Order model)
         {
-            ModelState.Remove("receiver_date");
             if (ModelState.IsValid)
             {
                 MD_Order Orders = new MD_Order();

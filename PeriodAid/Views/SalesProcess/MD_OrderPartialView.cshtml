@@ -10,25 +10,27 @@
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
             <th style="width:15%">平台单号</th>
-            <th style="width:15%">客户名称</th>
-            <th style="width:10%">首单发货日期</th>
-            <th style="width:25%">邮寄地址</th>
-            <th style="width:25%"></th>
+            <th style="width:10%">产品数量</th>
+            <th style="width:10%">客户名称</th>
+            <th style="width:15%">首单发货日期</th>
+            <th style="width:20%">邮寄地址</th>
+            <th style="width:30%"></th>
         </tr>
         @foreach (var item in Model)
         {
             <tr class="times_view" data-id="@item.Id" data-toggle="tooltip" data-placement="left">
                 <td>@item.order_code</td>
-                <td>@item.MD_Customer.customer_name</td>
+                <td style="text-indent:15px">@item.quantity</td>
+                <td>@item.vip_code</td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
                     <div style="width:312px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-                        @item.MD_Customer.customer_address
+                        @item.receiver_address
                     </div>
                 </td>
                 <td>
-                    <a class="btn btn-xs btn-success amalgamate_btn" role="button" data-id="@item.Id">合并发送</a>
-                    <a class="btn btn-xs btn-danger cancel_btn" role="button" data-id="@item.Id">取消发送</a>
+                    <a class="btn btn-xs btn-success amalgamate_btn select_btn" role="button" data-id="@item.Id" data-ostatus="@item.order_status">合并发送</a>
+                    <a class="btn btn-xs btn-danger cancel_btn select_btn" role="button" data-id="@item.Id" data-ostatus="@item.order_status">取消发送</a>
                     <a class="btn btn-xs btn-info orderDetail_btn" role="button" data-id="@item.Id">订单详情</a>
                 </td>
             </tr>
@@ -36,6 +38,12 @@
     </table>
     <div class="text-right">
         @Html.PagedListPager(Model, page => Url.Action("MD_OrderPartialView", new { page }))
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
     </div>
 </div>
 <script>
@@ -80,32 +88,29 @@
                 content: that.parents(".times_view").attr("data-original-title"),
                 buttons: {
                     确定: function () {
-                        $.confirm({
-                            title: '提示!',
-                            content: '是否使用默认信息!',
-                            buttons: {
-                                确定: function () {
-                                    $.ajax({
-                                        url: "/SalesProcess/Amalgamate_Order/",
-                                        type: "post",
-                                        data: {
-                                            order_id: that.attr("data-id")
-                                        },
-                                        success: function (data) {
-                                            if (data.result == "SUCCESS") {
-                                                $.alert({
-                                                    title: '提示!',
-                                                    content: '合并成功!',
-                                                    type: 'green',
-                                                });
-                                            }
-                                        }
-                                    })
-                                },
-                                更改: function () {
+                        $.ajax({
+                            url: "/SalesProcess/Amalgamate_Order/",
+                            type: "post",
+                            data: {
+                                order_id: that.attr("data-id")
+                            },
+                            success: function (data) {
+                                if (data.result == "SUCCESS") {
+                                    $.alert({
+                                        title: '提示!',
+                                        content: '合并成功!',
+                                        type: 'green',
+                                    });
+                                }
+                                else {
+                                    $.alert({
+                                        title: '提示!',
+                                        content: '订单已合并!',
+                                        type: 'red',
+                                    });
                                 }
                             }
-                        });
+                        })
                     },
                     取消: function () {
                         
@@ -134,6 +139,13 @@
                                         title: '提示!',
                                         content: '取消成功!',
                                         type: 'green',
+                                    });
+                                }
+                                else {
+                                    $.alert({
+                                        title: '提示!',
+                                        content: '订单已取消!',
+                                        type: 'red',
                                     });
                                 }
                             }

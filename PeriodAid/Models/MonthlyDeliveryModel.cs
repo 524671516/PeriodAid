@@ -17,34 +17,14 @@ namespace PeriodAid.Models
             : base("name=MonthlyDeliveryConnection")
         {
         }
-        public virtual DbSet<MD_Customer> MD_Customer { get; set; }
         public virtual DbSet<MD_Order> MD_Order { get; set; }
-        public virtual DbSet<MD_OrderDetail> MD_OrderDetail { get; set; }
+        public virtual DbSet<MD_Product> MD_Product { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<MD_Customer>().HasMany(m => m.MD_Order).WithRequired(m => m.MD_Customer).HasForeignKey(m => m.customer_id).WillCascadeOnDelete(false);
-            modelBuilder.Entity<MD_Order>().HasMany(m => m.MD_OrderDetail).WithRequired(m => m.MD_Order).HasForeignKey(m => m.order_id).WillCascadeOnDelete(false);
+            modelBuilder.Entity<MD_Product>().HasMany(m => m.MD_Order).WithRequired(m => m.MD_Product).HasForeignKey(m => m.product_id).WillCascadeOnDelete(false);
         }
     }
-
-    [Table("MD_Customer")]
-    public partial class MD_Customer
-    {
-        public int Id { get; set; }
-        [StringLength(64)]
-        public string customer_name { get; set; }
-        [StringLength(32)]
-        public string customer_tel { get; set; }
-        [StringLength(32)]
-        public string customer_area { get; set; }
-        [StringLength(128)]
-        public string customer_address { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MD_Order> MD_Order { get; set; }
-
-    }
-
+    
     [Table("MD_Order")]
     public partial class MD_Order
     {
@@ -57,11 +37,12 @@ namespace PeriodAid.Models
         public double total_amount { get; set; }
 
         public DateTime? receiver_date { get; set; }
-
         [StringLength(32)]
         public string receiver_area { get; set; }
         [StringLength(128)]
         public string receiver_address { get; set; }
+        [StringLength(32)]
+        public string receiver_tel { get; set; }
 
         public int receiver_status { get; set; }
         // -1 取消 0 分批 1 合并
@@ -72,21 +53,20 @@ namespace PeriodAid.Models
         public string remark { get; set; }
         // 0 未推送 1已推送
         public int upload_status { get; set; }
-
-        public int customer_id { get; set; }
+        [StringLength(256)]
+        public string vip_code { get; set; }
 
         public int parentOrder_id { get; set; }
 
         public int times { get; set; }
 
-        public virtual MD_Customer MD_Customer { get; set; }
+        public int product_id { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MD_OrderDetail> MD_OrderDetail { get; set; }
+        public virtual MD_Product MD_Product { get; set; }
     }
 
-    [Table("MD_OrderDetail")]
-    public partial class MD_OrderDetail
+    [Table("MD_Product")]
+    public partial class MD_Product
     {
         public int Id { get; set; }
         
@@ -94,13 +74,17 @@ namespace PeriodAid.Models
         public string product_code { get; set; }
         [StringLength(64)]
         public string product_name { get; set; }
-        // 总数量
-        public int total_quantity { get; set; }
-
-        public int order_id { get; set; }
-
-        public virtual MD_Order MD_Order { get; set; }
+        
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MD_Order> MD_Order { get; set; }
 
     }
-    
+
+    public static class OrderInfo
+    {
+        // 合并后的订单times
+        public static int amalgamate_time =10;
+    }
+
+
 }
