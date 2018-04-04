@@ -9,8 +9,8 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th style="width:15%">平台单号</th>
-            <th style="width:10%">产品数量</th>
+            <th style="width:20%">平台单号</th>
+            <th style="width:5%">数量</th>
             <th style="width:10%">客户名称</th>
             <th style="width:15%">首单发货日期</th>
             <th style="width:20%">邮寄地址</th>
@@ -19,12 +19,14 @@
         @foreach (var item in Model)
         {
             <tr class="times_view" data-id="@item.Id" data-toggle="tooltip" data-placement="left">
-                <td>@item.order_code</td>
-                <td style="text-indent:15px">@item.quantity</td>
+                <td>
+                    <div style="width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.order_code</div>
+                </td>
+                <td style="text-indent:8px">@item.quantity</td>
                 <td>@item.vip_code</td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
-                    <div style="width:312px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                    <div style="width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                         @item.receiver_address
                     </div>
                 </td>

@@ -34,7 +34,7 @@ namespace PeriodAid.Models
         // 数量
         public int quantity { get; set; }
         // 总金额
-        public double total_amount { get; set; }
+        public decimal total_amount { get; set; }
 
         public DateTime? receiver_date { get; set; }
         [StringLength(32)]
@@ -58,7 +58,7 @@ namespace PeriodAid.Models
 
         public int parentOrder_id { get; set; }
 
-        public int times { get; set; }
+        public int receiver_times { get; set; }
 
         public int product_id { get; set; }
 

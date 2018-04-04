@@ -30,8 +30,8 @@
                 <input id="order_status" type="text" value="@ViewBag.Order.order_status" class="form-control" name="order_status" />
                 @Html.ValidationMessageFor(model => model.order_status, "", new { @class = "text-danger" })
 
-                <input id="times" type="text" value="@ViewBag.Order.times" class="form-control" name="times" />
-                @Html.ValidationMessageFor(model => model.times, "", new { @class = "text-danger" })
+                <input id="receiver_times" type="text" value="@ViewBag.Order.times" class="form-control" name="receiver_times" />
+                @Html.ValidationMessageFor(model => model.receiver_times, "", new { @class = "text-danger" })
 
                 <input id="product_id" type="text" value="@ViewBag.Order.product_id" class="form-control" name="product_id" />
                 @Html.ValidationMessageFor(model => model.product_id, "", new { @class = "text-danger" })
@@ -39,11 +39,11 @@
                 <input id="receiver_address" type="text" value="@ViewBag.Order.receiver_address" class="form-control" name="receiver_address" />
                 @Html.ValidationMessageFor(model => model.receiver_address, "", new { @class = "text-danger" })
 
-                <input id="receiver_area" type="text" value="@ViewBag.Order.receiver_area" class="form-control" name="receiver_area" />
-                @Html.ValidationMessageFor(model => model.receiver_area, "", new { @class = "text-danger" })
-
                 <input id="receiver_tel" type="text" value="@ViewBag.Order.receiver_tel" class="form-control" name="receiver_tel" />
                 @Html.ValidationMessageFor(model => model.receiver_tel, "", new { @class = "text-danger" })
+
+                <input id="receiver_area" type="text" value="@ViewBag.Order.receiver_area" class="form-control" name="receiver_area" />
+                @Html.ValidationMessageFor(model => model.receiver_area, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label">邮寄日期</label>
