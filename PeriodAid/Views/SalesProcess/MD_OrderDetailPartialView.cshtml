@@ -27,7 +27,7 @@
                 }
                 <td>@item.express_information</td>
                 <td>
-                    <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-status="@item.order_status" data-receiver="@item.receiver_status" data-toggle="modal" data-target="#myModal">编辑</a>
+                    <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-utatus="@item.upload_status" data-receiver="@item.receiver_status" data-toggle="modal" data-target="#myModal">编辑</a>
                 </td>
             </tr>
         }
@@ -57,6 +57,7 @@
         $('.edit_btn[data-status="-1"]').addClass("disabled")
         $('.edit_btn[data-receiver="2"]').addClass("disabled")
         $("#ul-hover li").eq(1).addClass("current")
+        $('.edit_btn[data-utatus="1"]').addClass("disabled")
         // 编辑
         $(".edit_btn").on("click", function () {
             var that = $(this)
