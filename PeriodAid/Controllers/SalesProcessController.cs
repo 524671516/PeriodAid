@@ -1311,7 +1311,7 @@ namespace PeriodAid.Controllers
             }
         }
 
-        // YYS
+        // MD
         public ActionResult MD_OrderView()
         {
             return View();
@@ -1344,7 +1344,7 @@ namespace PeriodAid.Controllers
         public int ReceiverTimes(int order_id)
         {
             var count = from m in md_db.MD_Order
-                        where m.receiver_status == 0 && m.parentOrder_id == order_id
+                        where m.upload_status == 0 && m.parentOrder_id == order_id
                         select m;
             return count.Count();
         }
@@ -1368,13 +1368,13 @@ namespace PeriodAid.Controllers
         public JsonResult Amalgamate_Order(int order_id)
         {
             var order = from m in md_db.MD_Order
-                        where m.parentOrder_id == order_id && m.order_status == 0 && m.receiver_status == 0 && m.receiver_times != 1
+                        where m.parentOrder_id == order_id && m.order_status == 0 && m.delivery_state == 0 && m.receiver_times != 1
                         select m;
             var count = order.Count();
             if(count != 0)
             {
                 var Order = md_db.MD_Order.Where(m => m.parentOrder_id == order_id && m.upload_status == 1).OrderByDescending(m => m.receiver_times).FirstOrDefault();
-                var total_quantity = count * Order.quantity;
+                var total_quantity = count * Order.qty;
                 md_db.MD_Order.RemoveRange(order);
                 var OrderDetail = new MD_Order();
                 if (Order.order_code.Contains("YYS"))
@@ -1386,10 +1386,10 @@ namespace PeriodAid.Controllers
 
                     OrderDetail.order_code = "YYS" + Order.order_code + Order.receiver_times + 1;
                 }
-                OrderDetail.quantity = total_quantity;
-                OrderDetail.total_amount = 0;
+                OrderDetail.qty = total_quantity;
+                OrderDetail.amount = 0;
                 OrderDetail.receiver_date = Order.receiver_date.Value.AddDays(30);
-                OrderDetail.receiver_status = 0;
+                OrderDetail.delivery_state = 0;
                 OrderDetail.order_status = 1;
                 OrderDetail.receiver_area = Order.receiver_area;
                 OrderDetail.receiver_address = Order.receiver_address;
@@ -1411,7 +1411,7 @@ namespace PeriodAid.Controllers
         public JsonResult Cancel_Order(int order_id)
         {
             var order = from m in md_db.MD_Order
-                        where m.parentOrder_id == order_id && m.order_status == 0 && m.receiver_status == 0 && m.receiver_times != 1
+                        where m.parentOrder_id == order_id && m.order_status == 0 && m.delivery_state == 0 && m.upload_status != 1 && m.receiver_times != 1
                         select m;
             if(order.Count() != 0)
             {

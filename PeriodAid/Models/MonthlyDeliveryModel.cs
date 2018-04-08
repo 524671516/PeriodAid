@@ -32,9 +32,15 @@ namespace PeriodAid.Models
         [StringLength(128)]
         public string order_code { get; set; }
         // 数量
-        public int quantity { get; set; }
+        public int qty { get; set; }
         // 总金额
-        public decimal total_amount { get; set; }
+        public decimal amount { get; set; }
+
+        public decimal payment { get; set; }
+
+        public decimal discount_fee { get; set; }
+
+        public decimal payment_amount { get; set; }
 
         public DateTime? receiver_date { get; set; }
         [StringLength(32)]
@@ -44,7 +50,7 @@ namespace PeriodAid.Models
         [StringLength(32)]
         public string receiver_tel { get; set; }
 
-        public int receiver_status { get; set; }
+        public int delivery_state { get; set; }
         // -1 取消 0 分批 1 合并
         public int order_status { get; set; }
         [StringLength(128)]
